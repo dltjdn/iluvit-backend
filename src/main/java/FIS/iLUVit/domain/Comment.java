@@ -1,0 +1,39 @@
+package FIS.iLUVit.domain;
+
+import javax.persistence.*;
+import java.time.LocalDate;
+import java.time.LocalTime;
+import java.util.List;
+
+@Entity
+@Table(name = "Comments")
+public class Comment {
+    @Id
+    @GeneratedValue
+    private Long id;
+    private LocalDate date;          // 게시글 작성 날짜
+    private LocalTime time;          // 게시글 작성 시간
+    private Boolean anonymous;       // 익명 댓글 여부
+
+
+    @ManyToOne
+    @JoinColumn(name = "post_id")
+    private Post post;
+
+    @ManyToOne
+    @JoinColumn(name = "user_id")
+    private User user;
+
+    @OneToMany(mappedBy = "comment")
+    private List<CommentHeart> commentHearts;
+
+    @OneToMany(mappedBy = "parentComment")
+    private List<Comment> subComments;
+
+    @ManyToOne
+    @JoinColumn(name = "pComment_id")
+    private Comment parentComment;
+
+
+
+}

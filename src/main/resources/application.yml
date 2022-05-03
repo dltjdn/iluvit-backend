@@ -1,0 +1,29 @@
+spring:
+  datasource:
+    url:  jdbc:h2:tcp://localhost/~/fis_police
+    username: sa
+    password:
+    driver-class-name: org.h2.Driver
+  # 작성자: 원보라, 작성내용: swagger 라이브러리 오류 방지
+  mvc:
+    pathmatch:
+      matching-strategy: ant_path_matcher
+
+  # 작성자: 원보라, 작성내용: agent 사진 multipart
+  servlet:
+    multipart:
+      max-file-size: 20MB #최대 파일 사이즈 20MB
+  jpa:
+    hibernate:
+      ddl-auto: update  # 작성자 이승범 ddl-auto: create-drop 해놓음
+    properties:
+      hibernate:
+        show_sql: true
+        format_sql: true
+        default_batch_fetch_size: 100
+logging:
+  level:
+    org.hibernate.SQL: debug
+    org.hibernate.Type: trace
+
+

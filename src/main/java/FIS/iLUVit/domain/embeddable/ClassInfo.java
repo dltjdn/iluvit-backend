@@ -19,5 +19,7 @@ public class ClassInfo {
     private Long child_3;
     private Long child_4;
     private Long child_5;
+
+    // 특수 아동 총원수
     private Long child_spe;
 }
