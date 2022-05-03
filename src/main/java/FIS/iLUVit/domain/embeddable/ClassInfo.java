@@ -5,21 +5,21 @@ import javax.persistence.Embeddable;
 @Embeddable
 public class ClassInfo {
     // 연령별 학급수 (만 0 ~ 5세) 유치원은 (만3 ~ 5세)
-    private Long class_0;
-    private Long class_1;
-    private Long class_2;
-    private Long class_3;
-    private Long class_4;
-    private Long class_5;
+    private Integer class_0;
+    private Integer class_1;
+    private Integer class_2;
+    private Integer class_3;
+    private Integer class_4;
+    private Integer class_5;
 
     // 연령별 아이수 (만 0 ~ 5세) 유치원은 (만3 ~ 5세)
-    private Long child_0;
-    private Long child_1;
-    private Long child_2;
-    private Long child_3;
-    private Long child_4;
-    private Long child_5;
+    private Integer child_0;
+    private Integer child_1;
+    private Integer child_2;
+    private Integer child_3;
+    private Integer child_4;
+    private Integer child_5;
 
     // 특수 아동 총원수
-    private Long child_spe;
+    private Integer child_spe;
 }
