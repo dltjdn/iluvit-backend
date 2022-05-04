@@ -14,7 +14,7 @@ public class Teacher extends User{
     @Enumerated(EnumType.STRING)
     private Approval approval;              // 교사 승인 여부
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "center_id")
     private Center center;
 

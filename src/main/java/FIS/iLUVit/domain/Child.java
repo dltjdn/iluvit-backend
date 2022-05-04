@@ -13,11 +13,11 @@ public class Child {
     @Enumerated(EnumType.STRING)
     private Approval approval;                  // 승인 여부 상태
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "parent_id")
     private Parent parent;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "center_id")
     private Center center;
 }

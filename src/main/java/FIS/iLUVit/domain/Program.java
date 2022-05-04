@@ -9,7 +9,7 @@ public class Program {
 
     private String name;                // 프로그램 명
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "center_id")
     private Center center;
 }
