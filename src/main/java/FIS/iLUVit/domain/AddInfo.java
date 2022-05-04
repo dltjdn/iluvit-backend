@@ -10,7 +10,7 @@ public class AddInfo {
 
     private String info;                // 부가정보
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "center_id")
     private Center center;
 }

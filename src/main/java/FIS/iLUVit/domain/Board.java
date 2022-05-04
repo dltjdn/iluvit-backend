@@ -19,7 +19,7 @@ public class Board {
     @OneToMany(mappedBy = "board")
     private List<Bookmark> bookmarks;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "center_id")             // null 이면 모두의 게시판
     private Center center;
 }

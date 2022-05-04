@@ -9,11 +9,11 @@ public class Bookmark {
     @Column(name = "orders")
     private Integer order;              //즐겨찾기 순서
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "board_id")
     private Board board;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id")
     private User user;
 }
