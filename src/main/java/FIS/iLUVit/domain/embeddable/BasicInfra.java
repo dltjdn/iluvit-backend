@@ -12,6 +12,7 @@ public class BasicInfra {
     private Boolean hasUniform;             // 단체복 유무
     private Boolean hasKidsNote;            // 키즈노트 사용 유무
     private Boolean hasHandWriteNote;       // 수기알림장 유무
+    private Boolean hasPhysics;             // 체육시설 있는지
 
     private Integer BusCnt;                 // 통합차량 수
     private Integer buildingYear;           // 건축년도 ( 이걸로 신축 여부 판단하기 )
