@@ -31,7 +31,6 @@ public class CenterRepositoryImpl extends CenterQueryMethod implements CenterRep
     public List<Center> findByMapFilter(double longitude, double latitude, Theme theme, Integer interestedAge, String kindOf, Integer distance) {
         return jpaQueryFactory.selectFrom(center)
                 .where(center.theme.eq(theme)
-                        .and()
                         .and(interestedAgeEq(interestedAge))
                         .and(kindOfEq(kindOf)))
                 .fetch();
