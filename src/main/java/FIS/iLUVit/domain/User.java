@@ -7,7 +7,7 @@ import java.util.List;
 @Inheritance(strategy = InheritanceType.JOINED)
 @DiscriminatorColumn
 @DiscriminatorValue("null")
-public class User{
+public class User extends BaseEntity{
     @GeneratedValue @Id
     private Long id;
     private String nickName;            // 닉네임

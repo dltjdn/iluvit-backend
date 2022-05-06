@@ -6,7 +6,7 @@ import java.time.LocalTime;
 import java.util.List;
 
 @Entity
-public class Post {
+public class Post extends BaseEntity {
     @Id
     @GeneratedValue
     private Long id;

@@ -5,7 +5,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 @Entity
-public class Prefer {
+public class Prefer extends BaseEntity {
 
     @Id @GeneratedValue
     private Long id;

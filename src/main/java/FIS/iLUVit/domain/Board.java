@@ -6,7 +6,7 @@ import javax.persistence.*;
 import java.util.List;
 
 @Entity
-public class Board {
+public class Board extends BaseEntity{
     @Id @GeneratedValue
     private Long id;
     private String name;                        // 게시판 이름

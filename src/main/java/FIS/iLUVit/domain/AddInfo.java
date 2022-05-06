@@ -3,7 +3,7 @@ package FIS.iLUVit.domain;
 import javax.persistence.*;
 
 @Entity
-public class AddInfo {
+public class AddInfo extends BaseEntity {
     @Id
     @GeneratedValue
     private Long id;
