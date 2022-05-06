@@ -7,7 +7,7 @@ import java.util.List;
 
 @Entity
 @Table(name = "Comments")
-public class Comment {
+public class Comment extends BaseEntity {
     @Id
     @GeneratedValue
     private Long id;

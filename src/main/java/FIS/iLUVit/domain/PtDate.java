@@ -7,7 +7,7 @@ import javax.persistence.OneToMany;
 import java.util.List;
 
 @Entity
-public class PtDate {
+public class PtDate extends BaseEntity {
     @Id @GeneratedValue
     private Long id;
 

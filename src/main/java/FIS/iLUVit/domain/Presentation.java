@@ -6,7 +6,7 @@ import javax.persistence.Id;
 import javax.persistence.Lob;
 
 @Entity
-public class Presentation {
+public class Presentation extends BaseEntity {
     @Id @GeneratedValue
     private Long id;
 

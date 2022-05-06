@@ -5,7 +5,7 @@ import java.time.LocalDate;
 import java.time.LocalTime;
 
 @Entity
-public class Chat {
+public class Chat extends BaseEntity {
     @Id @GeneratedValue
     private Long id;
     private LocalDate date;             // 쪽지 발생 날짜

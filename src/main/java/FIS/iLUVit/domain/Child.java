@@ -5,7 +5,7 @@ import FIS.iLUVit.domain.enumtype.Approval;
 import javax.persistence.*;
 
 @Entity
-public class Child {
+public class Child extends BaseEntity {
     @Id @GeneratedValue
     private Long id;
     private String name;

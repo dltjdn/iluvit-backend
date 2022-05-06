@@ -4,7 +4,7 @@ import javax.persistence.*;
 import java.util.List;
 
 @Entity
-public class Scrap {
+public class Scrap extends BaseEntity {
     @Id @GeneratedValue
     private Long id;
 
