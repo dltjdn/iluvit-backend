@@ -8,7 +8,7 @@ import java.time.LocalDate;
 @Entity
 @Inheritance(strategy = InheritanceType.JOINED)
 @DiscriminatorValue("null")
-@DiscriminatorColumn
+@DiscriminatorColumn(name = "kindOf")
 public class Center {
     @Id @GeneratedValue
     private Long id;
@@ -27,8 +27,8 @@ public class Center {
     private Integer maxAge;                 //
     private String address;                 // 주소
     private String zipcode;                 // 우편번호
-    private String sido;                    // 시도
-    private String sigungu;                 // 시군구
+    @Embedded
+    private Area area;
     private Double longitude;               // 경도
     private Double latitude;                // 위도
     private String offerService;            // 제공서비스 (, 로 구분)
@@ -42,6 +42,7 @@ public class Center {
     private String introText;               // 시설 소개글
     private Integer imgCnt;                 // 시설 이미지 개수 최대 20장
     private Integer videoCnt;               // 시설 동영상 갯수 최대 5개
+    private String kindOf;                  // 시설 종류
 
     @Embedded
     private ClassInfo classInfo;            // 학급정보
