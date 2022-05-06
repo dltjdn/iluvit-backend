@@ -9,7 +9,7 @@ import java.time.LocalDate;
 @Inheritance(strategy = InheritanceType.JOINED)
 @DiscriminatorValue("null")
 @DiscriminatorColumn(name = "kindOf")
-public class Center {
+public class Center extends BaseEntity{
     @Id @GeneratedValue
     private Long id;
 

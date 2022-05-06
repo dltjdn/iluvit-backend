@@ -3,15 +3,15 @@ package FIS.iLUVit.domain;
 import javax.persistence.*;
 
 @Entity
-public class Waiting {
+public class Waiting extends BaseEntity {
     @Id @GeneratedValue
     private Long id;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "parent_id")
     private Parent parent;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "ptDate_id")
     private PtDate ptDate;
 

@@ -6,7 +6,7 @@ import javax.persistence.*;
 import java.util.List;
 
 @Entity
-public class Board {
+public class Board extends BaseEntity{
     @Id @GeneratedValue
     private Long id;
     private String name;                        // 게시판 이름
@@ -19,7 +19,7 @@ public class Board {
     @OneToMany(mappedBy = "board")
     private List<Bookmark> bookmarks;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "center_id")             // null 이면 모두의 게시판
     private Center center;
 }

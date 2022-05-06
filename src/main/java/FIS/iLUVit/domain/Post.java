@@ -6,7 +6,7 @@ import java.time.LocalTime;
 import java.util.List;
 
 @Entity
-public class Post {
+public class Post extends BaseEntity {
     @Id
     @GeneratedValue
     private Long id;
@@ -21,11 +21,11 @@ public class Post {
     private Integer imgCnt;                 // 게시글 이미지 개수 최대 __장
     private Integer videoCnt;               // 게시글 동영상 개수 최대 _개
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "board_id")
     private Board board;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id")
     private User user;
 

@@ -3,16 +3,16 @@ package FIS.iLUVit.domain;
 import javax.persistence.*;
 
 @Entity
-public class PostHeart {
+public class PostHeart extends BaseEntity {
     @Id
     @GeneratedValue
     private Long id;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id")
     private User user;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "post_id")
     private Post post;
 }

@@ -7,7 +7,7 @@ import java.util.List;
 
 @Entity
 @Table(name = "Comments")
-public class Comment {
+public class Comment extends BaseEntity {
     @Id
     @GeneratedValue
     private Long id;
@@ -16,11 +16,11 @@ public class Comment {
     private Boolean anonymous;       // 익명 댓글 여부
 
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "post_id")
     private Post post;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id")
     private User user;
 
@@ -30,7 +30,7 @@ public class Comment {
     @OneToMany(mappedBy = "parentComment")
     private List<Comment> subComments;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "pComment_id")
     private Comment parentComment;
 
