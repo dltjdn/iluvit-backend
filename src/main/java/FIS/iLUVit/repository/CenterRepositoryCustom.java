@@ -10,5 +10,5 @@ public interface CenterRepositoryCustom {
 
     public List<Center> findByFilter(List<Area> areas, Theme theme, Integer interestedAge, String kindOf, Integer offset, Integer limit);
 
-    List<Center> findByMapFilter(double longitude, double latitude, Theme theme, Integer interestedAge, String kindOf, Integer distance);
+    List<CenterAndDistance> findByMapFilter(double longitude, double latitude, Theme theme, Integer interestedAge, String kindOf, Integer distance);
 }

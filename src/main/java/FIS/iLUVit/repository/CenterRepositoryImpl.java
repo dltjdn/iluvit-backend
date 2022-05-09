@@ -3,6 +3,9 @@ package FIS.iLUVit.repository;
 import FIS.iLUVit.domain.Center;
 import FIS.iLUVit.domain.embeddable.Area;
 import FIS.iLUVit.domain.embeddable.Theme;
+import com.querydsl.core.types.Projections;
+import com.querydsl.core.types.dsl.Expressions;
+import com.querydsl.core.types.dsl.NumberPath;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.AllArgsConstructor;
 
@@ -28,10 +31,11 @@ public class CenterRepositoryImpl extends CenterQueryMethod implements CenterRep
     }
 
     @Override
-    public List<Center> findByMapFilter(double longitude, double latitude, Theme theme, Integer interestedAge, String kindOf, Integer distance) {
-        return jpaQueryFactory.selectFrom(center)
-                .where(center.theme.eq(theme)
-                        .and()
+    public List<CenterAndDistance> findByMapFilter(double longitude, double latitude, Theme theme, Integer interestedAge, String kindOf, Integer distance) {
+        return jpaQueryFactory.select(Projections.constructor(CenterAndDistance.class, center, distanceRange(longitude, latitude)))
+                .from(center)
+                .where(
+                        themeEq(theme)
                         .and(interestedAgeEq(interestedAge))
                         .and(kindOfEq(kindOf)))
                 .fetch();

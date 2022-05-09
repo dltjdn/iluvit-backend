@@ -10,6 +10,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @Transactional
@@ -25,10 +26,12 @@ public class CenterService {
         return centerRepository.findByFilter(areas, theme, interestedAge, kindOf, offset, limit);
     }
 
+
     public List<Center> findByFilterAndMap(double longitude, double latitude, Theme theme, Integer interestedAge, String kindOf, Integer distance) {
-        if(!kindOf.equals("KinderGarden") || !kindOf.equals("ChildHouse")){
+        if(!kindOf.equals("KinderGarden") && !kindOf.equals("ChildHouse")){
             throw new RuntimeException();
         }
-        return centerRepository.findByMapFilter(longitude, latitude, theme, interestedAge, kindOf, distance);
+        return centerRepository.findByMapFilter(longitude, latitude, theme, interestedAge, kindOf, distance)
+                .stream().map(centerAndDistance -> centerAndDistance.getCenter()).collect(Collectors.toList());
     }
 }
