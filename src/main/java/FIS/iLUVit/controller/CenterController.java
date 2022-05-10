@@ -3,6 +3,7 @@ package FIS.iLUVit.controller;
 import FIS.iLUVit.controller.dto.CenterSearchFilterDTO;
 import FIS.iLUVit.controller.dto.CenterSearchMapFilterDTO;
 import FIS.iLUVit.domain.Center;
+import FIS.iLUVit.repository.CenterAndDistance;
 import FIS.iLUVit.service.CenterService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -25,8 +26,9 @@ public class CenterController {
     }
 
     @PostMapping("/center/map/search")
-    public void searchByFilterAndMap(@RequestBody CenterSearchMapFilterDTO dto){
-        List<Center> center = centerService.findByFilterAndMap(dto.getLongitude(), dto.getLatitude() ,dto.getTheme(), dto.getInterestedAge(), dto.getKindOf(), dto.getDistance());
+    public List<CenterAndDistance> searchByFilterAndMap(@RequestBody CenterSearchMapFilterDTO dto){
+        List<CenterAndDistance> center = centerService.findByFilterAndMap(dto.getLongitude(), dto.getLatitude() ,dto.getTheme(), dto.getInterestedAge(), dto.getKindOf(), dto.getDistance());
+        return center;
     }
 
 }

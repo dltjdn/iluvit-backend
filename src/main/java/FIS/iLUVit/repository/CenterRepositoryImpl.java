@@ -32,10 +32,30 @@ public class CenterRepositoryImpl extends CenterQueryMethod implements CenterRep
 
     @Override
     public List<CenterAndDistance> findByMapFilter(double longitude, double latitude, Theme theme, Integer interestedAge, String kindOf, Integer distance) {
-        return jpaQueryFactory.select(Projections.constructor(CenterAndDistance.class, center, distanceRange(longitude, latitude)))
+        double latitude_l = latitude - 0.009 * distance;
+        double latitude_h = latitude + 0.009 * distance;
+        double longitude_l = longitude - 0.009 * distance;
+        double longitude_h = longitude + 0.009 * distance;
+
+        return jpaQueryFactory.select(Projections.constructor(CenterAndDistance.class,
+                center.id,
+                center.name,
+                center.owner,
+                center.director,
+                center.estType,
+                center.tel,
+                center.startTime,
+                center.endTime,
+                center.minAge,
+                center.maxAge,
+                center.address,
+                center.area,
+                center.longitude,
+                center.latitude))
                 .from(center)
-                .where(
-                        themeEq(theme)
+                .where(center.latitude.between(latitude_l, latitude_h)
+                        .and(center.longitude.between(longitude_l, longitude_h))
+                        .and(themeEq(theme))
                         .and(interestedAgeEq(interestedAge))
                         .and(kindOfEq(kindOf)))
                 .fetch();

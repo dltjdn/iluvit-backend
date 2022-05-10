@@ -20,4 +20,21 @@ public class Child extends BaseEntity {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "center_id")
     private Center center;
+
+    public static Child createChild(String name, String birthDate, Approval approval) {
+        Child child = new Child();
+        child.name = name;
+        child.birthDate = birthDate;
+        child.approval = approval;
+        return child;
+    }
+
+    public void mappingParent(Parent parent) {
+        this.parent = parent;
+        parent.getChildren().add(this);
+    }
+
+    public void mappingCenter(Center center) {
+        this.center = center;
+    }
 }

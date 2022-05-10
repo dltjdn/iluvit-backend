@@ -2,11 +2,20 @@ package FIS.iLUVit.domain;
 
 import FIS.iLUVit.domain.enumtype.Approval;
 import FIS.iLUVit.domain.enumtype.Auth;
+import com.querydsl.core.types.dsl.BooleanExpression;
+import lombok.AccessLevel;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
 
 import javax.persistence.*;
 
 @Entity
-public class Teacher extends User{
+@Getter
+@OnDelete(action = OnDeleteAction.CASCADE)
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
+public class Teacher extends User {
 
     @Enumerated(EnumType.STRING)
     private Auth auth;                      // 교사 권한
@@ -17,5 +26,23 @@ public class Teacher extends User{
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "center_id")
     private Center center;
+
+    public static Teacher createTeacher(String nickName, String loginId, String password, String phoneNumber, Boolean hasProfileImg, String emailAddress, String name, Auth auth, Approval approval) {
+        Teacher teacher = new Teacher();
+        teacher.nickName = nickName;
+        teacher.loginId = loginId;
+        teacher.password = password;
+        teacher.phoneNumber = phoneNumber;
+        teacher.hasProfileImg = hasProfileImg;
+        teacher.emailAddress = emailAddress;
+        teacher.name = name;
+        teacher.auth = auth;
+        teacher.approval = approval;
+        return teacher;
+    }
+
+    public void mappingCenter(Center center) {
+        this.center = center;
+    }
 
 }
