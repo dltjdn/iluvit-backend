@@ -1,6 +1,8 @@
 package FIS.iLUVit.domain;
 
+import FIS.iLUVit.controller.dto.CenterModifyReqeustDto;
 import FIS.iLUVit.domain.embeddable.*;
+import lombok.Builder;
 import lombok.Getter;
 
 import javax.persistence.*;
@@ -100,5 +102,41 @@ public class Center extends BaseEntity{
         center.theme = theme;
         center.otherInfo = otherInfo;
         return center;
+    }
+
+    @Builder(toBuilder = true)
+    public Center(Long id, String name, String owner, String director, String estType, String estDate, String tel, String homepage, String startTime, String endTime, Integer minAge, Integer maxAge, String address, String zipcode, Area area, String offerService, Integer maxChildCnt, Integer curChildCnt, LocalDate updateDate, Boolean recruit, String introText, Integer imgCnt, Integer videoCnt, ClassInfo classInfo, TeacherInfo teacherInfo, CostInfo costInfo, BasicInfra basicInfra, Theme theme) {
+        this.id = id;
+        this.name = name;
+        this.owner = owner;
+        this.director = director;
+        this.estType = estType;
+        this.estDate = estDate;
+        this.tel = tel;
+        this.homepage = homepage;
+        this.startTime = startTime;
+        this.endTime = endTime;
+        this.minAge = minAge;
+        this.maxAge = maxAge;
+        this.address = address;
+        this.zipcode = zipcode;
+        this.area = area;
+        this.offerService = offerService;
+        this.maxChildCnt = maxChildCnt;
+        this.curChildCnt = curChildCnt;
+        this.updateDate = updateDate;
+        this.recruit = recruit;
+        this.introText = introText;
+        this.imgCnt = imgCnt;
+        this.videoCnt = videoCnt;
+        this.classInfo = classInfo;
+        this.teacherInfo = teacherInfo;
+        this.costInfo = costInfo;
+        this.basicInfra = basicInfra;
+        this.theme = theme;
+    }
+
+    public Center update(CenterModifyReqeustDto requestDto) {
+
     }
 }

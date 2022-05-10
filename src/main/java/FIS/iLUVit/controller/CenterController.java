@@ -1,9 +1,6 @@
 package FIS.iLUVit.controller;
 
-import FIS.iLUVit.controller.dto.CenterInfoResponseDto;
-import FIS.iLUVit.controller.dto.CenterSearchDto;
-import FIS.iLUVit.controller.dto.CenterSearchFilterDTO;
-import FIS.iLUVit.controller.dto.CenterSearchMapFilterDTO;
+import FIS.iLUVit.controller.dto.*;
 import FIS.iLUVit.repository.dto.CenterAndDistancePreview;
 import FIS.iLUVit.repository.dto.CenterPreview;
 import FIS.iLUVit.service.CenterService;
@@ -42,10 +39,34 @@ public class CenterController {
     }
 
     /**
-     * Id 기반 center 정보값 반환하기 기본정보 + 프로그램 + 기본시설 + 부가시설 반환
+     * Id 기반 center 정보값 반환하기 기본정보 + 프로그램 + 기본시설 + 부가시설 반환 <p>
+     * 개발 추가 사항 - 사진, 영상 정보 반환할 것 추가하기
      */
     @GetMapping("/center/{center_id}/Info")
     public CenterInfoResponseDto centerInfo(@PathVariable("center_id") Long id){
         return new CenterInfoResponseDto(centerService.findInfoById(id));
     }
+
+    /**
+     * id 기반 으로 센터 클릭시 배너로 나올 center 이름, 모집 상황 반환할 api
+     */
+    @GetMapping("/center/{center_id}/recruit")
+    public CenterBannerResponseDto centerBanner(@PathVariable("center_id") Long id){
+        return new CenterBannerResponseDto(centerService.findBannerById(id));
+    }
+
+    /**
+     * 메인 화면에서 띄워 줄 센터 Banner에 대한 내용 기본적으로 Login이 되어 있어야하는 상태이며 관심 테마 설정이 되어있어야한다.
+     * 회원로직 완료후에 작업 시작
+     */
+    @GetMapping("/center/theme")
+    public CenterThemeBannerResponseDto centerThemeBanner(){
+        return null;
+    }
+
+    @PatchMapping("/center/{center_id}")
+    public Long modifyCenter(@PathVariable("center_id") Long id, @RequestBody CenterModifyReqeustDto requestDto){
+        centerService.modifyCenter(id, requestDto);
+    }
+
 }
