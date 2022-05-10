@@ -1,5 +1,6 @@
 package FIS.iLUVit.domain;
 
+import FIS.iLUVit.domain.enumtype.Auth;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -23,6 +24,9 @@ public class User extends BaseEntity{
     protected Boolean hasProfileImg;      // 프사 있니?
     protected String emailAddress;
     protected String name;                // 잔짜 이름
+
+    @Enumerated(EnumType.STRING)
+    protected Auth auth;                   // 교사, 원장, 부모
 
     @Column(name = "dtype", insertable = false, updatable = false)
     protected String dtype;               // Teacher or Parent

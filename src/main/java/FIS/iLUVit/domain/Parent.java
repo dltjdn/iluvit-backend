@@ -4,6 +4,8 @@ import FIS.iLUVit.domain.embeddable.Theme;
 import FIS.iLUVit.domain.enumtype.Approval;
 import FIS.iLUVit.domain.enumtype.Auth;
 import lombok.Getter;
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
 import org.springframework.security.core.parameters.P;
 
 import javax.persistence.Embedded;
@@ -14,6 +16,7 @@ import java.util.List;
 
 @Entity
 @Getter
+@OnDelete(action = OnDeleteAction.CASCADE)
 public class Parent extends User {
     @OneToMany(mappedBy = "parent")
     private List<Child> children;
