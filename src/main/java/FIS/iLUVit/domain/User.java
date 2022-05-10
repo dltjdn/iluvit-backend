@@ -1,5 +1,7 @@
 package FIS.iLUVit.domain;
 
+import lombok.Getter;
+
 import javax.persistence.*;
 import java.util.List;
 
@@ -7,6 +9,7 @@ import java.util.List;
 @Inheritance(strategy = InheritanceType.JOINED)
 @DiscriminatorColumn
 @DiscriminatorValue("null")
+@Getter
 public class User extends BaseEntity{
     @GeneratedValue @Id
     private Long id;

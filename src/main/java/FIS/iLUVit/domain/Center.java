@@ -1,6 +1,7 @@
 package FIS.iLUVit.domain;
 
 import FIS.iLUVit.domain.embeddable.*;
+import lombok.Getter;
 
 import javax.persistence.*;
 import java.time.LocalDate;
@@ -9,6 +10,7 @@ import java.time.LocalDate;
 @Inheritance(strategy = InheritanceType.JOINED)
 @DiscriminatorValue("null")
 @DiscriminatorColumn(name = "kindOf")
+@Getter
 public class Center extends BaseEntity{
     @Id @GeneratedValue
     private Long id;

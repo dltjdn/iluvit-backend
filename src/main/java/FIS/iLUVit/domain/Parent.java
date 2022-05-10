@@ -1,6 +1,7 @@
 package FIS.iLUVit.domain;
 
 import FIS.iLUVit.domain.embeddable.Theme;
+import lombok.Getter;
 
 import javax.persistence.Embedded;
 import javax.persistence.Entity;
@@ -9,6 +10,7 @@ import javax.persistence.OneToMany;
 import java.util.List;
 
 @Entity
+@Getter
 public class Parent extends User{
     @OneToMany(mappedBy = "parent")
     private List<Child> children;
