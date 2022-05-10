@@ -1,4 +1,4 @@
-package FIS.iLUVit.repository;
+package FIS.iLUVit.repository.dto;
 
 import FIS.iLUVit.domain.Center;
 import FIS.iLUVit.domain.QCenter;
@@ -10,7 +10,7 @@ import lombok.Data;
 
 @Data
 @AllArgsConstructor
-public class CenterAndDistance {
+public class CenterAndDistancePreview {
     private Long id;
     private String name;                    // 시설명
     private String owner;                   // 대표자명
@@ -27,7 +27,7 @@ public class CenterAndDistance {
     private Double latitude;                // 위도
     private Double distance;
 
-    public CenterAndDistance(Long id, String name, String owner, String director, String estType, String tel, String startTime, String endTime, Integer minAge, Integer maxAge, String address, Area area, Double longitude, Double latitude) {
+    public CenterAndDistancePreview(Long id, String name, String owner, String director, String estType, String tel, String startTime, String endTime, Integer minAge, Integer maxAge, String address, Area area, Double longitude, Double latitude) {
         this.id = id;
         this.name = name;
         this.owner = owner;
@@ -44,21 +44,22 @@ public class CenterAndDistance {
         this.latitude = latitude;
     }
 
-    public CenterAndDistance(Center center, double longitude, double latitude){
-        this.id = id;
-        this.name = name;
-        this.owner = owner;
-        this.director = director;
-        this.estType = estType;
-        this.tel = tel;
-        this.startTime = startTime;
-        this.endTime = endTime;
-        this.minAge = minAge;
-        this.maxAge = maxAge;
-        this.address = address;
-        this.area = area;
-        this.longitude = longitude;
-        this.latitude = latitude;
+    @QueryProjection
+    public CenterAndDistancePreview(Center center){
+        this.id = center.getId();
+        this.name = center.getName();
+        this.owner = center.getOwner();
+        this.director = center.getDirector();
+        this.estType = center.getEstType();
+        this.tel = center.getTel();
+        this.startTime = center.getStartTime();
+        this.endTime = center.getEndTime();
+        this.minAge = center.getMinAge();
+        this.maxAge = center.getMaxAge();
+        this.address = center.getAddress();
+        this.area = center.getArea();
+        this.longitude = center.getLongitude();
+        this.latitude = center.getLatitude();
     }
 
     public Double calculateDistance(double longitude, double latitude){
@@ -68,8 +69,8 @@ public class CenterAndDistance {
         dist = Math.acos(dist);
         dist = rad2deg(dist);
         dist = dist * 60 * 1.1515 * 1609.344;
-        distance = dist;
-        return (dist);
+        distance = dist/1000.0;               //km 단위로 끊음
+        return distance;
     }
 
     // This function converts decimal degrees to radians
