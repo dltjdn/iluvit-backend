@@ -42,7 +42,12 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
             // 로그인 시도를 해본다
             // authenticationManager로 로그인 시도를 하면 PrincipalDetailsService 호출되고 loadByUsername 함수 자동 실행
             // db 정보와 일치한다면 authentication 객체 리턴됨
-            return authenticationManager.authenticate(authenticationToken);
+            Authentication authentication = authenticationManager.authenticate(authenticationToken);
+
+            PrincipalDetails principalDetails = (PrincipalDetails) authentication.getPrincipal();
+            System.out.println("로그인 완료됨 : " + principalDetails.getUser().getLoginId());
+
+            return authentication;
 
         } catch (IOException e) {
              e.printStackTrace();

@@ -11,8 +11,13 @@ import org.springframework.web.bind.annotation.RestController;
 @RequiredArgsConstructor
 public class SignController {
 
-    @GetMapping("user")
+    @GetMapping("/user")
     public String user() {
+        return "asd";
+    }
+
+    @GetMapping("/asd")
+    public String asd() {
         return "asd";
     }
 }

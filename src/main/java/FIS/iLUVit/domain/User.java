@@ -2,14 +2,18 @@ package FIS.iLUVit.domain;
 
 import FIS.iLUVit.domain.enumtype.Auth;
 import lombok.AccessLevel;
+import lombok.Data;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 @Entity
 @Getter
+@Data
 @Inheritance(strategy = InheritanceType.JOINED)
 @DiscriminatorColumn
 @DiscriminatorValue("null")
@@ -36,6 +40,13 @@ public class User extends BaseEntity{
 
     @OneToMany(mappedBy = "sender")
     protected List<Chat> sendChats;
+
+    public List<String> getAuthList() {
+        if (this.auth != null) {
+            return Arrays.asList(this.auth.toString().split(","));
+        }
+        return new ArrayList<>();
+    }
 
 
 
