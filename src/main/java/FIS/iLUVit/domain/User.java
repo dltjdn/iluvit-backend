@@ -1,30 +1,38 @@
 package FIS.iLUVit.domain;
 
+import lombok.AccessLevel;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
 import java.util.List;
 
 @Entity
+@Getter
 @Inheritance(strategy = InheritanceType.JOINED)
 @DiscriminatorColumn
 @DiscriminatorValue("null")
-@Getter
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class User extends BaseEntity{
     @GeneratedValue @Id
-    private Long id;
-    private String nickName;            // 닉네임
-    private String loginId;             // 로그인 할때 입력할 아이디
-    private String password;            // 비밀번호
-    private String phoneNumber;
-    private Boolean hasProfileImg;      // 프사 있니?
-    private String emailAddress;
-    private String name;                // 잔짜 이름
+    protected Long id;
+    protected String nickName;            // 닉네임
+    protected String loginId;             // 로그인 할때 입력할 아이디
+    protected String password;            // 비밀번호
+    protected String phoneNumber;
+    protected Boolean hasProfileImg;      // 프사 있니?
+    protected String emailAddress;
+    protected String name;                // 잔짜 이름
+
+    @Column(name = "dtype", insertable = false, updatable = false)
+    protected String dtype;               // Teacher or Parent
 
     @OneToMany(mappedBy = "receiver")
-    private List<Chat> receiveChats;
+    protected List<Chat> receiveChats;
 
     @OneToMany(mappedBy = "sender")
-    private List<Chat> sendChats;
+    protected List<Chat> sendChats;
+
+
 
 }

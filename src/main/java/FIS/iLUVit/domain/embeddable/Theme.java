@@ -1,11 +1,18 @@
 package FIS.iLUVit.domain.embeddable;
 
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+
 import javax.persistence.Embeddable;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 
 @Embeddable
+@AllArgsConstructor
+@Getter
+@NoArgsConstructor
 public class Theme {
     private Boolean English;                // 양어
     private Boolean foreigner;              // 원어민

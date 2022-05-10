@@ -1,8 +1,15 @@
 package FIS.iLUVit.domain.embeddable;
 
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+
 import javax.persistence.Embeddable;
 
 @Embeddable
+@Getter
+@NoArgsConstructor
+@AllArgsConstructor
 public class BasicInfra {
     private Boolean hasBus;                 // 통합차량 운영 여부
     private Boolean hasPlayground;          // 놀이터 유무

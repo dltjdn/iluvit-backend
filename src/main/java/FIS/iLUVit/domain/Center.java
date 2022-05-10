@@ -44,6 +44,8 @@ public class Center extends BaseEntity{
     private String introText;               // 시설 소개글
     private Integer imgCnt;                 // 시설 이미지 개수 최대 20장
     private Integer videoCnt;               // 시설 동영상 갯수 최대 5개
+
+    @Column(name="kindOf", insertable = false, updatable = false)
     private String kindOf;                  // 시설 종류
 
     @Embedded
@@ -59,5 +61,44 @@ public class Center extends BaseEntity{
     @Embedded
     private OtherInfo otherInfo;            // 지문등록 사업에서 사용하는 정보들 집합
 
-
+    public static Center createCenter(String name, String owner, String director, String estType, String status, String estDate, String tel, String homepage, String startTime, String endTime, Integer minAge, Integer maxAge, String address,
+                  String zipcode, Area area, Double longitude, Double latitude, String offerService, Integer maxChildCnt, Integer curChildCnt, LocalDate updateDate, Boolean signed, Boolean recruit, Integer waitingNum, String introText,
+                  Integer imgCnt, Integer videoCnt, String kindOf, ClassInfo classInfo, TeacherInfo teacherInfo, CostInfo costInfo, BasicInfra basicInfra, Theme theme, OtherInfo otherInfo) {
+        Center center = new Center();
+        center.name = name;
+        center.owner = owner;
+        center.director = director;
+        center.estType = estType;
+        center.status = status;
+        center.estDate = estDate;
+        center.tel = tel;
+        center.homepage = homepage;
+        center.startTime = startTime;
+        center.endTime = endTime;
+        center.minAge = minAge;
+        center.maxAge = maxAge;
+        center.address = address;
+        center.zipcode = zipcode;
+        center.area = area;
+        center.longitude = longitude;
+        center.latitude = latitude;
+        center.offerService = offerService;
+        center.maxChildCnt = maxChildCnt;
+        center.curChildCnt = curChildCnt;
+        center.updateDate = updateDate;
+        center.signed = signed;
+        center.recruit = recruit;
+        center.waitingNum = waitingNum;
+        center.introText = introText;
+        center.imgCnt = imgCnt;
+        center.videoCnt = videoCnt;
+        center.kindOf = kindOf;
+        center.classInfo = classInfo;
+        center.teacherInfo = teacherInfo;
+        center.costInfo = costInfo;
+        center.basicInfra = basicInfra;
+        center.theme = theme;
+        center.otherInfo = otherInfo;
+        return center;
+    }
 }
