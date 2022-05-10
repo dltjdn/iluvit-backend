@@ -1,11 +1,18 @@
 package FIS.iLUVit.domain;
 
+import lombok.AccessLevel;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+
 import javax.persistence.*;
 import java.time.LocalDate;
 import java.time.LocalTime;
+import java.util.ArrayList;
 import java.util.List;
 
 @Entity
+@Getter
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Review extends BaseEntity{
     @Id @GeneratedValue
     private Long id;
@@ -19,6 +26,12 @@ public class Review extends BaseEntity{
     private Boolean anonymous;          // 리뷰 익명 여부
     @Lob
     private String answer;              // 시설 관계자의 답글 무조건 1개
+    /**
+     * 작성자: 이창윤
+     * 설명: 대댓글의 게시 날짜 컬럼이 없어서 추가했습니다.
+     */
+    private LocalDate answerCreateDate;
+    private LocalTime answerCreateTime;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "parent_id")
@@ -33,5 +46,27 @@ public class Review extends BaseEntity{
     private Center center;
 
     @OneToMany(mappedBy = "review")
-    private List<ReviewHeart> reviewHearts;
+    private List<ReviewHeart> reviewHearts = new ArrayList<>();
+
+    public static Review createReview(String content, Integer score, Boolean anonymous, Parent parent, Center center) {
+        Review review = new Review();
+        review.content = content;
+        review.createTime = LocalTime.now();
+        review.score = score;
+        review.anonymous = anonymous;
+        review.parent = parent;
+        review.center = center;
+        return review;
+    }
+
+    public void updateContent(String content) {
+        this.content = content;
+        this.updateTime = LocalTime.now();
+    }
+
+    public void updateAnswer(String comment) {
+        this.answer = comment;
+        this.answerCreateDate = LocalDate.now();
+        this.answerCreateTime = LocalTime.now();
+    }
 }
