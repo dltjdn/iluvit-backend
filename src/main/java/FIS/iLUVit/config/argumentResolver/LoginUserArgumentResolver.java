@@ -3,6 +3,7 @@ package FIS.iLUVit.config.argumentResolver;
 import antlr.TokenStreamException;
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.algorithms.Algorithm;
+import com.auth0.jwt.exceptions.JWTVerificationException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.core.MethodParameter;
@@ -34,6 +35,10 @@ public class LoginUserArgumentResolver implements HandlerMethodArgumentResolver 
 
         String jwtToken = authorizationHeader.replace("Bearer ", "");
 
-        return JWT.require(Algorithm.HMAC512("symmetricKey")).build().verify(jwtToken).getClaim("id").asLong();
+        try {
+            return JWT.require(Algorithm.HMAC512("symmetricKey")).build().verify(jwtToken).getClaim("id").asLong();
+        } catch (JWTVerificationException e) {
+            return null;
+        }
     }
 }

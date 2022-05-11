@@ -1,6 +1,7 @@
 package FIS.iLUVit.filter;
 
 import FIS.iLUVit.exception.ErrorResponse;
+import com.auth0.jwt.exceptions.JWTVerificationException;
 import com.auth0.jwt.exceptions.TokenExpiredException;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -18,8 +19,8 @@ public class ExceptionHandlerFilter extends OncePerRequestFilter {
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
         try {
             filterChain.doFilter(request, response);
-        } catch (Exception e) {
-            ErrorResponse errorResponse = new ErrorResponse(e, 403);
+        } catch (JWTVerificationException e) {
+            ErrorResponse errorResponse = new ErrorResponse(e.getMessage(), 403);
             response.setContentType("application/json");
             response.setStatus(HttpServletResponse.SC_FORBIDDEN);
             response.getWriter().write(convertObjectToJson(errorResponse));

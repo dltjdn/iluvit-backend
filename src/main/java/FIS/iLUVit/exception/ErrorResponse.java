@@ -12,8 +12,8 @@ public class ErrorResponse {
     private Integer status;
     private String error;
 
-    public ErrorResponse(Exception e, int status) {
+    public ErrorResponse(String message, int status) {
         this.status = status;
-        this.error = e.getMessage();
+        this.error = message;
     }
 }

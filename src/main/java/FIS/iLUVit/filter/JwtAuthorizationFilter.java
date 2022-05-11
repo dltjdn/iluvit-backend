@@ -1,15 +1,12 @@
 package FIS.iLUVit.filter;
 
 import FIS.iLUVit.domain.User;
-import FIS.iLUVit.exception.ErrorResponse;
 import FIS.iLUVit.repository.UserRepository;
 import FIS.iLUVit.uesrdetails.PrincipalDetails;
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.algorithms.Algorithm;
+import com.auth0.jwt.exceptions.JWTVerificationException;
 import com.auth0.jwt.exceptions.TokenExpiredException;
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import org.apache.el.parser.TokenMgrError;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -26,7 +23,7 @@ import java.io.IOException;
 // 권한이나 인증이 필요한 주소가 아니라면 해당 필터는 지나친다.
 public class JwtAuthorizationFilter extends BasicAuthenticationFilter {
 
-    private UserRepository userRepository;
+    private final UserRepository userRepository;
 
     public JwtAuthorizationFilter(AuthenticationManager authenticationManager, UserRepository userRepository) {
         super(authenticationManager);
@@ -48,7 +45,13 @@ public class JwtAuthorizationFilter extends BasicAuthenticationFilter {
         // 토큰을 검증해서 정상적인 사용자인지 확인
         String jwtToken = request.getHeader("Authorization").replace("Bearer ", "");
 
-        Long id = JWT.require(Algorithm.HMAC512("symmetricKey")).build().verify(jwtToken).getClaim("id").asLong();
+        Long id;
+        try {
+            id = JWT.require(Algorithm.HMAC512("symmetricKey")).build().verify(jwtToken).getClaim("id").asLong();
+        } catch (JWTVerificationException e) {
+            chain.doFilter(request, response);
+            return ;
+        }
 
 
         // 서명이 정상적인지 확인
