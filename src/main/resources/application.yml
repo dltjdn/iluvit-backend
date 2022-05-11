@@ -1,3 +1,11 @@
+server:
+  servlet:
+    context-path: /
+    encoding:
+      charset: UTF-8
+      enabled: true
+      force: true
+
 spring:
   datasource:
     url:  jdbc:h2:tcp://localhost/~/fis_police
@@ -15,7 +23,9 @@ spring:
       max-file-size: 20MB #최대 파일 사이즈 20MB
   jpa:
     hibernate:
-      ddl-auto: update  # 작성자 이승범 ddl-auto: create-drop 해놓음
+      ddl-auto: create  # 작성자 이승범 ddl-auto: create-drop 해놓음
+      naming:
+        physical-strategy: org.hibernate.boot.model.naming.PhysicalNamingStrategyStandardImpl
     properties:
       hibernate:
         show_sql: true
@@ -25,5 +35,4 @@ logging:
   level:
     org.hibernate.SQL: debug
     org.hibernate.Type: trace
-
 
