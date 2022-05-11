@@ -2,8 +2,10 @@ package FIS.iLUVit.domain;
 
 import FIS.iLUVit.controller.dto.CenterModifyReqeustDto;
 import FIS.iLUVit.domain.embeddable.*;
+import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
 import java.time.LocalDate;
@@ -13,6 +15,7 @@ import java.time.LocalDate;
 @DiscriminatorValue("null")
 @DiscriminatorColumn(name = "kindOf")
 @Getter
+@NoArgsConstructor
 public class Center extends BaseEntity{
     @Id @GeneratedValue
     private Long id;
@@ -137,6 +140,6 @@ public class Center extends BaseEntity{
     }
 
     public Center update(CenterModifyReqeustDto requestDto) {
-
+        return null;
     }
 }

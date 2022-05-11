@@ -20,6 +20,7 @@ public class CenterController {
     /**
      * center 검색 정보 반환 front 검색인자 값 - 시도, 시군구 값(list) 그리고 offset 과 갯수 몇개 가져올건지 <P>
      * 반환값으로 center Preview 정보와 startIndex와 endIndex 보내준다.
+     * QueryDsl 에서 또한 Paging 처리를 Pagable을 사용해서 할 수 있으므로 최적화 할 것.
      */
     @PostMapping("/center/search")
     public CenterSearchDto<CenterPreview> searchByFilter(@RequestBody CenterSearchFilterDTO dto,
@@ -67,6 +68,7 @@ public class CenterController {
     @PatchMapping("/center/{center_id}")
     public Long modifyCenter(@PathVariable("center_id") Long id, @RequestBody CenterModifyReqeustDto requestDto){
         centerService.modifyCenter(id, requestDto);
+        return null;
     }
 
 }
