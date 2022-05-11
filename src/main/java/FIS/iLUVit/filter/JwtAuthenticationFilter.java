@@ -65,7 +65,7 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
         // HMAC512 방식의 Hash 암호화
         String jwtToken = JWT.create()
                 .withSubject("JWT")
-                .withExpiresAt(new Date(System.currentTimeMillis() + (60000 * 10))) // JWT 만료시간 밀리세컨단위
+                .withExpiresAt(new Date(System.currentTimeMillis() + (60000 * 30))) // JWT 만료시간 밀리세컨단위
                 .withClaim("id", principalDetails.getUser().getId())
                 .withClaim("nickname", principalDetails.getUser().getNickName())
                 .withClaim("auth", principalDetails.getUser().getAuth().toString())

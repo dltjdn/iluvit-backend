@@ -30,7 +30,8 @@ public class LoginUserArgumentResolver implements HandlerMethodArgumentResolver 
         String authorizationHeader = webRequest.getHeader("Authorization");
 
         if (authorizationHeader == null) {
-            throw new TokenStreamException("Access Token이 존재하지 않습니다.");
+            return null;
+//            throw new TokenStreamException("Access Token이 존재하지 않습니다.");
         }
 
         String jwtToken = authorizationHeader.replace("Bearer ", "");
