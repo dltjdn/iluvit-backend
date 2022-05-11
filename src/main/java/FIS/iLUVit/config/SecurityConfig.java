@@ -31,13 +31,15 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .addFilter(corsFilter)
                 .formLogin().disable()  // springSecurity가 제공하는 formLogin 기능 사용X
                 .httpBasic().disable()  // 매 요청마다 id, pwd 보내는 방식으로 인증하는 httpBasic 사용X
-//                .addFilterBefore(new ExceptionHandlerFilter(), LogoutFilter.class)
+                .addFilterBefore(new ExceptionHandlerFilter(), LogoutFilter.class)
                 .addFilter(new JwtAuthenticationFilter(authenticationManager()))
                 .addFilter(new JwtAuthorizationFilter(authenticationManager(), userRepository))
                 .authorizeRequests()
-                .antMatchers("/user/**")
-                .access("hasRole('PARENT') or hasRole('TEACHER') or hasRole('DIRECTOR')")
+//                .antMatchers("/user/**")
+//                .access("hasRole('PARENT') or hasRole('TEACHER') or hasRole('DIRECTOR')")
 //                .hasRole("PARENT")
+                .antMatchers("/user/**")
+                .access("hasRole('ROLE_PARENT')")
                 .anyRequest().permitAll();
     }
 }

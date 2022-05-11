@@ -18,8 +18,8 @@ public class ExceptionHandlerFilter extends OncePerRequestFilter {
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
         try {
             filterChain.doFilter(request, response);
-        } catch (TokenExpiredException e) {
-            ErrorResponse errorResponse = new ErrorResponse(e, 403);
+        } catch (Exception e) {
+            ErrorResponse errorResponse = new ErrorResponse(e, 505);
             response.setStatus(HttpServletResponse.SC_FORBIDDEN);
             response.getWriter().write(convertObjectToJson(errorResponse));
         }

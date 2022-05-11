@@ -63,9 +63,9 @@ public class initDB {
             em.persist(teacher4);
             em.persist(teacher5);
 
-            Parent parent1 = Parent.createParent("qwe", "qwe", encoder.encode("asd"), "qwe", false, "qwe@qwe.com", "qwe", new Theme(), 5, Auth.PARENT);
-            Parent parent2 = Parent.createParent("ewq", "ewq", encoder.encode("asd"), "ewq", false, "ewq@ewq.com", "ewq", new Theme(), 5, Auth.PARENT);
-            Parent parent3 = Parent.createParent("weq", "weq", encoder.encode("asd"), "weq", false, "weq@weq.com", "weq", new Theme(), 5, Auth.PARENT);
+            Parent parent1 = Parent.createParent("qwe", "qwe", encoder.encode("asd"), "qwe", false, "qwe@qwe.com", "qwe", new Theme(), 5, Auth.ROLE_PARENT);
+            Parent parent2 = Parent.createParent("ewq", "ewq", encoder.encode("asd"), "ewq", false, "ewq@ewq.com", "ewq", new Theme(), 5, Auth.ROLE_PARENT);
+            Parent parent3 = Parent.createParent("weq", "weq", encoder.encode("asd"), "weq", false, "weq@weq.com", "weq", new Theme(), 5, Auth.ROLE_PARENT);
             em.persist(parent1);
             em.persist(parent2);
             em.persist(parent3);
