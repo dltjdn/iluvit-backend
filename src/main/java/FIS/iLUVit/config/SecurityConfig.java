@@ -1,6 +1,5 @@
 package FIS.iLUVit.config;
 
-import FIS.iLUVit.filter.CorsConfig;
 import FIS.iLUVit.filter.ExceptionHandlerFilter;
 import FIS.iLUVit.filter.JwtAuthenticationFilter;
 import FIS.iLUVit.filter.JwtAuthorizationFilter;
@@ -12,7 +11,6 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.web.authentication.logout.LogoutFilter;
-import org.springframework.web.filter.CorsFilter;
 
 @Configuration
 @EnableWebSecurity
@@ -20,7 +18,6 @@ import org.springframework.web.filter.CorsFilter;
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
     private final UserRepository userRepository;
-    private final CorsFilter corsFilter;
 
     @Override
     protected void configure(HttpSecurity http) throws Exception {
@@ -28,7 +25,6 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         // JWT를 사용할거기 때문에 STATELESS 즉, 세션을 사용하지 않겠다.
         http.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 .and()
-                .addFilter(corsFilter)
                 .formLogin().disable()  // springSecurity가 제공하는 formLogin 기능 사용X
                 .httpBasic().disable()  // 매 요청마다 id, pwd 보내는 방식으로 인증하는 httpBasic 사용X
                 .addFilterBefore(new ExceptionHandlerFilter(), LogoutFilter.class)
@@ -37,9 +33,6 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .authorizeRequests()
 //                .antMatchers("/user/**")
 //                .access("hasRole('PARENT') or hasRole('TEACHER') or hasRole('DIRECTOR')")
-//                .hasRole("PARENT")
-                .antMatchers("/user/**")
-                .access("hasRole('ROLE_PARENT')")
                 .anyRequest().permitAll();
     }
 }

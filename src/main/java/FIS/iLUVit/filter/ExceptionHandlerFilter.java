@@ -19,7 +19,8 @@ public class ExceptionHandlerFilter extends OncePerRequestFilter {
         try {
             filterChain.doFilter(request, response);
         } catch (Exception e) {
-            ErrorResponse errorResponse = new ErrorResponse(e, 505);
+            ErrorResponse errorResponse = new ErrorResponse(e, 403);
+            response.setContentType("application/json");
             response.setStatus(HttpServletResponse.SC_FORBIDDEN);
             response.getWriter().write(convertObjectToJson(errorResponse));
         }
