@@ -33,7 +33,7 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
         try {
             // username, password 받아서
             ObjectMapper om = new ObjectMapper();
-            LoginInfo loginInfo = om.readValue(request.getInputStream(), LoginInfo.class);
+            LoginRequest loginInfo = om.readValue(request.getInputStream(), LoginRequest.class);
 
             // 로그인 정보를 token화 시키고
             UsernamePasswordAuthenticationToken authenticationToken =
@@ -69,8 +69,9 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
                 .withClaim("id", principalDetails.getUser().getId())
                 .withClaim("nickname", principalDetails.getUser().getNickName())
                 .withClaim("auth", principalDetails.getUser().getAuth().toString())
-                .sign(Algorithm.HMAC512("symmetricKey"));   // 대칭키 들어가 자리(절대 노출 금지)
+                .sign(Algorithm.HMAC512("symmetricKey"));   // 대칭키 들어가 자리(노출 금지)
 
         response.addHeader("Authorization", "Bearer " + jwtToken);
+        this.getSuccessHandler().onAuthenticationSuccess(request, response, authResult);
     }
 }

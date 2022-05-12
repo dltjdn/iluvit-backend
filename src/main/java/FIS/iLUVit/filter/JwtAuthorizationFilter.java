@@ -18,6 +18,7 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.util.Date;
 
 // 인증이나 권한이 필요한 주소요청이 있을 때 해당 필터(BasicAuthenticationFilter) 동작
 // 권한이나 인증이 필요한 주소가 아니라면 해당 필터는 지나친다.
@@ -46,18 +47,24 @@ public class JwtAuthorizationFilter extends BasicAuthenticationFilter {
         String jwtToken = request.getHeader("Authorization").replace("Bearer ", "");
 
         Long id;
+        String auth;
         try {
             id = JWT.require(Algorithm.HMAC512("symmetricKey")).build().verify(jwtToken).getClaim("id").asLong();
+            auth = JWT.require(Algorithm.HMAC512("symmetricKey")).build().verify(jwtToken).getClaim("auth").asString();
         } catch (JWTVerificationException e) {
             chain.doFilter(request, response);
             return ;
         }
 
-
         // 서명이 정상적인지 확인
         User user = userRepository.findById(id).orElse(null);
         if (user == null) {
             throw new TokenExpiredException("인증되지 않은 사용자입니다.");
+        }
+
+        if(!user.getAuth().toString().equals(auth)){
+            String newToken = createToken(user);
+            response.addHeader("Authorization", "Bearer " + newToken);
         }
 
         // Jwt 토큰 서명을 통해서 서명이 정상이면 Authentication 객체를 만들어준다.
@@ -68,5 +75,16 @@ public class JwtAuthorizationFilter extends BasicAuthenticationFilter {
         SecurityContextHolder.getContext().setAuthentication(authentication);
         // 다음 필터로 진행
         chain.doFilter(request, response);
+    }
+
+    // HMAC512 방식의 Hash 암호화
+    private String createToken(User user) {
+        return JWT.create()
+                .withSubject("JWT")
+                .withExpiresAt(new Date(System.currentTimeMillis() + (60000 * 30))) // JWT 만료시간 밀리세컨단위
+                .withClaim("id", user.getId())
+                .withClaim("nickname", user.getNickName())
+                .withClaim("auth", user.getAuth().toString())
+                .sign(Algorithm.HMAC512("symmetricKey"));
     }
 }

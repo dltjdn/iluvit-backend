@@ -9,10 +9,7 @@ import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
 import org.springframework.security.core.parameters.P;
 
-import javax.persistence.Embedded;
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.OneToMany;
+import javax.persistence.*;
 import java.util.List;
 
 @Entity
@@ -20,6 +17,7 @@ import java.util.List;
 @Data
 @OnDelete(action = OnDeleteAction.CASCADE)
 public class Parent extends User {
+
     @OneToMany(mappedBy = "parent")
     private List<Child> children;
 

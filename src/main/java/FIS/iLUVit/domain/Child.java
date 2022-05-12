@@ -21,11 +21,12 @@ public class Child extends BaseEntity {
     @JoinColumn(name = "center_id")
     private Center center;
 
-    public static Child createChild(String name, String birthDate, Approval approval) {
+    public static Child createChild(String name, String birthDate, Approval approval, Parent parent) {
         Child child = new Child();
         child.name = name;
         child.birthDate = birthDate;
         child.approval = approval;
+        child.parent = parent;
         return child;
     }
 

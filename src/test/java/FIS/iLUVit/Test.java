@@ -26,7 +26,7 @@ class UserTest {
             System.out.println("user = " + user.getDtype());
         }
         Teacher teacher = Teacher.createTeacher("qaz", "qaz", "qaz", "01012341234",
-                false, "qaz@qaz.com", "qaz", Auth.TEACHER, Approval.WAITING);
+                false, "qaz@qaz.com", "qaz", Auth.TEACHER, Approval.WAITING, null);
         em.persist(teacher);
         em.flush();
         em.clear();

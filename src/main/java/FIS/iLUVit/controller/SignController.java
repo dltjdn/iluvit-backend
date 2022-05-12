@@ -22,4 +22,9 @@ public class SignController {
     public String asd() {
         return "asd";
     }
+
+    @PostMapping("/login")
+    public String login() {
+        return "login";
+    }
 }

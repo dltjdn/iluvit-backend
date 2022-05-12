@@ -40,14 +40,4 @@ public class User extends BaseEntity{
 
     @OneToMany(mappedBy = "sender")
     protected List<Chat> sendChats;
-
-    public List<String> getAuthList() {
-        if (this.auth != null) {
-            return Arrays.asList(this.auth.toString().split(","));
-        }
-        return new ArrayList<>();
-    }
-
-
-
 }
