@@ -10,5 +10,5 @@ import java.util.Optional;
 public interface ParentRepository extends JpaRepository<Parent, Long> {
 
     @Query("select p from Parent p join fetch p.children where p.id = :id")
-    Optional<Parent> findParentWithChildren(@Param("id") Long id);
+    Optional<Parent> findWithChildren(@Param("id") Long id);
 }
