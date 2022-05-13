@@ -9,6 +9,9 @@ import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
 import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Objects;
 
 @Entity
 @Inheritance(strategy = InheritanceType.JOINED)
@@ -65,6 +68,11 @@ public class Center extends BaseEntity{
     private Theme theme;                    // 테마
     @Embedded
     private OtherInfo otherInfo;            // 지문등록 사업에서 사용하는 정보들 집합
+
+    @OneToMany(mappedBy = "center")
+    private List<Program> programs = new ArrayList<>();
+    @OneToMany(mappedBy = "center")
+    private List<AddInfo> addInfos = new ArrayList<>();
 
     public static Center createCenter(String name, String owner, String director, String estType, String status, String estDate, String tel, String homepage, String startTime, String endTime, Integer minAge, Integer maxAge, String address,
                   String zipcode, Area area, Double longitude, Double latitude, String offerService, Integer maxChildCnt, Integer curChildCnt, LocalDate updateDate, Boolean signed, Boolean recruit, Integer waitingNum, String introText,
@@ -142,4 +150,5 @@ public class Center extends BaseEntity{
     public Center update(CenterModifyReqeustDto requestDto) {
         return null;
     }
+
 }

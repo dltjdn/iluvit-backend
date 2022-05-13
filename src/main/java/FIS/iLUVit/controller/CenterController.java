@@ -1,6 +1,7 @@
 package FIS.iLUVit.controller;
 
 import FIS.iLUVit.controller.dto.*;
+import FIS.iLUVit.domain.Center;
 import FIS.iLUVit.repository.dto.CenterAndDistancePreview;
 import FIS.iLUVit.repository.dto.CenterPreview;
 import FIS.iLUVit.service.CenterService;
@@ -45,7 +46,7 @@ public class CenterController {
      */
     @GetMapping("/center/{center_id}/Info")
     public CenterInfoResponseDto centerInfo(@PathVariable("center_id") Long id){
-        return new CenterInfoResponseDto(centerService.findInfoById(id));
+        return centerService.findInfoById(id);
     }
 
     /**

@@ -1,9 +1,13 @@
 package FIS.iLUVit.repository.dto;
 
+import FIS.iLUVit.domain.AddInfo;
 import FIS.iLUVit.domain.Center;
+import FIS.iLUVit.domain.Program;
 import FIS.iLUVit.domain.embeddable.Area;
 import com.querydsl.core.annotations.QueryProjection;
 import lombok.Data;
+
+import java.util.List;
 
 @Data
 public class CenterPreview {
