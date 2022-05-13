@@ -17,8 +17,6 @@ import javax.persistence.*;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Teacher extends User {
 
-    @Enumerated(EnumType.STRING)
-    private Auth auth;                      // 교사 권한
 
     @Enumerated(EnumType.STRING)
     private Approval approval;              // 교사 승인 여부
@@ -27,7 +25,7 @@ public class Teacher extends User {
     @JoinColumn(name = "center_id")
     private Center center;
 
-    public static Teacher createTeacher(String nickName, String loginId, String password, String phoneNumber, Boolean hasProfileImg, String emailAddress, String name, Auth auth, Approval approval) {
+    public static Teacher createTeacher(String nickName, String loginId, String password, String phoneNumber, Boolean hasProfileImg, String emailAddress, String name, Auth auth, Approval approval, Center center) {
         Teacher teacher = new Teacher();
         teacher.nickName = nickName;
         teacher.loginId = loginId;
@@ -38,6 +36,7 @@ public class Teacher extends User {
         teacher.name = name;
         teacher.auth = auth;
         teacher.approval = approval;
+        teacher.center = center;
         return teacher;
     }
 

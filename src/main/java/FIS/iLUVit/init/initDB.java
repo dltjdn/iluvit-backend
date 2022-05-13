@@ -9,6 +9,7 @@ import FIS.iLUVit.domain.embeddable.Theme;
 import FIS.iLUVit.domain.enumtype.Approval;
 import FIS.iLUVit.domain.enumtype.Auth;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -34,6 +35,7 @@ public class initDB {
     static class InitService{
 
         private final EntityManager em;
+        private final BCryptPasswordEncoder encoder;
 
         public void dbInit() {
 
@@ -50,30 +52,30 @@ public class initDB {
             em.persist(center2);
             em.persist(center3);
 
-//            Teacher teacher1 = Teacher.createTeacher("asd", "asd", "asd", "asd", false, "asd@asd.com", "asd", Auth.TEACHER, Approval.WAITING);
-//            Teacher teacher2 = Teacher.createTeacher("sad", "sad", "sad", "sad", false, "sad@sad.com", "sad", Auth.TEACHER, Approval.WAITING);
-//            Teacher teacher3 = Teacher.createTeacher("dsa", "dsa", "dsa", "dsa", false, "dsa@dsa.com", "dsa", Auth.TEACHER, Approval.WAITING);
-//            Teacher teacher4 = Teacher.createTeacher("ddd", "ddd", "ddd", "ddd", false, "ddd@ddd.com", "ddd", Auth.DIRECTOR, Approval.ACCEPT);
-//            Teacher teacher5 = Teacher.createTeacher("sss", "sss", "sss", "sss", false, "sss@sss.com", "sss", Auth.DIRECTOR, Approval.WAITING);
-//            em.persist(teacher1);
-//            em.persist(teacher2);
-//            em.persist(teacher3);
-//            em.persist(teacher4);
-//            em.persist(teacher5);
-//
-//            Parent parent1 = Parent.createParent("qwe", "qwe", "qwe", "qwe", false, "qwe@qwe.com", "qwe", new Theme(), 5);
-//            Parent parent2 = Parent.createParent("ewq", "ewq", "ewq", "ewq", false, "ewq@ewq.com", "ewq", new Theme(), 5);
-//            Parent parent3 = Parent.createParent("weq", "weq", "weq", "weq", false, "weq@weq.com", "weq", new Theme(), 5);
-//            em.persist(parent1);
-//            em.persist(parent2);
-//            em.persist(parent3);
-//
-//            Child child1 = Child.createChild("zxc", "zxc", Approval.WAITING);
-//            Child child2 = Child.createChild("zxc", "zxc", Approval.ACCEPT);
-//            Child child3 = Child.createChild("zxc", "zxc", Approval.ACCEPT);
-//            em.persist(child1);
-//            em.persist(child2);
-//            em.persist(child3);
+            Teacher teacher1 = Teacher.createTeacher("asd", "asd", encoder.encode("asd"), "asd", false, "asd@asd.com", "asd", Auth.TEACHER, Approval.WAITING, center1);
+            Teacher teacher2 = Teacher.createTeacher("sad", "sad", encoder.encode("asd"), "sad", false, "sad@sad.com", "sad", Auth.TEACHER, Approval.WAITING, center1);
+            Teacher teacher3 = Teacher.createTeacher("dsa", "dsa", encoder.encode("asd"), "dsa", false, "dsa@dsa.com", "dsa", Auth.TEACHER, Approval.WAITING, center1);
+            Teacher teacher4 = Teacher.createTeacher("ddd", "ddd", encoder.encode("asd"), "ddd", false, "ddd@ddd.com", "ddd", Auth.DIRECTOR, Approval.ACCEPT, center2);
+            Teacher teacher5 = Teacher.createTeacher("sss", "sss", encoder.encode("asd"), "sss", false, "sss@sss.com", "sss", Auth.DIRECTOR, Approval.WAITING, center2);
+            em.persist(teacher1);
+            em.persist(teacher2);
+            em.persist(teacher3);
+            em.persist(teacher4);
+            em.persist(teacher5);
+
+            Parent parent1 = Parent.createParent("qwe", "qwe", encoder.encode("asd"), "qwe", false, "qwe@qwe.com", "qwe", new Theme(), 5, Auth.PARENT);
+            Parent parent2 = Parent.createParent("ewq", "ewq", encoder.encode("asd"), "ewq", false, "ewq@ewq.com", "ewq", new Theme(), 5, Auth.PARENT);
+            Parent parent3 = Parent.createParent("weq", "weq", encoder.encode("asd"), "weq", false, "weq@weq.com", "weq", new Theme(), 5, Auth.PARENT);
+            em.persist(parent1);
+            em.persist(parent2);
+            em.persist(parent3);
+
+            Child child1 = Child.createChild("zxc", "zxc", Approval.WAITING, parent1);
+            Child child2 = Child.createChild("zxc", "zxc", Approval.ACCEPT, parent1);
+            Child child3 = Child.createChild("zxc", "zxc", Approval.ACCEPT, parent1);
+            em.persist(child1);
+            em.persist(child2);
+            em.persist(child3);
         }
     }
 }
