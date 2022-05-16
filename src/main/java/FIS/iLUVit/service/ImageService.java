@@ -100,6 +100,7 @@ public class ImageService {
      */
     public void saveImage(List<MultipartFile> images, String destDir) throws IOException {
         mkDir(destDir);
+        clear(destDir);
         int name = 1;
         for(MultipartFile image : images){
             if(!image.isEmpty()){
@@ -107,6 +108,16 @@ public class ImageService {
                 String extension = extractExt(originalFileName);
                 image.transferTo(new File(destDir + String.valueOf(name) + "." + extension));
                 name++;
+            }
+        }
+    }
+
+    public void clear(String destDir) {
+        File file = new File(destDir);
+        File[] files = file.listFiles();
+        if(files.length != 0){
+            for(File temp : files){
+                temp.delete();
             }
         }
     }
@@ -130,5 +141,6 @@ public class ImageService {
                 }
             }
         }
+        new File(path + "video").mkdir();
     }
 }
