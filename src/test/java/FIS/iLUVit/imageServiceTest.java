@@ -23,8 +23,9 @@ public class imageServiceTest {
     @Test
     @DisplayName("폴더 생성")
     public void Folder() throws IOException {
-        imageService.mkDir(path);
-        imageService.getEncodedImage(path, 3);
+//        imageService.mkDir(path);
+//        imageService.getEncodedImage(path, 3);
+        imageService.clear(path);
     }
 
 }
