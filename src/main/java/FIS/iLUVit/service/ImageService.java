@@ -32,14 +32,14 @@ public class ImageService {
     }
 
     /**
-     * presentation Id를 넣으면 해당 Center 의 이미지들이 있는 디렉토리 경로 반환
+     * presentation Id를 넣으면 해당 presentation 의 이미지들이 있는 디렉토리 경로 반환
      */
     public String getPresentationDir(Long id){
         return presentationInfoDir + String.valueOf(id) + "/";
     }
 
     /**
-     * User Id를 넣으면 해당 Center 의 이미지들이 있는 디렉토리 경로 반환
+     * User Id를 넣으면 해당 user profile 이미지 경로 반환
      */
     public String getUserProfileImagePath(Long id){
         return userProfileImagePath + String.valueOf(id);
@@ -47,14 +47,14 @@ public class ImageService {
 
 
     /**
-     * Center Id를 넣으면 해당 Center 의 이미지들이 있는 디렉토리 경로 반환
+     * Center Id를 넣으면 해당 center profile 이미지 경로 반환
      */
     public String getCenterProfileImagePath(Long id){
         return centerProfileImagePath + String.valueOf(id);
     }
 
     /**
-     * Presentation Id를 넣으면 해당 Center 의 이미지들이 있는 디렉토리 경로 반환
+     * Presentation Id를 넣으면 해당 child profile 이미지 경로 반환
      */
     public String getChileProfileImagePath(Long id){
         return childProfileImagePath + String.valueOf(id);
