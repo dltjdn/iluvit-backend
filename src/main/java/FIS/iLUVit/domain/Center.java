@@ -1,16 +1,24 @@
 package FIS.iLUVit.domain;
 
+import FIS.iLUVit.controller.dto.CenterModifyReqeustDto;
 import FIS.iLUVit.domain.embeddable.*;
+import lombok.AccessLevel;
+import lombok.Builder;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
 import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Objects;
 
 @Entity
 @Inheritance(strategy = InheritanceType.JOINED)
 @DiscriminatorValue("null")
 @DiscriminatorColumn(name = "kindOf")
 @Getter
+@NoArgsConstructor
 public class Center extends BaseEntity{
     @Id @GeneratedValue
     private Long id;
@@ -61,6 +69,11 @@ public class Center extends BaseEntity{
     @Embedded
     private OtherInfo otherInfo;            // 지문등록 사업에서 사용하는 정보들 집합
 
+    @OneToMany(mappedBy = "center")
+    private List<Program> programs = new ArrayList<>();
+    @OneToMany(mappedBy = "center")
+    private List<AddInfo> addInfos = new ArrayList<>();
+
     public static Center createCenter(String name, String owner, String director, String estType, String status, String estDate, String tel, String homepage, String startTime, String endTime, Integer minAge, Integer maxAge, String address,
                   String zipcode, Area area, Double longitude, Double latitude, String offerService, Integer maxChildCnt, Integer curChildCnt, LocalDate updateDate, Boolean signed, Boolean recruit, Integer waitingNum, String introText,
                   Integer imgCnt, Integer videoCnt, String kindOf, ClassInfo classInfo, TeacherInfo teacherInfo, CostInfo costInfo, BasicInfra basicInfra, Theme theme, OtherInfo otherInfo) {
@@ -101,4 +114,41 @@ public class Center extends BaseEntity{
         center.otherInfo = otherInfo;
         return center;
     }
+
+    @Builder(toBuilder = true)
+    public Center(Long id, String name, String owner, String director, String estType, String estDate, String tel, String homepage, String startTime, String endTime, Integer minAge, Integer maxAge, String address, String zipcode, Area area, String offerService, Integer maxChildCnt, Integer curChildCnt, LocalDate updateDate, Boolean recruit, String introText, Integer imgCnt, Integer videoCnt, ClassInfo classInfo, TeacherInfo teacherInfo, CostInfo costInfo, BasicInfra basicInfra, Theme theme) {
+        this.id = id;
+        this.name = name;
+        this.owner = owner;
+        this.director = director;
+        this.estType = estType;
+        this.estDate = estDate;
+        this.tel = tel;
+        this.homepage = homepage;
+        this.startTime = startTime;
+        this.endTime = endTime;
+        this.minAge = minAge;
+        this.maxAge = maxAge;
+        this.address = address;
+        this.zipcode = zipcode;
+        this.area = area;
+        this.offerService = offerService;
+        this.maxChildCnt = maxChildCnt;
+        this.curChildCnt = curChildCnt;
+        this.updateDate = updateDate;
+        this.recruit = recruit;
+        this.introText = introText;
+        this.imgCnt = imgCnt;
+        this.videoCnt = videoCnt;
+        this.classInfo = classInfo;
+        this.teacherInfo = teacherInfo;
+        this.costInfo = costInfo;
+        this.basicInfra = basicInfra;
+        this.theme = theme;
+    }
+
+    public Center update(CenterModifyReqeustDto requestDto) {
+        return null;
+    }
+
 }
