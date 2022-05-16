@@ -1,12 +1,10 @@
 package FIS.iLUVit.service;
 
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.core.io.UrlResource;
 import org.springframework.stereotype.Component;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.*;
-import java.net.MalformedURLException;
 import java.util.ArrayList;
 import java.util.Base64;
 import java.util.List;
@@ -15,37 +13,57 @@ import java.util.List;
 public class ImageService {
 
     @Value("${file.centerDir}")
-    private String centerDir;
-    @Value("${file.userDir}")
-    private String userDir;
+    private String centerInfoDir;
     @Value("${file.presentationDir}")
-    private String presentationDir;
+    private String presentationInfoDir;
+
+    @Value("${file.userProfileImagePath}")
+    private String userProfileImagePath;
+    @Value("${file.centerProfileImagePath}")
+    private String centerProfileImagePath;
+    @Value("${file.childProfileImagePath}")
+    private String childProfileImagePath;
 
     /**
      * Center Id를 넣으면 해당 Center 의 이미지들이 있는 디렉토리 경로 반환
      */
     public String getCenterDir(Long id){
-        return centerDir + String.valueOf(id) + "/";
+        return centerInfoDir + String.valueOf(id) + "/";
     }
 
     /**
-     * User Id를 넣으면 해당 Center 의 이미지들이 있는 디렉토리 경로 반환
-     */
-    public String getUserDir(Long id){
-        return userDir + String.valueOf(id) + "/";
-    }
-
-    /**
-     * presentation Id를 넣으면 해당 Center 의 이미지들이 있는 디렉토리 경로 반환
+     * presentation Id를 넣으면 해당 presentation 의 이미지들이 있는 디렉토리 경로 반환
      */
     public String getPresentationDir(Long id){
-        return presentationDir + String.valueOf(id) + "/";
+        return presentationInfoDir + String.valueOf(id) + "/";
+    }
+
+    /**
+     * User Id를 넣으면 해당 user profile 이미지 경로 반환
+     */
+    public String getUserProfileImagePath(Long id){
+        return userProfileImagePath + String.valueOf(id);
+    }
+
+
+    /**
+     * Center Id를 넣으면 해당 center profile 이미지 경로 반환
+     */
+    public String getCenterProfileImagePath(Long id){
+        return centerProfileImagePath + String.valueOf(id);
+    }
+
+    /**
+     * Presentation Id를 넣으면 해당 child profile 이미지 경로 반환
+     */
+    public String getChileProfileImagePath(Long id){
+        return childProfileImagePath + String.valueOf(id);
     }
 
     /**
      * 해당 domain이 가지고 있는 디렉토리의 경로와 이미지 갯수를 인자값으로 주면 base64로 인코딩된 문자열 반환
      */
-    public List<String> getEncodedImage(String imageDirPath, Integer cnt) throws IOException {
+    public List<String> getEncodedInfoImage(String imageDirPath, Integer cnt) throws IOException {
         List<String> images = new ArrayList<>();
         for(int i = 1; i <= cnt; i++){
             int finalI = i;
@@ -71,7 +89,7 @@ public class ImageService {
     /**
      * GetEncodedImage 메서드 에서 사용
      */
-    public String encodeImage(File file) throws IOException {
+    private String encodeImage(File file) throws IOException {
         String encodedImage = null;
         FileInputStream inputStream =  null;
         ByteArrayOutputStream byteArrayOutputStream = null;
@@ -98,7 +116,7 @@ public class ImageService {
     /**
      * multipart List로 받고 domain의 디렉터리 경로를 입력하면 파일 자동으로 저장
      */
-    public void saveImage(List<MultipartFile> images, String destDir) throws IOException {
+    public void saveInfoImage(List<MultipartFile> images, String destDir) throws IOException {
         mkDir(destDir);
         clear(destDir);
         int name = 1;
@@ -112,7 +130,7 @@ public class ImageService {
         }
     }
 
-    public void clear(String destDir) {
+    private void clear(String destDir) {
         File file = new File(destDir);
         File[] files = file.listFiles();
         if(files.length != 0){
@@ -127,7 +145,7 @@ public class ImageService {
         return originalFilename.substring(pos + 1);
     }
 
-    public void mkDir(String path){
+    private void mkDir(String path){
         String[] names = path.split("/");
         String temp = "";
         for(String name : names){
@@ -143,4 +161,20 @@ public class ImageService {
         }
         new File(path + "video").mkdir();
     }
+
+    private void mkProfileDir(){
+        mkDir(userProfileImagePath);
+        mkDir(centerProfileImagePath);
+        mkDir(childProfileImagePath);
+    }
+
+    public void saveProfileImage(MultipartFile image, String imagePath) throws IOException {
+        mkProfileDir();
+        if(!image.isEmpty()){
+            String originalFileName = image.getOriginalFilename();
+            String extension = extractExt(originalFileName);
+            image.transferTo(new File(imagePath + "." + extension));
+        }
+    }
+
 }

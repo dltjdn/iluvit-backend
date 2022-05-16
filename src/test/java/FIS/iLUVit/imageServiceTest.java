@@ -25,7 +25,8 @@ public class imageServiceTest {
     public void Folder() throws IOException {
 //        imageService.mkDir(path);
 //        imageService.getEncodedImage(path, 3);
-        imageService.clear(path);
+//        imageService.clear(path);
+        imageService.mkDir(path);
     }
 
 }
