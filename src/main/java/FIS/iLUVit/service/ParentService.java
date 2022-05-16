@@ -57,7 +57,7 @@ public class ParentService {
 
         Parent findParent = parentRepository.findById(id)
                 .orElseThrow(() -> new UserException("유효하지 않은 토큰으로의 사용자 접근입니다."));
-
+        return null;
     }
 
     /**
