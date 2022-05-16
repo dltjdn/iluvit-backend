@@ -10,8 +10,8 @@ import java.time.LocalDate;
 @AllArgsConstructor
 public class PresentationQuryDto {
     private Long presentationId;
-    private LocalDate start_date;          // 설명회 신청 기간
-    private LocalDate end_date;
+    private LocalDate startDate;          // 설명회 신청 기간
+    private LocalDate endDate;
     private String place;               // 설명회 장소
     private String content;             // 설명회 내용
     private Integer imgCnt;             // 설명회 이미지 개수 최대 __장
@@ -19,8 +19,8 @@ public class PresentationQuryDto {
 
     public PresentationQuryDto(PresentationWithPtDatesDto querydto) {
         presentationId = querydto.getPresentationId();
-        start_date = querydto.getStart_date();
-        end_date = querydto.getEnd_date();
+        startDate = querydto.getStartDate();
+        endDate = querydto.getEndDate();
         place = querydto.getPlace();
         content = querydto.getContent();
         imgCnt = querydto.getImgCnt();

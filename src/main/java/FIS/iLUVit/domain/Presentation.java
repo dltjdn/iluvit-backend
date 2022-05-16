@@ -1,6 +1,7 @@
 package FIS.iLUVit.domain;
 
 import lombok.Builder;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.Cascade;
 
@@ -13,6 +14,7 @@ import static org.hibernate.annotations.CascadeType.*;
 
 @Entity
 @NoArgsConstructor
+@Getter
 public class Presentation extends BaseEntity {
     @Id @GeneratedValue
     private Long id;
@@ -44,5 +46,14 @@ public class Presentation extends BaseEntity {
         this.center = center;
     }
 
-
+    public static Presentation createPresentation(LocalDate startDate, LocalDate endDate, String place, String content, Integer imgCnt, Integer videoCnt, Center center) {
+        return Presentation.builder()
+                .startDate(startDate)
+                .endDate(endDate)
+                .content(content)
+                .imgCnt(imgCnt)
+                .videoCnt(videoCnt)
+                .center(center)
+                .build();
+    }
 }

@@ -2,8 +2,10 @@ package FIS.iLUVit.controller;
 
 import FIS.iLUVit.controller.dto.PresentationRequestRequestFormDto;
 import FIS.iLUVit.controller.dto.PresentationResponseDto;
+import FIS.iLUVit.controller.dto.PresentationSaveResponseDto;
 import FIS.iLUVit.service.PresentationService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -26,9 +28,15 @@ public class PresentationController {
 
     /**
      * 원장/ 선생의 presentation 등록 PtDate 설정하기
+     * @return
      */
-    @PostMapping("/presentation")
-    public void registerPresentation(@RequestBody PresentationRequestRequestFormDto request){
-        presentationService.saveWithPtDate(request);
+    @PostMapping(value = "/presentation", consumes = {MediaType.APPLICATION_JSON_VALUE, MediaType.MULTIPART_FORM_DATA_VALUE})
+    public PresentationSaveResponseDto registerPresentation(@RequestPart PresentationRequestRequestFormDto request){
+        return new PresentationSaveResponseDto(presentationService.saveWithPtDate(request));
+    }
+
+    @GetMapping("/presentation/{presentionId}/teacher")
+    public void findMyCenterPresentation(@PathVariable("") Long presentionId){
+
     }
 }

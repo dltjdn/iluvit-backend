@@ -4,6 +4,7 @@ import FIS.iLUVit.controller.dto.PresentationRequestRequestFormDto;
 import FIS.iLUVit.controller.dto.PresentationResponseDto;
 import FIS.iLUVit.domain.Center;
 import FIS.iLUVit.domain.Presentation;
+import FIS.iLUVit.domain.PtDate;
 import FIS.iLUVit.repository.CenterRepository;
 import FIS.iLUVit.repository.PresentationRepository;
 import FIS.iLUVit.repository.dto.PresentationWithPtDatesDto;
@@ -37,10 +38,36 @@ public class PresentationService {
                 .collect(toList());
     }
 
-    public void saveWithPtDate(PresentationRequestRequestFormDto request) {
+    /**
+     * 설명회 저장
+     */
+    public Presentation saveWithPtDate(PresentationRequestRequestFormDto request) {
         Center center = centerRepository.getById(request.getCenterId());
-        Presentation presentation =
+        Presentation presentation = Presentation.builder()
+                .startDate(request.getStartDate())
+                .endDate(request.getEndDate())
+                .content(request.getContent())
+                .place(request.getPlace())
+                .imgCnt(request.getImgCnt())
+                .videoCnt(request.getVideoCnt())
+                .center(center)
+                .build();
 
+        List<PtDate> ptDates = presentation.getPtDates();
 
+        request.getPtDateDtos().forEach(ptDateRequestDto -> {
+            ptDates.add(
+                    PtDate.builder()
+                            .date(ptDateRequestDto.getDate())
+                            .time(ptDateRequestDto.getTime())
+                            .ablePersonNum(ptDateRequestDto.getAblePersonNum())
+                            .presentation(presentation)
+                            .build());
+        });
+
+        presentationRepository.save(presentation);
+        return presentation;
     }
+
+
 }
