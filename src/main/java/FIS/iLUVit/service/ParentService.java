@@ -1,8 +1,7 @@
 package FIS.iLUVit.service;
 
-import FIS.iLUVit.controller.dto.ParentDetailDTO;
+import FIS.iLUVit.controller.dto.ParentDetailResponse;
 import FIS.iLUVit.controller.dto.ParentDetailRequest;
-import FIS.iLUVit.domain.Child;
 import FIS.iLUVit.domain.Parent;
 import FIS.iLUVit.exception.UserException;
 import FIS.iLUVit.repository.ParentRepository;
@@ -53,7 +52,7 @@ public class ParentService {
     *   작성자: 이승범
     *   작성내용: 부모의 마이페이지 정보 업데이트
     */
-    public ParentDetailDTO updateDetail(Long id, ParentDetailRequest request) {
+    public ParentDetailResponse updateDetail(Long id, ParentDetailRequest request) {
 
         Parent findParent = parentRepository.findById(id)
                 .orElseThrow(() -> new UserException("유효하지 않은 토큰으로의 사용자 접근입니다."));
@@ -65,12 +64,12 @@ public class ParentService {
     *   작성자: 이승범
     *   작성내용: 부모의 마이페이지 정보 반환
     */
-    public ParentDetailDTO findDetail(Long id) throws IOException {
+    public ParentDetailResponse findDetail(Long id) throws IOException {
 
         Parent findParent = parentRepository.findById(id)
                 .orElseThrow(() -> new UserException("유효하지 않은 토큰으로의 사용자 접근입니다."));
 
-        ParentDetailDTO response = new ParentDetailDTO(findParent);
+        ParentDetailResponse response = new ParentDetailResponse(findParent);
 
         // 부모의 프로필 사진 담기
         InputStream imageStream = new FileInputStream(profileImgPath + id + ".png");

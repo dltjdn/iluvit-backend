@@ -7,7 +7,6 @@ import org.springframework.web.multipart.MultipartFile;
 @Data
 public class ParentDetailRequest {
     private String nickname;
-    private String phoneNumber;
     private String emailAddress;
     private Integer interestAge;
     private Theme theme;

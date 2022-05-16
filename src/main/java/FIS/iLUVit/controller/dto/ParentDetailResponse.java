@@ -9,15 +9,15 @@ import lombok.NoArgsConstructor;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class ParentDetailDTO {
+public class ParentDetailResponse {
     private String nickname;
     private String phoneNumber;
     private String emailAddress;
+    private String profileImg;
     private Integer interestAge;
     private Theme theme;
-    private String profileImg;
 
-    public ParentDetailDTO(Parent parent) {
+    public ParentDetailResponse(Parent parent) {
         this.nickname = parent.getNickName();
         this.phoneNumber = parent.getPhoneNumber();
         this.emailAddress = parent.getEmailAddress();
