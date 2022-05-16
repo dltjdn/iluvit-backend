@@ -31,4 +31,6 @@ public class Theme {
     private Boolean coding;                 // 코딩
     private Boolean manner;                 // 예절
     private Boolean genius;                 // 양재
+
+
 }

@@ -7,6 +7,7 @@ import com.auth0.jwt.JWT;
 import com.auth0.jwt.algorithms.Algorithm;
 import com.auth0.jwt.exceptions.JWTVerificationException;
 import com.auth0.jwt.exceptions.TokenExpiredException;
+import com.auth0.jwt.interfaces.DecodedJWT;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -47,10 +48,9 @@ public class JwtAuthorizationFilter extends BasicAuthenticationFilter {
         String jwtToken = request.getHeader("Authorization").replace("Bearer ", "");
 
         Long id;
-        String auth;
         try {
-            id = JWT.require(Algorithm.HMAC512("symmetricKey")).build().verify(jwtToken).getClaim("id").asLong();
-            auth = JWT.require(Algorithm.HMAC512("symmetricKey")).build().verify(jwtToken).getClaim("auth").asString();
+            DecodedJWT decodedJWT = JWT.require(Algorithm.HMAC512("symmetricKey")).build().verify(jwtToken);
+            id = decodedJWT.getClaim("id").asLong();
         } catch (JWTVerificationException e) {
             chain.doFilter(request, response);
             return ;
@@ -60,11 +60,6 @@ public class JwtAuthorizationFilter extends BasicAuthenticationFilter {
         User user = userRepository.findById(id).orElse(null);
         if (user == null) {
             throw new TokenExpiredException("인증되지 않은 사용자입니다.");
-        }
-
-        if(!user.getAuth().toString().equals(auth)){
-            String newToken = createToken(user);
-            response.addHeader("Authorization", "Bearer " + newToken);
         }
 
         // Jwt 토큰 서명을 통해서 서명이 정상이면 Authentication 객체를 만들어준다.
@@ -83,8 +78,6 @@ public class JwtAuthorizationFilter extends BasicAuthenticationFilter {
                 .withSubject("JWT")
                 .withExpiresAt(new Date(System.currentTimeMillis() + (60000 * 30))) // JWT 만료시간 밀리세컨단위
                 .withClaim("id", user.getId())
-                .withClaim("nickname", user.getNickName())
-                .withClaim("auth", user.getAuth().toString())
                 .sign(Algorithm.HMAC512("symmetricKey"));
     }
 }
