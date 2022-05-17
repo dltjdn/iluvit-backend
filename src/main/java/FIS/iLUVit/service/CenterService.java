@@ -16,6 +16,7 @@ import org.springframework.data.domain.Slice;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -27,15 +28,21 @@ public class CenterService {
     private final CenterRepository centerRepository;
     private final ImageService imageService;
 
-    public List<CenterPreview> findByFilter(List<Area> areas, Theme theme, Integer interestedAge, String kindOf, Pageable pageable) {
-        if (!kindOf.equals("Kindergarten") && !kindOf.equals("ChildHouse")) {
+    public Slice<CenterPreview> findByFilter(List<Area> areas, Theme theme, Integer interestedAge, String kindOf, Pageable pageable) {
+        if (!kindOf.equals("Kindergarten") && !kindOf.equals("ChildHouse") && !kindOf.equals("ALL")) {
             throw new RuntimeException();
         }
         Slice<CenterPreview> results = centerRepository.findByFilter(areas, theme, interestedAge, kindOf, pageable);
         results.getContent().forEach(centerPreview -> {
-            String centerProfileImagePath = imageService.getCenterProfileImagePath(centerPreview.getId());
+            Long centerId = centerPreview.getId();
+            String centerProfileDir = imageService.getCenterProfileDir();
+            try {
+                centerPreview.setProfileImage(imageService.getEncodedProfileImage(centerProfileDir, centerId));
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
         });
-        return null;
+        return results;
     }
 
 

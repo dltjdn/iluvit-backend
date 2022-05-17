@@ -37,13 +37,13 @@ public class ImageService {
      * presentation Id를 넣으면 해당 presentation 의 이미지들이 있는 디렉토리 경로 반환
      */
     public String getPresentationDir(Long id){
-        return presentationInfoDir + String.valueOf(id) + "/";
+        return presentationInfoDir;
     }
 
     /**
      * User Id를 넣으면 해당 user profile 이미지 경로 반환
      */
-    public String getUserProfileImagePath(){
+    public String getUserProfileDir(){
         return userProfileImagePath;
     }
 
@@ -51,15 +51,15 @@ public class ImageService {
     /**
      * Center Id를 넣으면 해당 center profile 이미지 경로 반환
      */
-    public String getCenterProfileImagePath(Long id){
-        return centerProfileImagePath + String.valueOf(id);
+    public String getCenterProfileDir(){
+        return centerProfileImagePath;
     }
 
     /**
      * Presentation Id를 넣으면 해당 child profile 이미지 경로 반환
      */
-    public String getChileProfileImagePath(Long id){
-        return childProfileImagePath + String.valueOf(id);
+    public String getChileProfileDir(){
+        return childProfileImagePath;
     }
 
     /**
@@ -79,7 +79,6 @@ public class ImageService {
                 if(temp.isFile()){
                     String encodeImage = encodeImage(temp);
                     if(encodeImage != null){
-                        System.out.println("temp = " + temp.getName());
                         images.add(encodeImage);
                     }
                 }
@@ -93,17 +92,18 @@ public class ImageService {
     *   작성자: 이승범
     *   작성내용: profileImg를 base64로 인고딩된 문자열 반환
     */
-    public String getEncodedProfileImage(String imagePath, Long id) throws IOException {
+    public String getEncodedProfileImage(String imageDir, Long id) throws IOException {
         FilenameFilter filter = (f, name) -> {
             String regex = "^" + id + "[.].+";
             return name.matches(regex);
         };
-        File dir = new File(imagePath);
+        File dir = new File(imageDir);
         File findFile;
         try {
             findFile = Objects.requireNonNull(dir.listFiles(filter))[0];
             return encodeImage(findFile);
         } catch (NullPointerException nullPointerException) {
+            nullPointerException.printStackTrace();
             return null;
         }
     }
