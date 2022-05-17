@@ -6,6 +6,7 @@ import FIS.iLUVit.domain.AddInfo;
 import FIS.iLUVit.domain.Center;
 import FIS.iLUVit.domain.embeddable.Area;
 import FIS.iLUVit.domain.embeddable.Theme;
+import FIS.iLUVit.exception.CenterException;
 import FIS.iLUVit.repository.dto.CenterAndDistancePreview;
 import FIS.iLUVit.repository.CenterRepository;
 import FIS.iLUVit.repository.dto.CenterBannerDto;
@@ -56,16 +57,29 @@ public class CenterService {
                     // 거리별 계산 해서 나오기
                     if (distance >= centerAndDistance.calculateDistance(longitude, latitude)) {
                         centerDTOList.add(centerAndDistance);
+                        try {
+                            imageService.getEncodedProfileImage(imageService.getCenterProfileDir(), centerAndDistance.getId());
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                        }
                     }
                 });
         return centerDTOList;
     }
 
     public CenterInfoResponseDto findInfoById(Long id) {
-        Center center = centerRepository.findInfoByIdWithProgram(id).orElseThrow(RuntimeException::new);
+        Center center = centerRepository.findInfoByIdWithProgram(id)
+                .orElseThrow(() -> new CenterException("해당 센터 존재하지 않음"));
         List<AddInfo> addInfos = centerRepository.findInfoByIdWithAddInfo(id);
         CenterInfoResponseDto centerInfoResponseDto = new CenterInfoResponseDto(center);
         addInfos.forEach(addInfo -> centerInfoResponseDto.getAddInfos().add(addInfo.getInfo()));
+        String imageDir = imageService.getCenterDir(id);
+        try {
+            centerInfoResponseDto.setImages(imageService.getEncodedInfoImage(imageDir, centerInfoResponseDto.getImgCnt()));
+        } catch (IOException e) {
+            centerInfoResponseDto.setImages(null);
+            throw new RuntimeException("시설 이미지 로드중 문제 발생");
+        }
         return centerInfoResponseDto;
     }
 
