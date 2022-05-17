@@ -45,11 +45,22 @@ public class ParentService {
     *   작성자: 이승범
     *   작성내용: 부모의 마이페이지 정보 업데이트
     */
-    public ParentDetailResponse updateDetail(Long id, ParentDetailRequest request) {
+    public ParentDetailResponse updateDetail(Long id, ParentDetailRequest request) throws IOException {
 
         Parent findParent = parentRepository.findById(id)
                 .orElseThrow(() -> new UserException("유효하지 않은 토큰으로의 사용자 접근입니다."));
-        return null;
+
+        try {
+            parentRepository.findByNickName(request.getNickname());
+            throw new UserException("이미 존재하는 닉네임 입니다.");
+        } catch (IllegalStateException e) {
+            findParent.updateDetail(request);
+        }
+
+        ParentDetailResponse response = new ParentDetailResponse(findParent);
+        String imagePath = imageService.getUserProfileDir();
+        response.setProfileImg(imageService.getEncodedProfileImage(imagePath, id));
+        return response;
     }
 
     /**
@@ -63,14 +74,6 @@ public class ParentService {
                 .orElseThrow(() -> new UserException("유효하지 않은 토큰으로의 사용자 접근입니다."));
 
         ParentDetailResponse response = new ParentDetailResponse(findParent);
-
-//        // 부모의 프로필 사진 담기
-//        InputStream imageStream = new FileInputStream(profileImgPath + id + ".png");
-//        byte[] imageByteArray = IOUtils.toByteArray(imageStream);
-//        imageStream.close();
-//
-//        String encodedImage = Base64.encodeBase64String(imageByteArray);
-//        response.setProfileImg(encodedImage);
 
         String imagePath = imageService.getUserProfileDir();
         response.setProfileImg(imageService.getEncodedProfileImage(imagePath, id));

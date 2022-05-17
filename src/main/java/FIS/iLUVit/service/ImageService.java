@@ -1,5 +1,6 @@
 package FIS.iLUVit.service;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.IOUtils;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
@@ -11,6 +12,7 @@ import java.util.Base64;
 import java.util.List;
 import java.util.Objects;
 
+@Slf4j
 @Component
 public class ImageService {
 
@@ -100,10 +102,13 @@ public class ImageService {
         File dir = new File(imageDir);
         File findFile;
         try {
-            findFile = Objects.requireNonNull(dir.listFiles(filter))[0];
+            File[] files = Objects.requireNonNull(dir.listFiles(filter));
+            if (files.length > 1) {
+                log.error("pk로 되어있는 이미지가 {}개 있습니다.", files.length);
+            }
+            findFile = files[0];
             return encodeImage(findFile);
-        } catch (NullPointerException nullPointerException) {
-            nullPointerException.printStackTrace();
+        } catch (NullPointerException | ArrayIndexOutOfBoundsException e) {
             return null;
         }
     }
