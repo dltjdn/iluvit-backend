@@ -30,12 +30,12 @@ public class TeacherService {
         TeacherDetailResponse response = new TeacherDetailResponse(findTeacher);
 
         // 부모의 프로필 사진 담기
-        InputStream imageStream = new FileInputStream(profileImgPath + id + ".png");
-        byte[] imageByteArray = IOUtils.toByteArray(imageStream);
-        imageStream.close();
-
-        String encodedImage = Base64.encodeBase64String(imageByteArray);
-        response.setProfileImg(encodedImage);
+//        InputStream imageStream = new FileInputStream(profileImgPath + id + ".png");
+//        byte[] imageByteArray = IOUtils.toByteArray(imageStream);
+//        imageStream.close();
+//
+//        String encodedImage = Base64.encodeBase64String(imageByteArray);
+//        response.setProfileImg(encodedImage);
 
         return response;
 

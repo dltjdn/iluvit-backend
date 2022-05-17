@@ -25,9 +25,7 @@ import java.io.InputStream;
 public class ParentService {
 
     private final ParentRepository parentRepository;
-
-    @Value("${profileImg.path}")
-    private String profileImgPath;
+    private final ImageService imageService;
 
     /**
      *   작성날짜: 2022/05/13 4:43 PM
@@ -71,13 +69,16 @@ public class ParentService {
 
         ParentDetailResponse response = new ParentDetailResponse(findParent);
 
-        // 부모의 프로필 사진 담기
-        InputStream imageStream = new FileInputStream(profileImgPath + id + ".png");
-        byte[] imageByteArray = IOUtils.toByteArray(imageStream);
-        imageStream.close();
+//        // 부모의 프로필 사진 담기
+//        InputStream imageStream = new FileInputStream(profileImgPath + id + ".png");
+//        byte[] imageByteArray = IOUtils.toByteArray(imageStream);
+//        imageStream.close();
+//
+//        String encodedImage = Base64.encodeBase64String(imageByteArray);
+//        response.setProfileImg(encodedImage);
 
-        String encodedImage = Base64.encodeBase64String(imageByteArray);
-        response.setProfileImg(encodedImage);
+        String imagePath = imageService.
+        response.setProfileImg(imageService.getEncodedProfileImage());
 
         return response;
     }

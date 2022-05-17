@@ -19,5 +19,6 @@ public class TeacherController {
     public TeacherDetailResponse findTeacherDetail(@Login Long id) {
         teacherService.findDetail(id);
 
+        return null;
     }
 }

@@ -26,7 +26,7 @@ public class imageServiceTest {
 //        imageService.mkDir(path);
 //        imageService.getEncodedImage(path, 3);
 //        imageService.clear(path);
-        imageService.mkDir(path);
+//        imageService.mkDir(path);
     }
 
 }

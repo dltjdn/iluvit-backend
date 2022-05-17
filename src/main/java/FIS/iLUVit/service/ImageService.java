@@ -1,5 +1,6 @@
 package FIS.iLUVit.service;
 
+import org.apache.commons.io.IOUtils;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import org.springframework.web.multipart.MultipartFile;
@@ -87,6 +88,19 @@ public class ImageService {
     }
 
     /**
+    *   작성날짜: 2022/05/17 11:12 AM
+    *   작성자: 이승범
+    *   작성내용: profileImg를 base64로 인고딩된 문자열 반환
+    */
+    public String getEncodedProfileImage(String imagePath) throws IOException {
+        File file = new File(imagePath);
+        if (file.exists()) {
+            return encodeImage(file);
+        }
+        return null;
+    }
+
+    /**
      * GetEncodedImage 메서드 에서 사용
      */
     private String encodeImage(File file) throws IOException {
@@ -95,15 +109,8 @@ public class ImageService {
         ByteArrayOutputStream byteArrayOutputStream = null;
         try {
             inputStream = new FileInputStream(file);
-            byteArrayOutputStream = new ByteArrayOutputStream();
-
-            int len = 0;
-            byte[] buf = new byte[1024];
-            while ((len = inputStream.read(buf)) != -1) {
-                byteArrayOutputStream.write(buf, 0, len);
-            }
-            byte[] fileArray = byteArrayOutputStream.toByteArray();
-            encodedImage = new String(Base64.getEncoder().encode(fileArray));
+            byte[] buf = IOUtils.toByteArray(inputStream);
+            encodedImage = new String(Base64.getEncoder().encode(buf));
         } catch (IOException e) {
             e.printStackTrace();
         } finally{
@@ -162,14 +169,7 @@ public class ImageService {
         new File(path + "video").mkdir();
     }
 
-    private void mkProfileDir(){
-        mkDir(userProfileImagePath);
-        mkDir(centerProfileImagePath);
-        mkDir(childProfileImagePath);
-    }
-
     public void saveProfileImage(MultipartFile image, String imagePath) throws IOException {
-        mkProfileDir();
         if(!image.isEmpty()){
             String originalFileName = image.getOriginalFilename();
             String extension = extractExt(originalFileName);
