@@ -25,6 +25,7 @@ public class CenterPreview {
     private Area area;
     private Double longitude;               // 경도
     private Double latitude;                // 위도
+    private String profileImage;
 
     @QueryProjection
     public CenterPreview(Center center){

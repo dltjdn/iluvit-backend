@@ -7,6 +7,8 @@ import FIS.iLUVit.repository.dto.CenterPreview;
 import FIS.iLUVit.service.CenterService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -24,11 +26,10 @@ public class CenterController {
      * QueryDsl 에서 또한 Paging 처리를 Pagable을 사용해서 할 수 있으므로 최적화 할 것.
      */
     @PostMapping("/center/search")
-    public CenterSearchDto<CenterPreview> searchByFilter(@RequestBody CenterSearchFilterDTO dto,
-                                                         @RequestParam(required = false) Integer offset,
-                                                         @RequestParam(required = false) Integer limit){
-        List<CenterPreview> centerPreviews = centerService.findByFilter(dto.getAreas(), dto.getTheme(), dto.getInterestedAge(), dto.getKindOf(), offset, limit);
-        return new CenterSearchDto<CenterPreview>(centerPreviews, offset, offset+centerPreviews.size());
+    public CenterSearchDto<CenterPreview> searchByFilter(@RequestBody CenterSearchFilterDTO dto, Pageable pageable){
+        List<CenterPreview> centerPreviews = centerService.findByFilter(dto.getAreas(), dto.getTheme(), dto.getInterestedAge(), dto.getKindOf(), pageable);
+//        return new CenterSearchDto<CenterPreview>(centerPreviews, pageable.getOffset(), pageable.goffset + centerPreviews.size());
+        return null;
     }
 
     /**

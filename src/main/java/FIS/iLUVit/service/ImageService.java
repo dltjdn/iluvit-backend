@@ -69,7 +69,8 @@ public class ImageService {
             int finalI = i;
             FilenameFilter filter = new FilenameFilter() {
                 public boolean accept(File f, String name) {
-                    return name.startsWith(String.valueOf(finalI));
+                    String regex = "^" + String.valueOf(finalI) + "[.].+";
+                    return name.matches(regex);
                 }
             };
             File file = new File(imageDirPath);
@@ -78,6 +79,7 @@ public class ImageService {
                 if(temp.isFile()){
                     String encodeImage = encodeImage(temp);
                     if(encodeImage != null){
+                        System.out.println("temp = " + temp.getName());
                         images.add(encodeImage);
                     }
                 }
@@ -145,7 +147,7 @@ public class ImageService {
         return originalFilename.substring(pos + 1);
     }
 
-    private void mkDir(String path){
+    public void mkDir(String path){
         String[] names = path.split("/");
         String temp = "";
         for(String name : names){
