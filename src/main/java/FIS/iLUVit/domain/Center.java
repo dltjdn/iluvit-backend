@@ -112,6 +112,7 @@ public class Center extends BaseEntity{
         center.basicInfra = basicInfra;
         center.theme = theme;
         center.otherInfo = otherInfo;
+        center.kindOf = "Kindergarten";
         return center;
     }
 

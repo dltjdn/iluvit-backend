@@ -25,8 +25,8 @@ public class CenterRepositoryImpl extends CenterQueryMethod implements CenterRep
     public Slice<CenterPreview> findByFilter(List<Area> areas, Theme theme, Integer interestedAge, String kindOf, Pageable pageable) {
         List<CenterPreview> content = jpaQueryFactory.select(new QCenterPreview(center))
                 .from(center)
-                .where(kindOfEq(kindOf)
-                        .and(areasIn(areas))
+                .where(areasIn(areas)
+                        .and(kindOfEq(kindOf))
                         .and(themeEq(theme))
                         .and(interestedAgeEq(interestedAge)))
                 .offset(pageable.getOffset())

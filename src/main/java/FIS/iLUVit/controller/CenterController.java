@@ -1,14 +1,13 @@
 package FIS.iLUVit.controller;
 
 import FIS.iLUVit.controller.dto.*;
-import FIS.iLUVit.domain.Center;
 import FIS.iLUVit.repository.dto.CenterAndDistancePreview;
 import FIS.iLUVit.repository.dto.CenterPreview;
 import FIS.iLUVit.service.CenterService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.web.PageableDefault;
+import org.springframework.data.domain.Slice;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -24,12 +23,11 @@ public class CenterController {
      * center 검색 정보 반환 front 검색인자 값 - 시도, 시군구 값(list) 그리고 offset 과 갯수 몇개 가져올건지 <P>
      * 반환값으로 center Preview 정보와 startIndex와 endIndex 보내준다.
      * QueryDsl 에서 또한 Paging 처리를 Pagable을 사용해서 할 수 있으므로 최적화 할 것.
+     * @return
      */
     @PostMapping("/center/search")
-    public CenterSearchDto<CenterPreview> searchByFilter(@RequestBody CenterSearchFilterDTO dto, Pageable pageable){
-        List<CenterPreview> centerPreviews = centerService.findByFilter(dto.getAreas(), dto.getTheme(), dto.getInterestedAge(), dto.getKindOf(), pageable);
-//        return new CenterSearchDto<CenterPreview>(centerPreviews, pageable.getOffset(), pageable.goffset + centerPreviews.size());
-        return null;
+    public Slice<CenterPreview> searchByFilter(@RequestBody CenterSearchFilterDTO dto, Pageable pageable){
+        return centerService.findByFilter(dto.getAreas(), dto.getTheme(), dto.getInterestedAge(), dto.getKindOf(), pageable);
     }
 
     /**

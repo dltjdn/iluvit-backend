@@ -8,15 +8,10 @@ import FIS.iLUVit.repository.ParentRepository;
 import FIS.iLUVit.controller.dto.ChildInfoDTO;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.io.IOUtils;
-import org.apache.tomcat.util.codec.binary.Base64;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.io.FileInputStream;
 import java.io.IOException;
-import java.io.InputStream;
 
 @Slf4j
 @Service
@@ -63,7 +58,7 @@ public class ParentService {
         }
 
         ParentDetailResponse response = new ParentDetailResponse(findParent);
-        String imagePath = imageService.getUserProfileImagePath();
+        String imagePath = imageService.getUserProfileDir();
         response.setProfileImg(imageService.getEncodedProfileImage(imagePath, id));
         return response;
     }
@@ -80,7 +75,7 @@ public class ParentService {
 
         ParentDetailResponse response = new ParentDetailResponse(findParent);
 
-        String imagePath = imageService.getUserProfileImagePath();
+        String imagePath = imageService.getUserProfileDir();
         response.setProfileImg(imageService.getEncodedProfileImage(imagePath, id));
 
         return response;
