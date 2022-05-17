@@ -43,6 +43,9 @@ dependencies {
 
 	// JWT 의존성 추가
 	implementation group: 'com.auth0', name: 'java-jwt', version: '3.18.3'
+
+	implementation 'commons-io:commons-io:2.11.0' //이미지 내보내기
+
 }
 
 tasks.named('test') {
