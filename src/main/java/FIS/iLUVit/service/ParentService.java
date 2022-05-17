@@ -77,8 +77,8 @@ public class ParentService {
 //        String encodedImage = Base64.encodeBase64String(imageByteArray);
 //        response.setProfileImg(encodedImage);
 
-        String imagePath = imageService.
-        response.setProfileImg(imageService.getEncodedProfileImage());
+        String imagePath = imageService.getUserProfileImagePath();
+        response.setProfileImg(imageService.getEncodedProfileImage(imagePath, id));
 
         return response;
     }

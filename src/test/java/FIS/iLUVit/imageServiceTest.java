@@ -11,6 +11,7 @@ import org.springframework.test.context.junit4.SpringRunner;
 
 import java.io.IOException;
 import java.net.MalformedURLException;
+import java.util.List;
 
 @SpringBootTest
 public class imageServiceTest {
@@ -26,7 +27,8 @@ public class imageServiceTest {
 //        imageService.mkDir(path);
 //        imageService.getEncodedImage(path, 3);
 //        imageService.clear(path);
-//        imageService.mkDir(path);
+        imageService.mkDir(path);
+        List<String> encodedInfoImage = imageService.getEncodedInfoImage(path, 5);
     }
 
 }

@@ -13,9 +13,9 @@ public class ParentDetailResponse {
     private String nickname;
     private String phoneNumber;
     private String emailAddress;
-    private String profileImg;
     private Integer interestAge;
     private Theme theme;
+    private String profileImg;
 
     public ParentDetailResponse(Parent parent) {
         this.nickname = parent.getNickName();

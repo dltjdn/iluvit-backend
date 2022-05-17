@@ -9,6 +9,7 @@ import java.io.*;
 import java.util.ArrayList;
 import java.util.Base64;
 import java.util.List;
+import java.util.Objects;
 
 @Component
 public class ImageService {
@@ -42,8 +43,8 @@ public class ImageService {
     /**
      * User Id를 넣으면 해당 user profile 이미지 경로 반환
      */
-    public String getUserProfileImagePath(Long id){
-        return userProfileImagePath + String.valueOf(id);
+    public String getUserProfileImagePath(){
+        return userProfileImagePath;
     }
 
 
@@ -68,10 +69,9 @@ public class ImageService {
         List<String> images = new ArrayList<>();
         for(int i = 1; i <= cnt; i++){
             int finalI = i;
-            FilenameFilter filter = new FilenameFilter() {
-                public boolean accept(File f, String name) {
-                    return name.startsWith(String.valueOf(finalI));
-                }
+            FilenameFilter filter = (f, name) -> {
+                String regex = "^" + String.valueOf(finalI) + "[.].+";
+                return name.matches(regex);
             };
             File file = new File(imageDirPath);
             File[] files = file.listFiles(filter);
@@ -79,6 +79,7 @@ public class ImageService {
                 if(temp.isFile()){
                     String encodeImage = encodeImage(temp);
                     if(encodeImage != null){
+                        System.out.println("temp = " + temp.getName());
                         images.add(encodeImage);
                     }
                 }
@@ -92,12 +93,19 @@ public class ImageService {
     *   작성자: 이승범
     *   작성내용: profileImg를 base64로 인고딩된 문자열 반환
     */
-    public String getEncodedProfileImage(String imagePath) throws IOException {
-        File file = new File(imagePath);
-        if (file.exists()) {
-            return encodeImage(file);
+    public String getEncodedProfileImage(String imagePath, Long id) throws IOException {
+        FilenameFilter filter = (f, name) -> {
+            String regex = "^" + id + "[.].+";
+            return name.matches(regex);
+        };
+        File dir = new File(imagePath);
+        File findFile;
+        try {
+            findFile = Objects.requireNonNull(dir.listFiles(filter))[0];
+            return encodeImage(findFile);
+        } catch (NullPointerException nullPointerException) {
+            return null;
         }
-        return null;
     }
 
     /**
@@ -105,17 +113,11 @@ public class ImageService {
      */
     private String encodeImage(File file) throws IOException {
         String encodedImage = null;
-        FileInputStream inputStream =  null;
-        ByteArrayOutputStream byteArrayOutputStream = null;
-        try {
-            inputStream = new FileInputStream(file);
+        try (FileInputStream inputStream = new FileInputStream(file)) {
             byte[] buf = IOUtils.toByteArray(inputStream);
             encodedImage = new String(Base64.getEncoder().encode(buf));
         } catch (IOException e) {
             e.printStackTrace();
-        } finally{
-            inputStream.close();
-            byteArrayOutputStream.close();
         }
         return encodedImage;
     }
@@ -152,7 +154,7 @@ public class ImageService {
         return originalFilename.substring(pos + 1);
     }
 
-    private void mkDir(String path){
+    public void mkDir(String path){
         String[] names = path.split("/");
         String temp = "";
         for(String name : names){

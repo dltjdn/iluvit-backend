@@ -11,6 +11,8 @@ import FIS.iLUVit.repository.CenterRepository;
 import FIS.iLUVit.repository.dto.CenterBannerDto;
 import FIS.iLUVit.repository.dto.CenterPreview;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Slice;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -23,12 +25,17 @@ import java.util.List;
 public class CenterService {
 
     private final CenterRepository centerRepository;
+    private final ImageService imageService;
 
-    public List<CenterPreview> findByFilter(List<Area> areas, Theme theme, Integer interestedAge, String kindOf, Integer offset, Integer limit) {
+    public List<CenterPreview> findByFilter(List<Area> areas, Theme theme, Integer interestedAge, String kindOf, Pageable pageable) {
         if (!kindOf.equals("Kindergarten") && !kindOf.equals("ChildHouse")) {
             throw new RuntimeException();
         }
-        return centerRepository.findByFilter(areas, theme, interestedAge, kindOf, offset, limit);
+        Slice<CenterPreview> results = centerRepository.findByFilter(areas, theme, interestedAge, kindOf, pageable);
+        results.getContent().forEach(centerPreview -> {
+            String centerProfileImagePath = imageService.getCenterProfileImagePath(centerPreview.getId());
+        });
+        return null;
     }
 
 
