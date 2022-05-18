@@ -44,6 +44,7 @@ public class Parent extends User {
 
     public void updateDetail(ParentDetailRequest request) {
         this.nickName = request.getNickname();
-
+        this.emailAddress = request.getEmailAddress();
+        this.interestAge = request.getInterestAge();
     }
 }

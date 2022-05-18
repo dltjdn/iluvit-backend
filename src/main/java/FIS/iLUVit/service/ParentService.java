@@ -51,14 +51,16 @@ public class ParentService {
                 .orElseThrow(() -> new UserException("유효하지 않은 토큰으로의 사용자 접근입니다."));
 
         try {
-            parentRepository.findByNickName(request.getNickname());
+            parentRepository.findByNickName(request.getNickname()).orElseThrow(IllegalArgumentException::new);
             throw new UserException("이미 존재하는 닉네임 입니다.");
-        } catch (IllegalStateException e) {
+        } catch (IllegalArgumentException e) {
             findParent.updateDetail(request);
         }
 
-        ParentDetailResponse response = new ParentDetailResponse(findParent);
         String imagePath = imageService.getUserProfileDir();
+        imageService.saveProfileImage(request.getProfileImg(), imagePath + findParent.getId());
+
+        ParentDetailResponse response = new ParentDetailResponse(findParent);
         response.setProfileImg(imageService.getEncodedProfileImage(imagePath, id));
         return response;
     }

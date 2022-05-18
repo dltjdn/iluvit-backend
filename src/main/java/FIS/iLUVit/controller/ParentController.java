@@ -3,14 +3,13 @@ package FIS.iLUVit.controller;
 import FIS.iLUVit.config.argumentResolver.Login;
 import FIS.iLUVit.controller.dto.ParentDetailResponse;
 import FIS.iLUVit.controller.dto.ParentDetailRequest;
+import FIS.iLUVit.domain.embeddable.Theme;
 import FIS.iLUVit.service.ParentService;
 import FIS.iLUVit.controller.dto.ChildInfoDTO;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.io.IOException;
 
@@ -48,6 +47,9 @@ public class ParentController {
      */
     @PutMapping("/parent/detail")
     public ParentDetailResponse updateParentDetail(@Login Long id, @ModelAttribute ParentDetailRequest request) throws IOException {
+        ObjectMapper objectMapper = new ObjectMapper();
+        Theme theme = objectMapper.readValue(request.getTheme(), Theme.class);
+        System.out.println("theme = " + theme);
         return parentService.updateDetail(id, request);
     }
 }
