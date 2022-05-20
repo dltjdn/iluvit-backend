@@ -3,9 +3,11 @@ package FIS.iLUVit.service;
 import FIS.iLUVit.controller.dto.ParentDetailResponse;
 import FIS.iLUVit.controller.dto.ParentDetailRequest;
 import FIS.iLUVit.domain.Parent;
+import FIS.iLUVit.domain.embeddable.Theme;
 import FIS.iLUVit.exception.UserException;
 import FIS.iLUVit.repository.ParentRepository;
 import FIS.iLUVit.controller.dto.ChildInfoDTO;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -47,14 +49,19 @@ public class ParentService {
     */
     public ParentDetailResponse updateDetail(Long id, ParentDetailRequest request) throws IOException {
 
+
         Parent findParent = parentRepository.findById(id)
                 .orElseThrow(() -> new UserException("유효하지 않은 토큰으로의 사용자 접근입니다."));
+
+        // 관심사를 스트링에서 객체로 바꾸기
+        ObjectMapper objectMapper = new ObjectMapper();
+        Theme theme = objectMapper.readValue(request.getTheme(), Theme.class);
 
         try {
             parentRepository.findByNickName(request.getNickname()).orElseThrow(IllegalArgumentException::new);
             throw new UserException("이미 존재하는 닉네임 입니다.");
         } catch (IllegalArgumentException e) {
-            findParent.updateDetail(request);
+            findParent.updateDetail(request, theme);
         }
 
         String imagePath = imageService.getUserProfileDir();
@@ -82,5 +89,4 @@ public class ParentService {
 
         return response;
     }
-
 }

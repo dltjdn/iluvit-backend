@@ -47,9 +47,6 @@ public class ParentController {
      */
     @PutMapping("/parent/detail")
     public ParentDetailResponse updateParentDetail(@Login Long id, @ModelAttribute ParentDetailRequest request) throws IOException {
-        ObjectMapper objectMapper = new ObjectMapper();
-        Theme theme = objectMapper.readValue(request.getTheme(), Theme.class);
-        System.out.println("theme = " + theme);
         return parentService.updateDetail(id, request);
     }
 }
