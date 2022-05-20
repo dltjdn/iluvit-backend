@@ -4,14 +4,10 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import javax.persistence.Lob;
-
 @Data
 @NoArgsConstructor
-public class ReviewCommentDTO {
-    private Long teacher_id;
+@AllArgsConstructor
+public class ReviewHeartRequest {
 
-    @Lob
-    private String comment;
-
+    private Long userId;
 }

@@ -25,7 +25,7 @@ public class ReviewController {
 
     @PatchMapping("/review/{review_id}")
     public void updateReview(@PathVariable(name = "review_id") Long reviewId,
-                             ReviewUpdateDTO reviewUpdateDto) {
+                             @RequestBody ReviewUpdateDTO reviewUpdateDto) {
         reviewService.updateReview(reviewId, reviewUpdateDto.getContent());
     }
 
@@ -36,8 +36,8 @@ public class ReviewController {
 
     @PostMapping("/review/{review_id}/comment")
     public void registerComment(@PathVariable("review_id") Long reviewId,
-                                ReviewCommentDTO reviewCommentDTO) {
-        reviewService.saveComment(reviewId, reviewCommentDTO.getComment());
+                                @RequestBody ReviewCommentDTO reviewCommentDTO) {
+        reviewService.saveComment(reviewId, reviewCommentDTO.getComment(), reviewCommentDTO.getTeacher_id());
     }
 
 //    @PatchMapping("/review/{review_id}/comment")
