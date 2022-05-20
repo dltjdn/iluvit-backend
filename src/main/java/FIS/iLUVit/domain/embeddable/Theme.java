@@ -12,10 +12,10 @@ import javax.persistence.Embeddable;
 @NoArgsConstructor
 @Getter
 public class Theme {
-    private Boolean English;                // 양어
+    private Boolean english;                // 양어
     private Boolean foreigner;              // 원어민
     private Boolean clean;                  // 청결
-    private Boolean Buddhism;               // 불교
+    private Boolean buddhism;               // 불교
     private Boolean christianity;           // 기독교
     private Boolean catholic;               // 천주교
     private Boolean animal;                 // 동물
