@@ -49,7 +49,6 @@ public class ParentService {
     */
     public ParentDetailResponse updateDetail(Long id, ParentDetailRequest request) throws IOException {
 
-
         Parent findParent = parentRepository.findById(id)
                 .orElseThrow(() -> new UserException("유효하지 않은 토큰으로의 사용자 접근입니다."));
 
