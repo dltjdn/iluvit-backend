@@ -1,5 +1,6 @@
 package FIS.iLUVit.domain;
 
+import FIS.iLUVit.controller.dto.UpdateTeacherDetailRequest;
 import FIS.iLUVit.domain.enumtype.Approval;
 import FIS.iLUVit.domain.enumtype.Auth;
 import com.querydsl.core.types.dsl.BooleanExpression;
@@ -44,4 +45,9 @@ public class Teacher extends User {
         this.center = center;
     }
 
+    public void updateDetail(UpdateTeacherDetailRequest request) {
+        this.nickName = request.getNickname();
+        this.phoneNumber = request.getPhoneNumber();
+        this.emailAddress = request.getEmailAddress();
+    }
 }
