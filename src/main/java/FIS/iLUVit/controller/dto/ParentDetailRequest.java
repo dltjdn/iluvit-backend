@@ -13,6 +13,6 @@ public class ParentDetailRequest {
     private String nickname;
     private String emailAddress;
     private Integer interestAge;
-    private Theme theme;
+    private String theme;
     private MultipartFile profileImg;
 }

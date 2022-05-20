@@ -42,8 +42,10 @@ public class Parent extends User {
         return parent;
     }
 
-    public void updateDetail(ParentDetailRequest request) {
+    public void updateDetail(ParentDetailRequest request, Theme theme) {
         this.nickName = request.getNickname();
-
+        this.emailAddress = request.getEmailAddress();
+        this.interestAge = request.getInterestAge();
+        this.theme = theme;
     }
 }
