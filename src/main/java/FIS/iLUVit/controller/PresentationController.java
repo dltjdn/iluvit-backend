@@ -7,6 +7,7 @@ import FIS.iLUVit.service.PresentationService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 
@@ -31,7 +32,7 @@ public class PresentationController {
      * @return
      */
     @PostMapping(value = "/presentation", consumes = {MediaType.APPLICATION_JSON_VALUE, MediaType.MULTIPART_FORM_DATA_VALUE})
-    public PresentationSaveResponseDto registerPresentation(@RequestPart PresentationRequestRequestFormDto request){
+    public PresentationSaveResponseDto registerPresentation(@RequestPart PresentationRequestRequestFormDto request, @RequestPart MultipartFile multipartFile){
         return new PresentationSaveResponseDto(presentationService.saveWithPtDate(request));
     }
 

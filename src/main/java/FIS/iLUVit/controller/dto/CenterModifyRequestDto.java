@@ -1,13 +1,18 @@
 package FIS.iLUVit.controller.dto;
 
 import FIS.iLUVit.domain.embeddable.*;
+import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
 import java.time.LocalDate;
+import java.util.List;
 
 @Data
-public class CenterModifyReqeustDto {
+@AllArgsConstructor
+@NoArgsConstructor
+public class CenterModifyRequestDto {
     private String name;                    // 시설명
     private String owner;                   // 대표자명
     private String director;                // 원장명
@@ -20,6 +25,8 @@ public class CenterModifyReqeustDto {
     private Integer minAge;                 // 시설이 관리하는 연령대
     private Integer maxAge;                 //
     private String address;                 // 주소
+    private String sido;
+    private String sigungu;
     private String zipcode;                 // 우편번호
     private String offerService;            // 제공서비스 (, 로 구분)
     private Integer maxChildCnt;            // 정원
@@ -29,8 +36,6 @@ public class CenterModifyReqeustDto {
     private Boolean recruit;                // 원아 모집중
     private Integer waitingNum;             // 원아 모집이 false 일때 대기자 수
     private String introText;               // 시설 소개글
-    private Integer imgCnt;                 // 시설 이미지 개수 최대 20장
-    private Integer videoCnt;               // 시설 동영상 갯수 최대 5개
     private ClassInfo classInfo;            // 학급정보
     private TeacherInfo teacherInfo;        // 선생님 정보
     private CostInfo costInfo;              // 보육료 정보

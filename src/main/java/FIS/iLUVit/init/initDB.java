@@ -36,16 +36,19 @@ public class initDB {
 
         public void dbInit() {
 
+            Theme theme = new Theme(true, false, true, false, true, true, false, false, false, false, true, false, false, false, false, true, false);
+
+
             // 시설 추가
             Kindergarten center1 = Kindergarten.createKindergarten("떡잎유치원", "민병관", "민병관", "민간", "ㅁㄴㅇ", "2022-02-20", "02-123-1234", "www.www.www", "09:00", "19:00",
                     3, 90, "서울시 금천구 뉴티캐슬", "152-052", new Area("서울시", "금천구"), 123.123, 123.123, "흙찡구놀이, 비둘기잡기", 99999, 88888, LocalDate.now(), false,
-                    false, 0, "gkgkgkgk", 0, 0, "얼쥡", null, null, null, null, null, null);
+                    false, 0, "gkgkgkgk", 3, 0, "얼쥡", null, null, null, null, theme, null);
             Kindergarten center2 = Kindergarten.createKindergarten("떡잎유치원", "민병관", "민병관", "민간", "ㅁㄴㅇ", "2022-02-20", "02-123-1234", "www.www.www", "09:00", "19:00",
                     3, 90, "서울시 금천구 뉴티캐슬", "152-052", new Area("서울시", "금천구"), 123.123, 123.123, "흙찡구놀이, 비둘기잡기", 99999, 88888, LocalDate.now(), false,
-                    false, 0, "gkgkgkgk", 0, 0, "얼쥡", null, null, null, null, null, null);
+                    false, 0, "gkgkgkgk", 3, 0, "얼쥡", null, null, null, null, theme, null);
             Kindergarten center3 = Kindergarten.createKindergarten("떡잎유치원", "민병관", "민병관", "민간", "ㅁㄴㅇ", "2022-02-20", "02-123-1234", "www.www.www", "09:00", "19:00",
                     3, 90, "서울시 금천구 뉴티캐슬", "152-052", new Area("서울시", "금천구"), 123.123, 123.123, "흙찡구놀이, 비둘기잡기", 99999, 88888, LocalDate.now(), false,
-                    false, 0, "gkgkgkgk", 0, 0, "얼쥡", null, null, null, null, null, null);
+                    false, 0, "gkgkgkgk", 3, 0, "얼쥡", null, null, null, null, theme, null);
             em.persist(center1);
             em.persist(center2);
             em.persist(center3);
@@ -63,9 +66,9 @@ public class initDB {
             em.persist(teacher5);
 
             // 학부모 추가
-            Parent parent1 = Parent.createParent("qwe", "qwe", encoder.encode("asd"), "qwe", false, "qwe@qwe.com", "qwe", new Theme(), 5, Auth.PARENT);
-            Parent parent2 = Parent.createParent("ewq", "ewq", encoder.encode("asd"), "ewq", false, "ewq@ewq.com", "ewq", new Theme(), 5, Auth.PARENT);
-            Parent parent3 = Parent.createParent("weq", "weq", encoder.encode("asd"), "weq", false, "weq@weq.com", "weq", new Theme(), 5, Auth.PARENT);
+            Parent parent1 = Parent.createParent("qwe", "qwe", encoder.encode("asd"), "qwe", false, "qwe@qwe.com", "qwe", theme, 5, Auth.PARENT);
+            Parent parent2 = Parent.createParent("ewq", "ewq", encoder.encode("asd"), "ewq", false, "ewq@ewq.com", "ewq", theme, 5, Auth.PARENT);
+            Parent parent3 = Parent.createParent("weq", "weq", encoder.encode("asd"), "weq", false, "weq@weq.com", "weq", theme, 5, Auth.PARENT);
             em.persist(parent1);
             em.persist(parent2);
             em.persist(parent3);

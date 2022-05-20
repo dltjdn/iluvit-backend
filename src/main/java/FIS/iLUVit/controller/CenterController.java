@@ -1,14 +1,17 @@
 package FIS.iLUVit.controller;
 
+import FIS.iLUVit.config.argumentResolver.Login;
 import FIS.iLUVit.controller.dto.*;
 import FIS.iLUVit.repository.dto.CenterAndDistancePreview;
 import FIS.iLUVit.repository.dto.CenterPreview;
 import FIS.iLUVit.service.CenterService;
+import FIS.iLUVit.service.ImageService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 
@@ -35,7 +38,8 @@ public class CenterController {
      */
     @PostMapping("/center/map/search")
     public List<CenterAndDistancePreview> searchByFilterAndMap(@RequestBody CenterSearchMapFilterDTO dto){
-        List<CenterAndDistancePreview> center = centerService.findByFilterAndMap(dto.getLongitude(), dto.getLatitude() ,dto.getTheme(), dto.getInterestedAge(), dto.getKindOf(), dto.getDistance());
+        List<CenterAndDistancePreview> center = centerService.
+                findByFilterAndMap(dto.getLongitude(), dto.getLatitude() ,dto.getTheme(), dto.getInterestedAge(), dto.getKindOf(), dto.getDistance());
         return center;
     }
 
@@ -61,13 +65,15 @@ public class CenterController {
      * 회원로직 완료후에 작업 시작
      */
     @GetMapping("/center/theme")
-    public CenterThemeBannerResponseDto centerThemeBanner(){
-        return null;
+    public CenterThemeBannerResponseDto centerThemeBanner(@Login Long userId){
+        return new CenterThemeBannerResponseDto(centerService.findCenterForParent(userId));
     }
 
     @PatchMapping("/center/{center_id}")
-    public Long modifyCenter(@PathVariable("center_id") Long id, @RequestBody CenterModifyReqeustDto requestDto){
-        centerService.modifyCenter(id, requestDto);
+    public Long modifyCenter(@PathVariable("center_id") Long id,
+                             @RequestPart CenterModifyRequestDto requestDto,
+                             @RequestPart List<MultipartFile> infoFiles){
+        centerService.modifyCenter(id, requestDto, infoFiles);
         return null;
     }
 
