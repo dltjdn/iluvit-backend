@@ -1,15 +1,18 @@
 package FIS.iLUVit.domain;
 
 import FIS.iLUVit.domain.enumtype.Approval;
+import lombok.Getter;
 
 import javax.persistence.*;
 
 @Entity
+@Getter
 public class Child extends BaseEntity {
     @Id @GeneratedValue
     private Long id;
     private String name;
     private String birthDate;
+    private Boolean hasProfileImg;              // 프사 있나?
     @Enumerated(EnumType.STRING)
     private Approval approval;                  // 승인 여부 상태
 

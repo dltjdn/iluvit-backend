@@ -1,8 +1,15 @@
 package FIS.iLUVit.domain;
 
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+
 import javax.persistence.*;
 
 @Entity
+@NoArgsConstructor
+@AllArgsConstructor
+@Getter
 public class AddInfo extends BaseEntity {
     @Id
     @GeneratedValue

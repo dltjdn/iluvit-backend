@@ -26,6 +26,7 @@ public class User extends BaseEntity{
     protected String password;            // 비밀번호
     protected String phoneNumber;
     protected Boolean hasProfileImg;      // 프사 있니?
+    protected String profileImgPath;      // 프사가 저장된 경로
     protected String emailAddress;
     protected String name;                // 잔짜 이름
 
@@ -40,4 +41,9 @@ public class User extends BaseEntity{
 
     @OneToMany(mappedBy = "sender")
     protected List<Chat> sendChats;
+
+    public void changePassword(String newPwd) {
+        this.password = newPwd;
+    }
+
 }

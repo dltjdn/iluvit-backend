@@ -1,16 +1,22 @@
 package FIS.iLUVit.service;
 
+import FIS.iLUVit.controller.dto.CenterInfoResponseDto;
+import FIS.iLUVit.controller.dto.CenterModifyReqeustDto;
+import FIS.iLUVit.domain.AddInfo;
 import FIS.iLUVit.domain.Center;
 import FIS.iLUVit.domain.embeddable.Area;
 import FIS.iLUVit.domain.embeddable.Theme;
 import FIS.iLUVit.repository.dto.CenterAndDistancePreview;
 import FIS.iLUVit.repository.CenterRepository;
-import FIS.iLUVit.repository.dto.CenterInfoDto;
+import FIS.iLUVit.repository.dto.CenterBannerDto;
 import FIS.iLUVit.repository.dto.CenterPreview;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Slice;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -20,12 +26,23 @@ import java.util.List;
 public class CenterService {
 
     private final CenterRepository centerRepository;
+    private final ImageService imageService;
 
-    public List<CenterPreview> findByFilter(List<Area> areas, Theme theme, Integer interestedAge, String kindOf, Integer offset, Integer limit) {
-        if (!kindOf.equals("Kindergarten") && !kindOf.equals("ChildHouse")) {
+    public Slice<CenterPreview> findByFilter(List<Area> areas, Theme theme, Integer interestedAge, String kindOf, Pageable pageable) {
+        if (!kindOf.equals("Kindergarten") && !kindOf.equals("ChildHouse") && !kindOf.equals("ALL")) {
             throw new RuntimeException();
         }
-        return centerRepository.findByFilter(areas, theme, interestedAge, kindOf, offset, limit);
+        Slice<CenterPreview> results = centerRepository.findByFilter(areas, theme, interestedAge, kindOf, pageable);
+        results.getContent().forEach(centerPreview -> {
+            Long centerId = centerPreview.getId();
+            String centerProfileDir = imageService.getCenterProfileDir();
+            try {
+                centerPreview.setProfileImage(imageService.getEncodedProfileImage(centerProfileDir, centerId));
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        });
+        return results;
     }
 
 
@@ -44,7 +61,21 @@ public class CenterService {
         return centerDTOList;
     }
 
-    public CenterInfoDto findInfoById(Long id) {
-        return centerRepository.findInfoById(id);
+    public CenterInfoResponseDto findInfoById(Long id) {
+        Center center = centerRepository.findInfoByIdWithProgram(id).orElseThrow(RuntimeException::new);
+        List<AddInfo> addInfos = centerRepository.findInfoByIdWithAddInfo(id);
+        CenterInfoResponseDto centerInfoResponseDto = new CenterInfoResponseDto(center);
+        addInfos.forEach(addInfo -> centerInfoResponseDto.getAddInfos().add(addInfo.getInfo()));
+        return centerInfoResponseDto;
+    }
+
+    public CenterBannerDto findBannerById(Long id) {
+        return centerRepository.findBannerById(id);
+    }
+
+    public void modifyCenter(Long id, CenterModifyReqeustDto requestDto) {
+        // 해당하는 center 없으면 RuntimeException 반환
+        Center center = centerRepository.findById(id).orElseThrow(RuntimeException::new);
+        center.update(requestDto);
     }
 }

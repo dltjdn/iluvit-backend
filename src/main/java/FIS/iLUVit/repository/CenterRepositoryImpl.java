@@ -8,6 +8,9 @@ import FIS.iLUVit.repository.dto.QCenterAndDistancePreview;
 import FIS.iLUVit.repository.dto.QCenterPreview;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.AllArgsConstructor;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Slice;
+import org.springframework.data.domain.SliceImpl;
 
 import java.util.List;
 
@@ -19,16 +22,23 @@ public class CenterRepositoryImpl extends CenterQueryMethod implements CenterRep
     private final JPAQueryFactory jpaQueryFactory;
 
     @Override
-    public List<CenterPreview> findByFilter(List<Area> areas, Theme theme, Integer interestedAge, String kindOf, Integer offset, Integer limit) {
-        return jpaQueryFactory.select(new QCenterPreview(center))
+    public Slice<CenterPreview> findByFilter(List<Area> areas, Theme theme, Integer interestedAge, String kindOf, Pageable pageable) {
+        List<CenterPreview> content = jpaQueryFactory.select(new QCenterPreview(center))
                 .from(center)
-                .where(kindOfEq(kindOf)
-                        .and(areasIn(areas))
+                .where(areasIn(areas)
+                        .and(kindOfEq(kindOf))
                         .and(themeEq(theme))
                         .and(interestedAgeEq(interestedAge)))
-                .offset(offset)
-                .limit(limit)
+                .offset(pageable.getOffset())
+                .limit(pageable.getPageSize() + 1)
                 .fetch();
+
+        boolean hasNext = false;
+        if(content.size() > pageable.getPageSize()){
+            content.remove(pageable.getPageSize());
+            hasNext = true;
+        }
+        return new SliceImpl<>(content, pageable, hasNext);
     }
 
     @Override

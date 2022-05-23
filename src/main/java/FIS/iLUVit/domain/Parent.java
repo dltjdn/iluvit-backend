@@ -1,5 +1,6 @@
 package FIS.iLUVit.domain;
 
+import FIS.iLUVit.controller.dto.ParentDetailRequest;
 import FIS.iLUVit.domain.embeddable.Theme;
 import FIS.iLUVit.domain.enumtype.Approval;
 import FIS.iLUVit.domain.enumtype.Auth;
@@ -39,5 +40,12 @@ public class Parent extends User {
         parent.interestAge = interestAge;
         parent.auth = auth;
         return parent;
+    }
+
+    public void updateDetail(ParentDetailRequest request, Theme theme) {
+        this.nickName = request.getNickname();
+        this.emailAddress = request.getEmailAddress();
+        this.interestAge = request.getInterestAge();
+        this.theme = theme;
     }
 }

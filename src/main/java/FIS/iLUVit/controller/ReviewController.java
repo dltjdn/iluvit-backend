@@ -1,5 +1,6 @@
 package FIS.iLUVit.controller;
 
+import FIS.iLUVit.config.argumentResolver.Login;
 import FIS.iLUVit.controller.dto.*;
 import FIS.iLUVit.service.ReviewService;
 import lombok.RequiredArgsConstructor;
@@ -11,49 +12,47 @@ public class ReviewController {
 
     private final ReviewService reviewService;
 
-    // 학부모가 작성한 리뷰 반환
+    // 학부모가 작성한 리뷰 조회
     @GetMapping("/review")
-    public ReviewByParentDTO searchByParent(Long userId) { // @Login 어노테이션 달아야됨.
+    public ReviewByParentDTO searchByParent(@Login Long userId) { // @Login 어노테이션 달아야됨.
         return reviewService.findByParent(userId);
     }
 
     // 학부모가 작성한 리뷰 등록
     @PostMapping("/review")
-    public void registerReview(Long userId, Long centerId, ReviewCreateDTO reviewCreateDTO) {
-        reviewService.saveReview(userId, centerId, reviewCreateDTO);
+    public void registerReview(@Login Long userId, @RequestBody ReviewCreateDTO reviewCreateDTO) {
+        reviewService.saveReview(userId, reviewCreateDTO);
     }
 
+    // 학부모가 작성한 리뷰 수정
     @PatchMapping("/review/{review_id}")
-    public void updateReview(@PathVariable(name = "review_id") Long reviewId,
+    public void updateReview(@Login Long userId, @PathVariable(name = "review_id") Long reviewId,
                              @RequestBody ReviewUpdateDTO reviewUpdateDto) {
-        reviewService.updateReview(reviewId, reviewUpdateDto.getContent());
+        reviewService.updateReview(reviewId, userId, reviewUpdateDto.getContent());
     }
 
-    @GetMapping("/review/center/{center_id}")
-    public ReviewByCenterDTO searchByCenter(@PathVariable(name = "center_id") Long centerId) {
-        return reviewService.findByCenter(centerId);
-    }
-
-    @PostMapping("/review/{review_id}/comment")
-    public void registerComment(@PathVariable("review_id") Long reviewId,
-                                @RequestBody ReviewCommentDTO reviewCommentDTO) {
-        reviewService.saveComment(reviewId, reviewCommentDTO.getComment(), reviewCommentDTO.getTeacher_id());
-    }
-
-//    @PatchMapping("/review/{review_id}/comment")
-//    public void updateComment(@PathVariable("review_id") Long reviewId,
-//                              ReviewCommentDTO reviewCommentDTO) {
-//        reviewService.saveComment(reviewId, reviewCommentDTO.getComment());
-//    }
-//    대댓글 하나 인데 등록이랑 업데이트가 따로 있어야 하는지 ??
-
+    // 학부모가 작성한 리뷰 삭제
     @DeleteMapping("/review/{review_id}")
-    public void deleteReview(@PathVariable("review_id") Long reviewId) {
-        reviewService.deleteReview(reviewId);
+    public void deleteReview(@Login Long userId, @PathVariable("review_id") Long reviewId) {
+        reviewService.deleteReview(reviewId, userId);
     }
 
+    // 센터에 달린 리뷰 조회
+    @GetMapping("/review/center/{center_id}")
+    public ReviewByCenterDTO searchByCenter(@Login Long userId, @PathVariable(name = "center_id") Long centerId) {
+        return reviewService.findByCenter(centerId, userId);
+    }
+
+    // 선생님이 단 답글 등록 (수정은 X)
+    @PostMapping("/review/{review_id}/comment")
+    public void registerComment(@Login Long teacherId, @PathVariable("review_id") Long reviewId,
+                                @RequestBody ReviewCommentDTO reviewCommentDTO) {
+        reviewService.saveComment(reviewId, reviewCommentDTO.getComment(), teacherId);
+    }
+
+    // 선생님이 단 답글 삭제
     @DeleteMapping("/review/{review_id}/comment")
-    public void deleteComment(@PathVariable("review_id") Long reviewId) {
-        reviewService.deleteComment(reviewId);
+    public void deleteComment(@Login Long teacherId, @PathVariable("review_id") Long reviewId) {
+        reviewService.deleteComment(reviewId, teacherId);
     }
 }

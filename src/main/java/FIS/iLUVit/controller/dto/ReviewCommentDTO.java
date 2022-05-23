@@ -9,7 +9,6 @@ import javax.persistence.Lob;
 @Data
 @NoArgsConstructor
 public class ReviewCommentDTO {
-    private Long teacher_id;
 
     @Lob
     private String comment;

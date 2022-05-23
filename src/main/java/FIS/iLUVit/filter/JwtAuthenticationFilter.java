@@ -67,8 +67,6 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
                 .withSubject("JWT")
                 .withExpiresAt(new Date(System.currentTimeMillis() + (60000 * 30))) // JWT 만료시간 밀리세컨단위
                 .withClaim("id", principalDetails.getUser().getId())
-                .withClaim("nickname", principalDetails.getUser().getNickName())
-                .withClaim("auth", principalDetails.getUser().getAuth().toString())
                 .sign(Algorithm.HMAC512("symmetricKey"));   // 대칭키 들어가 자리(노출 금지)
 
         response.addHeader("Authorization", "Bearer " + jwtToken);

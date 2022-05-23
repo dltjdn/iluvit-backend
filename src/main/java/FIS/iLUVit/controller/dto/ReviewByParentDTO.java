@@ -17,6 +17,7 @@ public class ReviewByParentDTO {
     @AllArgsConstructor
     static public class ReviewDto {
 
+        private Long reviewId;
         private String centerName;
         private String content;
         private LocalDate createDate;
