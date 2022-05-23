@@ -1,17 +1,16 @@
 package FIS.iLUVit.domain;
 
-import FIS.iLUVit.controller.dto.CenterModifyReqeustDto;
+import FIS.iLUVit.controller.dto.CenterModifyRequestDto;
 import FIS.iLUVit.domain.embeddable.*;
-import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.springframework.web.multipart.MultipartFile;
 
 import javax.persistence.*;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 
 @Entity
 @Inheritance(strategy = InheritanceType.JOINED)
@@ -52,6 +51,7 @@ public class Center extends BaseEntity{
     protected String introText;               // 시설 소개글
     protected Integer imgCnt;                 // 시설 이미지 개수 최대 20장
     protected Integer videoCnt;               // 시설 동영상 갯수 최대 5개
+    private Integer score;                    // 시설 order By 기준 중 하나
 
     @Column(name="kindOf", insertable = false, updatable = false)
     protected String kindOf;                  // 시설 종류
@@ -106,8 +106,47 @@ public class Center extends BaseEntity{
         this.theme = theme;
     }
 
-    public Center update(CenterModifyReqeustDto requestDto) {
-        return null;
+    public void update(CenterModifyRequestDto requestDto) {
+        this.name = requestDto.getName();
+        this.owner = requestDto.getOwner();
+        this.director = requestDto.getDirector();
+        this.estType = requestDto.getEstType();
+        this.estDate = requestDto.getEstDate();
+        this.tel = requestDto.getTel();
+        this.homepage = requestDto.getHomepage();
+        this.startTime = requestDto.getStartTime();
+        this.endTime = requestDto.getEndTime();
+        this.minAge = requestDto.getMinAge();
+        this.maxAge = requestDto.getMaxAge();
+        this.address = requestDto.getAddress();
+        this.zipcode = requestDto.getZipcode();
+        this.area.setSido(requestDto.getSido());
+        this.area.setSigungu(requestDto.getSigungu());
+        this.offerService = requestDto.getOfferService();
+        this.maxChildCnt = requestDto.getMaxChildCnt();
+        this.curChildCnt = requestDto.getCurChildCnt();
+        this.updateDate = requestDto.getUpdateDate();
+        this.recruit = requestDto.getRecruit();
+        this.introText = requestDto.getIntroText();
+        this.classInfo = requestDto.getClassInfo();
+        this.teacherInfo = requestDto.getTeacherInfo();
+        this.costInfo = requestDto.getCostInfo();
+        this.basicInfra = requestDto.getBasicInfra();
+        this.theme = requestDto.getTheme();
     }
 
+    public void addScore(Score mode){
+        // null 처리
+        if(score == null) score = 0;
+
+        if(mode == Score.GET){
+            this.score += Score.GET.getScore();
+        } else if (mode == Score.Review){
+            this.score += Score.Review.getScore();
+        }
+    }
+
+    public void updateImageCnt(List<MultipartFile> files){
+        imgCnt = files.size();
+    }
 }
