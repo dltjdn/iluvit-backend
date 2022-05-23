@@ -30,6 +30,7 @@ public class CenterQueryMethod {
 
     protected BooleanExpression themeEq(Theme theme) {
         try {
+            if(theme == null) return null;
             List<String> trueList = theme.trueList();
             BooleanExpression booleanExpression = null;
             for (String name : trueList) {
@@ -43,7 +44,7 @@ public class CenterQueryMethod {
                     booleanExpression = booleanExpression.or((BooleanExpression) eq.invoke(type, true));
                 }
             }
-            return theme == null ? null : booleanExpression;
+            return booleanExpression;
         } catch(NoSuchFieldException | NoSuchMethodException | IllegalAccessException | InvocationTargetException e){
             e.printStackTrace();
             throw new CenterException("센터 repository에서 오류");

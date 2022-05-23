@@ -49,7 +49,6 @@ public class CenterService {
         return results;
     }
 
-
     public List<CenterAndDistancePreview> findByFilterAndMap(double longitude, double latitude, Theme theme, Integer interestedAge, String kindOf, Integer distance) {
         if (!kindOf.equals("Kindergarten") && !kindOf.equals("childHouse")) {
             throw new RuntimeException();
@@ -59,9 +58,10 @@ public class CenterService {
                         .stream().collect(Collectors.toMap(CenterAndDistancePreview::getId,
                         centerAndDistancePreview -> centerAndDistancePreview));
         List<Long> idList = new ArrayList<>(map.keySet());
-        imageService.getEncodedProfileImage(imageService.getCenterProfileDir(), idList).forEach((id, image) -> {
-            map.get(id).setImage(image);
-        });
+        imageService.getEncodedProfileImage(imageService.getCenterProfileDir(), idList)
+                .forEach((id, image) -> {
+                    map.get(id).setImage(image);
+                });
         return new ArrayList<>(map.values());
     }
 
@@ -85,19 +85,19 @@ public class CenterService {
         return dto;
     }
 
-    public void modifyCenter(Long id, CenterModifyRequestDto requestDto, List<MultipartFile> files) {
+    public Long modifyCenter(Long id, CenterModifyRequestDto requestDto, List<MultipartFile> files) {
         // 해당하는 center 없으면 RuntimeException 반환
         Center center = centerRepository.findById(id).orElseThrow(RuntimeException::new);
         String centerDir = imageService.getCenterDir(id);
         imageService.saveInfoImage(files, centerDir);
         center.update(requestDto);
+        return center.getId();
     }
 
     public List<String> findCenterForParent(Long userId) {
-        Parent parent = parentRepository.findById(userId).orElseThrow(()-> new UserException("해당 유저가 존재 하지 않습니다."));
+        Parent parent = parentRepository.findById(userId).orElseThrow(() -> new UserException("해당 유저가 존재 하지 않습니다."));
         Theme theme = parent.getTheme();
         List<Long> idList = centerRepository.findByThemeAndAgeOnly3(theme, PageRequest.of(0, 3, Sort.by("score")));
-        System.out.println("score = " + idList);
         return new ArrayList<>(imageService.getEncodedProfileImage(imageService.getCenterProfileDir(), idList).values());
     }
 }

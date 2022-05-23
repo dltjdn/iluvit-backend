@@ -1,5 +1,6 @@
 package FIS.iLUVit.service;
 
+import FIS.iLUVit.exception.ImageException;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.IOUtils;
 import org.springframework.beans.factory.annotation.Value;
@@ -24,6 +25,9 @@ public class ImageService {
     private String centerProfileImagePath;
     @Value("${file.childProfileImagePath}")
     private String childProfileImagePath;
+
+
+
 
     /**
      * Center Id를 넣으면 해당 Center 의 이미지들이 있는 디렉토리 경로 반환
@@ -74,6 +78,7 @@ public class ImageService {
             };
             File file = new File(imageDirPath);
             File[] files = file.listFiles(filter);
+            if(files == null) throw new ImageException("해당 image가 없습니다");
             for (File temp : files){
                 if(temp.isFile()){
                     String encodeImage = null;
@@ -117,7 +122,7 @@ public class ImageService {
     }
 
     public Map<Long, String> getEncodedProfileImage(String imageDir, List<Long> idList){
-        Map map = new HashMap();
+        Map map = new HashMap<Long, String>();
         idList.forEach(id -> map.put(id, null));
         FilenameFilter filter = (f, name) -> {
             String regex = "^(";
@@ -134,7 +139,7 @@ public class ImageService {
         File[] files = dir.listFiles(filter);
         for(File file : files){
             try {
-                map.put(extractFileName(file.getName()), encodeImage(file));
+                map.put(Long.valueOf(extractFileName(file.getName())), encodeImage(file));
             } catch (IOException e) {
                 continue;
             }

@@ -21,10 +21,11 @@ public class PtDate extends BaseEntity {
     private Integer participantCnt;     // 신청 사람 수
     private Integer waitingCnt;         // 대기 수
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn
     private Presentation presentation;
 
+    // Set 으로 변경해야 할까?
     @OneToMany(mappedBy = "ptDate")
     private List<Participation> participations;
 
@@ -42,13 +43,46 @@ public class PtDate extends BaseEntity {
         this.presentation = presentation;
     }
 
+    public static PtDate register(Presentation presentation, LocalDate date, String time, Integer ablePersonNum){
+        return PtDate.builder()
+                .date(date)
+                .time(time)
+                .ablePersonNum(ablePersonNum)
+                .waitingCnt(0)
+                .participantCnt(0)
+                .presentation(presentation)
+                .build();
+    }
+
     public static PtDate createPtDate(LocalDate date, String time, Integer ablePersonNum, Integer waitingCnt, Presentation presentation) {
         return PtDate.builder()
                 .date(date)
                 .time(time)
                 .ablePersonNum(ablePersonNum)
+                .participantCnt(0)
                 .waitingCnt(waitingCnt)
                 .presentation(presentation)
                 .build();
+    }
+
+    // 일정을 취소할 경우 participantCnt 값을 줄인다
+    public static void cancelParticipation(Participation participation) {
+        participation.getPtDate().participantCnt--;
+    }
+
+    // 등록이 가능한지 여부 체크
+    public boolean canRegister() {
+        if(ablePersonNum <= participantCnt) return false;
+        else return true;
+    }
+
+    // 설명회 신청 할경우 participantCnt 값을 1증가
+    public static void acceptParticipation(Participation participation) {
+        participation.getPtDate().participantCnt++;
+        participation.getPtDate().participations.add(participation);
+    }
+
+    public static void cancelWaiting(Waiting waiting){
+        waiting.getPtDate().waitingCnt--;
     }
 }

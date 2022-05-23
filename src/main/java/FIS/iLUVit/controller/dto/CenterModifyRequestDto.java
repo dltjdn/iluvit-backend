@@ -31,10 +31,7 @@ public class CenterModifyRequestDto {
     private String offerService;            // 제공서비스 (, 로 구분)
     private Integer maxChildCnt;            // 정원
     private Integer curChildCnt;            // 현원
-    private LocalDate updateDate;           // 정보 업데이트 일자
-    private Boolean signed;                 // 원장의 가입 유무
     private Boolean recruit;                // 원아 모집중
-    private Integer waitingNum;             // 원아 모집이 false 일때 대기자 수
     private String introText;               // 시설 소개글
     private ClassInfo classInfo;            // 학급정보
     private TeacherInfo teacherInfo;        // 선생님 정보

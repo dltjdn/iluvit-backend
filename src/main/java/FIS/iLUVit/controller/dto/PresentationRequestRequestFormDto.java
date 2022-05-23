@@ -12,18 +12,17 @@ import java.util.List;
 public class PresentationRequestRequestFormDto {
     private Long centerId;
 
-    @DateTimeFormat()
+    @DateTimeFormat(pattern = "yyyy-MM-dd", iso = DateTimeFormat.ISO.DATE)
     private LocalDate startDate;          // 설명회 신청 기간
+    @DateTimeFormat(pattern = "yyyy-MM-dd", iso = DateTimeFormat.ISO.DATE)
     private LocalDate endDate;
     private String place;               // 설명회 장소
     private String content;             // 설명회 내용
-    private Integer imgCnt;             // 설명회 이미지 개수 최대 __장
-    private Integer videoCnt;           // 설명회 동영상 개수 최대 _개
 
     @Size(min = 1, message = "설명회 작성 미완료")
     private List<PtDateRequestDto> ptDateDtos;
 
-    public static Presentation Presentation(PresentationRequestRequestFormDto request){
+    public static Presentation toPresentation(PresentationRequestRequestFormDto request){
         return Presentation.builder()
                 .startDate(request.getStartDate())
                 .endDate(request.getEndDate())

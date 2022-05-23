@@ -1,5 +1,6 @@
 package FIS.iLUVit.controller;
 
+import FIS.iLUVit.config.argumentResolver.Login;
 import FIS.iLUVit.controller.dto.PresentationRequestRequestFormDto;
 import FIS.iLUVit.controller.dto.PresentationResponseDto;
 import FIS.iLUVit.controller.dto.PresentationSaveResponseDto;
@@ -32,12 +33,16 @@ public class PresentationController {
      * @return
      */
     @PostMapping(value = "/presentation", consumes = {MediaType.APPLICATION_JSON_VALUE, MediaType.MULTIPART_FORM_DATA_VALUE})
-    public PresentationSaveResponseDto registerPresentation(@RequestPart PresentationRequestRequestFormDto request, @RequestPart MultipartFile multipartFile){
-        return new PresentationSaveResponseDto(presentationService.saveWithPtDate(request));
+    public PresentationSaveResponseDto registerPresentation(@RequestPart PresentationRequestRequestFormDto request,
+                                                            @RequestPart List<MultipartFile> images){
+        return new PresentationSaveResponseDto(presentationService.saveWithPtDate(request, images));
     }
 
-    @GetMapping("/presentation/{presentionId}/teacher")
-    public void findMyCenterPresentation(@PathVariable("") Long presentionId){
+    /**
+     * 원장 전용 설명회 자세히 보기 기능
+     */
+    @GetMapping("/presentation/{presentationId}/teacher")
+    public void findMyCenterPresentation(@PathVariable("presentationId") Long presentationId, @Login Long userId){
 
     }
 }

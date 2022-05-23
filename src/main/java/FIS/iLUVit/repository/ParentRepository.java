@@ -13,4 +13,12 @@ public interface ParentRepository extends JpaRepository<Parent, Long> {
     Optional<Parent> findWithChildren(@Param("id") Long id);
 
     Optional<Parent> findByNickName(String nickname);
+
+    @Query("select distinct parent from Parent parent " +
+            "join fetch parent.participations as participation " +
+            "left join fetch participation.ptDate as ptDate " +
+            "left join fetch ptDate.presentation as presentation " +
+            "left join fetch presentation.center " +
+            "where parent.id = :userId")
+    Optional<Parent> findByIdAndFetchPresentation(@Param("userId") Long userId);
 }

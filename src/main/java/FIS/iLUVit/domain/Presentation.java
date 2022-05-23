@@ -26,7 +26,7 @@ public class Presentation extends BaseEntity {
     private String content;             // 설명회 내용
     private Integer imgCnt;             // 설명회 이미지 개수 최대 __장
     private Integer videoCnt;           // 설명회 동영상 개수 최대 _개
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn
     private Center center;
 
@@ -55,5 +55,16 @@ public class Presentation extends BaseEntity {
                 .videoCnt(videoCnt)
                 .center(center)
                 .build();
+    }
+
+    public Presentation updateImageCnt(int size) {
+        imgCnt = size;
+        return this;
+    }
+
+    public Presentation updateCenter(Center center) {
+        this.center = center;
+        center.getPresentations().add(this);
+        return this;
     }
 }
