@@ -31,6 +31,7 @@ public class SignService {
     private String fromNumber;
 
     public void sendAuthNumber(String toNumber) {
+
         Message message = new Message();
         System.out.println("fromNumber = " + fromNumber);
         message.setFrom(fromNumber);
@@ -39,6 +40,8 @@ public class SignService {
 
         SingleMessageSentResponse response = this.messageService.sendOne(new SingleMessageSendingRequest(message));
         System.out.println("response = " + response);
+
+
     }
 
     private String createRandomNumber() {
@@ -50,4 +53,6 @@ public class SignService {
         }
         return authNumber;
     }
+
+
 }
