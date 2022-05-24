@@ -2,9 +2,10 @@ package FIS.iLUVit.service;
 
 import FIS.iLUVit.controller.dto.*;
 import FIS.iLUVit.domain.*;
+import FIS.iLUVit.domain.enumtype.AuthKind;
 import FIS.iLUVit.exception.SignupException;
 import FIS.iLUVit.exception.UserException;
-import FIS.iLUVit.repository.AuthNumberInfoRepository;
+import FIS.iLUVit.repository.AuthNumberRepository;
 import FIS.iLUVit.repository.CenterRepository;
 import FIS.iLUVit.repository.TeacherRepository;
 import FIS.iLUVit.repository.UserRepository;
@@ -26,7 +27,7 @@ public class TeacherService {
     private final CenterRepository centerRepository;
     private final UserRepository userRepository;
     private final TeacherRepository teacherRepository;
-    private final AuthNumberInfoRepository authNumberInfoRepository;
+    private final AuthNumberRepository authNumberRepository;
 
 
     /**
@@ -85,7 +86,7 @@ public class TeacherService {
             throw new SignupException("중복된 닉네임입니다.");
         }
 
-        List<AuthNumberInfo> authCompletes = authNumberInfoRepository.findAuthComplete(request.getPhoneNum());
+        List<AuthNumber> authCompletes = authNumberRepository.findAuthComplete(request.getPhoneNum(), AuthKind.signup);
         if (authCompletes.isEmpty()){
             throw new SignupException("핸드폰 인증이 완료되지 않았습니다.");
         }

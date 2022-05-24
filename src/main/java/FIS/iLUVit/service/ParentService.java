@@ -3,13 +3,14 @@ package FIS.iLUVit.service;
 import FIS.iLUVit.controller.dto.ParentDetailResponse;
 import FIS.iLUVit.controller.dto.ParentDetailRequest;
 import FIS.iLUVit.controller.dto.SignupParentRequest;
-import FIS.iLUVit.domain.AuthNumberInfo;
+import FIS.iLUVit.domain.AuthNumber;
 import FIS.iLUVit.domain.Parent;
 import FIS.iLUVit.domain.User;
 import FIS.iLUVit.domain.embeddable.Theme;
+import FIS.iLUVit.domain.enumtype.AuthKind;
 import FIS.iLUVit.exception.SignupException;
 import FIS.iLUVit.exception.UserException;
-import FIS.iLUVit.repository.AuthNumberInfoRepository;
+import FIS.iLUVit.repository.AuthNumberRepository;
 import FIS.iLUVit.repository.ParentRepository;
 import FIS.iLUVit.controller.dto.ChildInfoDTO;
 import FIS.iLUVit.repository.UserRepository;
@@ -32,7 +33,7 @@ public class ParentService {
 
     private final ParentRepository parentRepository;
     private final UserRepository userRepository;
-    private final AuthNumberInfoRepository authNumberInfoRepository;
+    private final AuthNumberRepository authNumberRepository;
     private final ImageService imageService;
 
     /**
@@ -116,7 +117,7 @@ public class ParentService {
             throw new SignupException("중복된 닉네임입니다.");
         }
 
-        List<AuthNumberInfo> authCompletes = authNumberInfoRepository.findAuthComplete(request.getPhoneNum());
+        List<AuthNumber> authCompletes = authNumberRepository.findAuthComplete(request.getPhoneNum(), AuthKind.signup);
         if (authCompletes.isEmpty()) {
             throw new SignupException("핸드폰 인증이 완료되지 않았습니다.");
         } else if (Duration.between(authCompletes.get(0).getAuthTime(), LocalDateTime.now()).getSeconds() > (60 * 60)) {
@@ -126,6 +127,6 @@ public class ParentService {
         Parent parent = request.createParent();
         parentRepository.save(parent);
 
-        authNumberInfoRepository.deleteAllByPhoneNum(request.getPhoneNum());
+        authNumberRepository.deleteAllByPhoneNum(request.getPhoneNum());
     }
 }

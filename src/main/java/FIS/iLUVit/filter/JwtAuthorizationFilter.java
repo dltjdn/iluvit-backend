@@ -73,7 +73,6 @@ public class JwtAuthorizationFilter extends BasicAuthenticationFilter {
 
         // JWT 최신화
         response.addHeader("Authorization", "Bearer " + createToken(user));
-        System.out.println("@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@");
         // 다음 필터로 진행
         chain.doFilter(request, response);
     }

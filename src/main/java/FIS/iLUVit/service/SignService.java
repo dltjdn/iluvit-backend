@@ -1,11 +1,13 @@
 package FIS.iLUVit.service;
 
 import FIS.iLUVit.controller.dto.AuthenticateAuthNumRequest;
-import FIS.iLUVit.domain.AuthNumberInfo;
+import FIS.iLUVit.domain.AuthNumber;
 import FIS.iLUVit.domain.User;
+import FIS.iLUVit.domain.enumtype.AuthKind;
 import FIS.iLUVit.exception.AuthNumException;
-import FIS.iLUVit.repository.AuthNumberInfoRepository;
+import FIS.iLUVit.repository.AuthNumberRepository;
 import FIS.iLUVit.repository.UserRepository;
+import kotlin.text.UStringsKt;
 import lombok.extern.slf4j.Slf4j;
 import net.nurigo.sdk.NurigoApp;
 import net.nurigo.sdk.message.model.Message;
@@ -29,14 +31,14 @@ public class SignService {
 
     private final DefaultMessageService messageService;
     private final UserRepository userRepository;
-    private final AuthNumberInfoRepository authNumberInfoRepository;
+    private final AuthNumberRepository authNumberRepository;
 
     @Autowired
-    public SignService(AuthNumberInfoRepository authNumberInfoRepository, UserRepository userRepository,
+    public SignService(AuthNumberRepository authNumberRepository, UserRepository userRepository,
                        @Value("${coolsms.api_key}") String api_key, @Value("${coolsms.api_secret}") String api_secret, @Value("${coolsms.domain}") String domain) {
         this.messageService = NurigoApp.INSTANCE.initialize(api_key, api_secret, domain);
         this.userRepository = userRepository;
-        this.authNumberInfoRepository = authNumberInfoRepository;
+        this.authNumberRepository = authNumberRepository;
     }
 
     @Value("${coolsms.fromNumber}")
@@ -47,7 +49,7 @@ public class SignService {
      * 작성자: 이승범
      * 작성내용: 인증번호 전송 로직
      */
-    public void sendAuthNumber(String toNumber) {
+    public void sendAuthNumber(String toNumber, AuthKind authKind) {
 
         User findUser = userRepository.findByPhoneNumber(toNumber).orElse(null);
 
@@ -57,7 +59,7 @@ public class SignService {
 
         String authNumber = createRandomNumber();
 
-        List<AuthNumberInfo> overlaps = authNumberInfoRepository.findOverlap(toNumber);
+        List<AuthNumber> overlaps = authNumberRepository.findOverlap(toNumber, authKind);
 
         // 인증번호 최초 요청인 경우
         if (overlaps.isEmpty()) {
@@ -65,19 +67,19 @@ public class SignService {
             // 인증번호 보내고
             requestCoolSMS(toNumber, authNumber);
             // 인증번호 관련 정보를 db에 저장
-            AuthNumberInfo authNumberInfo = new AuthNumberInfo(toNumber, authNumber);
-            authNumberInfoRepository.save(authNumberInfo);
+            AuthNumber authNumberInfo = new AuthNumber(toNumber, authNumber, authKind);
+            authNumberRepository.save(authNumberInfo);
 
             // 이미 인증번호를 받았지만 제한시간이 지난 경우
         } else if (Duration.between(overlaps.get(0).getCreatedDate(), LocalDateTime.now()).getSeconds() > 180) {
 
             // 예전 인증번호 관련 정보를 db에서 지우고
-            authNumberInfoRepository.deleteExpiredNumber(toNumber);
+            authNumberRepository.deleteExpiredNumber(toNumber, authKind);
             // 인증번호 보낸 후
             requestCoolSMS(toNumber, authNumber);
             // 인증번호 관련 정보를 db에 저장
-            AuthNumberInfo authNumberInfo = new AuthNumberInfo(toNumber, authNumber);
-            authNumberInfoRepository.save(authNumberInfo);
+            AuthNumber authNumberInfo = new AuthNumber(toNumber, authNumber, authKind);
+            authNumberRepository.save(authNumberInfo);
 
             // 이미 인증번호를 요청하였고 제한시간이 지나지 않은 경우
         } else {
@@ -92,15 +94,28 @@ public class SignService {
      */
     public void authenticateAuthNum(AuthenticateAuthNumRequest request) {
 
-        AuthNumberInfo authNumberInfo = authNumberInfoRepository.findByPhoneNumAndAuthNum(request.getPhoneNum(), request.getAuthNum()).orElse(null);
+        AuthNumber authNumber =
+                authNumberRepository
+                .findByPhoneNumAndAuthNumAndAuthKind(request.getPhoneNum(), request.getAuthNum(), request.getAuthKind())
+                .orElse(null);
 
-        if (authNumberInfo == null) {
+        if (authNumber == null) {
             throw new AuthNumException("인증번호가 일치하지 않습니다.");
-        } else if (Duration.between(authNumberInfo.getCreatedDate(), LocalDateTime.now()).getSeconds() > 180) {
+        } else if (Duration.between(authNumber.getCreatedDate(), LocalDateTime.now()).getSeconds() > 180) {
             throw new AuthNumException("인증번호가 만료되었습니다.");
         } else {
-            authNumberInfo.AuthComplete();
+            authNumber.AuthComplete();
         }
+    }
+
+    /**
+     * 작성날짜: 2022/05/24 10:40 AM
+     * 작성자: 이승범
+     * 작성내용: 인증번호 입력로직
+     */
+    public String findLoginId(AuthenticateAuthNumRequest request) {
+        authenticateAuthNum(request);
+
     }
 
     // CoolSMS 문자전송 요청
@@ -112,7 +127,6 @@ public class SignService {
         message.setText("[아이러빗] 인증번호 " + authNumber + " 를 입력하세요.");
 
         SingleMessageSentResponse response = this.messageService.sendOne(new SingleMessageSendingRequest(message));
-        System.out.println("response = " + response);
     }
 
     // 4자리 랜던 숫자 생성
