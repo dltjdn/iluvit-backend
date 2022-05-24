@@ -1,5 +1,11 @@
 package FIS.iLUVit.service;
 
+import FIS.iLUVit.domain.AuthNumberInfo;
+import FIS.iLUVit.domain.User;
+import FIS.iLUVit.exception.AuthNumException;
+import FIS.iLUVit.exception.UserException;
+import FIS.iLUVit.repository.AuthNumberInfoRepository;
+import FIS.iLUVit.repository.UserRepository;
 import lombok.extern.slf4j.Slf4j;
 import net.nurigo.sdk.NurigoApp;
 import net.nurigo.sdk.message.model.Message;
@@ -12,7 +18,11 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.time.Duration;
+import java.time.LocalDateTime;
 import java.util.HashMap;
+import java.util.List;
+import java.util.Optional;
 import java.util.Random;
 
 @Slf4j
@@ -21,10 +31,15 @@ import java.util.Random;
 public class SignService {
 
     private final DefaultMessageService messageService;
+    private final UserRepository userRepository;
+    private final AuthNumberInfoRepository authNumberInfoRepository;
 
     @Autowired
-    public SignService(@Value("${coolsms.api_key}") String api_key, @Value("${coolsms.api_secret}") String api_secret, @Value("${coolsms.domain}") String domain){
+    public SignService(AuthNumberInfoRepository authNumberInfoRepository, UserRepository userRepository,
+                       @Value("${coolsms.api_key}") String api_key, @Value("${coolsms.api_secret}") String api_secret, @Value("${coolsms.domain}") String domain){
         this.messageService = NurigoApp.INSTANCE.initialize(api_key, api_secret, domain);
+        this.userRepository = userRepository;
+        this.authNumberInfoRepository = authNumberInfoRepository;
     }
 
     @Value("${coolsms.fromNumber}")
@@ -32,18 +47,56 @@ public class SignService {
 
     public void sendAuthNumber(String toNumber) {
 
+        User findUser = userRepository.findByPhoneNumber().orElse(null);
+
+        if (findUser != null) {
+            throw new AuthNumException("이미 서비스에 가입된 핸드폰 번호입니다.");
+        }
+
+        List<AuthNumberInfo> overlaps = authNumberInfoRepository.findOverlap(toNumber);
+
+        // 인증번호 최초 요청인 경우
+        if(overlaps.isEmpty()){
+
+            // 인증번호 보내고
+            requestCoolSMS(toNumber);
+            // 인증번호 관련 정보를 db에 저장
+            AuthNumberInfo authNumberInfo = new AuthNumberInfo(toNumber, toNumber);
+            authNumberInfoRepository.save(authNumberInfo);
+
+            // 이미 인증번호를 받았지만 제한시간이 지난 경우
+        } else if(Duration.between(overlaps.get(0).getCreatedDate(), LocalDateTime.now()).getSeconds()>180){
+
+            // 예전 인증번호 관련 정보를 db에서 지우고
+            authNumberInfoRepository.deleteExpiredNumber(toNumber);
+
+            // 인증번호 보낸 후
+            requestCoolSMS(toNumber);
+            // 인증번호 관련 정보를 db에 저장
+            AuthNumberInfo authNumberInfo = new AuthNumberInfo(toNumber, toNumber);
+            authNumberInfoRepository.save(authNumberInfo);
+
+            // 이미 인증번호를 요청하였고 제한시간이 지나지 않은 경우
+        } else{
+            throw new AuthNumException("해당 번호로 인증 진행중입니다. 인증번호를 분실하였다면 3분 후 다시 시도해주세요");
+        }
+    }
+
+    // CoolSMS 문자전송 요청
+    private void requestCoolSMS(String toNumber) {
+
+        String authNumber = createRandomNumber();
+
         Message message = new Message();
-        System.out.println("fromNumber = " + fromNumber);
         message.setFrom(fromNumber);
         message.setTo(toNumber);
-        message.setText("[아이러빗] 인증번호 " + createRandomNumber() + " 를 입력하세요.");
+        message.setText("[아이러빗] 인증번호 " + authNumber + " 를 입력하세요.");
 
         SingleMessageSentResponse response = this.messageService.sendOne(new SingleMessageSendingRequest(message));
         System.out.println("response = " + response);
-
-
     }
 
+    // 4자리 랜던 숫자 생성
     private String createRandomNumber() {
         String authNumber = "";
         Random random = new Random();
@@ -53,6 +106,4 @@ public class SignService {
         }
         return authNumber;
     }
-
-
 }

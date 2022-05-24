@@ -41,12 +41,9 @@ public class UserController {
         userService.updatePassword(id, request);
     }
 
-    @GetMapping("/authPhone")
-    public void sendAuthNumber(@RequestParam String requestNumber, HttpServletRequest request, HttpServletResponse response) {
-        signService.sendAuthNumber(requestNumber);
-
-        HttpSession session = request.getSession();
-
+    @GetMapping("/authNumber")
+    public void sendAuthNumber(@RequestParam String phoneNumber) {
+        signService.sendAuthNumber(phoneNumber);
     }
 
     @PostMapping("/signup")
