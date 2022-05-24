@@ -1,14 +1,18 @@
 package FIS.iLUVit.domain;
 
+import lombok.AccessLevel;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
 import java.time.LocalDate;
 import java.time.LocalTime;
+import java.util.ArrayList;
 import java.util.List;
 
 @Entity
 @Getter
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Table(name = "Comments")
 public class Comment extends BaseEntity {
     @Id
@@ -29,15 +33,21 @@ public class Comment extends BaseEntity {
     private User user;
 
     @OneToMany(mappedBy = "comment")
-    private List<CommentHeart> commentHearts;
+    private List<CommentHeart> commentHearts = new ArrayList<>();
 
     @OneToMany(mappedBy = "parentComment")
-    private List<Comment> subComments;
+    private List<Comment> subComments = new ArrayList<>();
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "pComment_id")
     private Comment parentComment;
 
-
-
+    public Comment(Boolean anonymous, String content, Post post, User user) {
+        this.anonymous = anonymous;
+        this.content = content;
+        this.post = post;
+        this.user = user;
+        this.date = LocalDate.now();
+        this.time = LocalTime.now();
+    }
 }

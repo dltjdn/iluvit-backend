@@ -24,6 +24,7 @@ public class ReviewService {
     private final TeacherRepository teacherRepository;
     private final ParentRepository parentRepository;
     private final CenterRepository centerRepository;
+    private final ImageService imageService;
 
     public ReviewByParentDTO findByParent(Long userId) {
         Parent findUser = parentRepository.findById(userId)
@@ -72,11 +73,13 @@ public class ReviewService {
         reviews.forEach((review) -> {
             log.info("userId: " + userId);
             Integer like = review.getReviewHearts().size();
+            String imagePath = imageService.getUserProfileDir();
+            String encodedProfileImage = imageService.getEncodedProfileImage(imagePath, userId);
             reviewByCenterDTO.getReviews().add(new ReviewByCenterDTO.ReviewCenterDto(
                review.getId(), review.getParent().getNickName(), review.getContent(), review.getScore(),
                     review.getCreateDate(), review.getCreateTime(), review.getUpdateDate(),
                     review.getUpdateTime(), review.getAnswer(), review.getAnswerCreateDate(),
-                    review.getAnswerCreateTime(), review.getAnonymous(), like
+                    review.getAnswerCreateTime(), review.getAnonymous(), like, encodedProfileImage
             ));
         });
         return reviewByCenterDTO;
