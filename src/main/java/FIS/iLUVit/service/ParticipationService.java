@@ -6,6 +6,7 @@ import FIS.iLUVit.domain.Participation;
 import FIS.iLUVit.domain.PtDate;
 import FIS.iLUVit.domain.Waiting;
 import FIS.iLUVit.domain.enumtype.Status;
+import FIS.iLUVit.event.ParticipationCancelEvent;
 import FIS.iLUVit.exception.PresentationException;
 import FIS.iLUVit.exception.UserException;
 import FIS.iLUVit.repository.ParentRepository;
@@ -14,6 +15,7 @@ import FIS.iLUVit.repository.PtDateRepository;
 import FIS.iLUVit.repository.WaitingRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -24,13 +26,13 @@ import java.util.stream.Collectors;
 @Service
 @Slf4j
 @RequiredArgsConstructor
-@Transactional
+@Transactional // 기본 Required 트랜잭션들 다 엮인다.
 public class ParticipationService {
 
     private final ParticipationRepository participationRepository;
     private final PtDateRepository ptDateRepository;
     private final ParentRepository parentRepository;
-    private final WaitingRepository waitingRepository;
+    private final ApplicationEventPublisher publisher;
 
     public Long register(Long userId, Long ptDateId) {
         // 학부모 조회
@@ -65,14 +67,8 @@ public class ParticipationService {
             throw new PresentationException("해당 사용자가 설명회 신청한적 없습니다.");
         participation.cancel();
         // 참여를 취소할 경우 대기자 중에서 가장 높은 순번이 자동으로 등록 됨
-        Integer waitingCnt = ptDate.getWaitingCnt();
-        if(waitingCnt != null || waitingCnt > 0){
-            waitingRepository.updateWaitingForParticipationCancel(ptDate);
-            Waiting waiting = waitingRepository.findMinWaitingOrder(ptDate)
-                    .orElseThrow(() -> new PresentationException("DB 적합성 오류 발생"));
-            Participation waitingToParticipate = Waiting.whenParticipationCanceled(waiting);
-            participationRepository.save(waitingToParticipate);
-            waitingRepository.delete(waiting);
+        if(ptDate.hasWaiting()){
+            publisher.publishEvent(new ParticipationCancelEvent(ptDate, null)); // 이벤트 리스너 호출
         }
         return participationId;
     }

@@ -98,4 +98,10 @@ public class PtDate extends BaseEntity {
         // 쿼리문 나가지 않기위한 waitings 초기화 안하기
         waitingCnt--;
     }
+
+    public boolean hasWaiting(){
+        if(waitingCnt != null || waitingCnt > 0)
+            return true;
+        else return false;
+    }
 }

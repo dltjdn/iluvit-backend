@@ -52,11 +52,13 @@ public class Waiting extends BaseEntity {
         });
     }
 
-    public static Waiting createAndRegister(Parent parent, PtDate ptDate) {
+    public static Waiting createAndRegister(Parent parent, PtDate ptDate, List<Participation> participations) {
         // ptDate 에 초과가 된게 맞는가?
         ptDate.canWait();
         // 1. 유효성 검사 waiting 에 존재?
         hasRegistered(ptDate.getWaitings(), parent);
+        // 2. 학부모 신청자에 포함 되어 있나?
+        Participation.hasRegistered(participations, parent);
         Waiting waiting = Waiting
                 .builder()
                 .waitingOrder(ptDate.getWaitingCnt() + 1)
