@@ -16,7 +16,10 @@ public interface AuthNumberInfoRepository extends JpaRepository<AuthNumberInfo, 
     @Query("select a from AuthNumberInfo a where a.phoneNum = :pNum order by a.createdDate")
     List<AuthNumberInfo> findOverlap(@Param("pNum") String toNumber);
 
-    Optional<AuthNumberInfo> findByPhoneNumAndAuthNum(@Param("pNum") String phoneNum, @Param("authNum") String authNum);
+    Optional<AuthNumberInfo> findByPhoneNumAndAuthNum(String phoneNum, String authNum);
 
-//    List<AuthNumberInfo> findByPhoneNum
+    @Query("select a from AuthNumberInfo a where a.phoneNum = :pNum and a.authTime is not null order by a.authTime desc")
+    List<AuthNumberInfo> findAuthComplete(@Param("pNum") String phoneNum);
+
+    void deleteAllByPhoneNum(String phoneNum);
 }

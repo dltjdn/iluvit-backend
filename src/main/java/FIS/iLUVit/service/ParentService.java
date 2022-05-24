@@ -20,6 +20,9 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.io.IOException;
+import java.time.Duration;
+import java.time.LocalDateTime;
+import java.util.List;
 
 @Slf4j
 @Service
@@ -33,9 +36,9 @@ public class ParentService {
     private final ImageService imageService;
 
     /**
-     *   작성날짜: 2022/05/13 4:43 PM
-     *   작성자: 이승범
-     *   작성내용: 부모의 메인페이지에 필요한 아이들 정보 반환
+     * 작성날짜: 2022/05/13 4:43 PM
+     * 작성자: 이승범
+     * 작성내용: 부모의 메인페이지에 필요한 아이들 정보 반환
      */
     public ChildInfoDTO ChildrenInfo(Long id) {
         Parent findParent = parentRepository.findWithChildren(id)
@@ -51,10 +54,10 @@ public class ParentService {
     }
 
     /**
-    *   작성날짜: 2022/05/16 11:42 AM
-    *   작성자: 이승범
-    *   작성내용: 부모의 마이페이지 정보 업데이트
-    */
+     * 작성날짜: 2022/05/16 11:42 AM
+     * 작성자: 이승범
+     * 작성내용: 부모의 마이페이지 정보 업데이트
+     */
     public ParentDetailResponse updateDetail(Long id, ParentDetailRequest request) throws IOException {
 
         Parent findParent = parentRepository.findById(id)
@@ -80,10 +83,10 @@ public class ParentService {
     }
 
     /**
-    *   작성날짜: 2022/05/13 4:44 PM
-    *   작성자: 이승범
-    *   작성내용: 부모의 마이페이지 정보 반환
-    */
+     * 작성날짜: 2022/05/13 4:44 PM
+     * 작성자: 이승범
+     * 작성내용: 부모의 마이페이지 정보 반환
+     */
     public ParentDetailResponse findDetail(Long id) throws IOException {
 
         Parent findParent = parentRepository.findById(id)
@@ -104,7 +107,7 @@ public class ParentService {
      */
     public void signup(SignupParentRequest request) {
 
-        if(!request.getPassword().equals(request.getPasswordCheck())){
+        if (!request.getPassword().equals(request.getPasswordCheck())) {
             throw new SignupException("비밀번호와 비밀번호확인이 서로 다릅니다.");
         }
 
@@ -113,8 +116,16 @@ public class ParentService {
             throw new SignupException("중복된 닉네임입니다.");
         }
 
-//        authNumberInfoRepository.findByPhoneNum
-//        if()
+        List<AuthNumberInfo> authCompletes = authNumberInfoRepository.findAuthComplete(request.getPhoneNum());
+        if (authCompletes.isEmpty()) {
+            throw new SignupException("핸드폰 인증이 완료되지 않았습니다.");
+        } else if (Duration.between(authCompletes.get(0).getAuthTime(), LocalDateTime.now()).getSeconds() > (60 * 60)) {
+            throw new SignupException("핸드폰 인증시간이 만료되었습니다. 핸드폰 인증을 다시 해주세요");
+        }
 
+        Parent parent = request.createParent();
+        parentRepository.save(parent);
+
+        authNumberInfoRepository.deleteAllByPhoneNum(request.getPhoneNum());
     }
 }

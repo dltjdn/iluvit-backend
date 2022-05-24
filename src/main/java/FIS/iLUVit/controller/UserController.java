@@ -52,6 +52,11 @@ public class UserController {
         signService.sendAuthNumber(phoneNumber);
     }
 
+    /**
+    *   작성날짜: 2022/05/24 3:24 PM
+    *   작성자: 이승범
+    *   작성내용: 인증번호를 통한 핸드폰 인증
+    */
     @PostMapping("/authNumber")
     public void AuthenticateAuthNum(@RequestBody AuthenticateAuthNumRequest request) {
         signService.authenticateAuthNum(request);

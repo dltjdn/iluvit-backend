@@ -1,24 +1,28 @@
 package FIS.iLUVit.controller.dto;
 
-import FIS.iLUVit.domain.Parent;
-import FIS.iLUVit.domain.embeddable.Theme;
+import FIS.iLUVit.domain.Center;
+import FIS.iLUVit.domain.Teacher;
+import FIS.iLUVit.domain.enumtype.Approval;
 import FIS.iLUVit.domain.enumtype.Auth;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 @Data
-public class SignupParentRequest {
+@NoArgsConstructor
+public class SignupTeacherRequest {
+    private String nickname;
     private String loginId;
     private String password;
     private String passwordCheck;
-    private String nickname;
-    private String name;
     private String phoneNum;
     private String emailAddress;
-    private Theme theme;
-    private Integer interestAge;
+    private String name;
+    private Auth auth;
+    private Approval approval;
+    private Long centerId;
 
-    public Parent createParent() {
-        return Parent.builder()
+    public Teacher createTeacher(Center center){
+        return Teacher.builder()
                 .nickName(nickname)
                 .loginId(loginId)
                 .password(password)
@@ -26,9 +30,9 @@ public class SignupParentRequest {
                 .hasProfileImg(null)
                 .emailAddress(emailAddress)
                 .name(name)
-                .theme(theme)
-                .interestAge(interestAge)
-                .auth(Auth.PARENT)
+                .approval(approval)
+                .center(center)
                 .build();
     }
+
 }

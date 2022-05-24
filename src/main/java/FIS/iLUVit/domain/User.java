@@ -26,6 +26,7 @@ public class User extends BaseEntity{
     @Column(unique = true)
     protected String loginId;             // 로그인 할때 입력할 아이디
     protected String password;            // 비밀번호
+    @Column(unique = true)
     protected String phoneNumber;         // 핸드폰 번호
     protected Boolean hasProfileImg;      // 프사 있니?
     protected String emailAddress;        // 이메일

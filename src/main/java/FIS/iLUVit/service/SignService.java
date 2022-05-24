@@ -33,7 +33,7 @@ public class SignService {
 
     @Autowired
     public SignService(AuthNumberInfoRepository authNumberInfoRepository, UserRepository userRepository,
-                       @Value("${coolsms.api_key}") String api_key, @Value("${coolsms.api_secret}") String api_secret, @Value("${coolsms.domain}") String domain){
+                       @Value("${coolsms.api_key}") String api_key, @Value("${coolsms.api_secret}") String api_secret, @Value("${coolsms.domain}") String domain) {
         this.messageService = NurigoApp.INSTANCE.initialize(api_key, api_secret, domain);
         this.userRepository = userRepository;
         this.authNumberInfoRepository = authNumberInfoRepository;
@@ -43,10 +43,10 @@ public class SignService {
     private String fromNumber;
 
     /**
-    *   작성날짜: 2022/05/24 10:38 AM
-    *   작성자: 이승범
-    *   작성내용: 인증번호 전송 로직
-    */
+     * 작성날짜: 2022/05/24 10:38 AM
+     * 작성자: 이승범
+     * 작성내용: 인증번호 전송 로직
+     */
     public void sendAuthNumber(String toNumber) {
 
         User findUser = userRepository.findByPhoneNumber(toNumber).orElse(null);
@@ -60,7 +60,7 @@ public class SignService {
         List<AuthNumberInfo> overlaps = authNumberInfoRepository.findOverlap(toNumber);
 
         // 인증번호 최초 요청인 경우
-        if(overlaps.isEmpty()){
+        if (overlaps.isEmpty()) {
 
             // 인증번호 보내고
             requestCoolSMS(toNumber, authNumber);
@@ -69,7 +69,7 @@ public class SignService {
             authNumberInfoRepository.save(authNumberInfo);
 
             // 이미 인증번호를 받았지만 제한시간이 지난 경우
-        } else if(Duration.between(overlaps.get(0).getCreatedDate(), LocalDateTime.now()).getSeconds()>180){
+        } else if (Duration.between(overlaps.get(0).getCreatedDate(), LocalDateTime.now()).getSeconds() > 180) {
 
             // 예전 인증번호 관련 정보를 db에서 지우고
             authNumberInfoRepository.deleteExpiredNumber(toNumber);
@@ -80,30 +80,25 @@ public class SignService {
             authNumberInfoRepository.save(authNumberInfo);
 
             // 이미 인증번호를 요청하였고 제한시간이 지나지 않은 경우
-        } else{
+        } else {
             throw new AuthNumException("해당 번호로 인증 진행중입니다. 인증번호를 분실하였다면 3분 후 다시 시도해주세요");
         }
     }
 
     /**
-    *   작성날짜: 2022/05/24 10:40 AM
-    *   작성자: 이승범
-    *   작성내용: 인증번호 입력로직
-    */
+     * 작성날짜: 2022/05/24 10:40 AM
+     * 작성자: 이승범
+     * 작성내용: 인증번호 입력로직
+     */
     public void authenticateAuthNum(AuthenticateAuthNumRequest request) {
-
-        System.out.println("request = " + request.getAuthNum());
-        System.out.println("request = " + request.getPhoneNum());
 
         AuthNumberInfo authNumberInfo = authNumberInfoRepository.findByPhoneNumAndAuthNum(request.getPhoneNum(), request.getAuthNum()).orElse(null);
 
         if (authNumberInfo == null) {
             throw new AuthNumException("인증번호가 일치하지 않습니다.");
-        }
-        else if(Duration.between(authNumberInfo.getCreatedDate(), LocalDateTime.now()).getSeconds()>180) {
+        } else if (Duration.between(authNumberInfo.getCreatedDate(), LocalDateTime.now()).getSeconds() > 180) {
             throw new AuthNumException("인증번호가 만료되었습니다.");
-        }
-        else{
+        } else {
             authNumberInfo.AuthComplete();
         }
     }
@@ -124,7 +119,7 @@ public class SignService {
     private String createRandomNumber() {
         String authNumber = "";
         Random random = new Random();
-        for(int i=0; i<4; i++){
+        for (int i = 0; i < 4; i++) {
             String ran = Integer.toString(random.nextInt(10));
             authNumber += ran;
         }
