@@ -17,6 +17,8 @@ public class ImageService {
     private String centerInfoDir;
     @Value("${file.presentationDir}")
     private String presentationInfoDir;
+    @Value("${file.postDir}")
+    private String postInfoDir;
 
     @Value("${file.userProfileImagePath}")
     private String userProfileImagePath;
@@ -37,6 +39,13 @@ public class ImageService {
      */
     public String getPresentationDir(Long id){
         return presentationInfoDir  + String.valueOf(id) + "/";
+    }
+
+    /**
+     * post Id를 넣으면 해당 post 의 이미지들이 있는 디렉토리 경로 반환
+     */
+    public String getPostDir(Long id){
+        return postInfoDir  + String.valueOf(id) + "/";
     }
 
     /**
