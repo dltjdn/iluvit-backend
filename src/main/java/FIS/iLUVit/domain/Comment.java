@@ -1,11 +1,14 @@
 package FIS.iLUVit.domain;
 
+import lombok.Getter;
+
 import javax.persistence.*;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.List;
 
 @Entity
+@Getter
 @Table(name = "Comments")
 public class Comment extends BaseEntity {
     @Id
@@ -14,6 +17,7 @@ public class Comment extends BaseEntity {
     private LocalDate date;          // 게시글 작성 날짜
     private LocalTime time;          // 게시글 작성 시간
     private Boolean anonymous;       // 익명 댓글 여부
+    private String content;
 
 
     @ManyToOne(fetch = FetchType.LAZY)

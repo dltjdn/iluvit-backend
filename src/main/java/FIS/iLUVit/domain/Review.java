@@ -8,7 +8,9 @@ import javax.persistence.*;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @Entity
 @Getter
@@ -45,13 +47,16 @@ public class Review extends BaseEntity{
     @JoinColumn(name = "center_id")
     private Center center;
 
-    @OneToMany(mappedBy = "review")
+    @OneToMany(mappedBy = "review", cascade = CascadeType.ALL)
     private List<ReviewHeart> reviewHearts = new ArrayList<>();
 
     public static Review createReview(String content, Integer score, Boolean anonymous, Parent parent, Center center) {
         Review review = new Review();
         review.content = content;
+        review.createDate = LocalDate.now();
         review.createTime = LocalTime.now();
+        review.updateDate = LocalDate.now();
+        review.updateTime = LocalTime.now();
         review.score = score;
         review.anonymous = anonymous;
         review.parent = parent;
@@ -61,12 +66,14 @@ public class Review extends BaseEntity{
 
     public void updateContent(String content) {
         this.content = content;
+        this.updateDate = LocalDate.now();
         this.updateTime = LocalTime.now();
     }
 
-    public void updateAnswer(String comment) {
+    public void updateAnswer(String comment, Teacher teacher) {
         this.answer = comment;
         this.answerCreateDate = LocalDate.now();
         this.answerCreateTime = LocalTime.now();
+        this.teacher = teacher;
     }
 }

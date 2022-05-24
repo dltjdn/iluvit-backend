@@ -81,6 +81,25 @@ public class initDB {
             em.persist(child2);
             em.persist(child3);
 
+            Review review1 = Review.createReview("친절해요", 5, false, parent1, center1);
+            Review review2 = Review.createReview("좋아요", 5, false, parent2, center1);
+            Review review3 = Review.createReview("거리가 가까워요", 4, false, parent3, center1);
+            Review review4 = Review.createReview("가격이 싸요", 5, false, parent1, center2);
+            Review review5 = Review.createReview("좋아요", 4, true, parent2, center2);
+            Review review6 = Review.createReview("놀이터가 좋아요", 5, false, parent3, center3);
+            em.persist(review1);
+            em.persist(review2);
+            em.persist(review3);
+            em.persist(review4);
+            em.persist(review5);
+            em.persist(review6);
+
+            ReviewHeart reviewHeart1 = new ReviewHeart(review1, parent1);
+            ReviewHeart reviewHeart2 = new ReviewHeart(review1, parent2);
+            ReviewHeart reviewHeart3 = new ReviewHeart(review1, parent3);
+            em.persist(reviewHeart1);
+            em.persist(reviewHeart2);
+            em.persist(reviewHeart3);
             // 설명회 추가
             Presentation presentation1 = Presentation.createPresentation(LocalDate.now(), LocalDate.now(), "이승범네 집", "설명회 입니다.", 5, 3, center1);
             Presentation presentation2 = Presentation.createPresentation(LocalDate.now(), LocalDate.now(), "이승범네 집", "설명회 입니다.", 5, 3, center1);

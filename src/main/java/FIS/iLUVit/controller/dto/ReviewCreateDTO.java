@@ -9,7 +9,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class ReviewCreateDTO {
 
-    private Long userId;
+    private Long centerId;
     private String content;
     private Integer score;
     private Boolean anonymous;

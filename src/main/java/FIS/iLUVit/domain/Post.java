@@ -1,11 +1,18 @@
 package FIS.iLUVit.domain;
 
+import lombok.AccessLevel;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+
 import javax.persistence.*;
 import java.time.LocalDate;
 import java.time.LocalTime;
+import java.util.ArrayList;
 import java.util.List;
 
 @Entity
+@Getter
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Post extends BaseEntity {
     @Id
     @GeneratedValue
@@ -30,11 +37,28 @@ public class Post extends BaseEntity {
     private User user;
 
     @OneToMany(mappedBy = "post")
-    private List<PostHeart> postHearts;
+    private List<PostHeart> postHearts = new ArrayList<>();
 
     @OneToMany(mappedBy = "post")
-    private List<Comment> comments;
+    private List<Comment> comments = new ArrayList<>();
 
     @OneToMany(mappedBy = "post")
-    private List<ScrapPost> scrapPosts;
+    private List<ScrapPost> scrapPosts = new ArrayList<>();
+
+    public Post(String title, String content, Boolean anonymous, Integer commentCnt, Integer heartCnt, Integer imgCnt, User user) {
+        this.title = title;
+        this.content = content;
+        this.anonymous = anonymous;
+        this.date = LocalDate.now();
+        this.time = LocalTime.now();
+        this.commentCnt = commentCnt;
+        this.heartCnt = heartCnt;
+        this.imgCnt = imgCnt;
+        this.user = user;
+    }
+
+    public void updateBoard(Board board) {
+        this.board = board;
+        board.getPosts().add(this);
+    }
 }
