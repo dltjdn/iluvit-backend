@@ -41,7 +41,6 @@ public class SignService {
         SingleMessageSentResponse response = this.messageService.sendOne(new SingleMessageSendingRequest(message));
         System.out.println("response = " + response);
 
-
     }
 
     private String createRandomNumber() {
