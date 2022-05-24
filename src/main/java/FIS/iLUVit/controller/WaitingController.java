@@ -15,8 +15,8 @@ public class WaitingController {
     private final WaitingService waitingService;
 
     @PostMapping("/waiting")
-    public void register(@Login Long userId, @RequestBody WaitingRegisterDto dto){
+    public Long register(@Login Long userId, @RequestBody WaitingRegisterDto dto){
         Long ptDateId = dto.getPtDateId();
-        waitingService.register(userId, ptDateId);
+        return waitingService.register(userId, ptDateId);
     }
 }

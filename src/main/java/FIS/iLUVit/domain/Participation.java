@@ -48,7 +48,7 @@ public class Participation extends BaseEntity {
         parent.getParticipations().add(participation);
 
         // 연관 관계 등록 및 participationCnt + 1
-        PtDate.acceptParticipation(participation);
+        ptDate.acceptParticipation(participation);
 
         return participation;
     }
@@ -62,10 +62,10 @@ public class Participation extends BaseEntity {
         });
     }
 
-    // 취소할 경우 연관관계를 해제해야한다.
-    public static Participation cancel(Participation participation) {
-        PtDate.cancelParticipation(participation);
-        participation.status = Status.CANCELED;
-        return participation;
+    // 취소할 경우 연관관계 해제 안하고 상태만 바꿈
+    public Participation cancel() {
+        ptDate.cancelParticipation();
+        status = Status.CANCELED;
+        return this;
     }
 }

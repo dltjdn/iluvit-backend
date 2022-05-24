@@ -19,7 +19,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -64,10 +63,11 @@ public class ParticipationService {
         // 학부모가 참여를 신청한게 맞는지 조회
         if (!participation.getParent().equals(parent))
             throw new PresentationException("해당 사용자가 설명회 신청한적 없습니다.");
-        Participation.cancel(participation);
+        participation.cancel();
         // 참여를 취소할 경우 대기자 중에서 가장 높은 순번이 자동으로 등록 됨
         Integer waitingCnt = ptDate.getWaitingCnt();
-        if(waitingCnt != null || waitingCnt <= 0){
+        if(waitingCnt != null || waitingCnt > 0){
+            waitingRepository.updateWaitingForParticipationCancel(ptDate);
             Waiting waiting = waitingRepository.findMinWaitingOrder(ptDate)
                     .orElseThrow(() -> new PresentationException("DB 적합성 오류 발생"));
             Participation waitingToParticipate = Waiting.whenParticipationCanceled(waiting);

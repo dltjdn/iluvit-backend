@@ -13,8 +13,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.Optional;
-
 @Service
 @Transactional
 @AllArgsConstructor
@@ -25,13 +23,15 @@ public class WaitingService {
     private final PtDateRepository ptDateRepository;
     private final ParentRepository parentRepository;
 
-    public void register(Long userId, Long ptDateId) {
+    public Long register(Long userId, Long ptDateId) {
         // 학부모 조회
         Parent parent = parentRepository.findByIdAndFetchPresentation(userId)
                 .orElseThrow(() -> new UserException("해당 사용자가 존재하지 않습니다"));
         // 설명회 회차 조회
         PtDate ptDate = ptDateRepository.findByIdJoinWaiting(ptDateId)
                 .orElseThrow(() -> new PresentationException("해당 설명회는 존재하지 않습니다"));
-
+        Waiting waiting = Waiting.createAndRegister(parent, ptDate);
+        waitingRepository.save(waiting);
+        return waiting.getId();
     }
 }

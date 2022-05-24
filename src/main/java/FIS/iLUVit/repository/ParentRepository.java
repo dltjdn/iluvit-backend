@@ -15,7 +15,7 @@ public interface ParentRepository extends JpaRepository<Parent, Long> {
     Optional<Parent> findByNickName(String nickname);
 
     @Query("select distinct parent from Parent parent " +
-            "join fetch parent.participations as participation " +
+            "left join fetch parent.participations as participation " +
             "left join fetch participation.ptDate as ptDate " +
             "left join fetch ptDate.presentation as presentation " +
             "left join fetch presentation.center " +

@@ -1,5 +1,6 @@
 package FIS.iLUVit.domain;
 
+import FIS.iLUVit.exception.PresentationException;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -12,7 +13,8 @@ import java.util.List;
 @NoArgsConstructor
 @Getter
 public class PtDate extends BaseEntity {
-    @Id @GeneratedValue
+    @Id
+    @GeneratedValue
     private Long id;
 
     private LocalDate date;
@@ -43,7 +45,7 @@ public class PtDate extends BaseEntity {
         this.presentation = presentation;
     }
 
-    public static PtDate register(Presentation presentation, LocalDate date, String time, Integer ablePersonNum){
+    public static PtDate register(Presentation presentation, LocalDate date, String time, Integer ablePersonNum) {
         return PtDate.builder()
                 .date(date)
                 .time(time)
@@ -66,23 +68,34 @@ public class PtDate extends BaseEntity {
     }
 
     // 일정을 취소할 경우 participantCnt 값을 줄인다
-    public static void cancelParticipation(Participation participation) {
-        participation.getPtDate().participantCnt--;
+    public void cancelParticipation() {
+        participantCnt--;
+    }
+
+    public void canWait() {
+        if (ablePersonNum > participantCnt)
+            throw new PresentationException("정원이 가득 차지 않아 대기를 할 필요없습니다. 설명회 신청을 해주세요");
+    }
+
+    public void acceptWaiting(Waiting waiting) {
+        waitingCnt++;
+        waitings.add(waiting);
     }
 
     // 등록이 가능한지 여부 체크
     public boolean canRegister() {
-        if(ablePersonNum <= participantCnt) return false;
+        if (ablePersonNum <= participantCnt) return false;
         else return true;
     }
 
     // 설명회 신청 할경우 participantCnt 값을 1증가
-    public static void acceptParticipation(Participation participation) {
-        participation.getPtDate().participantCnt++;
-        participation.getPtDate().participations.add(participation);
+    public void acceptParticipation(Participation participation) {
+        participantCnt++;
+        participations.add(participation);
     }
 
-    public static void cancelWaiting(Waiting waiting){
-        waiting.getPtDate().waitingCnt--;
+    public void cancelWaitingForAcceptingParticipation() {
+        // 쿼리문 나가지 않기위한 waitings 초기화 안하기
+        waitingCnt--;
     }
 }

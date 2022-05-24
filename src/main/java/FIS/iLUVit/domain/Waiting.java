@@ -1,19 +1,21 @@
 package FIS.iLUVit.domain;
 
-import lombok.AllArgsConstructor;
+import FIS.iLUVit.exception.PresentationException;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
 import javax.persistence.*;
+import java.util.List;
 
 @Entity
 @NoArgsConstructor
-@AllArgsConstructor
 @Slf4j
 @Getter
 public class Waiting extends BaseEntity {
-    @Id @GeneratedValue
+    @Id
+    @GeneratedValue
     private Long id;
 
     private Integer waitingOrder;
@@ -26,13 +28,45 @@ public class Waiting extends BaseEntity {
     @JoinColumn(name = "ptDate_id")
     private PtDate ptDate;
 
+    @Builder
+    public Waiting(Long id, Integer waitingOrder, Parent parent, PtDate ptDate) {
+        this.id = id;
+        this.waitingOrder = waitingOrder;
+        this.parent = parent;
+        this.ptDate = ptDate;
+    }
+
     public static Participation whenParticipationCanceled(Waiting waiting) {
         Parent parent = waiting.parent;
-        log.info("쿼리가 나갈까??");
+        // 영속성 관리 되어서 ptDate 가져올때 쿼리 안나감
         PtDate ptDate = waiting.ptDate;
-        log.info("쿼리가 나갈까??");
-        PtDate.cancelWaiting(waiting);
+        ptDate.cancelWaitingForAcceptingParticipation();
         Participation.hasRegistered(ptDate.getParticipations(), parent);
         return Participation.createAndRegister(parent, ptDate);
     }
+
+    public static void hasRegistered(List<Waiting> waitings, Parent parent) {
+        waitings.forEach(waiting -> {
+            if (waiting.parent.equals(parent))
+                throw new PresentationException("이미 대기등록을 마친 학부모 입니다");
+        });
+    }
+
+    public static Waiting createAndRegister(Parent parent, PtDate ptDate) {
+        // ptDate 에 초과가 된게 맞는가?
+        ptDate.canWait();
+        // 1. 유효성 검사 waiting 에 존재?
+        hasRegistered(ptDate.getWaitings(), parent);
+        Waiting waiting = Waiting
+                .builder()
+                .waitingOrder(ptDate.getWaitingCnt() + 1)
+                .parent(parent)
+                .ptDate(ptDate)
+                .build();
+        ptDate.acceptWaiting(waiting);
+        return waiting;
+    }
+
+
+
 }
