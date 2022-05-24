@@ -3,6 +3,7 @@ package FIS.iLUVit.controller;
 import FIS.iLUVit.config.argumentResolver.Login;
 import FIS.iLUVit.controller.dto.ParentDetailResponse;
 import FIS.iLUVit.controller.dto.ParentDetailRequest;
+import FIS.iLUVit.controller.dto.SignupParentRequest;
 import FIS.iLUVit.service.ParentService;
 import FIS.iLUVit.controller.dto.ChildInfoDTO;
 import lombok.RequiredArgsConstructor;
@@ -46,5 +47,10 @@ public class ParentController {
     @PutMapping("/parent/detail")
     public ParentDetailResponse updateParentDetail(@Login Long id, @ModelAttribute ParentDetailRequest request) throws IOException {
         return parentService.updateDetail(id, request);
+    }
+
+    @PostMapping("/signup/parent")
+    public void signupParent(@RequestBody SignupParentRequest request) {
+        parentService.signup(request);
     }
 }

@@ -2,11 +2,17 @@ package FIS.iLUVit.service;
 
 import FIS.iLUVit.controller.dto.ParentDetailResponse;
 import FIS.iLUVit.controller.dto.ParentDetailRequest;
+import FIS.iLUVit.controller.dto.SignupParentRequest;
+import FIS.iLUVit.domain.AuthNumberInfo;
 import FIS.iLUVit.domain.Parent;
+import FIS.iLUVit.domain.User;
 import FIS.iLUVit.domain.embeddable.Theme;
+import FIS.iLUVit.exception.SignupException;
 import FIS.iLUVit.exception.UserException;
+import FIS.iLUVit.repository.AuthNumberInfoRepository;
 import FIS.iLUVit.repository.ParentRepository;
 import FIS.iLUVit.controller.dto.ChildInfoDTO;
+import FIS.iLUVit.repository.UserRepository;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -22,6 +28,8 @@ import java.io.IOException;
 public class ParentService {
 
     private final ParentRepository parentRepository;
+    private final UserRepository userRepository;
+    private final AuthNumberInfoRepository authNumberInfoRepository;
     private final ImageService imageService;
 
     /**
@@ -87,5 +95,26 @@ public class ParentService {
         response.setProfileImg(imageService.getEncodedProfileImage(imagePath, id));
 
         return response;
+    }
+
+    /**
+     * 작성날짜: 2022/05/24 11:40 AM
+     * 작성자: 이승범
+     * 작성내용: 학부모 회원가입
+     */
+    public void signup(SignupParentRequest request) {
+
+        if(!request.getPassword().equals(request.getPasswordCheck())){
+            throw new SignupException("비밀번호와 비밀번호확인이 서로 다릅니다.");
+        }
+
+        User reduplicatedUser = userRepository.findByLoginId(request.getLoginId()).orElse(null);
+        if (reduplicatedUser != null) {
+            throw new SignupException("중복된 닉네임입니다.");
+        }
+
+//        authNumberInfoRepository.findByPhoneNum
+//        if()
+
     }
 }

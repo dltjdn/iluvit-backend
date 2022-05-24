@@ -4,8 +4,7 @@ import FIS.iLUVit.controller.dto.ParentDetailRequest;
 import FIS.iLUVit.domain.embeddable.Theme;
 import FIS.iLUVit.domain.enumtype.Approval;
 import FIS.iLUVit.domain.enumtype.Auth;
-import lombok.Data;
-import lombok.Getter;
+import lombok.*;
 import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
 import org.springframework.security.core.parameters.P;
@@ -16,6 +15,7 @@ import java.util.List;
 @Entity
 @Getter
 @Data
+@NoArgsConstructor
 @OnDelete(action = OnDeleteAction.CASCADE)
 public class Parent extends User {
 
@@ -27,19 +27,33 @@ public class Parent extends User {
 
     private Integer interestAge;            // 관심나이
 
+    @Builder
+    public Parent(String nickName, String loginId, String password, String phoneNumber, Boolean hasProfileImg, String emailAddress, String name, Theme theme, Integer interestAge, Auth auth) {
+        this.nickName = nickName;
+        this.loginId = loginId;
+        this.password = password;
+        this.phoneNumber = phoneNumber;
+        this.hasProfileImg = hasProfileImg;
+        this.emailAddress = emailAddress;
+        this.name = name;
+        this.theme = theme;
+        this.interestAge = interestAge;
+        this.auth = auth;
+    }
+
     public static Parent createParent(String nickName, String loginId, String password, String phoneNumber, Boolean hasProfileImg, String emailAddress, String name, Theme theme, Integer interestAge, Auth auth) {
-        Parent parent = new Parent();
-        parent.nickName = nickName;
-        parent.loginId = loginId;
-        parent.password = password;
-        parent.phoneNumber = phoneNumber;
-        parent.hasProfileImg = hasProfileImg;
-        parent.emailAddress = emailAddress;
-        parent.name = name;
-        parent.theme = theme;
-        parent.interestAge = interestAge;
-        parent.auth = auth;
-        return parent;
+        return Parent.builder()
+                .nickName(nickName)
+                .loginId(loginId)
+                .password(password)
+                .phoneNumber(phoneNumber)
+                .hasProfileImg(hasProfileImg)
+                .emailAddress(emailAddress)
+                .name(name)
+                .theme(theme)
+                .interestAge(interestAge)
+                .auth(auth)
+                .build();
     }
 
     public void updateDetail(ParentDetailRequest request, Theme theme) {

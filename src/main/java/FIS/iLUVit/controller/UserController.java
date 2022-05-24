@@ -1,6 +1,7 @@
 package FIS.iLUVit.controller;
 
 import FIS.iLUVit.config.argumentResolver.Login;
+import FIS.iLUVit.controller.dto.AuthenticateAuthNumRequest;
 import FIS.iLUVit.controller.dto.UpdatePasswordRequest;
 import FIS.iLUVit.filter.LoginResponse;
 import FIS.iLUVit.service.SignService;
@@ -41,16 +42,19 @@ public class UserController {
         userService.updatePassword(id, request);
     }
 
-    @GetMapping("/authPhone")
-    public void sendAuthNumber(@RequestParam String requestNumber, HttpServletRequest request, HttpServletResponse response) {
-        signService.sendAuthNumber(requestNumber);
-
-        HttpSession session = request.getSession();
-
+    /**
+    *   작성날짜: 2022/05/24 10:39 AM
+    *   작성자: 이승범
+    *   작성내용: 인증번호 전송
+    */
+    @GetMapping("/authNumber")
+    public void sendAuthNumber(@RequestParam String phoneNumber) {
+        signService.sendAuthNumber(phoneNumber);
     }
 
-    @PostMapping("/signup")
-    public void signUp() {
-
+    @PostMapping("/authNumber")
+    public void AuthenticateAuthNum(@RequestBody AuthenticateAuthNumRequest request) {
+        signService.authenticateAuthNum(request);
     }
+
 }

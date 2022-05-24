@@ -1,6 +1,7 @@
 package FIS.iLUVit.uesrdetails;
 
 import FIS.iLUVit.domain.User;
+import FIS.iLUVit.exception.UserException;
 import FIS.iLUVit.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -17,7 +18,7 @@ public class PrincipalDetailsService implements UserDetailsService {
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        User user = userRepository.findByLoginId(username);
+        User user = userRepository.findByLoginId(username).orElse(null);
         return new PrincipalDetails(user);
     }
 }

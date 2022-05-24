@@ -63,7 +63,7 @@ public class initDB {
             em.persist(teacher5);
 
             // 학부모 추가
-            Parent parent1 = Parent.createParent("qwe", "qwe", encoder.encode("asd"), "qwe", false, "qwe@qwe.com", "qwe", new Theme(), 5, Auth.PARENT);
+            Parent parent1 = Parent.createParent("qwe", "qwe", encoder.encode("asd"), "asd", false, "qwe@qwe.com", "qwe", new Theme(), 5, Auth.PARENT);
             Parent parent2 = Parent.createParent("ewq", "ewq", encoder.encode("asd"), "ewq", false, "ewq@ewq.com", "ewq", new Theme(), 5, Auth.PARENT);
             Parent parent3 = Parent.createParent("weq", "weq", encoder.encode("asd"), "weq", false, "weq@weq.com", "weq", new Theme(), 5, Auth.PARENT);
             em.persist(parent1);
