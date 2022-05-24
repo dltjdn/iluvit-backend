@@ -9,16 +9,19 @@ import FIS.iLUVit.repository.BoardRepository;
 import FIS.iLUVit.repository.PostRepository;
 import FIS.iLUVit.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 import java.util.Objects;
+import java.util.stream.Collectors;
 
 @Service
 @Transactional
 @RequiredArgsConstructor
+@Slf4j
 public class PostService {
     private final PostRepository postRepository;
     private final UserRepository userRepository;
@@ -59,11 +62,38 @@ public class PostService {
 
         Post findPost = postRepository.findByIdWithUserAndBoardAndCenter(postId)
                 .orElseThrow(() -> new IllegalStateException("존재하지 않는 게시글"));
-        String postPath = imageService.getPostDir(postId);
-        List<String> encodedImages = imageService.getEncodedInfoImage(postPath, findPost.getImgCnt());
+        return getPostResponseDto(findPost);
+    }
 
-        String profilePath = imageService.getUserProfileDir();
-        String encodedProfileImage = imageService.getEncodedProfileImage(profilePath, findPost.getUser().getId());
-        return new GetPostResponse(findPost, encodedImages, encodedProfileImage);
+    public List<GetPostResponse> searchByKeyword(String input) {
+        log.info(input);
+        List<Post> posts;
+        if (input.isEmpty() || input == null) {
+            posts = postRepository.findAll();
+        } else {
+            posts = postRepository.findByKeyword(input);
+        }
+        return posts.stream().map(p -> getPostResponseDto(p))
+                .collect(Collectors.toList());
+    }
+
+    public List<GetPostResponse> searchByKeywordAndCenter(Long centerId, String input) {
+        List<Post> posts = postRepository.findByKeywordAndCenter(centerId, input);
+        return posts.stream().map(p -> getPostResponseDto(p))
+                .collect(Collectors.toList());
+    }
+
+    public List<GetPostResponse> searchByKeywordAndBoard(Long boardId, String input) {
+        List<Post> posts = postRepository.findByKeywordAndBoard(boardId, input);
+        return posts.stream().map(p -> getPostResponseDto(p))
+                .collect(Collectors.toList());
+    }
+
+    private GetPostResponse getPostResponseDto(Post post) {
+        String postDir = imageService.getPostDir(post.getId());
+        List<String> encodedInfoImage = imageService.getEncodedInfoImage(postDir, post.getImgCnt());
+        String userProfileDir = imageService.getUserProfileDir();
+        String encodedProfileImage = imageService.getEncodedProfileImage(userProfileDir, post.getUser().getId());
+        return new GetPostResponse(post, encodedInfoImage, encodedProfileImage);
     }
 }

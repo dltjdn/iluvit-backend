@@ -1,6 +1,7 @@
 package FIS.iLUVit.controller.dto;
 
 import FIS.iLUVit.domain.Post;
+import com.querydsl.core.annotations.QueryProjection;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -36,6 +37,7 @@ public class GetPostResponse {
     private List<GetCommentResponse> comments;
     private Integer commentCnt;
 
+    @QueryProjection
     public GetPostResponse(Post post, List<String> encodedImages, String encodedProfileImage) {
         this.nickname = post.getUser().getNickName();
         this.date = post.getDate();

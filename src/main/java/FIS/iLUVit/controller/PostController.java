@@ -34,22 +34,22 @@ public class PostController {
         return postService.findById(postId);
     }
 
-//    @GetMapping("/post/all/search")
-//    public List<GetPostResponse> searchPost(@RequestParam("input") String input) {
-//
-//    }
-//
-//    @GetMapping("/post/search/inCenter")
-//    public List<GetPostResponse> searchPost(
-//            @RequestParam("center_id") Long centerId,
-//            @RequestParam("input") String input) {
-//
-//    }
-//
-//    @GetMapping("/post/search/inBoard")
-//    public List<GetPostResponse> searchPost(
-//            @RequestParam("board_id") Long boardId,
-//            @RequestParam("input") String input) {
-//
-//    }
+    @GetMapping("/post/all/search")
+    public List<GetPostResponse> searchPost(@RequestParam("input") String input) {
+        return postService.searchByKeyword(input);
+    }
+
+    @GetMapping("/post/search/inCenter")
+    public List<GetPostResponse> searchPostByCenter(
+            @RequestParam("center_id") Long centerId,
+            @RequestParam("input") String input) {
+        return postService.searchByKeywordAndCenter(centerId, input);
+    }
+
+    @GetMapping("/post/search/inBoard")
+    public List<GetPostResponse> searchPostByBoard(
+            @RequestParam("board_id") Long boardId,
+            @RequestParam("input") String input) {
+        return postService.searchByKeywordAndBoard(boardId, input);
+    }
 }
