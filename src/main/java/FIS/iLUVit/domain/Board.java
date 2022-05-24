@@ -1,11 +1,13 @@
 package FIS.iLUVit.domain;
 
 import FIS.iLUVit.domain.enumtype.BoardKind;
+import lombok.Getter;
 
 import javax.persistence.*;
 import java.util.List;
 
 @Entity
+@Getter
 public class Board extends BaseEntity{
     @Id @GeneratedValue
     private Long id;

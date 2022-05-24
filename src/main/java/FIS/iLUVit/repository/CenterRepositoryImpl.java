@@ -22,13 +22,14 @@ public class CenterRepositoryImpl extends CenterQueryMethod implements CenterRep
     private final JPAQueryFactory jpaQueryFactory;
 
     @Override
-    public Slice<CenterPreview> findByFilter(List<Area> areas, Theme theme, Integer interestedAge, String kindOf, Pageable pageable) {
+    public Slice<CenterPreview> findByFilter(List<Area> areas, Theme theme, Integer interestedAge, String kindOf, Pageable pageable){
         List<CenterPreview> content = jpaQueryFactory.select(new QCenterPreview(center))
                 .from(center)
                 .where(areasIn(areas)
                         .and(kindOfEq(kindOf))
                         .and(themeEq(theme))
                         .and(interestedAgeEq(interestedAge)))
+                .orderBy(center.score.asc())
                 .offset(pageable.getOffset())
                 .limit(pageable.getPageSize() + 1)
                 .fetch();
@@ -55,6 +56,17 @@ public class CenterRepositoryImpl extends CenterQueryMethod implements CenterRep
                         .and(themeEq(theme))
                         .and(interestedAgeEq(interestedAge))
                         .and(kindOfEq(kindOf)))
+                .fetch();
+    }
+
+    @Override
+    public List<Long> findByThemeAndAgeOnly3(Theme theme, Pageable pageable) {
+        return jpaQueryFactory.select(center.id)
+                .from(center)
+                .where(themeEq(theme))
+                .orderBy(center.score.asc())
+                .offset(pageable.getOffset())
+                .limit(pageable.getPageSize())
                 .fetch();
     }
 

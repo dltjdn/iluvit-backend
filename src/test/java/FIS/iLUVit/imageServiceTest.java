@@ -9,8 +9,10 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
 
+import javax.persistence.criteria.CriteriaBuilder;
 import java.io.IOException;
 import java.net.MalformedURLException;
+import java.util.ArrayList;
 import java.util.List;
 
 @SpringBootTest
@@ -20,6 +22,7 @@ public class imageServiceTest {
     ImageService imageService;
 
     String path = "/Users/hyeonseung-gu/Desktop/center/";
+    String path1 = "/Users/hyeonseung-gu/Desktop/centerProfile/";
 
     @Test
     @DisplayName("폴더 생성")
@@ -31,4 +34,12 @@ public class imageServiceTest {
         List<String> encodedInfoImage = imageService.getEncodedInfoImage(path, 5);
     }
 
+    @Test
+    public void list(){
+        List<Long> integers = new ArrayList<>();
+        integers.add(1L);
+        integers.add(2L);
+        integers.add(3L);
+        imageService.getEncodedProfileImage(path1, integers);
+    }
 }

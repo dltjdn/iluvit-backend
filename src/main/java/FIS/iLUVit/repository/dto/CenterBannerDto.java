@@ -23,4 +23,15 @@ public class CenterBannerDto {
     private Boolean signed;                 // 원장의 가입 유무
     private Boolean recruit;                // 원아 모집중
     private Integer waitingNum;             // 원아 모집이 false 일때 대기자 수
+    private String profileImage;
+
+    public CenterBannerDto(Long id, String name, Integer maxChildCnt, Integer curChildCnt, Boolean signed, Boolean recruit, Integer waitingNum) {
+        this.id = id;
+        this.name = name;
+        this.maxChildCnt = maxChildCnt;
+        this.curChildCnt = curChildCnt;
+        this.signed = signed;
+        this.recruit = recruit;
+        this.waitingNum = waitingNum;
+    }
 }

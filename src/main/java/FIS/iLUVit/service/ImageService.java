@@ -1,5 +1,6 @@
 package FIS.iLUVit.service;
 
+import FIS.iLUVit.exception.ImageException;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.IOUtils;
 import org.springframework.beans.factory.annotation.Value;
@@ -7,10 +8,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.*;
-import java.util.ArrayList;
-import java.util.Base64;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
 
 @Slf4j
 @Component
@@ -20,6 +18,8 @@ public class ImageService {
     private String centerInfoDir;
     @Value("${file.presentationDir}")
     private String presentationInfoDir;
+    @Value("${file.postDir}")
+    private String postInfoDir;
 
     @Value("${file.userProfileImagePath}")
     private String userProfileImagePath;
@@ -27,6 +27,9 @@ public class ImageService {
     private String centerProfileImagePath;
     @Value("${file.childProfileImagePath}")
     private String childProfileImagePath;
+
+
+
 
     /**
      * Center Id를 넣으면 해당 Center 의 이미지들이 있는 디렉토리 경로 반환
@@ -39,7 +42,14 @@ public class ImageService {
      * presentation Id를 넣으면 해당 presentation 의 이미지들이 있는 디렉토리 경로 반환
      */
     public String getPresentationDir(Long id){
-        return presentationInfoDir;
+        return presentationInfoDir  + String.valueOf(id) + "/";
+    }
+
+    /**
+     * post Id를 넣으면 해당 post 의 이미지들이 있는 디렉토리 경로 반환
+     */
+    public String getPostDir(Long id){
+        return postInfoDir  + String.valueOf(id) + "/";
     }
 
     /**
@@ -67,7 +77,7 @@ public class ImageService {
     /**
      * 해당 domain이 가지고 있는 디렉토리의 경로와 이미지 갯수를 인자값으로 주면 base64로 인코딩된 문자열 반환
      */
-    public List<String> getEncodedInfoImage(String imageDirPath, Integer cnt) throws IOException {
+    public List<String> getEncodedInfoImage(String imageDirPath, Integer cnt) {
         List<String> images = new ArrayList<>();
         for(int i = 1; i <= cnt; i++){
             int finalI = i;
@@ -77,9 +87,16 @@ public class ImageService {
             };
             File file = new File(imageDirPath);
             File[] files = file.listFiles(filter);
+            if(files == null) throw new ImageException("해당 image가 없습니다");
             for (File temp : files){
                 if(temp.isFile()){
-                    String encodeImage = encodeImage(temp);
+                    String encodeImage = null;
+                    try {
+                        encodeImage = encodeImage(temp);
+                    } catch (IOException e) {
+                        log.error("{} 시설 이미지 로드중 {}에서 예외 발생", imageDirPath, temp.getName());
+                        encodeImage = null;
+                    }
                     if(encodeImage != null){
                         images.add(encodeImage);
                     }
@@ -94,7 +111,7 @@ public class ImageService {
     *   작성자: 이승범
     *   작성내용: profileImg를 base64로 인고딩된 문자열 반환
     */
-    public String getEncodedProfileImage(String imageDir, Long id) throws IOException {
+    public String getEncodedProfileImage(String imageDir, Long id) {
         FilenameFilter filter = (f, name) -> {
             String regex = "^" + id + "[.].+";
             return name.matches(regex);
@@ -108,9 +125,35 @@ public class ImageService {
             }
             findFile = files[0];
             return encodeImage(findFile);
-        } catch (NullPointerException | ArrayIndexOutOfBoundsException e) {
+        } catch (NullPointerException | ArrayIndexOutOfBoundsException | IOException e) {
             return null;
         }
+    }
+
+    public Map<Long, String> getEncodedProfileImage(String imageDir, List<Long> idList){
+        Map map = new HashMap<Long, String>();
+        idList.forEach(id -> map.put(id, null));
+        FilenameFilter filter = (f, name) -> {
+            String regex = "^(";
+            for(int i = 0; i < idList.size(); i++){
+                if(i == idList.size() - 1){
+                    regex += idList.get(i);
+                }
+                else regex = regex + idList.get(i) + '|';
+            }
+            regex += ")[.].+";
+            return name.matches(regex);
+        };
+        File dir = new File(imageDir);
+        File[] files = dir.listFiles(filter);
+        for(File file : files){
+            try {
+                map.put(Long.valueOf(extractFileName(file.getName())), encodeImage(file));
+            } catch (IOException e) {
+                continue;
+            }
+        }
+        return map;
     }
 
     /**
@@ -130,7 +173,7 @@ public class ImageService {
     /**
      * multipart List로 받고 domain의 디렉터리 경로를 입력하면 파일 자동으로 저장
      */
-    public void saveInfoImage(List<MultipartFile> images, String destDir) throws IOException {
+    public void saveInfoImage(List<MultipartFile> images, String destDir) {
         mkDir(destDir);
         clear(destDir);
         int name = 1;
@@ -138,7 +181,11 @@ public class ImageService {
             if(!image.isEmpty()){
                 String originalFileName = image.getOriginalFilename();
                 String extension = extractExt(originalFileName);
-                image.transferTo(new File(destDir + String.valueOf(name) + "." + extension));
+                try {
+                    image.transferTo(new File(destDir + String.valueOf(name) + "." + extension));
+                } catch (IOException e) {
+                    log.error("{} 에 이미지 저장 오류 발생", destDir);
+                }
                 name++;
             }
         }
@@ -157,6 +204,11 @@ public class ImageService {
     private String extractExt(String originalFilename) {
         int pos = originalFilename.lastIndexOf(".");
         return originalFilename.substring(pos + 1);
+    }
+
+    private String extractFileName(String originalFilename){
+        int pos = originalFilename.lastIndexOf(".");
+        return originalFilename.substring(0, pos);
     }
 
     public void mkDir(String path){

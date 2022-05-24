@@ -26,6 +26,7 @@ public class CenterAndDistancePreview {
     private Double longitude;               // 경도
     private Double latitude;                // 위도
     private Double distance;
+    private String image;
 
     public CenterAndDistancePreview(Long id, String name, String owner, String director, String estType, String tel, String startTime, String endTime, Integer minAge, Integer maxAge, String address, Area area, Double longitude, Double latitude) {
         this.id = id;

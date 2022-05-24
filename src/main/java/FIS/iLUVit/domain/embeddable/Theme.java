@@ -6,6 +6,9 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.Embeddable;
+import java.lang.reflect.Field;
+import java.util.ArrayList;
+import java.util.List;
 
 @Embeddable
 @AllArgsConstructor
@@ -29,4 +32,16 @@ public class Theme {
     private Boolean coding;                 // 코딩
     private Boolean manner;                 // 예절
     private Boolean genius;                 // 양재
+
+    public List<String> trueList() throws IllegalAccessException {
+        List<String> trueList = new ArrayList<>();
+        Field[] fields = Theme.class.getDeclaredFields();
+        for(Field field : fields){
+            field.setAccessible(true);
+            if((Boolean) field.get(this)){
+                trueList.add(field.getName());
+            }
+        }
+        return trueList;
+    }
 }

@@ -28,7 +28,6 @@ spring:
         physical-strategy: org.hibernate.boot.model.naming.PhysicalNamingStrategyStandardImpl
     properties:
       hibernate:
-        show_sql: true
         format_sql: true
         default_batch_fetch_size: 100
   # 작성자 이승범, 작성내용: coolsms api 정보 불러오기

@@ -1,8 +1,14 @@
 package FIS.iLUVit.domain;
 
+import lombok.AccessLevel;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+
 import javax.persistence.*;
 
 @Entity
+@Getter
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class PostHeart extends BaseEntity {
     @Id
     @GeneratedValue
@@ -15,4 +21,10 @@ public class PostHeart extends BaseEntity {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "post_id")
     private Post post;
+
+    public PostHeart(User user, Post post) {
+        this.user = user;
+        this.post = post;
+        post.getPostHearts().add(this);
+    }
 }

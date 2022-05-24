@@ -10,6 +10,7 @@ import org.hibernate.annotations.OnDeleteAction;
 import org.springframework.security.core.parameters.P;
 
 import javax.persistence.*;
+import java.util.ArrayList;
 import java.util.List;
 
 @Entity
@@ -26,6 +27,9 @@ public class Parent extends User {
     private Theme theme;                    // 테마 (학부모 관심사)
 
     private Integer interestAge;            // 관심나이
+
+    @OneToMany(mappedBy = "parent")
+    private List<Participation> participations = new ArrayList<>();
 
     @Builder
     public Parent(String nickName, String loginId, String password, String phoneNumber, Boolean hasProfileImg, String emailAddress, String name, Theme theme, Integer interestAge, Auth auth) {
@@ -62,4 +66,6 @@ public class Parent extends User {
         this.interestAge = request.getInterestAge();
         this.theme = theme;
     }
+
+
 }

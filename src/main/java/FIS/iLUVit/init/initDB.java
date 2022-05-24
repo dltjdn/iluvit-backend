@@ -36,16 +36,19 @@ public class initDB {
 
         public void dbInit() {
 
+            Theme theme = new Theme(true, false, true, false, true, true, false, false, false, false, true, false, false, false, false, true, false);
+
+
             // 시설 추가
             Kindergarten center1 = Kindergarten.createKindergarten("떡잎유치원", "민병관", "민병관", "민간", "ㅁㄴㅇ", "2022-02-20", "02-123-1234", "www.www.www", "09:00", "19:00",
                     3, 90, "서울시 금천구 뉴티캐슬", "152-052", new Area("서울시", "금천구"), 123.123, 123.123, "흙찡구놀이, 비둘기잡기", 99999, 88888, LocalDate.now(), false,
-                    false, 0, "gkgkgkgk", 0, 0, "얼쥡", null, null, null, null, null, null);
+                    false, 0, "gkgkgkgk", 3, 0, "얼쥡", null, null, null, null, theme, null);
             Kindergarten center2 = Kindergarten.createKindergarten("떡잎유치원", "민병관", "민병관", "민간", "ㅁㄴㅇ", "2022-02-20", "02-123-1234", "www.www.www", "09:00", "19:00",
                     3, 90, "서울시 금천구 뉴티캐슬", "152-052", new Area("서울시", "금천구"), 123.123, 123.123, "흙찡구놀이, 비둘기잡기", 99999, 88888, LocalDate.now(), false,
-                    false, 0, "gkgkgkgk", 0, 0, "얼쥡", null, null, null, null, null, null);
+                    false, 0, "gkgkgkgk", 3, 0, "얼쥡", null, null, null, null, theme, null);
             Kindergarten center3 = Kindergarten.createKindergarten("떡잎유치원", "민병관", "민병관", "민간", "ㅁㄴㅇ", "2022-02-20", "02-123-1234", "www.www.www", "09:00", "19:00",
                     3, 90, "서울시 금천구 뉴티캐슬", "152-052", new Area("서울시", "금천구"), 123.123, 123.123, "흙찡구놀이, 비둘기잡기", 99999, 88888, LocalDate.now(), false,
-                    false, 0, "gkgkgkgk", 0, 0, "얼쥡", null, null, null, null, null, null);
+                    false, 0, "gkgkgkgk", 3, 0, "얼쥡", null, null, null, null, theme, null);
             em.persist(center1);
             em.persist(center2);
             em.persist(center3);
@@ -63,9 +66,10 @@ public class initDB {
             em.persist(teacher5);
 
             // 학부모 추가
-            Parent parent1 = Parent.createParent("qwe", "qwe", encoder.encode("asd"), "asd6", false, "qwe@qwe.com", "qwe", new Theme(), 5, Auth.PARENT);
-            Parent parent2 = Parent.createParent("ewq", "ewq", encoder.encode("asd"), "ewq7", false, "ewq@ewq.com", "ewq", new Theme(), 5, Auth.PARENT);
-            Parent parent3 = Parent.createParent("weq", "weq", encoder.encode("asd"), "weq8", false, "weq@weq.com", "weq", new Theme(), 5, Auth.PARENT);
+            Parent parent1 = Parent.createParent("qwe", "qwe", encoder.encode("asd"), "asd6", false, "qwe@qwe.com", "qwe", theme, 5, Auth.PARENT);
+            Parent parent2 = Parent.createParent("ewq", "ewq", encoder.encode("asd"), "ewq7", false, "ewq@ewq.com", "ewq", theme, 5, Auth.PARENT);
+            Parent parent3 = Parent.createParent("weq", "weq", encoder.encode("asd"), "weq8", false, "weq@weq.com", "weq", theme, 5, Auth.PARENT);
+
             em.persist(parent1);
             em.persist(parent2);
             em.persist(parent3);
@@ -78,6 +82,25 @@ public class initDB {
             em.persist(child2);
             em.persist(child3);
 
+            Review review1 = Review.createReview("친절해요", 5, false, parent1, center1);
+            Review review2 = Review.createReview("좋아요", 5, false, parent2, center1);
+            Review review3 = Review.createReview("거리가 가까워요", 4, false, parent3, center1);
+            Review review4 = Review.createReview("가격이 싸요", 5, false, parent1, center2);
+            Review review5 = Review.createReview("좋아요", 4, true, parent2, center2);
+            Review review6 = Review.createReview("놀이터가 좋아요", 5, false, parent3, center3);
+            em.persist(review1);
+            em.persist(review2);
+            em.persist(review3);
+            em.persist(review4);
+            em.persist(review5);
+            em.persist(review6);
+
+            ReviewHeart reviewHeart1 = new ReviewHeart(review1, parent1);
+            ReviewHeart reviewHeart2 = new ReviewHeart(review1, parent2);
+            ReviewHeart reviewHeart3 = new ReviewHeart(review1, parent3);
+            em.persist(reviewHeart1);
+            em.persist(reviewHeart2);
+            em.persist(reviewHeart3);
             // 설명회 추가
             Presentation presentation1 = Presentation.createPresentation(LocalDate.now(), LocalDate.now(), "이승범네 집", "설명회 입니다.", 5, 3, center1);
             Presentation presentation2 = Presentation.createPresentation(LocalDate.now(), LocalDate.now(), "이승범네 집", "설명회 입니다.", 5, 3, center1);
@@ -87,9 +110,9 @@ public class initDB {
             em.persist(presentation3);
 
             // 설명회의 회차 추가
-            PtDate ptDate1 = PtDate.createPtDate(LocalDate.now(), "오후 1시", 13, 0, presentation1);
-            PtDate ptDate2 = PtDate.createPtDate(LocalDate.now(), "오후 2시", 10, 1, presentation1);
-            PtDate ptDate3 = PtDate.createPtDate(LocalDate.now(), "오후 3시", 14, 0, presentation2);
+            PtDate ptDate1 = PtDate.createPtDate(LocalDate.now(), "오후 1시", 1, 0, presentation1);
+            PtDate ptDate2 = PtDate.createPtDate(LocalDate.now(), "오후 2시", 3, 0, presentation1);
+            PtDate ptDate3 = PtDate.createPtDate(LocalDate.now(), "오후 3시", 2, 0, presentation2);
             em.persist(ptDate1);
             em.persist(ptDate2);
             em.persist(ptDate3);

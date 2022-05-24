@@ -13,6 +13,7 @@ import FIS.iLUVit.service.dto.PtDateDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -26,6 +27,7 @@ public class PresentationService {
 
     private final PresentationRepository presentationRepository;
     private final CenterRepository centerRepository;
+    private final ImageService imageService;
 
     public List<PresentationResponseDto> findPresentationByCenterId(Long centerId) {
         List<PresentationWithPtDatesDto> queryDtos = presentationRepository.findByCenterAndDateWithPtDates(centerId, LocalDate.now());
@@ -34,38 +36,39 @@ public class PresentationService {
                         mapping(queryDto -> new PtDateDto(queryDto), toList())
                 ))
                 .entrySet().stream()
-                .map(e -> new PresentationResponseDto(e.getKey(), e.getValue()))
+                .map(e -> {
+                    PresentationResponseDto presentationResponseDto = new PresentationResponseDto(e.getKey(), e.getValue());
+                    Long presentationId = presentationResponseDto.getPresentationId();
+                    String presentationDir = imageService.getPresentationDir(presentationId);
+                    presentationResponseDto.setImages(
+                            imageService.getEncodedInfoImage(presentationDir, presentationResponseDto.getImgCnt()));
+                    return presentationResponseDto;
+                })
                 .collect(toList());
     }
 
     /**
      * 설명회 저장
      */
-    public Presentation saveWithPtDate(PresentationRequestRequestFormDto request) {
+    public Presentation saveWithPtDate(PresentationRequestRequestFormDto request, List<MultipartFile> images) {
         Center center = centerRepository.getById(request.getCenterId());
-        Presentation presentation = Presentation.builder()
-                .startDate(request.getStartDate())
-                .endDate(request.getEndDate())
-                .content(request.getContent())
-                .place(request.getPlace())
-                .imgCnt(request.getImgCnt())
-                .videoCnt(request.getVideoCnt())
-                .center(center)
-                .build();
-
+        Presentation presentation = PresentationRequestRequestFormDto.toPresentation(request);
+        presentation.updateImageCnt(images.size())
+                .updateCenter(center);
         List<PtDate> ptDates = presentation.getPtDates();
 
         request.getPtDateDtos().forEach(ptDateRequestDto -> {
-            ptDates.add(
-                    PtDate.builder()
-                            .date(ptDateRequestDto.getDate())
-                            .time(ptDateRequestDto.getTime())
-                            .ablePersonNum(ptDateRequestDto.getAblePersonNum())
-                            .presentation(presentation)
-                            .build());
+            ptDates.add(PtDate
+                    .register(presentation,
+                            ptDateRequestDto.getDate(),
+                            ptDateRequestDto.getTime(),
+                            ptDateRequestDto.getAblePersonNum()));
         });
 
         presentationRepository.save(presentation);
+        String presentationDir = imageService.getPresentationDir(presentation.getId());
+        imageService.saveInfoImage(images, presentationDir);
+
         return presentation;
     }
 
