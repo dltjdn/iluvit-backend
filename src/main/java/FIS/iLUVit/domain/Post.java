@@ -61,4 +61,14 @@ public class Post extends BaseEntity {
         this.board = board;
         board.getPosts().add(this);
     }
+
+    public void updatePostHeart(PostHeart postHeart) {
+        this.postHearts.add(postHeart);
+        this.heartCnt++;
+    }
+
+    public void updateComment(Comment comment) {
+        this.comments.add(comment);
+        this.commentCnt++;
+    }
 }

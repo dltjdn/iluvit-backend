@@ -46,8 +46,18 @@ public class Comment extends BaseEntity {
         this.anonymous = anonymous;
         this.content = content;
         this.post = post;
+        post.updateComment(this);
         this.user = user;
         this.date = LocalDate.now();
         this.time = LocalTime.now();
+    }
+
+    public void updateParentComment(Comment parentComment) {
+        this.parentComment = parentComment;
+        parentComment.getSubComments().add(this);
+    }
+
+    public void updateContent(String content) {
+        this.content = content;
     }
 }
