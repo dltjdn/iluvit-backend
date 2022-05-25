@@ -37,7 +37,7 @@ public class PostService {
                 .orElseThrow(() -> new IllegalStateException("존재하지 않는 보드"));
 
         Post post = new Post(request.getTitle(), request.getContent(), request.getAnonymous(),
-                0, 0, imgSize, findBoard, findUser);
+                0, 0, imgSize, 0, findBoard, findUser);
 
         Post savedPost = postRepository.save(post); // 게시글 저장 -> Id 생김
 

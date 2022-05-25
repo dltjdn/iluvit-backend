@@ -129,11 +129,11 @@ public class initDB {
             em.persist(board4);
             em.persist(board5);
 
-            Post post1 = new Post("제목이다", "내용이다", false, 0, 0, 0, board2, teacher1);
-            Post post2 = new Post("안녕", "먹칠하잖아", false, 0, 0, 0, board2, parent1);
-            Post post3 = new Post("게시글제목", "계속먹칠하잖아", false, 0, 0, 0, board2, teacher2);
-            Post post4 = new Post("타이틀", "abcdefg", false, 0, 0, 0, board2, parent2);
-            Post post5 = new Post("다와가", "때려밟았지마티즈엑셀", false, 0, 0, 0, board2, teacher3);
+            Post post1 = new Post("제목이다", "내용이다", false, 0, 0, 0, 0, board2, teacher1);
+            Post post2 = new Post("안녕", "먹칠하잖아", false, 0, 0, 0, 0, board2, parent1);
+            Post post3 = new Post("게시글제목", "계속먹칠하잖아", false, 0, 0, 0, 0, board2, teacher2);
+            Post post4 = new Post("타이틀", "abcdefg", false, 0, 0, 0, 0, board2, parent2);
+            Post post5 = new Post("다와가", "때려밟았지마티즈엑셀", false, 0, 0, 0, 0, board2, teacher3);
             em.persist(post1);
             em.persist(post2);
             em.persist(post3);

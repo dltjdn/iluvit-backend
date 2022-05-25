@@ -36,16 +36,16 @@ public class Post extends BaseEntity {
     @JoinColumn(name = "user_id")
     private User user;
 
-    @OneToMany(mappedBy = "post")
+    @OneToMany(mappedBy = "post", cascade = CascadeType.ALL)
     private List<PostHeart> postHearts = new ArrayList<>();
 
-    @OneToMany(mappedBy = "post")
+    @OneToMany(mappedBy = "post", cascade = CascadeType.ALL)
     private List<Comment> comments = new ArrayList<>();
 
-    @OneToMany(mappedBy = "post")
+    @OneToMany(mappedBy = "post", cascade = CascadeType.ALL)
     private List<ScrapPost> scrapPosts = new ArrayList<>();
 
-    public Post(String title, String content, Boolean anonymous, Integer commentCnt, Integer heartCnt, Integer imgCnt, Board board, User user) {
+    public Post(String title, String content, Boolean anonymous, Integer commentCnt, Integer heartCnt, Integer imgCnt, Integer videoCnt, Board board, User user) {
         this.title = title;
         this.content = content;
         this.anonymous = anonymous;
@@ -54,6 +54,7 @@ public class Post extends BaseEntity {
         this.commentCnt = commentCnt;
         this.heartCnt = heartCnt;
         this.imgCnt = imgCnt;
+        this.videoCnt = videoCnt;
         this.board = board;
         this.user = user;
     }
