@@ -12,6 +12,7 @@ import FIS.iLUVit.repository.PtDateRepository;
 import FIS.iLUVit.repository.UserRepository;
 import FIS.iLUVit.repository.dto.PresentationPreviewDto;
 import FIS.iLUVit.repository.dto.PresentationWithPtDatesDto;
+import FIS.iLUVit.service.dto.ParentInfoForDirectorDto;
 import FIS.iLUVit.service.dto.PresentationQuryDto;
 import FIS.iLUVit.service.dto.PtDateDto;
 import lombok.RequiredArgsConstructor;
@@ -22,6 +23,7 @@ import org.springframework.web.multipart.MultipartFile;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import static java.util.stream.Collectors.*;
 
@@ -58,7 +60,9 @@ public class PresentationService {
      * 설명회 저장
      */
     public Presentation saveWithPtDate(PresentationRequestRequestFormDto request, List<MultipartFile> images, Long userId) {
-        userRepository.findTeacherById(userId).orElseThrow(() -> new UserException("존재하지 않는 유저입니다")).canWrite();
+        userRepository.findTeacherById(userId)
+                .orElseThrow(() -> new UserException("존재하지 않는 유저입니다"))
+                .canWrite(request.getCenterId());
         if (presentationRepository.findByCenterIdAndDate(request.getCenterId(), LocalDate.now()) != null)
             throw new PresentationException("아직 유효한 설명회가 있습니다");
         Center center = centerRepository.getById(request.getCenterId());
@@ -82,25 +86,33 @@ public class PresentationService {
         return presentation;
     }
 
-    public List<PresentationPreviewDto> findPresentationListByCenterId(Long centerId) {
+    public List<PresentationPreviewDto> findPresentationListByCenterId(Long userId, Long centerId) {
+        //
+        userRepository.findTeacherById(userId)
+                .orElseThrow(() -> new UserException("존재하지 않는 유저입니다"))
+                .canRead(centerId);
         return presentationRepository.findByCenterId(centerId);
     }
 
     public void findPresentationDetail(Long presentationId, Long userId) {
-        userRepository.findTeacherById(userId)
-                .orElseThrow(() -> new UserException("존재하지 않는 유저입니다")).canWrite();
+        //
         Presentation presentation = presentationRepository.findByIdAndJoinPtDate(presentationId)
                 .orElseThrow(() -> new PresentationException("존재하지않는 설명회 입니다"));
+        userRepository.findTeacherById(userId)
+                .orElseThrow(() -> new UserException("존재하지 않는 유저입니다"))
+                .canWrite(presentation.getCenter().getId());
         String presentationDir = imageService.getPresentationDir(presentationId);
         List<String> encodedInfoImage = imageService.getEncodedInfoImage(presentationDir, presentation.getImgCnt());
         new PresentationResponseDto(presentation, encodedInfoImage);
     }
 
     public Presentation modifyWithPtDate(PresentationModifyRequestDto request, List<MultipartFile> images, Long userId) {
-        userRepository.findTeacherById(userId)
-                .orElseThrow(() -> new UserException("존재하지 않는 유저입니다")).canWrite();
+        //
         Presentation presentation = presentationRepository.findByIdAndJoinPtDate(request.getPresentationId())
                 .orElseThrow(() -> new PresentationException("존재하지 않는 설명회 입니다."));
+        userRepository.findTeacherById(userId)
+                .orElseThrow(() -> new UserException("존재하지 않는 유저입니다"))
+                .canWrite(presentation.getCenter().getId());
         Map<Long, PtDate> ptDateMap = presentation.getPtDates()
                 .stream()
                 .collect(toMap(PtDate::getId,
@@ -120,5 +132,31 @@ public class PresentationService {
         String presentationDir = imageService.getPresentationDir(presentation.getId());
         imageService.saveInfoImage(images, presentationDir);
         return presentation;
+    }
+
+    public List<ParentInfoForDirectorDto> findPtDateParticipatingParents(Long userId, Long ptDateId) {
+        //
+        PtDate ptDate = ptDateRepository.findByIdAndJoinParticipation(ptDateId)
+                .orElseThrow(() -> new PresentationException("존재하지 않는 설명회 회차 입니다."));
+        userRepository.findTeacherById(userId)
+                .orElseThrow(() -> new UserException("존재하지 않는 유저입니다"))
+                .canRead(ptDate.getPresentation().getCenter().getId());
+        return ptDate.getParticipations().stream()
+                .map(participation -> new ParentInfoForDirectorDto(participation.getParent()))
+                .collect(Collectors.toList());
+
+    }
+
+    public List<ParentInfoForDirectorDto> findPtDateWaitingParents(Long userId, Long ptDateId) {
+        //
+        PtDate ptDate = ptDateRepository.findByIdAndJoinWaiting(ptDateId)
+                .orElseThrow(() -> new PresentationException("존재하지 않는 설명회 회차 입니다."));
+        userRepository.findTeacherById(userId)
+                .orElseThrow(() -> new UserException("존재하지 않는 유저입니다"))
+                .canRead(ptDate.getPresentation().getCenter().getId());
+
+        return ptDate.getWaitings().stream()
+                .map(participation -> new ParentInfoForDirectorDto(participation.getParent()))
+                .collect(Collectors.toList());
     }
 }

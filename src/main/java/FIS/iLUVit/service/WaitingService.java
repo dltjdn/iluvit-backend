@@ -33,7 +33,7 @@ public class WaitingService {
         Parent parent = parentRepository.findByIdAndFetchPresentation(userId)
                 .orElseThrow(() -> new UserException("해당 사용자가 존재하지 않습니다"));
         // 설명회 회차 조회
-        PtDate ptDate = ptDateRepository.findByIdJoinWaiting(ptDateId)
+        PtDate ptDate = ptDateRepository.findByIdAndJoinWaiting(ptDateId)
                 .orElseThrow(() -> new PresentationException("해당 설명회는 존재하지 않습니다"));
         List<Participation> participations = participationRepository.findByptDateAndStatus(ptDate);
         Waiting waiting = Waiting.createAndRegister(parent, ptDate, participations);

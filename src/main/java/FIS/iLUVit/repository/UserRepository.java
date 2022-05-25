@@ -22,6 +22,7 @@ public interface UserRepository extends JpaRepository<User, Long> {
     Optional<Teacher> findTeacherAndJoinPresentationById(@Param("userId") Long userId, @Param("date") LocalDate date);
 
     @Query("select teacher from Teacher teacher " +
+            "join fetch teacher.center " +
             "where teacher.id = :userId")
     Optional<Teacher> findTeacherById(@Param("userId") Long userId);
 

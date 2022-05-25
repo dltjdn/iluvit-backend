@@ -85,12 +85,15 @@ public class CenterController {
         return new CenterThemeBannerResponseDto(centerService.findCenterForParent(userId));
     }
 
-    @PatchMapping("/center/{center_id}")
-    public Long modifyCenter(@PathVariable("center_id") Long id,
+    /**
+     * 시설 정보 수정
+     */
+    @PatchMapping("/center/{centerId}")
+    public Long modifyCenter(@PathVariable("centerId") Long centerId,
                              @Login Long userId,
                              @RequestPart CenterModifyRequestDto requestDto,
                              @RequestPart List<MultipartFile> infoFiles){
-        return centerService.modifyCenter(id, userId, requestDto, infoFiles);
+        return centerService.modifyCenter(centerId, userId, requestDto, infoFiles);
     }
 
 }

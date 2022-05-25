@@ -5,6 +5,7 @@ import FIS.iLUVit.controller.dto.*;
 import FIS.iLUVit.repository.dto.PresentationPreviewDto;
 import FIS.iLUVit.service.PresentationService;
 import FIS.iLUVit.service.UserService;
+import FIS.iLUVit.service.dto.ParentInfoForDirectorDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
@@ -63,13 +64,23 @@ public class PresentationController {
      * @return
      */
     @GetMapping("/presentation/center/{centerId}/list")
-    public List<PresentationPreviewDto> findMyCenterPresentationList(@PathVariable("centerId") Long centerId){
-        return presentationService.findPresentationListByCenterId(centerId);
+    public List<PresentationPreviewDto> findMyCenterPresentationList(@Login Long userId, @PathVariable("centerId") Long centerId){
+        return presentationService.findPresentationListByCenterId(userId, centerId);
     }
 
     /**
      * 설명회를 신청한 사람들의 목록 반환 이름, 전화번호
      */
-//    @GetMapping()
-//    public void findParentParticipate(@Login Long userId, )
+    @GetMapping("/presentation/ptDate/{ptDateId}/participating/parentList")
+    public List<ParentInfoForDirectorDto> findParentParticipate(@Login Long userId, @PathVariable("ptDateId") Long ptDateId){
+        return presentationService.findPtDateParticipatingParents(userId, ptDateId);
+    }
+
+    /**
+     * 대기를 신청한 사람들의 목록 반환 이름, 전화번호
+     */
+    @GetMapping("/presentation/ptDate/{ptDateId}/waiting/parentList")
+    public List<ParentInfoForDirectorDto> findParentWait(@Login Long userId, @PathVariable("ptDateId") Long ptDateId){
+        return presentationService.findPtDateWaitingParents(userId, ptDateId);
+    }
 }

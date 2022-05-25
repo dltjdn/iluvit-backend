@@ -4,7 +4,6 @@ import FIS.iLUVit.controller.dto.UpdateTeacherDetailRequest;
 import FIS.iLUVit.domain.enumtype.Approval;
 import FIS.iLUVit.domain.enumtype.Auth;
 import FIS.iLUVit.exception.PresentationException;
-import com.querydsl.core.types.dsl.BooleanExpression;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
@@ -53,6 +52,7 @@ public class Teacher extends User {
                 .name(name)
                 .approval(approval)
                 .center(center)
+                .auth(auth)
                 .build();
     }
 
@@ -66,13 +66,13 @@ public class Teacher extends User {
         this.emailAddress = request.getEmailAddress();
     }
 
-    public void canWrite() {
-        if(approval != Approval.ACCEPT)
+    public void canWrite(Long centerId) {
+        if(approval != Approval.ACCEPT || centerId != center.getId())
             throw new PresentationException("시설에 대해 작성 권한이 없습니다.");
     }
 
-    public void canRead(){
-        if(approval != Approval.ACCEPT)
-            throw new PresentationException("시설 상세정보 읽을 권한이 없습니다.");
+    public void canRead(Long centerId){
+        if(approval != Approval.ACCEPT || centerId != center.getId())
+            throw new PresentationException("시설 읽을 권한이 없습니다.");
     }
 }
