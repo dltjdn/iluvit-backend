@@ -12,7 +12,7 @@ import java.util.Optional;
 
 public interface UserRepository extends JpaRepository<User, Long> {
 
-    public User findByLoginId(String loginId);
+    Optional<User> findByLoginId(String loginId);
 
     @Query("select teacher from Teacher teacher " +
             "join fetch teacher.center as center " +
@@ -24,4 +24,6 @@ public interface UserRepository extends JpaRepository<User, Long> {
     @Query("select teacher from Teacher teacher " +
             "where teacher.id = :userId")
     Optional<Teacher> findTeacherById(@Param("userId") Long userId);
+
+    Optional<User> findByPhoneNumber(String phoneNumber);
 }

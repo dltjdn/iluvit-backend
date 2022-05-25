@@ -70,6 +70,10 @@ public class JwtAuthorizationFilter extends BasicAuthenticationFilter {
 
         // 권한 구분을 위해 강제로 시큐리티의 세션에 접근하여 Authentication 객체를 저장 - 일회성으로 사용하기 때문에 세션에 저장해도 됨
         SecurityContextHolder.getContext().setAuthentication(authentication);
+
+        // JWT 최신화
+        response.addHeader("Authorization", "Bearer " + createToken(user));
+        System.out.println("@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@");
         // 다음 필터로 진행
         chain.doFilter(request, response);
     }

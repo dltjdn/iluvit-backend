@@ -30,7 +30,13 @@ public class ReviewByCenterDTO {
         private LocalTime updateTime;
 
         private String answer;
+        private LocalDate answerCreateDate;
+        private LocalTime answerCreateTime;
 
         private Boolean anonymous;
+
+        private Integer like; // 좋아요 수
+
+        private String profileImage;
     }
 }

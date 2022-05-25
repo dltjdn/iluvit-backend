@@ -1,6 +1,6 @@
 package FIS.iLUVit.service;
 
-import FIS.iLUVit.controller.dto.PatchPasswordRequest;
+import FIS.iLUVit.controller.dto.UpdatePasswordRequest;
 import FIS.iLUVit.domain.User;
 import FIS.iLUVit.exception.InputException;
 import FIS.iLUVit.exception.UserException;
@@ -35,7 +35,7 @@ public class UserService {
     *   작성자: 이승범
     *   작성내용: 비밀번호 변경
     */
-    public void updatePassword(Long id, PatchPasswordRequest request) {
+    public void updatePassword(Long id, UpdatePasswordRequest request) {
 
         User findUser = userRepository.findById(id)
                 .orElseThrow(() -> new UserException("유효하지 않은 토큰으로의 사용자 접근입니다."));
