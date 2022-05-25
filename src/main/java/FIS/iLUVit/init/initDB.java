@@ -115,6 +115,52 @@ public class initDB {
             em.persist(ptDate1);
             em.persist(ptDate2);
             em.persist(ptDate3);
+
+            Post post1 = new Post("제목이다", "내용이다", false, 0, 0, 0, teacher1);
+            Post post2 = new Post("안녕", "먹칠하잖아", false, 0, 0, 0, parent1);
+            Post post3 = new Post("게시글제목", "계속먹칠하잖아", false, 0, 0, 0, teacher2);
+            Post post4 = new Post("타이틀", "abcdefg", false, 0, 0, 0, parent2);
+            Post post5 = new Post("다와가", "때려밟았지마티즈엑셀", false, 0, 0, 0, teacher3);
+            em.persist(post1);
+            em.persist(post2);
+            em.persist(post3);
+            em.persist(post4);
+            em.persist(post5);
+
+            PostHeart postHeart1 = new PostHeart(teacher4, post1);
+            PostHeart postHeart2 = new PostHeart(parent3, post1);
+            PostHeart postHeart3 = new PostHeart(teacher1, post2);
+            PostHeart postHeart4 = new PostHeart(parent2, post2);
+            em.persist(postHeart1);
+            em.persist(postHeart2);
+            em.persist(postHeart3);
+            em.persist(postHeart4);
+
+            Comment comment1 = new Comment(false, "댓글이다", post1, parent1);
+            Comment comment2 = new Comment(false, "댓글이다2", post1, parent2);
+            Comment comment3 = new Comment(false, "댓글이다3", post1, parent3);
+            comment2.updateParentComment(comment1);
+            comment3.updateParentComment(comment1);
+            Comment comment4 = new Comment(false, "안녕하세요", post2, teacher1);
+            Comment comment5 = new Comment(false, "댓글내용", post3, teacher2);
+            Comment comment6 = new Comment(false, "adsasdfasfd", post4, teacher4);
+            em.persist(comment1);
+            em.persist(comment2);
+            em.persist(comment3);
+            em.persist(comment4);
+            em.persist(comment5);
+            em.persist(comment6);
+
+            CommentHeart commentHeart1 = new CommentHeart(teacher1, comment1);
+            CommentHeart commentHeart2 = new CommentHeart(teacher2, comment1);
+            CommentHeart commentHeart3 = new CommentHeart(teacher3, comment1);
+            CommentHeart commentHeart4 = new CommentHeart(teacher4, comment2);
+            CommentHeart commentHeart5 = new CommentHeart(parent1, comment2);
+            em.persist(commentHeart1);
+            em.persist(commentHeart2);
+            em.persist(commentHeart3);
+            em.persist(commentHeart4);
+            em.persist(commentHeart5);
         }
     }
 }
