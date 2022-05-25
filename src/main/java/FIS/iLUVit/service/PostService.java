@@ -31,18 +31,20 @@ public class PostService {
     public void savePost(PostRegisterRequest request, List<MultipartFile> images, Long userId) {
         User findUser = userRepository.findById(userId)
                 .orElseThrow(() -> new IllegalStateException("존재하지 않는 유저"));
+        Integer imgSize = (images == null ? 0 : images.size());
+
+        Board findBoard = boardRepository.findById(request.getBoard_id())
+                .orElseThrow(() -> new IllegalStateException("존재하지 않는 보드"));
+
         Post post = new Post(request.getTitle(), request.getContent(), request.getAnonymous(),
-                0, 0, images.size(), findUser);
-        if (request.getBoard_id() != null) {
-            Board findBoard = boardRepository.findById(request.getBoard_id())
-                    .orElseThrow(() -> new IllegalStateException("존재하지 않는 보드"));
-            post.updateBoard(findBoard);
+                0, 0, imgSize, 0, findBoard, findUser);
+
+        Post savedPost = postRepository.save(post); // 게시글 저장 -> Id 생김
+
+        if (imgSize > 0) {
+            String imagePath = imageService.getPostDir(savedPost.getId()); // id로 경로얻어서 이미지 저장
+            imageService.saveInfoImage(images, imagePath);
         }
-
-        Post savedPost = postRepository.save(post);
-
-        String imagePath = imageService.getPostDir(savedPost.getId());
-        imageService.saveInfoImage(images, imagePath);
 
     }
 

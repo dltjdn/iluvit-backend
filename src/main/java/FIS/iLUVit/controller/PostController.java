@@ -20,7 +20,7 @@ public class PostController {
     @PostMapping(value = "/post", consumes = {MediaType.APPLICATION_JSON_VALUE, MediaType.MULTIPART_FORM_DATA_VALUE})
     public void registerPost(@Login Long userId,
                              @RequestPart PostRegisterRequest request,
-                             @RequestPart List<MultipartFile> images) {
+                             @RequestPart(required = false) List<MultipartFile> images) {
         postService.savePost(request, images, userId);
     }
 
