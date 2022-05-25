@@ -17,7 +17,6 @@ public class Waiting extends BaseEntity {
     @Id
     @GeneratedValue
     private Long id;
-
     private Integer waitingOrder;
 
     @ManyToOne(fetch = FetchType.LAZY)

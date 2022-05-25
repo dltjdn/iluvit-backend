@@ -33,7 +33,7 @@ public class WaitingService {
         Parent parent = parentRepository.findByIdAndFetchPresentation(userId)
                 .orElseThrow(() -> new UserException("해당 사용자가 존재하지 않습니다"));
         // 설명회 회차 조회
-        PtDate ptDate = ptDateRepository.findByIdJoinWaiting(ptDateId)
+        PtDate ptDate = ptDateRepository.findByIdAndJoinWaiting(ptDateId)
                 .orElseThrow(() -> new PresentationException("해당 설명회는 존재하지 않습니다"));
         List<Participation> participations = participationRepository.findByptDateAndStatus(ptDate);
         Waiting waiting = Waiting.createAndRegister(parent, ptDate, participations);
@@ -42,9 +42,18 @@ public class WaitingService {
     }
 
 
-    public Waiting findFirstOrderWaiting(PtDate ptDate){
+    public Waiting findFirstOrderWaiting(PtDate ptDate) {
         waitingRepository.updateWaitingForParticipationCancel(ptDate);
         return waitingRepository.findMinWaitingOrder(ptDate)
                 .orElseThrow(() -> new PresentationException("DB 적합성 오류 발생"));
+    }
+
+    public Long cancel(Long waitingId) {
+        Waiting waiting = waitingRepository.findById(waitingId)
+                .orElseThrow(() -> new PresentationException("올바르지 않은 대기취소 입니다."));
+        Integer waitingOrder = waiting.getWaitingOrder();
+        waitingRepository.updateWaitingOrderForWaitCancel(waitingOrder);
+        waitingRepository.delete(waiting);
+        return waitingId;
     }
 }

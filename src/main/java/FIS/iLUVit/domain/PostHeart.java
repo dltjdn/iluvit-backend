@@ -25,6 +25,6 @@ public class PostHeart extends BaseEntity {
     public PostHeart(User user, Post post) {
         this.user = user;
         this.post = post;
-        post.getPostHearts().add(this);
+        post.updatePostHeart(this);
     }
 }

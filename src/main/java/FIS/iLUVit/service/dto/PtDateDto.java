@@ -1,5 +1,6 @@
 package FIS.iLUVit.service.dto;
 
+import FIS.iLUVit.domain.PtDate;
 import FIS.iLUVit.repository.dto.PresentationWithPtDatesDto;
 import lombok.Data;
 
@@ -22,5 +23,14 @@ public class PtDateDto {
         ablePersonNum = queryDto.getAblePersonNum();
         participantCnt = queryDto.getParticipantCnt();
         waitingCnt = queryDto.getWaitingCnt();
+    }
+
+    public PtDateDto(PtDate ptDate) {
+        ptDateId = ptDate.getId();
+        date = ptDate.getDate();
+        time = ptDate.getTime();
+        ablePersonNum = ptDate.getAblePersonNum();
+        participantCnt = ptDate.getParticipantCnt();
+        waitingCnt = ptDate.getWaitingCnt();
     }
 }

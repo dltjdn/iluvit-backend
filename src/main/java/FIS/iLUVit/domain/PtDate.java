@@ -1,5 +1,6 @@
 package FIS.iLUVit.domain;
 
+import FIS.iLUVit.controller.dto.PtDateModifyDto;
 import FIS.iLUVit.exception.PresentationException;
 import lombok.Builder;
 import lombok.Getter;
@@ -34,7 +35,7 @@ public class PtDate extends BaseEntity {
     @OneToMany(mappedBy = "ptDate")
     private List<Waiting> waitings;       // 인원 마감이 된 회차에 대기
 
-    @Builder
+    @Builder(toBuilder = true)
     public PtDate(Long id, LocalDate date, String time, Integer ablePersonNum, Integer participantCnt, Integer waitingCnt, Presentation presentation) {
         this.id = id;
         this.date = date;
@@ -46,7 +47,7 @@ public class PtDate extends BaseEntity {
     }
 
     public static PtDate register(Presentation presentation, LocalDate date, String time, Integer ablePersonNum) {
-        return PtDate.builder()
+        PtDate ptDate = PtDate.builder()
                 .date(date)
                 .time(time)
                 .ablePersonNum(ablePersonNum)
@@ -54,6 +55,8 @@ public class PtDate extends BaseEntity {
                 .participantCnt(0)
                 .presentation(presentation)
                 .build();
+        presentation.getPtDates().add(ptDate);
+        return ptDate;
     }
 
     public static PtDate createPtDate(LocalDate date, String time, Integer ablePersonNum, Integer waitingCnt, Presentation presentation) {
@@ -100,8 +103,17 @@ public class PtDate extends BaseEntity {
     }
 
     public boolean hasWaiting(){
-        if(waitingCnt != null || waitingCnt > 0)
+        if(waitingCnt > 0)
             return true;
         else return false;
+    }
+
+    public PtDate update(PtDateModifyDto ptDateModifyDto) {
+        if(participantCnt > ptDateModifyDto.getAblePersonNum())
+            throw new PresentationException("이미 신청한 인원들보다 신청가능 인원들 작게 설정할 수 없습니다.");
+        date = ptDateModifyDto.getDate();
+        time = ptDateModifyDto.getTime();
+        ablePersonNum = ptDateModifyDto.getAblePersonNum();
+        return this;
     }
 }

@@ -18,6 +18,7 @@ import java.util.stream.Collectors;
 @AllArgsConstructor
 public class GetPostResponse {
 
+    private Long id;
     private String nickname;
     private LocalDate date;
     private LocalTime time;
@@ -37,8 +38,8 @@ public class GetPostResponse {
     private List<GetCommentResponse> comments;
     private Integer commentCnt;
 
-    @QueryProjection
     public GetPostResponse(Post post, List<String> encodedImages, String encodedProfileImage) {
+        this.id = post.getId();
         this.nickname = post.getUser().getNickName();
         this.date = post.getDate();
         this.time = post.getTime();
@@ -61,6 +62,7 @@ public class GetPostResponse {
         }
 
         this.comments = post.getComments().stream()
+                .filter(c -> c.getParentComment() == null)
                 .map(c -> new GetCommentResponse(c)).collect(Collectors.toList());
         this.commentCnt = post.getCommentCnt();
 

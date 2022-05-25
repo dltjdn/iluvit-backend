@@ -2,6 +2,7 @@ package FIS.iLUVit.domain;
 
 import FIS.iLUVit.controller.dto.CenterModifyRequestDto;
 import FIS.iLUVit.domain.embeddable.*;
+import FIS.iLUVit.domain.enumtype.KindOf;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -54,7 +55,8 @@ public class Center extends BaseEntity{
     private Integer score;                    // 시설 order By 기준 중 하나
 
     @Column(name="kindOf", insertable = false, updatable = false)
-    protected String kindOf;                  // 시설 종류
+    @Enumerated(EnumType.STRING)
+    protected KindOf kindOf;                  // 시설 종류
 
     @Embedded
     protected ClassInfo classInfo;            // 학급정보

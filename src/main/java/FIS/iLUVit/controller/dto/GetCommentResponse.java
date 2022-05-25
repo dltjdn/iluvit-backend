@@ -14,6 +14,7 @@ import java.util.stream.Collectors;
 @AllArgsConstructor
 @NoArgsConstructor
 public class GetCommentResponse {
+    private Long id;
     private String nickname;
     private String content;
     private Integer heartCnt;
@@ -24,6 +25,7 @@ public class GetCommentResponse {
     private List<Answer> answers;
 
     public GetCommentResponse(Comment comment) {
+        this.id = comment.getId();
         this.nickname = comment.getUser().getNickName();
         this.content = comment.getContent();
         this.heartCnt = comment.getCommentHearts().size();
@@ -39,6 +41,7 @@ public class GetCommentResponse {
     @AllArgsConstructor
     @NoArgsConstructor
     static class Answer {
+        private Long id;
         private String nickname;
         private String content;
         private Integer heartCnt;
@@ -47,6 +50,7 @@ public class GetCommentResponse {
         private Boolean anonymous;
 
         public Answer(Comment comment) {
+            this.id = comment.getId();
             this.nickname = comment.getUser().getNickName();
             this.content = comment.getContent();
             this.heartCnt = comment.getCommentHearts().size();

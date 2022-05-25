@@ -22,4 +22,9 @@ public interface WaitingRepository extends JpaRepository<Waiting, Long> {
             "where waiting.ptDate = :ptDate and waiting.waitingOrder = 0")
     Optional<Waiting> findMinWaitingOrder(@Param("ptDate") PtDate ptDate);
 
+    @Modifying
+    @Query("update Waiting waiting " +
+            "set waiting.waitingOrder = waiting.waitingOrder - 1 " +
+            "where waiting.waitingOrder > :waitingOrder")
+    void updateWaitingOrderForWaitCancel(@Param("waitingOrder") Integer waitingOrder);
 }

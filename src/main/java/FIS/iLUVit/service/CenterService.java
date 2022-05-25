@@ -6,9 +6,11 @@ import FIS.iLUVit.domain.*;
 import FIS.iLUVit.domain.embeddable.Area;
 import FIS.iLUVit.domain.embeddable.Score;
 import FIS.iLUVit.domain.embeddable.Theme;
+import FIS.iLUVit.domain.enumtype.KindOf;
 import FIS.iLUVit.exception.CenterException;
 import FIS.iLUVit.exception.UserException;
 import FIS.iLUVit.repository.ParentRepository;
+import FIS.iLUVit.repository.UserRepository;
 import FIS.iLUVit.repository.dto.CenterAndDistancePreview;
 import FIS.iLUVit.repository.CenterRepository;
 import FIS.iLUVit.repository.dto.CenterBannerDto;
@@ -35,9 +37,10 @@ public class CenterService {
     private final CenterRepository centerRepository;
     private final ImageService imageService;
     private final ParentRepository parentRepository;
+    private final UserRepository userRepository;
 
-    public Slice<CenterPreview> findByFilter(List<Area> areas, Theme theme, Integer interestedAge, String kindOf, Pageable pageable) {
-        if (!kindOf.equals("Kindergarten") && !kindOf.equals("ChildHouse") && !kindOf.equals("ALL")) {
+    public Slice<CenterPreview> findByFilter(List<Area> areas, Theme theme, Integer interestedAge, KindOf kindOf, Pageable pageable) {
+        if (!(kindOf == KindOf.Kindergarten) && !(kindOf == KindOf.Childhouse) && !(kindOf == KindOf.ALL)) {
             throw new RuntimeException();
         }
         Slice<CenterPreview> results = centerRepository.findByFilter(areas, theme, interestedAge, kindOf, pageable);
@@ -49,8 +52,8 @@ public class CenterService {
         return results;
     }
 
-    public List<CenterAndDistancePreview> findByFilterAndMap(double longitude, double latitude, Theme theme, Integer interestedAge, String kindOf, Integer distance) {
-        if (!kindOf.equals("Kindergarten") && !kindOf.equals("childHouse")) {
+    public List<CenterAndDistancePreview> findByFilterAndMap(double longitude, double latitude, Theme theme, Integer interestedAge, KindOf kindOf, Integer distance) {
+        if (!(kindOf == KindOf.Kindergarten) && !(kindOf == KindOf.Childhouse) && !(kindOf == KindOf.ALL)) {
             throw new RuntimeException();
         }
         Map<Long, CenterAndDistancePreview> map =
@@ -85,10 +88,13 @@ public class CenterService {
         return dto;
     }
 
-    public Long modifyCenter(Long id, CenterModifyRequestDto requestDto, List<MultipartFile> files) {
+    public Long modifyCenter(Long centerId, Long userId, CenterModifyRequestDto requestDto, List<MultipartFile> files) {
+        userRepository.findTeacherById(userId)
+                .orElseThrow(() -> new UserException("존재하지 않는 유저입니다"))
+                .canWrite(centerId);
         // 해당하는 center 없으면 RuntimeException 반환
-        Center center = centerRepository.findById(id).orElseThrow(RuntimeException::new);
-        String centerDir = imageService.getCenterDir(id);
+        Center center = centerRepository.findById(centerId).orElseThrow(RuntimeException::new);
+        String centerDir = imageService.getCenterDir(centerId);
         imageService.saveInfoImage(files, centerDir);
         center.update(requestDto);
         return center.getId();

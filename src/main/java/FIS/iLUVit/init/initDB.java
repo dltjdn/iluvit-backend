@@ -5,6 +5,7 @@ import FIS.iLUVit.domain.embeddable.Area;
 import FIS.iLUVit.domain.embeddable.Theme;
 import FIS.iLUVit.domain.enumtype.Approval;
 import FIS.iLUVit.domain.enumtype.Auth;
+import FIS.iLUVit.domain.enumtype.BoardKind;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Component;
@@ -116,6 +117,63 @@ public class initDB {
             em.persist(ptDate1);
             em.persist(ptDate2);
             em.persist(ptDate3);
+
+            Board board1 = Board.createBoard("HOT 게시물", BoardKind.NORMAL, null);
+            Board board2 = Board.createBoard("자유 게시판", BoardKind.NORMAL, null);
+            Board board3 = Board.createBoard("영상 게시판", BoardKind.VIDEO, null);
+            Board board4 = Board.createBoard("장터 게시판", BoardKind.MARKET, null);
+            Board board5 = Board.createBoard("맛집 게시판", BoardKind.FOOD, null);
+            em.persist(board1);
+            em.persist(board2);
+            em.persist(board3);
+            em.persist(board4);
+            em.persist(board5);
+
+            Post post1 = new Post("제목이다", "내용이다", false, 0, 0, 0, 0, board2, teacher1);
+            Post post2 = new Post("안녕", "먹칠하잖아", false, 0, 0, 0, 0, board2, parent1);
+            Post post3 = new Post("게시글제목", "계속먹칠하잖아", false, 0, 0, 0, 0, board2, teacher2);
+            Post post4 = new Post("타이틀", "abcdefg", false, 0, 0, 0, 0, board2, parent2);
+            Post post5 = new Post("다와가", "때려밟았지마티즈엑셀", false, 0, 0, 0, 0, board2, teacher3);
+            em.persist(post1);
+            em.persist(post2);
+            em.persist(post3);
+            em.persist(post4);
+            em.persist(post5);
+
+            PostHeart postHeart1 = new PostHeart(teacher4, post1);
+            PostHeart postHeart2 = new PostHeart(parent3, post1);
+            PostHeart postHeart3 = new PostHeart(teacher1, post2);
+            PostHeart postHeart4 = new PostHeart(parent2, post2);
+            em.persist(postHeart1);
+            em.persist(postHeart2);
+            em.persist(postHeart3);
+            em.persist(postHeart4);
+
+            Comment comment1 = new Comment(false, "댓글이다", post1, parent1);
+            Comment comment2 = new Comment(false, "댓글이다2", post1, parent2);
+            Comment comment3 = new Comment(false, "댓글이다3", post1, parent3);
+            comment2.updateParentComment(comment1);
+            comment3.updateParentComment(comment1);
+            Comment comment4 = new Comment(false, "안녕하세요", post2, teacher1);
+            Comment comment5 = new Comment(false, "댓글내용", post3, teacher2);
+            Comment comment6 = new Comment(false, "adsasdfasfd", post4, teacher4);
+            em.persist(comment1);
+            em.persist(comment2);
+            em.persist(comment3);
+            em.persist(comment4);
+            em.persist(comment5);
+            em.persist(comment6);
+
+            CommentHeart commentHeart1 = new CommentHeart(teacher1, comment1);
+            CommentHeart commentHeart2 = new CommentHeart(teacher2, comment1);
+            CommentHeart commentHeart3 = new CommentHeart(teacher3, comment1);
+            CommentHeart commentHeart4 = new CommentHeart(teacher4, comment2);
+            CommentHeart commentHeart5 = new CommentHeart(parent1, comment2);
+            em.persist(commentHeart1);
+            em.persist(commentHeart2);
+            em.persist(commentHeart3);
+            em.persist(commentHeart4);
+            em.persist(commentHeart5);
         }
     }
 }
