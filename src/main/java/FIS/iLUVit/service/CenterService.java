@@ -10,6 +10,7 @@ import FIS.iLUVit.domain.enumtype.KindOf;
 import FIS.iLUVit.exception.CenterException;
 import FIS.iLUVit.exception.UserException;
 import FIS.iLUVit.repository.ParentRepository;
+import FIS.iLUVit.repository.UserRepository;
 import FIS.iLUVit.repository.dto.CenterAndDistancePreview;
 import FIS.iLUVit.repository.CenterRepository;
 import FIS.iLUVit.repository.dto.CenterBannerDto;
@@ -36,6 +37,7 @@ public class CenterService {
     private final CenterRepository centerRepository;
     private final ImageService imageService;
     private final ParentRepository parentRepository;
+    private final UserRepository userRepository;
 
     public Slice<CenterPreview> findByFilter(List<Area> areas, Theme theme, Integer interestedAge, KindOf kindOf, Pageable pageable) {
         if (!(kindOf == KindOf.Kindergarten) && !(kindOf == KindOf.Childhouse) && !(kindOf == KindOf.ALL)) {
@@ -87,7 +89,8 @@ public class CenterService {
     }
 
     public Long modifyCenter(Long id, Long userId, CenterModifyRequestDto requestDto, List<MultipartFile> files) {
-
+        userRepository.findTeacherById(userId)
+                .orElseThrow(() -> new UserException("존재하지 않는 유저입니다")).canWrite();
         // 해당하는 center 없으면 RuntimeException 반환
         Center center = centerRepository.findById(id).orElseThrow(RuntimeException::new);
         String centerDir = imageService.getCenterDir(id);

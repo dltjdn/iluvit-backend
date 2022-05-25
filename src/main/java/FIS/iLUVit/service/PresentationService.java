@@ -12,6 +12,7 @@ import FIS.iLUVit.repository.PtDateRepository;
 import FIS.iLUVit.repository.UserRepository;
 import FIS.iLUVit.repository.dto.PresentationPreviewDto;
 import FIS.iLUVit.repository.dto.PresentationWithPtDatesDto;
+import FIS.iLUVit.service.dto.ParentInfoForDirectorDto;
 import FIS.iLUVit.service.dto.PresentationQuryDto;
 import FIS.iLUVit.service.dto.PtDateDto;
 import lombok.RequiredArgsConstructor;
@@ -22,6 +23,7 @@ import org.springframework.web.multipart.MultipartFile;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import static java.util.stream.Collectors.*;
 
@@ -120,5 +122,26 @@ public class PresentationService {
         String presentationDir = imageService.getPresentationDir(presentation.getId());
         imageService.saveInfoImage(images, presentationDir);
         return presentation;
+    }
+
+    public List<ParentInfoForDirectorDto> findPtDateParticipatingParents(Long userId, Long ptDateId) {
+        userRepository.findTeacherById(userId)
+                .orElseThrow(() -> new UserException("존재하지 않는 유저입니다")).canRead();
+        PtDate ptDate = ptDateRepository.findByIdAndJoinParticipation(ptDateId)
+                .orElseThrow(() -> new PresentationException("존재하지 않는 설명회 회차 입니다."));
+        return ptDate.getParticipations().stream()
+                .map(participation -> new ParentInfoForDirectorDto(participation.getParent()))
+                .collect(Collectors.toList());
+
+    }
+
+    public List<ParentInfoForDirectorDto> findPtDateWaitingParents(Long userId, Long ptDateId) {
+        userRepository.findTeacherById(userId)
+                .orElseThrow(() -> new UserException("존재하지 않는 유저입니다")).canRead();
+        PtDate ptDate = ptDateRepository.findByIdAndJoinWaiting(ptDateId)
+                .orElseThrow(() -> new PresentationException("존재하지 않는 설명회 회차 입니다."));
+        return ptDate.getWaitings().stream()
+                .map(participation -> new ParentInfoForDirectorDto(participation.getParent()))
+                .collect(Collectors.toList());
     }
 }
