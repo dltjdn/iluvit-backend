@@ -64,8 +64,8 @@ public class PresentationController {
      * @return
      */
     @GetMapping("/presentation/center/{centerId}/list")
-    public List<PresentationPreviewDto> findMyCenterPresentationList(@PathVariable("centerId") Long centerId){
-        return presentationService.findPresentationListByCenterId(centerId);
+    public List<PresentationPreviewDto> findMyCenterPresentationList(@Login Long userId, @PathVariable("centerId") Long centerId){
+        return presentationService.findPresentationListByCenterId(userId, centerId);
     }
 
     /**

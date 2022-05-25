@@ -88,12 +88,13 @@ public class CenterService {
         return dto;
     }
 
-    public Long modifyCenter(Long id, Long userId, CenterModifyRequestDto requestDto, List<MultipartFile> files) {
+    public Long modifyCenter(Long centerId, Long userId, CenterModifyRequestDto requestDto, List<MultipartFile> files) {
         userRepository.findTeacherById(userId)
-                .orElseThrow(() -> new UserException("존재하지 않는 유저입니다")).canWrite();
+                .orElseThrow(() -> new UserException("존재하지 않는 유저입니다"))
+                .canWrite(centerId);
         // 해당하는 center 없으면 RuntimeException 반환
-        Center center = centerRepository.findById(id).orElseThrow(RuntimeException::new);
-        String centerDir = imageService.getCenterDir(id);
+        Center center = centerRepository.findById(centerId).orElseThrow(RuntimeException::new);
+        String centerDir = imageService.getCenterDir(centerId);
         imageService.saveInfoImage(files, centerDir);
         center.update(requestDto);
         return center.getId();
