@@ -1,6 +1,5 @@
 buildscript {
 	ext {
-		kotlin_version = "1.4.32"
 		queryDslVersion = "5.0.0"
 	}
 }
