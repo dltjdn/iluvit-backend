@@ -2,6 +2,7 @@ package FIS.iLUVit.controller;
 
 import FIS.iLUVit.config.argumentResolver.Login;
 import FIS.iLUVit.controller.dto.GetPostResponse;
+import FIS.iLUVit.controller.dto.GetPostResponsePreview;
 import FIS.iLUVit.controller.dto.PostRegisterRequest;
 import FIS.iLUVit.service.PostService;
 import lombok.RequiredArgsConstructor;
@@ -35,19 +36,21 @@ public class PostController {
     }
 
     @GetMapping("/post/all/search")
-    public List<GetPostResponse> searchPost(@RequestParam("input") String input) {
-        return postService.searchByKeyword(input);
+    public List<GetPostResponsePreview> searchPost(@Login Long userId,
+                                                   @RequestParam("input") String input) {
+        return postService.searchByKeyword(input, userId);
     }
 
     @GetMapping("/post/search/inCenter")
-    public List<GetPostResponse> searchPostByCenter(
-            @RequestParam("center_id") Long centerId,
+    public List<GetPostResponsePreview> searchPostByCenter(
+            @Login Long userId,
+            @RequestParam(name = "center_id", required = false) Long centerId,
             @RequestParam("input") String input) {
-        return postService.searchByKeywordAndCenter(centerId, input);
+        return postService.searchByKeywordAndCenter(centerId, input, userId);
     }
 
     @GetMapping("/post/search/inBoard")
-    public List<GetPostResponse> searchPostByBoard(
+    public List<GetPostResponsePreview> searchPostByBoard(
             @RequestParam("board_id") Long boardId,
             @RequestParam("input") String input) {
         return postService.searchByKeywordAndBoard(boardId, input);
