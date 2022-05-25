@@ -1,10 +1,10 @@
 package FIS.iLUVit.service;
 
 import FIS.iLUVit.controller.dto.GetPostResponse;
+import FIS.iLUVit.controller.dto.GetPostResponsePreview;
 import FIS.iLUVit.controller.dto.PostRegisterRequest;
-import FIS.iLUVit.domain.Board;
-import FIS.iLUVit.domain.Post;
-import FIS.iLUVit.domain.User;
+import FIS.iLUVit.domain.*;
+import FIS.iLUVit.domain.enumtype.Auth;
 import FIS.iLUVit.repository.BoardRepository;
 import FIS.iLUVit.repository.PostRepository;
 import FIS.iLUVit.repository.UserRepository;
@@ -67,27 +67,48 @@ public class PostService {
         return getPostResponseDto(findPost);
     }
 
-    public List<GetPostResponse> searchByKeyword(String input) {
-        log.info(input);
-        List<Post> posts;
-        if (input.isEmpty() || input == null) {
-            posts = postRepository.findAll();
+    public List<GetPostResponsePreview> searchByKeyword(String input, Long userId) {
+        log.info("input : " + input);
+
+        List<Long> boardIds;
+        User findUser = userRepository.findById(userId)
+                .orElseThrow(() -> new IllegalStateException("존재하지 않는 유저"));
+        if (findUser.getAuth() == Auth.PARENT) {
+            List<Long> centerIds = ((Parent) findUser).getChildren().stream()
+                    .filter(c -> c.getCenter() != null)
+                    .map(c -> c.getCenter().getId())
+                    .collect(Collectors.toList());
+            boardIds = boardRepository.findByUserWithCenterIds(centerIds)
+                    .stream().map(b -> b.getId()).collect(Collectors.toList());
         } else {
-            posts = postRepository.findByKeyword(input);
+            Center center = ((Teacher) findUser).getCenter();
+            boardIds = boardRepository.findByUserWithCenter(center.getId())
+                    .stream().map(b -> b.getId()).collect(Collectors.toList());
         }
-        return posts.stream().map(p -> getPostResponseDto(p))
+
+        List<Post> posts;
+        if (input.isEmpty()) {
+            posts = postRepository.findAllWithBoardIds(boardIds);
+        } else {
+            posts = postRepository.findByKeywordWithBoardIds(input, boardIds);
+        }
+        return posts.stream().map(p -> getPostResponsePreviewResponseDto(p))
                 .collect(Collectors.toList());
     }
 
-    public List<GetPostResponse> searchByKeywordAndCenter(Long centerId, String input) {
+    public List<GetPostResponsePreview> searchByKeywordAndCenter(Long centerId, String input, Long userId) {
+        if (centerId == null) {
+            return searchByKeyword(input, userId);
+        }
+
         List<Post> posts = postRepository.findByKeywordAndCenter(centerId, input);
-        return posts.stream().map(p -> getPostResponseDto(p))
+        return posts.stream().map(p -> getPostResponsePreviewResponseDto(p))
                 .collect(Collectors.toList());
     }
 
-    public List<GetPostResponse> searchByKeywordAndBoard(Long boardId, String input) {
+    public List<GetPostResponsePreview> searchByKeywordAndBoard(Long boardId, String input) {
         List<Post> posts = postRepository.findByKeywordAndBoard(boardId, input);
-        return posts.stream().map(p -> getPostResponseDto(p))
+        return posts.stream().map(p -> getPostResponsePreviewResponseDto(p))
                 .collect(Collectors.toList());
     }
 
@@ -97,5 +118,11 @@ public class PostService {
         String userProfileDir = imageService.getUserProfileDir();
         String encodedProfileImage = imageService.getEncodedProfileImage(userProfileDir, post.getUser().getId());
         return new GetPostResponse(post, encodedInfoImage, encodedProfileImage);
+    }
+
+    private GetPostResponsePreview getPostResponsePreviewResponseDto(Post post) {
+        String postDir = imageService.getPostDir(post.getId());
+        List<String> encodedInfoImage = imageService.getEncodedInfoImage(postDir, post.getImgCnt());
+        return new GetPostResponsePreview(post, encodedInfoImage);
     }
 }
