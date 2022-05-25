@@ -11,11 +11,17 @@ import java.time.LocalDateTime;
 @Getter
 @Entity
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
+@Table(
+        uniqueConstraints = {
+                @UniqueConstraint(
+                        columnNames = {"phoneNum", "authKind"}
+                )
+        }
+)
 public class AuthNumber extends BaseEntity{
 
     @Id @GeneratedValue
     private Long id;
-    @Column(unique = true)
     private String phoneNum;        // 핸드폰 번호
     private String authNum;         // 인증번호
     private LocalDateTime authTime; // 인증 완료 시간

@@ -17,13 +17,13 @@ import FIS.iLUVit.repository.UserRepository;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.io.IOException;
 import java.time.Duration;
 import java.time.LocalDateTime;
-import java.util.List;
 
 @Slf4j
 @Service
@@ -35,6 +35,7 @@ public class ParentService {
     private final UserRepository userRepository;
     private final AuthNumberRepository authNumberRepository;
     private final ImageService imageService;
+    private final BCryptPasswordEncoder encoder;
 
     /**
      * 작성날짜: 2022/05/13 4:43 PM
@@ -117,14 +118,16 @@ public class ParentService {
             throw new SignupException("중복된 닉네임입니다.");
         }
 
-        List<AuthNumber> authCompletes = authNumberRepository.findAuthComplete(request.getPhoneNum(), AuthKind.signup);
-        if (authCompletes.isEmpty()) {
+        AuthNumber authComplete = authNumberRepository.findAuthComplete(request.getPhoneNum(), AuthKind.signup).orElse(null);
+        if (authComplete == null) {
             throw new SignupException("핸드폰 인증이 완료되지 않았습니다.");
-        } else if (Duration.between(authCompletes.get(0).getAuthTime(), LocalDateTime.now()).getSeconds() > (60 * 60)) {
+        } else if (Duration.between(authComplete.getAuthTime(), LocalDateTime.now()).getSeconds() > (60 * 60)) {
             throw new SignupException("핸드폰 인증시간이 만료되었습니다. 핸드폰 인증을 다시 해주세요");
         }
 
-        Parent parent = request.createParent();
+        String hashedPwd = encoder.encode(request.getPassword());
+        Parent parent = request.createParent(hashedPwd);
+
         parentRepository.save(parent);
 
         authNumberRepository.deleteAllByPhoneNum(request.getPhoneNum());

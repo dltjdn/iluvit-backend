@@ -52,6 +52,7 @@ public class Teacher extends User {
                 .name(name)
                 .approval(approval)
                 .center(center)
+                .auth(auth)
                 .build();
     }
 

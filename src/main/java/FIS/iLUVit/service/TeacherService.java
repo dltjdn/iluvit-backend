@@ -11,10 +11,13 @@ import FIS.iLUVit.repository.TeacherRepository;
 import FIS.iLUVit.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.io.IOException;
+import java.time.Duration;
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Slf4j
@@ -28,12 +31,13 @@ public class TeacherService {
     private final UserRepository userRepository;
     private final TeacherRepository teacherRepository;
     private final AuthNumberRepository authNumberRepository;
+    private final BCryptPasswordEncoder encoder;
 
 
     /**
-     *   작성날짜: 2022/05/20 4:43 PM
-     *   작성자: 이승범
-     *   작성내용: 선생의 마이페이지에 정보 조회
+     * 작성날짜: 2022/05/20 4:43 PM
+     * 작성자: 이승범
+     * 작성내용: 선생의 마이페이지에 정보 조회
      */
     public TeacherDetailResponse findDetail(Long id) throws IOException {
 
@@ -50,9 +54,9 @@ public class TeacherService {
 
 
     /**
-     *   작성날짜: 2022/05/20 4:43 PM
-     *   작성자: 이승범
-     *   작성내용: 선생의 마이페이지에 정보 update
+     * 작성날짜: 2022/05/20 4:43 PM
+     * 작성자: 이승범
+     * 작성내용: 선생의 마이페이지에 정보 update
      */
     public TeacherDetailResponse updateDetail(Long id, UpdateTeacherDetailRequest request) throws IOException {
 
@@ -77,7 +81,7 @@ public class TeacherService {
 
     public void signup(SignupTeacherRequest request) {
 
-        if(!request.getPassword().equals(request.getPasswordCheck())){
+        if (!request.getPassword().equals(request.getPasswordCheck())) {
             throw new SignupException("비밀번호와 비밀번호확인이 서로 다릅니다.");
         }
 
@@ -86,16 +90,22 @@ public class TeacherService {
             throw new SignupException("중복된 닉네임입니다.");
         }
 
-        List<AuthNumber> authCompletes = authNumberRepository.findAuthComplete(request.getPhoneNum(), AuthKind.signup);
-        if (authCompletes.isEmpty()){
+        AuthNumber authComplete = authNumberRepository.findAuthComplete(request.getPhoneNum(), AuthKind.signup).orElse(null);
+        if (authComplete == null) {
             throw new SignupException("핸드폰 인증이 완료되지 않았습니다.");
+        } else if (Duration.between(authComplete.getAuthTime(), LocalDateTime.now()).getSeconds() > (60 * 60)) {
+            throw new SignupException("핸드폰 인증시간이 만료되었습니다. 핸드폰 인증을 다시 해주세요");
         }
 
         // throw EntityNotFoundException
         Center center = centerRepository.getById(request.getCenterId());
 
-        Teacher teacher = request.createTeacher(center);
+        String hashedPwd = encoder.encode(request.getPassword());
+        Teacher teacher = request.createTeacher(center, hashedPwd);
+
         teacherRepository.save(teacher);
+
+        authNumberRepository.deleteAllByPhoneNum(request.getPhoneNum());
     }
 
 

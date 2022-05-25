@@ -17,12 +17,12 @@ public interface AuthNumberRepository extends JpaRepository<AuthNumber, Long> {
     void deleteExpiredNumber(@Param("pNum") String toNumber, @Param("kind")AuthKind authKind);
 
     @Query("select a from AuthNumber a where a.phoneNum = :pNum and a.authKind =:kind order by a.createdDate")
-    List<AuthNumber> findOverlap(@Param("pNum") String toNumber, @Param("kind")AuthKind authKind);
+    Optional<AuthNumber> findOverlap(@Param("pNum") String toNumber, @Param("kind")AuthKind authKind);
 
     Optional<AuthNumber> findByPhoneNumAndAuthNumAndAuthKind(String phoneNum, String authNum, AuthKind authKind);
 
-    @Query("select a from AuthNumber a where a.phoneNum = :pNum and a.authKind =:kind and a.authTime is not null order by a.authTime desc")
-    List<AuthNumber> findAuthComplete(@Param("pNum") String phoneNum, @Param("kind") AuthKind authKind);
+    @Query("select a from AuthNumber a where a.phoneNum = :pNum and a.authKind =:kind and a.authTime is not null")
+    Optional<AuthNumber> findAuthComplete(@Param("pNum") String phoneNum, @Param("kind") AuthKind authKind);
 
     void deleteAllByPhoneNum(String phoneNum);
 }

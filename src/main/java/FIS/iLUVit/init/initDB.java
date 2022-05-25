@@ -54,7 +54,7 @@ public class initDB {
             em.persist(center3);
 
             // 선생 추가
-            Teacher teacher1 = Teacher.createTeacher("asd", "asd", encoder.encode("asd"), "asd1", false, "asd@asd.com", "asd", Auth.TEACHER, Approval.WAITING, center1);
+            Teacher teacher1 = Teacher.createTeacher("asd", "asd", encoder.encode("asd"), "01067150071", false, "asd@asd.com", "asd", Auth.TEACHER, Approval.WAITING, center1);
             Teacher teacher2 = Teacher.createTeacher("sad", "sad", encoder.encode("asd"), "sad2", false, "sad@sad.com", "sad", Auth.TEACHER, Approval.WAITING, center1);
             Teacher teacher3 = Teacher.createTeacher("dsa", "dsa", encoder.encode("asd"), "dsa3", false, "dsa@dsa.com", "dsa", Auth.TEACHER, Approval.WAITING, center1);
             Teacher teacher4 = Teacher.createTeacher("ddd", "ddd", encoder.encode("asd"), "ddd4", false, "ddd@ddd.com", "ddd", Auth.DIRECTOR, Approval.ACCEPT, center2);
