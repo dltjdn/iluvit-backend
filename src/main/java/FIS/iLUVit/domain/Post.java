@@ -45,7 +45,7 @@ public class Post extends BaseEntity {
     @OneToMany(mappedBy = "post")
     private List<ScrapPost> scrapPosts = new ArrayList<>();
 
-    public Post(String title, String content, Boolean anonymous, Integer commentCnt, Integer heartCnt, Integer imgCnt, User user) {
+    public Post(String title, String content, Boolean anonymous, Integer commentCnt, Integer heartCnt, Integer imgCnt, Board board, User user) {
         this.title = title;
         this.content = content;
         this.anonymous = anonymous;
@@ -54,12 +54,8 @@ public class Post extends BaseEntity {
         this.commentCnt = commentCnt;
         this.heartCnt = heartCnt;
         this.imgCnt = imgCnt;
-        this.user = user;
-    }
-
-    public void updateBoard(Board board) {
         this.board = board;
-        board.getPosts().add(this);
+        this.user = user;
     }
 
     public void updatePostHeart(PostHeart postHeart) {

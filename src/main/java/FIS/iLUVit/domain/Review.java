@@ -1,5 +1,6 @@
 package FIS.iLUVit.domain;
 
+import FIS.iLUVit.domain.embeddable.Score;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -76,4 +77,5 @@ public class Review extends BaseEntity{
         this.answerCreateTime = LocalTime.now();
         this.teacher = teacher;
     }
+
 }

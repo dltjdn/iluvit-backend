@@ -4,6 +4,7 @@ import FIS.iLUVit.controller.dto.ReviewByCenterDTO;
 import FIS.iLUVit.controller.dto.ReviewByParentDTO;
 import FIS.iLUVit.controller.dto.ReviewCreateDTO;
 import FIS.iLUVit.domain.*;
+import FIS.iLUVit.domain.embeddable.Score;
 import FIS.iLUVit.domain.enumtype.Approval;
 import FIS.iLUVit.repository.*;
 import lombok.RequiredArgsConstructor;
@@ -55,6 +56,7 @@ public class ReviewService {
 
         Review review = Review.createReview(reviewCreateDTO.getContent(), reviewCreateDTO.getScore(),
                 reviewCreateDTO.getAnonymous(), findUser, findCenter);
+        findCenter.addScore(Score.Review); // 리뷰 작성 시 센터의 스코어 올림
         reviewRepository.save(review);
     }
 

@@ -5,6 +5,7 @@ import FIS.iLUVit.domain.embeddable.Area;
 import FIS.iLUVit.domain.embeddable.Theme;
 import FIS.iLUVit.domain.enumtype.Approval;
 import FIS.iLUVit.domain.enumtype.Auth;
+import FIS.iLUVit.domain.enumtype.BoardKind;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Component;
@@ -117,11 +118,22 @@ public class initDB {
             em.persist(ptDate2);
             em.persist(ptDate3);
 
-            Post post1 = new Post("제목이다", "내용이다", false, 0, 0, 0, teacher1);
-            Post post2 = new Post("안녕", "먹칠하잖아", false, 0, 0, 0, parent1);
-            Post post3 = new Post("게시글제목", "계속먹칠하잖아", false, 0, 0, 0, teacher2);
-            Post post4 = new Post("타이틀", "abcdefg", false, 0, 0, 0, parent2);
-            Post post5 = new Post("다와가", "때려밟았지마티즈엑셀", false, 0, 0, 0, teacher3);
+            Board board1 = Board.createBoard("HOT 게시물", BoardKind.NORMAL, null);
+            Board board2 = Board.createBoard("자유 게시판", BoardKind.NORMAL, null);
+            Board board3 = Board.createBoard("영상 게시판", BoardKind.VIDEO, null);
+            Board board4 = Board.createBoard("장터 게시판", BoardKind.MARKET, null);
+            Board board5 = Board.createBoard("맛집 게시판", BoardKind.FOOD, null);
+            em.persist(board1);
+            em.persist(board2);
+            em.persist(board3);
+            em.persist(board4);
+            em.persist(board5);
+
+            Post post1 = new Post("제목이다", "내용이다", false, 0, 0, 0, board2, teacher1);
+            Post post2 = new Post("안녕", "먹칠하잖아", false, 0, 0, 0, board2, parent1);
+            Post post3 = new Post("게시글제목", "계속먹칠하잖아", false, 0, 0, 0, board2, teacher2);
+            Post post4 = new Post("타이틀", "abcdefg", false, 0, 0, 0, board2, parent2);
+            Post post5 = new Post("다와가", "때려밟았지마티즈엑셀", false, 0, 0, 0, board2, teacher3);
             em.persist(post1);
             em.persist(post2);
             em.persist(post3);
