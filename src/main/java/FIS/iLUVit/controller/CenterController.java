@@ -3,6 +3,7 @@ package FIS.iLUVit.controller;
 import FIS.iLUVit.config.argumentResolver.Login;
 import FIS.iLUVit.controller.dto.*;
 import FIS.iLUVit.domain.embeddable.Area;
+import FIS.iLUVit.domain.enumtype.KindOf;
 import FIS.iLUVit.repository.dto.CenterAndDistancePreview;
 import FIS.iLUVit.repository.dto.CenterPreview;
 import FIS.iLUVit.service.CenterService;
@@ -32,7 +33,7 @@ public class CenterController {
         Slice<CenterPreview> centerPreviews = centerService.findByFilter(Collections.singletonList(area),
                 null,
                 null,
-                "ALL",
+                KindOf.ALL,
                 PageRequest.of(0, 5));
         return centerPreviews.getContent();
     }
@@ -86,9 +87,10 @@ public class CenterController {
 
     @PatchMapping("/center/{center_id}")
     public Long modifyCenter(@PathVariable("center_id") Long id,
+                             @Login Long userId,
                              @RequestPart CenterModifyRequestDto requestDto,
                              @RequestPart List<MultipartFile> infoFiles){
-        return centerService.modifyCenter(id, requestDto, infoFiles);
+        return centerService.modifyCenter(id, userId, requestDto, infoFiles);
     }
 
 }

@@ -42,9 +42,18 @@ public class WaitingService {
     }
 
 
-    public Waiting findFirstOrderWaiting(PtDate ptDate){
+    public Waiting findFirstOrderWaiting(PtDate ptDate) {
         waitingRepository.updateWaitingForParticipationCancel(ptDate);
         return waitingRepository.findMinWaitingOrder(ptDate)
                 .orElseThrow(() -> new PresentationException("DB 적합성 오류 발생"));
+    }
+
+    public Long cancel(Long waitingId) {
+        Waiting waiting = waitingRepository.findById(waitingId)
+                .orElseThrow(() -> new PresentationException("올바르지 않은 대기취소 입니다."));
+        Integer waitingOrder = waiting.getWaitingOrder();
+        waitingRepository.updateWaitingOrderForWaitCancel(waitingOrder);
+        waitingRepository.delete(waiting);
+        return waitingId;
     }
 }

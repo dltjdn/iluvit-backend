@@ -6,6 +6,7 @@ import FIS.iLUVit.domain.*;
 import FIS.iLUVit.domain.embeddable.Area;
 import FIS.iLUVit.domain.embeddable.Score;
 import FIS.iLUVit.domain.embeddable.Theme;
+import FIS.iLUVit.domain.enumtype.KindOf;
 import FIS.iLUVit.exception.CenterException;
 import FIS.iLUVit.exception.UserException;
 import FIS.iLUVit.repository.ParentRepository;
@@ -36,8 +37,8 @@ public class CenterService {
     private final ImageService imageService;
     private final ParentRepository parentRepository;
 
-    public Slice<CenterPreview> findByFilter(List<Area> areas, Theme theme, Integer interestedAge, String kindOf, Pageable pageable) {
-        if (!kindOf.equals("Kindergarten") && !kindOf.equals("ChildHouse") && !kindOf.equals("ALL")) {
+    public Slice<CenterPreview> findByFilter(List<Area> areas, Theme theme, Integer interestedAge, KindOf kindOf, Pageable pageable) {
+        if (!(kindOf == KindOf.Kindergarten) && !(kindOf == KindOf.Childhouse) && !(kindOf == KindOf.ALL)) {
             throw new RuntimeException();
         }
         Slice<CenterPreview> results = centerRepository.findByFilter(areas, theme, interestedAge, kindOf, pageable);
@@ -49,8 +50,8 @@ public class CenterService {
         return results;
     }
 
-    public List<CenterAndDistancePreview> findByFilterAndMap(double longitude, double latitude, Theme theme, Integer interestedAge, String kindOf, Integer distance) {
-        if (!kindOf.equals("Kindergarten") && !kindOf.equals("childHouse")) {
+    public List<CenterAndDistancePreview> findByFilterAndMap(double longitude, double latitude, Theme theme, Integer interestedAge, KindOf kindOf, Integer distance) {
+        if (!(kindOf == KindOf.Kindergarten) && !(kindOf == KindOf.Childhouse) && !(kindOf == KindOf.ALL)) {
             throw new RuntimeException();
         }
         Map<Long, CenterAndDistancePreview> map =
@@ -85,7 +86,8 @@ public class CenterService {
         return dto;
     }
 
-    public Long modifyCenter(Long id, CenterModifyRequestDto requestDto, List<MultipartFile> files) {
+    public Long modifyCenter(Long id, Long userId, CenterModifyRequestDto requestDto, List<MultipartFile> files) {
+
         // 해당하는 center 없으면 RuntimeException 반환
         Center center = centerRepository.findById(id).orElseThrow(RuntimeException::new);
         String centerDir = imageService.getCenterDir(id);

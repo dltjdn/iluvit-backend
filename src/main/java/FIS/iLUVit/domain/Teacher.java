@@ -3,6 +3,7 @@ package FIS.iLUVit.domain;
 import FIS.iLUVit.controller.dto.UpdateTeacherDetailRequest;
 import FIS.iLUVit.domain.enumtype.Approval;
 import FIS.iLUVit.domain.enumtype.Auth;
+import FIS.iLUVit.exception.PresentationException;
 import com.querydsl.core.types.dsl.BooleanExpression;
 import lombok.AccessLevel;
 import lombok.Getter;
@@ -49,5 +50,15 @@ public class Teacher extends User {
         this.nickName = request.getNickname();
         this.phoneNumber = request.getPhoneNumber();
         this.emailAddress = request.getEmailAddress();
+    }
+
+    public void canWrite() {
+        if(approval != Approval.ACCEPT)
+            throw new PresentationException("시설에 대해 작성 권한이 없습니다.");
+    }
+
+    public void canRead(){
+        if(approval != Approval.ACCEPT)
+            throw new PresentationException("시설 상세정보 읽을 권한이 없습니다.");
     }
 }

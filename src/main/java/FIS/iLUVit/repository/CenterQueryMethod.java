@@ -2,6 +2,7 @@ package FIS.iLUVit.repository;
 
 import FIS.iLUVit.domain.embeddable.Area;
 import FIS.iLUVit.domain.embeddable.Theme;
+import FIS.iLUVit.domain.enumtype.KindOf;
 import FIS.iLUVit.exception.CenterException;
 import com.querydsl.core.types.Predicate;
 import com.querydsl.core.types.dsl.*;
@@ -24,8 +25,8 @@ public class CenterQueryMethod {
         return age == null ? null : center.maxAge.goe(age).and(center.minAge.loe(age));
     }
 
-    protected BooleanExpression kindOfEq(String kindOf) {
-        return kindOf == null || kindOf.equals("") || kindOf.equals("ALL") ? null : center.kindOf.eq(kindOf);
+    protected BooleanExpression kindOfEq(KindOf kindOf) {
+        return kindOf == null || kindOf == KindOf.ALL ? null : center.kindOf.eq(kindOf);
     }
 
     protected BooleanExpression themeEq(Theme theme) {

@@ -2,6 +2,7 @@ package FIS.iLUVit.repository;
 
 import FIS.iLUVit.domain.embeddable.Area;
 import FIS.iLUVit.domain.embeddable.Theme;
+import FIS.iLUVit.domain.enumtype.KindOf;
 import FIS.iLUVit.repository.dto.CenterAndDistancePreview;
 import FIS.iLUVit.repository.dto.CenterPreview;
 import FIS.iLUVit.repository.dto.QCenterAndDistancePreview;
@@ -22,7 +23,7 @@ public class CenterRepositoryImpl extends CenterQueryMethod implements CenterRep
     private final JPAQueryFactory jpaQueryFactory;
 
     @Override
-    public Slice<CenterPreview> findByFilter(List<Area> areas, Theme theme, Integer interestedAge, String kindOf, Pageable pageable){
+    public Slice<CenterPreview> findByFilter(List<Area> areas, Theme theme, Integer interestedAge, KindOf kindOf, Pageable pageable){
         List<CenterPreview> content = jpaQueryFactory.select(new QCenterPreview(center))
                 .from(center)
                 .where(areasIn(areas)
@@ -43,7 +44,7 @@ public class CenterRepositoryImpl extends CenterQueryMethod implements CenterRep
     }
 
     @Override
-    public List<CenterAndDistancePreview> findByMapFilter(double longitude, double latitude, Theme theme, Integer interestedAge, String kindOf, Integer distance) {
+    public List<CenterAndDistancePreview> findByMapFilter(double longitude, double latitude, Theme theme, Integer interestedAge, KindOf kindOf, Integer distance) {
         double latitude_l = latitude - 0.009 * distance;
         double latitude_h = latitude + 0.009 * distance;
         double longitude_l = longitude - 0.009 * distance;

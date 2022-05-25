@@ -1,5 +1,7 @@
 package FIS.iLUVit.domain;
 
+import FIS.iLUVit.controller.dto.PresentationModifyRequestDto;
+import FIS.iLUVit.exception.PresentationException;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -65,6 +67,18 @@ public class Presentation extends BaseEntity {
     public Presentation updateCenter(Center center) {
         this.center = center;
         center.getPresentations().add(this);
+        return this;
+    }
+
+    public Presentation update(PresentationModifyRequestDto request, Integer imgCnt, Integer videoCnt) {
+        startDate = request.getStartDate();
+        endDate = request.getEndDate();
+        if(endDate.isBefore(startDate))
+            throw new PresentationException("시작일자와 종료일자를 다시 확인해 주세요.");
+        content = request.getContent();
+        place = request.getPlace();
+        this.imgCnt = imgCnt;
+        this.videoCnt = videoCnt;
         return this;
     }
 }
