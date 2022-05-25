@@ -2,6 +2,7 @@ package FIS.iLUVit.controller.dto;
 
 import FIS.iLUVit.domain.Center;
 import FIS.iLUVit.domain.embeddable.*;
+import FIS.iLUVit.domain.enumtype.KindOf;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 
@@ -36,7 +37,7 @@ public class CenterInfoResponseDto {
     private String introText;               // 시설 소개글
     private Integer imgCnt;                 // 시설 이미지 개수 최대 20장
     private Integer videoCnt;               // 시설 동영상 갯수 최대 5개
-    private String kindOf;                  // 시설 종류
+    private KindOf kindOf;                  // 시설 종류
     private ClassInfo classInfo;            // 학급정보
     private TeacherInfo teacherInfo;        // 선생님 정보
     private CostInfo costInfo;              // 보육료 정보

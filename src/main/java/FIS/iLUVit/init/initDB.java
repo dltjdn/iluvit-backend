@@ -54,11 +54,11 @@ public class initDB {
             em.persist(center3);
 
             // 선생 추가
-            Teacher teacher1 = Teacher.createTeacher("asd", "asd", encoder.encode("asd"), "asd", false, "asd@asd.com", "asd", Auth.TEACHER, Approval.WAITING, center1);
-            Teacher teacher2 = Teacher.createTeacher("sad", "sad", encoder.encode("asd"), "sad", false, "sad@sad.com", "sad", Auth.TEACHER, Approval.WAITING, center1);
-            Teacher teacher3 = Teacher.createTeacher("dsa", "dsa", encoder.encode("asd"), "dsa", false, "dsa@dsa.com", "dsa", Auth.TEACHER, Approval.WAITING, center1);
-            Teacher teacher4 = Teacher.createTeacher("ddd", "ddd", encoder.encode("asd"), "ddd", false, "ddd@ddd.com", "ddd", Auth.DIRECTOR, Approval.ACCEPT, center2);
-            Teacher teacher5 = Teacher.createTeacher("sss", "sss", encoder.encode("asd"), "sss", false, "sss@sss.com", "sss", Auth.DIRECTOR, Approval.WAITING, center2);
+            Teacher teacher1 = Teacher.createTeacher("asd", "asd", encoder.encode("asd"), "asd1", false, "asd@asd.com", "asd", Auth.TEACHER, Approval.WAITING, center1);
+            Teacher teacher2 = Teacher.createTeacher("sad", "sad", encoder.encode("asd"), "sad2", false, "sad@sad.com", "sad", Auth.TEACHER, Approval.WAITING, center1);
+            Teacher teacher3 = Teacher.createTeacher("dsa", "dsa", encoder.encode("asd"), "dsa3", false, "dsa@dsa.com", "dsa", Auth.TEACHER, Approval.WAITING, center1);
+            Teacher teacher4 = Teacher.createTeacher("ddd", "ddd", encoder.encode("asd"), "ddd4", false, "ddd@ddd.com", "ddd", Auth.DIRECTOR, Approval.ACCEPT, center2);
+            Teacher teacher5 = Teacher.createTeacher("sss", "sss", encoder.encode("asd"), "sss5", false, "sss@sss.com", "sss", Auth.DIRECTOR, Approval.WAITING, center2);
             em.persist(teacher1);
             em.persist(teacher2);
             em.persist(teacher3);
@@ -66,9 +66,10 @@ public class initDB {
             em.persist(teacher5);
 
             // 학부모 추가
-            Parent parent1 = Parent.createParent("qwe", "qwe", encoder.encode("asd"), "qwe", false, "qwe@qwe.com", "qwe", theme, 5, Auth.PARENT);
-            Parent parent2 = Parent.createParent("ewq", "ewq", encoder.encode("asd"), "ewq", false, "ewq@ewq.com", "ewq", theme, 5, Auth.PARENT);
-            Parent parent3 = Parent.createParent("weq", "weq", encoder.encode("asd"), "weq", false, "weq@weq.com", "weq", theme, 5, Auth.PARENT);
+            Parent parent1 = Parent.createParent("qwe", "qwe", encoder.encode("asd"), "asd6", false, "qwe@qwe.com", "qwe", theme, 5, Auth.PARENT);
+            Parent parent2 = Parent.createParent("ewq", "ewq", encoder.encode("asd"), "ewq7", false, "ewq@ewq.com", "ewq", theme, 5, Auth.PARENT);
+            Parent parent3 = Parent.createParent("weq", "weq", encoder.encode("asd"), "weq8", false, "weq@weq.com", "weq", theme, 5, Auth.PARENT);
+
             em.persist(parent1);
             em.persist(parent2);
             em.persist(parent3);
