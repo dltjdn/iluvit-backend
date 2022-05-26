@@ -11,7 +11,7 @@ import java.util.List;
 
 @Data
 public class PresentationModifyRequestDto {
-    private Long PresentationId;
+    private Long presentationId;
     @DateTimeFormat(pattern = "yyyy-MM-dd", iso = DateTimeFormat.ISO.DATE)
     private LocalDate startDate;          // 설명회 신청 기간
     @DateTimeFormat(pattern = "yyyy-MM-dd", iso = DateTimeFormat.ISO.DATE)

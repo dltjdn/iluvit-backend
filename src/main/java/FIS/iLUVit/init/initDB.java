@@ -113,8 +113,8 @@ public class initDB {
 
             // 설명회의 회차 추가
             PtDate ptDate1 = PtDate.createPtDate(LocalDate.now(), "오후 1시", 1, 0, presentation1);
-            PtDate ptDate2 = PtDate.createPtDate(LocalDate.now(), "오후 2시", 3, 0, presentation1);
-            PtDate ptDate3 = PtDate.createPtDate(LocalDate.now(), "오후 3시", 2, 0, presentation2);
+            PtDate ptDate2 = PtDate.createPtDate(LocalDate.now(), "오후 2시", 3, 0, presentation2);
+            PtDate ptDate3 = PtDate.createPtDate(LocalDate.now(), "오후 3시", 2, 0, presentation3);
             em.persist(ptDate1);
             em.persist(ptDate2);
             em.persist(ptDate3);

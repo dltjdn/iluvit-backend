@@ -4,6 +4,7 @@ import FIS.iLUVit.domain.AddInfo;
 import FIS.iLUVit.domain.Center;
 import FIS.iLUVit.domain.Program;
 import FIS.iLUVit.domain.embeddable.Area;
+import FIS.iLUVit.domain.embeddable.Theme;
 import com.querydsl.core.annotations.QueryProjection;
 import lombok.Data;
 
@@ -25,10 +26,12 @@ public class CenterPreview {
     private Area area;
     private Double longitude;               // 경도
     private Double latitude;                // 위도
+    private Theme theme;
     private String profileImage;
+    private Double starAverage;
 
     @QueryProjection
-    public CenterPreview(Center center){
+    public CenterPreview(Center center, Double starAverage){
         this.id = center.getId();
         this.name = center.getName();
         this.owner = center.getOwner();
@@ -43,5 +46,7 @@ public class CenterPreview {
         this.area = center.getArea();
         this.longitude = center.getLongitude();
         this.latitude = center.getLatitude();
+        this.theme = center.getTheme();
+        this.starAverage = starAverage;
     }
 }

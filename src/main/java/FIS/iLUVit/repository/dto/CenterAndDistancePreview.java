@@ -3,6 +3,7 @@ package FIS.iLUVit.repository.dto;
 import FIS.iLUVit.domain.Center;
 import FIS.iLUVit.domain.QCenter;
 import FIS.iLUVit.domain.embeddable.Area;
+import FIS.iLUVit.domain.embeddable.Theme;
 import com.querydsl.core.annotations.QueryProjection;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -25,8 +26,10 @@ public class CenterAndDistancePreview {
     private Area area;
     private Double longitude;               // 경도
     private Double latitude;                // 위도
+    private Theme theme;
     private Double distance;
     private String image;
+    private Double starAverage;
 
     public CenterAndDistancePreview(Long id, String name, String owner, String director, String estType, String tel, String startTime, String endTime, Integer minAge, Integer maxAge, String address, Area area, Double longitude, Double latitude) {
         this.id = id;
@@ -46,7 +49,7 @@ public class CenterAndDistancePreview {
     }
 
     @QueryProjection
-    public CenterAndDistancePreview(Center center){
+    public CenterAndDistancePreview(Center center, Double starAverage){
         this.id = center.getId();
         this.name = center.getName();
         this.owner = center.getOwner();
@@ -61,6 +64,8 @@ public class CenterAndDistancePreview {
         this.area = center.getArea();
         this.longitude = center.getLongitude();
         this.latitude = center.getLatitude();
+        this.starAverage = starAverage;
+        this.theme = center.getTheme();
     }
 
     public Double calculateDistance(double longitude, double latitude){

@@ -2,10 +2,12 @@ package FIS.iLUVit.repository;
 
 import FIS.iLUVit.domain.PtDate;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
 import java.util.Optional;
+import java.util.Set;
 
 public interface PtDateRepository extends JpaRepository<PtDate, Long> {
 
@@ -21,4 +23,7 @@ public interface PtDateRepository extends JpaRepository<PtDate, Long> {
             "where ptDate.id = :ptDateId")
     Optional<PtDate> findByIdAndJoinWaiting(@Param("ptDateId") Long ptDateId);
 
+    @Modifying
+    @Query("delete from PtDate ptdate where ptdate.id in :ptDateKeys")
+    void deletePtDateByIds(@Param("ptDateKeys") Set<Long> ptDateKeysDeleteTarget);
 }
