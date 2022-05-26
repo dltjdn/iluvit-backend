@@ -20,6 +20,7 @@ public class ReviewByCenterDTO {
     @AllArgsConstructor
     public static class ReviewCenterDto {
         private Long id;
+        private Long parentId;
         private String username;
         private String content;
         private Integer score;
@@ -29,6 +30,7 @@ public class ReviewByCenterDTO {
         private LocalDate updateDate;
         private LocalTime updateTime;
 
+        private Long teacherId;
         private String answer;
         private LocalDate answerCreateDate;
         private LocalTime answerCreateTime;

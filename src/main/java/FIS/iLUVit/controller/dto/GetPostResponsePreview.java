@@ -1,6 +1,7 @@
 package FIS.iLUVit.controller.dto;
 
 import FIS.iLUVit.domain.Post;
+import com.querydsl.core.annotations.QueryProjection;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -31,6 +32,26 @@ public class GetPostResponsePreview {
     private LocalTime time;
 
     private Long center_id;
+
+    @QueryProjection
+    public GetPostResponsePreview(Post post) {
+        this.post_id = post.getId();
+        this.title = post.getTitle();
+        this.content = post.getContent();
+        this.anonymous = post.getAnonymous();
+        this.nickname = post.getUser().getName();
+        this.user_id = post.getUser().getId();
+        this.commentCnt = post.getCommentCnt();
+        this.heartCnt = post.getHeartCnt();
+        this.imgCnt = post.getImgCnt();
+        this.boardName = post.getBoard().getName();
+        this.date = post.getDate();
+        this.time = post.getTime();
+
+        if (post.getBoard().getCenter() != null) {
+            this.center_id = post.getBoard().getCenter().getId();
+        }
+    }
 
     public GetPostResponsePreview(Post post, List<String> encodedInfoImage) {
         this.post_id = post.getId();

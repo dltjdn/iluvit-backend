@@ -77,11 +77,12 @@ public class ReviewService {
             Integer like = review.getReviewHearts().size();
             String imagePath = imageService.getUserProfileDir();
             String encodedProfileImage = imageService.getEncodedProfileImage(imagePath, userId);
+            Long teacherId = review.getTeacher() == null ? null : review.getTeacher().getId();
             reviewByCenterDTO.getReviews().add(new ReviewByCenterDTO.ReviewCenterDto(
-               review.getId(), review.getParent().getNickName(), review.getContent(), review.getScore(),
-                    review.getCreateDate(), review.getCreateTime(), review.getUpdateDate(),
-                    review.getUpdateTime(), review.getAnswer(), review.getAnswerCreateDate(),
-                    review.getAnswerCreateTime(), review.getAnonymous(), like, encodedProfileImage
+               review.getId(), review.getParent().getId(), review.getParent().getNickName(), review.getContent(), review.getScore(),
+                    review.getCreateDate(), review.getCreateTime(), review.getUpdateDate(), review.getUpdateTime(),
+                    teacherId, review.getAnswer(), review.getAnswerCreateDate(), review.getAnswerCreateTime(),
+                    review.getAnonymous(), like, encodedProfileImage
             ));
         });
         return reviewByCenterDTO;
@@ -90,7 +91,6 @@ public class ReviewService {
     public void saveComment(Long reviewId, String comment, Long teacherId) {
         Review review = reviewRepository.findById(reviewId)
                 .orElseThrow(() -> new IllegalStateException("존재하지 않는 리뷰 아이디"));
-        log.info(teacherId.toString());
         Teacher teacher = teacherRepository.findById(teacherId)
                 .orElseThrow(() -> new IllegalStateException("존재하지 않는 티처 아이디"));
         if (!teacher.getApproval().equals(Approval.ACCEPT)) {

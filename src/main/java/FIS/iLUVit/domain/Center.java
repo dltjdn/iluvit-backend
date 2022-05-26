@@ -77,6 +77,8 @@ public class Center extends BaseEntity{
     protected List<AddInfo> addInfos = new ArrayList<>();
     @OneToMany(mappedBy = "center")
     protected List<Presentation> presentations = new ArrayList<>();
+    @OneToMany(mappedBy = "center")
+    protected List<Teacher> teachers = new ArrayList<>();
 
     @Builder(toBuilder = true)
     public Center(Long id, String name, String owner, String director, String estType, String estDate, String tel, String homepage, String startTime, String endTime, Integer minAge, Integer maxAge, String address, String zipcode, Area area, String offerService, Integer maxChildCnt, Integer curChildCnt, LocalDate updateDate, Boolean recruit, String introText, Integer imgCnt, Integer videoCnt, ClassInfo classInfo, TeacherInfo teacherInfo, CostInfo costInfo, BasicInfra basicInfra, Theme theme) {
@@ -152,4 +154,5 @@ public class Center extends BaseEntity{
     public void updateImageCnt(List<MultipartFile> files){
         imgCnt = files.size();
     }
+
 }

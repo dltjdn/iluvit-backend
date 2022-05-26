@@ -4,6 +4,8 @@ import FIS.iLUVit.config.argumentResolver.Login;
 import FIS.iLUVit.controller.dto.GetPostResponse;
 import FIS.iLUVit.controller.dto.GetPostResponsePreview;
 import FIS.iLUVit.controller.dto.PostRegisterRequest;
+import FIS.iLUVit.controller.dto.PostSearchRequestDTO;
+import FIS.iLUVit.domain.enumtype.Auth;
 import FIS.iLUVit.service.PostService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.MediaType;
@@ -37,16 +39,17 @@ public class PostController {
 
     @GetMapping("/post/all/search")
     public List<GetPostResponsePreview> searchPost(@Login Long userId,
-                                                   @RequestParam("input") String input) {
-        return postService.searchByKeyword(input, userId);
+                                                   @RequestParam("input") String input,
+                                                   @RequestParam("auth") Auth auth) {
+        return postService.searchByKeyword(input, auth, userId);
     }
 
     @GetMapping("/post/search/inCenter")
     public List<GetPostResponsePreview> searchPostByCenter(
             @Login Long userId,
-            @RequestParam(name = "center_id", required = false) Long centerId,
-            @RequestParam("input") String input) {
-        return postService.searchByKeywordAndCenter(centerId, input, userId);
+            @ModelAttribute PostSearchRequestDTO requestDTO) {
+        return postService.searchByKeywordAndCenter(requestDTO.getCenterId(), requestDTO.getInput()
+                , requestDTO.getAuth(), userId);
     }
 
     @GetMapping("/post/search/inBoard")

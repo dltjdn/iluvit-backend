@@ -6,6 +6,7 @@ import FIS.iLUVit.controller.dto.PostRegisterRequest;
 import FIS.iLUVit.domain.*;
 import FIS.iLUVit.domain.enumtype.Auth;
 import FIS.iLUVit.repository.BoardRepository;
+import FIS.iLUVit.repository.CenterRepository;
 import FIS.iLUVit.repository.PostRepository;
 import FIS.iLUVit.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
@@ -16,6 +17,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 import java.util.Objects;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 @Service
@@ -27,6 +29,7 @@ public class PostService {
     private final UserRepository userRepository;
     private final ImageService imageService;
     private final BoardRepository boardRepository;
+    private final CenterRepository centerRepository;
 
     public void savePost(PostRegisterRequest request, List<MultipartFile> images, Long userId) {
         User findUser = userRepository.findById(userId)
@@ -67,22 +70,23 @@ public class PostService {
         return getPostResponseDto(findPost);
     }
 
-    public List<GetPostResponsePreview> searchByKeyword(String input, Long userId) {
+    public List<GetPostResponsePreview> searchByKeyword(String input, Auth auth, Long userId) {
         log.info("input : " + input);
 
         List<Long> boardIds;
-        User findUser = userRepository.findById(userId)
-                .orElseThrow(() -> new IllegalStateException("존재하지 않는 유저"));
-        if (findUser.getAuth() == Auth.PARENT) {
-            List<Long> centerIds = ((Parent) findUser).getChildren().stream()
-                    .filter(c -> c.getCenter() != null)
-                    .map(c -> c.getCenter().getId())
-                    .collect(Collectors.toList());
+
+        if (auth == Auth.PARENT) {
+            Set<Long> centerIds = userRepository.findChildren(userId)
+                    .stream().map(c -> c.getCenter().getId())
+                    .collect(Collectors.toSet());
+
             boardIds = boardRepository.findByUserWithCenterIds(centerIds)
                     .stream().map(b -> b.getId()).collect(Collectors.toList());
+
         } else {
-            Center center = ((Teacher) findUser).getCenter();
-            boardIds = boardRepository.findByUserWithCenter(center.getId())
+            Center center = centerRepository.findCenterByTeacher(userId).get();
+
+            boardIds = boardRepository.findByCenter(center.getId())
                     .stream().map(b -> b.getId()).collect(Collectors.toList());
         }
 
@@ -96,9 +100,9 @@ public class PostService {
                 .collect(Collectors.toList());
     }
 
-    public List<GetPostResponsePreview> searchByKeywordAndCenter(Long centerId, String input, Long userId) {
+    public List<GetPostResponsePreview> searchByKeywordAndCenter(Long centerId, String input, Auth auth, Long userId) {
         if (centerId == null) {
-            return searchByKeyword(input, userId);
+            return searchByKeyword(input, auth, userId);
         }
 
         List<Post> posts = postRepository.findByKeywordAndCenter(centerId, input);
