@@ -1,8 +1,8 @@
 spring:
   datasource:
-    url: jdbc:mysql://13.125.109.123:3306/iLuvit_test
-    username: fisadmin
-    password: fisserver1207!
-    driver-class-name: com.mysql.cj.jdbc.Driver
+    url:  jdbc:h2:tcp://localhost/~/fis_police
+    username: sa
+    password:
+    driver-class-name: org.h2.Driver
     hikari:
       maximum-pool-size: 20
