@@ -1,6 +1,5 @@
 package FIS.iLUVit.repository;
 
-import FIS.iLUVit.controller.dto.GetPostResponse;
 import FIS.iLUVit.domain.Post;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
@@ -24,4 +23,11 @@ public interface PostRepository extends JpaRepository<Post, Long> {
     @Query("select p from Post p left join fetch p.board b where b.id = :boardId" +
             " and (p.title like %:keyword% or p.content like %:keyword%)")
     List<Post> findByKeywordAndBoard(@Param("boardId") Long boardId, @Param("keyword") String keyword);
+
+    @Query("select p from Post p left join fetch p.board b where b.id in :boardIds")
+    List<Post> findAllWithBoardIds(@Param("boardIds") List<Long> boardIds);
+
+    @Query("select p from Post p left join fetch p.board b where b.id in :boardIds" +
+            " and (p.title like %:keyword% or p.content like %:keyword%)")
+    List<Post> findByKeywordWithBoardIds(@Param("keyword") String keyword, @Param("boardIds") List<Long> boardIds);
 }

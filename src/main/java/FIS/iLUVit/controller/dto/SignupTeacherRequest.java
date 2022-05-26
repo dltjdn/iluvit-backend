@@ -18,20 +18,20 @@ public class SignupTeacherRequest {
     private String emailAddress;
     private String name;
     private Auth auth;
-    private Approval approval;
     private Long centerId;
 
-    public Teacher createTeacher(Center center){
+    public Teacher createTeacher(Center center, String pwd){
         return Teacher.builder()
                 .nickName(nickname)
                 .loginId(loginId)
-                .password(password)
+                .password(pwd)
                 .phoneNumber(phoneNum)
-                .hasProfileImg(null)
+                .hasProfileImg(false)
                 .emailAddress(emailAddress)
                 .name(name)
-                .approval(approval)
+                .auth(auth)
                 .center(center)
+                .approval(Approval.WAITING)
                 .build();
     }
 

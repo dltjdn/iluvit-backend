@@ -18,6 +18,7 @@ import java.util.stream.Collectors;
 @AllArgsConstructor
 public class GetPostResponse {
 
+    private Long id;
     private String nickname;
     private LocalDate date;
     private LocalTime time;
@@ -37,7 +38,10 @@ public class GetPostResponse {
     private List<GetCommentResponse> comments;
     private Integer commentCnt;
 
+    private Long centerId;
+
     public GetPostResponse(Post post, List<String> encodedImages, String encodedProfileImage) {
+        this.id = post.getId();
         this.nickname = post.getUser().getNickName();
         this.date = post.getDate();
         this.time = post.getTime();
@@ -55,6 +59,7 @@ public class GetPostResponse {
         } else {
             this.boardName = post.getBoard().getName();
             if (post.getBoard().getCenter() != null) {
+                this.centerId = post.getBoard().getCenter().getId();
                 this.centerName = post.getBoard().getCenter().getName();
             }
         }

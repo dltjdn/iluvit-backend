@@ -31,6 +31,7 @@ public class Parent extends User {
     @OneToMany(mappedBy = "parent")
     private List<Participation> participations = new ArrayList<>();
 
+
     @Builder
     public Parent(String nickName, String loginId, String password, String phoneNumber, Boolean hasProfileImg, String emailAddress, String name, Theme theme, Integer interestAge, Auth auth) {
         this.nickName = nickName;

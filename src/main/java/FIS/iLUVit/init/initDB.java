@@ -5,6 +5,7 @@ import FIS.iLUVit.domain.embeddable.Area;
 import FIS.iLUVit.domain.embeddable.Theme;
 import FIS.iLUVit.domain.enumtype.Approval;
 import FIS.iLUVit.domain.enumtype.Auth;
+import FIS.iLUVit.domain.enumtype.BoardKind;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Component;
@@ -54,7 +55,7 @@ public class initDB {
             em.persist(center3);
 
             // 선생 추가
-            Teacher teacher1 = Teacher.createTeacher("asd", "asd", encoder.encode("asd"), "asd1", false, "asd@asd.com", "asd", Auth.TEACHER, Approval.WAITING, center1);
+            Teacher teacher1 = Teacher.createTeacher("asd", "asd", encoder.encode("asd"), "01067150071", false, "asd@asd.com", "asd", Auth.TEACHER, Approval.WAITING, center1);
             Teacher teacher2 = Teacher.createTeacher("sad", "sad", encoder.encode("asd"), "sad2", false, "sad@sad.com", "sad", Auth.TEACHER, Approval.WAITING, center1);
             Teacher teacher3 = Teacher.createTeacher("dsa", "dsa", encoder.encode("asd"), "dsa3", false, "dsa@dsa.com", "dsa", Auth.TEACHER, Approval.WAITING, center1);
             Teacher teacher4 = Teacher.createTeacher("ddd", "ddd", encoder.encode("asd"), "ddd4", false, "ddd@ddd.com", "ddd", Auth.DIRECTOR, Approval.ACCEPT, center2);
@@ -78,6 +79,7 @@ public class initDB {
             Child child1 = Child.createChild("zxc", "zxc", Approval.WAITING, parent1);
             Child child2 = Child.createChild("zxc", "zxc", Approval.ACCEPT, parent1);
             Child child3 = Child.createChild("zxc", "zxc", Approval.ACCEPT, parent1);
+            child1.mappingCenter(center1);
             em.persist(child1);
             em.persist(child2);
             em.persist(child3);
@@ -117,16 +119,31 @@ public class initDB {
             em.persist(ptDate2);
             em.persist(ptDate3);
 
-            Post post1 = new Post("제목이다", "내용이다", false, 0, 0, 0, teacher1);
-            Post post2 = new Post("안녕", "먹칠하잖아", false, 0, 0, 0, parent1);
-            Post post3 = new Post("게시글제목", "계속먹칠하잖아", false, 0, 0, 0, teacher2);
-            Post post4 = new Post("타이틀", "abcdefg", false, 0, 0, 0, parent2);
-            Post post5 = new Post("다와가", "때려밟았지마티즈엑셀", false, 0, 0, 0, teacher3);
+            Board board1 = Board.createBoard("HOT 게시물", BoardKind.NORMAL, null);
+            Board board2 = Board.createBoard("자유 게시판", BoardKind.NORMAL, null);
+            Board board3 = Board.createBoard("영상 게시판", BoardKind.VIDEO, null);
+            Board board4 = Board.createBoard("장터 게시판", BoardKind.MARKET, null);
+            Board board5 = Board.createBoard("맛집 게시판", BoardKind.FOOD, null);
+            Board board6 = Board.createBoard("OO 유치원 게시판", BoardKind.NORMAL, center1);
+            em.persist(board1);
+            em.persist(board2);
+            em.persist(board3);
+            em.persist(board4);
+            em.persist(board5);
+            em.persist(board6);
+
+            Post post1 = new Post("제목이다", "내용이다", false, 0, 0, 0, 0, board2, teacher1);
+            Post post2 = new Post("안녕", "먹칠하잖아", false, 0, 0, 0, 0, board2, parent1);
+            Post post3 = new Post("게시글제목", "계속먹칠하잖아", false, 0, 0, 0, 0, board2, teacher2);
+            Post post4 = new Post("타이틀", "abcdefg", false, 0, 0, 0, 0, board2, parent2);
+            Post post5 = new Post("다와가", "때려밟았지마티즈엑셀", false, 0, 0, 0, 0, board2, teacher3);
+            Post post6 = new Post("집에가고 싶다", "집에가자 좀", false, 0, 0, 0, 0, board6, parent1);
             em.persist(post1);
             em.persist(post2);
             em.persist(post3);
             em.persist(post4);
             em.persist(post5);
+            em.persist(post6);
 
             PostHeart postHeart1 = new PostHeart(teacher4, post1);
             PostHeart postHeart2 = new PostHeart(parent3, post1);

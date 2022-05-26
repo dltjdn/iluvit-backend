@@ -17,13 +17,13 @@ public class SignupParentRequest {
     private Theme theme;
     private Integer interestAge;
 
-    public Parent createParent() {
+    public Parent createParent(String pwd) {
         return Parent.builder()
                 .nickName(nickname)
                 .loginId(loginId)
-                .password(password)
+                .password(pwd)
                 .phoneNumber(phoneNum)
-                .hasProfileImg(null)
+                .hasProfileImg(false)
                 .emailAddress(emailAddress)
                 .name(name)
                 .theme(theme)
