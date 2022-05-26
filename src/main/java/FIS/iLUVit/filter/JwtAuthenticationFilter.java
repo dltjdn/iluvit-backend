@@ -69,6 +69,7 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
                 .sign(Algorithm.HMAC512("symmetricKey"));   // 대칭키 들어가 자리(노출 금지)
 
         response.addHeader("Authorization", "Bearer " + jwtToken);
+        response.setHeader("Access-Control-Allow-Origin", "*");
         this.getSuccessHandler().onAuthenticationSuccess(request, response, authResult);
     }
 }
