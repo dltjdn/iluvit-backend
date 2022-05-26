@@ -24,8 +24,11 @@ public interface CenterRepository extends JpaRepository<Center, Long>, CenterRep
     List<AddInfo> findInfoByIdWithAddInfo(@Param("id") Long id);
 
 
-    @Query("select new FIS.iLUVit.repository.dto.CenterBannerDto(center.id, center.name, center.maxChildCnt, center.curChildCnt, center.signed, center.recruit, center.waitingNum) " +
-            "from Center center where center.id=:id")
+    @Query("select new FIS.iLUVit.repository.dto.CenterBannerDto(center.id, center.name, center.maxChildCnt, center.curChildCnt, center.signed, center.recruit, center.waitingNum, avg(review.score)) " +
+            "from Center center " +
+            "left join center.reviews as review " +
+            "where center.id=:id " +
+            "group by center")
     CenterBannerDto findBannerById(@Param("id") Long id);
 
     @Query("select center.id from Center center " +

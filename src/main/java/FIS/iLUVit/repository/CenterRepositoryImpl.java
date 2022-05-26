@@ -1,5 +1,6 @@
 package FIS.iLUVit.repository;
 
+import FIS.iLUVit.domain.QReview;
 import FIS.iLUVit.domain.embeddable.Area;
 import FIS.iLUVit.domain.embeddable.Theme;
 import FIS.iLUVit.domain.enumtype.KindOf;
@@ -16,6 +17,7 @@ import org.springframework.data.domain.SliceImpl;
 import java.util.List;
 
 import static FIS.iLUVit.domain.QCenter.center;
+import static FIS.iLUVit.domain.QReview.review;
 
 @AllArgsConstructor
 public class CenterRepositoryImpl extends CenterQueryMethod implements CenterRepositoryCustom {
@@ -24,13 +26,15 @@ public class CenterRepositoryImpl extends CenterQueryMethod implements CenterRep
 
     @Override
     public Slice<CenterPreview> findByFilter(List<Area> areas, Theme theme, Integer interestedAge, KindOf kindOf, Pageable pageable){
-        List<CenterPreview> content = jpaQueryFactory.select(new QCenterPreview(center))
+        List<CenterPreview> content = jpaQueryFactory.select(new QCenterPreview(center, review.score.avg()))
                 .from(center)
+                .leftJoin(center.reviews, review)
                 .where(areasIn(areas)
                         .and(kindOfEq(kindOf))
                         .and(themeEq(theme))
                         .and(interestedAgeEq(interestedAge)))
                 .orderBy(center.score.asc())
+                .groupBy(center)
                 .offset(pageable.getOffset())
                 .limit(pageable.getPageSize() + 1)
                 .fetch();
@@ -50,13 +54,15 @@ public class CenterRepositoryImpl extends CenterQueryMethod implements CenterRep
         double longitude_l = longitude - 0.009 * distance;
         double longitude_h = longitude + 0.009 * distance;
 
-        return jpaQueryFactory.select(new QCenterAndDistancePreview(center))
+        return jpaQueryFactory.select(new QCenterAndDistancePreview(center, review.score.avg()))
                 .from(center)
+                .leftJoin(center.reviews, review)
                 .where(center.latitude.between(latitude_l, latitude_h)
                         .and(center.longitude.between(longitude_l, longitude_h))
                         .and(themeEq(theme))
                         .and(interestedAgeEq(interestedAge))
                         .and(kindOfEq(kindOf)))
+                .groupBy(center)
                 .fetch();
     }
 

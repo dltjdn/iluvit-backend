@@ -21,8 +21,10 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.time.LocalDate;
+import java.util.Collection;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 import static java.util.stream.Collectors.*;
@@ -113,10 +115,14 @@ public class PresentationService {
         userRepository.findTeacherById(userId)
                 .orElseThrow(() -> new UserException("존재하지 않는 유저입니다"))
                 .canWrite(presentation.getCenter().getId());
+
+        // 데이터 베이스에 저장되어있는 ptDate 목록
         Map<Long, PtDate> ptDateMap = presentation.getPtDates()
                 .stream()
                 .collect(toMap(PtDate::getId,
                         ptDate -> ptDate));
+
+        // modify 요청에서 넘어온 ptdate 정보
         request.getPtDateDtos().forEach(ptDateModifyDto -> {
             if(ptDateModifyDto.getPtDateId() == null) {
                 PtDate register = PtDate.register(presentation,
@@ -125,9 +131,19 @@ public class PresentationService {
                         ptDateModifyDto.getAblePersonNum());
                 ptDateRepository.save(register);
             }
-            PtDate ptDate = ptDateMap.get(ptDateModifyDto.getPtDateId());
-            ptDate.update(ptDateModifyDto);
+            else {
+                PtDate ptDate = ptDateMap.get(ptDateModifyDto.getPtDateId());
+                if(ptDate == null)
+                    throw new PresentationException("잘못된 접근입니다");
+                ptDate.update(ptDateModifyDto);
+                ptDateMap.remove(ptDate.getId());
+            }
         });
+        Set<Long> ptDateKeysDeleteTarget = ptDateMap.keySet();
+        Collection<PtDate> ptDateSet = ptDateMap.values();
+        ptDateSet.forEach(ptDate -> ptDate.canDelete());
+        presentation.getPtDates().removeAll(ptDateSet);
+        ptDateRepository.deletePtDateByIds(ptDateKeysDeleteTarget);
         presentation.update(request, images.size(), 0);
         String presentationDir = imageService.getPresentationDir(presentation.getId());
         imageService.saveInfoImage(images, presentationDir);

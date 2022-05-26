@@ -1,5 +1,7 @@
 package FIS.iLUVit.controller.dto;
 
+import FIS.iLUVit.domain.AddInfo;
+import FIS.iLUVit.domain.Program;
 import FIS.iLUVit.domain.embeddable.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -7,6 +9,7 @@ import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
 
 @Data
@@ -38,4 +41,6 @@ public class CenterModifyRequestDto {
     private CostInfo costInfo;              // 보육료 정보
     private BasicInfra basicInfra;          // 기본시설
     private Theme theme;                    // 테마
+    private List<Program> programs = new ArrayList<>();
+    private List<AddInfo> addInfos = new ArrayList<>();
 }

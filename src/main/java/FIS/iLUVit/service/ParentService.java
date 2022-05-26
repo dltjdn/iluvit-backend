@@ -3,26 +3,27 @@ package FIS.iLUVit.service;
 import FIS.iLUVit.controller.dto.ParentDetailResponse;
 import FIS.iLUVit.controller.dto.ParentDetailRequest;
 import FIS.iLUVit.controller.dto.SignupParentRequest;
-import FIS.iLUVit.domain.AuthNumberInfo;
+import FIS.iLUVit.domain.AuthNumber;
 import FIS.iLUVit.domain.Parent;
 import FIS.iLUVit.domain.User;
 import FIS.iLUVit.domain.embeddable.Theme;
+import FIS.iLUVit.domain.enumtype.AuthKind;
 import FIS.iLUVit.exception.SignupException;
 import FIS.iLUVit.exception.UserException;
-import FIS.iLUVit.repository.AuthNumberInfoRepository;
+import FIS.iLUVit.repository.AuthNumberRepository;
 import FIS.iLUVit.repository.ParentRepository;
 import FIS.iLUVit.controller.dto.ChildInfoDTO;
 import FIS.iLUVit.repository.UserRepository;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.io.IOException;
 import java.time.Duration;
 import java.time.LocalDateTime;
-import java.util.List;
 
 @Slf4j
 @Service
@@ -32,8 +33,9 @@ public class ParentService {
 
     private final ParentRepository parentRepository;
     private final UserRepository userRepository;
-    private final AuthNumberInfoRepository authNumberInfoRepository;
+    private final AuthNumberRepository authNumberRepository;
     private final ImageService imageService;
+    private final BCryptPasswordEncoder encoder;
 
     /**
      * 작성날짜: 2022/05/13 4:43 PM
@@ -116,16 +118,18 @@ public class ParentService {
             throw new SignupException("중복된 닉네임입니다.");
         }
 
-        List<AuthNumberInfo> authCompletes = authNumberInfoRepository.findAuthComplete(request.getPhoneNum());
-        if (authCompletes.isEmpty()) {
+        AuthNumber authComplete = authNumberRepository.findAuthComplete(request.getPhoneNum(), AuthKind.signup).orElse(null);
+        if (authComplete == null) {
             throw new SignupException("핸드폰 인증이 완료되지 않았습니다.");
-        } else if (Duration.between(authCompletes.get(0).getAuthTime(), LocalDateTime.now()).getSeconds() > (60 * 60)) {
+        } else if (Duration.between(authComplete.getAuthTime(), LocalDateTime.now()).getSeconds() > (60 * 60)) {
             throw new SignupException("핸드폰 인증시간이 만료되었습니다. 핸드폰 인증을 다시 해주세요");
         }
 
-        Parent parent = request.createParent();
+        String hashedPwd = encoder.encode(request.getPassword());
+        Parent parent = request.createParent(hashedPwd);
+
         parentRepository.save(parent);
 
-        authNumberInfoRepository.deleteAllByPhoneNum(request.getPhoneNum());
+        authNumberRepository.deleteAllByPhoneNum(request.getPhoneNum());
     }
 }

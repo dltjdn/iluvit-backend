@@ -6,12 +6,15 @@ import FIS.iLUVit.domain.enumtype.KindOf;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.Cascade;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.persistence.*;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
+
+import static org.hibernate.annotations.CascadeType.*;
 
 @Entity
 @Inheritance(strategy = InheritanceType.JOINED)
@@ -72,6 +75,7 @@ public class Center extends BaseEntity{
     protected OtherInfo otherInfo;            // 지문등록 사업에서 사용하는 정보들 집합
 
     @OneToMany(mappedBy = "center")
+    @Cascade(value = {PERSIST, DELETE})
     protected List<Program> programs = new ArrayList<>();
     @OneToMany(mappedBy = "center")
     protected List<AddInfo> addInfos = new ArrayList<>();
@@ -79,6 +83,8 @@ public class Center extends BaseEntity{
     protected List<Presentation> presentations = new ArrayList<>();
     @OneToMany(mappedBy = "center")
     protected List<Teacher> teachers = new ArrayList<>();
+    @OneToMany(mappedBy = "center")
+    protected List<Review> reviews = new ArrayList<>();
 
     @Builder(toBuilder = true)
     public Center(Long id, String name, String owner, String director, String estType, String estDate, String tel, String homepage, String startTime, String endTime, Integer minAge, Integer maxAge, String address, String zipcode, Area area, String offerService, Integer maxChildCnt, Integer curChildCnt, LocalDate updateDate, Boolean recruit, String introText, Integer imgCnt, Integer videoCnt, ClassInfo classInfo, TeacherInfo teacherInfo, CostInfo costInfo, BasicInfra basicInfra, Theme theme) {
@@ -138,6 +144,7 @@ public class Center extends BaseEntity{
         this.costInfo = requestDto.getCostInfo();
         this.basicInfra = requestDto.getBasicInfra();
         this.theme = requestDto.getTheme();
+
     }
 
     public void addScore(Score mode){

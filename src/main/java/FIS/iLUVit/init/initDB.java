@@ -55,7 +55,7 @@ public class initDB {
             em.persist(center3);
 
             // 선생 추가
-            Teacher teacher1 = Teacher.createTeacher("asd", "asd", encoder.encode("asd"), "asd1", false, "asd@asd.com", "asd", Auth.TEACHER, Approval.WAITING, center1);
+            Teacher teacher1 = Teacher.createTeacher("asd", "asd", encoder.encode("asd"), "01067150071", false, "asd@asd.com", "asd", Auth.TEACHER, Approval.WAITING, center1);
             Teacher teacher2 = Teacher.createTeacher("sad", "sad", encoder.encode("asd"), "sad2", false, "sad@sad.com", "sad", Auth.TEACHER, Approval.WAITING, center1);
             Teacher teacher3 = Teacher.createTeacher("dsa", "dsa", encoder.encode("asd"), "dsa3", false, "dsa@dsa.com", "dsa", Auth.TEACHER, Approval.WAITING, center1);
             Teacher teacher4 = Teacher.createTeacher("ddd", "ddd", encoder.encode("asd"), "ddd4", false, "ddd@ddd.com", "ddd", Auth.DIRECTOR, Approval.ACCEPT, center2);
@@ -113,8 +113,8 @@ public class initDB {
 
             // 설명회의 회차 추가
             PtDate ptDate1 = PtDate.createPtDate(LocalDate.now(), "오후 1시", 1, 0, presentation1);
-            PtDate ptDate2 = PtDate.createPtDate(LocalDate.now(), "오후 2시", 3, 0, presentation1);
-            PtDate ptDate3 = PtDate.createPtDate(LocalDate.now(), "오후 3시", 2, 0, presentation2);
+            PtDate ptDate2 = PtDate.createPtDate(LocalDate.now(), "오후 2시", 3, 0, presentation2);
+            PtDate ptDate3 = PtDate.createPtDate(LocalDate.now(), "오후 3시", 2, 0, presentation3);
             em.persist(ptDate1);
             em.persist(ptDate2);
             em.persist(ptDate3);
