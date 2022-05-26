@@ -26,9 +26,10 @@ public class CenterPreview {
     private Double longitude;               // 경도
     private Double latitude;                // 위도
     private String profileImage;
+    private Double starAverage;
 
     @QueryProjection
-    public CenterPreview(Center center){
+    public CenterPreview(Center center, Double starAverage){
         this.id = center.getId();
         this.name = center.getName();
         this.owner = center.getOwner();
@@ -43,5 +44,6 @@ public class CenterPreview {
         this.area = center.getArea();
         this.longitude = center.getLongitude();
         this.latitude = center.getLatitude();
+        this.starAverage = starAverage;
     }
 }

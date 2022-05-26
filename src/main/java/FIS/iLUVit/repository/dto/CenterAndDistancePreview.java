@@ -27,6 +27,7 @@ public class CenterAndDistancePreview {
     private Double latitude;                // 위도
     private Double distance;
     private String image;
+    private Double starAverage;
 
     public CenterAndDistancePreview(Long id, String name, String owner, String director, String estType, String tel, String startTime, String endTime, Integer minAge, Integer maxAge, String address, Area area, Double longitude, Double latitude) {
         this.id = id;
@@ -46,7 +47,7 @@ public class CenterAndDistancePreview {
     }
 
     @QueryProjection
-    public CenterAndDistancePreview(Center center){
+    public CenterAndDistancePreview(Center center, Double starAverage){
         this.id = center.getId();
         this.name = center.getName();
         this.owner = center.getOwner();
@@ -61,6 +62,7 @@ public class CenterAndDistancePreview {
         this.area = center.getArea();
         this.longitude = center.getLongitude();
         this.latitude = center.getLatitude();
+        this.starAverage = starAverage;
     }
 
     public Double calculateDistance(double longitude, double latitude){

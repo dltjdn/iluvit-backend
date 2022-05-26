@@ -9,6 +9,7 @@ import lombok.NoArgsConstructor;
 import javax.persistence.*;
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Objects;
 
 @Entity
 @NoArgsConstructor
@@ -116,4 +117,23 @@ public class PtDate extends BaseEntity {
         ablePersonNum = ptDateModifyDto.getAblePersonNum();
         return this;
     }
+
+    public void canDelete() {
+        if(participantCnt > 0)
+            throw new PresentationException("설명회를 신청한 사용자가 있어 설명회 회차를 삭제할 수 없습니다");
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        PtDate ptDate = (PtDate) o;
+        return id.equals(ptDate.id);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id);
+    }
+
 }
