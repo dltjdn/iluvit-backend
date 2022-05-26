@@ -37,6 +37,4 @@ out/
 *.properties
 **/.DS_Store
 src/main/resources/application-secret.yml
-<<<<<<< HEAD
 src/main/resources/application-mysql.yml
-src/mina/resources/application-mysql.yml
