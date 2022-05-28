@@ -1,14 +1,13 @@
 package FIS.iLUVit.domain;
 
 import FIS.iLUVit.domain.enumtype.Auth;
+import FIS.iLUVit.filter.LoginResponse;
 import lombok.AccessLevel;
 import lombok.Data;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
 
@@ -60,5 +59,9 @@ public class User extends BaseEntity{
     @Override
     public int hashCode() {
         return Objects.hash(id);
+    }
+
+    public LoginResponse getUserInfo() {
+        return new LoginResponse(id, nickName, auth.toString());
     }
 }
