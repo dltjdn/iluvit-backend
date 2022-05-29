@@ -62,6 +62,6 @@ public class User extends BaseEntity{
     }
 
     public LoginResponse getUserInfo() {
-        return new LoginResponse(id, nickName, auth.toString());
+        return new LoginResponse(id, nickName, auth);
     }
 }
