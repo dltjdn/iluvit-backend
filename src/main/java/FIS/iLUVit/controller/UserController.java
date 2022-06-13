@@ -1,19 +1,13 @@
 package FIS.iLUVit.controller;
 
 import FIS.iLUVit.config.argumentResolver.Login;
-import FIS.iLUVit.controller.dto.AuthenticateAuthNumRequest;
 import FIS.iLUVit.controller.dto.UpdatePasswordRequest;
-import FIS.iLUVit.domain.enumtype.AuthKind;
 import FIS.iLUVit.filter.LoginResponse;
-import FIS.iLUVit.service.SignService;
 import FIS.iLUVit.service.UserService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpSession;
 
 @Slf4j
 @RestController
