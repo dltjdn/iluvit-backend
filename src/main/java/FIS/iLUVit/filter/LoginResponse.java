@@ -1,6 +1,7 @@
 package FIS.iLUVit.filter;
 
 import FIS.iLUVit.domain.User;
+import FIS.iLUVit.domain.enumtype.Auth;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -11,11 +12,11 @@ import lombok.NoArgsConstructor;
 public class LoginResponse {
     private Long id;
     private String nickname;
-    private String auth;
+    private Auth auth;
 
     public LoginResponse(User user) {
         this.id = user.getId();
         this.nickname = user.getNickName();
-        this.auth = user.getAuth().toString();
+        this.auth = user.getAuth();
     }
 }

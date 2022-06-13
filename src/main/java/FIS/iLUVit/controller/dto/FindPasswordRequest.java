@@ -7,7 +7,7 @@ import lombok.Data;
 public class FindPasswordRequest {
     private String loginId;
     private String phoneNum;
-    private String AuthNum;
+    private String authNum;
     private String newPwd;
     private String newPwdCheck;
 }

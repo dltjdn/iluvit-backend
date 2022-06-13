@@ -27,7 +27,7 @@ public class UserService {
     public LoginResponse findUserInfo(Long id) {
         User findUser = userRepository.findById(id)
                 .orElseThrow(() -> new UserException("유효하지 않은 토큰으로의 사용자 접근입니다."));
-        return new LoginResponse(findUser);
+        return findUser.getUserInfo();
     }
 
     /**
