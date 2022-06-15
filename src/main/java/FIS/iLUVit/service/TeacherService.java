@@ -79,6 +79,11 @@ public class TeacherService {
         return response;
     }
 
+    /**
+    *   작성날짜: 2022/06/15 1:03 PM
+    *   작성자: 이승범
+    *   작성내용: 교사 회원가입
+    */
     public void signup(SignupTeacherRequest request) {
 
         if (!request.getPassword().equals(request.getPasswordCheck())) {

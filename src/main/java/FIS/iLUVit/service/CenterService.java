@@ -1,5 +1,7 @@
 package FIS.iLUVit.service;
 
+import FIS.iLUVit.controller.dto.CenterInfoForSignupDto;
+import FIS.iLUVit.controller.dto.CenterInfoForSignupRequest;
 import FIS.iLUVit.controller.dto.CenterInfoResponseDto;
 import FIS.iLUVit.controller.dto.CenterModifyRequestDto;
 import FIS.iLUVit.domain.*;
@@ -105,5 +107,10 @@ public class CenterService {
         Theme theme = parent.getTheme();
         List<Long> idList = centerRepository.findByThemeAndAgeOnly3(theme, PageRequest.of(0, 3, Sort.by("score")));
         return new ArrayList<>(imageService.getEncodedProfileImage(imageService.getCenterProfileDir(), idList).values());
+    }
+
+    public List<CenterInfoForSignupDto> findCenterForSignup(CenterInfoForSignupRequest request) {
+        PageRequest pageRequest = PageRequest.of(request.getPageNum(), 10);
+        Slice<Center>
     }
 }

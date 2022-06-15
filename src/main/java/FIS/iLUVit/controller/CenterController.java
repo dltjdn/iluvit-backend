@@ -96,4 +96,9 @@ public class CenterController {
         return centerService.modifyCenter(centerId, userId, requestDto, infoFiles);
     }
 
+    @GetMapping("/center/signup")
+    public List<CenterInfoForSignupDto> centerInfoForSignup(@ModelAttribute CenterInfoForSignupRequest request) {
+        return centerService.findCenterForSignup(request);
+    }
+
 }
