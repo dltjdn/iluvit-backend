@@ -13,7 +13,8 @@ node('I_LOVE_IT') {
         script {
             CHANGE = java.lang.String.valueOf(currentBuild.changeSets.size())
             if(CHANGE.equals('0')) {
-                sh exit
+                currentBuild.result = 'SUCCESS'
+                return
             }
         }
         echo CHANGE
