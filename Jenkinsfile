@@ -4,7 +4,7 @@ node('I_LOVE_IT') {
         SCM_VARS =
                 git(
                 branch: 'develop',
-                credentialsId: 'jenkins-github-wh',
+                credentialsId: 'e7fe12eb-4666-4cd0-af62-5d18b1c55756',
                 url: 'git@github.com:FISOLUTION/ILUVIT_BACK.git'
                 )
     }
