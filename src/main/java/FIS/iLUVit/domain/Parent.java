@@ -1,13 +1,13 @@
 package FIS.iLUVit.domain;
 
+import FIS.iLUVit.controller.dto.LoginParentResponse;
 import FIS.iLUVit.controller.dto.ParentDetailRequest;
 import FIS.iLUVit.domain.embeddable.Theme;
-import FIS.iLUVit.domain.enumtype.Approval;
 import FIS.iLUVit.domain.enumtype.Auth;
+import FIS.iLUVit.filter.LoginResponse;
 import lombok.*;
 import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
-import org.springframework.security.core.parameters.P;
 
 import javax.persistence.*;
 import java.util.ArrayList;
@@ -68,5 +68,8 @@ public class Parent extends User {
         this.theme = theme;
     }
 
-
+    @Override
+    public LoginResponse getUserInfo() {
+        return new LoginParentResponse(id, nickName, auth, interestAge);
+    }
 }

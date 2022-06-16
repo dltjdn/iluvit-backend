@@ -13,6 +13,8 @@ import javax.persistence.*;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import static org.hibernate.annotations.CascadeType.*;
 
@@ -56,6 +58,8 @@ public class Center extends BaseEntity{
     protected Integer imgCnt;                 // 시설 이미지 개수 최대 20장
     protected Integer videoCnt;               // 시설 동영상 갯수 최대 5개
     private Integer score;                    // 시설 order By 기준 중 하나
+    private String addInfo;
+    private String program;
 
     @Column(name="kindOf", insertable = false, updatable = false)
     @Enumerated(EnumType.STRING)
@@ -75,12 +79,9 @@ public class Center extends BaseEntity{
     protected OtherInfo otherInfo;            // 지문등록 사업에서 사용하는 정보들 집합
 
     @OneToMany(mappedBy = "center")
-    @Cascade(value = {PERSIST, DELETE})
-    protected List<Program> programs = new ArrayList<>();
-    @OneToMany(mappedBy = "center")
-    protected List<AddInfo> addInfos = new ArrayList<>();
-    @OneToMany(mappedBy = "center")
     protected List<Presentation> presentations = new ArrayList<>();
+    @OneToMany(mappedBy = "center")
+    protected List<Teacher> teachers = new ArrayList<>();
     @OneToMany(mappedBy = "center")
     protected List<Review> reviews = new ArrayList<>();
 
@@ -142,7 +143,8 @@ public class Center extends BaseEntity{
         this.costInfo = requestDto.getCostInfo();
         this.basicInfra = requestDto.getBasicInfra();
         this.theme = requestDto.getTheme();
-
+        this.addInfo = Center.encodeStringList(requestDto.getAddInfos());
+        this.program = Center.encodeStringList(requestDto.getPrograms());
     }
 
     public void addScore(Score mode){
@@ -156,7 +158,32 @@ public class Center extends BaseEntity{
         }
     }
 
-    public void updateImageCnt(List<MultipartFile> files){
+    public void updateImageCntAndVideoCnt(List<MultipartFile> files, Integer videoCnt){
         imgCnt = files.size();
+        this.videoCnt = videoCnt;
     }
+
+
+    public static String encodeStringList(List<String> infos){
+        String encodedString = "";
+        for (String info : infos) {
+            encodedString += "<d>" + info + "</d>";
+        }
+        return encodedString;
+    }
+
+    public static List<String> decodeString(String encodeString){
+        if(encodeString == null || encodeString.equals(""))
+            return new ArrayList<>();
+        List<String> decodedStrings = new ArrayList<>();
+        String regEx = "<d>(.*?)</d>";
+        Pattern pat = Pattern.compile(regEx);
+        Matcher match = pat.matcher(encodeString);
+        while (match.find()) {
+            String group = match.group();
+            decodedStrings.add(group.substring(3, group.length() - 4));
+        }
+        return decodedStrings;
+    }
+
 }

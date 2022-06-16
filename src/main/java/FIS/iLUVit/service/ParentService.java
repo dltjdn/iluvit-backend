@@ -48,9 +48,7 @@ public class ParentService {
 
         ChildInfoDTO childInfoDTO = new ChildInfoDTO();
 
-        findParent.getChildren().forEach(child -> {
-            childInfoDTO.getData().add(new ChildInfoDTO.ChildInfo(child));
-        });
+        findParent.getChildren().forEach(child -> childInfoDTO.getData().add(new ChildInfoDTO.ChildInfo(child)));
 
         return childInfoDTO;
     }
