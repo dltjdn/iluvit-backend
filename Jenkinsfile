@@ -32,8 +32,8 @@ node('I_LOVE_IT') {
         sh "ls"
         dir("./build/libs") {
             sh "pwd"
+            sh "ls"
         }
-        sh "ls"
         sh "nohup java -jar iLUVit-0.0.1-SNAPSHOT.jar &"
         sh "tail -f nohup.out"
     }
