@@ -23,7 +23,8 @@ node('I_LOVE_IT') {
         sh "who"
         sh "whoami"
         sh "pwd"
-        sh "sudo cd /root"
+        sh "sudo echo 'Hello World'"
+        sh "cd /root"
         sh "ls"
     }
 }
