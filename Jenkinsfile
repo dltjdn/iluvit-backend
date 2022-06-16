@@ -13,7 +13,7 @@ node('I_LOVE_IT') {
             if(currentBuild.changeSets.size() <= 0) {
                 sh exit
             }
-            echo ${currentBuild.changeSets.size()}
         }
+        echo currentBuild.changeSets.size()
     }
 }
