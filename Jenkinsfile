@@ -24,8 +24,9 @@ node('I_LOVE_IT') {
     }
 
     stage('kill ex-Application'){
-        pid = sh("lsof -t -i :8080")
+        def pid
         script {
+            pid = sh("lsof -t -i :8081")
             if (!pid.equals("")) {
                 echo "===================== Killing Process ====================="
                 sh("kill -9 $pid")
@@ -37,10 +38,8 @@ node('I_LOVE_IT') {
 
     stage('Access To Jar') {
         echo "===================== Access ====================="
-        sh "ls"
         dir("./build/libs") {
             sh "pwd"
-            sh "ls"
             sh "nohup java -jar iLUVit-0.0.1-SNAPSHOT.jar &"
             sh "tail -f nohup.out"
 
