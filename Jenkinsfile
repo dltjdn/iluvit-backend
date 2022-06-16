@@ -24,7 +24,15 @@ node('I_LOVE_IT') {
     }
 
     stage('kill ex-Application'){
-        sh "ps -ef|grep iLUVit"
+        pid = sh("lsof -t -i :5000 -s TCP:LISTEN")
+        script {
+            if (!pid.equals("")) {
+                echo "===================== Killing Process ====================="
+                sh("kill -9 $pid")
+            } else {
+                echo "===================== Nothing To Kill ====================="
+            }
+        }
     }
 
     stage('Access To Jar') {
