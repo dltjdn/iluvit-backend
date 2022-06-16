@@ -21,8 +21,9 @@ node('I_LOVE_IT') {
     }
     stage('cd') {
         sh "who"
+        sh "who am i"
         sh "pwd"
-        sh "cd /"
+        sh "cd /root"
         sh "ls"
     }
 }
