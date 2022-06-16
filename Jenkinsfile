@@ -11,7 +11,7 @@ node('I_LOVE_IT') {
     stage('has Changed?') {
         def CHANGE
         script {
-            CHANGE = currentBuild.changeSets.size()
+            CHANGE = java.lang.String.valueOf(currentBuild.changeSets.size())
             if(CHANGE <= 0) {
                 sh exit
             }
