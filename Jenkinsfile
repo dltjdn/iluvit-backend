@@ -24,7 +24,7 @@ node('I_LOVE_IT') {
     }
 
     stage('kill ex-Application'){
-        pid = sh("lsof -t -i :5000 -s TCP:LISTEN")
+        pid = sh("lsof -t -i :8080")
         script {
             if (!pid.equals("")) {
                 echo "===================== Killing Process ====================="
