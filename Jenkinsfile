@@ -9,7 +9,7 @@ node('I_LOVE_IT') {
                 )
     }
     stage('has Changed?') {
-        def CHANGE = COMMIT_CHANGE_SET = sh(returnStdout: true, script: "git diff --name-only develop origin/develop").trim()
+        def CHANGE = sh(returnStdout: true, script: "git diff --name-only develop origin/develop").trim()
 
         sh echo CHANGE
 
