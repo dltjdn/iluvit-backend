@@ -29,7 +29,10 @@ node('I_LOVE_IT') {
 
     stage('Access To Jar') {
         echo "===================== Access ====================="
-        sh "cd ./build/libs"
+        sh "ls"
+        dir("cd ./build/libs") {
+            sh "pwd"
+        }
         sh "nohup java -jar iLUVit-0.0.1-SNAPSHOT.jar &"
         sh "tail -f nohup.out"
     }
