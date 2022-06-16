@@ -24,7 +24,7 @@ public class QCenter extends EntityPathBase<Center> {
 
     public final QBaseEntity _super = new QBaseEntity(this);
 
-    public final ListPath<AddInfo, QAddInfo> addInfos = this.<AddInfo, QAddInfo>createList("addInfos", AddInfo.class, QAddInfo.class, PathInits.DIRECT2);
+    public final StringPath addInfo = createString("addInfo");
 
     public final StringPath address = createString("address");
 
@@ -79,7 +79,7 @@ public class QCenter extends EntityPathBase<Center> {
 
     public final ListPath<Presentation, QPresentation> presentations = this.<Presentation, QPresentation>createList("presentations", Presentation.class, QPresentation.class, PathInits.DIRECT2);
 
-    public final ListPath<Program, QProgram> programs = this.<Program, QProgram>createList("programs", Program.class, QProgram.class, PathInits.DIRECT2);
+    public final StringPath program = createString("program");
 
     public final BooleanPath recruit = createBoolean("recruit");
 
@@ -94,6 +94,8 @@ public class QCenter extends EntityPathBase<Center> {
     public final StringPath status = createString("status");
 
     public final FIS.iLUVit.domain.embeddable.QTeacherInfo teacherInfo;
+
+    public final ListPath<Teacher, QTeacher> teachers = this.<Teacher, QTeacher>createList("teachers", Teacher.class, QTeacher.class, PathInits.DIRECT2);
 
     public final StringPath tel = createString("tel");
 

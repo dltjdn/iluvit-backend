@@ -25,7 +25,7 @@ public class QKindergarten extends EntityPathBase<Kindergarten> {
     public final QCenter _super;
 
     //inherited
-    public final ListPath<AddInfo, QAddInfo> addInfos;
+    public final StringPath addInfo;
 
     //inherited
     public final StringPath address;
@@ -106,7 +106,7 @@ public class QKindergarten extends EntityPathBase<Kindergarten> {
     public final ListPath<Presentation, QPresentation> presentations;
 
     //inherited
-    public final ListPath<Program, QProgram> programs;
+    public final StringPath program;
 
     //inherited
     public final BooleanPath recruit;
@@ -128,6 +128,9 @@ public class QKindergarten extends EntityPathBase<Kindergarten> {
 
     // inherited
     public final FIS.iLUVit.domain.embeddable.QTeacherInfo teacherInfo;
+
+    //inherited
+    public final ListPath<Teacher, QTeacher> teachers;
 
     //inherited
     public final StringPath tel;
@@ -169,7 +172,7 @@ public class QKindergarten extends EntityPathBase<Kindergarten> {
     public QKindergarten(Class<? extends Kindergarten> type, PathMetadata metadata, PathInits inits) {
         super(type, metadata, inits);
         this._super = new QCenter(type, metadata, inits);
-        this.addInfos = _super.addInfos;
+        this.addInfo = _super.addInfo;
         this.address = _super.address;
         this.area = _super.area;
         this.basicInfra = _super.basicInfra;
@@ -196,7 +199,7 @@ public class QKindergarten extends EntityPathBase<Kindergarten> {
         this.otherInfo = _super.otherInfo;
         this.owner = _super.owner;
         this.presentations = _super.presentations;
-        this.programs = _super.programs;
+        this.program = _super.program;
         this.recruit = _super.recruit;
         this.reviews = _super.reviews;
         this.score = _super.score;
@@ -204,6 +207,7 @@ public class QKindergarten extends EntityPathBase<Kindergarten> {
         this.startTime = _super.startTime;
         this.status = _super.status;
         this.teacherInfo = _super.teacherInfo;
+        this.teachers = _super.teachers;
         this.tel = _super.tel;
         this.theme = _super.theme;
         this.updateDate = _super.updateDate;
