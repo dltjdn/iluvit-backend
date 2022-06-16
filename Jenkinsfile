@@ -9,11 +9,13 @@ node('I_LOVE_IT') {
                 )
     }
     stage('has Changed?') {
+        def CHANGE
         script {
-            if(currentBuild.changeSets.size() <= 0) {
+            CHANGE = currentBuild.changeSets.size()
+            if(CHANGE <= 0) {
                 sh exit
             }
         }
-        echo "$currentBuild.changeSets.size()"
+        echo CHANGE
     }
 }
