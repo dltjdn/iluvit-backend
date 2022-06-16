@@ -14,6 +14,6 @@ node('I_LOVE_IT') {
                 sh exit
             }
         }
-        echo currentBuild.changeSets.size()
+        echo "$currentBuild.changeSets.size()"
     }
 }
