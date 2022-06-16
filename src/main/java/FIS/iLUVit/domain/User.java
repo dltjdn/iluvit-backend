@@ -45,6 +45,7 @@ public class User extends BaseEntity{
     @OneToMany(mappedBy = "sender")
     protected List<Chat> sendChats;
 
+
     public void changePassword(String newPwd) {
         this.password = newPwd;
     }

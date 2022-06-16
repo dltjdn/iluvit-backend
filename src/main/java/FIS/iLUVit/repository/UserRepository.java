@@ -8,6 +8,7 @@ import org.springframework.data.repository.query.Param;
 
 import javax.websocket.server.PathParam;
 import java.time.LocalDate;
+import java.util.List;
 import java.util.Optional;
 
 public interface UserRepository extends JpaRepository<User, Long> {
@@ -29,4 +30,8 @@ public interface UserRepository extends JpaRepository<User, Long> {
     Optional<User> findByPhoneNumber(String phoneNumber);
 
     Optional<User> findByLoginIdAndPhoneNumber(String loginId, String phoneNumber);
+
+    @Query("select user " +
+            "from User user ")
+    List<User> findByIdTest();
 }
