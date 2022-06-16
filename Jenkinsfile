@@ -1,15 +1,40 @@
 node('I_LOVE_IT') {
     def SCM_VARS
     stage('Git Clone') {
-        SCM_VARS = git branch: 'release', url: 'git@github.com:FISOLUTION/ILUVIT_BACK.git'
+        echo "===================== Cloning from Git ======================="
+        SCM_VARS =
+                git(
+                branch: 'release',
+                credentialsId: 'e7fe12eb-4666-4cd0-af62-5d18b1c55756',
+                url: 'git@github.com:FISOLUTION/ILUVIT_BACK.git'
+                )
     }
-    stage('has Changed?') {
-        def CHANGE = sh(script: "git diff ${SCM_VARS.GIT_PREVIOUS_SUCCESSFUL_COMMIT} ${SCM_VARS.GIT_COMMIT} test.txt", returnStdout: true)
 
+    stage('has Changed?') {
+        def CHANGE
         script {
-            if (CHANGE.length() <= 0) {
-                sh exit
+            CHANGE = java.lang.String.valueOf(currentBuild.changeSets.size())
+            if(CHANGE.equals('0')) {
+                echo "===================== file does not Changed ====================="
+                currentBuild.result = 'SUCCESS'
+                sh "exit 1"
             }
+        }
+        echo CHANGE
+    }
+
+    stage('kill ex-Application'){
+        sh "ps -ef|grep iLUVit"
+    }
+
+    stage('Access To Jar') {
+        echo "===================== Access ====================="
+        sh "ls"
+        dir("./build/libs") {
+            sh "pwd"
+            sh "ls"
+            sh "nohup java -jar iLUVit-0.0.1-SNAPSHOT.jar &"
+            sh "tail -f nohup.out"
         }
     }
 }
