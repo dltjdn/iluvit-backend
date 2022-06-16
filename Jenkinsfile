@@ -25,8 +25,8 @@ node('I_LOVE_IT') {
 
     stage('kill ex-Application'){
         def pid
+        pid = sh(encoding: 'UTF-8', returnStdout: true, script: 'lsof -t -i :8081')
         script {
-            pid = sh "lsof -t -i :8081"
             if (!pid.equals("")) {
                 echo "===================== Killing Process ====================="
                 sh "kill -9 $pid"
