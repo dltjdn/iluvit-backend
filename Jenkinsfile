@@ -9,7 +9,9 @@ node('I_LOVE_IT') {
                 )
     }
     stage('has Changed?') {
-        def CHANGE = sh(script: "git diff ${SCM_VARS.GIT_PREVIOUS_SUCCESSFUL_COMMIT} ${SCM_VARS.GIT_COMMIT} test.txt", returnStdout: true)
+        def CHANGE = COMMIT_CHANGE_SET = sh(returnStdout: true, script: "git diff --name-only develop origin/develop").trim()
+
+        sh echo CHANGE
 
         script {
             if (CHANGE.length() <= 0) {
