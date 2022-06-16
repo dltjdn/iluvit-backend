@@ -4,7 +4,7 @@ node('I_LOVE_IT') {
         echo "===================== Cloning from Git ======================="
         SCM_VARS =
                 git(
-                branch: 'develop',
+                branch: 'release',
                 credentialsId: 'e7fe12eb-4666-4cd0-af62-5d18b1c55756',
                 url: 'git@github.com:FISOLUTION/ILUVIT_BACK.git'
                 )
