@@ -1,6 +1,7 @@
 node('I_LOVE_IT') {
     def SCM_VARS
     stage('Git Clone') {
+        echo "===================== Cloning from Git ======================="
         SCM_VARS =
                 git(
                 branch: 'develop',
@@ -8,23 +9,29 @@ node('I_LOVE_IT') {
                 url: 'git@github.com:FISOLUTION/ILUVIT_BACK.git'
                 )
     }
+
     stage('has Changed?') {
         def CHANGE
         script {
             CHANGE = java.lang.String.valueOf(currentBuild.changeSets.size())
             if(CHANGE.equals('0')) {
+                echo "===================== file does not Changed ====================="
                 currentBuild.result = 'SUCCESS'
                 sh "exit 1"
             }
         }
         echo CHANGE
     }
-    stage('cd') {
-        sh "who"
-        sh "whoami"
-        sh "pwd"
-        sh "sudo echo 'Hello World'"
-        sh "cd /home"
-        sh "ls"
+
+    stage('kill ex-Application'){
+        sh "kill \$(lsof -t -i:8080)"
     }
+
+    stage('Access To Jar') {
+        echo "===================== Access ====================="
+        sh "cd ./build/libs"
+        sh "nohup java -jar iLUVit-0.0.1-SNAPSHOT.jar &"
+        sh "tail -f nohup.out"
+    }
+
 }
