@@ -109,8 +109,7 @@ public class CenterService {
         return new ArrayList<>(imageService.getEncodedProfileImage(imageService.getCenterProfileDir(), idList).values());
     }
 
-    public List<CenterInfoForSignupDto> findCenterForSignup(CenterInfoForSignupRequest request) {
-        PageRequest pageRequest = PageRequest.of(request.getPageNum(), 10);
-        Slice<Center>
+    public Slice<CenterInfoForSignupDto> findCenterForSignup(CenterInfoForSignupRequest request, Pageable pageable) {
+        return centerRepository.findForSignup(request, pageable);
     }
 }

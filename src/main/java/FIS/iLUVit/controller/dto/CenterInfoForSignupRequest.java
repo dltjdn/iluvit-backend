@@ -8,9 +8,8 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 public class CenterInfoForSignupRequest {
-    private String auth;
+    private String signupKind;
     private String sido;
     private String sigungu;
     private String centerName;
-    private Integer pageNum;
 }

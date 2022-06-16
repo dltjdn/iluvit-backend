@@ -97,8 +97,8 @@ public class CenterController {
     }
 
     @GetMapping("/center/signup")
-    public List<CenterInfoForSignupDto> centerInfoForSignup(@ModelAttribute CenterInfoForSignupRequest request) {
-        return centerService.findCenterForSignup(request);
+    public Slice<CenterInfoForSignupDto> centerInfoForSignup(@ModelAttribute CenterInfoForSignupRequest request, Pageable pageable) {
+        return centerService.findCenterForSignup(request, pageable);
     }
 
 }
