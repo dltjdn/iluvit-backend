@@ -9,12 +9,8 @@ node('I_LOVE_IT') {
                 )
     }
     stage('has Changed?') {
-        def CHANGE = sh(returnStdout: true, script: "git diff --name-only develop origin/develop").trim()
-
-        echo CHANGE
-
         script {
-            if (CHANGE.length() <= 0) {
+            if(currentBuild.changeSets.size() <= 0) {
                 sh exit
             }
         }
