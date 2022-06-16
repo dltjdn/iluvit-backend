@@ -20,6 +20,7 @@ node('I_LOVE_IT') {
         echo CHANGE
     }
     stage('cd') {
+        sh "cd /"
         sh "ls"
     }
 }
