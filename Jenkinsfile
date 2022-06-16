@@ -12,7 +12,7 @@ node('I_LOVE_IT') {
         def CHANGE
         script {
             CHANGE = java.lang.String.valueOf(currentBuild.changeSets.size())
-            if(CHANGE <= 0) {
+            if(CHANGE.equals('0')) {
                 sh exit
             }
         }
