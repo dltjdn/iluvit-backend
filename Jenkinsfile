@@ -1,4 +1,4 @@
-node('Built-In Node') {
+node('I_LOVE_IT') {
     def SCM_VARS
     stage('Git Clone') {
         SCM_VARS = git branch: 'release', url: 'https://github.com/FISOLUTION/ILUVIT_BACK.git'
