@@ -1,5 +1,6 @@
 package FIS.iLUVit.repository;
 
+import FIS.iLUVit.domain.Child;
 import FIS.iLUVit.domain.Teacher;
 import FIS.iLUVit.domain.User;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -28,6 +29,10 @@ public interface UserRepository extends JpaRepository<User, Long> {
     Optional<Teacher> findTeacherById(@Param("userId") Long userId);
 
     Optional<User> findByPhoneNumber(String phoneNumber);
+
+    @Query("select c from Child c join c.parent p join fetch c.center ct" +
+            " where p.id = :parentId")
+    List<Child> findChildren(@Param("parentId") Long parentId);
 
     Optional<User> findByLoginIdAndPhoneNumber(String loginId, String phoneNumber);
 

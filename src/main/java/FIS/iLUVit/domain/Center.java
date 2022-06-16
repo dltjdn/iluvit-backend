@@ -81,6 +81,8 @@ public class Center extends BaseEntity{
     @OneToMany(mappedBy = "center")
     protected List<Presentation> presentations = new ArrayList<>();
     @OneToMany(mappedBy = "center")
+    protected List<Teacher> teachers = new ArrayList<>();
+    @OneToMany(mappedBy = "center")
     protected List<Review> reviews = new ArrayList<>();
 
     @Builder(toBuilder = true)
@@ -160,6 +162,7 @@ public class Center extends BaseEntity{
         imgCnt = files.size();
         this.videoCnt = videoCnt;
     }
+
 
     public static String encodeStringList(List<String> infos){
         String encodedString = "";

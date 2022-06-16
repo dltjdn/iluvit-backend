@@ -27,7 +27,7 @@ public class UserService {
     public LoginResponse findUserInfo(Long id) {
         User findUser = userRepository.findById(id)
                 .orElseThrow(() -> new UserException("유효하지 않은 토큰으로의 사용자 접근입니다."));
-        return new LoginResponse(findUser);
+        return findUser.getUserInfo();
     }
 
     /**
@@ -40,9 +40,9 @@ public class UserService {
         User findUser = userRepository.findById(id)
                 .orElseThrow(() -> new UserException("유효하지 않은 토큰으로의 사용자 접근입니다."));
 
-        if (!encoder.encode(request.getOriginPwd()).equals(findUser.getPassword())) {
+        if (!encoder.matches(request.getOriginPwd(), findUser.getPassword())) {
             throw new InputException("비밀번호가 틀렸습니다.");
-        } else if (request.getNewPwd().equals(request.getNewPwdCheck())) {
+        } else if (!request.getNewPwd().equals(request.getNewPwdCheck())) {
             throw new InputException("새로운 비밀번호가 확인과 일치하지 않습니다.");
         }
 
