@@ -24,7 +24,7 @@ node('I_LOVE_IT') {
         sh "whoami"
         sh "pwd"
         sh "sudo echo 'Hello World'"
-        sh "cd /root"
+        sh "cd /home"
         sh "ls"
     }
 }
