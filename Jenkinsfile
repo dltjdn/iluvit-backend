@@ -24,7 +24,7 @@ node('I_LOVE_IT') {
     }
 
     stage('kill ex-Application'){
-        sh "kill $(lsof -t -i:8080)"
+        sh "ps -ef|grep iLUVit"
     }
 
     stage('Access To Jar') {
