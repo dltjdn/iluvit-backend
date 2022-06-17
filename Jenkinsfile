@@ -53,7 +53,7 @@ node('I_LOVE_IT') {
         dir("./build/libs") {
             PATH = sh(encoding: 'UTF-8', returnStdout: true, script:"pwd")
             script{
-                EXCUTE = "JENKINS_NODE_COOKIE=DONTKILLME nohup java -jar " + JAR_NAME + " > nohup.out 2>&1 &"
+                EXCUTE = "JENKINS_NODE_COOKIE=DONTKILLME nohup java -jar " + JAR_NAME + "> nohup.out 2>&1 &"
                 echo "$EXCUTE"
                 sh "$EXCUTE"
             }
