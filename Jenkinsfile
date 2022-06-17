@@ -27,13 +27,11 @@ node('I_LOVE_IT') {
         BUILD_JAR = sh(encoding: 'UTF-8', returnStdout: true, script: "ls ./build/libs/*.jar")
         JAR_NAME = sh(encoding: 'UTF-8', returnStdout: true, script: "basename $BUILD_JAR")
         echo "$JAR_NAME"
-        pid = sh(encoding: 'UTF-8', returnStdout: true,script: "ps -ef | grep $JAR_NAME")
+        pid = sh(encoding: 'UTF-8', returnStdout: true,script: "pgrep -f $JAR_NAME")
         echo "$pid"
         script {
             if (!pid.equals("")) {
                 echo "===================== Killing Process ====================="
-                String[] array = pid.toString().split('\\r\\n|\\r|\\n|\\n\\r|\\p{Z}|\\t');
-                pid = java.lang.Integer.valueOf(array[4])
                 echo "$pid"
                 sh "kill -15 $pid"
             } else {
