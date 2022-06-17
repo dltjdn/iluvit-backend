@@ -44,8 +44,8 @@ public class TeacherController {
     *   작성자: 이승범
     *   작성내용: 원장 회원가입
     */
-    @PostMapping("/signup/director")
-    public void signupTeacher(@RequestBody SignupTeacherRequest request) {
+    @PostMapping("/signup/teacher")
+    public void signup(@RequestBody SignupTeacherRequest request) {
         teacherService.signup(request);
     }
 
