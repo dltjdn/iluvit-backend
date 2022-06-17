@@ -53,6 +53,7 @@ node('I_LOVE_IT') {
         dir("./build/libs") {
             PATH = sh(encoding: 'UTF-8', returnStdout: true, script:"pwd")
             "nohup java -jar $JAR_NAME >> $PATH/nohup.out 2>&1 &".excute()
+
         }
     }
 }
