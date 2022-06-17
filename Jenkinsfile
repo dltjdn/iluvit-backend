@@ -32,7 +32,7 @@ node('I_LOVE_IT') {
         script {
             if (!pid.equals("")) {
                 echo "===================== Killing Process ====================="
-                String[] array = pid.toString().split('\\t');
+                String[] array = pid.toString().split('\\r\\n|\\r|\\n|\\n\\r|\\p{Z}|\\t');
                 pid = java.lang.Integer.valueOf(array[1])
                 echo "$pid"
                 sh "kill -15 $pid"
