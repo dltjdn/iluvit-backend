@@ -47,9 +47,11 @@ node('I_LOVE_IT') {
 
     stage('Access To Jar') {
         echo "===================== Access ====================="
+        BUILD_JAR = sh(encoding: 'UTF-8', returnStdout: true, script: "ls ./build/libs/*.jar")
+        JAR_NAME = sh(encoding: 'UTF-8', returnStdout: true, script: "basename $BUILD_JAR")
         dir("./build/libs") {
             sh "pwd"
-            sh "nohup java -jar iLUVit-0.0.1-SNAPSHOT.jar &"
+            nohup "java -jar $JAR_NAME &"
         }
     }
 }
