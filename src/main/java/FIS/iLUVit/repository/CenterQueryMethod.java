@@ -1,5 +1,6 @@
 package FIS.iLUVit.repository;
 
+import FIS.iLUVit.controller.dto.CenterInfoForSignupDto;
 import FIS.iLUVit.domain.embeddable.Area;
 import FIS.iLUVit.domain.embeddable.Theme;
 import FIS.iLUVit.domain.enumtype.KindOf;
@@ -60,6 +61,26 @@ public class CenterQueryMethod {
                                         .multiply(cos(radians(Expressions.constant(latitude)))
                                                 .multiply(cos(radians(center.longitude)).subtract(radians(Expressions.constant(longitude))))))).multiply(6371);
         return distanceExpression;
+    }
+
+    protected BooleanExpression signedEq(Boolean isSigned) {
+        return isSigned == null ? null : center.signed.eq(isSigned);
+    }
+
+    protected BooleanExpression areaEq(String sido, String sigungu) {
+        if (sido == null && sigungu == null) {
+            return null;
+        } else if (sigungu == null) {
+            return center.area.sido.eq(sido);
+        } else if (sido == null) {
+            return center.area.sigungu.eq(sigungu);
+        } else {
+            return center.area.sido.eq(sido).and(center.area.sigungu.eq(sigungu));
+        }
+    }
+
+    protected BooleanExpression centerNameEq(String centerName) {
+        return centerName == null ? null : center.name.eq(centerName);
     }
 
 }

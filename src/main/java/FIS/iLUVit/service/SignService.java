@@ -127,6 +127,7 @@ public class SignService {
         User findUser = userRepository.findByPhoneNumber(authNumber.getPhoneNum())
                 .orElseThrow(() -> new AuthNumException("핸드폰 번호를 확인해 주세요"));
 
+        authNumberRepository.delete(authNumber);
         return blindLoginId(findUser.getLoginId());
     }
 
@@ -148,15 +149,17 @@ public class SignService {
             throw new AuthNumException("핸드폰 인증시간이 만료되었습니다.");
         }
 
-        User user = userRepository.findByLoginId(request.getLoginId())
+        User user = userRepository.findByLoginIdAndPhoneNumber(request.getLoginId(), request.getPhoneNum())
                 .orElseThrow(() -> new UserException("잘못된 로그인 아이디입니다."));
 
         user.changePassword(encoder.encode(request.getNewPwd()));
+        authNumberRepository.delete(authComplete);
     }
 
-    // 로그인 찾기에서 로그인아이디 일부를 *로 가리기
+    // 인증번호 전송 로직
     private void sendAuthNumber(String toNumber, AuthKind authKind) {
-        // 인증번호 전송 로직
+
+        // 4자리 랜덤 숫자 생성
         String authNumber = createRandomNumber();
 
         AuthNumber overlaps = authNumberRepository.findOverlap(toNumber, authKind).orElse(null);

@@ -27,4 +27,6 @@ public interface CenterRepository extends JpaRepository<Center, Long>, CenterRep
 
     @Query("select c from Center c join c.teachers t where t.id = :teacherId")
     Optional<Center> findCenterByTeacher(@Param("teacherId") Long teacherId);
+
+    Optional<Center> findByIdAndSigned(Long centerId, boolean signed);
 }
