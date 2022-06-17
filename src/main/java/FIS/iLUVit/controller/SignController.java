@@ -1,5 +1,6 @@
 package FIS.iLUVit.controller;
 
+import FIS.iLUVit.controller.dto.AuthenticateAuthNumForFindPwd;
 import FIS.iLUVit.controller.dto.AuthenticateAuthNumRequest;
 import FIS.iLUVit.controller.dto.FindPasswordRequest;
 import FIS.iLUVit.service.SignService;

@@ -127,6 +127,7 @@ public class SignService {
         User findUser = userRepository.findByPhoneNumber(authNumber.getPhoneNum())
                 .orElseThrow(() -> new AuthNumException("핸드폰 번호를 확인해 주세요"));
 
+        authNumberRepository.delete(authNumber);
         return blindLoginId(findUser.getLoginId());
     }
 
@@ -148,10 +149,11 @@ public class SignService {
             throw new AuthNumException("핸드폰 인증시간이 만료되었습니다.");
         }
 
-        User user = userRepository.findByLoginId(request.getLoginId())
+        User user = userRepository.findByLoginIdAndPhoneNumber(request.getLoginId(), request.getPhoneNum())
                 .orElseThrow(() -> new UserException("잘못된 로그인 아이디입니다."));
 
         user.changePassword(encoder.encode(request.getNewPwd()));
+        authNumberRepository.delete(authComplete);
     }
 
     // 인증번호 전송 로직

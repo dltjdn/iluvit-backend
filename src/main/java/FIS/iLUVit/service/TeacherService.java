@@ -98,8 +98,7 @@ public class TeacherService {
             teacherRepository.save(teacher);
         }
 
-
-        authNumberRepository.deleteAllByPhoneNum(request.getPhoneNum());
+        authNumberRepository.deleteByPhoneNumAndAuthKind(request.getPhoneNum(), AuthKind.signup);
     }
 
 

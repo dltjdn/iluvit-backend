@@ -112,6 +112,6 @@ public class ParentService {
 
         parentRepository.save(parent);
 
-        authNumberRepository.deleteAllByPhoneNum(request.getPhoneNum());
+        authNumberRepository.deleteByPhoneNumAndAuthKind(request.getPhoneNum(), AuthKind.signup);
     }
 }
