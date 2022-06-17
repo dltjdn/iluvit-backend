@@ -25,11 +25,14 @@ node('I_LOVE_IT') {
 
     stage('kill ex-Application'){
         def pid
-        pid = sh(encoding: 'UTF-8', returnStdout: true, script: 'lsof -i tcp:8081')
+        BUILD_JAR = sh "ls /home/ubuntu/app/fis_police_server/build/libs/*.jar"
+        JAR_NAME = sh "basename $BUILD_JAR"
+        pid = sh "pgrep -f $JAR_NAME"
+
         script {
             if (!pid.equals("")) {
                 echo "===================== Killing Process ====================="
-                sh "kill -9 $pid"
+                sh "kill -15 $pid"
             } else {
                 echo "===================== Nothing To Kill ====================="
             }
