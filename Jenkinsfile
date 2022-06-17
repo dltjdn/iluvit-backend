@@ -25,9 +25,9 @@ node('I_LOVE_IT') {
 
     stage('kill ex-Application'){
         def pid
-        BUILD_JAR = sh "ls ./build/libs/*.jar"
-        JAR_NAME = sh "basename $BUILD_JAR"
-        pid = sh "pgrep -f $JAR_NAME"
+        BUILD_JAR = sh(encoding: 'UTF-8', returnStdout: true, script: "ls ./build/libs/*.jar")
+        JAR_NAME = sh(encoding: 'UTF-8', returnStdout: true, script: "basename $BUILD_JAR")
+        pid = sh(encoding: 'UTF-8', returnStdout: true, script: "pgrep -f $JAR_NAME")
 
         script {
             if (!pid.equals("")) {
