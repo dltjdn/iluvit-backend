@@ -50,8 +50,6 @@ node('I_LOVE_IT') {
         dir("./build/libs") {
             sh "pwd"
             sh "nohup java -jar iLUVit-0.0.1-SNAPSHOT.jar &"
-            sh "tail -f nohup.out"
-
         }
     }
 }
