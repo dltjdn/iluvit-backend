@@ -53,7 +53,7 @@ node('I_LOVE_IT') {
         dir("./build/libs") {
             PATH = sh(encoding: 'UTF-8', returnStdout: true, script: "pwd")
             withEnv(['JENKINS_NODE_COOKIE=dontkill']) {
-                sh "nohup java -jar $JAR_NAME &"
+                sh "nohup java -jar $JAR_NAME 1> nohup.out 2>&1 &"
             }
         }
     }
