@@ -51,7 +51,7 @@ node('I_LOVE_IT') {
         JAR_NAME = sh(encoding: 'UTF-8', returnStdout: true, script: "basename $BUILD_JAR")
         dir("./build/libs") {
             sh "pwd"
-            sh "nohup java -jar $JAR_NAME &"
+            sh "nohup java -jar $JAR_NAME > nohup.out 2>&1 &"
         }
     }
 }
