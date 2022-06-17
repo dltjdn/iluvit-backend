@@ -35,4 +35,8 @@ public interface UserRepository extends JpaRepository<User, Long> {
     List<Child> findChildren(@Param("parentId") Long parentId);
 
     Optional<User> findByLoginIdAndPhoneNumber(String loginId, String phoneNumber);
+
+    @Query("select user " +
+            "from User user ")
+    List<User> findByIdTest();
 }

@@ -77,6 +77,7 @@ public class CenterInfoResponseDto {
         this.costInfo = center.getCostInfo();
         this.basicInfra = center.getBasicInfra();
         this.theme = center.getTheme();
-        this.programs = center.getPrograms().stream().map(program -> program.getName()).collect(Collectors.toList());
+        this.programs = Center.decodeString(center.getProgram());
+        this.addInfos = Center.decodeString(center.getAddInfo());
     }
 }
