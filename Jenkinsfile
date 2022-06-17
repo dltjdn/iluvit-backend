@@ -27,7 +27,7 @@ node('I_LOVE_IT') {
         BUILD_JAR = sh(encoding: 'UTF-8', returnStdout: true, script: "ls ./build/libs/*.jar")
         JAR_NAME = sh(encoding: 'UTF-8', returnStdout: true, script: "basename $BUILD_JAR")
         echo "$JAR_NAME"
-        pid = sh(script: "pgrep -f $JAR_NAME")
+        pid = sh(encoding: 'UTF-8', returnStdout: true, script: "ps -ef | grep $JAR_NAME")
         echo "$pid"
         script {
             if (!pid.equals("")) {
