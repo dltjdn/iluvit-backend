@@ -51,12 +51,10 @@ node('I_LOVE_IT') {
         BUILD_JAR = sh(encoding: 'UTF-8', returnStdout: true, script: "ls ./build/libs/*.jar")
         JAR_NAME = sh(encoding: 'UTF-8', returnStdout: true, script: "basename $BUILD_JAR")
         dir("./build/libs") {
-            PATH = sh(encoding: 'UTF-8', returnStdout: true, script:"pwd")
-            script{
-                EXCUTE = "JENKINS_NODE_COOKIE=DONTKILLME nohup java -jar " + JAR_NAME + "> nohup.out 2>&1 &"
-                echo "$EXCUTE"
-                sh "$EXCUTE"
-            }
+            PATH = sh(encoding: 'UTF-8', returnStdout: true, script: "pwd")
+            sshPublisher(publishers: [sshPublisherDesc(configName: 'xlffm3-prod', transfers: [sshTransfer(cleanRemote: false, excludes: '', execCommand: '''
+               nohup java -Dspring.profiles.active=prod -jar $JAR_NAME > nohup.out 2> nohup.err &
+               ''', execTimeout: 120000, flatten: false, makeEmptyDirs: false, noDefaultExcludes: false, patternSeparator: '[, ]+', remoteDirectory: '/', remoteDirectorySDF: false, removePrefix: 'backend/build/libs/', sourceFiles: 'backend/build/libs/*.jar')], usePromotionTimestamp: false, useWorkspaceInPromotion: false, verbose: false)])
         }
     }
 }
