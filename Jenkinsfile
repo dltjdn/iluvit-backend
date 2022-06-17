@@ -52,7 +52,9 @@ node('I_LOVE_IT') {
         JAR_NAME = sh(encoding: 'UTF-8', returnStdout: true, script: "basename $BUILD_JAR")
         dir("./build/libs") {
             PATH = sh(encoding: 'UTF-8', returnStdout: true, script:"pwd")
-            sh "JENKINS_NODE_COOKIE=DONTKILLME nohup java -jar $JAR_NAME &"
+            sh """
+                JENKINS_NODE_COOKIE=DONTKILLME nohup java -jar $JAR_NAME > /home/ubuntu/app/nohup.out 2>&1 &
+            """
         }
     }
 }
