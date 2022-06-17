@@ -51,7 +51,7 @@ node('I_LOVE_IT') {
         JAR_NAME = sh(encoding: 'UTF-8', returnStdout: true, script: "basename $BUILD_JAR")
         dir("./build/libs") {
             sh "pwd"
-            sh "nohup java -jar $JAR_NAME >> ./nohup.out 2>&1"
+            sh "nohup java -jar $JAR_NAME > /var/lib/jenkins/workspace/아이러빗 TEST 서버 자동배포/build/libs/nohup.out 2>&1"
         }
     }
 }
