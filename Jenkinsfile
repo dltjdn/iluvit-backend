@@ -25,7 +25,7 @@ node('I_LOVE_IT') {
 
     stage('kill ex-Application'){
         def pid
-        BUILD_JAR = sh "ls /home/ubuntu/app/fis_police_server/build/libs/*.jar"
+        BUILD_JAR = sh "ls ./build/libs/*.jar"
         JAR_NAME = sh "basename $BUILD_JAR"
         pid = sh "pgrep -f $JAR_NAME"
 
