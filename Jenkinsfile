@@ -26,7 +26,7 @@ node('I_LOVE_IT') {
     stage('kill ex-Application'){
         BUILD_JAR = sh(encoding: 'UTF-8', returnStdout: true, script: "ls ./build/libs/*.jar")
         JAR_NAME = sh(encoding: 'UTF-8', returnStdout: true, script: "basename $BUILD_JAR")
-        echo = "$JAR_NAME"
+        echo "$JAR_NAME"
         pid = sh(encoding: 'UTF-8', returnStdout: true, script: "pgrep -f $JAR_NAME")
         echo "$pid"
         script {
