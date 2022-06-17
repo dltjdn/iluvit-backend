@@ -28,7 +28,7 @@ node('I_LOVE_IT') {
         BUILD_JAR = sh(encoding: 'UTF-8', returnStdout: true, script: "ls ./build/libs/*.jar")
         JAR_NAME = sh(encoding: 'UTF-8', returnStdout: true, script: "basename $BUILD_JAR")
         pid = sh(encoding: 'UTF-8', returnStdout: true, script: "pgrep -f $JAR_NAME")
-
+        echo "$pid"
         script {
             if (!pid.equals("")) {
                 echo "===================== Killing Process ====================="
