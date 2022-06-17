@@ -102,8 +102,8 @@ public class TeacherService {
             throw new SignupException("핸드폰 인증시간이 만료되었습니다. 핸드폰 인증을 다시 해주세요");
         }
 
-        // throw EntityNotFoundException
-        Center center = centerRepository.getById(request.getCenterId());
+        Center center = centerRepository.findByIdAndSigned(request.getCenterId(), true)
+                .orElseThrow(() -> new SignupException("원장으로 등록된 계정이 이미 존재하는 시설입니다."));
 
         String hashedPwd = encoder.encode(request.getPassword());
         Teacher teacher = request.createTeacher(center, hashedPwd);

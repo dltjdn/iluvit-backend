@@ -42,10 +42,12 @@ public class TeacherController {
     /**
     *   작성날짜: 2022/05/24 5:24 PM
     *   작성자: 이승범
-    *   작성내용: 교사 회원가입
+    *   작성내용: 원장 회원가입
     */
-    @PostMapping("/signup/teacher")
-    public void signupParent(@RequestBody SignupTeacherRequest request) {
+    @PostMapping("/signup/director")
+    public void signupTeacher(@RequestBody SignupTeacherRequest request) {
         teacherService.signup(request);
     }
+
+
 }

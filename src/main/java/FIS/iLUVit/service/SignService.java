@@ -154,9 +154,10 @@ public class SignService {
         user.changePassword(encoder.encode(request.getNewPwd()));
     }
 
-    // 로그인 찾기에서 로그인아이디 일부를 *로 가리기
+    // 인증번호 전송 로직
     private void sendAuthNumber(String toNumber, AuthKind authKind) {
-        // 인증번호 전송 로직
+
+        // 4자리 랜덤 숫자 생성
         String authNumber = createRandomNumber();
 
         AuthNumber overlaps = authNumberRepository.findOverlap(toNumber, authKind).orElse(null);
