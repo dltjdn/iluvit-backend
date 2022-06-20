@@ -41,7 +41,7 @@ public class AuthNumberTest {
 
     @Test
     void testUnique() {
-        Parent parent = Parent.createParent("sdaasd", "qwe", encoder.encode("asd"), "asd", false, "qwe@qwe.com", "qwe", new Theme(), 5, Auth.PARENT);
+        Parent parent = Parent.createParent("sdaasd", "qwe", encoder.encode("asd"), "asd", false, "qwe@qwe.com", "qwe", new Theme(), 5, Auth.PARENT, "서울특별시", "구로구 벚꽃로 68길 10");
         em.persist(parent);
         em.flush();
         em.clear();

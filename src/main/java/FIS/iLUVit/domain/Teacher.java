@@ -30,20 +30,22 @@ public class Teacher extends User {
     private Center center;
 
     @Builder
-    public Teacher(String nickName, String loginId, String password, String phoneNumber, Boolean hasProfileImg, String emailAddress, String name, Auth auth, Approval approval, Center center) {
-        this.nickName = nickName;
+    public Teacher(String nickName, String loginId, String password, String phoneNumber, Boolean hasProfileImg, String emailAddress, String name, Auth auth, Approval approval, Center center, String address, String addressDetail) {
         this.loginId = loginId;
         this.password = password;
+        this.name = name;
+        this.nickName = nickName;
         this.phoneNumber = phoneNumber;
         this.hasProfileImg = hasProfileImg;
         this.emailAddress = emailAddress;
-        this.name = name;
         this.auth = auth;
+        this.address = address;
+        this.addressDetail = addressDetail;
         this.approval = approval;
         this.center = center;
     }
 
-    public static Teacher createTeacher(String nickName, String loginId, String password, String phoneNumber, Boolean hasProfileImg, String emailAddress, String name, Auth auth, Approval approval, Center center) {
+    public static Teacher createTeacher(String nickName, String loginId, String password, String phoneNumber, Boolean hasProfileImg, String emailAddress, String name, Auth auth, Approval approval, Center center, String address, String addressDetail) {
         return Teacher.builder()
                 .nickName(nickName)
                 .loginId(loginId)
@@ -55,6 +57,8 @@ public class Teacher extends User {
                 .approval(approval)
                 .center(center)
                 .auth(auth)
+                .address(address)
+                .addressDetail(addressDetail)
                 .build();
     }
 

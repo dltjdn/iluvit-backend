@@ -31,6 +31,8 @@ public class User extends BaseEntity{
     protected Boolean hasProfileImg;      // 프사 있니?
     protected String emailAddress;        // 이메일
     protected String name;                // 잔짜 이름
+    protected String address;             // 주소
+    protected String addressDetail;       // 상세주소
 
     @Enumerated(EnumType.STRING)
     protected Auth auth;                   // 교사, 원장, 부모

@@ -32,7 +32,7 @@ import java.time.LocalDateTime;
 public class ParentService {
 
     private final ParentRepository parentRepository;
-    private final UserRepository userRepository;
+    private final UserService userService;
     private final AuthNumberRepository authNumberRepository;
     private final ImageService imageService;
     private final BCryptPasswordEncoder encoder;
@@ -107,27 +107,11 @@ public class ParentService {
      */
     public void signup(SignupParentRequest request) {
 
-        if (!request.getPassword().equals(request.getPasswordCheck())) {
-            throw new SignupException("비밀번호와 비밀번호확인이 서로 다릅니다.");
-        }
-
-        User reduplicatedUser = userRepository.findByLoginId(request.getLoginId()).orElse(null);
-        if (reduplicatedUser != null) {
-            throw new SignupException("중복된 닉네임입니다.");
-        }
-
-        AuthNumber authComplete = authNumberRepository.findAuthComplete(request.getPhoneNum(), AuthKind.signup).orElse(null);
-        if (authComplete == null) {
-            throw new SignupException("핸드폰 인증이 완료되지 않았습니다.");
-        } else if (Duration.between(authComplete.getAuthTime(), LocalDateTime.now()).getSeconds() > (60 * 60)) {
-            throw new SignupException("핸드폰 인증시간이 만료되었습니다. 핸드폰 인증을 다시 해주세요");
-        }
-
-        String hashedPwd = encoder.encode(request.getPassword());
+        String hashedPwd = userService.signupValidation(request.getPassword(), request.getPasswordCheck(), request.getLoginId(), request.getPhoneNum());
         Parent parent = request.createParent(hashedPwd);
 
         parentRepository.save(parent);
 
-        authNumberRepository.deleteAllByPhoneNum(request.getPhoneNum());
+        authNumberRepository.deleteByPhoneNumAndAuthKind(request.getPhoneNum(), AuthKind.signup);
     }
 }
