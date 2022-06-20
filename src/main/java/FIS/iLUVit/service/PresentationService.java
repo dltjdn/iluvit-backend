@@ -97,16 +97,13 @@ public class PresentationService {
         return presentationRepository.findByCenterId(centerId);
     }
 
-    public void findPresentationDetail(Long presentationId, Long userId) {
+    public PresentationResponseDto findPresentationDetail(Long presentationId) {
         //
         Presentation presentation = presentationRepository.findByIdAndJoinPtDate(presentationId)
                 .orElseThrow(() -> new PresentationException("존재하지않는 설명회 입니다"));
-        userRepository.findTeacherById(userId)
-                .orElseThrow(() -> new UserException("존재하지 않는 유저입니다"))
-                .canWrite(presentation.getCenter().getId());
         String presentationDir = imageService.getPresentationDir(presentationId);
         List<String> encodedInfoImage = imageService.getEncodedInfoImage(presentationDir, presentation.getImgCnt());
-        new PresentationResponseDto(presentation, encodedInfoImage);
+        return new PresentationResponseDto(presentation, encodedInfoImage);
     }
 
     public Presentation modifyWithPtDate(PresentationModifyRequestDto request, List<MultipartFile> images, Long userId) {
