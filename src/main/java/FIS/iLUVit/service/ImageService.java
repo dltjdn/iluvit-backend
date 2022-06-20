@@ -216,10 +216,12 @@ public class ImageService {
         String temp = "";
         for(String name : names){
             temp += name + "/";
+            log.info("현재 폴더 생성 {}" ,temp);
             File folder = new File(temp);
             if(!folder.exists()){
                 try {
                     folder.mkdir();
+                    log.info("현재 폴더 생성 완료 {}", temp);
                 } catch (Exception exception){
                     exception.printStackTrace();
                 }
