@@ -1,9 +1,6 @@
 package FIS.iLUVit.service;
 
-import FIS.iLUVit.domain.Parent;
-import FIS.iLUVit.domain.Participation;
-import FIS.iLUVit.domain.PtDate;
-import FIS.iLUVit.domain.Waiting;
+import FIS.iLUVit.domain.*;
 import FIS.iLUVit.exception.PresentationException;
 import FIS.iLUVit.exception.UserException;
 import FIS.iLUVit.repository.ParentRepository;
@@ -30,13 +27,14 @@ public class WaitingService {
 
     public Long register(Long userId, Long ptDateId) {
         // 학부모 조회
-        Parent parent = parentRepository.findByIdAndFetchPresentation(userId)
+        Parent parent = parentRepository.findById(userId)
                 .orElseThrow(() -> new UserException("해당 사용자가 존재하지 않습니다"));
         // 설명회 회차 조회
         PtDate ptDate = ptDateRepository.findByIdAndJoinWaiting(ptDateId)
                 .orElseThrow(() -> new PresentationException("해당 설명회는 존재하지 않습니다"));
+        Presentation presentation = ptDate.getPresentation();
         List<Participation> participations = participationRepository.findByptDateAndStatus(ptDate);
-        Waiting waiting = Waiting.createAndRegister(parent, ptDate, participations);
+        Waiting waiting = Waiting.createAndRegister(parent, presentation, ptDate, participations);
         waitingRepository.save(waiting);
         return waiting.getId();
     }

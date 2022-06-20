@@ -40,8 +40,8 @@ public class Waiting extends BaseEntity {
         // 영속성 관리 되어서 ptDate 가져올때 쿼리 안나감
         PtDate ptDate = waiting.ptDate;
         ptDate.cancelWaitingForAcceptingParticipation();
-        Participation.hasRegistered(ptDate.getParticipations(), parent);
-        return Participation.createAndRegister(parent, ptDate);
+        List<Participation> participations = ptDate.getParticipations();
+        return Participation.createAndRegister(parent, ptDate, participations);
     }
 
     public static void hasRegistered(List<Waiting> waitings, Parent parent) {
@@ -51,7 +51,9 @@ public class Waiting extends BaseEntity {
         });
     }
 
-    public static Waiting createAndRegister(Parent parent, PtDate ptDate, List<Participation> participations) {
+    public static Waiting createAndRegister(Parent parent, Presentation presentation, PtDate ptDate, List<Participation> participations) {
+        // 기간안에 신청한 것이 맞는가?
+        presentation.canRegister();
         // ptDate 에 초과가 된게 맞는가?
         ptDate.canWait();
         // 1. 유효성 검사 waiting 에 존재?

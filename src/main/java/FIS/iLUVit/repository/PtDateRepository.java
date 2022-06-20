@@ -13,12 +13,14 @@ public interface PtDateRepository extends JpaRepository<PtDate, Long> {
 
     @Query("select distinct ptDate from PtDate ptDate " +
             "left join fetch ptDate.participations as participation " +
+            "left join fetch ptDate.presentation as presentation " +
             "left join fetch participation.parent " +
             "where ptDate.id = :id")
     Optional<PtDate> findByIdAndJoinParticipation(@Param("id") Long ptDateId);
 
     @Query("select distinct ptDate from PtDate ptDate " +
             "left join fetch ptDate.waitings as waiting " +
+            "left join fetch ptDate.presentation as presentation " +
             "left join fetch waiting.parent " +
             "where ptDate.id = :ptDateId")
     Optional<PtDate> findByIdAndJoinWaiting(@Param("ptDateId") Long ptDateId);

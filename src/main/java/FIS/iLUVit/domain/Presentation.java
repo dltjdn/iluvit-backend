@@ -81,4 +81,11 @@ public class Presentation extends BaseEntity {
         this.videoCnt = videoCnt;
         return this;
     }
+
+    public void canRegister() {
+        LocalDate now = LocalDate.now();
+        if(!startDate.isBefore(now) || !endDate.isAfter(now)){
+            throw new PresentationException("신청기간이 지났습니다");
+        }
+    }
 }
