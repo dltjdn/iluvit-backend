@@ -62,6 +62,7 @@ public class PresentationService {
      * 설명회 저장
      */
     public Presentation saveWithPtDate(PresentationRequestRequestFormDto request, List<MultipartFile> images, Long userId) {
+        // 리펙터링 필요 findById 를 통해서 그냥 canWrite 와 canRead 를 override 하기
         userRepository.findTeacherById(userId)
                 .orElseThrow(() -> new UserException("존재하지 않는 유저입니다"))
                 .canWrite(request.getCenterId());
@@ -139,6 +140,7 @@ public class PresentationService {
                 ptDateMap.remove(ptDate.getId());
             }
         });
+
         Set<Long> ptDateKeysDeleteTarget = ptDateMap.keySet();
         Collection<PtDate> ptDateSet = ptDateMap.values();
         ptDateSet.forEach(ptDate -> ptDate.canDelete());
