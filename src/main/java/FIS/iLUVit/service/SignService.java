@@ -117,7 +117,7 @@ public class SignService {
     /**
      * 작성날짜: 2022/05/24 10:40 AM
      * 작성자: 이승범
-     * 작성내용: 로그인 아이디를 찾기위해
+     * 작성내용: 로그인 아이디 찾기
      */
     public String findLoginId(AuthenticateAuthNumRequest request) {
 
@@ -141,18 +141,25 @@ public class SignService {
             throw new SignupException("비밀번호와 비밀번호확인이 서로 다릅니다.");
         }
 
-        AuthNumber authComplete = authNumberRepository.findAuthComplete(request.getPhoneNum(), AuthKind.findPwd).orElse(null);
-        if (authComplete == null) {
-            throw new AuthNumException("핸드폰 인증이 완료되지 않았습니다.");
-        } else if(Duration.between(authComplete.getAuthTime(), LocalDateTime.now()).getSeconds() > (60 * 10)){
-            throw new AuthNumException("핸드폰 인증시간이 만료되었습니다.");
-        }
+        // 인증완료된 핸드폰번호인지 확인
+        AuthNumber authNumber = validateAuthNumber(request.getPhoneNum(), AuthKind.findPwd);
 
         User user = userRepository.findByLoginIdAndPhoneNumber(request.getLoginId(), request.getPhoneNum())
                 .orElseThrow(() -> new UserException("잘못된 로그인 아이디입니다."));
 
         user.changePassword(encoder.encode(request.getNewPwd()));
-        authNumberRepository.delete(authComplete);
+        authNumberRepository.delete(authNumber);
+    }
+
+    // 인증이 완료된 인증번호인지 검사
+    public AuthNumber validateAuthNumber(String phoneNum, AuthKind authKind){
+        AuthNumber authComplete = authNumberRepository.findAuthComplete(phoneNum, authKind).orElse(null);
+        if (authComplete == null) {
+            throw new SignupException("핸드폰 인증이 완료되지 않았습니다.");
+        } else if (Duration.between(authComplete.getAuthTime(), LocalDateTime.now()).getSeconds() > (60 * 60)) {
+            throw new SignupException("핸드폰 인증시간이 만료되었습니다. 핸드폰 인증을 다시 해주세요");
+        }
+        return authComplete;
     }
 
     // 인증번호 전송 로직

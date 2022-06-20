@@ -69,6 +69,18 @@ public class Parent extends User {
         this.emailAddress = request.getEmailAddress();
         this.interestAge = request.getInterestAge();
         this.theme = theme;
+        this.hasProfileImg = !request.getProfileImg().isEmpty();
+    }
+
+    public void updateDetailWithPhoneNum(ParentDetailRequest request, Theme theme) {
+        this.nickName = request.getNickname();
+        this.phoneNumber = request.getPhoneNum();
+        this.emailAddress = request.getEmailAddress();
+        this.address = request.getAddress();
+        this.detailAddress = request.getDetailAddress();
+        this.interestAge = request.getInterestAge();
+        this.theme = theme;
+        this.hasProfileImg = !request.getProfileImg().isEmpty();
     }
 
     @Override

@@ -71,6 +71,7 @@ public class Teacher extends User {
         this.emailAddress = request.getEmailAddress();
         this.address = request.getAddress();
         this.detailAddress = request.getDetailAddress();
+        this.hasProfileImg = !request.getProfileImg().isEmpty();
     }
 
     public void updateDetailWithPhoneNum(UpdateTeacherDetailRequest request) {
@@ -79,6 +80,7 @@ public class Teacher extends User {
         this.address = request.getAddress();
         this.detailAddress = request.getDetailAddress();
         this.phoneNumber = request.getPhoneNum();
+        this.hasProfileImg = !request.getProfileImg().isEmpty();
     }
 
     public void canWrite(Long centerId) {
