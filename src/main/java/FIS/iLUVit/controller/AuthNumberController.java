@@ -1,17 +1,16 @@
 package FIS.iLUVit.controller;
 
-import FIS.iLUVit.controller.dto.AuthenticateAuthNumForFindPwd;
 import FIS.iLUVit.controller.dto.AuthenticateAuthNumRequest;
 import FIS.iLUVit.controller.dto.FindPasswordRequest;
-import FIS.iLUVit.service.SignService;
+import FIS.iLUVit.service.AuthNumberService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequiredArgsConstructor
-public class SignController {
+public class AuthNumberController {
 
-    private final SignService signService;
+    private final AuthNumberService authNumberService;
 
     /**
      * 작성날짜: 2022/05/24 10:39 AM
@@ -20,7 +19,7 @@ public class SignController {
      */
     @GetMapping("/authNumber/signup")
     public void sendAuthNumberForSignup(@RequestParam String phoneNumber) {
-        signService.sendAuthNumberForSignup(phoneNumber);
+        authNumberService.sendAuthNumberForSignup(phoneNumber);
     }
 
     /**
@@ -30,7 +29,7 @@ public class SignController {
      */
     @GetMapping("/authNumber/loginId")
     public void sendAuthNumberForFindLoginId(@RequestParam String phoneNumber) {
-        signService.sendAuthNumberForFindLoginId(phoneNumber);
+        authNumberService.sendAuthNumberForFindLoginId(phoneNumber);
     }
 
     /**
@@ -40,7 +39,7 @@ public class SignController {
      */
     @GetMapping("/authNumber/password")
     public void sendAuthNumberForFindPassword(@RequestParam String loginId, @RequestParam String phoneNumber) {
-        signService.sendAuthNumberForFindPassword(loginId, phoneNumber);
+        authNumberService.sendAuthNumberForFindPassword(loginId, phoneNumber);
     }
 
     /**
@@ -50,7 +49,7 @@ public class SignController {
      */
     @PostMapping("/authNumber")
     public void AuthenticateAuthNum(@RequestBody AuthenticateAuthNumRequest request) {
-        signService.authenticateAuthNum(request);
+        authNumberService.authenticateAuthNum(request);
     }
 
     /**
@@ -60,7 +59,7 @@ public class SignController {
      */
     @PostMapping("/findLoginId")
     public String findLoginId(@RequestBody AuthenticateAuthNumRequest request) {
-        return signService.findLoginId(request);
+        return authNumberService.findLoginId(request);
     }
 
     /**
@@ -70,6 +69,6 @@ public class SignController {
     */
     @PostMapping("/findPassword")
     public void findPassword(@RequestBody FindPasswordRequest request) {
-        signService.changePassword(request);
+        authNumberService.changePassword(request);
     }
 }
