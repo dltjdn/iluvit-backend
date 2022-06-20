@@ -10,28 +10,31 @@ import lombok.NoArgsConstructor;
 @Data
 @NoArgsConstructor
 public class SignupTeacherRequest {
-    private String nickname;
     private String loginId;
     private String password;
     private String passwordCheck;
+    private String name;
+    private String nickname;
     private String phoneNum;
     private String emailAddress;
-    private String name;
-    private Auth auth;
+    private String address;
+    private String addressDetail;
     private Long centerId;
 
     public Teacher createTeacher(Center center, String pwd){
         return Teacher.builder()
-                .nickName(nickname)
                 .loginId(loginId)
                 .password(pwd)
-                .phoneNumber(phoneNum)
-                .hasProfileImg(false)
-                .emailAddress(emailAddress)
+                .nickName(nickname)
                 .name(name)
-                .auth(auth)
+                .phoneNumber(phoneNum)
+                .emailAddress(emailAddress)
+                .address(address)
+                .addressDetail(addressDetail)
+                .hasProfileImg(false)
                 .center(center)
                 .approval(Approval.WAITING)
+                .auth(Auth.TEACHER)
                 .build();
     }
 

@@ -24,5 +24,7 @@ public interface AuthNumberRepository extends JpaRepository<AuthNumber, Long> {
     @Query("select a from AuthNumber a where a.phoneNum = :pNum and a.authKind =:kind and a.authTime is not null")
     Optional<AuthNumber> findAuthComplete(@Param("pNum") String phoneNum, @Param("kind") AuthKind authKind);
 
-    void deleteAllByPhoneNum(String phoneNum);
+    @Modifying
+    @Query("delete from AuthNumber a where a.phoneNum =:pNum and a.authKind =:kind")
+    void deleteByPhoneNumAndAuthKind(@Param("pNum") String phoneNum, @Param("kind") AuthKind authKind);
 }

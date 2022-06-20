@@ -24,6 +24,12 @@ public class QTeacher extends EntityPathBase<Teacher> {
 
     public final QUser _super = new QUser(this);
 
+    //inherited
+    public final StringPath address = _super.address;
+
+    //inherited
+    public final StringPath addressDetail = _super.addressDetail;
+
     public final EnumPath<FIS.iLUVit.domain.enumtype.Approval> approval = createEnum("approval", FIS.iLUVit.domain.enumtype.Approval.class);
 
     //inherited

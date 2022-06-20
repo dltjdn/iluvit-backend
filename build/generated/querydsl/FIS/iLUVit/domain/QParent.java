@@ -25,6 +25,12 @@ public class QParent extends EntityPathBase<Parent> {
     public final QUser _super = new QUser(this);
 
     //inherited
+    public final StringPath address = _super.address;
+
+    //inherited
+    public final StringPath addressDetail = _super.addressDetail;
+
+    //inherited
     public final EnumPath<FIS.iLUVit.domain.enumtype.Auth> auth = _super.auth;
 
     public final ListPath<Child, QChild> children = this.<Child, QChild>createList("children", Child.class, QChild.class, PathInits.DIRECT2);

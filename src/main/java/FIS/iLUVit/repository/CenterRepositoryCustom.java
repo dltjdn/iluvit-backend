@@ -1,5 +1,7 @@
 package FIS.iLUVit.repository;
 
+import FIS.iLUVit.controller.dto.CenterInfoForSignupDto;
+import FIS.iLUVit.controller.dto.CenterInfoForSignupRequest;
 import FIS.iLUVit.domain.embeddable.Area;
 import FIS.iLUVit.domain.embeddable.Theme;
 import FIS.iLUVit.domain.enumtype.KindOf;
@@ -18,4 +20,6 @@ public interface CenterRepositoryCustom {
     List<CenterAndDistancePreview> findByMapFilter(double longitude, double latitude, Theme theme, Integer interestedAge, KindOf kindOf, Integer distance);
 
     List<Long> findByThemeAndAgeOnly3(Theme theme, Pageable pageable);
+
+    Slice<CenterInfoForSignupDto> findForSignup(CenterInfoForSignupRequest request, Pageable pageable);
 }

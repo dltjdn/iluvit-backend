@@ -22,6 +22,10 @@ public class QUser extends EntityPathBase<User> {
 
     public final QBaseEntity _super = new QBaseEntity(this);
 
+    public final StringPath address = createString("address");
+
+    public final StringPath addressDetail = createString("addressDetail");
+
     public final EnumPath<FIS.iLUVit.domain.enumtype.Auth> auth = createEnum("auth", FIS.iLUVit.domain.enumtype.Auth.class);
 
     //inherited

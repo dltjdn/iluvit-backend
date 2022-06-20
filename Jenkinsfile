@@ -4,9 +4,9 @@ node('I_LOVE_IT') {
         echo "===================== Cloning from Git ======================="
         SCM_VARS =
                 git(
-                branch: 'release',
-                credentialsId: 'e7fe12eb-4666-4cd0-af62-5d18b1c55756',
-                url: 'git@github.com:FISOLUTION/ILUVIT_BACK.git'
+                        branch: 'release',
+                        credentialsId: 'e7fe12eb-4666-4cd0-af62-5d18b1c55756',
+                        url: 'git@github.com:FISOLUTION/ILUVIT_BACK.git'
                 )
     }
 
@@ -41,7 +41,10 @@ node('I_LOVE_IT') {
                 sh "sudo kill -15 $pid"
             } else {
                 echo "===================== Nothing To Kill ====================="
+<<<<<<< HEAD
 
+=======
+>>>>>>> 9ea7a17396cf36ffe222f5f1f4394f6d8c9a7ac0
             }
         }
     }
@@ -51,8 +54,13 @@ node('I_LOVE_IT') {
         BUILD_JAR = sh(encoding: 'UTF-8', returnStdout: true, script: "ls ./build/libs/*.jar")
         JAR_NAME = sh(encoding: 'UTF-8', returnStdout: true, script: "basename $BUILD_JAR")
         dir("./build/libs") {
+<<<<<<< HEAD
             PATH = sh(encoding: 'UTF-8', returnStdout: true, script: "pwd")
             sh 'JENKINS_NODE_COOKIE=dontKillMe nohup java -jar ./iLUVit-0.0.1-SNAPSHOT.jar >> ./nohup.out 2>&1 &'
+=======
+            sh "pwd"
+            sh "nohup java -jar $JAR_NAME > nohup.out 2>&1 &"
+>>>>>>> 9ea7a17396cf36ffe222f5f1f4394f6d8c9a7ac0
         }
     }
 }

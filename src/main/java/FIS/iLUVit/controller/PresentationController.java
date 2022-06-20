@@ -52,11 +52,12 @@ public class PresentationController {
     }
 
     /**
-     * 원장 전용 설명회 자세히 보기 기능
+     * 설명회 자세히 보기 기능
+     * @return
      */
     @GetMapping("/presentation/{presentationId}/teacher")
-    public void findMyCenterPresentation(@PathVariable("presentationId") Long presentationId, @Login Long userId){
-        presentationService.findPresentationDetail(presentationId, userId);
+    public PresentationResponseDto findMyCenterPresentation(@PathVariable("presentationId") Long presentationId){
+        return presentationService.findPresentationDetail(presentationId);
     }
 
     /**
