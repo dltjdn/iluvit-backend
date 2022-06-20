@@ -19,6 +19,7 @@ import java.io.IOException;
 import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
 
 @Slf4j
 @Service
@@ -63,11 +64,25 @@ public class TeacherService {
         Teacher findTeacher = teacherRepository.findById(id)
                 .orElseThrow(() -> new UserException("유효하지 않은 토큰으로 사용자 접근입니디."));
 
-        try {
-            teacherRepository.findByNickName(request.getNickname()).orElseThrow(IllegalArgumentException::new);
+        System.out.println("request.getPhoneNum() = " + request.getPhoneNum());
+        AuthNumber authComplete = authNumberRepository.findAuthComplete(request.getPhoneNum(), AuthKind.updatePhoneNum).orElse(null);
+        if (authComplete == null) {
+            throw new SignupException("핸드폰 인증이 완료되지 않았습니다.");
+        } else if (Duration.between(authComplete.getAuthTime(), LocalDateTime.now()).getSeconds() > (60 * 60)) {
+            throw new SignupException("핸드폰 인증시간이 만료되었습니다. 핸드폰 인증을 다시 해주세요");
+        }
+
+        Optional<Teacher> byNickName = teacherRepository.findByNickName(request.getNickname());
+        // 닉네임 중복 검사
+        if (byNickName.isEmpty()) {
+            // 핸드폰 번호도 변경하는 경우
+            if (request.getChangePhoneNum()) {
+                findTeacher.updateDetailWithPhoneNum(request);
+            } else { // 핸드폰 번호 변경은 변경하지 않는 경우
+                findTeacher.updateDetail(request);
+            }
+        } else {
             throw new UserException("이미 존재하는 닉네임 입니다.");
-        } catch (IllegalArgumentException e) {
-            findTeacher.updateDetail(request);
         }
 
         String imagePath = imageService.getUserProfileDir();
@@ -75,6 +90,7 @@ public class TeacherService {
 
         TeacherDetailResponse response = new TeacherDetailResponse(findTeacher);
         response.setProfileImg(imageService.getEncodedProfileImage(imagePath, id));
+        authNumberRepository.deleteByPhoneNumAndAuthKind(request.getPhoneNum(), AuthKind.updatePhoneNum);
 
         return response;
     }
@@ -86,6 +102,7 @@ public class TeacherService {
      */
     public void signup(SignupTeacherRequest request) {
 
+        // 회원가입 유효성 검사 및 비밀번호 해싱
         String hashedPwd = userService.signupValidation(request.getPassword(), request.getPasswordCheck(), request.getLoginId(), request.getPhoneNum());
 
         if (request.getCenterId() != null) {

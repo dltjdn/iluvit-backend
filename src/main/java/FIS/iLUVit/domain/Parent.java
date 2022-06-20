@@ -15,7 +15,6 @@ import java.util.List;
 
 @Entity
 @Getter
-@Data
 @NoArgsConstructor
 @OnDelete(action = OnDeleteAction.CASCADE)
 public class Parent extends User {
