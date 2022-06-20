@@ -14,7 +14,6 @@ import lombok.extern.slf4j.Slf4j;
 import net.nurigo.sdk.NurigoApp;
 import net.nurigo.sdk.message.model.Message;
 import net.nurigo.sdk.message.request.SingleMessageSendingRequest;
-import net.nurigo.sdk.message.response.SingleMessageSentResponse;
 import net.nurigo.sdk.message.service.DefaultMessageService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -29,7 +28,7 @@ import java.util.Random;
 @Slf4j
 @Service
 @Transactional
-public class AuthNumberService {
+public class SignService {
 
     private final DefaultMessageService messageService;
     private final UserRepository userRepository;
@@ -37,8 +36,8 @@ public class AuthNumberService {
     private final BCryptPasswordEncoder encoder;
 
     @Autowired
-    public AuthNumberService(AuthNumberRepository authNumberRepository, UserRepository userRepository, BCryptPasswordEncoder encoder,
-                             @Value("${coolsms.api_key}") String api_key, @Value("${coolsms.api_secret}") String api_secret, @Value("${coolsms.domain}") String domain) {
+    public SignService(AuthNumberRepository authNumberRepository, UserRepository userRepository, BCryptPasswordEncoder encoder,
+                       @Value("${coolsms.api_key}") String api_key, @Value("${coolsms.api_secret}") String api_secret, @Value("${coolsms.domain}") String domain) {
         this.messageService = NurigoApp.INSTANCE.initialize(api_key, api_secret, domain);
         this.userRepository = userRepository;
         this.authNumberRepository = authNumberRepository;
@@ -53,14 +52,14 @@ public class AuthNumberService {
      * 작성자: 이승범
      * 작성내용: 회원가입을 위한 인증번호 전송
      */
-    public void sendAuthNumberForSignup(String toNumber) {
+    public void sendAuthNumberForSignup(String toNumber, AuthKind authKind) {
 
         User findUser = userRepository.findByPhoneNumber(toNumber).orElse(null);
 
         if (findUser != null) {
             throw new AuthNumException("이미 서비스에 가입된 핸드폰 번호입니다.");
         }
-        sendAuthNumber(toNumber, AuthKind.signup);
+        sendAuthNumber(toNumber, authKind);
     }
 
     /**
@@ -208,7 +207,7 @@ public class AuthNumberService {
         message.setTo(toNumber);
         message.setText("[아이러빗] 인증번호 " + authNumber + " 를 입력하세요.");
 
-        SingleMessageSentResponse response = this.messageService.sendOne(new SingleMessageSendingRequest(message));
+        this.messageService.sendOne(new SingleMessageSendingRequest(message));
     }
 
     // 4자리 랜던 숫자 생성
