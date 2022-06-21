@@ -2,6 +2,7 @@ package FIS.iLUVit.repository;
 
 import FIS.iLUVit.controller.dto.GetPostResponsePreview;
 import FIS.iLUVit.controller.dto.QGetPostResponsePreview;
+import FIS.iLUVit.domain.enumtype.Auth;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.AllArgsConstructor;
 import org.springframework.data.domain.Pageable;
@@ -25,12 +26,53 @@ public class PostRepositoryImpl extends PostQueryMethod implements PostRepositor
         List<GetPostResponsePreview> posts = jpaQueryFactory.select(new QGetPostResponsePreview(post))
                 .from(post)
                 .join(post.board, board).fetchJoin()
-                .join(board.center, center).fetchJoin()
-                .where((centerIdIn(centerIds).or(center.id.isNull()))
-                        .and(keywordContains(keyword)))
+                .leftJoin(board.center, center).fetchJoin()
+                .where(centerIdIn(centerIds).or(center.id.isNull()), keywordContains(keyword))
+                .orderBy(post.createdDate.desc())
                 .offset(pageable.getOffset())
                 .limit(pageable.getPageSize() + 1)
                 .fetch();
+        boolean hasNext = false;
+
+        if(posts.size() > pageable.getPageSize()){
+            posts.remove(pageable.getPageSize());
+            hasNext = true;
+        }
+        return new SliceImpl<>(posts, pageable, hasNext);
+    }
+
+    @Override
+    public Slice<GetPostResponsePreview> findWithCenter(Long centerId, String keyword, Auth auth, Long userId, Pageable pageable) {
+        List<GetPostResponsePreview> posts = jpaQueryFactory.select(new QGetPostResponsePreview(post))
+                .from(post)
+                .join(post.board, board).fetchJoin()
+                .join(board.center, center).fetchJoin()
+                .where(center.id.eq(centerId), keywordContains(keyword))
+                .orderBy(post.createdDate.desc())
+                .offset(pageable.getOffset())
+                .limit(pageable.getPageSize() + 1)
+                .fetch();
+
+        boolean hasNext = false;
+
+        if(posts.size() > pageable.getPageSize()){
+            posts.remove(pageable.getPageSize());
+            hasNext = true;
+        }
+        return new SliceImpl<>(posts, pageable, hasNext);
+    }
+
+    @Override
+    public Slice<GetPostResponsePreview> findWithBoard(Long boardId, String keyword, Pageable pageable) {
+        List<GetPostResponsePreview> posts = jpaQueryFactory.select(new QGetPostResponsePreview(post))
+                .from(post)
+                .join(post.board, board).fetchJoin()
+                .where(board.id.eq(boardId), keywordContains(keyword))
+                .orderBy(post.createdDate.desc())
+                .offset(pageable.getOffset())
+                .limit(pageable.getPageSize() + 1)
+                .fetch();
+
         boolean hasNext = false;
 
         if(posts.size() > pageable.getPageSize()){

@@ -19,4 +19,5 @@ public interface BoardRepository extends JpaRepository<Board, Long> {
     @Query("select b from Board b join Center c where c.id = :centerId")
     List<Board> findByCenter(@Param("centerId") Long centerId);
 
+    List<Board> findByCenterIsNull();
 }
