@@ -90,6 +90,7 @@ public class ParentService {
         ObjectMapper objectMapper = new ObjectMapper();
         Theme theme = objectMapper.readValue(request.getTheme(), Theme.class);
 
+        // 유저 닉네임 중복 검사
         Optional<Parent> byNickName = parentRepository.findByNickName(request.getNickname());
         if (byNickName.isEmpty()) {
             // 핸드폰 번호도 변경하는 경우
@@ -108,6 +109,7 @@ public class ParentService {
         }
         ParentDetailResponse response = new ParentDetailResponse(findParent);
 
+        // 요청에 프로필 이미지 있으면 덮어씌우기
         if(!request.getProfileImg().isEmpty()){
             String imagePath = imageService.getUserProfileDir();
             imageService.saveProfileImage(request.getProfileImg(), imagePath + findParent.getId());
