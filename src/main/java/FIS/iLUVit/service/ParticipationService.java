@@ -1,10 +1,7 @@
 package FIS.iLUVit.service;
 
 import FIS.iLUVit.controller.dto.MyParticipationsDto;
-import FIS.iLUVit.domain.Parent;
-import FIS.iLUVit.domain.Participation;
-import FIS.iLUVit.domain.PtDate;
-import FIS.iLUVit.domain.Waiting;
+import FIS.iLUVit.domain.*;
 import FIS.iLUVit.domain.enumtype.Status;
 import FIS.iLUVit.event.ParticipationCancelEvent;
 import FIS.iLUVit.exception.PresentationException;
@@ -41,14 +38,10 @@ public class ParticipationService {
         // 설명회 세부 조회
         PtDate ptDate = ptDateRepository.findByIdAndJoinParticipation(ptDateId)
                 .orElseThrow(() -> new PresentationException("해당 설명회는 존재하지 않습니다"));
-        // 설명회 인원 초과가 되었으면 신청 불가
-        if (!ptDate.canRegister()) {
-            throw new PresentationException("설명회 수용가능 인원이 초과 되었습니다 대기자로 등록해 주세요");
-        }
-        // 해당 학부모가 설명회를 등록한적 있는가?
-        Participation.hasRegistered(ptDate.getParticipations(), parent);
+        List<Participation> participations = ptDate.getParticipations();
+        Presentation presentation = ptDate.getPresentation();
         // 설명회 등록
-        Participation participation = Participation.createAndRegister(parent, ptDate);
+        Participation participation = Participation.createAndRegister(parent, presentation, ptDate, participations);
         participationRepository.save(participation);
         return participation.getId();
     }

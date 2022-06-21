@@ -1,14 +1,13 @@
 package FIS.iLUVit.domain;
 
 import FIS.iLUVit.domain.enumtype.Auth;
+import FIS.iLUVit.filter.LoginResponse;
 import lombok.AccessLevel;
 import lombok.Data;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
 
@@ -32,6 +31,8 @@ public class User extends BaseEntity{
     protected Boolean hasProfileImg;      // 프사 있니?
     protected String emailAddress;        // 이메일
     protected String name;                // 잔짜 이름
+    protected String address;             // 주소
+    protected String detailAddress;       // 상세주소
 
     @Enumerated(EnumType.STRING)
     protected Auth auth;                   // 교사, 원장, 부모
@@ -44,6 +45,7 @@ public class User extends BaseEntity{
 
     @OneToMany(mappedBy = "sender")
     protected List<Chat> sendChats;
+
 
     public void changePassword(String newPwd) {
         this.password = newPwd;
@@ -60,5 +62,9 @@ public class User extends BaseEntity{
     @Override
     public int hashCode() {
         return Objects.hash(id);
+    }
+
+    public LoginResponse getUserInfo() {
+        return new LoginResponse(id, nickName, auth);
     }
 }

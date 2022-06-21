@@ -10,22 +10,26 @@ public class SignupParentRequest {
     private String loginId;
     private String password;
     private String passwordCheck;
+    private String phoneNum;
     private String nickname;
     private String name;
-    private String phoneNum;
     private String emailAddress;
+    private String address;
+    private String detailAddress;
     private Theme theme;
     private Integer interestAge;
 
     public Parent createParent(String pwd) {
         return Parent.builder()
-                .nickName(nickname)
                 .loginId(loginId)
                 .password(pwd)
-                .phoneNumber(phoneNum)
-                .hasProfileImg(false)
-                .emailAddress(emailAddress)
                 .name(name)
+                .nickName(nickname)
+                .phoneNumber(phoneNum)
+                .emailAddress(emailAddress)
+                .address(address)
+                .detailAddress(detailAddress)
+                .hasProfileImg(false)
                 .theme(theme)
                 .interestAge(interestAge)
                 .auth(Auth.PARENT)

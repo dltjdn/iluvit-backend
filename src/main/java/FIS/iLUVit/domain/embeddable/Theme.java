@@ -33,6 +33,7 @@ public class Theme {
     private Boolean manner;                 // 예절
     private Boolean genius;                 // 양재
 
+    // 필터링 사용하기 위해서 관심 목록만 뽑아내기
     public List<String> trueList() throws IllegalAccessException {
         List<String> trueList = new ArrayList<>();
         Field[] fields = Theme.class.getDeclaredFields();

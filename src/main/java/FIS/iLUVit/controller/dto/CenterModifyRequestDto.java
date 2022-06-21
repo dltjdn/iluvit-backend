@@ -41,6 +41,6 @@ public class CenterModifyRequestDto {
     private CostInfo costInfo;              // 보육료 정보
     private BasicInfra basicInfra;          // 기본시설
     private Theme theme;                    // 테마
-    private List<Program> programs = new ArrayList<>();
-    private List<AddInfo> addInfos = new ArrayList<>();
+    private List<String> programs = new ArrayList<>();
+    private List<String> addInfos = new ArrayList<>();
 }

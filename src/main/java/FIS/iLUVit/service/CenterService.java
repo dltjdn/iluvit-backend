@@ -1,5 +1,7 @@
 package FIS.iLUVit.service;
 
+import FIS.iLUVit.controller.dto.CenterInfoForSignupDto;
+import FIS.iLUVit.controller.dto.CenterInfoForSignupRequest;
 import FIS.iLUVit.controller.dto.CenterInfoResponseDto;
 import FIS.iLUVit.controller.dto.CenterModifyRequestDto;
 import FIS.iLUVit.domain.*;
@@ -69,13 +71,11 @@ public class CenterService {
     }
 
     public CenterInfoResponseDto findInfoById(Long id) {
-        Center center = centerRepository.findInfoByIdWithProgram(id)
+        Center center = centerRepository.findById(id)
                 .orElseThrow(() -> new CenterException("해당 센터 존재하지 않음"));
         // Center 가 id 에 의해 조회 되었으므로 score에 1 추가
         center.addScore(Score.GET);
-        List<AddInfo> addInfos = centerRepository.findInfoByIdWithAddInfo(id);
         CenterInfoResponseDto centerInfoResponseDto = new CenterInfoResponseDto(center);
-        addInfos.forEach(addInfo -> centerInfoResponseDto.getAddInfos().add(addInfo.getInfo()));
         String imageDir = imageService.getCenterDir(id);
         centerInfoResponseDto.setImages(imageService.getEncodedInfoImage(imageDir, centerInfoResponseDto.getImgCnt()));
         return centerInfoResponseDto;
@@ -97,6 +97,7 @@ public class CenterService {
         String centerDir = imageService.getCenterDir(centerId);
         imageService.saveInfoImage(files, centerDir);
         center.update(requestDto);
+        center.updateImageCntAndVideoCnt(files, 0);
         return center.getId();
     }
 
@@ -105,5 +106,9 @@ public class CenterService {
         Theme theme = parent.getTheme();
         List<Long> idList = centerRepository.findByThemeAndAgeOnly3(theme, PageRequest.of(0, 3, Sort.by("score")));
         return new ArrayList<>(imageService.getEncodedProfileImage(imageService.getCenterProfileDir(), idList).values());
+    }
+
+    public Slice<CenterInfoForSignupDto> findCenterForSignup(CenterInfoForSignupRequest request, Pageable pageable) {
+        return centerRepository.findForSignup(request, pageable);
     }
 }

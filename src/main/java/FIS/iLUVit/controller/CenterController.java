@@ -96,4 +96,14 @@ public class CenterController {
         return centerService.modifyCenter(centerId, userId, requestDto, infoFiles);
     }
 
+    /**
+    *   작성날짜: 2022/06/20 3:49 PM
+    *   작성자: 이승범
+    *   작성내용: 회원가입 과정에서 center 정보 가져오기
+    */
+    @GetMapping("/center/signup")
+    public Slice<CenterInfoForSignupDto> centerInfoForSignup(@ModelAttribute CenterInfoForSignupRequest request, Pageable pageable) {
+        return centerService.findCenterForSignup(request, pageable);
+    }
+
 }

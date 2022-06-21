@@ -1,5 +1,8 @@
 package FIS.iLUVit.repository;
 
+import FIS.iLUVit.controller.dto.CenterInfoForSignupDto;
+import FIS.iLUVit.controller.dto.CenterInfoForSignupRequest;
+import FIS.iLUVit.controller.dto.QCenterInfoForSignupDto;
 import FIS.iLUVit.domain.QReview;
 import FIS.iLUVit.domain.embeddable.Area;
 import FIS.iLUVit.domain.embeddable.Theme;
@@ -77,4 +80,22 @@ public class CenterRepositoryImpl extends CenterQueryMethod implements CenterRep
                 .fetch();
     }
 
+    @Override
+    public Slice<CenterInfoForSignupDto> findForSignup(CenterInfoForSignupRequest request, Pageable pageable) {
+        List<CenterInfoForSignupDto> content = jpaQueryFactory.select(new QCenterInfoForSignupDto(center.id, center.name, center.address))
+                .from(center)
+                .where(areaEq(request.getSido(), request.getSigungu())
+                        .and(centerNameEq(request.getCenterName())))
+                .offset(pageable.getOffset())
+                .limit(pageable.getPageSize() + 1)
+                .fetch();
+
+        boolean hasNext = false;
+        if (content.size() > pageable.getPageSize()) {
+            hasNext = true;
+            content.remove(pageable.getPageSize());
+        }
+
+        return new SliceImpl<>(content, pageable, hasNext);
+    }
 }

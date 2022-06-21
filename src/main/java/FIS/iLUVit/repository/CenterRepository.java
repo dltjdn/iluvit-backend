@@ -14,16 +14,6 @@ import java.util.Optional;
 
 public interface CenterRepository extends JpaRepository<Center, Long>, CenterRepositoryCustom {
 
-    @Query("select distinct center " +
-            "From Center center " +
-            "left join fetch center.programs " +
-            "where center.id =:id")
-    Optional<Center> findInfoByIdWithProgram(@Param("id") Long id);
-
-    @Query("select center.addInfos from Center center where center.id =:id")
-    List<AddInfo> findInfoByIdWithAddInfo(@Param("id") Long id);
-
-
     @Query("select new FIS.iLUVit.repository.dto.CenterBannerDto(center.id, center.name, center.maxChildCnt, center.curChildCnt, center.signed, center.recruit, center.waitingNum, avg(review.score)) " +
             "from Center center " +
             "left join center.reviews as review " +
@@ -40,4 +30,7 @@ public interface CenterRepository extends JpaRepository<Center, Long>, CenterRep
 
     @Query("select ct from Child c join c.center ct join c.parent p where p.id = :userId")
     List<Center> findByUser(@Param("userId") Long userId);
+
+    Optional<Center> findByIdAndSigned(Long centerId, boolean signed);
+
 }

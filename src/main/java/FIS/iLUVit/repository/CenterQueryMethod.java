@@ -1,5 +1,6 @@
 package FIS.iLUVit.repository;
 
+import FIS.iLUVit.controller.dto.CenterInfoForSignupDto;
 import FIS.iLUVit.domain.embeddable.Area;
 import FIS.iLUVit.domain.embeddable.Theme;
 import FIS.iLUVit.domain.enumtype.KindOf;
@@ -32,9 +33,12 @@ public class CenterQueryMethod {
     protected BooleanExpression themeEq(Theme theme) {
         try {
             if(theme == null) return null;
+            // 관심 목록 추출한 trueList
             List<String> trueList = theme.trueList();
+            // BooleanExpression 초기화 => in 절도 사용 할 수 없다. theme 별로 나뉘어져 있으므로
             BooleanExpression booleanExpression = null;
             for (String name : trueList) {
+                // trueList 에 해당하는 BooleanExp 가져온다.
                 BooleanPath type = (BooleanPath) center.theme.getClass().getDeclaredField(name).get(center.theme);
                 Method eq = center.theme.getClass().getDeclaredField(name).getType().getMethod("eq", Boolean.class);
                 if (booleanExpression == null) {
@@ -60,6 +64,26 @@ public class CenterQueryMethod {
                                         .multiply(cos(radians(Expressions.constant(latitude)))
                                                 .multiply(cos(radians(center.longitude)).subtract(radians(Expressions.constant(longitude))))))).multiply(6371);
         return distanceExpression;
+    }
+
+    protected BooleanExpression signedEq(Boolean isSigned) {
+        return isSigned == null ? null : center.signed.eq(isSigned);
+    }
+
+    protected BooleanExpression areaEq(String sido, String sigungu) {
+        if (sido == null && sigungu == null) {
+            return null;
+        } else if (sigungu == null) {
+            return center.area.sido.eq(sido);
+        } else if (sido == null) {
+            return center.area.sigungu.eq(sigungu);
+        } else {
+            return center.area.sido.eq(sido).and(center.area.sigungu.eq(sigungu));
+        }
+    }
+
+    protected BooleanExpression centerNameEq(String centerName) {
+        return centerName == null ? null : center.name.eq(centerName);
     }
 
 }

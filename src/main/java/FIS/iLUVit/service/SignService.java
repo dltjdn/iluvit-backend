@@ -14,7 +14,6 @@ import lombok.extern.slf4j.Slf4j;
 import net.nurigo.sdk.NurigoApp;
 import net.nurigo.sdk.message.model.Message;
 import net.nurigo.sdk.message.request.SingleMessageSendingRequest;
-import net.nurigo.sdk.message.response.SingleMessageSentResponse;
 import net.nurigo.sdk.message.service.DefaultMessageService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -53,14 +52,14 @@ public class SignService {
      * 작성자: 이승범
      * 작성내용: 회원가입을 위한 인증번호 전송
      */
-    public void sendAuthNumberForSignup(String toNumber) {
+    public void sendAuthNumberForSignup(String toNumber, AuthKind authKind) {
 
         User findUser = userRepository.findByPhoneNumber(toNumber).orElse(null);
 
         if (findUser != null) {
             throw new AuthNumException("이미 서비스에 가입된 핸드폰 번호입니다.");
         }
-        sendAuthNumber(toNumber, AuthKind.signup);
+        sendAuthNumber(toNumber, authKind);
     }
 
     /**
@@ -118,7 +117,7 @@ public class SignService {
     /**
      * 작성날짜: 2022/05/24 10:40 AM
      * 작성자: 이승범
-     * 작성내용: 로그인 아이디를 찾기위해
+     * 작성내용: 로그인 아이디 찾기
      */
     public String findLoginId(AuthenticateAuthNumRequest request) {
 
@@ -127,6 +126,7 @@ public class SignService {
         User findUser = userRepository.findByPhoneNumber(authNumber.getPhoneNum())
                 .orElseThrow(() -> new AuthNumException("핸드폰 번호를 확인해 주세요"));
 
+        authNumberRepository.delete(authNumber);
         return blindLoginId(findUser.getLoginId());
     }
 
@@ -141,22 +141,31 @@ public class SignService {
             throw new SignupException("비밀번호와 비밀번호확인이 서로 다릅니다.");
         }
 
-        AuthNumber authComplete = authNumberRepository.findAuthComplete(request.getPhoneNum(), AuthKind.findPwd).orElse(null);
-        if (authComplete == null) {
-            throw new AuthNumException("핸드폰 인증이 완료되지 않았습니다.");
-        } else if(Duration.between(authComplete.getAuthTime(), LocalDateTime.now()).getSeconds() > (60 * 10)){
-            throw new AuthNumException("핸드폰 인증시간이 만료되었습니다.");
-        }
+        // 인증완료된 핸드폰번호인지 확인
+        AuthNumber authNumber = validateAuthNumber(request.getPhoneNum(), AuthKind.findPwd);
 
-        User user = userRepository.findByLoginId(request.getLoginId())
+        User user = userRepository.findByLoginIdAndPhoneNumber(request.getLoginId(), request.getPhoneNum())
                 .orElseThrow(() -> new UserException("잘못된 로그인 아이디입니다."));
 
         user.changePassword(encoder.encode(request.getNewPwd()));
+        authNumberRepository.delete(authNumber);
     }
 
-    // 로그인 찾기에서 로그인아이디 일부를 *로 가리기
+    // 인증이 완료된 인증번호인지 검사
+    public AuthNumber validateAuthNumber(String phoneNum, AuthKind authKind){
+        AuthNumber authComplete = authNumberRepository.findAuthComplete(phoneNum, authKind).orElse(null);
+        if (authComplete == null) {
+            throw new SignupException("핸드폰 인증이 완료되지 않았습니다.");
+        } else if (Duration.between(authComplete.getAuthTime(), LocalDateTime.now()).getSeconds() > (60 * 60)) {
+            throw new SignupException("핸드폰 인증시간이 만료되었습니다. 핸드폰 인증을 다시 해주세요");
+        }
+        return authComplete;
+    }
+
+    // 인증번호 전송 로직
     private void sendAuthNumber(String toNumber, AuthKind authKind) {
-        // 인증번호 전송 로직
+
+        // 4자리 랜덤 숫자 생성
         String authNumber = createRandomNumber();
 
         AuthNumber overlaps = authNumberRepository.findOverlap(toNumber, authKind).orElse(null);
@@ -205,7 +214,7 @@ public class SignService {
         message.setTo(toNumber);
         message.setText("[아이러빗] 인증번호 " + authNumber + " 를 입력하세요.");
 
-        SingleMessageSentResponse response = this.messageService.sendOne(new SingleMessageSendingRequest(message));
+        this.messageService.sendOne(new SingleMessageSendingRequest(message));
     }
 
     // 4자리 랜던 숫자 생성

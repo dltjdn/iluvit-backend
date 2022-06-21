@@ -23,7 +23,7 @@ spring:
       max-file-size: 20MB #최대 파일 사이즈 20MB
   jpa:
     hibernate:
-      ddl-auto: create
+      ddl-auto: update
       naming:
         physical-strategy: org.hibernate.boot.model.naming.PhysicalNamingStrategyStandardImpl
     properties:
@@ -38,4 +38,3 @@ logging:
   level:
     org.hibernate.SQL: debug
     org.hibernate.Type: trace
-

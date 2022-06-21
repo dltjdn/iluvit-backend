@@ -35,7 +35,14 @@ public class Participation extends BaseEntity {
         this.status = status;
     }
 
-    public static Participation createAndRegister(Parent parent, PtDate ptDate) {
+    public static Participation createAndRegister(Parent parent, Presentation presentation, PtDate ptDate, List<Participation> participations) {
+        presentation.canRegister();
+        // 설명회 인원 초과가 되었으면 신청 불가
+        if (!ptDate.canRegister()) {
+            throw new PresentationException("설명회 수용가능 인원이 초과 되었습니다 대기자로 등록해 주세요");
+        }
+        // 설명회에 등록되어 있으면 신청 불가
+        Participation.hasRegistered(participations, parent);
 
         // participation 생성
         Participation participation = Participation.builder()
@@ -60,6 +67,24 @@ public class Participation extends BaseEntity {
             if(participation.getParent().equals(parent) && participation.status == Status.JOINED)
                 throw new PresentationException("이미 설명회를 신청하셨습니다.");
         });
+    }
+
+    public static Participation createAndRegister(Parent parent, PtDate ptDate, List<Participation> participations) {
+        Participation.hasRegistered(participations, parent);
+        // participation 생성
+        Participation participation = Participation.builder()
+                .parent(parent)
+                .ptDate(ptDate)
+                .status(Status.JOINED)
+                .build();
+
+        // 연관 관계 등록
+        parent.getParticipations().add(participation);
+
+        // 연관 관계 등록 및 participationCnt + 1
+        ptDate.acceptParticipation(participation);
+
+        return participation;
     }
 
     // 취소할 경우 연관관계 해제 안하고 상태만 바꿈
