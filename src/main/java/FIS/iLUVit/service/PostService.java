@@ -164,7 +164,9 @@ public class PostService {
         });
     }
 
-//    public PostList searchByScrap(Long scrapId) {
-//        Slice<Post> posts = postRepository.findByScrap(scrapId);
-//    }
+    public PostList searchByScrap(Long scrapId) {
+        Slice<Post> posts = postRepository.findByScrap(scrapId);
+        Slice<GetPostResponsePreview> previews = posts.map(GetPostResponsePreview::new);
+        return new PostList(previews);
+    }
 }

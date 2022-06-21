@@ -78,8 +78,8 @@ public class PostController {
         return postService.searchCenterMainPreview(userId, centerId);
     }
 
-//    @GetMapping("/post/scrap")
-//    public PostList searchPostsByScrap(@RequestParam Long scrapId) {
-//        return postService.searchByScrap(scrapId);
-//    }
+    @GetMapping("/post/scrap")
+    public PostList searchPostsByScrap(@RequestParam Long scrapId) {
+        return postService.searchByScrap(scrapId);
+    }
 }
