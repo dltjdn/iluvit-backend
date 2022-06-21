@@ -8,7 +8,6 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 public class CenterInfoForSignupRequest {
-    private String signupKind;
     private String sido;
     private String sigungu;
     private String centerName;

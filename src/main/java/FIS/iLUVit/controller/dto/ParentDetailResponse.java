@@ -15,6 +15,8 @@ public class ParentDetailResponse {
     private String emailAddress;
     private Integer interestAge;
     private Theme theme;
+    private String address;
+    private String detailAddress;
     private String profileImg;
 
     public ParentDetailResponse(Parent parent) {
@@ -23,5 +25,7 @@ public class ParentDetailResponse {
         this.emailAddress = parent.getEmailAddress();
         this.interestAge = parent.getInterestAge();
         this.theme = parent.getTheme();
+        this.address = parent.getAddress();
+        this.detailAddress = parent.getDetailAddress();
     }
 }

@@ -30,7 +30,7 @@ public class Teacher extends User {
     private Center center;
 
     @Builder
-    public Teacher(String nickName, String loginId, String password, String phoneNumber, Boolean hasProfileImg, String emailAddress, String name, Auth auth, Approval approval, Center center, String address, String addressDetail) {
+    public Teacher(String nickName, String loginId, String password, String phoneNumber, Boolean hasProfileImg, String emailAddress, String name, Auth auth, Approval approval, Center center, String address, String detailAddress) {
         this.loginId = loginId;
         this.password = password;
         this.name = name;
@@ -40,12 +40,12 @@ public class Teacher extends User {
         this.emailAddress = emailAddress;
         this.auth = auth;
         this.address = address;
-        this.addressDetail = addressDetail;
+        this.detailAddress = detailAddress;
         this.approval = approval;
         this.center = center;
     }
 
-    public static Teacher createTeacher(String nickName, String loginId, String password, String phoneNumber, Boolean hasProfileImg, String emailAddress, String name, Auth auth, Approval approval, Center center, String address, String addressDetail) {
+    public static Teacher createTeacher(String nickName, String loginId, String password, String phoneNumber, Boolean hasProfileImg, String emailAddress, String name, Auth auth, Approval approval, Center center, String address, String detailAddress) {
         return Teacher.builder()
                 .nickName(nickName)
                 .loginId(loginId)
@@ -58,7 +58,7 @@ public class Teacher extends User {
                 .center(center)
                 .auth(auth)
                 .address(address)
-                .addressDetail(addressDetail)
+                .detailAddress(detailAddress)
                 .build();
     }
 
@@ -68,8 +68,19 @@ public class Teacher extends User {
 
     public void updateDetail(UpdateTeacherDetailRequest request) {
         this.nickName = request.getNickname();
-        this.phoneNumber = request.getPhoneNumber();
         this.emailAddress = request.getEmailAddress();
+        this.address = request.getAddress();
+        this.detailAddress = request.getDetailAddress();
+        this.hasProfileImg = !request.getProfileImg().isEmpty();
+    }
+
+    public void updateDetailWithPhoneNum(UpdateTeacherDetailRequest request) {
+        this.nickName = request.getNickname();
+        this.emailAddress = request.getEmailAddress();
+        this.address = request.getAddress();
+        this.detailAddress = request.getDetailAddress();
+        this.phoneNumber = request.getPhoneNum();
+        this.hasProfileImg = !request.getProfileImg().isEmpty();
     }
 
     public void canWrite(Long centerId) {

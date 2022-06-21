@@ -18,7 +18,7 @@ public class SignupTeacherRequest {
     private String phoneNum;
     private String emailAddress;
     private String address;
-    private String addressDetail;
+    private String detailAddress;
     private Long centerId;
 
     public Teacher createTeacher(Center center, String pwd){
@@ -30,7 +30,7 @@ public class SignupTeacherRequest {
                 .phoneNumber(phoneNum)
                 .emailAddress(emailAddress)
                 .address(address)
-                .addressDetail(addressDetail)
+                .detailAddress(detailAddress)
                 .hasProfileImg(false)
                 .center(center)
                 .approval(Approval.WAITING)

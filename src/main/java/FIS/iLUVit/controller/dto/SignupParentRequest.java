@@ -15,7 +15,7 @@ public class SignupParentRequest {
     private String name;
     private String emailAddress;
     private String address;
-    private String addressDetail;
+    private String detailAddress;
     private Theme theme;
     private Integer interestAge;
 
@@ -28,7 +28,7 @@ public class SignupParentRequest {
                 .phoneNumber(phoneNum)
                 .emailAddress(emailAddress)
                 .address(address)
-                .addressDetail(addressDetail)
+                .detailAddress(detailAddress)
                 .hasProfileImg(false)
                 .theme(theme)
                 .interestAge(interestAge)

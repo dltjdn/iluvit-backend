@@ -82,12 +82,9 @@ public class CenterRepositoryImpl extends CenterQueryMethod implements CenterRep
 
     @Override
     public Slice<CenterInfoForSignupDto> findForSignup(CenterInfoForSignupRequest request, Pageable pageable) {
-        System.out.println("request = " + request.getSignupKind());
-        Boolean isSigned = !request.getSignupKind().equals("director");
         List<CenterInfoForSignupDto> content = jpaQueryFactory.select(new QCenterInfoForSignupDto(center.id, center.name, center.address))
                 .from(center)
-                .where(signedEq(isSigned)
-                        .and(areaEq(request.getSido(), request.getSigungu()))
+                .where(areaEq(request.getSido(), request.getSigungu())
                         .and(centerNameEq(request.getCenterName())))
                 .offset(pageable.getOffset())
                 .limit(pageable.getPageSize() + 1)
