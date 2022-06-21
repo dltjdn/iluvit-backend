@@ -11,6 +11,10 @@ import org.springframework.web.multipart.MultipartFile;
 @NoArgsConstructor
 public class ParentDetailRequest {
     private String nickname;
+    private Boolean changePhoneNum;
+    private String phoneNum;
+    private String address;
+    private String detailAddress;
     private String emailAddress;
     private Integer interestAge;
     private String theme;

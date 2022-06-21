@@ -19,6 +19,7 @@ import java.io.IOException;
 import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
 
 @Slf4j
 @Service
@@ -31,8 +32,7 @@ public class TeacherService {
     private final UserService userService;
     private final TeacherRepository teacherRepository;
     private final AuthNumberRepository authNumberRepository;
-    private final BCryptPasswordEncoder encoder;
-
+    private final SignService signService;
 
     /**
      * 작성날짜: 2022/05/20 4:43 PM
@@ -46,8 +46,11 @@ public class TeacherService {
 
         TeacherDetailResponse response = new TeacherDetailResponse(findTeacher);
 
-        String imagePath = imageService.getUserProfileDir();
-        response.setProfileImg(imageService.getEncodedProfileImage(imagePath, id));
+        // 현재 등록한 프로필 이미지가 있으면 보여주기
+        if (findTeacher.getHasProfileImg()) {
+            String imagePath = imageService.getUserProfileDir();
+            response.setProfileImg(imageService.getEncodedProfileImage(imagePath, id));
+        }
 
         return response;
     }
@@ -63,18 +66,32 @@ public class TeacherService {
         Teacher findTeacher = teacherRepository.findById(id)
                 .orElseThrow(() -> new UserException("유효하지 않은 토큰으로 사용자 접근입니디."));
 
-        try {
-            teacherRepository.findByNickName(request.getNickname()).orElseThrow(IllegalArgumentException::new);
+        Optional<Teacher> byNickName = teacherRepository.findByNickName(request.getNickname());
+        // 닉네임 중복 검사
+        if (byNickName.isEmpty()) {
+            // 핸드폰 번호도 변경하는 경우
+            if (request.getChangePhoneNum()) {
+                // 핸드폰 인증이 완료되었는지 검사
+                signService.validateAuthNumber(request.getPhoneNum(), AuthKind.updatePhoneNum);
+                // 핸드폰 번호와 함께 프로필 update
+                findTeacher.updateDetailWithPhoneNum(request);
+                // 인증번호 테이블에서 지우기
+                authNumberRepository.deleteByPhoneNumAndAuthKind(request.getPhoneNum(), AuthKind.updatePhoneNum);
+            } else { // 핸드폰 번호 변경은 변경하지 않는 경우
+                findTeacher.updateDetail(request);
+            }
+        } else {
             throw new UserException("이미 존재하는 닉네임 입니다.");
-        } catch (IllegalArgumentException e) {
-            findTeacher.updateDetail(request);
         }
 
-        String imagePath = imageService.getUserProfileDir();
-        imageService.saveProfileImage(request.getProfileImg(), imagePath + findTeacher.getId());
-
         TeacherDetailResponse response = new TeacherDetailResponse(findTeacher);
-        response.setProfileImg(imageService.getEncodedProfileImage(imagePath, id));
+
+        // 프로필 이미지 수정
+        if (!request.getProfileImg().isEmpty()) {
+            String imagePath = imageService.getUserProfileDir();
+            imageService.saveProfileImage(request.getProfileImg(), imagePath + findTeacher.getId());
+            response.setProfileImg(imageService.getEncodedProfileImage(imagePath, id));
+        }
 
         return response;
     }
@@ -86,6 +103,7 @@ public class TeacherService {
      */
     public void signup(SignupTeacherRequest request) {
 
+        // 회원가입 유효성 검사 및 비밀번호 해싱
         String hashedPwd = userService.signupValidation(request.getPassword(), request.getPasswordCheck(), request.getLoginId(), request.getPhoneNum());
 
         if (request.getCenterId() != null) {

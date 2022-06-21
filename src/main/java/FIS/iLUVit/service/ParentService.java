@@ -5,6 +5,7 @@ import FIS.iLUVit.controller.dto.ParentDetailRequest;
 import FIS.iLUVit.controller.dto.SignupParentRequest;
 import FIS.iLUVit.domain.AuthNumber;
 import FIS.iLUVit.domain.Parent;
+import FIS.iLUVit.domain.Teacher;
 import FIS.iLUVit.domain.User;
 import FIS.iLUVit.domain.embeddable.Theme;
 import FIS.iLUVit.domain.enumtype.AuthKind;
@@ -24,6 +25,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.io.IOException;
 import java.time.Duration;
 import java.time.LocalDateTime;
+import java.util.Optional;
 
 @Slf4j
 @Service
@@ -35,7 +37,7 @@ public class ParentService {
     private final UserService userService;
     private final AuthNumberRepository authNumberRepository;
     private final ImageService imageService;
-    private final BCryptPasswordEncoder encoder;
+    private final SignService signService;
 
     /**
      * 작성날짜: 2022/05/13 4:43 PM
@@ -54,6 +56,27 @@ public class ParentService {
     }
 
     /**
+     * 작성날짜: 2022/05/13 4:44 PM
+     * 작성자: 이승범
+     * 작성내용: 부모의 마이페이지 정보 반환
+     */
+    public ParentDetailResponse findDetail(Long id) throws IOException {
+
+        Parent findParent = parentRepository.findById(id)
+                .orElseThrow(() -> new UserException("유효하지 않은 토큰으로의 사용자 접근입니다."));
+
+        ParentDetailResponse response = new ParentDetailResponse(findParent);
+
+        // 현재 등록한 프로필 이미지가 있으면 보여주기
+        if (findParent.getHasProfileImg()) {
+            String imagePath = imageService.getUserProfileDir();
+            response.setProfileImg(imageService.getEncodedProfileImage(imagePath, id));
+        }
+
+        return response;
+    }
+
+    /**
      * 작성날짜: 2022/05/16 11:42 AM
      * 작성자: 이승범
      * 작성내용: 부모의 마이페이지 정보 업데이트
@@ -67,35 +90,31 @@ public class ParentService {
         ObjectMapper objectMapper = new ObjectMapper();
         Theme theme = objectMapper.readValue(request.getTheme(), Theme.class);
 
-        try {
-            parentRepository.findByNickName(request.getNickname()).orElseThrow(IllegalArgumentException::new);
+        // 유저 닉네임 중복 검사
+        Optional<Parent> byNickName = parentRepository.findByNickName(request.getNickname());
+        if (byNickName.isEmpty()) {
+            // 핸드폰 번호도 변경하는 경우
+            if (request.getChangePhoneNum()) {
+                // 핸드폰 인증이 완료되었는지 검사
+                signService.validateAuthNumber(request.getPhoneNum(), AuthKind.updatePhoneNum);
+                // 핸드폰 번호와 함께 프로필 update
+                findParent.updateDetailWithPhoneNum(request, theme);
+                // 인증번호 테이블에서 지우기
+                authNumberRepository.deleteByPhoneNumAndAuthKind(request.getPhoneNum(), AuthKind.updatePhoneNum);
+            } else { // 핸드폰 번호 변경은 변경하지 않는 경우
+                findParent.updateDetail(request, theme);
+            }
+        } else {
             throw new UserException("이미 존재하는 닉네임 입니다.");
-        } catch (IllegalArgumentException e) {
-            findParent.updateDetail(request, theme);
         }
-
-        String imagePath = imageService.getUserProfileDir();
-        imageService.saveProfileImage(request.getProfileImg(), imagePath + findParent.getId());
-
-        ParentDetailResponse response = new ParentDetailResponse(findParent);
-        response.setProfileImg(imageService.getEncodedProfileImage(imagePath, id));
-        return response;
-    }
-
-    /**
-     * 작성날짜: 2022/05/13 4:44 PM
-     * 작성자: 이승범
-     * 작성내용: 부모의 마이페이지 정보 반환
-     */
-    public ParentDetailResponse findDetail(Long id) throws IOException {
-
-        Parent findParent = parentRepository.findById(id)
-                .orElseThrow(() -> new UserException("유효하지 않은 토큰으로의 사용자 접근입니다."));
-
         ParentDetailResponse response = new ParentDetailResponse(findParent);
 
-        String imagePath = imageService.getUserProfileDir();
-        response.setProfileImg(imageService.getEncodedProfileImage(imagePath, id));
+        // 요청에 프로필 이미지 있으면 덮어씌우기
+        if(!request.getProfileImg().isEmpty()){
+            String imagePath = imageService.getUserProfileDir();
+            imageService.saveProfileImage(request.getProfileImg(), imagePath + findParent.getId());
+            response.setProfileImg(imageService.getEncodedProfileImage(imagePath, id));
+        }
 
         return response;
     }

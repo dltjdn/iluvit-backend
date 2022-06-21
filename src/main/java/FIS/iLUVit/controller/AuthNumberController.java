@@ -1,15 +1,15 @@
 package FIS.iLUVit.controller;
 
-import FIS.iLUVit.controller.dto.AuthenticateAuthNumForFindPwd;
 import FIS.iLUVit.controller.dto.AuthenticateAuthNumRequest;
 import FIS.iLUVit.controller.dto.FindPasswordRequest;
+import FIS.iLUVit.domain.enumtype.AuthKind;
 import FIS.iLUVit.service.SignService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequiredArgsConstructor
-public class SignController {
+public class AuthNumberController {
 
     private final SignService signService;
 
@@ -20,7 +20,7 @@ public class SignController {
      */
     @GetMapping("/authNumber/signup")
     public void sendAuthNumberForSignup(@RequestParam String phoneNumber) {
-        signService.sendAuthNumberForSignup(phoneNumber);
+        signService.sendAuthNumberForSignup(phoneNumber, AuthKind.signup);
     }
 
     /**
@@ -41,6 +41,16 @@ public class SignController {
     @GetMapping("/authNumber/password")
     public void sendAuthNumberForFindPassword(@RequestParam String loginId, @RequestParam String phoneNumber) {
         signService.sendAuthNumberForFindPassword(loginId, phoneNumber);
+    }
+
+    /**
+    *   작성날짜: 2022/06/20 11:08 AM
+    *   작성자: 이승범
+    *   작성내용: 핸드폰번호 변경을 위한 인증번호 전송
+    */
+    @GetMapping("/authNumber/phoneNumber")
+    public void sendAuthNumberForUpdatePhoneNum(@RequestParam String phoneNumber) {
+        signService.sendAuthNumberForSignup(phoneNumber, AuthKind.updatePhoneNum);
     }
 
     /**

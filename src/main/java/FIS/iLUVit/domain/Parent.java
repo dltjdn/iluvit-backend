@@ -15,7 +15,6 @@ import java.util.List;
 
 @Entity
 @Getter
-@Data
 @NoArgsConstructor
 @OnDelete(action = OnDeleteAction.CASCADE)
 public class Parent extends User {
@@ -33,7 +32,7 @@ public class Parent extends User {
 
 
     @Builder
-    public Parent(String nickName, String loginId, String password, String phoneNumber, Boolean hasProfileImg, String emailAddress, String name, Theme theme, Integer interestAge, Auth auth, String address, String addressDetail) {
+    public Parent(String nickName, String loginId, String password, String phoneNumber, Boolean hasProfileImg, String emailAddress, String name, Theme theme, Integer interestAge, Auth auth, String address, String detailAddress) {
         this.loginId = loginId;
         this.name = name;
         this.nickName = nickName;
@@ -41,14 +40,14 @@ public class Parent extends User {
         this.phoneNumber = phoneNumber;
         this.emailAddress = emailAddress;
         this.address = address;
-        this.addressDetail = addressDetail;
+        this.detailAddress = detailAddress;
         this.theme = theme;
         this.interestAge = interestAge;
         this.auth = auth;
         this.hasProfileImg = hasProfileImg;
     }
 
-    public static Parent createParent(String nickName, String loginId, String password, String phoneNumber, Boolean hasProfileImg, String emailAddress, String name, Theme theme, Integer interestAge, Auth auth, String address, String addressDetail) {
+    public static Parent createParent(String nickName, String loginId, String password, String phoneNumber, Boolean hasProfileImg, String emailAddress, String name, Theme theme, Integer interestAge, Auth auth, String address, String detailAddress) {
         return Parent.builder()
                 .nickName(nickName)
                 .loginId(loginId)
@@ -61,7 +60,7 @@ public class Parent extends User {
                 .interestAge(interestAge)
                 .auth(auth)
                 .address(address)
-                .address(addressDetail)
+                .detailAddress(detailAddress)
                 .build();
     }
 
@@ -70,6 +69,18 @@ public class Parent extends User {
         this.emailAddress = request.getEmailAddress();
         this.interestAge = request.getInterestAge();
         this.theme = theme;
+        this.hasProfileImg = !request.getProfileImg().isEmpty();
+    }
+
+    public void updateDetailWithPhoneNum(ParentDetailRequest request, Theme theme) {
+        this.nickName = request.getNickname();
+        this.phoneNumber = request.getPhoneNum();
+        this.emailAddress = request.getEmailAddress();
+        this.address = request.getAddress();
+        this.detailAddress = request.getDetailAddress();
+        this.interestAge = request.getInterestAge();
+        this.theme = theme;
+        this.hasProfileImg = !request.getProfileImg().isEmpty();
     }
 
     @Override
