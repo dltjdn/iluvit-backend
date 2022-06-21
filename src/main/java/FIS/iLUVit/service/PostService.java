@@ -1,23 +1,18 @@
 package FIS.iLUVit.service;
 
-import FIS.iLUVit.controller.dto.GetPostResponse;
-import FIS.iLUVit.controller.dto.GetPostResponsePreview;
-import FIS.iLUVit.controller.dto.PostRegisterRequest;
+import FIS.iLUVit.controller.dto.*;
 import FIS.iLUVit.domain.*;
 import FIS.iLUVit.domain.enumtype.Auth;
-import FIS.iLUVit.repository.BoardRepository;
-import FIS.iLUVit.repository.CenterRepository;
-import FIS.iLUVit.repository.PostRepository;
-import FIS.iLUVit.repository.UserRepository;
+import FIS.iLUVit.repository.*;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Slice;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.util.List;
-import java.util.Objects;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
@@ -30,6 +25,7 @@ public class PostService {
     private final ImageService imageService;
     private final BoardRepository boardRepository;
     private final CenterRepository centerRepository;
+    private final BookmarkRepository bookmarkRepository;
 
     public void savePost(PostRegisterRequest request, List<MultipartFile> images, Long userId) {
         User findUser = userRepository.findById(userId)
@@ -70,53 +66,47 @@ public class PostService {
         return getPostResponseDto(findPost);
     }
 
-    public List<GetPostResponsePreview> searchByKeyword(String input, Auth auth, Long userId) {
+    public Slice<GetPostResponsePreview> searchByKeyword(String input, Auth auth, Long userId, Pageable pageable) {
         log.info("input : " + input);
 
-        List<Long> boardIds;
+        Set<Long> centerIds = new HashSet<>();
+//        List<Long> boardIds;
 
         if (auth == Auth.PARENT) {
-            Set<Long> centerIds = userRepository.findChildren(userId)
-                    .stream().map(c -> c.getCenter().getId())
+            // 학부모 유저일 때 아이와 연관된 센터의 아이디를 모두 가져옴
+            centerIds = userRepository.findChildren(userId)
+                    .stream().filter(c -> c.getCenter() != null).map(c -> c.getCenter().getId())
                     .collect(Collectors.toSet());
 
-            boardIds = boardRepository.findByUserWithCenterIds(centerIds)
-                    .stream().map(b -> b.getId()).collect(Collectors.toList());
 
         } else {
             Center center = centerRepository.findCenterByTeacher(userId).get();
+            centerIds.add(center.getId());
 
-            boardIds = boardRepository.findByCenter(center.getId())
-                    .stream().map(b -> b.getId()).collect(Collectors.toList());
         }
 
-        List<Post> posts;
-        if (input.isEmpty()) {
-            posts = postRepository.findAllWithBoardIds(boardIds);
-        } else {
-            posts = postRepository.findByKeywordWithBoardIds(input, boardIds);
-        }
-        return posts.stream().map(p -> getPostResponsePreviewResponseDto(p))
-                .collect(Collectors.toList());
+        Slice<GetPostResponsePreview> posts = postRepository.findWithBoardAndCenter(centerIds, input, pageable);
+        // 센터의 게시판 + 모두의 게시판(centerId == null) 키워드 검색
+        posts.forEach(g -> setPreviewImage(g));
+        return posts;
     }
 
-    public List<GetPostResponsePreview> searchByKeywordAndCenter(Long centerId, String input, Auth auth, Long userId) {
+    public Slice<GetPostResponsePreview> searchByKeywordAndCenter(Long centerId, String input, Auth auth, Long userId, Pageable pageable) {
         if (centerId == null) {
-            return searchByKeyword(input, auth, userId);
+            return searchByKeyword(input, auth, userId, pageable);
         }
-
-        List<Post> posts = postRepository.findByKeywordAndCenter(centerId, input);
-        return posts.stream().map(p -> getPostResponsePreviewResponseDto(p))
-                .collect(Collectors.toList());
+        Slice<GetPostResponsePreview> posts = postRepository.findWithCenter(centerId, input, auth, userId, pageable);
+        posts.forEach(g -> setPreviewImage(g));
+        return posts;
     }
 
-    public List<GetPostResponsePreview> searchByKeywordAndBoard(Long boardId, String input) {
-        List<Post> posts = postRepository.findByKeywordAndBoard(boardId, input);
-        return posts.stream().map(p -> getPostResponsePreviewResponseDto(p))
-                .collect(Collectors.toList());
+    public Slice<GetPostResponsePreview> searchByKeywordAndBoard(Long boardId, String input, Pageable pageable) {
+        Slice<GetPostResponsePreview> posts = postRepository.findWithBoard(boardId, input, pageable);
+        posts.forEach(g -> setPreviewImage(g));
+        return posts;
     }
 
-    private GetPostResponse getPostResponseDto(Post post) {
+    public GetPostResponse getPostResponseDto(Post post) {
         String postDir = imageService.getPostDir(post.getId());
         List<String> encodedInfoImage = imageService.getEncodedInfoImage(postDir, post.getImgCnt());
         String userProfileDir = imageService.getUserProfileDir();
@@ -124,9 +114,53 @@ public class PostService {
         return new GetPostResponse(post, encodedInfoImage, encodedProfileImage);
     }
 
-    private GetPostResponsePreview getPostResponsePreviewResponseDto(Post post) {
-        String postDir = imageService.getPostDir(post.getId());
-        List<String> encodedInfoImage = imageService.getEncodedInfoImage(postDir, post.getImgCnt());
-        return new GetPostResponsePreview(post, encodedInfoImage);
+    public void setPreviewImage(GetPostResponsePreview preview) {
+        String postDir = imageService.getPostDir(preview.getPost_id());
+        List<String> encodedInfoImage = imageService.getEncodedInfoImage(postDir, preview.getImgCnt());
+        preview.updatePreviewImage(encodedInfoImage);
+    }
+
+    public PostList searchByUser(Long userId, Pageable pageable) {
+        Slice<Post> posts = postRepository.findByUser(userId, pageable);
+        Slice<GetPostResponsePreview> preview = posts.map(p -> new GetPostResponsePreview(p));
+        return new PostList(preview);
+    }
+
+    public List<BoardPreview> searchMainPreview(Long userId) {
+        List<BoardPreview> boardPreviews = new ArrayList<>();
+        List<Bookmark> bookmarkList = bookmarkRepository.findBoardByUser(userId);
+        getBoardPreviews(bookmarkList, boardPreviews);
+
+        return boardPreviews.stream()
+                .sorted(Comparator.comparing(BoardPreview::getBoard_id)).collect(Collectors.toList());
+    }
+
+    public List<BoardPreview> searchCenterMainPreview(Long userId, Long centerId) {
+        List<BoardPreview> boardPreviews = new ArrayList<>();
+        List<Bookmark> bookmarkList = bookmarkRepository.findBoardByUserAndCenter(userId, centerId);
+        getBoardPreviews(bookmarkList, boardPreviews);
+
+        return boardPreviews.stream()
+                .sorted(Comparator.comparing(BoardPreview::getBoard_id)).collect(Collectors.toList());
+    }
+
+    private void getBoardPreviews(List<Bookmark> bookmarkList, List<BoardPreview> boardPreviews) {
+        List<Long> boardIds = bookmarkList.stream()
+                .map(bm -> bm.getBoard().getId())
+                .collect(Collectors.toList());
+
+        List<Post> top4 = postRepository.findTop4(boardIds);
+        Map<Board, List<Post>> boardPostMap = top4.stream()
+                .collect(Collectors.groupingBy(Post::getBoard));
+
+
+        boardPostMap.forEach((k, v) -> {
+
+            List<BoardPreview.PostInfo> postInfos = v.stream()
+                    .map(BoardPreview.PostInfo::new)
+                    .collect(Collectors.toList());
+
+            boardPreviews.add(new BoardPreview(k.getId(), k.getName(), postInfos));
+        });
     }
 }

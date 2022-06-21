@@ -41,6 +41,7 @@ node('I_LOVE_IT') {
                 sh "sudo kill -15 $pid"
             } else {
                 echo "===================== Nothing To Kill ====================="
+
             }
         }
     }
@@ -50,8 +51,8 @@ node('I_LOVE_IT') {
         BUILD_JAR = sh(encoding: 'UTF-8', returnStdout: true, script: "ls ./build/libs/*.jar")
         JAR_NAME = sh(encoding: 'UTF-8', returnStdout: true, script: "basename $BUILD_JAR")
         dir("./build/libs") {
-            sh "pwd"
-            sh "nohup java -jar $JAR_NAME > nohup.out 2>&1 &"
+            PATH = sh(encoding: 'UTF-8', returnStdout: true, script: "pwd")
+            sh 'JENKINS_NODE_COOKIE=dontKillMe nohup java -jar ./iLUVit-0.0.1-SNAPSHOT.jar >> ./nohup.out 2>&1 &'
         }
     }
 }

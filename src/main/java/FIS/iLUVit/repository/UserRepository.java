@@ -30,7 +30,7 @@ public interface UserRepository extends JpaRepository<User, Long> {
 
     Optional<User> findByPhoneNumber(String phoneNumber);
 
-    @Query("select c from Child c join c.parent p join fetch c.center ct" +
+    @Query("select c from Child c join c.parent p" +
             " where p.id = :parentId")
     List<Child> findChildren(@Param("parentId") Long parentId);
 

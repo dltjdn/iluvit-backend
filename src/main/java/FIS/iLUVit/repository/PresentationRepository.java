@@ -13,7 +13,7 @@ import java.util.List;
 import java.util.Optional;
 
 @Repository
-public interface PresentationRepository extends JpaRepository<Presentation, Long> {
+public interface PresentationRepository extends JpaRepository<Presentation, Long>, PresentationRepositoryCustom {
 
     @Query("select new FIS.iLUVit.repository.dto.PresentationWithPtDatesDto" +
             "(p.id, p.startDate, p.endDate, p.place, p.content, p.imgCnt, p.videoCnt, pd.id, pd.date, pd.time, pd.ablePersonNum, pd.participantCnt, pd.waitingCnt) " +
