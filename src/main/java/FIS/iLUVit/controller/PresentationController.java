@@ -2,7 +2,10 @@ package FIS.iLUVit.controller;
 
 import FIS.iLUVit.config.argumentResolver.Login;
 import FIS.iLUVit.controller.dto.*;
+import FIS.iLUVit.domain.Presentation;
+import FIS.iLUVit.repository.dto.CenterAndDistancePreview;
 import FIS.iLUVit.repository.dto.PresentationPreviewDto;
+import FIS.iLUVit.service.CenterService;
 import FIS.iLUVit.service.PresentationService;
 import FIS.iLUVit.service.UserService;
 import FIS.iLUVit.service.dto.ParentInfoForDirectorDto;
@@ -11,6 +14,7 @@ import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.awt.print.Pageable;
 import java.util.List;
 
 @RestController
@@ -83,5 +87,10 @@ public class PresentationController {
     @GetMapping("/presentation/ptDate/{ptDateId}/waiting/parentList")
     public List<ParentInfoForDirectorDto> findParentWait(@Login Long userId, @PathVariable("ptDateId") Long ptDateId){
         return presentationService.findPtDateWaitingParents(userId, ptDateId);
+    }
+
+    @PostMapping("/presentation/search")
+    public void searchByFilterAndMap(@RequestBody PresentationSearchFilterDTO dto, Pageable pageable){
+        presentationService.findByFilter(dto.getAreas(), dto.getTheme(), dto.getInterestedAge(), dto.getKindOf(), pageable);
     }
 }
