@@ -3,6 +3,7 @@ package FIS.iLUVit.controller;
 import FIS.iLUVit.config.argumentResolver.Login;
 import FIS.iLUVit.controller.dto.ScrapListInfoResponse;
 import FIS.iLUVit.controller.dto.addScrapRequest;
+import FIS.iLUVit.controller.dto.scrapPostRequest;
 import FIS.iLUVit.service.ScrapService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -16,32 +17,42 @@ public class ScrapController {
     private final ScrapService scrapService;
 
     /**
-    *   작성날짜: 2022/06/21 2:11 PM
-    *   작성자: 이승범
-    *   작성내용: 스크랩 폴더 목록 정보 가져오기
-    */
-    @GetMapping("/user/scrap")
+     * 작성날짜: 2022/06/21 2:11 PM
+     * 작성자: 이승범
+     * 작성내용: 스크랩 폴더 목록 정보 가져오기
+     */
+    @GetMapping("/user/scrap/dir")
     public ScrapListInfoResponse ScrapListInfo(@Login Long id) {
-        return scrapService.findScrapListInfo(id);
+        return scrapService.findScrapDirListInfo(id);
     }
 
     /**
-    *   작성날짜: 2022/06/21 2:11 PM
+     * 작성날짜: 2022/06/21 2:11 PM
+     * 작성자: 이승범
+     * 작성내용: 스크랩 폴더 추가하기
+     */
+    @PostMapping("/user/scrap/dir")
+    public ScrapListInfoResponse addScrap(@Login Long id, @RequestBody addScrapRequest request) {
+        return scrapService.addScrapDir(id, request);
+    }
+
+    /**
+     * 작성날짜: 2022/06/21 3:00 PM
+     * 작성자: 이승범
+     * 작성내용: 스크랩 폴더 삭제하기
+     */
+    @DeleteMapping("/user/scrap/dir")
+    public ScrapListInfoResponse deleteScrap(@Login Long id, @RequestParam Long scrapId) {
+        return scrapService.deleteScrapDir(id, scrapId);
+    }
+
+    /**
+    *   작성날짜: 2022/06/21 5:06 PM
     *   작성자: 이승범
-    *   작성내용: 스크랩 폴더 추가하기
+    *   작성내용: 게시물 스크랩하기
     */
     @PostMapping("/user/scrap")
-    public ScrapListInfoResponse addScrap(@Login Long id, @RequestBody addScrapRequest request) {
-        return scrapService.addScrap(id, request);
-    }
-
-    /**
-    *   작성날짜: 2022/06/21 3:00 PM
-    *   작성자: 이승범
-    *   작성내용: 스크랩 폴더 삭제하기
-    */
-    @DeleteMapping("/user/scrap")
-    public ScrapListInfoResponse deleteScrap(@Login Long id, @RequestParam Long scrapId) {
-        return scrapService.deleteScrap(id, scrapId);
+    public void scrapPost(@Login Long userId, @RequestBody scrapPostRequest request) {
+        scrapService.scrapPost(userId, request);
     }
 }

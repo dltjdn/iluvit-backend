@@ -26,4 +26,11 @@ public interface PostRepository extends JpaRepository<Post, Long>, PostRepositor
             "where ranking.rank <= 4 order by board_id, createdDate desc ",
             nativeQuery = true)
     List<Post> findTop4(@Param("boardIds") List<Long> boardIds);
+
+    @Query("select p " +
+            "from Post p " +
+            "join fetch p.scrapPosts sp " +
+            "join fetch sp.scrap s " +
+            "where s.id = :scrapId")
+    Slice<Post> findByScrap(@Param("scrapId") Long scrapId);
 }

@@ -163,4 +163,8 @@ public class PostService {
             boardPreviews.add(new BoardPreview(k.getId(), k.getName(), postInfos));
         });
     }
+
+//    public PostList searchByScrap(Long scrapId) {
+//        Slice<Post> posts = postRepository.findByScrap(scrapId);
+//    }
 }
