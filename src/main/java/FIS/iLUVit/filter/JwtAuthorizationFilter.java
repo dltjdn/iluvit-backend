@@ -71,18 +71,7 @@ public class JwtAuthorizationFilter extends BasicAuthenticationFilter {
         // 권한 구분을 위해 강제로 시큐리티의 세션에 접근하여 Authentication 객체를 저장 - 일회성으로 사용하기 때문에 세션에 저장해도 됨
         SecurityContextHolder.getContext().setAuthentication(authentication);
 
-        // JWT 최신화
-        response.addHeader("Authorization", "Bearer " + createToken(user));
         // 다음 필터로 진행
         chain.doFilter(request, response);
-    }
-
-    // HMAC512 방식의 Hash 암호화
-    private String createToken(User user) {
-        return JWT.create()
-                .withSubject("JWT")
-                .withExpiresAt(new Date(System.currentTimeMillis() + (60000 * 30))) // JWT 만료시간 밀리세컨단위
-                .withClaim("id", user.getId())
-                .sign(Algorithm.HMAC512("symmetricKey"));
     }
 }
