@@ -77,4 +77,9 @@ public class PostController {
                                                       @RequestParam("center_id") Long centerId) {
         return postService.searchCenterMainPreview(userId, centerId);
     }
+
+    @GetMapping("/post/scrap")
+    public PostList searchPostsByScrap(@RequestParam Long scrapId) {
+        return postService.searchByScrap(scrapId);
+    }
 }
