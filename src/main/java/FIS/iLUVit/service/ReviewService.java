@@ -9,6 +9,8 @@ import FIS.iLUVit.domain.enumtype.Approval;
 import FIS.iLUVit.repository.*;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -70,7 +72,7 @@ public class ReviewService {
     }
 
     public ReviewByCenterDTO findByCenter(Long centerId, Long userId) {
-        List<Review> reviews = reviewRepository.findByCenterAndParent(centerId); // getParent 지연 로딩 쿼리 막음
+        Page<Review> reviews = reviewRepository.findByCenterAndParent(centerId, PageRequest.of(0, 10)); // getParent 지연 로딩 쿼리 막음
         ReviewByCenterDTO reviewByCenterDTO = new ReviewByCenterDTO();
         reviews.forEach((review) -> {
             log.info("userId: " + userId);

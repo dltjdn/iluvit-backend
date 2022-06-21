@@ -7,7 +7,7 @@ import lombok.NoArgsConstructor;
 @Data
 @NoArgsConstructor
 public class PostSearchRequestDTO {
-    private Long centerId;
+    private Long center_id;
     private String input;
     private Auth auth;
 }

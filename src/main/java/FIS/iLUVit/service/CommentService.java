@@ -1,5 +1,6 @@
 package FIS.iLUVit.service;
 
+import FIS.iLUVit.controller.dto.CommentDTO;
 import FIS.iLUVit.controller.dto.RegisterCommentRequest;
 import FIS.iLUVit.domain.Comment;
 import FIS.iLUVit.domain.Post;
@@ -8,6 +9,8 @@ import FIS.iLUVit.repository.CommentRepository;
 import FIS.iLUVit.repository.PostRepository;
 import FIS.iLUVit.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Slice;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -26,8 +29,10 @@ public class CommentService {
                 .orElseThrow(() -> new IllegalStateException("존재하지 않는 게시글"));
         Comment comment = new Comment(request.getAnonymous(), request.getContent(), findPost, findUser);
 
-        commentRepository.findById(commentId)
-                .ifPresent(p -> comment.updateParentComment(p));
+        if (commentId != null) {
+            commentRepository.findById(commentId)
+                    .ifPresent(p -> comment.updateParentComment(p));
+        }
 
         commentRepository.save(comment);
     }
@@ -43,5 +48,9 @@ public class CommentService {
                 }, () -> {
                     throw new IllegalStateException("존재하지 않는 댓글");
                 });
+    }
+
+    public Slice<CommentDTO> searchByUser(Long userId) {
+        return commentRepository.findByUser(userId, PageRequest.of(0, 10)).map(CommentDTO::new);
     }
 }
