@@ -1,9 +1,7 @@
 package FIS.iLUVit.controller;
 
 import FIS.iLUVit.config.argumentResolver.Login;
-import FIS.iLUVit.controller.dto.ScrapListInfoResponse;
-import FIS.iLUVit.controller.dto.addScrapRequest;
-import FIS.iLUVit.controller.dto.scrapPostRequest;
+import FIS.iLUVit.controller.dto.*;
 import FIS.iLUVit.service.ScrapService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -47,12 +45,27 @@ public class ScrapController {
     }
 
     /**
-    *   작성날짜: 2022/06/21 5:06 PM
-    *   작성자: 이승범
-    *   작성내용: 게시물 스크랩하기
-    */
+     * 작성날짜: 2022/06/21 5:06 PM
+     * 작성자: 이승범
+     * 작성내용: 게시물 스크랩하기
+     */
     @PostMapping("/user/scrap")
     public void scrapPost(@Login Long userId, @RequestBody scrapPostRequest request) {
         scrapService.scrapPost(userId, request);
+    }
+
+    /**
+     * 작성날짜: 2022/06/22 10:24 AM
+     * 작성자: 이승범
+     * 작성내용: 스크랩 폴더 이름 바꾸기
+     */
+    @PutMapping("/user/scrap/dir/name")
+    public void updateScrapDirName(@Login Long id, @RequestBody updateScrapDirNameRequest request) {
+        scrapService.updateScrapDirName(id, request);
+    }
+
+    @DeleteMapping("/user/scrap/post")
+    public void deleteScrapPost(@Login Long id, @RequestParam Long scrapId, @RequestParam Long postId) {
+        scrapService.deleteScrapPost(id, scrapId, postId);
     }
 }
