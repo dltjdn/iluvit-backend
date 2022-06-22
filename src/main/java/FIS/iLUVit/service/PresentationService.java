@@ -13,17 +13,19 @@ import FIS.iLUVit.repository.CenterRepository;
 import FIS.iLUVit.repository.PresentationRepository;
 import FIS.iLUVit.repository.PtDateRepository;
 import FIS.iLUVit.repository.UserRepository;
-import FIS.iLUVit.repository.dto.PresentationPreviewDto;
+import FIS.iLUVit.repository.dto.PresentationPreviewForTeacher;
+import FIS.iLUVit.repository.dto.PresentationPreviewForUsers;
 import FIS.iLUVit.repository.dto.PresentationWithPtDatesDto;
 import FIS.iLUVit.service.dto.ParentInfoForDirectorDto;
 import FIS.iLUVit.service.dto.PresentationQuryDto;
 import FIS.iLUVit.service.dto.PtDateDto;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.SliceImpl;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.awt.print.Pageable;
 import java.time.LocalDate;
 import java.util.Collection;
 import java.util.List;
@@ -93,7 +95,7 @@ public class PresentationService {
         return presentation;
     }
 
-    public List<PresentationPreviewDto> findPresentationListByCenterId(Long userId, Long centerId) {
+    public List<PresentationPreviewForTeacher> findPresentationListByCenterId(Long userId, Long centerId) {
         //
         userRepository.findTeacherById(userId)
                 .orElseThrow(() -> new UserException("존재하지 않는 유저입니다"))
@@ -179,7 +181,7 @@ public class PresentationService {
                 .collect(Collectors.toList());
     }
 
-    public void findByFilter(List<Area> areas, Theme theme, Integer interestedAge, KindOf kindOf, Pageable pageable) {
-        presentationRepository.findByFilter(areas, theme, interestedAge, kindOf, pageable);
+    public SliceImpl<PresentationPreviewForUsers> findByFilter(List<Area> areas, Theme theme, Integer interestedAge, KindOf kindOf, Pageable pageable) {
+        return presentationRepository.findByFilter(areas, theme, interestedAge, kindOf, pageable);
     }
 }
