@@ -29,6 +29,8 @@ public class QScrap extends EntityPathBase<Scrap> {
 
     public final NumberPath<Long> id = createNumber("id", Long.class);
 
+    public final StringPath name = createString("name");
+
     public final ListPath<ScrapPost, QScrapPost> scrapPosts = this.<ScrapPost, QScrapPost>createList("scrapPosts", ScrapPost.class, QScrapPost.class, PathInits.DIRECT2);
 
     //inherited
