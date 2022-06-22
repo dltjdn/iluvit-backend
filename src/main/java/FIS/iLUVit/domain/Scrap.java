@@ -33,4 +33,8 @@ public class Scrap extends BaseEntity {
         scrap.name = name;
         return scrap;
     }
+
+    public void updateScrapDirName(String name) {
+        this.name = name;
+    }
 }
