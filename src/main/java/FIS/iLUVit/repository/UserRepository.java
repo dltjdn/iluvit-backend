@@ -16,7 +16,7 @@ public interface UserRepository extends JpaRepository<User, Long> {
 
     Optional<User> findByLoginId(String loginId);
 
-    @Query("select teacher from Teacher teacher " +
+    @Query("select distinct teacher from Teacher teacher " +
             "join fetch teacher.center as center " +
             "join fetch center.presentations as presentation " +
             "where teacher.id = :userId " +

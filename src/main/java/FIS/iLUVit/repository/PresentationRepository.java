@@ -29,7 +29,7 @@ public interface PresentationRepository extends JpaRepository<Presentation, Long
             "where p.center.id = :centerId")
     List<PresentationPreviewForTeacher> findByCenterId(@Param("centerId") Long centerId);
 
-    @Query("select presentation from Presentation presentation " +
+    @Query("select distinct presentation from Presentation presentation " +
             "join fetch presentation.ptDates " +
             "join fetch presentation.center " +
             "where presentation.id = :presentationId")
