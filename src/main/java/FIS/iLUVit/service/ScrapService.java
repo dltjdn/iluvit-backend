@@ -101,7 +101,7 @@ public class ScrapService {
         findScrap.updateScrapDirName(request.getDirName());
     }
 
-    public void deleteScrapPost(Long id, Long scrapId, Long postId) {
-        scrapRepository.findByScrapAndPost(id, scrapId, postId);
-    }
+//    public void deleteScrapPost(Long id, Long scrapId, Long postId) {
+//        scrapRepository.findByScrapAndPost(id, scrapId, postId);
+//    }
 }

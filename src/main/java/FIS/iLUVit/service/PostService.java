@@ -26,6 +26,7 @@ public class PostService {
     private final BoardRepository boardRepository;
     private final CenterRepository centerRepository;
     private final BookmarkRepository bookmarkRepository;
+    private final ScrapPostRepository scrapPostRepository;
 
     public void savePost(PostRegisterRequest request, List<MultipartFile> images, Long userId) {
         User findUser = userRepository.findById(userId)
@@ -164,9 +165,8 @@ public class PostService {
         });
     }
 
-    public PostList searchByScrap(Long scrapId) {
-        Slice<Post> posts = postRepository.findByScrap(scrapId);
-        Slice<GetPostResponsePreview> previews = posts.map(GetPostResponsePreview::new);
-        return new PostList(previews);
+    public Slice<GetScrapPostResponsePreview> searchByScrap(Long userId, Long scrapId) {
+        Slice<ScrapPost> scrapPosts = scrapPostRepository.findByScrapWithPost(scrapId);
+        return scrapPosts.map(GetScrapPostResponsePreview::new);
     }
 }

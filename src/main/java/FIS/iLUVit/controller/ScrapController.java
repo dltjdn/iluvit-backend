@@ -64,8 +64,8 @@ public class ScrapController {
         scrapService.updateScrapDirName(id, request);
     }
 
-    @DeleteMapping("/user/scrap/post")
-    public void deleteScrapPost(@Login Long id, @RequestParam Long scrapId, @RequestParam Long postId) {
-        scrapService.deleteScrapPost(id, scrapId, postId);
-    }
+//    @DeleteMapping("/user/scrap/post")
+//    public void deleteScrapPost(@Login Long id, @RequestParam Long scrapId, @RequestParam Long postId) {
+//        scrapService.deleteScrapPost(id, scrapId, postId);
+//    }
 }
