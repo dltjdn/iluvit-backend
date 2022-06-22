@@ -3,6 +3,7 @@ package FIS.iLUVit.service;
 import FIS.iLUVit.controller.dto.ScrapListInfoResponse;
 import FIS.iLUVit.controller.dto.addScrapRequest;
 import FIS.iLUVit.controller.dto.scrapPostRequest;
+import FIS.iLUVit.controller.dto.updateScrapDirNameRequest;
 import FIS.iLUVit.domain.Post;
 import FIS.iLUVit.domain.Scrap;
 import FIS.iLUVit.domain.ScrapPost;
@@ -33,10 +34,10 @@ public class ScrapService {
     private final ScrapPostRepository scrapPostRepository;
 
     /**
-    *   작성날짜: 2022/06/21 2:03 PM
-    *   작성자: 이승범
-    *   작성내용: 스크랩 폴더 목록 가져오기
-    */
+     * 작성날짜: 2022/06/21 2:03 PM
+     * 작성자: 이승범
+     * 작성내용: 스크랩 폴더 목록 가져오기
+     */
     public ScrapListInfoResponse findScrapDirListInfo(Long id) {
         List<Scrap> scraps = scrapRepository.findScrapsWithScrapPostsByUser(id);
         ScrapListInfoResponse response = new ScrapListInfoResponse();
@@ -48,10 +49,10 @@ public class ScrapService {
     }
 
     /**
-    *   작성날짜: 2022/06/21 2:11 PM
-    *   작성자: 이승범
-    *   작성내용: 스크랩 폴더 추가하기
-    */
+     * 작성날짜: 2022/06/21 2:11 PM
+     * 작성자: 이승범
+     * 작성내용: 스크랩 폴더 추가하기
+     */
     public ScrapListInfoResponse addScrapDir(Long id, addScrapRequest request) {
         User user = userRepository.getById(id);
         Scrap newScrap = Scrap.createScrap(user, request.getName());
@@ -61,10 +62,10 @@ public class ScrapService {
     }
 
     /**
-    *   작성날짜: 2022/06/21 2:59 PM
-    *   작성자: 이승범
-    *   작성내용: 스크랩 폴더 삭제하기
-    */
+     * 작성날짜: 2022/06/21 2:59 PM
+     * 작성자: 이승범
+     * 작성내용: 스크랩 폴더 삭제하기
+     */
     public ScrapListInfoResponse deleteScrapDir(Long id, Long scrapId) {
         try {
             scrapRepository.deleteById(scrapId);
@@ -75,17 +76,32 @@ public class ScrapService {
     }
 
     /**
-    *   작성날짜: 2022/06/21 5:06 PM
-    *   작성자: 이승범
-    *   작성내용: 게시물 스크랩하기
-    */
+     * 작성날짜: 2022/06/21 5:06 PM
+     * 작성자: 이승범
+     * 작성내용: 게시물 스크랩하기
+     */
     public void scrapPost(Long userId, scrapPostRequest request) {
         scrapRepository.findScrapByIdAndUserId(request.getScrapId(), userId)
-                .orElseThrow(()->new ScrapException("잘못된 스크랩폴더로의 접근입니다."));
+                .orElseThrow(() -> new ScrapException("잘못된 스크랩폴더로의 접근입니다."));
 
         Post post = postRepository.getById(request.getPostId());
         Scrap scrap = scrapRepository.getById(request.getScrapId());
         ScrapPost scrapPost = ScrapPost.createScrapPost(post, scrap);
         scrapPostRepository.save(scrapPost);
     }
+
+    /**
+    *   작성날짜: 2022/06/22 10:24 AM
+    *   작성자: 이승범
+    *   작성내용: 스크랩 폴더 이름 바꾸기
+    */
+    public void updateScrapDirName(Long id, updateScrapDirNameRequest request) {
+        Scrap findScrap = scrapRepository.findScrapByIdAndUserId(request.getScrapId(), id)
+                .orElseThrow(() -> new ScrapException("userId 또는 scrapId가 잘못되었습니다."));
+        findScrap.updateScrapDirName(request.getDirName());
+    }
+
+//    public void deleteScrapPost(Long id, Long scrapId, Long postId) {
+//        scrapRepository.findByScrapAndPost(id, scrapId, postId);
+//    }
 }

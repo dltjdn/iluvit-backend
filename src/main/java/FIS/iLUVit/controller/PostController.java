@@ -79,7 +79,7 @@ public class PostController {
     }
 
     @GetMapping("/post/scrap")
-    public PostList searchPostsByScrap(@RequestParam Long scrapId) {
-        return postService.searchByScrap(scrapId);
+    public Slice<GetScrapPostResponsePreview> searchPostsByScrap(@Login Long userId, @RequestParam Long scrapId) {
+        return postService.searchByScrap(userId, scrapId);
     }
 }
