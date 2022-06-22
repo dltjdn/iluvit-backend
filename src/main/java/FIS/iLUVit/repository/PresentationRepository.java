@@ -1,7 +1,7 @@
 package FIS.iLUVit.repository;
 
 import FIS.iLUVit.domain.Presentation;
-import FIS.iLUVit.repository.dto.PresentationPreviewDto;
+import FIS.iLUVit.repository.dto.PresentationPreviewForTeacher;
 import FIS.iLUVit.repository.dto.PresentationWithPtDatesDto;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
@@ -24,10 +24,10 @@ public interface PresentationRepository extends JpaRepository<Presentation, Long
             "and :date <= p.endDate")
     List<PresentationWithPtDatesDto> findByCenterAndDateWithPtDates(@Param("centerId") Long centerId, @Param("date") LocalDate date);
 
-    @Query("select new FIS.iLUVit.repository.dto.PresentationPreviewDto(p.id, p.startDate, p.endDate, p.place, p.content) " +
+    @Query("select new FIS.iLUVit.repository.dto.PresentationPreviewForTeacher(p.id, p.startDate, p.endDate, p.place, p.content) " +
             "from Presentation p " +
             "where p.center.id = :centerId")
-    List<PresentationPreviewDto> findByCenterId(@Param("centerId") Long centerId);
+    List<PresentationPreviewForTeacher> findByCenterId(@Param("centerId") Long centerId);
 
     @Query("select presentation from Presentation presentation " +
             "join fetch presentation.ptDates " +

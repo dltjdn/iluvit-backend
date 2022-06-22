@@ -146,9 +146,9 @@ public class ImageService {
         };
         File dir = new File(imageDir);
         File[] files = dir.listFiles(filter);
-        for(File file : files){
+        for(int i = 0; i < files.length; i++){
             try {
-                map.put(Long.valueOf(extractFileName(file.getName())), encodeImage(file));
+                map.put(Long.valueOf(extractFileName(files[i].getName())), encodeImage(files[i]));
             } catch (IOException e) {
                 continue;
             }
