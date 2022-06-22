@@ -1,14 +1,15 @@
 package FIS.iLUVit.domain.alarms;
 
 import FIS.iLUVit.domain.Presentation;
-import FIS.iLUVit.domain.enumtype.Auth;
-import FIS.iLUVit.domain.enumtype.Mode;
+import FIS.iLUVit.service.AlarmUtils;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.springframework.context.MessageSource;
 
 import javax.persistence.*;
+
+import static FIS.iLUVit.service.AlarmUtils.*;
 
 /**
  * 설명회 알림 발생 시나리오
@@ -30,7 +31,7 @@ public class PresentationAlarm extends Alarm {
     private Presentation presentation;
 
     @Override
-    public Alarm createMessage(MessageSource messageSource) {
-
+    public Alarm createMessage(MessageSource messageSource, Mode mode) {
+        return null;
     }
 }

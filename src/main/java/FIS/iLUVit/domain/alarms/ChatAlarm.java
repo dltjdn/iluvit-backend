@@ -1,6 +1,8 @@
 package FIS.iLUVit.domain.alarms;
 
 import FIS.iLUVit.domain.User;
+import FIS.iLUVit.service.AlarmUtils;
+import FIS.iLUVit.service.AlarmUtils.Mode;
 import org.springframework.context.MessageSource;
 
 import javax.persistence.Entity;
@@ -16,7 +18,7 @@ public class ChatAlarm extends Alarm{
     private User sender;
 
     @Override
-    public Alarm createMessage(MessageSource messageSource) {
+    public Alarm createMessage(MessageSource messageSource, Mode mode) {
         return null;
     }
 }

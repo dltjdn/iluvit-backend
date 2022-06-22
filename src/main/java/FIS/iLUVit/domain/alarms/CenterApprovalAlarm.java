@@ -1,6 +1,9 @@
 package FIS.iLUVit.domain.alarms;
 
 import FIS.iLUVit.domain.Center;
+import FIS.iLUVit.service.AlarmUtils;
+import FIS.iLUVit.service.AlarmUtils.Mode;
+import org.springframework.context.MessageSource;
 
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -15,7 +18,7 @@ public class CenterApprovalAlarm extends Alarm{
     private Center center;
 
     @Override
-    protected Alarm setRedirectUrl() {
+    public Alarm createMessage(MessageSource messageSource, Mode mode) {
         return null;
     }
 }

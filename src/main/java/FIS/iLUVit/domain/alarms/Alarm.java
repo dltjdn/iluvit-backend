@@ -2,6 +2,8 @@ package FIS.iLUVit.domain.alarms;
 
 import FIS.iLUVit.domain.BaseEntity;
 import FIS.iLUVit.domain.User;
+import FIS.iLUVit.service.AlarmUtils;
+import FIS.iLUVit.service.AlarmUtils.Mode;
 import org.springframework.context.MessageSource;
 
 import javax.persistence.*;
@@ -24,5 +26,5 @@ public abstract class Alarm extends BaseEntity {
     @JoinColumn(name = "user_id")
     protected User user;
 
-    public abstract Alarm createMessage(MessageSource messageSource);
+    public abstract Alarm createMessage(MessageSource messageSource, Mode mode);
 }
