@@ -1,7 +1,13 @@
 package FIS.iLUVit.domain;
+import lombok.AccessLevel;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+
 import javax.persistence.*;
 
 @Entity
+@Getter
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Bookmark extends BaseEntity {
     @Id @GeneratedValue
     private Long id;
@@ -16,4 +22,10 @@ public class Bookmark extends BaseEntity {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id")
     private User user;
+
+    public Bookmark(Integer order, Board board, User user) {
+        this.order = order;
+        this.board = board;
+        this.user = user;
+    }
 }

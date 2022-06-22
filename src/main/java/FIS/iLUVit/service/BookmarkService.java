@@ -1,0 +1,63 @@
+package FIS.iLUVit.service;
+
+import FIS.iLUVit.controller.dto.BookmarkMainDTO;
+import FIS.iLUVit.domain.*;
+import FIS.iLUVit.repository.*;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
+
+@Service
+@Transactional
+@RequiredArgsConstructor
+@Slf4j
+public class BookmarkService {
+
+    private final BookmarkRepository bookmarkRepository;
+
+    public BookmarkMainDTO search(Long userId) {
+        BookmarkMainDTO dto = new BookmarkMainDTO();
+
+        List<Post> posts = bookmarkRepository.findPostByBoard(userId);
+        Center tmp = new Center();
+
+        Map<Center, List<Post>> centerPostMap = posts.stream()
+                .collect(Collectors.groupingBy(p -> p.getBoard().getCenter() == null ?
+                        tmp : p.getBoard().getCenter()));
+
+        List<BookmarkMainDTO.StoryDTO> storyDTOS = new ArrayList<>();
+        centerPostMap.forEach((c, pl) -> {
+            BookmarkMainDTO.StoryDTO storyDTO = new BookmarkMainDTO.StoryDTO();
+            List<BookmarkMainDTO.BoardDTO> boardDTOS = pl.stream()
+                    .map(p -> new BookmarkMainDTO.BoardDTO(
+                            p.getBoard().getId(), p.getBoard().getName(), p.getTitle()))
+                    .collect(Collectors.toList());
+            storyDTO.setBoardDTOList(boardDTOS);
+            if (c.getId() == null) {
+                storyDTO.setCenter_id(null);
+                storyDTO.setStory_name("모두의 게시판");
+                dto.getStories().add(storyDTO);
+            } else {
+                storyDTO.setCenter_id(c.getId());
+                storyDTO.setStory_name(c.getName());
+                storyDTOS.add(storyDTO);
+            }
+        });
+
+        List<BookmarkMainDTO.StoryDTO> newDTO = storyDTOS.stream()
+                .sorted(Comparator.comparing(BookmarkMainDTO.StoryDTO::getCenter_id))
+                .collect(Collectors.toList());
+
+        newDTO.forEach(s -> dto.getStories().add(s));
+
+        return dto;
+    }
+}

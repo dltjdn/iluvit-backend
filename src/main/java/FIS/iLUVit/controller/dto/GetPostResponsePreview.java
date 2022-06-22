@@ -72,4 +72,8 @@ public class GetPostResponsePreview {
             this.center_id = post.getBoard().getCenter().getId();
         }
     }
+
+    public void updatePreviewImage(List<String> encodedInfoImage) {
+        this.previewImage = encodedInfoImage.isEmpty() ? null : encodedInfoImage.get(0);
+    }
 }
