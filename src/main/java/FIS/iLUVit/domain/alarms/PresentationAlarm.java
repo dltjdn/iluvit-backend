@@ -6,6 +6,7 @@ import FIS.iLUVit.domain.enumtype.Mode;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.springframework.context.MessageSource;
 
 import javax.persistence.*;
 
@@ -23,12 +24,13 @@ import javax.persistence.*;
 public class PresentationAlarm extends Alarm {
 
     // 누구를 대상으로 한 알람?
-    @Transient
-    private Mode mode;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn
     private Presentation presentation;
 
+    @Override
+    public Alarm createMessage(MessageSource messageSource) {
 
+    }
 }

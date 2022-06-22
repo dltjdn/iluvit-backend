@@ -1,14 +1,10 @@
 package FIS.iLUVit.domain.alarms;
 
 import FIS.iLUVit.domain.BaseEntity;
-import FIS.iLUVit.domain.Comment;
-import FIS.iLUVit.domain.Post;
 import FIS.iLUVit.domain.User;
 import org.springframework.context.MessageSource;
 
 import javax.persistence.*;
-import java.time.LocalDate;
-import java.time.LocalTime;
 
 @Entity
 @Inheritance(strategy = InheritanceType.JOINED)
@@ -18,6 +14,8 @@ public abstract class Alarm extends BaseEntity {
     @Id @GeneratedValue
     protected Long id;
     protected String message;
+
+    protected String mode;
 
     @Column(name = "dtype", insertable = false, updatable = false)
     protected String dtype;
