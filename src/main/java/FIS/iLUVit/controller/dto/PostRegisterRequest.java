@@ -1,10 +1,12 @@
 package FIS.iLUVit.controller.dto;
 
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import javax.persistence.Lob;
 
 @Data
+@NoArgsConstructor
 public class PostRegisterRequest {
     private String title;                   // 게시글 제목
     @Lob

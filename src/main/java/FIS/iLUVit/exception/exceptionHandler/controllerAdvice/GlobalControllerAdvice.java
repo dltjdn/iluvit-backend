@@ -19,6 +19,7 @@ public class GlobalControllerAdvice {
         return new ErrorResult("BAD", e.getMessage());
     }
 
+    // @Login id 의 값이 null일때 findById를 할 경우 발생하는 예외처리
     @ResponseStatus(HttpStatus.UNAUTHORIZED)
     @ExceptionHandler(InvalidDataAccessApiUsageException.class)
     public ErrorResult illegalExHandler(InvalidDataAccessApiUsageException e) {

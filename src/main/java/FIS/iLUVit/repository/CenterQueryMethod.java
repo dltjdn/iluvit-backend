@@ -33,9 +33,12 @@ public class CenterQueryMethod {
     protected BooleanExpression themeEq(Theme theme) {
         try {
             if(theme == null) return null;
+            // 관심 목록 추출한 trueList
             List<String> trueList = theme.trueList();
+            // BooleanExpression 초기화 => in 절도 사용 할 수 없다. theme 별로 나뉘어져 있으므로
             BooleanExpression booleanExpression = null;
             for (String name : trueList) {
+                // trueList 에 해당하는 BooleanExp 가져온다.
                 BooleanPath type = (BooleanPath) center.theme.getClass().getDeclaredField(name).get(center.theme);
                 Method eq = center.theme.getClass().getDeclaredField(name).getType().getMethod("eq", Boolean.class);
                 if (booleanExpression == null) {

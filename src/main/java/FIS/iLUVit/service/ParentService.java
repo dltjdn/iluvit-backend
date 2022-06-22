@@ -3,10 +3,7 @@ package FIS.iLUVit.service;
 import FIS.iLUVit.controller.dto.ParentDetailResponse;
 import FIS.iLUVit.controller.dto.ParentDetailRequest;
 import FIS.iLUVit.controller.dto.SignupParentRequest;
-import FIS.iLUVit.domain.AuthNumber;
-import FIS.iLUVit.domain.Parent;
-import FIS.iLUVit.domain.Teacher;
-import FIS.iLUVit.domain.User;
+import FIS.iLUVit.domain.*;
 import FIS.iLUVit.domain.embeddable.Theme;
 import FIS.iLUVit.domain.enumtype.AuthKind;
 import FIS.iLUVit.exception.SignupException;
@@ -14,6 +11,7 @@ import FIS.iLUVit.exception.UserException;
 import FIS.iLUVit.repository.AuthNumberRepository;
 import FIS.iLUVit.repository.ParentRepository;
 import FIS.iLUVit.controller.dto.ChildInfoDTO;
+import FIS.iLUVit.repository.ScrapRepository;
 import FIS.iLUVit.repository.UserRepository;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
@@ -33,11 +31,12 @@ import java.util.Optional;
 @RequiredArgsConstructor
 public class ParentService {
 
-    private final ParentRepository parentRepository;
     private final UserService userService;
-    private final AuthNumberRepository authNumberRepository;
     private final ImageService imageService;
     private final SignService signService;
+    private final ParentRepository parentRepository;
+    private final AuthNumberRepository authNumberRepository;
+    private final ScrapRepository scrapRepository;
 
     /**
      * 작성날짜: 2022/05/13 4:43 PM
@@ -129,8 +128,13 @@ public class ParentService {
         String hashedPwd = userService.signupValidation(request.getPassword(), request.getPasswordCheck(), request.getLoginId(), request.getPhoneNum());
         Parent parent = request.createParent(hashedPwd);
 
-        parentRepository.save(parent);
+        // default 스크랩 생성
+        Scrap scrap = Scrap.createScrap(parent, "default");
 
+        parentRepository.save(parent);
+        scrapRepository.save(scrap);
+
+        // 사용이 끝난 인증번호를 테이블에서 지우기
         authNumberRepository.deleteByPhoneNumAndAuthKind(request.getPhoneNum(), AuthKind.signup);
     }
 }

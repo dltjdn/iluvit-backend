@@ -80,6 +80,7 @@ public class initDB {
             Child child2 = Child.createChild("zxc", "zxc", Approval.ACCEPT, parent1);
             Child child3 = Child.createChild("zxc", "zxc", Approval.ACCEPT, parent1);
             child1.mappingCenter(center1);
+            child2.mappingCenter(center2);
             em.persist(child1);
             em.persist(child2);
             em.persist(child3);
@@ -124,13 +125,29 @@ public class initDB {
             Board board3 = Board.createBoard("영상 게시판", BoardKind.VIDEO, null);
             Board board4 = Board.createBoard("장터 게시판", BoardKind.MARKET, null);
             Board board5 = Board.createBoard("맛집 게시판", BoardKind.FOOD, null);
-            Board board6 = Board.createBoard("OO 유치원 게시판", BoardKind.NORMAL, center1);
+            Board board6 = Board.createBoard("공지 게시판", BoardKind.NORMAL, center1);
+            Board board7 = Board.createBoard("놀이 게시판", BoardKind.NORMAL, center2);
             em.persist(board1);
             em.persist(board2);
             em.persist(board3);
             em.persist(board4);
             em.persist(board5);
             em.persist(board6);
+            em.persist(board7);
+
+            Bookmark bookmark1 = new Bookmark(0, board2, parent1);
+            Bookmark bookmark2 = new Bookmark(1, board3, parent1);
+            Bookmark bookmark3 = new Bookmark(2, board4, parent1);
+            Bookmark bookmark4 = new Bookmark(3, board5, parent1);
+            Bookmark bookmark5 = new Bookmark(4, board6, parent1);
+            Bookmark bookmark6 = new Bookmark(5, board7, parent1);
+            em.persist(bookmark1);
+            em.persist(bookmark2);
+            em.persist(bookmark3);
+            em.persist(bookmark4);
+            em.persist(bookmark5);
+            em.persist(bookmark6);
+
 
             Post post1 = new Post("제목이다", "내용이다", false, 0, 0, 0, 0, board2, teacher1);
             Post post2 = new Post("안녕", "먹칠하잖아", false, 0, 0, 0, 0, board2, parent1);
@@ -138,12 +155,30 @@ public class initDB {
             Post post4 = new Post("타이틀", "abcdefg", false, 0, 0, 0, 0, board2, parent2);
             Post post5 = new Post("다와가", "때려밟았지마티즈엑셀", false, 0, 0, 0, 0, board2, teacher3);
             Post post6 = new Post("집에가고 싶다", "집에가자 좀", false, 0, 0, 0, 0, board6, parent1);
+            Post post7 = new Post("a sdffg", "ff 좀", false, 0, 0, 0, 0, board2, parent1);
+            Post post8 = new Post("ba sdffg", "a", false, 0, 0, 0, 0, board2, parent1);
+            Post post9 = new Post("b sdffg", "b", false, 0, 0, 0, 0, board7, parent1);
+            Post post10 = new Post("c sdffg", "c", false, 0, 0, 0, 0, board3, parent1);
+            Post post11 = new Post("d sdffg", "d 좀", false, 0, 0, 0, 0, board3, parent1);
+            Post post12 = new Post("e sdffg", "e 좀", false, 0, 0, 0, 0, board4, parent1);
+            Post post13 = new Post("f sdffg", "f 좀", false, 0, 0, 0, 0, board4, parent1);
+            Post post14 = new Post("g sdffg", "g 좀", false, 0, 0, 0, 0, board4, parent1);
+            Post post15 = new Post("h sdffg", "h 좀", false, 0, 0, 0, 0, board5, parent1);
             em.persist(post1);
             em.persist(post2);
             em.persist(post3);
             em.persist(post4);
             em.persist(post5);
             em.persist(post6);
+            em.persist(post7);
+            em.persist(post8);
+            em.persist(post9);
+            em.persist(post10);
+            em.persist(post11);
+            em.persist(post12);
+            em.persist(post13);
+            em.persist(post14);
+            em.persist(post15);
 
             PostHeart postHeart1 = new PostHeart(teacher4, post1);
             PostHeart postHeart2 = new PostHeart(parent3, post1);

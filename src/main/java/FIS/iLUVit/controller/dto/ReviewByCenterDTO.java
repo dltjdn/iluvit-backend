@@ -40,5 +40,6 @@ public class ReviewByCenterDTO {
         private Integer like; // 좋아요 수
 
         private String profileImage;
+
     }
 }
