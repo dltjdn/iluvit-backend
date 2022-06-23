@@ -21,10 +21,10 @@ public class initDB {
 
     private final InitService initService;
 
-//    @PostConstruct
-//    public void init() {
-//        initService.dbInit();
-//    }
+    @PostConstruct
+    public void init() {
+        initService.dbInit();
+    }
 
 
     @Component
@@ -141,12 +141,27 @@ public class initDB {
             Bookmark bookmark4 = new Bookmark(3, board5, parent1);
             Bookmark bookmark5 = new Bookmark(4, board6, parent1);
             Bookmark bookmark6 = new Bookmark(5, board7, parent1);
+
             em.persist(bookmark1);
             em.persist(bookmark2);
             em.persist(bookmark3);
             em.persist(bookmark4);
             em.persist(bookmark5);
             em.persist(bookmark6);
+
+            Bookmark bookmark7 = new Bookmark(0, board2, teacher1);
+            Bookmark bookmark8 = new Bookmark(1, board3, teacher1);
+            Bookmark bookmark9 = new Bookmark(2, board4, teacher1);
+            Bookmark bookmark10 = new Bookmark(3, board5, teacher1);
+            Bookmark bookmark11 = new Bookmark(4, board6, teacher1);
+            Bookmark bookmark12 = new Bookmark(5, board7, teacher1);
+
+            em.persist(bookmark7);
+            em.persist(bookmark8);
+            em.persist(bookmark9);
+            em.persist(bookmark10);
+            em.persist(bookmark11);
+            em.persist(bookmark12);
 
 
             Post post1 = new Post("제목이다", "내용이다", false, 0, 0, 0, 0, board2, teacher1);
@@ -214,6 +229,26 @@ public class initDB {
             em.persist(commentHeart3);
             em.persist(commentHeart4);
             em.persist(commentHeart5);
+
+            Chat chat1 = new Chat("안녕하세요", parent1, parent2, post2);
+            Chat chat2 = new Chat("감사해요", parent2, parent1, post2);
+            Chat chat3 = new Chat("잘있어요", parent1, parent2, post2);
+            Chat chat4 = new Chat("다시만나요", parent2, parent1, post2);
+
+            Chat chat5 = new Chat("안녕하세요2", parent1, teacher1, post7);
+            Chat chat6 = new Chat("감사해요2", teacher1, parent1, post7);
+            Chat chat7 = new Chat("잘있어요2", parent1, teacher1, post7);
+            Chat chat8 = new Chat("다시만나요2", teacher1, parent1, post7);
+
+            em.persist(chat1);
+            em.persist(chat2);
+            em.persist(chat3);
+            em.persist(chat4);
+
+            em.persist(chat5);
+            em.persist(chat6);
+            em.persist(chat7);
+            em.persist(chat8);
         }
     }
 }

@@ -7,6 +7,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
 import java.util.List;
+import java.util.Optional;
 
 public interface BookmarkRepository extends JpaRepository<Bookmark, Long> {
     @Query("select b from Bookmark b join fetch b.user u join fetch b.board bd left join fetch bd.center c " +
@@ -28,4 +29,8 @@ public interface BookmarkRepository extends JpaRepository<Bookmark, Long> {
 
     @Query("select bm from Bookmark bm join fetch bm.board b where bm.user.id = :userId and b.center.id = :centerId ")
     List<Bookmark> findBoardByUserAndCenter(@Param("userId") Long userId, @Param("centerId") Long centerId);
+
+    @Query("select max(bm.order) from Bookmark bm ")
+    Integer findMaxOrder();
+
 }
