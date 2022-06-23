@@ -1,10 +1,16 @@
 package FIS.iLUVit.domain;
 
+import lombok.AccessLevel;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+
 import javax.persistence.*;
 import java.time.LocalDate;
 import java.time.LocalTime;
 
 @Entity
+@Getter
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Chat extends BaseEntity {
     @Id @GeneratedValue
     private Long id;
@@ -27,4 +33,18 @@ public class Chat extends BaseEntity {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "comment_id")
     private Comment comment;
+
+
+    public Chat(String message, User receiver, User sender, Post post) {
+        this.date = LocalDate.now();
+        this.time = LocalTime.now();
+        this.message = message;
+        this.receiver = receiver;
+        this.sender = sender;
+        this.post = post;
+    }
+
+    public void updateComment(Comment comment) {
+        this.comment = comment;
+    }
 }

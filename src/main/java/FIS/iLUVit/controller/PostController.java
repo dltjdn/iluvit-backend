@@ -61,6 +61,13 @@ public class PostController {
         return postService.searchByKeywordAndBoard(boardId, input, pageable);
     }
 
+    @GetMapping("/post/search/hotBoard")
+    public Slice<GetPostResponsePreview> searchHotPosts(
+            @RequestParam(value = "center_id", required = false) Long centerId,
+            Pageable pageable) {
+        return postService.findByHeartCnt(centerId, pageable);
+    }
+
     @GetMapping("/post/mypage")
     public PostList searchPostByUser(@Login Long userId,
                                      Pageable pageable) {
@@ -76,5 +83,11 @@ public class PostController {
     public List<BoardPreview> searchCenterMainPreview(@Login Long userId,
                                                       @RequestParam("center_id") Long centerId) {
         return postService.searchCenterMainPreview(userId, centerId);
+    }
+
+    // 끌어올리기
+    @PutMapping("/post/update/{post_id}")
+    public void pullUp(@PathVariable("post_id") Long postId) {
+        postService.updateDate(postId);
     }
 }
