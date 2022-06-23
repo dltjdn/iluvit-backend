@@ -30,7 +30,10 @@ public class GetScrapPostResponsePreview {
 
     private Long center_id;
 
+    private Long scrapPost_id;
+
     public GetScrapPostResponsePreview(ScrapPost sp) {
+        this.scrapPost_id = sp.getId();
         this.post_id = sp.getPost().getId();
         this.title = sp.getPost().getTitle();
         this.content = sp.getPost().getContent();
