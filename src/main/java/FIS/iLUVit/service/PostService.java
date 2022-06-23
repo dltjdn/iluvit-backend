@@ -30,6 +30,7 @@ public class PostService {
     private final BoardRepository boardRepository;
     private final CenterRepository centerRepository;
     private final BookmarkRepository bookmarkRepository;
+    private final ScrapPostRepository scrapPostRepository;
 
     public void savePost(PostRegisterRequest request, List<MultipartFile> images, Long userId) {
         User findUser = userRepository.findById(userId)
@@ -204,5 +205,15 @@ public class PostService {
 
     public Slice<GetPostResponsePreview> findByHeartCnt(Long centerId, Pageable pageable) {
         return postRepository.findHotPosts(centerId, pageable);
+    }
+
+    /**
+     *   작성날짜: 2022/06/22 4:54 PM
+     *   작성자: 이승범
+     *   작성내용: 해당 스크랩 폴더의 게시물들 preview 보여주기
+     */
+    public Slice<GetScrapPostResponsePreview> searchByScrap(Long userId, Long scrapId, Pageable pageable) {
+        Slice<ScrapPost> scrapPosts = scrapPostRepository.findByScrapWithPost(userId, scrapId, pageable);
+        return scrapPosts.map(GetScrapPostResponsePreview::new);
     }
 }

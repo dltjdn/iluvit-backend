@@ -3,11 +3,13 @@ package FIS.iLUVit.repository;
 import FIS.iLUVit.domain.embeddable.Area;
 import FIS.iLUVit.domain.embeddable.Theme;
 import FIS.iLUVit.domain.enumtype.KindOf;
+import FIS.iLUVit.repository.dto.PresentationPreviewForUsers;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.SliceImpl;
 
-import java.awt.print.Pageable;
 import java.util.List;
 
 public interface PresentationRepositoryCustom {
 
-    void findByFilter(List<Area> areas, Theme theme, Integer interestedAge, KindOf kindOf, Pageable pageable);
+    SliceImpl<PresentationPreviewForUsers> findByFilter(List<Area> areas, Theme theme, Integer interestedAge, KindOf kindOf, Pageable pageable);
 }

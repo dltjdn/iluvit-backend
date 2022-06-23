@@ -80,8 +80,7 @@ public class PostController {
     }
 
     @GetMapping("/post/center-main")
-    public List<BoardPreview> searchCenterMainPreview(@Login Long userId,
-                                                      @RequestParam("center_id") Long centerId) {
+    public List<BoardPreview> searchCenterMainPreview(@Login Long userId, @RequestParam("center_id") Long centerId) {
         return postService.searchCenterMainPreview(userId, centerId);
     }
 
@@ -89,5 +88,15 @@ public class PostController {
     @PutMapping("/post/update/{post_id}")
     public void pullUp(@PathVariable("post_id") Long postId) {
         postService.updateDate(postId);
+    }
+
+    /**
+    *   작성날짜: 2022/06/22 4:54 PM
+    *   작성자: 이승범
+    *   작성내용: 해당 스크랩 폴더의 게시물들 preview 보여주기
+    */
+    @GetMapping("/post/scrap")
+    public Slice<GetScrapPostResponsePreview> searchPostsByScrap(@Login Long userId, @RequestParam Long scrapId, Pageable pageable) {
+        return postService.searchByScrap(userId, scrapId, pageable);
     }
 }

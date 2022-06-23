@@ -34,4 +34,10 @@ public interface PostRepository extends JpaRepository<Post, Long>, PostRepositor
     List<Post> findByHeartCntWithCenter(@Param("heartCnt") int heartCnt, @Param("centerId") Long centerId,
                                         Pageable pageable);
 
+    @Query("select p " +
+            "from Post p " +
+            "join fetch p.scrapPosts sp " +
+            "join fetch sp.scrap s " +
+            "where s.id = :scrapId")
+    Slice<Post> findByScrap(@Param("scrapId") Long scrapId);
 }
