@@ -12,6 +12,7 @@ import javax.persistence.*;
 @Inheritance(strategy = InheritanceType.JOINED)
 @DiscriminatorValue("null")
 @DiscriminatorColumn(name = "dtype")
+@Table(name="alarms")
 public abstract class Alarm extends BaseEntity {
     @Id @GeneratedValue
     protected Long id;

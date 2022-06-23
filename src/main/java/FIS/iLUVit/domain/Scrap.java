@@ -13,7 +13,6 @@ import java.util.List;
 
 @Entity
 @Getter
-@OnDelete(action = OnDeleteAction.CASCADE)
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Scrap extends BaseEntity {
     @Id @GeneratedValue
@@ -24,7 +23,7 @@ public class Scrap extends BaseEntity {
     @JoinColumn(name = "user_id")
     private User user;
 
-    @OneToMany(mappedBy = "scrap")
+    @OneToMany(mappedBy = "scrap", cascade = CascadeType.REMOVE)
     private List<ScrapPost> scrapPosts = new ArrayList<>();
 
     public static Scrap createScrap(User user, String name) {
