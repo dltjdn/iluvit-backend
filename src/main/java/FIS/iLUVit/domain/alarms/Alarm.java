@@ -2,21 +2,24 @@ package FIS.iLUVit.domain.alarms;
 
 import FIS.iLUVit.domain.BaseEntity;
 import FIS.iLUVit.domain.User;
-import FIS.iLUVit.service.AlarmUtils;
-import FIS.iLUVit.service.AlarmUtils.Mode;
-import org.springframework.context.MessageSource;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
 
 @Entity
-@Inheritance(strategy = InheritanceType.JOINED)
+@Inheritance(strategy = InheritanceType.SINGLE_TABLE)
 @DiscriminatorValue("null")
 @DiscriminatorColumn(name = "dtype")
+@Getter
+@NoArgsConstructor
 public abstract class Alarm extends BaseEntity {
+
     @Id @GeneratedValue
     protected Long id;
     protected String message;
 
+    @Transient
     protected String mode;
 
     @Column(name = "dtype", insertable = false, updatable = false)
@@ -26,5 +29,7 @@ public abstract class Alarm extends BaseEntity {
     @JoinColumn(name = "user_id")
     protected User user;
 
-    public abstract Alarm createMessage(MessageSource messageSource, Mode mode);
+    public Alarm(User user) {
+        this.user = user;
+    }
 }
