@@ -10,6 +10,7 @@ import FIS.iLUVit.repository.PostRepository;
 import FIS.iLUVit.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -42,6 +43,7 @@ public class CommentService {
                 .ifPresentOrElse(c -> {
                     if (c.getUser().getId() == userId) {
                         c.updateContent("삭제된 댓글입니다.");
+                        c.updateUser(null);
                     } else {
                         throw new IllegalStateException("삭제 권한없는 유저");
                     }
@@ -50,7 +52,7 @@ public class CommentService {
                 });
     }
 
-    public Slice<CommentDTO> searchByUser(Long userId) {
-        return commentRepository.findByUser(userId, PageRequest.of(0, 10)).map(CommentDTO::new);
+    public Slice<CommentDTO> searchByUser(Long userId, Pageable pageable) {
+        return commentRepository.findByUser(userId, pageable).map(CommentDTO::new);
     }
 }

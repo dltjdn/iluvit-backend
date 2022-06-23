@@ -6,6 +6,7 @@ import FIS.iLUVit.controller.dto.RegisterCommentRequest;
 import FIS.iLUVit.service.CommentHeartService;
 import FIS.iLUVit.service.CommentService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
 import org.springframework.web.bind.annotation.*;
 
@@ -43,7 +44,7 @@ public class CommentController {
     }
 
     @GetMapping("/comment/mypage")
-    public Slice<CommentDTO> searchCommentByUser(@Login Long userId) {
-        return commentService.searchByUser(userId);
+    public Slice<CommentDTO> searchCommentByUser(@Login Long userId, Pageable pageable) {
+        return commentService.searchByUser(userId, pageable);
     }
 }

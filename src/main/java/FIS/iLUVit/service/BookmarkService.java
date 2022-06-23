@@ -8,10 +8,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -22,6 +19,8 @@ import java.util.stream.Stream;
 public class BookmarkService {
 
     private final BookmarkRepository bookmarkRepository;
+    private final UserRepository userRepository;
+    private final BoardRepository boardRepository;
 
     public BookmarkMainDTO search(Long userId) {
         BookmarkMainDTO dto = new BookmarkMainDTO();
@@ -60,4 +59,27 @@ public class BookmarkService {
 
         return dto;
     }
+
+    public void create(Long userId, Long boardId) {
+        int max = bookmarkRepository.findMaxOrder();
+        User findUser = userRepository.findById(userId)
+                .orElseThrow(() -> new IllegalStateException("존재하지 않는 유저"));
+        Board findBoard = boardRepository.findById(boardId)
+                .orElseThrow(() -> new IllegalStateException("존재하지 않는 게시판"));
+
+        Bookmark bookmark = new Bookmark(max + 1, findBoard, findUser);
+        bookmarkRepository.save(bookmark);
+    }
+
+    public void delete(Long userId, Long bookmarkId) {
+        User findUser = userRepository.findById(userId)
+                .orElseThrow(() -> new IllegalStateException("존재하지 않는 유저"));
+        Bookmark findBookmark = bookmarkRepository.findById(bookmarkId)
+                .orElseThrow(() -> new IllegalStateException("존재하지 않는 북마크"));
+        if (!Objects.equals(findBookmark.getUser().getId(), findUser.getId())) {
+            throw new IllegalStateException("삭제 권한 없는 유저");
+        }
+        bookmarkRepository.deleteById(bookmarkId);
+
+   }
 }
