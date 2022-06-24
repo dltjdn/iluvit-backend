@@ -12,17 +12,32 @@ import org.springframework.web.bind.annotation.*;
 public class BoardController {
 
     private final BoardService boardService;
-
+    
+    /**
+        작성자: 이창윤
+        작성시간: 2022/06/24 2:39 PM
+        내용: 모두의 이야기 내 게시판 목록 조회
+    */
     @GetMapping("/board/modu")
     public BoardListDTO searchAllBoard(@Login Long userId) {
         return boardService.findAllWithBookmark(userId);
     }
 
+    /**
+        작성자: 이창윤
+        작성시간: 2022/06/24 2:48 PM
+        내용: 시설(유치원) 내 게시판 목록 조회
+    */
     @GetMapping("/board/inCenter/{center_id}")
     public BoardListDTO searchAllInCenter(@Login Long userId, @PathVariable("center_id") Long centerId) {
         return boardService.findAllWithBookmarkInCenter(userId, centerId);
     }
 
+    /**
+        작성자: 이창윤
+        작성시간: 2022/06/24 2:51 PM
+        내용: 게시판 생성 - center_id 값 유무에 따라 모두/시설 이야기 내 게시판 생성
+    */
     @PostMapping("/board")
     public void createBoard(@RequestParam(value = "center_id", required = false) Long center_id,
                             @RequestBody CreateBoardRequest request) {
