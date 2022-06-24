@@ -64,12 +64,11 @@ public class BookmarkService {
     }
 
     public void create(Long userId, Long boardId) {
-        int max = bookmarkRepository.findMaxOrder()
+        int max = bookmarkRepository.findMaxOrder(userId)
                 .orElse(0);
-        User findUser = userRepository.findById(userId)
-                .orElseThrow(() -> new UserException("존재하지 않는 유저"));
-        Board findBoard = boardRepository.findById(boardId)
-                .orElseThrow(() -> new BoardException("존재하지 않는 게시판"));
+
+        User findUser = userRepository.getById(userId);
+        Board findBoard = boardRepository.getById(boardId);
 
         Bookmark bookmark = new Bookmark(max + 1, findBoard, findUser);
         bookmarkRepository.save(bookmark);
