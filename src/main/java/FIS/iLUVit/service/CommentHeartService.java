@@ -3,6 +3,8 @@ package FIS.iLUVit.service;
 import FIS.iLUVit.domain.Comment;
 import FIS.iLUVit.domain.CommentHeart;
 import FIS.iLUVit.domain.User;
+import FIS.iLUVit.exception.CommentException;
+import FIS.iLUVit.exception.UserException;
 import FIS.iLUVit.repository.CommentHeartRepository;
 import FIS.iLUVit.repository.CommentRepository;
 import FIS.iLUVit.repository.UserRepository;
@@ -21,9 +23,9 @@ public class CommentHeartService {
 
     public void save(Long userId, Long comment_id) {
         User findUser = userRepository.findById(userId)
-                .orElseThrow(() -> new IllegalStateException("존재하지 않는 유저"));
+                .orElseThrow(() -> new UserException("존재하지 않는 유저"));
         Comment findComment = commentRepository.findById(comment_id)
-                .orElseThrow(() -> new IllegalStateException("존재하지 않는 댓글"));
+                .orElseThrow(() -> new CommentException("존재하지 않는 댓글"));
 
         CommentHeart commentHeart = new CommentHeart(findUser, findComment);
         commentHeartRepository.save(commentHeart);
@@ -35,10 +37,10 @@ public class CommentHeartService {
                     if (ch.getUser().getId() == userId) {
                         commentHeartRepository.deleteById(comment_id);
                     } else {
-                        throw new IllegalStateException("취소 권한 없는 유저");
+                        throw new UserException("취소 권한 없는 유저");
                     }
                 }, () -> {
-                    throw new IllegalStateException("존재하지 않는 좋아요");
+                    throw new CommentException("존재하지 않는 좋아요");
                 });
     }
 }
