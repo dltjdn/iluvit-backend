@@ -43,4 +43,14 @@ public class BoardController {
                             @RequestBody CreateBoardRequest request) {
         boardService.create(center_id, request);
     }
+
+    /**
+        작성자: 이창윤
+        작성시간: 2022/06/24 4:53 PM
+        내용: 게시판 삭제
+    */
+    @DeleteMapping("/board/{board_id}")
+    public void deleteBoard(@Login Long userId, @PathVariable("board_id") Long boardId) {
+        boardService.remove(userId, boardId);
+    }
 }

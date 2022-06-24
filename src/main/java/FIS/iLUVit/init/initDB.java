@@ -120,14 +120,14 @@ public class initDB {
             em.persist(ptDate2);
             em.persist(ptDate3);
 
-            Board board1 = Board.createBoard("HOT 게시물", BoardKind.NORMAL, null, false);
+//            Board board1 = Board.createBoard("HOT 게시물", BoardKind.NORMAL, null, false);
             Board board2 = Board.createBoard("자유 게시판", BoardKind.NORMAL, null, true);
             Board board3 = Board.createBoard("영상 게시판", BoardKind.VIDEO, null, true);
             Board board4 = Board.createBoard("장터 게시판", BoardKind.MARKET, null, true);
             Board board5 = Board.createBoard("맛집 게시판", BoardKind.FOOD, null, true);
             Board board6 = Board.createBoard("공지 게시판", BoardKind.NORMAL, center1, true);
             Board board7 = Board.createBoard("놀이 게시판", BoardKind.NORMAL, center2, false);
-            em.persist(board1);
+//            em.persist(board1);
             em.persist(board2);
             em.persist(board3);
             em.persist(board4);

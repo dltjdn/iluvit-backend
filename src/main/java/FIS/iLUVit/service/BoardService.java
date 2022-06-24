@@ -5,11 +5,15 @@ import FIS.iLUVit.controller.dto.CreateBoardRequest;
 import FIS.iLUVit.domain.Board;
 import FIS.iLUVit.domain.Bookmark;
 import FIS.iLUVit.domain.Center;
+import FIS.iLUVit.domain.User;
+import FIS.iLUVit.domain.enumtype.Auth;
+import FIS.iLUVit.exception.BoardException;
 import FIS.iLUVit.exception.CenterException;
 import FIS.iLUVit.exception.UserException;
 import FIS.iLUVit.repository.BoardRepository;
 import FIS.iLUVit.repository.BookmarkRepository;
 import FIS.iLUVit.repository.CenterRepository;
+import FIS.iLUVit.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -26,6 +30,7 @@ public class BoardService {
     private final BoardRepository boardRepository;
     private final BookmarkRepository bookmarkRepository;
     private final CenterRepository centerRepository;
+    private final UserRepository userRepository;
 
     public BoardListDTO findAllWithBookmark(Long userId) {
         BoardListDTO dto = new BoardListDTO();
@@ -91,5 +96,16 @@ public class BoardService {
 
         Board board = Board.createBoard(request.getBoard_name(), request.getBoardKind(), findCenter,false);
         boardRepository.save(board);
+    }
+
+    public void remove(Long userId, Long boardId) {
+        Board findBoard = boardRepository.findById(boardId)
+                .orElseThrow(() -> new BoardException("존재하지 않는 게시판"));
+
+        if (findBoard.getIsDefault()) {
+            throw new BoardException("기본 게시판들은 삭제할 수 없습니다.");
+        }
+
+        boardRepository.delete(findBoard);
     }
 }
