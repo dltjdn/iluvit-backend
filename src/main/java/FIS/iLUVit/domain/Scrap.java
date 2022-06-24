@@ -23,7 +23,7 @@ public class Scrap extends BaseEntity {
     @JoinColumn(name = "user_id")
     private User user;
 
-    @OneToMany(mappedBy = "scrap", cascade = CascadeType.REMOVE)
+    @OneToMany(mappedBy = "scrap")
     private List<ScrapPost> scrapPosts = new ArrayList<>();
 
     public static Scrap createScrap(User user, String name) {

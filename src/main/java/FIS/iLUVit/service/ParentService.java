@@ -1,18 +1,12 @@
 package FIS.iLUVit.service;
 
-import FIS.iLUVit.controller.dto.ParentDetailResponse;
-import FIS.iLUVit.controller.dto.ParentDetailRequest;
-import FIS.iLUVit.controller.dto.SignupParentRequest;
+import FIS.iLUVit.controller.dto.*;
 import FIS.iLUVit.domain.*;
 import FIS.iLUVit.domain.embeddable.Theme;
 import FIS.iLUVit.domain.enumtype.AuthKind;
 import FIS.iLUVit.exception.SignupException;
 import FIS.iLUVit.exception.UserException;
-import FIS.iLUVit.repository.AuthNumberRepository;
-import FIS.iLUVit.repository.ParentRepository;
-import FIS.iLUVit.controller.dto.ChildInfoDTO;
-import FIS.iLUVit.repository.ScrapRepository;
-import FIS.iLUVit.repository.UserRepository;
+import FIS.iLUVit.repository.*;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -37,6 +31,8 @@ public class ParentService {
     private final ParentRepository parentRepository;
     private final AuthNumberRepository authNumberRepository;
     private final ScrapRepository scrapRepository;
+    private final CenterRepository centerRepository;
+    private final ChildRepository childRepository;
 
     /**
      * 작성날짜: 2022/05/13 4:43 PM
@@ -136,5 +132,19 @@ public class ParentService {
 
         // 사용이 끝난 인증번호를 테이블에서 지우기
         authNumberRepository.deleteByPhoneNumAndAuthKind(request.getPhoneNum(), AuthKind.signup);
+    }
+
+    /**
+    *   작성날짜: 2022/06/23 5:25 PM
+    *   작성자: 이승범
+    *   작성내용: 아이 추가
+    */
+    public void saveChild(Long userId, SaveChildRequest request) {
+        Parent parent = parentRepository.getById(userId);
+        Center center = centerRepository.getById(request.getCenter_id());
+        // FK가 존재하지 않는경우
+        Child newChild = request.createChild(center, parent);
+        childRepository.save(newChild);
+
     }
 }

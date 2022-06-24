@@ -17,6 +17,7 @@ public class Board extends BaseEntity{
     private String name;                        // 게시판 이름
     @Enumerated(EnumType.STRING)
     private BoardKind boardKind;
+    private Boolean isDefault;
 
     @OneToMany(mappedBy = "board")
     private List<Post> posts = new ArrayList<>();
@@ -28,11 +29,12 @@ public class Board extends BaseEntity{
     @JoinColumn(name = "center_id")             // null 이면 모두의 게시판
     private Center center;
 
-    public static Board createBoard(String name, BoardKind boardKind, Center center) {
+    public static Board createBoard(String name, BoardKind boardKind, Center center, Boolean isDefault) {
         Board board = new Board();
         board.name = name;
         board.boardKind = boardKind;
         board.center = center;
+        board.isDefault = isDefault;
         return board;
     }
 }
