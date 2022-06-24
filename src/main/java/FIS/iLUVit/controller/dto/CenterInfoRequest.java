@@ -7,7 +7,7 @@ import lombok.NoArgsConstructor;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class CenterInfoForSignupRequest {
+public class CenterInfoRequest {
     private String sido;
     private String sigungu;
     private String centerName;

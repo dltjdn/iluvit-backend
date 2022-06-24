@@ -1,12 +1,15 @@
 package FIS.iLUVit.domain;
 
 import FIS.iLUVit.domain.enumtype.Approval;
+import lombok.Builder;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
 
 @Entity
 @Getter
+@NoArgsConstructor
 public class Child extends BaseEntity {
     @Id @GeneratedValue
     private Long id;
@@ -24,13 +27,23 @@ public class Child extends BaseEntity {
     @JoinColumn(name = "center_id")
     private Center center;
 
+    @Builder
+    public Child(String name, String birthDate, Boolean hasProfileImg, Approval approval, Parent parent, Center center) {
+        this.name = name;
+        this.birthDate = birthDate;
+        this.hasProfileImg = hasProfileImg;
+        this.approval = approval;
+        this.parent = parent;
+        this.center = center;
+    }
+
     public static Child createChild(String name, String birthDate, Approval approval, Parent parent) {
-        Child child = new Child();
-        child.name = name;
-        child.birthDate = birthDate;
-        child.approval = approval;
-        child.parent = parent;
-        return child;
+        return Child.builder()
+                .name(name)
+                .birthDate(birthDate)
+                .approval(approval)
+                .parent(parent)
+                .build();
     }
 
     public void mappingParent(Parent parent) {

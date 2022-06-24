@@ -76,7 +76,7 @@ public class BoardService {
                     .ifPresent((b) -> {
                         throw new UserException(b.getName() + " == " + request.getBoard_name() + " : 이름 중복");
                     });
-            boardRepository.save(Board.createBoard(request.getBoard_name(), request.getBoardKind(), null));
+            boardRepository.save(Board.createBoard(request.getBoard_name(), request.getBoardKind(), null, false));
             return;
         }
 
@@ -89,8 +89,7 @@ public class BoardService {
         Center findCenter = centerRepository.findById(center_id)
                 .orElseThrow(() -> new CenterException("존재하지 않는 시설"));
 
-
-        Board board = Board.createBoard(request.getBoard_name(), request.getBoardKind(), findCenter);
+        Board board = Board.createBoard(request.getBoard_name(), request.getBoardKind(), findCenter,false);
         boardRepository.save(board);
     }
 }
