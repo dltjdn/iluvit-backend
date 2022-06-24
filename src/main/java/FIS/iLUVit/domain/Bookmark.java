@@ -28,4 +28,12 @@ public class Bookmark extends BaseEntity {
         this.board = board;
         this.user = user;
     }
+
+    public static Bookmark createBookmark(Integer order, Board board, User user) {
+        Bookmark bookmark = new Bookmark();
+        bookmark.order = order;
+        bookmark.board = board;
+        bookmark.user = user;
+        return bookmark;
+    }
 }

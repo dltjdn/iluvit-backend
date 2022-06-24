@@ -24,7 +24,7 @@ public class GlobalControllerAdvice {
     @ExceptionHandler(InvalidDataAccessApiUsageException.class)
     public ErrorResult illegalExHandler(InvalidDataAccessApiUsageException e) {
         log.error("[exceptionHandler] ex", e);
-        return new ErrorResult("BAD", "쿼리마라미터가 null 입니다. 토큰이 유효한지 확인해보세요");
+        return new ErrorResult("BAD", "쿼리파라미터가 null 입니다. 토큰이 유효한지 확인해보세요");
     }
 
 }
