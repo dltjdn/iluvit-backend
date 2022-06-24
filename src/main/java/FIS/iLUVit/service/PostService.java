@@ -4,6 +4,9 @@ import FIS.iLUVit.controller.dto.*;
 import FIS.iLUVit.domain.*;
 import FIS.iLUVit.domain.enumtype.Auth;
 import FIS.iLUVit.domain.enumtype.BoardKind;
+import FIS.iLUVit.exception.BoardException;
+import FIS.iLUVit.exception.PostException;
+import FIS.iLUVit.exception.UserException;
 import FIS.iLUVit.repository.*;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -34,11 +37,11 @@ public class PostService {
 
     public void savePost(PostRegisterRequest request, List<MultipartFile> images, Long userId) {
         User findUser = userRepository.findById(userId)
-                .orElseThrow(() -> new IllegalStateException("존재하지 않는 유저"));
+                .orElseThrow(() -> new UserException("존재하지 않는 유저"));
         Integer imgSize = (images == null ? 0 : images.size());
 
         Board findBoard = boardRepository.findById(request.getBoard_id())
-                .orElseThrow(() -> new IllegalStateException("존재하지 않는 보드"));
+                .orElseThrow(() -> new BoardException("존재하지 않는 게시판"));
 
         Post post = new Post(request.getTitle(), request.getContent(), request.getAnonymous(),
                 0, 0, imgSize, 0, findBoard, findUser);
@@ -54,11 +57,11 @@ public class PostService {
 
     public void deleteById(Long postId, Long userId) {
         User findUser = userRepository.findById(userId)
-                .orElseThrow(() -> new IllegalStateException("존재하지 않는 유저"));
+                .orElseThrow(() -> new UserException("존재하지 않는 유저"));
         Post findPost = postRepository.findById(postId)
-                .orElseThrow(() -> new IllegalStateException("존재하지 않는 게시글"));
+                .orElseThrow(() -> new PostException("존재하지 않는 게시글"));
         if (!Objects.equals(findPost.getUser().getId(), findUser.getId())) {
-            throw new IllegalStateException("삭제 권한이 없는 유저");
+            throw new UserException("삭제 권한이 없는 유저");
         }
         postRepository.deleteById(postId);
     }
@@ -67,7 +70,7 @@ public class PostService {
     public GetPostResponse findById(Long postId) {
 
         Post findPost = postRepository.findByIdWithUserAndBoardAndCenter(postId)
-                .orElseThrow(() -> new IllegalStateException("존재하지 않는 게시글"));
+                .orElseThrow(() -> new PostException("존재하지 않는 게시글"));
         return getPostResponseDto(findPost);
     }
 
@@ -199,7 +202,7 @@ public class PostService {
 
     public void updateDate(Long postId) {
         Post findPost = postRepository.findById(postId)
-                .orElseThrow(() -> new IllegalStateException("존재하지 않는 게시글"));
+                .orElseThrow(() -> new PostException("존재하지 않는 게시글"));
         findPost.updateTime(LocalDateTime.now());
     }
 

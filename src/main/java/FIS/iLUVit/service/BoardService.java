@@ -5,6 +5,8 @@ import FIS.iLUVit.controller.dto.CreateBoardRequest;
 import FIS.iLUVit.domain.Board;
 import FIS.iLUVit.domain.Bookmark;
 import FIS.iLUVit.domain.Center;
+import FIS.iLUVit.exception.BoardException;
+import FIS.iLUVit.exception.CenterException;
 import FIS.iLUVit.repository.BoardRepository;
 import FIS.iLUVit.repository.BookmarkRepository;
 import FIS.iLUVit.repository.CenterRepository;
@@ -65,7 +67,7 @@ public class BoardService {
         if (center_id == null) {
             boardRepository.findByName(request.getBoard_name())
                     .ifPresent((b) -> {
-                        throw new IllegalStateException(b.getName() + " == " + request.getBoard_name() + " : 이름 중복");
+                        throw new BoardException(b.getName() + " == " + request.getBoard_name() + " : 이름 중복");
                     });
             boardRepository.save(Board.createBoard(request.getBoard_name(), request.getBoardKind(), null));
             return;
@@ -73,11 +75,11 @@ public class BoardService {
 
         boardRepository.findByNameWithCenter(request.getBoard_name(), center_id)
                 .ifPresent((b) -> {
-                    throw new IllegalStateException(b.getName() + " == " + request.getBoard_name() + " : 이름 중복");
+                    throw new BoardException(b.getName() + " == " + request.getBoard_name() + " : 이름 중복");
                 });
 
         Center findCenter = centerRepository.findById(center_id)
-                .orElseThrow(() -> new IllegalStateException("존재하지 않는 시설"));
+                .orElseThrow(() -> new CenterException("존재하지 않는 시설"));
 
 
         Board board = Board.createBoard(request.getBoard_name(), request.getBoardKind(), findCenter);
