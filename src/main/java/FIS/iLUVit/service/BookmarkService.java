@@ -2,6 +2,9 @@ package FIS.iLUVit.service;
 
 import FIS.iLUVit.controller.dto.BookmarkMainDTO;
 import FIS.iLUVit.domain.*;
+import FIS.iLUVit.exception.BoardException;
+import FIS.iLUVit.exception.BookmarkException;
+import FIS.iLUVit.exception.UserException;
 import FIS.iLUVit.repository.*;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -61,11 +64,12 @@ public class BookmarkService {
     }
 
     public void create(Long userId, Long boardId) {
-        int max = bookmarkRepository.findMaxOrder();
+        int max = bookmarkRepository.findMaxOrder()
+                .orElse(0);
         User findUser = userRepository.findById(userId)
-                .orElseThrow(() -> new IllegalStateException("존재하지 않는 유저"));
+                .orElseThrow(() -> new UserException("존재하지 않는 유저"));
         Board findBoard = boardRepository.findById(boardId)
-                .orElseThrow(() -> new IllegalStateException("존재하지 않는 게시판"));
+                .orElseThrow(() -> new BoardException("존재하지 않는 게시판"));
 
         Bookmark bookmark = new Bookmark(max + 1, findBoard, findUser);
         bookmarkRepository.save(bookmark);
@@ -73,9 +77,9 @@ public class BookmarkService {
 
     public void delete(Long userId, Long bookmarkId) {
         User findUser = userRepository.findById(userId)
-                .orElseThrow(() -> new IllegalStateException("존재하지 않는 유저"));
+                .orElseThrow(() -> new UserException("존재하지 않는 유저"));
         Bookmark findBookmark = bookmarkRepository.findById(bookmarkId)
-                .orElseThrow(() -> new IllegalStateException("존재하지 않는 북마크"));
+                .orElseThrow(() -> new BookmarkException("존재하지 않는 북마크"));
         if (!Objects.equals(findBookmark.getUser().getId(), findUser.getId())) {
             throw new IllegalStateException("삭제 권한 없는 유저");
         }

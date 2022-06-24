@@ -7,6 +7,9 @@ import FIS.iLUVit.domain.Chat;
 import FIS.iLUVit.domain.Comment;
 import FIS.iLUVit.domain.Post;
 import FIS.iLUVit.domain.User;
+import FIS.iLUVit.exception.CommentException;
+import FIS.iLUVit.exception.PostException;
+import FIS.iLUVit.exception.UserException;
 import FIS.iLUVit.repository.ChatRepository;
 import FIS.iLUVit.repository.CommentRepository;
 import FIS.iLUVit.repository.PostRepository;
@@ -33,20 +36,20 @@ public class ChatService {
 
     public void saveChat(Long userId, CreateChatRequest request) {
         User sendUser = userRepository.findById(userId)
-                .orElseThrow(() -> new IllegalStateException("존재하지 않는 유저"));
+                .orElseThrow(() -> new UserException("존재하지 않는 유저"));
         User receiveUser = userRepository.findById(request.getReceiver_id())
-                .orElseThrow(() -> new IllegalStateException("존재하지 않는 유저"));
+                .orElseThrow(() -> new UserException("존재하지 않는 유저"));
 
         Long post_id = request.getPost_id();
         Long comment_id = request.getComment_id();
 
         Post findPost = postRepository.findById(post_id)
-                .orElseThrow(() -> new IllegalStateException("존재하지 않는 게시글"));
+                .orElseThrow(() -> new PostException("존재하지 않는 게시글"));
         Chat chat = new Chat(request.getMessage(), receiveUser,
                 sendUser, findPost);
         if (comment_id != null) {
             Comment findComment = commentRepository.findById(comment_id)
-                    .orElseThrow(() -> new IllegalStateException("존재하지 않는 댓글"));
+                    .orElseThrow(() -> new CommentException("존재하지 않는 댓글"));
             chat.updateComment(findComment);
         }
 
