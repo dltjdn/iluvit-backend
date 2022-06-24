@@ -19,10 +19,10 @@ public class Board extends BaseEntity{
     private BoardKind boardKind;
     private Boolean isDefault;
 
-    @OneToMany(mappedBy = "board")
-    private List<Post> posts = new ArrayList<>();
+    @OneToMany(mappedBy = "board", cascade = CascadeType.REMOVE)
+    private List<Post> posts = new ArrayList<>(); // 게시판 지우면 글들도 사라짐
 
-    @OneToMany(mappedBy = "board")
+    @OneToMany(mappedBy = "board", cascade = CascadeType.REMOVE) // 게시판 지우면 북마크도 사라짐
     private List<Bookmark> bookmarks = new ArrayList<>();;
 
     @ManyToOne(fetch = FetchType.LAZY)
