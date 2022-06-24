@@ -30,7 +30,7 @@ public interface BookmarkRepository extends JpaRepository<Bookmark, Long> {
     @Query("select bm from Bookmark bm join fetch bm.board b where bm.user.id = :userId and b.center.id = :centerId ")
     List<Bookmark> findBoardByUserAndCenter(@Param("userId") Long userId, @Param("centerId") Long centerId);
 
-    @Query("select max(bm.order) from Bookmark bm ")
-    Optional<Integer> findMaxOrder();
+    @Query("select max(bm.order) from Bookmark bm where bm.user.id = :userId")
+    Optional<Integer> findMaxOrder(Long userId);
 
 }
