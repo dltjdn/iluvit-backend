@@ -1,7 +1,7 @@
 package FIS.iLUVit.service;
 
-import FIS.iLUVit.controller.dto.CenterInfoForSignupDto;
-import FIS.iLUVit.controller.dto.CenterInfoForSignupRequest;
+import FIS.iLUVit.controller.dto.CenterInfoDto;
+import FIS.iLUVit.controller.dto.CenterInfoRequest;
 import FIS.iLUVit.controller.dto.CenterInfoResponseDto;
 import FIS.iLUVit.controller.dto.CenterModifyRequestDto;
 import FIS.iLUVit.domain.*;
@@ -108,7 +108,21 @@ public class CenterService {
         return new ArrayList<>(imageService.getEncodedProfileImage(imageService.getCenterProfileDir(), idList).values());
     }
 
-    public Slice<CenterInfoForSignupDto> findCenterForSignup(CenterInfoForSignupRequest request, Pageable pageable) {
+    /**
+    *   작성날짜: 2022/06/24 10:28 AM
+    *   작성자: 이승범
+    *   작성내용: 회원가입 과정에서 필요한 센터정보 가져오기
+    */
+    public Slice<CenterInfoDto> findCenterForSignup(CenterInfoRequest request, Pageable pageable) {
         return centerRepository.findForSignup(request, pageable);
+    }
+
+    /**
+    *   작성날짜: 2022/06/24 10:31 AM
+    *   작성자: 이승범
+    *   작성내용: 아이추가 과정에서 필요한 센터정보 가져오기
+    */
+    public Slice<CenterInfoDto> findCenterForAddChild(CenterInfoRequest request, Pageable pageable) {
+        return centerRepository.findCenterForAddChild(request, pageable);
     }
 }

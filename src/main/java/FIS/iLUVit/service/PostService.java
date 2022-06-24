@@ -43,6 +43,12 @@ public class PostService {
         Board findBoard = boardRepository.findById(request.getBoard_id())
                 .orElseThrow(() -> new BoardException("존재하지 않는 게시판"));
 
+        if (findBoard.getBoardKind() == BoardKind.NOTICE) {
+            if (findUser.getAuth() == Auth.PARENT) {
+                throw new PostException("공지 게시판은 교사만 글을 등록할 수 있습니다.");
+            }
+        }
+
         Post post = new Post(request.getTitle(), request.getContent(), request.getAnonymous(),
                 0, 0, imgSize, 0, findBoard, findUser);
 

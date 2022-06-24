@@ -32,6 +32,8 @@ public class QCenter extends EntityPathBase<Center> {
 
     public final FIS.iLUVit.domain.embeddable.QBasicInfra basicInfra;
 
+    public final ListPath<Board, QBoard> boards = this.<Board, QBoard>createList("boards", Board.class, QBoard.class, PathInits.DIRECT2);
+
     public final FIS.iLUVit.domain.embeddable.QClassInfo classInfo;
 
     public final FIS.iLUVit.domain.embeddable.QCostInfo costInfo;

@@ -8,8 +8,6 @@ import FIS.iLUVit.domain.Comment;
 import FIS.iLUVit.domain.Post;
 import FIS.iLUVit.domain.User;
 import FIS.iLUVit.exception.CommentException;
-import FIS.iLUVit.exception.PostException;
-import FIS.iLUVit.exception.UserException;
 import FIS.iLUVit.repository.ChatRepository;
 import FIS.iLUVit.repository.CommentRepository;
 import FIS.iLUVit.repository.PostRepository;
@@ -35,18 +33,18 @@ public class ChatService {
     private final CommentRepository commentRepository;
 
     public void saveChat(Long userId, CreateChatRequest request) {
-        User sendUser = userRepository.findById(userId)
-                .orElseThrow(() -> new UserException("존재하지 않는 유저(sender)"));
-        User receiveUser = userRepository.findById(request.getReceiver_id())
-                .orElseThrow(() -> new UserException("존재하지 않는 유저(receiver)"));
+        User sendUser = userRepository.getById(userId);
+        User receiveUser = userRepository.getById(request.getReceiver_id());
 
         Long post_id = request.getPost_id();
         Long comment_id = request.getComment_id();
 
-        Post findPost = postRepository.findById(post_id)
-                .orElseThrow(() -> new PostException("존재하지 않는 게시글"));
+        Post findPost = postRepository.getById(post_id);
+
         Chat chat = new Chat(request.getMessage(), receiveUser,
                 sendUser, findPost);
+
+        // 댓글 작성자와 쪽지 교환이면 comment 정보도 엮여줌.
         if (comment_id != null) {
             Comment findComment = commentRepository.findById(comment_id)
                     .orElseThrow(() -> new CommentException("존재하지 않는 댓글"));
@@ -58,7 +56,10 @@ public class ChatService {
     }
 
     public Slice<ChatListDTO> findAll(Long userId, Pageable pageable) {
-        Slice<Chat> chatList = chatRepository.findFirstByPost(userId, pageable);
+        Slice<Chat> chatList = chatRepository.findByUser(userId, pageable);
+
+//        Slice<Chat> chatList = chatRepository.findFirstByPost(userId, pageable);
+
         List<ChatListDTO> content = chatList.getContent().stream()
                 .map(c -> new ChatListDTO(c))
                 .collect(Collectors.toList());
@@ -71,8 +72,9 @@ public class ChatService {
         return new SliceImpl<>(content, pageable, hasNext);
     }
 
-    public Slice<ChatDTO> findByPost(Long userId, Long postId, Pageable pageable) {
-        Slice<Chat> chatList = chatRepository.findByPost(userId, postId, pageable);
+    public Slice<ChatDTO> findByOpponent(Long userId, Long otherId, Pageable pageable) {
+//        Slice<Chat> chatList = chatRepository.findByPost(userId, receiverId, pageable);
+        Slice<Chat> chatList = chatRepository.findByOpponent(userId, otherId, pageable);
         List<ChatDTO> content = chatList.getContent().stream()
                 .map(c -> new ChatDTO(c))
                 .collect(Collectors.toList());

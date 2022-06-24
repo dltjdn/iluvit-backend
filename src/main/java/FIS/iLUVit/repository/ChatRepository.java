@@ -18,4 +18,12 @@ public interface ChatRepository extends JpaRepository<Chat, Long> {
     @Query("select c from Chat c join fetch c.post p join fetch p.board b left join fetch b.center ct " +
             "where (c.receiver.id = :userId or c.sender.id = :userId) and p.id = :postId order by c.createdDate desc ")
     Slice<Chat> findByPost(@Param("userId") Long userId, @Param("postId") Long postId, Pageable pageable);
+
+    @Query("select c from Chat c where c.receiver.id = :userId or c.sender.id = :userId order by c.createdDate desc ")
+    Slice<Chat> findByUser(@Param("userId") Long userId, Pageable pageable);
+
+    @Query("select c from Chat c where (c.receiver.id = :otherId and c.sender.id = :userId) " +
+            "or (c.sender.id = :otherId and c.receiver.id = :userId) order by c.createdDate desc")
+    Slice<Chat> findByOpponent(@Param("userId") Long userId, @Param("otherId") Long otherId, Pageable pageable);
+
 }
