@@ -31,6 +31,6 @@ public interface BookmarkRepository extends JpaRepository<Bookmark, Long> {
     List<Bookmark> findBoardByUserAndCenter(@Param("userId") Long userId, @Param("centerId") Long centerId);
 
     @Query("select max(bm.order) from Bookmark bm ")
-    Integer findMaxOrder();
+    Optional<Integer> findMaxOrder();
 
 }

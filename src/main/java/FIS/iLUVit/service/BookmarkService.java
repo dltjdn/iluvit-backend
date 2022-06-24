@@ -61,7 +61,8 @@ public class BookmarkService {
     }
 
     public void create(Long userId, Long boardId) {
-        int max = bookmarkRepository.findMaxOrder();
+        int max = bookmarkRepository.findMaxOrder()
+                .orElse(0);
         User findUser = userRepository.findById(userId)
                 .orElseThrow(() -> new IllegalStateException("존재하지 않는 유저"));
         Board findBoard = boardRepository.findById(boardId)
