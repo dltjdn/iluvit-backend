@@ -24,6 +24,7 @@ public interface PostRepository extends JpaRepository<Post, Long>, PostRepositor
             "where ranking.ranks <= 4 order by board_id, createdDate desc ",
             nativeQuery = true)
     List<Post> findTop4(@Param("boardIds") List<Long> boardIds);
+    // 자르파일 왜 안바뀜??
 
     @Query("select p from Post p join p.board b " +
             "where b.center.id is null and p.heartCnt >= :heartCnt order by p.postCreateDate desc ")
