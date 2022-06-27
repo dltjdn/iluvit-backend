@@ -25,10 +25,10 @@ public class PostController {
         내용: multipart/form-data 형식으로 변환된 request, 이미지 파일 리스트 images 파라미터로 게시글 저장
     */
     @PostMapping(value = "/post", consumes = {MediaType.APPLICATION_JSON_VALUE, MediaType.MULTIPART_FORM_DATA_VALUE})
-    public void registerPost(@Login Long userId,
+    public Long registerPost(@Login Long userId,
                              @RequestPart PostRegisterRequest request,
                              @RequestPart(required = false) List<MultipartFile> images) {
-        postService.savePost(request, images, userId);
+        return postService.savePost(request, images, userId);
     }
 
     /**
@@ -37,8 +37,8 @@ public class PostController {
         내용: 게시글 삭제
     */
     @DeleteMapping("/post/{post_id}")
-    public void deletePost(@Login Long userId, @PathVariable("post_id") Long postId) {
-        postService.deleteById(postId, userId);
+    public Long deletePost(@Login Long userId, @PathVariable("post_id") Long postId) {
+        return postService.deleteById(postId, userId);
     }
 
     /**

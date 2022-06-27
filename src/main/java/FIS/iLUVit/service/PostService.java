@@ -36,7 +36,7 @@ public class PostService {
     private final ScrapPostRepository scrapPostRepository;
     private final PostHeartRepository postHeartRepository;
 
-    public void savePost(PostRegisterRequest request, List<MultipartFile> images, Long userId) {
+    public Long savePost(PostRegisterRequest request, List<MultipartFile> images, Long userId) {
 
         User findUser = userRepository.getById(userId);
         Board findBoard = boardRepository.findById(request.getBoard_id())
@@ -60,9 +60,11 @@ public class PostService {
             imageService.saveInfoImage(images, imagePath);
         }
 
+        return savedPost.getId();
+
     }
 
-    public void deleteById(Long postId, Long userId) {
+    public Long deleteById(Long postId, Long userId) {
         User findUser = userRepository.findById(userId)
                 .orElseThrow(() -> new UserException("존재하지 않는 유저"));
         Post findPost = postRepository.findById(postId)
@@ -70,7 +72,8 @@ public class PostService {
         if (!Objects.equals(findPost.getUser().getId(), findUser.getId())) {
             throw new UserException("삭제 권한이 없는 유저");
         }
-        postRepository.deleteById(postId);
+        postRepository.delete(findPost);
+        return postId;
     }
 
 
