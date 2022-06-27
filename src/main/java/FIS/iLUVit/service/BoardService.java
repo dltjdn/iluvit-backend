@@ -27,7 +27,6 @@ public class BoardService {
     private final BoardRepository boardRepository;
     private final BookmarkRepository bookmarkRepository;
     private final CenterRepository centerRepository;
-    private final UserRepository userRepository;
 
     public BoardListDTO findAllWithBookmark(Long userId) {
         BoardListDTO dto = new BoardListDTO();
