@@ -32,4 +32,6 @@ public abstract class Alarm extends BaseEntity {
     public Alarm(User user) {
         this.user = user;
     }
+
+
 }

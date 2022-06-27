@@ -22,17 +22,17 @@ public class MessageUtils {
     // 채팅 수신됨
     public static final String CHAT_RECEIVED = "alarm.chat.received";
     //
-    public static final String CENTER_APPROVAL_RECEIVED = "";
+    public static final String CENTER_APPROVAL_RECEIVED = "alarm.center.approvalReceived";
     //
-    public static final String CENTER_APPROVAL_ACCEPTED = "";
+    public static final String CENTER_APPROVAL_ACCEPTED = "alarm.center.approvalAccepted";
 
     @Autowired
     public MessageUtils(MessageSource messageSource){
         this.messageSource = messageSource;
     }
 
-    public static String getMessage(Alarm alarm, Object[] args){
-        return messageSource.getMessage(alarm.getMode(), args, null);
+    public static String getMessage(String code, Object[] args){
+        return messageSource.getMessage(code, args, null);
     }
 
 }

@@ -14,15 +14,9 @@ import javax.persistence.ManyToOne;
 @NoArgsConstructor
 public class CenterApprovalReceivedAlarm extends Alarm{
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn
-    private Center center;
-
-    public CenterApprovalReceivedAlarm(User user, Center center) {
+    public CenterApprovalReceivedAlarm(User user) {
         super(user);
         this.mode = MessageUtils.CENTER_APPROVAL_RECEIVED;
-        this.center = center;
-        String[] args = {};
-        message = MessageUtils.getMessage(this, args);
+        message = MessageUtils.getMessage(mode, null);
     }
 }
