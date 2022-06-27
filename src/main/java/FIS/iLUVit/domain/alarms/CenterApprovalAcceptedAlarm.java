@@ -2,7 +2,7 @@ package FIS.iLUVit.domain.alarms;
 
 import FIS.iLUVit.domain.Center;
 import FIS.iLUVit.domain.User;
-import FIS.iLUVit.service.MessageUtils;
+import FIS.iLUVit.service.AlarmUtils;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.Entity;
@@ -20,9 +20,9 @@ public class CenterApprovalAcceptedAlarm extends Alarm{
 
     public CenterApprovalAcceptedAlarm(User user, Center center) {
         super(user);
-        this.mode = MessageUtils.CENTER_APPROVAL_ACCEPTED;
+        this.mode = AlarmUtils.CENTER_APPROVAL_ACCEPTED;
         this.center = center;
         String args[] = {center.getName()};
-        message = MessageUtils.getMessage(mode, args);
+        message = AlarmUtils.getMessage(mode, args);
     }
 }

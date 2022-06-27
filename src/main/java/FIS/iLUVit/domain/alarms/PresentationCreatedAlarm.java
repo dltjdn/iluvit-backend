@@ -3,7 +3,7 @@ package FIS.iLUVit.domain.alarms;
 import FIS.iLUVit.domain.Center;
 import FIS.iLUVit.domain.Presentation;
 import FIS.iLUVit.domain.User;
-import FIS.iLUVit.service.MessageUtils;
+import FIS.iLUVit.service.AlarmUtils;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -35,10 +35,10 @@ public class PresentationCreatedAlarm extends Alarm {
 
     public PresentationCreatedAlarm(User user, Presentation presentation, Center center) {
         super(user);
-        this.mode = MessageUtils.PRESENTATION_CREATED_LIKED_CENTER;
+        this.mode = AlarmUtils.PRESENTATION_CREATED_LIKED_CENTER;
         this.center = center;
         this.presentation = presentation;
         String args[] = {center.getName()};
-        message = MessageUtils.getMessage(mode, args);
+        message = AlarmUtils.getMessage(mode, args);
     }
 }

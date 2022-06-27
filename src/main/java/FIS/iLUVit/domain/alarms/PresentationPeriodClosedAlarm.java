@@ -2,7 +2,7 @@ package FIS.iLUVit.domain.alarms;
 
 import FIS.iLUVit.domain.Presentation;
 import FIS.iLUVit.domain.User;
-import FIS.iLUVit.service.MessageUtils;
+import FIS.iLUVit.service.AlarmUtils;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -22,9 +22,9 @@ public class PresentationPeriodClosedAlarm extends Alarm{
 
     public PresentationPeriodClosedAlarm(User user, Presentation presentation) {
         super(user);
-        this.mode = MessageUtils.PRESENTATION_CLOSED;
+        this.mode = AlarmUtils.PRESENTATION_CLOSED;
         this.presentation = presentation;
-        message = MessageUtils.getMessage(mode, null);
+        message = AlarmUtils.getMessage(mode, null);
     }
 
 }
