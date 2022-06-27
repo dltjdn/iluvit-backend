@@ -22,10 +22,8 @@ public class CommentHeartService {
     private final CommentRepository commentRepository;
 
     public void save(Long userId, Long comment_id) {
-        User findUser = userRepository.findById(userId)
-                .orElseThrow(() -> new UserException("존재하지 않는 유저"));
-        Comment findComment = commentRepository.findById(comment_id)
-                .orElseThrow(() -> new CommentException("존재하지 않는 댓글"));
+        User findUser = userRepository.getById(userId);
+        Comment findComment = commentRepository.getById(comment_id);
 
         CommentHeart commentHeart = new CommentHeart(findUser, findComment);
         commentHeartRepository.save(commentHeart);
@@ -35,7 +33,7 @@ public class CommentHeartService {
         commentHeartRepository.findById(comment_id)
                 .ifPresentOrElse(ch -> {
                     if (ch.getUser().getId() == userId) {
-                        commentHeartRepository.deleteById(comment_id);
+                        commentHeartRepository.delete(ch);
                     } else {
                         throw new UserException("취소 권한 없는 유저");
                     }

@@ -6,6 +6,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
+import java.time.LocalDate;
 
 @Entity
 @Getter
@@ -14,7 +15,7 @@ public class Child extends BaseEntity {
     @Id @GeneratedValue
     private Long id;
     private String name;
-    private String birthDate;
+    private LocalDate birthDate;
     private Boolean hasProfileImg;              // 프사 있나?
     @Enumerated(EnumType.STRING)
     private Approval approval;                  // 승인 여부 상태
@@ -28,7 +29,7 @@ public class Child extends BaseEntity {
     private Center center;
 
     @Builder
-    public Child(String name, String birthDate, Boolean hasProfileImg, Approval approval, Parent parent, Center center) {
+    public Child(String name, LocalDate birthDate, Boolean hasProfileImg, Approval approval, Parent parent, Center center) {
         this.name = name;
         this.birthDate = birthDate;
         this.hasProfileImg = hasProfileImg;
@@ -37,7 +38,7 @@ public class Child extends BaseEntity {
         this.center = center;
     }
 
-    public static Child createChild(String name, String birthDate, Approval approval, Parent parent) {
+    public static Child createChild(String name, LocalDate birthDate, Approval approval, Parent parent) {
         return Child.builder()
                 .name(name)
                 .birthDate(birthDate)

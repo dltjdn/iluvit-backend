@@ -27,15 +27,15 @@ public class CommentService {
     private final UserRepository userRepository;
 
     public void registerComment(Long userId, Long postId, Long commentId, RegisterCommentRequest request) {
-        User findUser = userRepository.findById(userId)
-                .orElseThrow(() -> new UserException("존재하지 않는 유저"));
-        Post findPost = postRepository.findById(postId)
-                .orElseThrow(() -> new PostException("존재하지 않는 게시글"));
+        User findUser = userRepository.getById(userId);
+        Post findPost = postRepository.getById(postId);
+
         Comment comment = new Comment(request.getAnonymous(), request.getContent(), findPost, findUser);
 
+        // commentId 보내는 경우 대댓글 -> parentComment
         if (commentId != null) {
-            commentRepository.findById(commentId)
-                    .ifPresent(p -> comment.updateParentComment(p));
+            Comment parentComment = commentRepository.getById(commentId);
+            comment.updateParentComment(parentComment);
         }
 
         commentRepository.save(comment);
@@ -44,6 +44,7 @@ public class CommentService {
     public void deleteComment(Long userId, Long commentId) {
         commentRepository.findById(commentId)
                 .ifPresentOrElse(c -> {
+                    // 내용 -> 삭제된 댓글입니다. + 작성자 -> null
                     if (c.getUser().getId() == userId) {
                         c.updateContent("삭제된 댓글입니다.");
                         c.updateUser(null);
@@ -56,6 +57,7 @@ public class CommentService {
     }
 
     public Slice<CommentDTO> searchByUser(Long userId, Pageable pageable) {
+        // Comment -> CommentDTO 타입으로 변환
         return commentRepository.findByUser(userId, pageable).map(CommentDTO::new);
     }
 }
