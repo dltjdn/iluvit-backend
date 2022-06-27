@@ -1,5 +1,6 @@
 package FIS.iLUVit.repository;
 
+import FIS.iLUVit.domain.Center;
 import FIS.iLUVit.domain.Child;
 import FIS.iLUVit.domain.Teacher;
 import FIS.iLUVit.domain.User;
@@ -39,4 +40,8 @@ public interface UserRepository extends JpaRepository<User, Long> {
     @Query("select user " +
             "from User user ")
     List<User> findByIdTest();
+
+    @Query("select teacher from Teacher teacher " +
+            "where teacher.center =:center")
+    List<User> findTeacherByCenter(@Param("center") Center center);
 }

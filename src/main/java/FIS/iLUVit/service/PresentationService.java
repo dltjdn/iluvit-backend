@@ -145,7 +145,7 @@ public class PresentationService {
                     // 추가 수용될 인원 id 만 추출
                     List<Long> waitingIds = waitings.stream().map(Waiting::getId).collect(toList());
                     // 수용 인원들 waiting 에서 삭제
-                    waitingRepository.deleteAllById(waitingIds);
+                    waitingRepository.deleteAllByIdInBatch(waitingIds);
                     // 수용 외의 인원들 order 감소
                     waitingRepository.updateWaitingOrderForPtDateChange(changeNum);
                     ptDate.updateWaitingCntForPtDateChange(changeNum);
