@@ -1,15 +1,14 @@
 package FIS.iLUVit.domain.alarms;
 
+import FIS.iLUVit.domain.Center;
 import FIS.iLUVit.domain.Presentation;
-import FIS.iLUVit.service.AlarmUtils;
+import FIS.iLUVit.domain.User;
+import FIS.iLUVit.service.MessageUtils;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import org.springframework.context.MessageSource;
 
 import javax.persistence.*;
-
-import static FIS.iLUVit.service.AlarmUtils.*;
 
 /**
  * 설명회 알림 발생 시나리오
@@ -22,16 +21,24 @@ import static FIS.iLUVit.service.AlarmUtils.*;
 @NoArgsConstructor
 @AllArgsConstructor
 @Getter
-public class PresentationAlarm extends Alarm {
+public class PresentationCreatedAlarm extends Alarm {
 
     // 누구를 대상으로 한 알람?
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn
+    @JoinColumn(name = "presentationId")
     private Presentation presentation;
 
-    @Override
-    public Alarm createMessage(MessageSource messageSource, Mode mode) {
-        return null;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "centerId")
+    private Center center;
+
+    public PresentationCreatedAlarm(User user, Presentation presentation, Center center) {
+        super(user);
+        this.mode = MessageUtils.PRESENTATION_CREATED_LIKED_CENTER;
+        this.center = center;
+        this.presentation = presentation;
+        String args[] = {center.getName()};
+        message = MessageUtils.getMessage(mode, args);
     }
 }

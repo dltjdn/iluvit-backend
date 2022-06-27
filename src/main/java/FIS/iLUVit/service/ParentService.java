@@ -1,18 +1,13 @@
 package FIS.iLUVit.service;
 
-import FIS.iLUVit.controller.dto.ParentDetailResponse;
-import FIS.iLUVit.controller.dto.ParentDetailRequest;
-import FIS.iLUVit.controller.dto.SignupParentRequest;
+import FIS.iLUVit.controller.dto.*;
 import FIS.iLUVit.domain.*;
 import FIS.iLUVit.domain.embeddable.Theme;
 import FIS.iLUVit.domain.enumtype.AuthKind;
+import FIS.iLUVit.exception.CenterException;
 import FIS.iLUVit.exception.SignupException;
 import FIS.iLUVit.exception.UserException;
-import FIS.iLUVit.repository.AuthNumberRepository;
-import FIS.iLUVit.repository.ParentRepository;
-import FIS.iLUVit.controller.dto.ChildInfoDTO;
-import FIS.iLUVit.repository.ScrapRepository;
-import FIS.iLUVit.repository.UserRepository;
+import FIS.iLUVit.repository.*;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -37,6 +32,9 @@ public class ParentService {
     private final ParentRepository parentRepository;
     private final AuthNumberRepository authNumberRepository;
     private final ScrapRepository scrapRepository;
+    private final CenterRepository centerRepository;
+    private final ChildRepository childRepository;
+    private final BookmarkService bookmarkService;
 
     /**
      * 작성날짜: 2022/05/13 4:43 PM
@@ -136,5 +134,39 @@ public class ParentService {
 
         // 사용이 끝난 인증번호를 테이블에서 지우기
         authNumberRepository.deleteByPhoneNumAndAuthKind(request.getPhoneNum(), AuthKind.signup);
+    }
+
+    /**
+    *   작성날짜: 2022/06/23 5:25 PM
+    *   작성자: 이승범
+    *   작성내용: 아이 추가
+    */
+    public void saveChild(Long userId, SaveChildRequest request) {
+
+        System.out.println("userId = " + userId);
+        // 부모를 기존에 등록되어 있는 아이와 엮어서 가져오기
+        Parent parent = parentRepository.findByIdWithChild(userId);
+
+        // 새로 등록할 시설에 정보를 게시판 정보와 엮어서 가져오기
+        Center center = centerRepository.findByIdAndSignedWithBoard(request.getCenter_id(), true)
+                .orElseThrow(() -> new CenterException("잘못된 centerId 입니다."));
+
+        // bookmark 처리
+        // 기존에 있던 아이들중에 현재 등록하려는 아이와 같은 시설에 다니는 아이가 있는지 검사
+        Optional<Child> alreadySignedChild = parent.getChildren().stream()
+                .filter(child -> child.getCenter().getId().equals(center.getId()))
+                .findFirst();
+        // 기존 아이들과 다른 시설에 아이를 등록할 경우 해당 시설에 default board 북마크 추가
+        if (alreadySignedChild.isEmpty()) {
+            center.getBoards().forEach(board->{
+                if (board.getIsDefault()) {
+                    bookmarkService.create(parent.getId(), board.getId());
+                }
+            });
+        }
+
+        // 아이 등록
+        Child newChild = request.createChild(center, parent);
+        childRepository.save(newChild);
     }
 }

@@ -5,11 +5,15 @@ import FIS.iLUVit.controller.dto.RegisterCommentRequest;
 import FIS.iLUVit.domain.Comment;
 import FIS.iLUVit.domain.Post;
 import FIS.iLUVit.domain.User;
+import FIS.iLUVit.exception.CommentException;
+import FIS.iLUVit.exception.PostException;
+import FIS.iLUVit.exception.UserException;
 import FIS.iLUVit.repository.CommentRepository;
 import FIS.iLUVit.repository.PostRepository;
 import FIS.iLUVit.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -24,9 +28,9 @@ public class CommentService {
 
     public void registerComment(Long userId, Long postId, Long commentId, RegisterCommentRequest request) {
         User findUser = userRepository.findById(userId)
-                .orElseThrow(() -> new IllegalStateException("존재하지 않는 유저"));
+                .orElseThrow(() -> new UserException("존재하지 않는 유저"));
         Post findPost = postRepository.findById(postId)
-                .orElseThrow(() -> new IllegalStateException("존재하지 않는 게시글"));
+                .orElseThrow(() -> new PostException("존재하지 않는 게시글"));
         Comment comment = new Comment(request.getAnonymous(), request.getContent(), findPost, findUser);
 
         if (commentId != null) {
@@ -42,15 +46,16 @@ public class CommentService {
                 .ifPresentOrElse(c -> {
                     if (c.getUser().getId() == userId) {
                         c.updateContent("삭제된 댓글입니다.");
+                        c.updateUser(null);
                     } else {
-                        throw new IllegalStateException("삭제 권한없는 유저");
+                        throw new UserException("삭제 권한없는 유저");
                     }
                 }, () -> {
-                    throw new IllegalStateException("존재하지 않는 댓글");
+                    throw new CommentException("존재하지 않는 댓글");
                 });
     }
 
-    public Slice<CommentDTO> searchByUser(Long userId) {
-        return commentRepository.findByUser(userId, PageRequest.of(0, 10)).map(CommentDTO::new);
+    public Slice<CommentDTO> searchByUser(Long userId, Pageable pageable) {
+        return commentRepository.findByUser(userId, pageable).map(CommentDTO::new);
     }
 }

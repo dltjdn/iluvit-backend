@@ -1,6 +1,5 @@
 package FIS.iLUVit.repository;
 
-import FIS.iLUVit.domain.AddInfo;
 import FIS.iLUVit.domain.Center;
 import FIS.iLUVit.domain.embeddable.Theme;
 import FIS.iLUVit.repository.dto.CenterBannerDto;
@@ -31,6 +30,15 @@ public interface CenterRepository extends JpaRepository<Center, Long>, CenterRep
     @Query("select ct from Child c join c.center ct join c.parent p where p.id = :userId")
     List<Center> findByUser(@Param("userId") Long userId);
 
-    Optional<Center> findByIdAndSigned(Long centerId, boolean signed);
+    @Query("select c from Center c " +
+            "join fetch c.boards " +
+            "where c.id=:centerId " +
+            "and c.signed =:signed ")
+    Optional<Center> findByIdAndSignedWithBoard(Long centerId, Boolean signed);
 
+    @Query("select distinct c " +
+            "from Center c " +
+            "left join fetch c.teachers " +
+            "where c.id =:centerId")
+    Optional<Center> findByIdWithTeacher(@Param("centerId") Long centerId);
 }

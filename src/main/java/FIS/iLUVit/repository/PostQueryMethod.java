@@ -15,4 +15,8 @@ public class PostQueryMethod {
     protected BooleanExpression centerIdIn(Collection<Long> centerIds) {
         return centerIds != null ? center.id.in(centerIds) : null;
     }
+
+    protected BooleanExpression centerIdEq(Long centerId) {
+        return centerId != null ? center.id.eq(centerId) : center.id.isNull();
+    }
 }
