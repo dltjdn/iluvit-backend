@@ -1,8 +1,7 @@
 package FIS.iLUVit.domain.alarms;
 
-import FIS.iLUVit.domain.Chat;
 import FIS.iLUVit.domain.User;
-import FIS.iLUVit.service.MessageUtils;
+import FIS.iLUVit.service.AlarmUtils;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -22,9 +21,9 @@ public class ChatAlarm extends Alarm{
 
     public ChatAlarm(User user, User sender) {
         super(user);
-        this.mode = MessageUtils.CHAT_RECEIVED;
+        this.mode = AlarmUtils.CHAT_RECEIVED;
         this.sender = sender;
         String[] args = {sender.getNickName()};
-        this.message = MessageUtils.getMessage(mode, args);
+        this.message = AlarmUtils.getMessage(mode, args);
     }
 }

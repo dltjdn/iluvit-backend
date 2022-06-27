@@ -1,14 +1,17 @@
 package FIS.iLUVit.service;
 
 import FIS.iLUVit.domain.alarms.Alarm;
+import FIS.iLUVit.event.AlarmEvent;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.context.MessageSource;
 import org.springframework.stereotype.Component;
 
 @Component
-public class MessageUtils {
+public class AlarmUtils {
 
     private static MessageSource messageSource;
+    private static ApplicationEventPublisher eventPublisher;
     // 작성한 글에 댓글 알림
     public static final String POST_COMMENT = "alarm.post.comment";
     // 좋아요한 센터에서 설명회 생성됨
@@ -27,12 +30,19 @@ public class MessageUtils {
     public static final String CENTER_APPROVAL_ACCEPTED = "alarm.center.approvalAccepted";
 
     @Autowired
-    public MessageUtils(MessageSource messageSource){
+    public AlarmUtils(MessageSource messageSource, ApplicationEventPublisher eventPublisher){
         this.messageSource = messageSource;
+        this.eventPublisher = eventPublisher;
     }
 
     public static String getMessage(String code, Object[] args){
         return messageSource.getMessage(code, args, null);
+    }
+
+    public static AlarmEvent publishAlarmEvent(Alarm alarm){
+        AlarmEvent alarmEvent = new AlarmEvent(alarm);
+        eventPublisher.publishEvent(alarmEvent);
+        return alarmEvent;
     }
 
 }

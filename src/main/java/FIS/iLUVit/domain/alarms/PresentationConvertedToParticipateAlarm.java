@@ -1,7 +1,7 @@
 package FIS.iLUVit.domain.alarms;
 
 import FIS.iLUVit.domain.*;
-import FIS.iLUVit.service.MessageUtils;
+import FIS.iLUVit.service.AlarmUtils;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -25,8 +25,8 @@ public class PresentationConvertedToParticipateAlarm extends Alarm {
         String[] args = {center.getName()};
         this.presentation = presentation;
         this.center = center;
-        this.mode = MessageUtils.PRESENTATION_WAITING_TO_PARTICIPATE;
-        this.message = MessageUtils.getMessage(mode, args);
+        this.mode = AlarmUtils.PRESENTATION_WAITING_TO_PARTICIPATE;
+        this.message = AlarmUtils.getMessage(mode, args);
     }
 
 }

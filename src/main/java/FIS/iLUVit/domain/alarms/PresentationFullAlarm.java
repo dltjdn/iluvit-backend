@@ -1,9 +1,8 @@
 package FIS.iLUVit.domain.alarms;
 
-import FIS.iLUVit.domain.Center;
 import FIS.iLUVit.domain.Presentation;
 import FIS.iLUVit.domain.User;
-import FIS.iLUVit.service.MessageUtils;
+import FIS.iLUVit.service.AlarmUtils;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -20,9 +19,9 @@ public class PresentationFullAlarm extends Alarm{
 
     public PresentationFullAlarm(User user, Presentation presentation) {
         super(user);
-        this.mode = MessageUtils.PRESENTATION_APPLICANTS_FULL;
+        this.mode = AlarmUtils.PRESENTATION_APPLICANTS_FULL;
         this.presentation = presentation;
-        message = MessageUtils.getMessage(mode, null);
+        message = AlarmUtils.getMessage(mode, null);
     }
 
 
