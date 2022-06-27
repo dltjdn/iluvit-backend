@@ -7,6 +7,7 @@ import FIS.iLUVit.domain.Chat;
 import FIS.iLUVit.domain.Comment;
 import FIS.iLUVit.domain.Post;
 import FIS.iLUVit.domain.User;
+import FIS.iLUVit.domain.alarms.ChatAlarm;
 import FIS.iLUVit.exception.CommentException;
 import FIS.iLUVit.repository.ChatRepository;
 import FIS.iLUVit.repository.CommentRepository;

@@ -4,6 +4,7 @@ import FIS.iLUVit.controller.dto.PresentationModifyRequestDto;
 import FIS.iLUVit.controller.dto.PresentationRequestRequestFormDto;
 import FIS.iLUVit.controller.dto.PresentationResponseDto;
 import FIS.iLUVit.domain.*;
+import FIS.iLUVit.domain.alarms.PresentationCreatedAlarm;
 import FIS.iLUVit.domain.embeddable.Area;
 import FIS.iLUVit.domain.embeddable.Theme;
 import FIS.iLUVit.domain.enumtype.KindOf;
@@ -89,6 +90,10 @@ public class PresentationService {
         presentationRepository.save(presentation);
         String presentationDir = imageService.getPresentationDir(presentation.getId());
         imageService.saveInfoImage(images, presentationDir);
+
+        userRepository.getUserPreferByCenterId(center).forEach(prefer -> {
+            AlarmUtils.publishAlarmEvent(new PresentationCreatedAlarm(prefer.getParent(), presentation, center));
+        });
 
         return presentation;
     }

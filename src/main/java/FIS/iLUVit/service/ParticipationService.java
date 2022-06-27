@@ -30,6 +30,7 @@ public class ParticipationService {
     private final PtDateRepository ptDateRepository;
     private final ParentRepository parentRepository;
     private final UserRepository userRepository;
+    private final ApplicationEventPublisher publisher;
 
     public Long register(Long userId, Long ptDateId) {
         // 학부모 조회
@@ -67,7 +68,7 @@ public class ParticipationService {
         participation.cancel();
         // 참여를 취소할 경우 대기자 중에서 가장 높은 순번이 자동으로 등록 됨
         if(ptDate.hasWaiting()){
-            //publisher.publishEvent(new ParticipationCancelEvent(ptDate, null)); // 이벤트 리스너 호출
+            publisher.publishEvent(new ParticipationCancelEvent(ptDate, null)); // 이벤트 리스너 호출
         }
         return participationId;
     }
