@@ -34,6 +34,7 @@ class UserTest {
                 .setParameter("id", teacher.getId())
                 .getSingleResult();
         System.out.println("teacher = " + user.getDtype());
+        
     }
 
 }
