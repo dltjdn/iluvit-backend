@@ -70,7 +70,7 @@ public class ImageService {
     /**
      * Presentation Id를 넣으면 해당 child profile 이미지 경로 반환
      */
-    public String getChileProfileDir(){
+    public String getChildProfileDir(){
         return childProfileImagePath;
     }
 

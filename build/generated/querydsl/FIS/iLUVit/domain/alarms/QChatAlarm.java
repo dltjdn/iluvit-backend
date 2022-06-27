@@ -36,9 +36,6 @@ public class QChatAlarm extends EntityPathBase<ChatAlarm> {
     //inherited
     public final StringPath message;
 
-    //inherited
-    public final StringPath mode;
-
     public final FIS.iLUVit.domain.QUser sender;
 
     //inherited
@@ -70,7 +67,6 @@ public class QChatAlarm extends EntityPathBase<ChatAlarm> {
         this.dtype = _super.dtype;
         this.id = _super.id;
         this.message = _super.message;
-        this.mode = _super.mode;
         this.sender = inits.isInitialized("sender") ? new FIS.iLUVit.domain.QUser(forProperty("sender")) : null;
         this.updatedDate = _super.updatedDate;
         this.user = _super.user;

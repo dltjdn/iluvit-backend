@@ -56,13 +56,5 @@ public class ParentController {
         parentService.signup(request);
     }
 
-    /**
-    *   작성날짜: 2022/06/23 5:24 PM
-    *   작성자: 이승범
-    *   작성내용: 아이 추가
-    */
-    @PostMapping("/parent/child")
-    public void saveChild(@Login Long userId, @ModelAttribute SaveChildRequest request) {
-        parentService.saveChild(userId, request);
-    }
+
 }

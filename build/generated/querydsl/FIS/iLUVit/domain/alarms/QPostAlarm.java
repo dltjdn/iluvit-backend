@@ -36,9 +36,6 @@ public class QPostAlarm extends EntityPathBase<PostAlarm> {
     //inherited
     public final StringPath message;
 
-    //inherited
-    public final StringPath mode;
-
     public final FIS.iLUVit.domain.QPost post;
 
     //inherited
@@ -70,7 +67,6 @@ public class QPostAlarm extends EntityPathBase<PostAlarm> {
         this.dtype = _super.dtype;
         this.id = _super.id;
         this.message = _super.message;
-        this.mode = _super.mode;
         this.post = inits.isInitialized("post") ? new FIS.iLUVit.domain.QPost(forProperty("post"), inits.get("post")) : null;
         this.updatedDate = _super.updatedDate;
         this.user = _super.user;

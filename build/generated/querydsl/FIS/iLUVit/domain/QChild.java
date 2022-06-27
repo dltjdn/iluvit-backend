@@ -26,7 +26,7 @@ public class QChild extends EntityPathBase<Child> {
 
     public final EnumPath<FIS.iLUVit.domain.enumtype.Approval> approval = createEnum("approval", FIS.iLUVit.domain.enumtype.Approval.class);
 
-    public final StringPath birthDate = createString("birthDate");
+    public final DatePath<java.time.LocalDate> birthDate = createDate("birthDate", java.time.LocalDate.class);
 
     public final QCenter center;
 

@@ -33,8 +33,6 @@ public class QAlarm extends EntityPathBase<Alarm> {
 
     public final StringPath message = createString("message");
 
-    public final StringPath mode = createString("mode");
-
     //inherited
     public final DateTimePath<java.time.LocalDateTime> updatedDate = _super.updatedDate;
 

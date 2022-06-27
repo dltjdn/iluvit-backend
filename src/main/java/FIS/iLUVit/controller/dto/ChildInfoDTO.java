@@ -22,15 +22,15 @@ public class ChildInfoDTO {
         private String name;
         private Long center_id;
         private String center_name;
-        private Boolean hasProfileImg;
+        private String profileImage;
         private Approval approval;
 
-        public ChildInfo(Child child) {
+        public ChildInfo(Child child, String image) {
             this.id = child.getId();
             this.name = child.getName();
             this.center_id = child.getCenter().getId();
             this.center_name = child.getCenter().getName();
-            this.hasProfileImg = child.getHasProfileImg();
+            this.profileImage = image;
             this.approval = child.getApproval();
         }
     }
