@@ -120,6 +120,7 @@ public class TeacherService {
             if (center.getTeachers().isEmpty()) {
                 createCenterStory(center);
             }
+            // center default boards bookmark 추가하기
             List<Board> defaultBoards = boardRepository.findDefaultByCenter(center.getId());
             int order = 1;
             for (Board defaultBoard : defaultBoards) {
@@ -135,7 +136,7 @@ public class TeacherService {
         authNumberRepository.deleteByPhoneNumAndAuthKind(request.getPhoneNum(), AuthKind.signup);
     }
 
-    // 시설에 대한 최초 승인요청일 경우 기본 게시판(자유, 공지, 정보, 영상)생성 -> 나중에 관리자가 원장승인을 해줬을때로 바꿔야됨
+    // 시설에 대한 최초 승인요청일 경우 기본 게시판(자유, 공지, 정보, 영상)생성 -> 나중에 관리자가 원장승인을 해줬을때로 바꿔야됨 and center signed to true
     private void createCenterStory(Center center) {
         Board noticeBoard = Board.createBoard("공지사항", BoardKind.NOTICE, center, true);
         Board freeBoard = Board.createBoard("자유 게시판", BoardKind.NORMAL, center, true);

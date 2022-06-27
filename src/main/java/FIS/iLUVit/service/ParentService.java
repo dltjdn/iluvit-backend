@@ -167,6 +167,7 @@ public class ParentService {
 
         // 아이 등록
         Child newChild = request.createChild(center, parent);
+
         childRepository.save(newChild);
     }
 }
