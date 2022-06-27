@@ -6,14 +6,16 @@ import FIS.iLUVit.controller.dto.ReviewCreateDTO;
 import FIS.iLUVit.domain.*;
 import FIS.iLUVit.domain.embeddable.Score;
 import FIS.iLUVit.domain.enumtype.Approval;
+import FIS.iLUVit.domain.enumtype.Auth;
 import FIS.iLUVit.exception.CenterException;
 import FIS.iLUVit.exception.ReviewException;
 import FIS.iLUVit.exception.UserException;
 import FIS.iLUVit.repository.*;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Slice;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -33,8 +35,6 @@ public class ReviewService {
     private final ImageService imageService;
 
     public ReviewByParentDTO findByParent(Long userId) {
-        Parent findUser = parentRepository.findById(userId)
-                .orElseThrow(() -> new UserException("존재하지 않는 유저"));// 학부모 정보 find
         List<Review> reviews = reviewRepository.findByParent(userId);
         ReviewByParentDTO reviewDtoList = new ReviewByParentDTO();
 
@@ -43,16 +43,16 @@ public class ReviewService {
                     review.getId(), review.getCenter().getName(), review.getContent(), review.getCreateDate()
             ));
         });
-
         return reviewDtoList;
     }
 
     public void saveReview(Long userId, ReviewCreateDTO reviewCreateDTO) {
 
-        Parent findUser = parentRepository.findById(userId)
-                .orElseThrow(() -> new UserException("존재하지 않는 유저"));// 학부모 정보 find
+        Parent findUser = parentRepository.getById(userId);
         Center findCenter = centerRepository.findById(reviewCreateDTO.getCenterId())
                 .orElseThrow(() -> new CenterException("존재하지 않는 시설"));
+
+        // 유저가 시설에 작성한 리뷰가 이미 존재하는 지 검증
         reviewRepository.findByUserAndCenter(userId, reviewCreateDTO.getCenterId())
                 .ifPresent((r) -> {
                     log.info("r.getId : " + r.getId().toString());
@@ -69,50 +69,9 @@ public class ReviewService {
         Review findReview = reviewRepository.findById(reviewId).orElseThrow(
                 () -> new ReviewException("존재하지 않는 리뷰 아이디"));
         if (!Objects.equals(findReview.getParent().getId(), userId)) {
-            throw new UserException("수정 권한없는 유저");
+            throw new UserException("수정 권한 없는 유저");
         }
         findReview.updateContent(content);
-    }
-
-    public ReviewByCenterDTO findByCenter(Long centerId, Long userId) {
-        Page<Review> reviews = reviewRepository.findByCenterAndParent(centerId, PageRequest.of(0, 10)); // getParent 지연 로딩 쿼리 막음
-        ReviewByCenterDTO reviewByCenterDTO = new ReviewByCenterDTO();
-        reviews.forEach((review) -> {
-            log.info("userId: " + userId);
-            Integer like = review.getReviewHearts().size();
-            String imagePath = imageService.getUserProfileDir();
-            String encodedProfileImage = imageService.getEncodedProfileImage(imagePath, userId);
-            Long teacherId = review.getTeacher() == null ? null : review.getTeacher().getId();
-            reviewByCenterDTO.getReviews().add(new ReviewByCenterDTO.ReviewCenterDto(
-               review.getId(), review.getParent().getId(), review.getParent().getNickName(), review.getContent(), review.getScore(),
-                    review.getCreateDate(), review.getCreateTime(), review.getUpdateDate(), review.getUpdateTime(),
-                    teacherId, review.getAnswer(), review.getAnswerCreateDate(), review.getAnswerCreateTime(),
-                    review.getAnonymous(), like, encodedProfileImage
-            ));
-        });
-        return reviewByCenterDTO;
-    }
-
-    public void saveComment(Long reviewId, String comment, Long teacherId) {
-        Review review = reviewRepository.findById(reviewId)
-                .orElseThrow(() -> new ReviewException("존재하지 않는 리뷰 아이디"));
-        Teacher teacher = teacherRepository.findById(teacherId)
-                .orElseThrow(() -> new UserException("존재하지 않는 티처 아이디"));
-        if (!teacher.getApproval().equals(Approval.ACCEPT)) {
-            throw new UserException("권한이 없는 티처입니다. (승인 대기 혹은 반려 상태)");
-        }
-        log.info("teacher.getCenter() : " + teacher.getCenter().toString());
-        log.info("review.getCenter() : " + review.getCenter().toString());
-        if (teacher.getCenter() != review.getCenter()) {
-            throw new UserException("권한없는 티처입니다. (해당 센터의 티처가 아님)");
-        }
-//        if (review.getTeacher().getId() != null) {
-//            if (!Objects.equals(review.getTeacher().getId(), teacherId)) {
-//                throw new IllegalStateException("수정 권한없는 티처입니다. (다른 티처가 쓴 리뷰임)");
-//            }
-//        }
-
-        review.updateAnswer(comment, teacher);
     }
 
     public void deleteReview(Long reviewId, Long userId) {
@@ -121,7 +80,48 @@ public class ReviewService {
         if (!Objects.equals(findReview.getParent().getId(), userId)) {
             throw new UserException("삭제 권한 없는 유저");
         }
-        reviewRepository.deleteById(reviewId);
+        reviewRepository.delete(findReview);
+    }
+
+    public ReviewByCenterDTO findByCenter(Long centerId, Long userId, Pageable pageable) {
+        // getParent 지연 로딩 쿼리 막음
+        Slice<Review> reviews = reviewRepository.findByCenterAndParent(centerId, pageable);
+
+        Slice<ReviewByCenterDTO.ReviewCenterDto> dtos = reviews.map(review -> {
+            log.info("userId: " + userId);
+            Integer like = review.getReviewHearts().size();
+            String imagePath = imageService.getUserProfileDir();
+            String encodedProfileImage = imageService.getEncodedProfileImage(imagePath, userId);
+            Long teacherId = review.getTeacher() == null ? null : review.getTeacher().getId();
+            return new ReviewByCenterDTO.ReviewCenterDto(
+                    review.getId(), review.getParent().getId(), review.getParent().getNickName(), review.getContent(), review.getScore(),
+                    review.getCreateDate(), review.getCreateTime(), review.getUpdateDate(), review.getUpdateTime(),
+                    teacherId, review.getAnswer(), review.getAnswerCreateDate(), review.getAnswerCreateTime(),
+                    review.getAnonymous(), like, encodedProfileImage
+            );
+        });
+
+        return new ReviewByCenterDTO(dtos);
+    }
+
+    public void saveComment(Long reviewId, String comment, Long teacherId) {
+        Review review = reviewRepository.findById(reviewId)
+                .orElseThrow(() -> new ReviewException("존재하지 않는 리뷰 아이디"));
+        Teacher teacher = teacherRepository.findById(teacherId)
+                .orElseThrow(() -> new UserException("존재하지 않는 티처 아이디"));
+        log.info("teacher.getCenter() : " + teacher.getCenter().toString());
+        log.info("review.getCenter() : " + review.getCenter().toString());
+        if (teacher.getAuth() != Auth.DIRECTOR) {
+            throw new ReviewException("리뷰 작성은 DIRECTOR 권한만 허용됩니다.");
+        }
+        if (!teacher.getApproval().equals(Approval.ACCEPT)) {
+            throw new UserException("권한이 없는 티처입니다. (승인 대기 혹은 반려 상태)");
+        }
+        if (teacher.getCenter() != review.getCenter()) {
+            throw new UserException("권한없는 티처입니다. (해당 센터의 티처가 아님)");
+        }
+
+        review.updateAnswer(comment, teacher);
     }
 
     public void deleteComment(Long reviewId, Long teacherId) {

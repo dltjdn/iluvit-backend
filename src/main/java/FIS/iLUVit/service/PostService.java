@@ -34,14 +34,13 @@ public class PostService {
     private final CenterRepository centerRepository;
     private final BookmarkRepository bookmarkRepository;
     private final ScrapPostRepository scrapPostRepository;
+    private final PostHeartRepository postHeartRepository;
 
     public void savePost(PostRegisterRequest request, List<MultipartFile> images, Long userId) {
-        User findUser = userRepository.findById(userId)
-                .orElseThrow(() -> new UserException("존재하지 않는 유저"));
-        Integer imgSize = (images == null ? 0 : images.size());
 
+        User findUser = userRepository.getById(userId);
         Board findBoard = boardRepository.findById(request.getBoard_id())
-                .orElseThrow(() -> new BoardException("존재하지 않는 보드"));
+                .orElseThrow(() -> new BoardException("존재하지 않는 게시판"));
 
         if (findBoard.getBoardKind() == BoardKind.NOTICE) {
             if (findUser.getAuth() == Auth.PARENT) {
@@ -49,6 +48,8 @@ public class PostService {
             }
         }
 
+
+        Integer imgSize = (images == null ? 0 : images.size());
         Post post = new Post(request.getTitle(), request.getContent(), request.getAnonymous(),
                 0, 0, imgSize, 0, findBoard, findUser);
 
@@ -74,9 +75,10 @@ public class PostService {
 
 
     public GetPostResponse findById(Long postId) {
-
+        // 게시글과 연관된 유저, 게시판, 시설 한 번에 끌고옴
         Post findPost = postRepository.findByIdWithUserAndBoardAndCenter(postId)
                 .orElseThrow(() -> new PostException("존재하지 않는 게시글"));
+        // 첨부된 이미지 파일, 게시글에 달린 댓글 지연 로딩으로 가져와 DTO 생성
         return getPostResponseDto(findPost);
     }
 
@@ -84,7 +86,6 @@ public class PostService {
         log.info("input : " + input);
 
         Set<Long> centerIds = new HashSet<>();
-//        List<Long> boardIds;
 
         if (auth == Auth.PARENT) {
             // 학부모 유저일 때 아이와 연관된 센터의 아이디를 모두 가져옴
@@ -94,21 +95,21 @@ public class PostService {
 
 
         } else {
+            // 교사 유저는 연관된 센터 가져옴
             Center center = centerRepository.findCenterByTeacher(userId).get();
             centerIds.add(center.getId());
 
         }
 
-        Slice<GetPostResponsePreview> posts = postRepository.findWithBoardAndCenter(centerIds, input, pageable);
         // 센터의 게시판 + 모두의 게시판(centerId == null) 키워드 검색
+        Slice<GetPostResponsePreview> posts = postRepository.findWithBoardAndCenter(centerIds, input, pageable);
+        // 끌어온 게시글에 이미지 있으면 프리뷰용 이미지 넣어줌
         posts.forEach(g -> setPreviewImage(g));
         return posts;
     }
 
     public Slice<GetPostResponsePreview> searchByKeywordAndCenter(Long centerId, String input, Auth auth, Long userId, Pageable pageable) {
-        if (centerId == null) {
-            return searchByKeyword(input, auth, userId, pageable);
-        }
+        // 센터 아이디 null 인 경우 모두의 이야기 안에서 검색됨
         Slice<GetPostResponsePreview> posts = postRepository.findWithCenter(centerId, input, auth, userId, pageable);
         posts.forEach(g -> setPreviewImage(g));
         return posts;
@@ -213,7 +214,26 @@ public class PostService {
     }
 
     public Slice<GetPostResponsePreview> findByHeartCnt(Long centerId, Pageable pageable) {
+        // heartCnt 가 n 개 이상이면 HOT 게시판에 넣어줍니다.
         return postRepository.findHotPosts(centerId, pageable);
+    }
+
+    /**
+        작성자: 이창윤
+        작성시간: 2022/06/27 1:40 PM
+        내용: 게시글에 이미 좋아요 눌렀는지 검증 후 저장
+    */
+    public void savePostHeart(Long userId, Long postId) {
+        Post findPost = postRepository.findById(postId)
+                .orElseThrow(() -> new PostException("존재하지 않는 게시글"));
+        User findUser = userRepository.getById(userId);
+        findPost.getPostHearts().forEach(ph -> {
+            if (Objects.equals(ph.getUser().getId(), userId)) {
+                throw new PostException("이미 좋아요 누른 게시글");
+            }
+        });
+        PostHeart postHeart = new PostHeart(findUser, findPost);
+        postHeartRepository.save(postHeart);
     }
 
     /**
