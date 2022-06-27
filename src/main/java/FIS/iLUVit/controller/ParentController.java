@@ -61,8 +61,8 @@ public class ParentController {
     *   작성자: 이승범
     *   작성내용: 아이 추가
     */
-//    @PostMapping("/parent/child")
-//    public void saveChild(@Login Long userId, @ModelAttribute SaveChildRequest request) {
-//        parentService.saveChild(userId, request);
-//    }
+    @PostMapping("/parent/child")
+    public void saveChild(@Login Long userId, @ModelAttribute SaveChildRequest request) {
+        parentService.saveChild(userId, request);
+    }
 }

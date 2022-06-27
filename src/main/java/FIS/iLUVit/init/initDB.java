@@ -76,9 +76,9 @@ public class initDB {
             em.persist(parent3);
 
             // 아이 추가
-            Child child1 = Child.createChild("zxc", "zxc", Approval.WAITING, parent1);
-            Child child2 = Child.createChild("zxc", "zxc", Approval.ACCEPT, parent1);
-            Child child3 = Child.createChild("zxc", "zxc", Approval.ACCEPT, parent1);
+            Child child1 = Child.createChild("zxc", LocalDate.now(), Approval.WAITING, parent1);
+            Child child2 = Child.createChild("zxc", LocalDate.now(), Approval.ACCEPT, parent1);
+            Child child3 = Child.createChild("zxc", LocalDate.now(), Approval.ACCEPT, parent1);
             child1.mappingCenter(center1);
             child2.mappingCenter(center2);
             em.persist(child1);
