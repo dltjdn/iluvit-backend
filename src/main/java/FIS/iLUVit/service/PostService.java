@@ -36,12 +36,10 @@ public class PostService {
     private final ScrapPostRepository scrapPostRepository;
 
     public void savePost(PostRegisterRequest request, List<MultipartFile> images, Long userId) {
-        User findUser = userRepository.findById(userId)
-                .orElseThrow(() -> new UserException("존재하지 않는 유저"));
-        Integer imgSize = (images == null ? 0 : images.size());
 
+        User findUser = userRepository.getById(userId);
         Board findBoard = boardRepository.findById(request.getBoard_id())
-                .orElseThrow(() -> new BoardException("존재하지 않는 보드"));
+                .orElseThrow(() -> new BoardException("존재하지 않는 게시판"));
 
         if (findBoard.getBoardKind() == BoardKind.NOTICE) {
             if (findUser.getAuth() == Auth.PARENT) {
@@ -49,6 +47,8 @@ public class PostService {
             }
         }
 
+
+        Integer imgSize = (images == null ? 0 : images.size());
         Post post = new Post(request.getTitle(), request.getContent(), request.getAnonymous(),
                 0, 0, imgSize, 0, findBoard, findUser);
 

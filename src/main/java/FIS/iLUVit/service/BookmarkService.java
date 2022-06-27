@@ -81,7 +81,6 @@ public class BookmarkService {
 
         User findUser = userRepository.getById(userId);
         Board findBoard = boardRepository.getById(boardId);
-
         Bookmark bookmark = new Bookmark(max + 1, findBoard, findUser);
         bookmarkRepository.save(bookmark);
     }
@@ -92,7 +91,7 @@ public class BookmarkService {
         Bookmark findBookmark = bookmarkRepository.findById(bookmarkId)
                 .orElseThrow(() -> new BookmarkException("존재하지 않는 북마크"));
         if (!Objects.equals(findBookmark.getUser().getId(), findUser.getId())) {
-            throw new IllegalStateException("삭제 권한 없는 유저");
+            throw new UserException("삭제 권한 없는 유저");
         }
         bookmarkRepository.deleteById(bookmarkId);
 

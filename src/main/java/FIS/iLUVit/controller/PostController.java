@@ -19,6 +19,11 @@ public class PostController {
 
     private final PostService postService;
 
+    /**
+        작성자: 이창윤
+        작성시간: 2022/06/27 11:31 AM
+        내용: multipart/form-data 형식으로 변환된 request, 이미지 파일 리스트 images 파라미터로 게시글 저장
+    */
     @PostMapping(value = "/post", consumes = {MediaType.APPLICATION_JSON_VALUE, MediaType.MULTIPART_FORM_DATA_VALUE})
     public void registerPost(@Login Long userId,
                              @RequestPart PostRegisterRequest request,
