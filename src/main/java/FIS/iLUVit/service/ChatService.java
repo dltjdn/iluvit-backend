@@ -7,6 +7,7 @@ import FIS.iLUVit.domain.Chat;
 import FIS.iLUVit.domain.Comment;
 import FIS.iLUVit.domain.Post;
 import FIS.iLUVit.domain.User;
+import FIS.iLUVit.domain.alarms.ChatAlarm;
 import FIS.iLUVit.exception.CommentException;
 import FIS.iLUVit.repository.ChatRepository;
 import FIS.iLUVit.repository.CommentRepository;
@@ -32,7 +33,7 @@ public class ChatService {
     private final PostRepository postRepository;
     private final CommentRepository commentRepository;
 
-    public void saveChat(Long userId, CreateChatRequest request) {
+    public Long saveChat(Long userId, CreateChatRequest request) {
         User sendUser = userRepository.getById(userId);
         User receiveUser = userRepository.getById(request.getReceiver_id());
 
@@ -51,7 +52,9 @@ public class ChatService {
             chat.updateComment(findComment);
         }
 
-        chatRepository.save(chat);
+        AlarmUtils.publishAlarmEvent(new ChatAlarm(receiveUser, sendUser));
+
+        return chatRepository.save(chat).getId();
 
     }
 
