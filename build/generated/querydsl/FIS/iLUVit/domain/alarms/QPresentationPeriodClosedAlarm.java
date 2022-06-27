@@ -11,20 +11,18 @@ import com.querydsl.core.types.dsl.PathInits;
 
 
 /**
- * QCenterApprovalAlarm is a Querydsl query type for CenterApprovalAlarm
+ * QPresentationPeriodClosedAlarm is a Querydsl query type for PresentationPeriodClosedAlarm
  */
 @Generated("com.querydsl.codegen.DefaultEntitySerializer")
-public class QCenterApprovalAlarm extends EntityPathBase<CenterApprovalAlarm> {
+public class QPresentationPeriodClosedAlarm extends EntityPathBase<PresentationPeriodClosedAlarm> {
 
-    private static final long serialVersionUID = -1522991050L;
+    private static final long serialVersionUID = -1871179705L;
 
     private static final PathInits INITS = PathInits.DIRECT2;
 
-    public static final QCenterApprovalAlarm centerApprovalAlarm = new QCenterApprovalAlarm("centerApprovalAlarm");
+    public static final QPresentationPeriodClosedAlarm presentationPeriodClosedAlarm = new QPresentationPeriodClosedAlarm("presentationPeriodClosedAlarm");
 
     public final QAlarm _super;
-
-    public final FIS.iLUVit.domain.QCenter center;
 
     //inherited
     public final DateTimePath<java.time.LocalDateTime> createdDate;
@@ -38,8 +36,7 @@ public class QCenterApprovalAlarm extends EntityPathBase<CenterApprovalAlarm> {
     //inherited
     public final StringPath message;
 
-    //inherited
-    public final StringPath mode;
+    public final FIS.iLUVit.domain.QPresentation presentation;
 
     //inherited
     public final DateTimePath<java.time.LocalDateTime> updatedDate;
@@ -47,31 +44,30 @@ public class QCenterApprovalAlarm extends EntityPathBase<CenterApprovalAlarm> {
     // inherited
     public final FIS.iLUVit.domain.QUser user;
 
-    public QCenterApprovalAlarm(String variable) {
-        this(CenterApprovalAlarm.class, forVariable(variable), INITS);
+    public QPresentationPeriodClosedAlarm(String variable) {
+        this(PresentationPeriodClosedAlarm.class, forVariable(variable), INITS);
     }
 
-    public QCenterApprovalAlarm(Path<? extends CenterApprovalAlarm> path) {
+    public QPresentationPeriodClosedAlarm(Path<? extends PresentationPeriodClosedAlarm> path) {
         this(path.getType(), path.getMetadata(), PathInits.getFor(path.getMetadata(), INITS));
     }
 
-    public QCenterApprovalAlarm(PathMetadata metadata) {
+    public QPresentationPeriodClosedAlarm(PathMetadata metadata) {
         this(metadata, PathInits.getFor(metadata, INITS));
     }
 
-    public QCenterApprovalAlarm(PathMetadata metadata, PathInits inits) {
-        this(CenterApprovalAlarm.class, metadata, inits);
+    public QPresentationPeriodClosedAlarm(PathMetadata metadata, PathInits inits) {
+        this(PresentationPeriodClosedAlarm.class, metadata, inits);
     }
 
-    public QCenterApprovalAlarm(Class<? extends CenterApprovalAlarm> type, PathMetadata metadata, PathInits inits) {
+    public QPresentationPeriodClosedAlarm(Class<? extends PresentationPeriodClosedAlarm> type, PathMetadata metadata, PathInits inits) {
         super(type, metadata, inits);
         this._super = new QAlarm(type, metadata, inits);
-        this.center = inits.isInitialized("center") ? new FIS.iLUVit.domain.QCenter(forProperty("center"), inits.get("center")) : null;
         this.createdDate = _super.createdDate;
         this.dtype = _super.dtype;
         this.id = _super.id;
         this.message = _super.message;
-        this.mode = _super.mode;
+        this.presentation = inits.isInitialized("presentation") ? new FIS.iLUVit.domain.QPresentation(forProperty("presentation"), inits.get("presentation")) : null;
         this.updatedDate = _super.updatedDate;
         this.user = _super.user;
     }
