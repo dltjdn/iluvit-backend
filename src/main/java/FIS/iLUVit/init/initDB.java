@@ -214,7 +214,6 @@ public class initDB {
             em.persist(commentHeart3);
             em.persist(commentHeart4);
             em.persist(commentHeart5);
-
         }
     }
 }
