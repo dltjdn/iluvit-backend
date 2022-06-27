@@ -9,10 +9,7 @@ import FIS.iLUVit.domain.embeddable.Theme;
 import FIS.iLUVit.domain.enumtype.KindOf;
 import FIS.iLUVit.exception.PresentationException;
 import FIS.iLUVit.exception.UserException;
-import FIS.iLUVit.repository.CenterRepository;
-import FIS.iLUVit.repository.PresentationRepository;
-import FIS.iLUVit.repository.PtDateRepository;
-import FIS.iLUVit.repository.UserRepository;
+import FIS.iLUVit.repository.*;
 import FIS.iLUVit.repository.dto.PresentationPreviewForTeacher;
 import FIS.iLUVit.repository.dto.PresentationPreviewForUsers;
 import FIS.iLUVit.repository.dto.PresentationWithPtDatesDto;
@@ -45,6 +42,7 @@ public class PresentationService {
     private final CenterRepository centerRepository;
     private final ImageService imageService;
     private final UserRepository userRepository;
+    private final WaitingRepository waitingRepository;
 
     public List<PresentationResponseDto> findPresentationByCenterIdAndDate(Long centerId) {
         List<PresentationWithPtDatesDto> queryDtos = presentationRepository.findByCenterAndDateWithPtDates(centerId, LocalDate.now());
@@ -139,6 +137,22 @@ public class PresentationService {
                 PtDate ptDate = ptDateMap.get(ptDateModifyDto.getPtDateId());
                 if(ptDate == null)
                     throw new PresentationException("잘못된 접근입니다");
+                if(ptDateModifyDto.getAblePersonNum() > ptDate.getAblePersonNum() && ptDate.hasWaiting()){
+                    // 추가 수용 가능 인원 숫자 체크
+                    Integer changeNum = ptDateModifyDto.getAblePersonNum() - ptDate.getAblePersonNum();
+                    // 추가 수용될 인원 추출
+                    List<Waiting> waitings = waitingRepository.findWaitingsByPtDateAndOrderNum(ptDate, changeNum);
+                    // 추가 수용될 인원 id 만 추출
+                    List<Long> waitingIds = waitings.stream().map(Waiting::getId).collect(toList());
+                    // 수용 인원들 waiting 에서 삭제
+                    waitingRepository.deleteAllById(waitingIds);
+                    // 수용 외의 인원들 order 감소
+                    waitingRepository.updateWaitingOrderForPtDateChange(changeNum);
+                    ptDate.updateWaitingCntForPtDateChange(changeNum);
+                    waitings.forEach(waiting -> {
+                        Participation.createAndRegister(waiting.getParent(), ptDate, ptDate.getParticipations());
+                    });
+                }
                 ptDate.update(ptDateModifyDto);
                 ptDateMap.remove(ptDate.getId());
             }
@@ -146,9 +160,11 @@ public class PresentationService {
 
         Set<Long> ptDateKeysDeleteTarget = ptDateMap.keySet();
         Collection<PtDate> ptDateSet = ptDateMap.values();
+
         ptDateSet.forEach(ptDate -> ptDate.canDelete());
         presentation.getPtDates().removeAll(ptDateSet);
         ptDateRepository.deletePtDateByIds(ptDateKeysDeleteTarget);
+
         presentation.update(request, images.size(), 0);
         String presentationDir = imageService.getPresentationDir(presentation.getId());
         imageService.saveInfoImage(images, presentationDir);

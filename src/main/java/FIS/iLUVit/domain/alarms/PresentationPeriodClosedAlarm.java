@@ -1,6 +1,6 @@
 package FIS.iLUVit.domain.alarms;
 
-import FIS.iLUVit.domain.Chat;
+import FIS.iLUVit.domain.Presentation;
 import FIS.iLUVit.domain.User;
 import FIS.iLUVit.service.MessageUtils;
 import lombok.Getter;
@@ -14,17 +14,17 @@ import javax.persistence.ManyToOne;
 @Entity
 @NoArgsConstructor
 @Getter
-public class ChatAlarm extends Alarm{
+public class PresentationPeriodClosedAlarm extends Alarm{
 
-    @JoinColumn(name = "senderId")
     @ManyToOne(fetch = FetchType.LAZY)
-    private User sender;
+    @JoinColumn(name = "presentationId")
+    private Presentation presentation;
 
-    public ChatAlarm(User user, User sender) {
+    public PresentationPeriodClosedAlarm(User user, Presentation presentation) {
         super(user);
-        this.mode = MessageUtils.CHAT_RECEIVED;
-        this.sender = sender;
-        String[] args = {sender.getNickName()};
-        this.message = MessageUtils.getMessage(mode, args);
+        this.mode = MessageUtils.PRESENTATION_CLOSED;
+        this.presentation = presentation;
+        message = MessageUtils.getMessage(mode, null);
     }
+
 }

@@ -35,8 +35,7 @@ out/
 
 ### VS Code ###
 .vscode/
-*.properties
 **/.DS_Store
 src/main/resources/application-secret.yml
 src/main/resources/application-mysql.yml
-application.properties
+src/main/resources/application.properties
