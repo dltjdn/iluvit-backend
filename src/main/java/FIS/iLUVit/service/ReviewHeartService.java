@@ -25,17 +25,17 @@ public class ReviewHeartService {
                 .ifPresent(m -> {
                     throw new ReviewException("이미 좋아요한 리뷰에 좋아요 불가능");
                 });
-        Review findReview = reviewRepository.findById(reviewId)
-                .orElseThrow(() -> new ReviewException("존재하지 않는 리뷰 아이디"));
-        User user = userRepository.findById(userId)
-                .orElseThrow(() -> new UserException("존재하지 않는 유저 아이디"));
+        Review findReview = reviewRepository.getById(reviewId);
+        User user = userRepository.getById(userId);
         ReviewHeart reviewHeart = new ReviewHeart(findReview, user);
         reviewHeartRepository.save(reviewHeart);
     }
 
     public void deleteReviewHeart(Long reviewId, Long userId) {
-        ReviewHeart findReviewHeart = reviewHeartRepository.findByReviewAndUser(reviewId, userId)
-                .orElseThrow(() -> new ReviewException("존재하지 않는 좋아요"));
-        reviewHeartRepository.delete(findReviewHeart);
+        // 리뷰 좋아요한 데이터가 존재하면 삭제, 존재하지 않는데 삭제 요청을 보내면 Exception 터뜨림
+        reviewHeartRepository.findByReviewAndUser(reviewId, userId)
+                .ifPresentOrElse(reviewHeartRepository::delete, () -> {
+                    throw new ReviewException("존재하지 않는 좋아요 취소 시도");
+                });
     }
 }

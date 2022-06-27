@@ -5,11 +5,8 @@ import FIS.iLUVit.controller.dto.CreateBoardRequest;
 import FIS.iLUVit.domain.Board;
 import FIS.iLUVit.domain.Bookmark;
 import FIS.iLUVit.domain.Center;
-import FIS.iLUVit.domain.User;
-import FIS.iLUVit.domain.enumtype.Auth;
 import FIS.iLUVit.exception.BoardException;
 import FIS.iLUVit.exception.CenterException;
-import FIS.iLUVit.exception.UserException;
 import FIS.iLUVit.repository.BoardRepository;
 import FIS.iLUVit.repository.BookmarkRepository;
 import FIS.iLUVit.repository.CenterRepository;
@@ -79,7 +76,7 @@ public class BoardService {
         if (center_id == null) {
             boardRepository.findByName(request.getBoard_name())
                     .ifPresent((b) -> {
-                        throw new UserException(b.getName() + " == " + request.getBoard_name() + " : 이름 중복");
+                        throw new BoardException(b.getName() + " == " + request.getBoard_name() + " : 이름 중복");
                     });
             boardRepository.save(Board.createBoard(request.getBoard_name(), request.getBoardKind(), null, false));
             return;
@@ -88,7 +85,7 @@ public class BoardService {
         // 시설의 이야기에서 게시판 이름 중복성 검사 및 저장
         boardRepository.findByNameWithCenter(request.getBoard_name(), center_id)
                 .ifPresent((b) -> {
-                    throw new UserException(b.getName() + " == " + request.getBoard_name() + " : 이름 중복");
+                    throw new BoardException(b.getName() + " == " + request.getBoard_name() + " : 이름 중복");
                 });
 
         Center findCenter = centerRepository.findById(center_id)
