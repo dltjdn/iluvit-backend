@@ -29,7 +29,7 @@ public class ChatController {
     /**
      작성자: 이창윤
      작성시간: 2022/06/24 3:10 PM
-     내용: 나의 쪽지함 (대화 상대 목록) 조회, 최신순 정렬
+     내용: 나의 쪽지함 (대화 상대 목록) 조회, 최신순 정렬로 대화 상대와 함께 쪽지 목록을 보여줌.
      */
     @GetMapping("/chat/list")
     public Slice<ChatListDTO> findAll(@Login Long userId, Pageable pageable) {

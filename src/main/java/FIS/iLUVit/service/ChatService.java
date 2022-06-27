@@ -57,33 +57,12 @@ public class ChatService {
 
     public Slice<ChatListDTO> findAll(Long userId, Pageable pageable) {
         Slice<Chat> chatList = chatRepository.findByUser(userId, pageable);
-
-//        Slice<Chat> chatList = chatRepository.findFirstByPost(userId, pageable);
-
-        List<ChatListDTO> content = chatList.getContent().stream()
-                .map(c -> new ChatListDTO(c))
-                .collect(Collectors.toList());
-
-        boolean hasNext = false;
-        if(content.size() > pageable.getPageSize()){
-            content.remove(pageable.getPageSize());
-            hasNext = true;
-        }
-        return new SliceImpl<>(content, pageable, hasNext);
+        return chatList.map(c -> new ChatListDTO(c));
     }
 
     public Slice<ChatDTO> findByOpponent(Long userId, Long otherId, Pageable pageable) {
-//        Slice<Chat> chatList = chatRepository.findByPost(userId, receiverId, pageable);
-        Slice<Chat> chatList = chatRepository.findByOpponent(userId, otherId, pageable);
-        List<ChatDTO> content = chatList.getContent().stream()
-                .map(c -> new ChatDTO(c))
-                .collect(Collectors.toList());
 
-        boolean hasNext = false;
-        if(content.size() > pageable.getPageSize()){
-            content.remove(pageable.getPageSize());
-            hasNext = true;
-        }
-        return new SliceImpl<>(content, pageable, hasNext);
+        Slice<Chat> chatList = chatRepository.findByOpponent(userId, otherId, pageable);
+        return chatList.map(c -> new ChatDTO(c));
     }
 }
