@@ -13,7 +13,6 @@ import java.util.List;
 
 @Entity
 @Getter
-@OnDelete(action = OnDeleteAction.CASCADE)
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Scrap extends BaseEntity {
     @Id @GeneratedValue
