@@ -39,9 +39,9 @@ public class BoardController {
         내용: 게시판 생성 - center_id 값 유무에 따라 모두/시설 이야기 내 게시판 생성
     */
     @PostMapping("/board")
-    public void createBoard(@RequestParam(value = "center_id", required = false) Long center_id,
+    public Long createBoard(@RequestParam(value = "center_id", required = false) Long center_id,
                             @RequestBody CreateBoardRequest request) {
-        boardService.create(center_id, request);
+        return boardService.create(center_id, request);
     }
 
     /**
@@ -50,7 +50,7 @@ public class BoardController {
         내용: 게시판 삭제
     */
     @DeleteMapping("/board/{board_id}")
-    public void deleteBoard(@Login Long userId, @PathVariable("board_id") Long boardId) {
-        boardService.remove(userId, boardId);
+    public Long deleteBoard(@Login Long userId, @PathVariable("board_id") Long boardId) {
+        return boardService.remove(userId, boardId);
     }
 }

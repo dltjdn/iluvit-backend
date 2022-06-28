@@ -28,8 +28,8 @@ public class BookmarkController {
         내용: 즐겨찾는 게시판 추가
     */
     @PostMapping("/bookmark/{board_id}")
-    public void createBookmark(@Login Long userId, @PathVariable("board_id") Long boardId) {
-        bookmarkService.create(userId, boardId);
+    public Long createBookmark(@Login Long userId, @PathVariable("board_id") Long boardId) {
+        return bookmarkService.create(userId, boardId);
     }
 
     /**
@@ -38,7 +38,7 @@ public class BookmarkController {
         내용: 즐겨찾는 게시판 삭제
     */
     @DeleteMapping("/bookmark/{bookmark_id}")
-    public void deleteBookmark(@Login Long userId, @PathVariable("bookmark_id") Long bookmarkId) {
-        bookmarkService.delete(userId, bookmarkId);
+    public Long deleteBookmark(@Login Long userId, @PathVariable("bookmark_id") Long bookmarkId) {
+        return bookmarkService.delete(userId, bookmarkId);
     }
 }

@@ -33,7 +33,7 @@ public class ChatService {
     private final PostRepository postRepository;
     private final CommentRepository commentRepository;
 
-    public void saveChat(Long userId, CreateChatRequest request) {
+    public Long saveChat(Long userId, CreateChatRequest request) {
         User sendUser = userRepository.getById(userId);
         User receiveUser = userRepository.getById(request.getReceiver_id());
 
@@ -52,7 +52,9 @@ public class ChatService {
             chat.updateComment(findComment);
         }
 
-        chatRepository.save(chat);
+        AlarmUtils.publishAlarmEvent(new ChatAlarm(receiveUser, sendUser));
+
+        return chatRepository.save(chat).getId();
 
     }
 
