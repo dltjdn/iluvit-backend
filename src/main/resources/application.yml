@@ -26,13 +26,15 @@ spring:
       max-file-size: 20MB #최대 파일 사이즈 20MB
   jpa:
     hibernate:
-      ddl-auto: update
+      ddl-auto: create
       naming:
         physical-strategy: org.hibernate.boot.model.naming.PhysicalNamingStrategyStandardImpl
     properties:
       hibernate:
         format_sql: true
         default_batch_fetch_size: 100
+        create_empty_composites:
+          enabled: true
   # 작성자 이승범, 작성내용: coolsms api 정보 불러오기
   profiles:
     include:

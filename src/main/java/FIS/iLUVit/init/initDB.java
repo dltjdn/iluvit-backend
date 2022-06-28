@@ -21,10 +21,10 @@ public class initDB {
 
     private final InitService initService;
 
-//    @PostConstruct
-//    public void init() {
-//        initService.dbInit();
-//    }
+    @PostConstruct
+    public void init() {
+        initService.dbInit();
+    }
 
 
     @Component
@@ -80,7 +80,8 @@ public class initDB {
             em.persist(Prefer.createPrefer(parent1, center1));
             em.persist(Prefer.createPrefer(parent1, center2));
             em.persist(Prefer.createPrefer(parent1, center3));
-            em.persist(Prefer.createPrefer(parent2, center1));
+            em.persist(Prefer.createPrefer(parent2, center3));
+            em.persist(Prefer.createPrefer(parent3, center3));
 
             // 아이 추가
             Child child1 = Child.createChild("zxc", LocalDate.now(), Approval.WAITING, parent1);
