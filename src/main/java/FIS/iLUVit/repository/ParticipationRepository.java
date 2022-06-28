@@ -11,7 +11,7 @@ import java.util.Optional;
 
 public interface ParticipationRepository extends JpaRepository<Participation, Long> {
 
-    @Query("select participation from Participation participation " +
+    @Query("select distinct participation from Participation participation " +
             "join fetch participation.parent " +
             "join fetch participation.ptDate as ptDate " +
             "join fetch ptDate.participations " +

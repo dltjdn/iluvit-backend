@@ -1,14 +1,13 @@
 package FIS.iLUVit.domain.alarms;
 
+import FIS.iLUVit.domain.Comment;
 import FIS.iLUVit.domain.Post;
-import FIS.iLUVit.service.AlarmUtils;
+import FIS.iLUVit.domain.User;
+import FIS.iLUVit.service.MessageUtils;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import org.springframework.context.MessageSource;
 
 import javax.persistence.*;
-
-import static FIS.iLUVit.service.AlarmUtils.*;
 
 @Entity
 @NoArgsConstructor
@@ -16,13 +15,16 @@ import static FIS.iLUVit.service.AlarmUtils.*;
 public class PostAlarm extends Alarm {
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn
+    @JoinColumn(name = "postId")
     private Post post;
 
-
-    @Override
-    public Alarm createMessage(MessageSource messageSource, Mode mode) {
-        return null;
+    public PostAlarm(User postWriter, Post post, Comment comment) {
+        super(postWriter);
+        String[] args = {post.getTitle(), comment.getContent()};
+        this.mode = MessageUtils.POST_COMMENT;
+        this.post = post;
+        this.message = MessageUtils.getMessage(mode, args);
     }
+
 }
 

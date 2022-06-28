@@ -19,12 +19,12 @@ public class GlobalControllerAdvice {
         return new ErrorResult("BAD", e.getMessage());
     }
 
-    // @Login id 의 값이 null일때 findById를 할 경우 발생하는 예외처리
+    // repository에서 쿼리 날릴때 parameter가 null이면 생기는 예외(토큰이 유효하지 않아 @Login이 Null일 확률이 높음)
     @ResponseStatus(HttpStatus.UNAUTHORIZED)
     @ExceptionHandler(InvalidDataAccessApiUsageException.class)
     public ErrorResult illegalExHandler(InvalidDataAccessApiUsageException e) {
         log.error("[exceptionHandler] ex", e);
-        return new ErrorResult("BAD", "로그인을 해주세요");
+        return new ErrorResult("BAD", "쿼리파라미터가 null 입니다. 토큰이 유효한지 확인해보세요");
     }
 
 }

@@ -68,7 +68,28 @@ public class PostRepositoryImpl extends PostQueryMethod implements PostRepositor
                 .from(post)
                 .join(post.board, board).fetchJoin()
                 .where(board.id.eq(boardId), keywordContains(keyword))
-                .orderBy(post.createdDate.desc())
+                .orderBy(post.postUpdateDate.desc())
+                .offset(pageable.getOffset())
+                .limit(pageable.getPageSize() + 1)
+                .fetch();
+
+        boolean hasNext = false;
+
+        if(posts.size() > pageable.getPageSize()){
+            posts.remove(pageable.getPageSize());
+            hasNext = true;
+        }
+        return new SliceImpl<>(posts, pageable, hasNext);
+    }
+
+    @Override
+    public Slice<GetPostResponsePreview> findHotPosts(Long centerId, Pageable pageable) {
+        List<GetPostResponsePreview> posts = jpaQueryFactory.select(new QGetPostResponsePreview(post))
+                .from(post)
+                .join(post.board, board).fetchJoin()
+                .leftJoin(board.center, center).fetchJoin()
+                .where(centerIdEq(centerId), post.heartCnt.goe(2))
+                .orderBy(post.postCreateDate.desc())
                 .offset(pageable.getOffset())
                 .limit(pageable.getPageSize() + 1)
                 .fetch();

@@ -36,6 +36,9 @@ public class QChildHouse extends EntityPathBase<ChildHouse> {
     // inherited
     public final FIS.iLUVit.domain.embeddable.QBasicInfra basicInfra;
 
+    //inherited
+    public final ListPath<Board, QBoard> boards;
+
     // inherited
     public final FIS.iLUVit.domain.embeddable.QClassInfo classInfo;
 
@@ -176,6 +179,7 @@ public class QChildHouse extends EntityPathBase<ChildHouse> {
         this.address = _super.address;
         this.area = _super.area;
         this.basicInfra = _super.basicInfra;
+        this.boards = _super.boards;
         this.classInfo = _super.classInfo;
         this.costInfo = _super.costInfo;
         this.createdDate = _super.createdDate;

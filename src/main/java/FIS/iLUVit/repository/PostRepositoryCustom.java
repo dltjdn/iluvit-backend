@@ -15,4 +15,6 @@ public interface PostRepositoryCustom {
     Slice<GetPostResponsePreview> findWithCenter(Long centerId, String keyword, Auth auth, Long userId, Pageable pageable);
 
     Slice<GetPostResponsePreview> findWithBoard(Long boardId, String keyword, Pageable pageable);
+
+    Slice<GetPostResponsePreview> findHotPosts(Long centerId, Pageable pageable);
 }

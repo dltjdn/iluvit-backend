@@ -40,7 +40,7 @@ public class initDB {
             Theme theme = new Theme(true, false, true, false, true, true, false, false, false, false, true, false, false, false, false, true, false);
 
 
-            // 시설 추가
+            // 시설 추가z
             Kindergarten center1 = Kindergarten.createKindergarten("떡잎유치원", "민병관", "민병관", "민간", "ㅁㄴㅇ", "2022-02-20", "02-123-1234", "www.www.www", "09:00", "19:00",
                     3, 90, "서울시 금천구 뉴티캐슬", "152-052", new Area("서울시", "금천구"), 123.123, 123.123, "흙찡구놀이, 비둘기잡기", 99999, 88888, LocalDate.now(), false,
                     false, 0, "gkgkgkgk", 3, 0, "얼쥡", null, null, null, null, theme, null);
@@ -76,9 +76,9 @@ public class initDB {
             em.persist(parent3);
 
             // 아이 추가
-            Child child1 = Child.createChild("zxc", "zxc", Approval.WAITING, parent1);
-            Child child2 = Child.createChild("zxc", "zxc", Approval.ACCEPT, parent1);
-            Child child3 = Child.createChild("zxc", "zxc", Approval.ACCEPT, parent1);
+            Child child1 = Child.createChild("zxc", LocalDate.now(), Approval.WAITING, parent1);
+            Child child2 = Child.createChild("zxc", LocalDate.now(), Approval.ACCEPT, parent1);
+            Child child3 = Child.createChild("zxc", LocalDate.now(), Approval.ACCEPT, parent1);
             child1.mappingCenter(center1);
             child2.mappingCenter(center2);
             em.persist(child1);
@@ -120,14 +120,14 @@ public class initDB {
             em.persist(ptDate2);
             em.persist(ptDate3);
 
-            Board board1 = Board.createBoard("HOT 게시물", BoardKind.NORMAL, null);
-            Board board2 = Board.createBoard("자유 게시판", BoardKind.NORMAL, null);
-            Board board3 = Board.createBoard("영상 게시판", BoardKind.VIDEO, null);
-            Board board4 = Board.createBoard("장터 게시판", BoardKind.MARKET, null);
-            Board board5 = Board.createBoard("맛집 게시판", BoardKind.FOOD, null);
-            Board board6 = Board.createBoard("공지 게시판", BoardKind.NORMAL, center1);
-            Board board7 = Board.createBoard("놀이 게시판", BoardKind.NORMAL, center2);
-            em.persist(board1);
+//            Board board1 = Board.createBoard("HOT 게시물", BoardKind.NORMAL, null, false);
+            Board board2 = Board.createBoard("자유 게시판", BoardKind.NORMAL, null, true);
+            Board board3 = Board.createBoard("영상 게시판", BoardKind.VIDEO, null, true);
+            Board board4 = Board.createBoard("장터 게시판", BoardKind.MARKET, null, true);
+            Board board5 = Board.createBoard("맛집 게시판", BoardKind.FOOD, null, true);
+            Board board6 = Board.createBoard("공지 게시판", BoardKind.NORMAL, center1, true);
+            Board board7 = Board.createBoard("놀이 게시판", BoardKind.NORMAL, center2, false);
+//            em.persist(board1);
             em.persist(board2);
             em.persist(board3);
             em.persist(board4);

@@ -19,6 +19,11 @@ public class PostController {
 
     private final PostService postService;
 
+    /**
+        작성자: 이창윤
+        작성시간: 2022/06/27 11:31 AM
+        내용: multipart/form-data 형식으로 변환된 request, 이미지 파일 리스트 images 파라미터로 게시글 저장
+    */
     @PostMapping(value = "/post", consumes = {MediaType.APPLICATION_JSON_VALUE, MediaType.MULTIPART_FORM_DATA_VALUE})
     public void registerPost(@Login Long userId,
                              @RequestPart PostRegisterRequest request,
@@ -61,6 +66,13 @@ public class PostController {
         return postService.searchByKeywordAndBoard(boardId, input, pageable);
     }
 
+    @GetMapping("/post/search/hotBoard")
+    public Slice<GetPostResponsePreview> searchHotPosts(
+            @RequestParam(value = "center_id", required = false) Long centerId,
+            Pageable pageable) {
+        return postService.findByHeartCnt(centerId, pageable);
+    }
+
     @GetMapping("/post/mypage")
     public PostList searchPostByUser(@Login Long userId,
                                      Pageable pageable) {
@@ -73,13 +85,23 @@ public class PostController {
     }
 
     @GetMapping("/post/center-main")
-    public List<BoardPreview> searchCenterMainPreview(@Login Long userId,
-                                                      @RequestParam("center_id") Long centerId) {
+    public List<BoardPreview> searchCenterMainPreview(@Login Long userId, @RequestParam("center_id") Long centerId) {
         return postService.searchCenterMainPreview(userId, centerId);
     }
 
+    // 끌어올리기
+    @PutMapping("/post/update/{post_id}")
+    public void pullUp(@PathVariable("post_id") Long postId) {
+        postService.updateDate(postId);
+    }
+
+    /**
+    *   작성날짜: 2022/06/22 4:54 PM
+    *   작성자: 이승범
+    *   작성내용: 해당 스크랩 폴더의 게시물들 preview 보여주기
+    */
     @GetMapping("/post/scrap")
-    public Slice<GetScrapPostResponsePreview> searchPostsByScrap(@Login Long userId, @RequestParam Long scrapId) {
-        return postService.searchByScrap(userId, scrapId);
+    public Slice<GetScrapPostResponsePreview> searchPostsByScrap(@Login Long userId, @RequestParam Long scrapId, Pageable pageable) {
+        return postService.searchByScrap(userId, scrapId, pageable);
     }
 }

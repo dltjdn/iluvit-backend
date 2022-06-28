@@ -45,7 +45,11 @@ public class QPost extends EntityPathBase<Post> {
 
     public final NumberPath<Integer> imgCnt = createNumber("imgCnt", Integer.class);
 
+    public final DateTimePath<java.time.LocalDateTime> postCreateDate = createDateTime("postCreateDate", java.time.LocalDateTime.class);
+
     public final ListPath<PostHeart, QPostHeart> postHearts = this.<PostHeart, QPostHeart>createList("postHearts", PostHeart.class, QPostHeart.class, PathInits.DIRECT2);
+
+    public final DateTimePath<java.time.LocalDateTime> postUpdateDate = createDateTime("postUpdateDate", java.time.LocalDateTime.class);
 
     public final ListPath<ScrapPost, QScrapPost> scrapPosts = this.<ScrapPost, QScrapPost>createList("scrapPosts", ScrapPost.class, QScrapPost.class, PathInits.DIRECT2);
 

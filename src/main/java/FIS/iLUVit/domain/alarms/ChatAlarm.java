@@ -1,9 +1,10 @@
 package FIS.iLUVit.domain.alarms;
 
+import FIS.iLUVit.domain.Chat;
 import FIS.iLUVit.domain.User;
-import FIS.iLUVit.service.AlarmUtils;
-import FIS.iLUVit.service.AlarmUtils.Mode;
-import org.springframework.context.MessageSource;
+import FIS.iLUVit.service.MessageUtils;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -11,14 +12,19 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 
 @Entity
+@NoArgsConstructor
+@Getter
 public class ChatAlarm extends Alarm{
 
-    @JoinColumn
+    @JoinColumn(name = "senderId")
     @ManyToOne(fetch = FetchType.LAZY)
     private User sender;
 
-    @Override
-    public Alarm createMessage(MessageSource messageSource, Mode mode) {
-        return null;
+    public ChatAlarm(User user, User sender) {
+        super(user);
+        this.mode = MessageUtils.CHAT_RECEIVED;
+        this.sender = sender;
+        String[] args = {sender.getNickName()};
+        this.message = MessageUtils.getMessage(mode, args);
     }
 }
