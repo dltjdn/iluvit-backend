@@ -14,6 +14,7 @@ public interface ParticipationRepository extends JpaRepository<Participation, Lo
     @Query("select distinct participation from Participation participation " +
             "join fetch participation.parent " +
             "join fetch participation.ptDate as ptDate " +
+            "join fetch ptDate.presentation " +
             "join fetch ptDate.participations " +
             "where participation.id = :participationId and " +
             "participation.status = FIS.iLUVit.domain.enumtype.Status.JOINED")

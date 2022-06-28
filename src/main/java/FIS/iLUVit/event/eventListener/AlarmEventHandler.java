@@ -36,6 +36,7 @@ public class AlarmEventHandler {
     public void saveAlarm(AlarmEvent alarmEvent){
         log.info("알람 생성 중");
         Alarm alarm = alarmEvent.getAlarm();
+        log.info(alarm.getMessage());
         alarmRepository.save(alarm);
         log.info("알람생성 종료");
     }

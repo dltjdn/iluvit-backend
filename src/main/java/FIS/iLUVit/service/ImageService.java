@@ -87,7 +87,10 @@ public class ImageService {
             };
             File file = new File(imageDirPath);
             File[] files = file.listFiles(filter);
-            if(files == null) throw new ImageException("해당 image가 없습니다");
+            if(files == null) {
+                log.error("{} 시설 이미지 로드중 예외발생", imageDirPath);
+                return null;
+            }
             for (File temp : files){
                 if(temp.isFile()){
                     String encodeImage = null;

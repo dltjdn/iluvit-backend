@@ -7,6 +7,7 @@ import FIS.iLUVit.domain.Chat;
 import FIS.iLUVit.domain.Comment;
 import FIS.iLUVit.domain.Post;
 import FIS.iLUVit.domain.User;
+import FIS.iLUVit.domain.alarms.ChatAlarm;
 import FIS.iLUVit.exception.CommentException;
 import FIS.iLUVit.repository.ChatRepository;
 import FIS.iLUVit.repository.CommentRepository;
@@ -32,7 +33,7 @@ public class ChatService {
     private final PostRepository postRepository;
     private final CommentRepository commentRepository;
 
-    public void saveChat(Long userId, CreateChatRequest request) {
+    public Long saveChat(Long userId, CreateChatRequest request) {
         User sendUser = userRepository.getById(userId);
         User receiveUser = userRepository.getById(request.getReceiver_id());
 
@@ -51,39 +52,20 @@ public class ChatService {
             chat.updateComment(findComment);
         }
 
-        chatRepository.save(chat);
+        AlarmUtils.publishAlarmEvent(new ChatAlarm(receiveUser, sendUser));
+
+        return chatRepository.save(chat).getId();
 
     }
 
     public Slice<ChatListDTO> findAll(Long userId, Pageable pageable) {
         Slice<Chat> chatList = chatRepository.findByUser(userId, pageable);
-
-//        Slice<Chat> chatList = chatRepository.findFirstByPost(userId, pageable);
-
-        List<ChatListDTO> content = chatList.getContent().stream()
-                .map(c -> new ChatListDTO(c))
-                .collect(Collectors.toList());
-
-        boolean hasNext = false;
-        if(content.size() > pageable.getPageSize()){
-            content.remove(pageable.getPageSize());
-            hasNext = true;
-        }
-        return new SliceImpl<>(content, pageable, hasNext);
+        return chatList.map(c -> new ChatListDTO(c));
     }
 
     public Slice<ChatDTO> findByOpponent(Long userId, Long otherId, Pageable pageable) {
-//        Slice<Chat> chatList = chatRepository.findByPost(userId, receiverId, pageable);
-        Slice<Chat> chatList = chatRepository.findByOpponent(userId, otherId, pageable);
-        List<ChatDTO> content = chatList.getContent().stream()
-                .map(c -> new ChatDTO(c))
-                .collect(Collectors.toList());
 
-        boolean hasNext = false;
-        if(content.size() > pageable.getPageSize()){
-            content.remove(pageable.getPageSize());
-            hasNext = true;
-        }
-        return new SliceImpl<>(content, pageable, hasNext);
+        Slice<Chat> chatList = chatRepository.findByOpponent(userId, otherId, pageable);
+        return chatList.map(c -> new ChatDTO(c));
     }
 }
