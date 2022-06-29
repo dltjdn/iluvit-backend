@@ -1,5 +1,6 @@
 package FIS.iLUVit.domain.alarms;
 
+import FIS.iLUVit.controller.dto.AlarmDto;
 import FIS.iLUVit.domain.User;
 import FIS.iLUVit.service.AlarmUtils;
 import lombok.Getter;
@@ -25,5 +26,20 @@ public class ChatAlarm extends Alarm{
         this.sender = sender;
         String[] args = {sender.getNickName()};
         this.message = AlarmUtils.getMessage(mode, args);
+    }
+
+    @Override
+    public AlarmDto exportAlarm() {
+        return new ChatAlarmDto(message, dtype, sender.getId());
+    }
+
+    @Getter
+    public static class ChatAlarmDto extends AlarmDto{
+
+        protected Long senderId;
+        public ChatAlarmDto(String message, String type, Long senderId) {
+            super(message, type);
+            this.senderId = senderId;
+        }
     }
 }

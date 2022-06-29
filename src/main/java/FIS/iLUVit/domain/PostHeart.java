@@ -27,4 +27,6 @@ public class PostHeart extends BaseEntity {
         this.post = post;
         post.updatePostHeart(this);
     }
+
+
 }
