@@ -99,8 +99,7 @@ public class SignService {
      */
     public AuthNumber authenticateAuthNum(AuthenticateAuthNumRequest request) {
 
-        AuthNumber authNumber =
-                authNumberRepository
+        AuthNumber authNumber = authNumberRepository
                         .findByPhoneNumAndAuthNumAndAuthKind(request.getPhoneNum(), request.getAuthNum(), request.getAuthKind())
                         .orElse(null);
 

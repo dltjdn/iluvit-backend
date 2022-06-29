@@ -1,15 +1,18 @@
 package FIS.iLUVit.service;
 
-import FIS.iLUVit.controller.dto.SaveChildRequest;
+import FIS.iLUVit.controller.dto.*;
 import FIS.iLUVit.domain.Center;
 import FIS.iLUVit.domain.Child;
 import FIS.iLUVit.domain.Parent;
 import FIS.iLUVit.exception.CenterException;
+import FIS.iLUVit.exception.UserException;
 import FIS.iLUVit.repository.CenterRepository;
 import FIS.iLUVit.repository.ChildRepository;
 import FIS.iLUVit.repository.ParentRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Slice;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -27,6 +30,28 @@ public class ChildService {
     private final CenterRepository centerRepository;
     private final ChildRepository childRepository;
     private final ImageService imageService;
+
+    /**
+     * 작성날짜: 2022/05/13 4:43 PM
+     * 작성자: 이승범
+     * 작성내용: 부모의 메인페이지에 필요한 아이들 정보 반환
+     */
+    public ChildInfoDTO childrenInfo(Long id) {
+        Parent findParent = parentRepository.findWithChildren(id)
+                .orElse(null);
+
+        ChildInfoDTO childInfoDTO = new ChildInfoDTO();
+
+        if (findParent != null) {
+            findParent.getChildren().forEach(child -> {
+                String imagePath = imageService.getChildProfileDir();
+                String encodedImage = imageService.getEncodedProfileImage(imagePath, child.getId());
+                childInfoDTO.getData().add(new ChildInfoDTO.ChildInfo(child, encodedImage));
+            });
+        }
+
+        return childInfoDTO;
+    }
 
     /**
      * 작성날짜: 2022/06/23 5:25 PM
@@ -65,5 +90,78 @@ public class ChildService {
             String imagePath = imageService.getChildProfileDir();
             imageService.saveProfileImage(request.getProfileImg(), imagePath + newChild.getId());
         }
+    }
+
+    /**
+    *   작성날짜: 2022/06/27 4:57 PM
+    *   작성자: 이승범
+    *   작성내용: 아이 프로필 조회
+    */
+    public ChildInfoDetailResponse findChildInfoDetail(Long userId, Long childId, Pageable pageable) {
+        // 프로필 수정하고자 하는 아이 가져오기
+        Child child = childRepository.findByIdWithParentAndCenter(userId, childId)
+                        .orElseThrow(() -> new UserException("잘못된 child_id 입니다."));
+
+        ChildInfoDetailResponse response = new ChildInfoDetailResponse(child);
+
+        // 이미지가 있다면 가져오기
+        if (child.getHasProfileImg() != null && child.getHasProfileImg()) {
+            String imagePath = imageService.getChildProfileDir();
+            String image = imageService.getEncodedProfileImage(imagePath, child.getId());
+            response.setProfileImage(image);
+        }
+
+        // 프로필 수정에 필요한 시설정보들 가져오기
+        Slice<CenterInfoDto> centerInfos = centerRepository.findCenterForAddChild(child.getCenter().getArea().getSido(),
+                child.getCenter().getArea().getSigungu(), child.getCenter().getName(), pageable);
+        response.setCenterInfoDtoSlice(centerInfos);
+
+        return response;
+    }
+
+    /**
+    *   작성날짜: 2022/06/27 5:47 PM
+    *   작성자: 이승범
+    *   작성내용: 아이 프로필 수정
+    */
+    public ChildInfoDetailResponse updateChild(Long userId, Long childId, UpdateChildRequest request, Pageable pageable) throws IOException {
+
+        Child child = childRepository.findByIdWithParentAndCenter(userId, childId)
+                .orElseThrow(() -> new UserException("잘못된 child_id 입니다."));
+
+        Center center = centerRepository.getById(request.getCenter_id());
+        child.update(center, request.getName(), request.getBirthDate(), request.getProfileImg());
+
+        ChildInfoDetailResponse response = new ChildInfoDetailResponse(child);
+
+        // 이미지가 있는 경우
+        if (request.getProfileImg() != null) {
+            String imagePath = imageService.getUserProfileDir();
+            imageService.saveProfileImage(request.getProfileImg(), imagePath);
+            String image = imageService.getEncodedProfileImage(imagePath, child.getId());
+            response.setProfileImage(image);
+        }
+
+        // 프로필 수정에 필요한 시설정보들 가져오기
+        Slice<CenterInfoDto> centerInfos = centerRepository.findCenterForAddChild(child.getCenter().getArea().getSido(),
+                child.getCenter().getArea().getSigungu(), child.getCenter().getName(), pageable);
+        response.setCenterInfoDtoSlice(centerInfos);
+
+        return response;
+    }
+
+    /**
+    *   작성날짜: 2022/06/28 3:18 PM
+    *   작성자: 이승범
+    *   작성내용: 아이 삭제
+    */
+    public ChildInfoDTO deleteChild(Long userId, Long childId) {
+
+        Child findChild = childRepository.findByIdAndUserId(userId, childId)
+                .orElseThrow(() -> new UserException("잘못된 child_id 입니다."));
+
+        childRepository.delete(findChild);
+
+        return childrenInfo(userId);
     }
 }

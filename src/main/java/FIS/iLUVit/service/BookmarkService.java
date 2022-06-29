@@ -75,13 +75,10 @@ public class BookmarkService {
     }
 
     public void create(Long userId, Long boardId) {
-        // 가장 최근에 추가한 북마크의 order 가져옴.
-        int max = bookmarkRepository.findMaxOrder(userId)
-                .orElse(0);
 
         User findUser = userRepository.getById(userId);
         Board findBoard = boardRepository.getById(boardId);
-        Bookmark bookmark = new Bookmark(max + 1, findBoard, findUser);
+        Bookmark bookmark = new Bookmark(findBoard, findUser);
         bookmarkRepository.save(bookmark);
     }
 
@@ -92,6 +89,5 @@ public class BookmarkService {
             throw new UserException("삭제 권한 없는 유저");
         }
         bookmarkRepository.delete(findBookmark);
-
    }
 }

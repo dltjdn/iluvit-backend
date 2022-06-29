@@ -36,26 +36,7 @@ public class ParentService {
     private final ChildRepository childRepository;
     private final BookmarkService bookmarkService;
 
-    /**
-     * 작성날짜: 2022/05/13 4:43 PM
-     * 작성자: 이승범
-     * 작성내용: 부모의 메인페이지에 필요한 아이들 정보 반환
-     */
-    public ChildInfoDTO ChildrenInfo(Long id) {
-        Parent findParent = parentRepository.findWithChildren(id)
-                .orElseThrow(() -> new UserException("존재하지 않는 User 입니다."));
 
-        ChildInfoDTO childInfoDTO = new ChildInfoDTO();
-
-
-        findParent.getChildren().forEach(child -> {
-            String imagePath = imageService.getChildProfileDir();
-            String encodedImage = imageService.getEncodedProfileImage(imagePath, child.getId());
-            childInfoDTO.getData().add(new ChildInfoDTO.ChildInfo(child, encodedImage));
-        });
-
-        return childInfoDTO;
-    }
 
     /**
      * 작성날짜: 2022/05/13 4:44 PM

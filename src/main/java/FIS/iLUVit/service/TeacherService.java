@@ -122,11 +122,9 @@ public class TeacherService {
             }
             // center default boards bookmark 추가하기
             List<Board> defaultBoards = boardRepository.findDefaultByCenter(center.getId());
-            int order = 1;
             for (Board defaultBoard : defaultBoards) {
-                Bookmark bookmark = Bookmark.createBookmark(order, defaultBoard, teacher);
+                Bookmark bookmark = Bookmark.createBookmark(defaultBoard, teacher);
                 bookmarkRepository.save(bookmark);
-                order++;
             }
         } else {   // 센터를 선택하지 않은 경우
             Teacher teacher = request.createTeacher(null, hashedPwd);

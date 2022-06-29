@@ -67,6 +67,8 @@ public class Parent extends User {
     public void updateDetail(ParentDetailRequest request, Theme theme) {
         this.nickName = request.getNickname();
         this.emailAddress = request.getEmailAddress();
+        this.address = request.getAddress();
+        this.detailAddress = request.getDetailAddress();
         this.interestAge = request.getInterestAge();
         this.theme = theme;
         this.hasProfileImg = !request.getProfileImg().isEmpty();
