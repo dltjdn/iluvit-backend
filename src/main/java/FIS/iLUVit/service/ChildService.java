@@ -1,14 +1,14 @@
 package FIS.iLUVit.service;
 
 import FIS.iLUVit.controller.dto.*;
+import FIS.iLUVit.domain.Board;
 import FIS.iLUVit.domain.Center;
 import FIS.iLUVit.domain.Child;
 import FIS.iLUVit.domain.Parent;
+import FIS.iLUVit.domain.enumtype.Approval;
 import FIS.iLUVit.exception.CenterException;
 import FIS.iLUVit.exception.UserException;
-import FIS.iLUVit.repository.CenterRepository;
-import FIS.iLUVit.repository.ChildRepository;
-import FIS.iLUVit.repository.ParentRepository;
+import FIS.iLUVit.repository.*;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Pageable;
@@ -17,7 +17,10 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.io.IOException;
+import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Slf4j
 @Service
@@ -30,6 +33,8 @@ public class ChildService {
     private final CenterRepository centerRepository;
     private final ChildRepository childRepository;
     private final ImageService imageService;
+    private final BoardRepository boardRepository;
+    private final BookmarkRepository bookmarkRepository;
 
     /**
      * 작성날짜: 2022/05/13 4:43 PM
@@ -68,18 +73,20 @@ public class ChildService {
                 .orElseThrow(() -> new CenterException("잘못된 centerId 입니다."));
 
         // bookmark 처리
-        // 기존에 있던 아이들중에 현재 등록하려는 아이와 같은 시설에 다니는 아이가 있는지 검사
-        Optional<Child> alreadySignedChild = parent.getChildren().stream()
-                .filter(child -> child.getCenter().getId().equals(center.getId()))
-                .findFirst();
-        // 기존 아이들과 다른 시설에 아이를 등록할 경우 해당 시설에 default board 북마크 추가
-        if (alreadySignedChild.isEmpty()) {
-            center.getBoards().forEach(board -> {
-                if (board.getIsDefault()) {
-                    bookmarkService.create(parent.getId(), board.getId());
-                }
-            });
-        }
+//        // 기존에 있던 아이들중에 현재 등록하려는 아이와 같은 시설에 다니는 아이가 있는지 검사
+//        Optional<Child> alreadySignedChild = parent.getChildren().stream()
+//                .filter(child -> child.getCenter().getId().equals(center.getId()))
+//                .findFirst();
+//
+//
+//        // 기존 아이들과 다른 시설에 아이를 등록할 경우 해당 시설에 default board 북마크 추가
+//        if (alreadySignedChild.isEmpty()) {
+//            center.getBoards().forEach(board -> {
+//                if (board.getIsDefault()) {
+//                    bookmarkService.create(parent.getId(), board.getId());
+//                }
+//            });
+//        }
 
         // 아이 등록
         Child newChild = request.createChild(center, parent);
@@ -157,10 +164,35 @@ public class ChildService {
     */
     public ChildInfoDTO deleteChild(Long userId, Long childId) {
 
-        Child findChild = childRepository.findByIdAndUserId(userId, childId)
-                .orElseThrow(() -> new UserException("잘못된 child_id 입니다."));
+        // 요청 사용자가 등록한 모든 아이 가져오기
+        List<Child> childrenByUser = childRepository.findByUserWithCenter(userId);
 
-        childRepository.delete(findChild);
+        // 삭제하고자 하는 아이
+        Child deletedChild = childrenByUser.stream()
+                .filter(child -> Objects.equals(child.getId(), childId))
+                .findFirst()
+                .orElseThrow(() -> new UserException("잘못된 childId 입니다."));
+
+        // 삭제하고자 하는 아이가 등록된 시설
+        Center belongedCenter = deletedChild.getCenter();
+
+        // 삭제하고자 하는 아이와 같은 시설에 다니는 또 다른 자녀가 있는지 확인
+        List<Child> sameCenterChildren = childrenByUser.stream()
+                .filter(child -> child.getCenter() == belongedCenter)
+                .filter(child-> !Objects.equals(child.getId(), deletedChild.getId()))
+                .filter(child-> child.getApproval() == Approval.ACCEPT)
+                .collect(Collectors.toList());
+
+        // 없으면 해당 시설과 연관된 bookMark 싹 다 삭제
+        if (sameCenterChildren.isEmpty()) {
+            List<Board> boards = boardRepository.findByCenter(belongedCenter.getId());
+            List<Long> boardIds = boards.stream()
+                    .map(Board::getId)
+                    .collect(Collectors.toList());
+            bookmarkRepository.deleteAllByBoardAndUser(userId, boardIds);
+        }
+
+        childRepository.delete(deletedChild);
 
         return childrenInfo(userId);
     }
