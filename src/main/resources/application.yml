@@ -5,21 +5,11 @@ server:
       charset: UTF-8
       enabled: true
       force: true
-
 spring:
-  datasource:
-    url:  jdbc:h2:tcp://localhost/~/fis_police
-    username: sa
-    password:
-    driver-class-name: org.h2.Driver
   # 작성자: 원보라, 작성내용: swagger 라이브러리 오류 방지
   mvc:
     pathmatch:
       matching-strategy: ant_path_matcher
-
-  messages:
-    encoding: UTF-8
-
   # 작성자: 원보라, 작성내용: agent 사진 multipart
   servlet:
     multipart:
@@ -27,8 +17,6 @@ spring:
   jpa:
     hibernate:
       ddl-auto: update
-      naming:
-        physical-strategy: org.hibernate.boot.model.naming.PhysicalNamingStrategyStandardImpl
     properties:
       hibernate:
         format_sql: true
@@ -39,7 +27,7 @@ spring:
   profiles:
     include:
       - secret
+      - mysql
 logging:
   level:
     org.hibernate.SQL: debug
-    org.hibernate.Type: trace
