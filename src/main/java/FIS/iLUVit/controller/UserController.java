@@ -1,12 +1,15 @@
 package FIS.iLUVit.controller;
 
 import FIS.iLUVit.config.argumentResolver.Login;
+import FIS.iLUVit.controller.dto.AlarmDto;
 import FIS.iLUVit.controller.dto.UpdatePasswordRequest;
 import FIS.iLUVit.filter.LoginResponse;
 import FIS.iLUVit.service.UserService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 
 @Slf4j
@@ -36,5 +39,8 @@ public class UserController {
         userService.updatePassword(id, request);
     }
 
-
+    @GetMapping("/alarm")
+    public List<AlarmDto> getAlarm(@Login Long userId){
+        return userService.findUserAlarm(userId);
+    }
 }

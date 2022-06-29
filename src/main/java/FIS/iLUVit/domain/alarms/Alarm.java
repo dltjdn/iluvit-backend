@@ -1,5 +1,6 @@
 package FIS.iLUVit.domain.alarms;
 
+import FIS.iLUVit.controller.dto.AlarmDto;
 import FIS.iLUVit.domain.BaseEntity;
 import FIS.iLUVit.domain.User;
 import lombok.Getter;
@@ -33,5 +34,6 @@ public abstract class Alarm extends BaseEntity {
         this.user = user;
     }
 
+    public abstract AlarmDto exportAlarm();
 
 }

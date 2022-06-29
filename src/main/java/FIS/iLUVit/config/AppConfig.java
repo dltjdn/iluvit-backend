@@ -1,5 +1,6 @@
 package FIS.iLUVit.config;
 
+import FIS.iLUVit.config.argumentResolver.ForDB;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 
 import org.springframework.context.MessageSource;
@@ -11,6 +12,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import javax.persistence.EntityManager;
 
 @Configuration
+@ForDB
 public class AppConfig {
 
     @Bean
