@@ -4,6 +4,7 @@ import FIS.iLUVit.controller.dto.CenterModifyRequestDto;
 import FIS.iLUVit.domain.embeddable.*;
 import FIS.iLUVit.domain.enumtype.KindOf;
 import lombok.Builder;
+import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.Cascade;
@@ -24,6 +25,7 @@ import static org.hibernate.annotations.CascadeType.*;
 @DiscriminatorColumn(name = "kindOf")
 @Getter
 @NoArgsConstructor
+@EqualsAndHashCode(of = "id", callSuper = false)
 public class Center extends BaseEntity{
     @Id @GeneratedValue
     protected Long id;

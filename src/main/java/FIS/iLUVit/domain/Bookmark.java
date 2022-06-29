@@ -8,6 +8,13 @@ import javax.persistence.*;
 @Entity
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
+@Table(
+        uniqueConstraints = {
+                @UniqueConstraint(
+                        columnNames = {"board_id", "user_id"}
+                )
+        }
+)
 public class Bookmark extends BaseEntity {
     @Id @GeneratedValue
     private Long id;
