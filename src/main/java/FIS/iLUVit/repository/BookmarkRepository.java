@@ -3,6 +3,7 @@ package FIS.iLUVit.repository;
 import FIS.iLUVit.domain.Bookmark;
 import FIS.iLUVit.domain.Post;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
@@ -29,5 +30,12 @@ public interface BookmarkRepository extends JpaRepository<Bookmark, Long> {
 
     @Query("select bm from Bookmark bm join fetch bm.board b where bm.user.id = :userId and b.center.id = :centerId ")
     List<Bookmark> findBoardByUserAndCenter(@Param("userId") Long userId, @Param("centerId") Long centerId);
+
+    @Modifying
+    @Query("delete " +
+            "from Bookmark b " +
+            "where b.board.id in :boardIds " +
+            "and b.user.id =:userId")
+    void deleteAllByBoardAndUser(Long userId, List<Long> boardIds);
 
 }

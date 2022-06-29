@@ -5,6 +5,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
+import java.util.List;
 import java.util.Optional;
 
 public interface ChildRepository extends JpaRepository<Child, Long> {
@@ -25,7 +26,7 @@ public interface ChildRepository extends JpaRepository<Child, Long> {
 
     @Query("select c " +
             "from Child c " +
-            "where c.id =:childId " +
-            "and c.parent.id =:userId")
-    Optional<Child> findByIdAndUserId(Long userId, Long childId);
+            "join fetch c.center " +
+            "where c.parent.id =:userId")
+    List<Child> findByUserWithCenter(@Param("userId") Long userId);
 }
