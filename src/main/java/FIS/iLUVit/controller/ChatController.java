@@ -22,8 +22,8 @@ public class ChatController {
      내용: 쪽지 작성
      */
     @PostMapping("/chat")
-    public void createChat(@Login Long userId, @RequestBody CreateChatRequest request) {
-        chatService.saveChat(userId, request);
+    public Long createChat(@Login Long userId, @RequestBody CreateChatRequest request) {
+        return chatService.saveChat(userId, request);
     }
 
     /**

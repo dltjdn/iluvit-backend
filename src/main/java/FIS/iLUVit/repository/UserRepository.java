@@ -1,9 +1,6 @@
 package FIS.iLUVit.repository;
 
-import FIS.iLUVit.domain.Center;
-import FIS.iLUVit.domain.Child;
-import FIS.iLUVit.domain.Teacher;
-import FIS.iLUVit.domain.User;
+import FIS.iLUVit.domain.*;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -44,4 +41,9 @@ public interface UserRepository extends JpaRepository<User, Long> {
     @Query("select teacher from Teacher teacher " +
             "where teacher.center =:center")
     List<User> findTeacherByCenter(@Param("center") Center center);
+
+    @Query("select prefer from Prefer prefer " +
+            "join fetch prefer.center " +
+            "where prefer.center = :center")
+    List<Prefer> getUserPreferByCenterId(@Param("center") Center center);
 }

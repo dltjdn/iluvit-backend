@@ -1,6 +1,7 @@
 package FIS.iLUVit.event.eventListener;
 
 import FIS.iLUVit.domain.Participation;
+import FIS.iLUVit.domain.Presentation;
 import FIS.iLUVit.domain.PtDate;
 import FIS.iLUVit.domain.Waiting;
 import FIS.iLUVit.event.ParticipationCancelEvent;
@@ -25,7 +26,9 @@ public class ParticipationCancelEventHandler {
     @EventListener
     public void changeWaitingToParticipation(ParticipationCancelEvent event){
         Waiting waiting = waitingService.findFirstOrderWaiting(event.getPtDate());
-        Participation waitingToParticipate = Waiting.whenParticipationCanceled(waiting);
+        Presentation presentation = event.getPresentation();
+        PtDate ptDate = event.getPtDate();
+        Participation waitingToParticipate = Waiting.whenParticipationCanceled(waiting, presentation);
         participationRepository.save(waitingToParticipate);
         waitingRepository.delete(waiting);
     }

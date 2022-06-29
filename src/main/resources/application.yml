@@ -33,6 +33,8 @@ spring:
       hibernate:
         format_sql: true
         default_batch_fetch_size: 100
+        create_empty_composites:
+          enabled: true
   # 작성자 이승범, 작성내용: coolsms api 정보 불러오기
   profiles:
     include:

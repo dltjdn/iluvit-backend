@@ -4,6 +4,7 @@ import FIS.iLUVit.controller.dto.PresentationModifyRequestDto;
 import FIS.iLUVit.controller.dto.PresentationRequestRequestFormDto;
 import FIS.iLUVit.controller.dto.PresentationResponseDto;
 import FIS.iLUVit.domain.*;
+import FIS.iLUVit.domain.alarms.PresentationCreatedAlarm;
 import FIS.iLUVit.domain.embeddable.Area;
 import FIS.iLUVit.domain.embeddable.Theme;
 import FIS.iLUVit.domain.enumtype.KindOf;
@@ -17,6 +18,7 @@ import FIS.iLUVit.service.dto.ParentInfoForDirectorDto;
 import FIS.iLUVit.service.dto.PresentationQuryDto;
 import FIS.iLUVit.service.dto.PtDateDto;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.SliceImpl;
 import org.springframework.stereotype.Service;
@@ -35,6 +37,7 @@ import static java.util.stream.Collectors.*;
 @Service
 @Transactional
 @RequiredArgsConstructor
+@Slf4j
 public class PresentationService {
 
     private final PresentationRepository presentationRepository;
@@ -79,16 +82,22 @@ public class PresentationService {
         List<PtDate> ptDates = presentation.getPtDates();
 
         request.getPtDateDtos().forEach(ptDateRequestDto -> {
-            ptDates.add(PtDate
-                    .register(presentation,
+            PtDate.register(presentation,
                             ptDateRequestDto.getDate(),
                             ptDateRequestDto.getTime(),
-                            ptDateRequestDto.getAblePersonNum()));
+                            ptDateRequestDto.getAblePersonNum());
         });
 
         presentationRepository.save(presentation);
         String presentationDir = imageService.getPresentationDir(presentation.getId());
         imageService.saveInfoImage(images, presentationDir);
+
+        userRepository.getUserPreferByCenterId(center).forEach(prefer -> {
+            log.info("알림 메시지 생성 {}", prefer.getParent().getId());
+            AlarmUtils.publishAlarmEvent(new PresentationCreatedAlarm(prefer.getParent(), presentation, center));
+        });
+
+        log.info("언제 되는지?");
 
         return presentation;
     }
@@ -150,7 +159,7 @@ public class PresentationService {
                     waitingRepository.updateWaitingOrderForPtDateChange(changeNum);
                     ptDate.updateWaitingCntForPtDateChange(changeNum);
                     waitings.forEach(waiting -> {
-                        Participation.createAndRegister(waiting.getParent(), ptDate, ptDate.getParticipations());
+                        Participation.createAndRegisterForWaitings(waiting.getParent(), presentation, ptDate, ptDate.getParticipations());
                     });
                 }
                 ptDate.update(ptDateModifyDto);

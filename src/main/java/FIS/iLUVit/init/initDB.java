@@ -21,10 +21,10 @@ public class initDB {
 
     private final InitService initService;
 
-//    @PostConstruct
-//    public void init() {
-//        initService.dbInit();
-//    }
+    @PostConstruct
+    public void init() {
+        initService.dbInit();
+    }
 
 
     @Component
@@ -60,11 +60,13 @@ public class initDB {
             Teacher teacher3 = Teacher.createTeacher("dsa", "dsa", encoder.encode("asd"), "dsa3", false, "dsa@dsa.com", "dsa", Auth.TEACHER, Approval.WAITING, center1, "서울특별시", "구로구 벚꽃로 68길 10");
             Teacher teacher4 = Teacher.createTeacher("ddd", "ddd", encoder.encode("asd"), "ddd4", false, "ddd@ddd.com", "ddd", Auth.DIRECTOR, Approval.ACCEPT, center2, "서울특별시", "구로구 벚꽃로 68길 10");
             Teacher teacher5 = Teacher.createTeacher("sss", "sss", encoder.encode("asd"), "sss5", false, "sss@sss.com", "sss", Auth.DIRECTOR, Approval.WAITING, center2, "서울특별시", "구로구 벚꽃로 68길 10");
+            Teacher teacher6 = Teacher.createTeacher("www", "www", encoder.encode("asd"), "sss5fs", false, "sss@sss.com", "sss", Auth.DIRECTOR, Approval.ACCEPT, center3, "서울특별시", "구로구 벚꽃로 68길 10");
             em.persist(teacher1);
             em.persist(teacher2);
             em.persist(teacher3);
             em.persist(teacher4);
             em.persist(teacher5);
+            em.persist(teacher6);
 
             // 학부모 추가
             Parent parent1 = Parent.createParent("qwe", "qwe", encoder.encode("asd"), "asd6", false, "qwe@qwe.com", "qwe", theme, 5, Auth.PARENT, "서울특별시", "구로구 벚꽃로 68길 10");
@@ -74,6 +76,12 @@ public class initDB {
             em.persist(parent1);
             em.persist(parent2);
             em.persist(parent3);
+
+            em.persist(Prefer.createPrefer(parent1, center1));
+            em.persist(Prefer.createPrefer(parent1, center2));
+            em.persist(Prefer.createPrefer(parent1, center3));
+            em.persist(Prefer.createPrefer(parent2, center3));
+            em.persist(Prefer.createPrefer(parent3, center3));
 
             // 아이 추가
             Child child1 = Child.createChild("zxc", LocalDate.now(), Approval.WAITING, parent1);

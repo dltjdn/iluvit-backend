@@ -21,24 +21,17 @@ public class CommentHeartService {
     private final UserRepository userRepository;
     private final CommentRepository commentRepository;
 
-    public void save(Long userId, Long comment_id) {
+    public Long save(Long userId, Long comment_id) {
         User findUser = userRepository.getById(userId);
         Comment findComment = commentRepository.getById(comment_id);
 
         CommentHeart commentHeart = new CommentHeart(findUser, findComment);
-        commentHeartRepository.save(commentHeart);
+        return commentHeartRepository.save(commentHeart).getId();
     }
 
-    public void delete(Long userId, Long comment_id) {
-        commentHeartRepository.findById(comment_id)
-                .ifPresentOrElse(ch -> {
-                    if (ch.getUser().getId() == userId) {
-                        commentHeartRepository.delete(ch);
-                    } else {
-                        throw new UserException("취소 권한 없는 유저");
-                    }
-                }, () -> {
-                    throw new CommentException("존재하지 않는 좋아요");
-                });
+    public Long delete(Long userId, Long comment_id) {
+        CommentHeart commentHeart = commentHeartRepository.findByUserAndComment(userId, comment_id)
+                .orElseThrow(() -> new CommentException("존재하지 않는 좋아요"));
+        return commentHeart.getId();
     }
 }

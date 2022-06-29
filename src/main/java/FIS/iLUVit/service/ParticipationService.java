@@ -2,10 +2,8 @@ package FIS.iLUVit.service;
 
 import FIS.iLUVit.controller.dto.MyParticipationsDto;
 import FIS.iLUVit.domain.*;
-import FIS.iLUVit.domain.alarms.Alarm;
 import FIS.iLUVit.domain.alarms.PresentationFullAlarm;
 import FIS.iLUVit.domain.enumtype.Status;
-import FIS.iLUVit.event.AlarmEvent;
 import FIS.iLUVit.event.ParticipationCancelEvent;
 import FIS.iLUVit.exception.PresentationException;
 import FIS.iLUVit.exception.UserException;
@@ -30,6 +28,7 @@ public class ParticipationService {
     private final PtDateRepository ptDateRepository;
     private final ParentRepository parentRepository;
     private final UserRepository userRepository;
+    private final ApplicationEventPublisher publisher;
 
     public Long register(Long userId, Long ptDateId) {
         // 학부모 조회
@@ -67,7 +66,7 @@ public class ParticipationService {
         participation.cancel();
         // 참여를 취소할 경우 대기자 중에서 가장 높은 순번이 자동으로 등록 됨
         if(ptDate.hasWaiting()){
-            //publisher.publishEvent(new ParticipationCancelEvent(ptDate, null)); // 이벤트 리스너 호출
+            publisher.publishEvent(new ParticipationCancelEvent(ptDate.getPresentation(), ptDate, null)); // 이벤트 리스너 호출
         }
         return participationId;
     }

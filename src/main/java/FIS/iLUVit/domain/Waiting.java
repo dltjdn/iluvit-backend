@@ -35,13 +35,13 @@ public class Waiting extends BaseEntity {
         this.ptDate = ptDate;
     }
 
-    public static Participation whenParticipationCanceled(Waiting waiting) {
+    public static Participation whenParticipationCanceled(Waiting waiting, Presentation presentation) {
         Parent parent = waiting.parent;
         // 영속성 관리 되어서 ptDate 가져올때 쿼리 안나감
         PtDate ptDate = waiting.ptDate;
         ptDate.cancelWaitingForAcceptingParticipation();
         List<Participation> participations = ptDate.getParticipations();
-        return Participation.createAndRegister(parent, ptDate, participations);
+        return Participation.createAndRegisterForWaitings(parent, presentation, ptDate, participations);
     }
 
     public static void hasRegistered(List<Waiting> waitings, Parent parent) {

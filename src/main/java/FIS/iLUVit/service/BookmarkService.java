@@ -74,20 +74,20 @@ public class BookmarkService {
         return dto;
     }
 
-    public void create(Long userId, Long boardId) {
-
+    public Long create(Long userId, Long boardId) {
         User findUser = userRepository.getById(userId);
         Board findBoard = boardRepository.getById(boardId);
         Bookmark bookmark = new Bookmark(findBoard, findUser);
-        bookmarkRepository.save(bookmark);
+        return bookmarkRepository.save(bookmark).getId();
     }
 
-    public void delete(Long userId, Long bookmarkId) {
+    public Long delete(Long userId, Long bookmarkId) {
         Bookmark findBookmark = bookmarkRepository.findById(bookmarkId)
                 .orElseThrow(() -> new BookmarkException("존재하지 않는 북마크"));
         if (!Objects.equals(findBookmark.getUser().getId(), userId)) {
             throw new UserException("삭제 권한 없는 유저");
         }
         bookmarkRepository.delete(findBookmark);
+        return bookmarkId;
    }
 }
