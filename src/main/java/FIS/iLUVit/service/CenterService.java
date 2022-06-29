@@ -114,7 +114,7 @@ public class CenterService {
     *   작성내용: 회원가입 과정에서 필요한 센터정보 가져오기
     */
     public Slice<CenterInfoDto> findCenterForSignup(CenterInfoRequest request, Pageable pageable) {
-        return centerRepository.findForSignup(request, pageable);
+        return centerRepository.findForSignup(request.getSido(), request.getSigungu(), request.getCenterName(), pageable);
     }
 
     /**
@@ -123,6 +123,6 @@ public class CenterService {
     *   작성내용: 아이추가 과정에서 필요한 센터정보 가져오기
     */
     public Slice<CenterInfoDto> findCenterForAddChild(CenterInfoRequest request, Pageable pageable) {
-        return centerRepository.findCenterForAddChild(request, pageable);
+        return centerRepository.findCenterForAddChild(request.getSido(), request.getSigungu(), request.getCenterName(), pageable);
     }
 }

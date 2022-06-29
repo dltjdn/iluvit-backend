@@ -10,8 +10,8 @@ import javax.persistence.Entity;
 @NoArgsConstructor
 public class CenterApprovalReceivedAlarm extends Alarm{
 
-    public CenterApprovalReceivedAlarm(User user) {
-        super(user);
+    public CenterApprovalReceivedAlarm(User teacher) {
+        super(teacher);
         this.mode = AlarmUtils.CENTER_APPROVAL_RECEIVED;
         message = AlarmUtils.getMessage(mode, null);
     }

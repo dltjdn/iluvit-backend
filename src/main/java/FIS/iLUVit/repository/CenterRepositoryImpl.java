@@ -80,11 +80,11 @@ public class CenterRepositoryImpl extends CenterQueryMethod implements CenterRep
     }
 
     @Override
-    public Slice<CenterInfoDto> findForSignup(CenterInfoRequest request, Pageable pageable) {
+    public Slice<CenterInfoDto> findForSignup(String sido, String sigungu, String centerName, Pageable pageable) {
         List<CenterInfoDto> content = jpaQueryFactory.select(new QCenterInfoDto(center.id, center.name, center.address))
                 .from(center)
-                .where(areaEq(request.getSido(), request.getSigungu())
-                        .and(centerNameEq(request.getCenterName())))
+                .where(areaEq(sido, sigungu)
+                        .and(centerNameEq(centerName)))
                 .offset(pageable.getOffset())
                 .limit(pageable.getPageSize() + 1)
                 .fetch();
@@ -99,12 +99,12 @@ public class CenterRepositoryImpl extends CenterQueryMethod implements CenterRep
     }
 
     @Override
-    public Slice<CenterInfoDto> findCenterForAddChild(CenterInfoRequest request, Pageable pageable) {
+    public Slice<CenterInfoDto> findCenterForAddChild(String sido, String sigungu, String centerName, Pageable pageable) {
         List<CenterInfoDto> content = jpaQueryFactory.select(new QCenterInfoDto(center.id, center.name, center.address))
                 .from(center)
                 .where(center.signed.eq(true)
-                        .and(areaEq(request.getSido(), request.getSigungu()))
-                        .and(centerNameEq(request.getCenterName())))
+                        .and(areaEq(sido, sigungu))
+                        .and(centerNameEq(centerName)))
                 .offset(pageable.getOffset())
                 .limit(pageable.getPageSize()+1)
                 .fetch();
