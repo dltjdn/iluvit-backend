@@ -1,18 +1,13 @@
 package FIS.iLUVit.service;
 
-import FIS.iLUVit.controller.dto.ParentDetailResponse;
-import FIS.iLUVit.controller.dto.ParentDetailRequest;
-import FIS.iLUVit.controller.dto.SignupParentRequest;
+import FIS.iLUVit.controller.dto.*;
 import FIS.iLUVit.domain.*;
 import FIS.iLUVit.domain.embeddable.Theme;
 import FIS.iLUVit.domain.enumtype.AuthKind;
+import FIS.iLUVit.exception.CenterException;
 import FIS.iLUVit.exception.SignupException;
 import FIS.iLUVit.exception.UserException;
-import FIS.iLUVit.repository.AuthNumberRepository;
-import FIS.iLUVit.repository.ParentRepository;
-import FIS.iLUVit.controller.dto.ChildInfoDTO;
-import FIS.iLUVit.repository.ScrapRepository;
-import FIS.iLUVit.repository.UserRepository;
+import FIS.iLUVit.repository.*;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -37,22 +32,11 @@ public class ParentService {
     private final ParentRepository parentRepository;
     private final AuthNumberRepository authNumberRepository;
     private final ScrapRepository scrapRepository;
+    private final CenterRepository centerRepository;
+    private final ChildRepository childRepository;
+    private final BookmarkService bookmarkService;
 
-    /**
-     * 작성날짜: 2022/05/13 4:43 PM
-     * 작성자: 이승범
-     * 작성내용: 부모의 메인페이지에 필요한 아이들 정보 반환
-     */
-    public ChildInfoDTO ChildrenInfo(Long id) {
-        Parent findParent = parentRepository.findWithChildren(id)
-                .orElseThrow(() -> new UserException("존재하지 않는 User 입니다."));
 
-        ChildInfoDTO childInfoDTO = new ChildInfoDTO();
-
-        findParent.getChildren().forEach(child -> childInfoDTO.getData().add(new ChildInfoDTO.ChildInfo(child)));
-
-        return childInfoDTO;
-    }
 
     /**
      * 작성날짜: 2022/05/13 4:44 PM
@@ -109,7 +93,7 @@ public class ParentService {
         ParentDetailResponse response = new ParentDetailResponse(findParent);
 
         // 요청에 프로필 이미지 있으면 덮어씌우기
-        if(!request.getProfileImg().isEmpty()){
+        if (!request.getProfileImg().isEmpty()) {
             String imagePath = imageService.getUserProfileDir();
             imageService.saveProfileImage(request.getProfileImg(), imagePath + findParent.getId());
             response.setProfileImg(imageService.getEncodedProfileImage(imagePath, id));
@@ -137,4 +121,6 @@ public class ParentService {
         // 사용이 끝난 인증번호를 테이블에서 지우기
         authNumberRepository.deleteByPhoneNumAndAuthKind(request.getPhoneNum(), AuthKind.signup);
     }
+
+
 }

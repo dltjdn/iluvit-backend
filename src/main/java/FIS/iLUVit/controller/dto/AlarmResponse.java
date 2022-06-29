@@ -5,10 +5,12 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 @Data
-@AllArgsConstructor
 @NoArgsConstructor
-public class CenterInfoForSignupRequest {
-    private String sido;
-    private String sigungu;
-    private String centerName;
+@AllArgsConstructor
+public abstract class AlarmResponse {
+
+    private Long userId;
+    private String message;
+    private String type;
+
 }

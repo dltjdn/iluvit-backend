@@ -136,4 +136,11 @@ public class PtDate extends BaseEntity {
         return Objects.hash(id);
     }
 
+    public PtDate updateWaitingCntForPtDateChange(Integer changeNum) {
+        participantCnt += changeNum;
+        waitingCnt =- changeNum;
+        if(waitingCnt < 0)
+            waitingCnt = 0;
+        return this;
+    }
 }

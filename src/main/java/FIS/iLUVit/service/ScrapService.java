@@ -85,6 +85,7 @@ public class ScrapService {
         // 사용자의 스크랩폴더 목록을 가져온다.
         List<Scrap> scraps = scrapRepository.findScrapsByUserAndPostWithScrapPost(userId);
 
+        // request 스크랩 폴더 목록들을 사용자의 스크랩 폴더 목록과 비교
         request.getScrapList().forEach(requestScrap -> {
             boolean isFindScrap = false;
             for (Scrap s : scraps) {

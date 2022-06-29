@@ -60,11 +60,13 @@ public class initDB {
             Teacher teacher3 = Teacher.createTeacher("dsa", "dsa", encoder.encode("asd"), "dsa3", false, "dsa@dsa.com", "dsa", Auth.TEACHER, Approval.WAITING, center1, "서울특별시", "구로구 벚꽃로 68길 10");
             Teacher teacher4 = Teacher.createTeacher("ddd", "ddd", encoder.encode("asd"), "ddd4", false, "ddd@ddd.com", "ddd", Auth.DIRECTOR, Approval.ACCEPT, center2, "서울특별시", "구로구 벚꽃로 68길 10");
             Teacher teacher5 = Teacher.createTeacher("sss", "sss", encoder.encode("asd"), "sss5", false, "sss@sss.com", "sss", Auth.DIRECTOR, Approval.WAITING, center2, "서울특별시", "구로구 벚꽃로 68길 10");
+            Teacher teacher6 = Teacher.createTeacher("www", "www", encoder.encode("asd"), "sss5fs", false, "sss@sss.com", "sss", Auth.DIRECTOR, Approval.ACCEPT, center3, "서울특별시", "구로구 벚꽃로 68길 10");
             em.persist(teacher1);
             em.persist(teacher2);
             em.persist(teacher3);
             em.persist(teacher4);
             em.persist(teacher5);
+            em.persist(teacher6);
 
             // 학부모 추가
             Parent parent1 = Parent.createParent("qwe", "qwe", encoder.encode("asd"), "asd6", false, "qwe@qwe.com", "qwe", theme, 5, Auth.PARENT, "서울특별시", "구로구 벚꽃로 68길 10");
@@ -75,10 +77,16 @@ public class initDB {
             em.persist(parent2);
             em.persist(parent3);
 
+            em.persist(Prefer.createPrefer(parent1, center1));
+            em.persist(Prefer.createPrefer(parent1, center2));
+            em.persist(Prefer.createPrefer(parent1, center3));
+            em.persist(Prefer.createPrefer(parent2, center3));
+            em.persist(Prefer.createPrefer(parent3, center3));
+
             // 아이 추가
-            Child child1 = Child.createChild("zxc", "zxc", Approval.WAITING, parent1);
-            Child child2 = Child.createChild("zxc", "zxc", Approval.ACCEPT, parent1);
-            Child child3 = Child.createChild("zxc", "zxc", Approval.ACCEPT, parent1);
+            Child child1 = Child.createChild("zxc", LocalDate.now(), Approval.WAITING, parent1);
+            Child child2 = Child.createChild("zxc", LocalDate.now(), Approval.ACCEPT, parent1);
+            Child child3 = Child.createChild("zxc", LocalDate.now(), Approval.ACCEPT, parent1);
             child1.mappingCenter(center1);
             child2.mappingCenter(center2);
             em.persist(child1);
@@ -120,14 +128,14 @@ public class initDB {
             em.persist(ptDate2);
             em.persist(ptDate3);
 
-            Board board1 = Board.createBoard("HOT 게시물", BoardKind.NORMAL, null);
-            Board board2 = Board.createBoard("자유 게시판", BoardKind.NORMAL, null);
-            Board board3 = Board.createBoard("영상 게시판", BoardKind.VIDEO, null);
-            Board board4 = Board.createBoard("장터 게시판", BoardKind.MARKET, null);
-            Board board5 = Board.createBoard("맛집 게시판", BoardKind.FOOD, null);
-            Board board6 = Board.createBoard("공지 게시판", BoardKind.NORMAL, center1);
-            Board board7 = Board.createBoard("놀이 게시판", BoardKind.NORMAL, center2);
-            em.persist(board1);
+//            Board board1 = Board.createBoard("HOT 게시물", BoardKind.NORMAL, null, false);
+            Board board2 = Board.createBoard("자유 게시판", BoardKind.NORMAL, null, true);
+            Board board3 = Board.createBoard("영상 게시판", BoardKind.VIDEO, null, true);
+            Board board4 = Board.createBoard("장터 게시판", BoardKind.MARKET, null, true);
+            Board board5 = Board.createBoard("맛집 게시판", BoardKind.FOOD, null, true);
+            Board board6 = Board.createBoard("공지 게시판", BoardKind.NORMAL, center1, true);
+            Board board7 = Board.createBoard("놀이 게시판", BoardKind.NORMAL, center2, false);
+//            em.persist(board1);
             em.persist(board2);
             em.persist(board3);
             em.persist(board4);
@@ -135,33 +143,18 @@ public class initDB {
             em.persist(board6);
             em.persist(board7);
 
-            Bookmark bookmark1 = new Bookmark(0, board2, parent1);
-            Bookmark bookmark2 = new Bookmark(1, board3, parent1);
-            Bookmark bookmark3 = new Bookmark(2, board4, parent1);
-            Bookmark bookmark4 = new Bookmark(3, board5, parent1);
-            Bookmark bookmark5 = new Bookmark(4, board6, parent1);
-            Bookmark bookmark6 = new Bookmark(5, board7, parent1);
-
+            Bookmark bookmark1 = new Bookmark(board2, parent1);
+            Bookmark bookmark2 = new Bookmark(board3, parent1);
+            Bookmark bookmark3 = new Bookmark(board4, parent1);
+            Bookmark bookmark4 = new Bookmark(board5, parent1);
+            Bookmark bookmark5 = new Bookmark(board6, parent1);
+            Bookmark bookmark6 = new Bookmark(board7, parent1);
             em.persist(bookmark1);
             em.persist(bookmark2);
             em.persist(bookmark3);
             em.persist(bookmark4);
             em.persist(bookmark5);
             em.persist(bookmark6);
-
-            Bookmark bookmark7 = new Bookmark(0, board2, teacher1);
-            Bookmark bookmark8 = new Bookmark(1, board3, teacher1);
-            Bookmark bookmark9 = new Bookmark(2, board4, teacher1);
-            Bookmark bookmark10 = new Bookmark(3, board5, teacher1);
-            Bookmark bookmark11 = new Bookmark(4, board6, teacher1);
-            Bookmark bookmark12 = new Bookmark(5, board7, teacher1);
-
-            em.persist(bookmark7);
-            em.persist(bookmark8);
-            em.persist(bookmark9);
-            em.persist(bookmark10);
-            em.persist(bookmark11);
-            em.persist(bookmark12);
 
 
             Post post1 = new Post("제목이다", "내용이다", false, 0, 0, 0, 0, board2, teacher1);
@@ -230,25 +223,21 @@ public class initDB {
             em.persist(commentHeart4);
             em.persist(commentHeart5);
 
-            Chat chat1 = new Chat("안녕하세요", parent1, parent2, post2);
-            Chat chat2 = new Chat("감사해요", parent2, parent1, post2);
-            Chat chat3 = new Chat("잘있어요", parent1, parent2, post2);
-            Chat chat4 = new Chat("다시만나요", parent2, parent1, post2);
-
-            Chat chat5 = new Chat("안녕하세요2", parent1, teacher1, post7);
-            Chat chat6 = new Chat("감사해요2", teacher1, parent1, post7);
-            Chat chat7 = new Chat("잘있어요2", parent1, teacher1, post7);
-            Chat chat8 = new Chat("다시만나요2", teacher1, parent1, post7);
+            Chat chat1 = new Chat("안녕하세요", parent1, teacher1, post2);
+            Chat chat2 = new Chat("안녕하세요", teacher1, parent1, post2);
+            Chat chat3 = new Chat("안녕하세요", parent1, teacher1, post6);
+            Chat chat4 = new Chat("안녕하세요", teacher1, parent1, post2);
+            Chat chat5 = new Chat("안녕하세요", teacher2, parent1, post2);
+            Chat chat6 = new Chat("안녕하세요", teacher2, parent1, post6);
+            Chat chat7 = new Chat("안녕하세요", parent1, teacher2, post2);
 
             em.persist(chat1);
             em.persist(chat2);
             em.persist(chat3);
             em.persist(chat4);
-
             em.persist(chat5);
             em.persist(chat6);
             em.persist(chat7);
-            em.persist(chat8);
         }
     }
 }

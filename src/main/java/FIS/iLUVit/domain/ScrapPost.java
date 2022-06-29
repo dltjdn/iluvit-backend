@@ -22,7 +22,7 @@ public class ScrapPost extends BaseEntity {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "scrap_id")
-//    @OnDelete(action = OnDeleteAction.CASCADE)
+    @OnDelete(action = OnDeleteAction.CASCADE)
     private Scrap scrap;
 
     public static ScrapPost createScrapPost(Post post, Scrap scrap) {

@@ -1,7 +1,9 @@
 package FIS.iLUVit.domain;
 
+import FIS.iLUVit.domain.alarms.PresentationConvertedToParticipateAlarm;
 import FIS.iLUVit.domain.enumtype.Status;
 import FIS.iLUVit.exception.PresentationException;
+import FIS.iLUVit.service.AlarmUtils;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -69,7 +71,8 @@ public class Participation extends BaseEntity {
         });
     }
 
-    public static Participation createAndRegister(Parent parent, PtDate ptDate, List<Participation> participations) {
+    // 대기 상태에서 신청으로 전환시 발생하는 createAndRegister 메서드
+    public static Participation createAndRegisterForWaitings(Parent parent, Presentation presentation, PtDate ptDate, List<Participation> participations) {
         Participation.hasRegistered(participations, parent);
         // participation 생성
         Participation participation = Participation.builder()
@@ -83,7 +86,7 @@ public class Participation extends BaseEntity {
 
         // 연관 관계 등록 및 participationCnt + 1
         ptDate.acceptParticipation(participation);
-
+        AlarmUtils.publishAlarmEvent(new PresentationConvertedToParticipateAlarm(parent, presentation, presentation.getCenter()));
         return participation;
     }
 

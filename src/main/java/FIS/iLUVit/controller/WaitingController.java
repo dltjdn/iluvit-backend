@@ -8,15 +8,13 @@ import FIS.iLUVit.domain.Teacher;
 import FIS.iLUVit.domain.enumtype.Approval;
 import FIS.iLUVit.domain.enumtype.Auth;
 import FIS.iLUVit.event.AlarmEvent;
-import FIS.iLUVit.event.ParticipationCancelEvent;
 import FIS.iLUVit.repository.CenterRepository;
 import FIS.iLUVit.repository.UserRepository;
-import FIS.iLUVit.service.CenterService;
 import FIS.iLUVit.service.WaitingService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.ApplicationEventPublisher;
-import org.springframework.scheduling.annotation.Async;
+import org.springframework.context.MessageSource;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
@@ -30,6 +28,7 @@ public class WaitingController {
     private final ApplicationEventPublisher publisher;
     private final CenterRepository centerRepository;
     private final UserRepository userRepository;
+    private final MessageSource messageSource;
 
     @PostMapping("/waiting")
     public Long register(@Login Long userId, @RequestBody WaitingRegisterDto dto){

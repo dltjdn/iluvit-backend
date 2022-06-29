@@ -1,6 +1,5 @@
 package FIS.iLUVit.repository;
 
-import FIS.iLUVit.controller.dto.CenterInfoForSignupDto;
 import FIS.iLUVit.domain.embeddable.Area;
 import FIS.iLUVit.domain.embeddable.Theme;
 import FIS.iLUVit.domain.enumtype.KindOf;
@@ -83,7 +82,7 @@ public class CenterQueryMethod {
     }
 
     protected BooleanExpression centerNameEq(String centerName) {
-        return centerName == null ? null : center.name.eq(centerName);
+        return centerName == null ? null : center.name.contains(centerName);
     }
 
 }

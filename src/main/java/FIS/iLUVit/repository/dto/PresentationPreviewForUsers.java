@@ -2,6 +2,7 @@ package FIS.iLUVit.repository.dto;
 
 import FIS.iLUVit.domain.Center;
 import FIS.iLUVit.domain.Presentation;
+import FIS.iLUVit.domain.embeddable.Theme;
 import com.querydsl.core.annotations.QueryProjection;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -21,6 +22,7 @@ public class PresentationPreviewForUsers {
     private LocalDate endDate;
     private String place;               // 설명회 장소
     private String content;             // 설명회 내용
+    private Theme theme;
 
     @QueryProjection
     public PresentationPreviewForUsers(Presentation presentation, Center center) {
@@ -31,5 +33,6 @@ public class PresentationPreviewForUsers {
         endDate = presentation.getEndDate();
         place = presentation.getPlace();
         content = presentation.getContent();
+        theme = center.getTheme();
     }
 }

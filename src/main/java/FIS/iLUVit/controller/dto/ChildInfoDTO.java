@@ -20,13 +20,17 @@ public class ChildInfoDTO {
     public static class ChildInfo{
         private Long id;
         private String name;
-        private Boolean hasProfileImg;
+        private Long center_id;
+        private String center_name;
+        private String profileImage;
         private Approval approval;
 
-        public ChildInfo(Child child) {
+        public ChildInfo(Child child, String image) {
             this.id = child.getId();
             this.name = child.getName();
-            this.hasProfileImg = child.getHasProfileImg();
+            this.center_id = child.getCenter().getId();
+            this.center_name = child.getCenter().getName();
+            this.profileImage = image;
             this.approval = child.getApproval();
         }
     }

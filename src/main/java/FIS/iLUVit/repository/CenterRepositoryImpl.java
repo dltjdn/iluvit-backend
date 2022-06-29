@@ -1,9 +1,8 @@
 package FIS.iLUVit.repository;
 
-import FIS.iLUVit.controller.dto.CenterInfoForSignupDto;
-import FIS.iLUVit.controller.dto.CenterInfoForSignupRequest;
-import FIS.iLUVit.controller.dto.QCenterInfoForSignupDto;
-import FIS.iLUVit.domain.QReview;
+import FIS.iLUVit.controller.dto.CenterInfoDto;
+import FIS.iLUVit.controller.dto.CenterInfoRequest;
+import FIS.iLUVit.controller.dto.QCenterInfoDto;
 import FIS.iLUVit.domain.embeddable.Area;
 import FIS.iLUVit.domain.embeddable.Theme;
 import FIS.iLUVit.domain.enumtype.KindOf;
@@ -81,13 +80,33 @@ public class CenterRepositoryImpl extends CenterQueryMethod implements CenterRep
     }
 
     @Override
-    public Slice<CenterInfoForSignupDto> findForSignup(CenterInfoForSignupRequest request, Pageable pageable) {
-        List<CenterInfoForSignupDto> content = jpaQueryFactory.select(new QCenterInfoForSignupDto(center.id, center.name, center.address))
+    public Slice<CenterInfoDto> findForSignup(String sido, String sigungu, String centerName, Pageable pageable) {
+        List<CenterInfoDto> content = jpaQueryFactory.select(new QCenterInfoDto(center.id, center.name, center.address))
                 .from(center)
-                .where(areaEq(request.getSido(), request.getSigungu())
-                        .and(centerNameEq(request.getCenterName())))
+                .where(areaEq(sido, sigungu)
+                        .and(centerNameEq(centerName)))
                 .offset(pageable.getOffset())
                 .limit(pageable.getPageSize() + 1)
+                .fetch();
+
+        boolean hasNext = false;
+        if (content.size() > pageable.getPageSize()) {
+            hasNext = true;
+            content.remove(pageable.getPageSize());
+        }
+
+        return new SliceImpl<>(content, pageable, hasNext);
+    }
+
+    @Override
+    public Slice<CenterInfoDto> findCenterForAddChild(String sido, String sigungu, String centerName, Pageable pageable) {
+        List<CenterInfoDto> content = jpaQueryFactory.select(new QCenterInfoDto(center.id, center.name, center.address))
+                .from(center)
+                .where(center.signed.eq(true)
+                        .and(areaEq(sido, sigungu))
+                        .and(centerNameEq(centerName)))
+                .offset(pageable.getOffset())
+                .limit(pageable.getPageSize()+1)
                 .fetch();
 
         boolean hasNext = false;

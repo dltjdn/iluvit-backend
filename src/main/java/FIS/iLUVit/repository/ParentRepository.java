@@ -9,7 +9,11 @@ import java.util.Optional;
 
 public interface ParentRepository extends JpaRepository<Parent, Long> {
 
-    @Query("select p from Parent p join fetch p.children where p.id = :id")
+    @Query("select distinct p " +
+            "from Parent p " +
+            "join fetch p.children c " +
+            "join fetch c.center " +
+            "where p.id = :id")
     Optional<Parent> findWithChildren(@Param("id") Long id);
 
     Optional<Parent> findByNickName(String nickname);
@@ -21,4 +25,10 @@ public interface ParentRepository extends JpaRepository<Parent, Long> {
             "left join fetch presentation.center " +
             "where parent.id = :userId")
     Optional<Parent> findByIdAndFetchPresentation(@Param("userId") Long userId);
+
+    @Query("select distinct p " +
+            "from Parent p " +
+            "left join fetch p.children " +
+            "where p.id =:userId")
+    Parent findByIdWithChild(@Param("userId") Long userId);
 }

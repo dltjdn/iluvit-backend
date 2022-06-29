@@ -3,6 +3,7 @@ package FIS.iLUVit.controller.dto;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.springframework.data.domain.Slice;
 
 import java.time.LocalDate;
 import java.time.LocalTime;
@@ -13,7 +14,7 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 public class ReviewByCenterDTO {
-    private List<ReviewCenterDto> reviews = new ArrayList<>();
+    private Slice<ReviewCenterDto> reviews;
 
     @Data
     @NoArgsConstructor

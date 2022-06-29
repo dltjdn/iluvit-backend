@@ -1,53 +1,49 @@
 package FIS.iLUVit.service;
 
 import FIS.iLUVit.domain.alarms.Alarm;
-import lombok.RequiredArgsConstructor;
+import FIS.iLUVit.event.AlarmEvent;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.context.MessageSource;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Component;
 
 @Component
 public class AlarmUtils {
 
     private static MessageSource messageSource;
+    private static ApplicationEventPublisher eventPublisher;
     // 작성한 글에 댓글 알림
-    public static final Mode POST_COMMENT = Mode.POST_COMMENT;
+    public static final String POST_COMMENT = "alarm.post.comment";
     // 좋아요한 센터에서 설명회 생성됨
-    public static final Mode PRESENTATION_CREATED_LIKED_CENTER = Mode.PRESENTATION_CREATED_LIKED_CENTER;
+    public static final String PRESENTATION_CREATED_LIKED_CENTER = "alarm.presentation.createdLikedCenter";
     // 대기신청했던 거에서 참여로 바뀜
-    public static final Mode PRESENTATION_WAITING_TO_PARTICIPATE = Mode.PRESENTATION_WAITING_TO_PARTICIPATE;
+    public static final String PRESENTATION_WAITING_TO_PARTICIPATE = "alarm.presentation.waitingToParticipate";
     // 설명회 신청인원 가득 참
-    public static final Mode PRESENTATION_APPLICANTS_FULL = Mode.PRESENTATION_APPLICANTS_FULL;
+    public static final String PRESENTATION_APPLICANTS_FULL = "alarm.presentation.applicantsFull";
     // 설명회 신청기간 종료
-    public static final Mode PRESENTATION_CLOSED = Mode.PRESENTATION_CLOSED;
+    public static final String PRESENTATION_CLOSED = "alarm.presentation.closed";
     // 채팅 수신됨
-    public static final Mode CHAT_RECEIVED = Mode.CHAT_RECEIVED;
-
-    public enum Mode {
-        POST_COMMENT("alarm.post.comment"),
-        PRESENTATION_CREATED_LIKED_CENTER("alarm.presentation.createdLikedCenter"),
-        PRESENTATION_WAITING_TO_PARTICIPATE("alarm.presentation.waitingToParticipate"),
-        PRESENTATION_APPLICANTS_FULL("alarm.presentation.applicantsFull"),
-        PRESENTATION_CLOSED("alarm.presentation.closed"),
-        CHAT_RECEIVED("alarm.chat.received");
-
-        private String path;
-
-        Mode(String path) {
-            this.path = path;
-        }
-    }
+    public static final String CHAT_RECEIVED = "alarm.chat.received";
+    //
+    public static final String CENTER_APPROVAL_RECEIVED = "alarm.center.approvalReceived";
+    //
+    public static final String CENTER_APPROVAL_ACCEPTED = "alarm.center.approvalAccepted";
 
     @Autowired
-    public AlarmUtils(MessageSource messageSource){
+    public AlarmUtils(MessageSource messageSource, ApplicationEventPublisher eventPublisher){
         this.messageSource = messageSource;
+        this.eventPublisher = eventPublisher;
     }
 
-    public static Alarm createMessage(Alarm alarm, Mode mode){
-        alarm.createMessage(messageSource, mode);
-        return alarm;
+    public static String getMessage(String code, Object[] args){
+        return messageSource.getMessage(code, args, null);
     }
 
-
+    public static AlarmEvent publishAlarmEvent(Alarm alarm){
+        AlarmEvent alarmEvent = new AlarmEvent(alarm);
+        eventPublisher.publishEvent(alarmEvent);
+        return alarmEvent;
+    }
 
 }

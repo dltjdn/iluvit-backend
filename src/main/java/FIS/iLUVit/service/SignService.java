@@ -99,14 +99,13 @@ public class SignService {
      */
     public AuthNumber authenticateAuthNum(AuthenticateAuthNumRequest request) {
 
-        AuthNumber authNumber =
-                authNumberRepository
+        AuthNumber authNumber = authNumberRepository
                         .findByPhoneNumAndAuthNumAndAuthKind(request.getPhoneNum(), request.getAuthNum(), request.getAuthKind())
                         .orElse(null);
 
         if (authNumber == null) {
             throw new AuthNumException("인증번호가 일치하지 않습니다.");
-        } else if (Duration.between(authNumber.getCreatedDate(), LocalDateTime.now()).getSeconds() > 180) {
+        } else if (Duration.between(authNumber.getCreatedDate(), LocalDateTime.now()).getSeconds() > 60) {
             throw new AuthNumException("인증번호가 만료되었습니다.");
         } else {
             authNumber.AuthComplete();
@@ -180,7 +179,7 @@ public class SignService {
             authNumberRepository.save(authNumberInfo);
 
             // 이미 인증번호를 받았지만 제한시간이 지난 경우
-        } else if (Duration.between(overlaps.getCreatedDate(), LocalDateTime.now()).getSeconds() > 180) {
+        } else if (Duration.between(overlaps.getCreatedDate(), LocalDateTime.now()).getSeconds() > 60) {
 
             // 예전 인증번호 관련 정보를 db에서 지우고
             authNumberRepository.deleteExpiredNumber(toNumber, authKind);

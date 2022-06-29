@@ -34,15 +34,22 @@ public class PostService {
     private final CenterRepository centerRepository;
     private final BookmarkRepository bookmarkRepository;
     private final ScrapPostRepository scrapPostRepository;
+    private final PostHeartRepository postHeartRepository;
 
-    public void savePost(PostRegisterRequest request, List<MultipartFile> images, Long userId) {
-        User findUser = userRepository.findById(userId)
-                .orElseThrow(() -> new UserException("존재하지 않는 유저"));
-        Integer imgSize = (images == null ? 0 : images.size());
+    public Long savePost(PostRegisterRequest request, List<MultipartFile> images, Long userId) {
 
+        User findUser = userRepository.getById(userId);
         Board findBoard = boardRepository.findById(request.getBoard_id())
-                .orElseThrow(() -> new BoardException("존재하지 않는 보드"));
+                .orElseThrow(() -> new BoardException("존재하지 않는 게시판"));
 
+        if (findBoard.getBoardKind() == BoardKind.NOTICE) {
+            if (findUser.getAuth() == Auth.PARENT) {
+                throw new PostException("공지 게시판은 교사만 글을 등록할 수 있습니다.");
+            }
+        }
+
+
+        Integer imgSize = (images == null ? 0 : images.size());
         Post post = new Post(request.getTitle(), request.getContent(), request.getAnonymous(),
                 0, 0, imgSize, 0, findBoard, findUser);
 
@@ -53,9 +60,11 @@ public class PostService {
             imageService.saveInfoImage(images, imagePath);
         }
 
+        return savedPost.getId();
+
     }
 
-    public void deleteById(Long postId, Long userId) {
+    public Long deleteById(Long postId, Long userId) {
         User findUser = userRepository.findById(userId)
                 .orElseThrow(() -> new UserException("존재하지 않는 유저"));
         Post findPost = postRepository.findById(postId)
@@ -63,14 +72,16 @@ public class PostService {
         if (!Objects.equals(findPost.getUser().getId(), findUser.getId())) {
             throw new UserException("삭제 권한이 없는 유저");
         }
-        postRepository.deleteById(postId);
+        postRepository.delete(findPost);
+        return postId;
     }
 
 
     public GetPostResponse findById(Long postId) {
-
+        // 게시글과 연관된 유저, 게시판, 시설 한 번에 끌고옴
         Post findPost = postRepository.findByIdWithUserAndBoardAndCenter(postId)
                 .orElseThrow(() -> new PostException("존재하지 않는 게시글"));
+        // 첨부된 이미지 파일, 게시글에 달린 댓글 지연 로딩으로 가져와 DTO 생성
         return getPostResponseDto(findPost);
     }
 
@@ -78,7 +89,6 @@ public class PostService {
         log.info("input : " + input);
 
         Set<Long> centerIds = new HashSet<>();
-//        List<Long> boardIds;
 
         if (auth == Auth.PARENT) {
             // 학부모 유저일 때 아이와 연관된 센터의 아이디를 모두 가져옴
@@ -88,21 +98,21 @@ public class PostService {
 
 
         } else {
+            // 교사 유저는 연관된 센터 가져옴
             Center center = centerRepository.findCenterByTeacher(userId).get();
             centerIds.add(center.getId());
 
         }
 
-        Slice<GetPostResponsePreview> posts = postRepository.findWithBoardAndCenter(centerIds, input, pageable);
         // 센터의 게시판 + 모두의 게시판(centerId == null) 키워드 검색
+        Slice<GetPostResponsePreview> posts = postRepository.findWithBoardAndCenter(centerIds, input, pageable);
+        // 끌어온 게시글에 이미지 있으면 프리뷰용 이미지 넣어줌
         posts.forEach(g -> setPreviewImage(g));
         return posts;
     }
 
     public Slice<GetPostResponsePreview> searchByKeywordAndCenter(Long centerId, String input, Auth auth, Long userId, Pageable pageable) {
-        if (centerId == null) {
-            return searchByKeyword(input, auth, userId, pageable);
-        }
+        // 센터 아이디 null 인 경우 모두의 이야기 안에서 검색됨
         Slice<GetPostResponsePreview> posts = postRepository.findWithCenter(centerId, input, auth, userId, pageable);
         posts.forEach(g -> setPreviewImage(g));
         return posts;
@@ -148,6 +158,35 @@ public class PostService {
 
 
     public List<BoardPreview> searchCenterMainPreview(Long userId, Long centerId) {
+
+        User findUser = userRepository.findById(userId)
+                .orElseThrow(() -> new UserException("존재하지 않는 유저"));
+        // 학부모 유저일 경우 아이를 통해 센터 정보를 가져옴
+        // 교사 유저일 경우 바로 센터 정보 가져옴
+        if (findUser.getAuth() == Auth.PARENT) {
+            boolean flag = false;
+            List<Long> centerIds = ((Parent) findUser).getChildren()
+                    .stream()
+                    .filter(c -> c.getCenter() != null)
+                    .map(c -> c.getCenter().getId())
+                    .collect(Collectors.toList());
+            for (Long id : centerIds) {
+                if (id == centerId) {
+                    flag = true;
+                    break;
+                }
+            }
+            if (!flag) {
+                throw new UserException("해당 센터에 권한 없는 학부모 유저");
+            }
+
+        } else {
+            Center center = ((Teacher) findUser).getCenter();
+            if (center.getId() != centerId) {
+                throw new UserException("해당 센터에 권한 없는 교사 유저");
+            }
+        }
+
         List<BoardPreview> boardPreviews = new ArrayList<>();
         List<Bookmark> bookmarkList = bookmarkRepository.findBoardByUserAndCenter(userId, centerId);
         getBoardPreviews(bookmarkList, boardPreviews);
@@ -207,7 +246,26 @@ public class PostService {
     }
 
     public Slice<GetPostResponsePreview> findByHeartCnt(Long centerId, Pageable pageable) {
+        // heartCnt 가 n 개 이상이면 HOT 게시판에 넣어줍니다.
         return postRepository.findHotPosts(centerId, pageable);
+    }
+
+    /**
+        작성자: 이창윤
+        작성시간: 2022/06/27 1:40 PM
+        내용: 게시글에 이미 좋아요 눌렀는지 검증 후 저장
+    */
+    public void savePostHeart(Long userId, Long postId) {
+        Post findPost = postRepository.findById(postId)
+                .orElseThrow(() -> new PostException("존재하지 않는 게시글"));
+        User findUser = userRepository.getById(userId);
+        findPost.getPostHearts().forEach(ph -> {
+            if (Objects.equals(ph.getUser().getId(), userId)) {
+                throw new PostException("이미 좋아요 누른 게시글");
+            }
+        });
+        PostHeart postHeart = new PostHeart(findUser, findPost);
+        postHeartRepository.save(postHeart);
     }
 
     /**

@@ -1,6 +1,7 @@
 package FIS.iLUVit.repository;
 
 import FIS.iLUVit.domain.Board;
+import FIS.iLUVit.domain.Center;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -30,4 +31,11 @@ public interface BoardRepository extends JpaRepository<Board, Long> {
 
     @Query("select b from Board b where b.center.id = :centerId and b.name = :name")
     Optional<Board> findByNameWithCenter(@Param("name") String name, @Param("centerId") Long centerId);
+
+    @Query("select b " +
+            "from Board b " +
+            "join fetch b.center c " +
+            "where c.id =:centerId or c.id is null " +
+            "and b.isDefault = true")
+    List<Board> findDefaultByCenter(@Param("centerId") Long centerId);
 }

@@ -5,6 +5,7 @@ import FIS.iLUVit.controller.dto.RegisterCommentRequest;
 import FIS.iLUVit.domain.Comment;
 import FIS.iLUVit.domain.Post;
 import FIS.iLUVit.domain.User;
+import FIS.iLUVit.domain.alarms.PostAlarm;
 import FIS.iLUVit.exception.CommentException;
 import FIS.iLUVit.exception.PostException;
 import FIS.iLUVit.exception.UserException;
@@ -26,24 +27,27 @@ public class CommentService {
     private final PostRepository postRepository;
     private final UserRepository userRepository;
 
-    public void registerComment(Long userId, Long postId, Long commentId, RegisterCommentRequest request) {
-        User findUser = userRepository.findById(userId)
-                .orElseThrow(() -> new UserException("존재하지 않는 유저"));
+    public Long registerComment(Long userId, Long postId, Long commentId, RegisterCommentRequest request) {
+        User findUser = userRepository.getById(userId);
         Post findPost = postRepository.findById(postId)
                 .orElseThrow(() -> new PostException("존재하지 않는 게시글"));
+
         Comment comment = new Comment(request.getAnonymous(), request.getContent(), findPost, findUser);
 
+        // commentId 보내는 경우 대댓글 -> parentComment
         if (commentId != null) {
-            commentRepository.findById(commentId)
-                    .ifPresent(p -> comment.updateParentComment(p));
+            Comment parentComment = commentRepository.getById(commentId);
+            comment.updateParentComment(parentComment);
         }
 
-        commentRepository.save(comment);
+        AlarmUtils.publishAlarmEvent(new PostAlarm(findPost.getUser(), findPost, comment));
+        return commentRepository.save(comment).getId();
     }
 
-    public void deleteComment(Long userId, Long commentId) {
+    public Long deleteComment(Long userId, Long commentId) {
         commentRepository.findById(commentId)
                 .ifPresentOrElse(c -> {
+                    // 내용 -> 삭제된 댓글입니다. + 작성자 -> null
                     if (c.getUser().getId() == userId) {
                         c.updateContent("삭제된 댓글입니다.");
                         c.updateUser(null);
@@ -53,9 +57,11 @@ public class CommentService {
                 }, () -> {
                     throw new CommentException("존재하지 않는 댓글");
                 });
+        return commentId;
     }
 
     public Slice<CommentDTO> searchByUser(Long userId, Pageable pageable) {
+        // Comment -> CommentDTO 타입으로 변환
         return commentRepository.findByUser(userId, pageable).map(CommentDTO::new);
     }
 }
