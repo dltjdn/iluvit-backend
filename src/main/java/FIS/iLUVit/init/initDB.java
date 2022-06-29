@@ -143,12 +143,12 @@ public class initDB {
             em.persist(board6);
             em.persist(board7);
 
-            Bookmark bookmark1 = new Bookmark(0, board2, parent1);
-            Bookmark bookmark2 = new Bookmark(1, board3, parent1);
-            Bookmark bookmark3 = new Bookmark(2, board4, parent1);
-            Bookmark bookmark4 = new Bookmark(3, board5, parent1);
-            Bookmark bookmark5 = new Bookmark(4, board6, parent1);
-            Bookmark bookmark6 = new Bookmark(5, board7, parent1);
+            Bookmark bookmark1 = new Bookmark(board2, parent1);
+            Bookmark bookmark2 = new Bookmark(board3, parent1);
+            Bookmark bookmark3 = new Bookmark(board4, parent1);
+            Bookmark bookmark4 = new Bookmark(board5, parent1);
+            Bookmark bookmark5 = new Bookmark(board6, parent1);
+            Bookmark bookmark6 = new Bookmark(board7, parent1);
             em.persist(bookmark1);
             em.persist(bookmark2);
             em.persist(bookmark3);
