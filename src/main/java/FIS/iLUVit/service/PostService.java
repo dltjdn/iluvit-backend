@@ -158,6 +158,35 @@ public class PostService {
 
 
     public List<BoardPreview> searchCenterMainPreview(Long userId, Long centerId) {
+
+        User findUser = userRepository.findById(userId)
+                .orElseThrow(() -> new UserException("존재하지 않는 유저"));
+        // 학부모 유저일 경우 아이를 통해 센터 정보를 가져옴
+        // 교사 유저일 경우 바로 센터 정보 가져옴
+        if (findUser.getAuth() == Auth.PARENT) {
+            boolean flag = false;
+            List<Long> centerIds = ((Parent) findUser).getChildren()
+                    .stream()
+                    .filter(c -> c.getCenter() != null)
+                    .map(c -> c.getCenter().getId())
+                    .collect(Collectors.toList());
+            for (Long id : centerIds) {
+                if (id == centerId) {
+                    flag = true;
+                    break;
+                }
+            }
+            if (!flag) {
+                throw new UserException("해당 센터에 권한 없는 학부모 유저");
+            }
+
+        } else {
+            Center center = ((Teacher) findUser).getCenter();
+            if (center.getId() != centerId) {
+                throw new UserException("해당 센터에 권한 없는 교사 유저");
+            }
+        }
+
         List<BoardPreview> boardPreviews = new ArrayList<>();
         List<Bookmark> bookmarkList = bookmarkRepository.findBoardByUserAndCenter(userId, centerId);
         getBoardPreviews(bookmarkList, boardPreviews);
