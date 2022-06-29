@@ -2,7 +2,6 @@ package FIS.iLUVit.service;
 
 import FIS.iLUVit.controller.dto.BookmarkMainDTO;
 import FIS.iLUVit.domain.*;
-import FIS.iLUVit.exception.BoardException;
 import FIS.iLUVit.exception.BookmarkException;
 import FIS.iLUVit.exception.UserException;
 import FIS.iLUVit.repository.*;
@@ -13,7 +12,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.*;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 @Service
 @Transactional
