@@ -4,20 +4,15 @@ import FIS.iLUVit.controller.dto.*;
 import FIS.iLUVit.domain.*;
 import FIS.iLUVit.domain.embeddable.Theme;
 import FIS.iLUVit.domain.enumtype.AuthKind;
-import FIS.iLUVit.exception.CenterException;
-import FIS.iLUVit.exception.SignupException;
 import FIS.iLUVit.exception.UserException;
 import FIS.iLUVit.repository.*;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.io.IOException;
-import java.time.Duration;
-import java.time.LocalDateTime;
 import java.util.Optional;
 
 @Slf4j
@@ -28,7 +23,7 @@ public class ParentService {
 
     private final UserService userService;
     private final ImageService imageService;
-    private final SignService signService;
+    private final AuthNumberService authNumberService;
     private final ParentRepository parentRepository;
     private final AuthNumberRepository authNumberRepository;
     private final ScrapRepository scrapRepository;
@@ -36,21 +31,7 @@ public class ParentService {
     private final ChildRepository childRepository;
     private final BookmarkService bookmarkService;
 
-    /**
-     * 작성날짜: 2022/05/13 4:43 PM
-     * 작성자: 이승범
-     * 작성내용: 부모의 메인페이지에 필요한 아이들 정보 반환
-     */
-    public ChildInfoDTO ChildrenInfo(Long id) {
-        Parent findParent = parentRepository.findWithChildren(id)
-                .orElseThrow(() -> new UserException("존재하지 않는 User 입니다."));
 
-        ChildInfoDTO childInfoDTO = new ChildInfoDTO();
-
-        findParent.getChildren().forEach(child -> childInfoDTO.getData().add(new ChildInfoDTO.ChildInfo(child)));
-
-        return childInfoDTO;
-    }
 
     /**
      * 작성날짜: 2022/05/13 4:44 PM
@@ -93,7 +74,7 @@ public class ParentService {
             // 핸드폰 번호도 변경하는 경우
             if (request.getChangePhoneNum()) {
                 // 핸드폰 인증이 완료되었는지 검사
-                signService.validateAuthNumber(request.getPhoneNum(), AuthKind.updatePhoneNum);
+                authNumberService.validateAuthNumber(request.getPhoneNum(), AuthKind.updatePhoneNum);
                 // 핸드폰 번호와 함께 프로필 update
                 findParent.updateDetailWithPhoneNum(request, theme);
                 // 인증번호 테이블에서 지우기
@@ -107,7 +88,7 @@ public class ParentService {
         ParentDetailResponse response = new ParentDetailResponse(findParent);
 
         // 요청에 프로필 이미지 있으면 덮어씌우기
-        if(!request.getProfileImg().isEmpty()){
+        if (!request.getProfileImg().isEmpty()) {
             String imagePath = imageService.getUserProfileDir();
             imageService.saveProfileImage(request.getProfileImg(), imagePath + findParent.getId());
             response.setProfileImg(imageService.getEncodedProfileImage(imagePath, id));
@@ -136,37 +117,5 @@ public class ParentService {
         authNumberRepository.deleteByPhoneNumAndAuthKind(request.getPhoneNum(), AuthKind.signup);
     }
 
-    /**
-    *   작성날짜: 2022/06/23 5:25 PM
-    *   작성자: 이승범
-    *   작성내용: 아이 추가
-    */
-    public void saveChild(Long userId, SaveChildRequest request) {
 
-        System.out.println("userId = " + userId);
-        // 부모를 기존에 등록되어 있는 아이와 엮어서 가져오기
-        Parent parent = parentRepository.findByIdWithChild(userId);
-
-        // 새로 등록할 시설에 정보를 게시판 정보와 엮어서 가져오기
-        Center center = centerRepository.findByIdAndSignedWithBoard(request.getCenter_id(), true)
-                .orElseThrow(() -> new CenterException("잘못된 centerId 입니다."));
-
-        // bookmark 처리
-        // 기존에 있던 아이들중에 현재 등록하려는 아이와 같은 시설에 다니는 아이가 있는지 검사
-        Optional<Child> alreadySignedChild = parent.getChildren().stream()
-                .filter(child -> child.getCenter().getId().equals(center.getId()))
-                .findFirst();
-        // 기존 아이들과 다른 시설에 아이를 등록할 경우 해당 시설에 default board 북마크 추가
-        if (alreadySignedChild.isEmpty()) {
-            center.getBoards().forEach(board->{
-                if (board.getIsDefault()) {
-                    bookmarkService.create(parent.getId(), board.getId());
-                }
-            });
-        }
-
-        // 아이 등록
-        Child newChild = request.createChild(center, parent);
-        childRepository.save(newChild);
-    }
 }

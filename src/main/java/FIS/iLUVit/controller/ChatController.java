@@ -22,14 +22,14 @@ public class ChatController {
      내용: 쪽지 작성
      */
     @PostMapping("/chat")
-    public void createChat(@Login Long userId, @RequestBody CreateChatRequest request) {
-        chatService.saveChat(userId, request);
+    public Long createChat(@Login Long userId, @RequestBody CreateChatRequest request) {
+        return chatService.saveChat(userId, request);
     }
 
     /**
      작성자: 이창윤
      작성시간: 2022/06/24 3:10 PM
-     내용: 나의 쪽지함 (대화 상대 목록) 조회, 최신순 정렬
+     내용: 나의 쪽지함 (대화 상대 목록) 조회, 최신순 정렬로 대화 상대와 함께 쪽지 목록을 보여줌.
      */
     @GetMapping("/chat/list")
     public Slice<ChatListDTO> findAll(@Login Long userId, Pageable pageable) {
@@ -41,9 +41,19 @@ public class ChatController {
         작성시간: 2022/06/24 4:34 PM
         내용: 쪽지 자세히 보기
     */
-    @GetMapping("/chat/{other_id}")
-    public Slice<ChatDTO> searchByPost(@Login Long userId, @PathVariable("other_id") Long otherId,
+    @GetMapping("/chat/{chat_id}")
+    public Slice<ChatDTO> searchByPost(@Login Long userId, @PathVariable("chat_id") Long chatId,
                                            Pageable pageable) {
-        return chatService.findByOpponent(userId, otherId, pageable);
+        return chatService.findByOpponent(userId, chatId, pageable);
+    }
+
+    /**
+        작성자: 이창윤
+        작성시간: 2022/06/29 4:13 PM
+        내용: 대화방 모든 쪽지 삭제
+    */
+    @DeleteMapping("/chat/{chat_id}")
+    public Long deleteChat(@Login Long userId, @PathVariable("chat_id") Long chatId) {
+        return chatService.deleteChat(userId, chatId);
     }
 }

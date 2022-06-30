@@ -19,5 +19,6 @@ public class PresentationSaveResponseDto {
     public PresentationSaveResponseDto(Presentation presentation) {
         presentationId = presentation.getId();
         presentation.getPtDates().forEach(ptDate -> ptDateId.add(ptDate.getId()));
+        System.out.println("ddd");
     }
 }

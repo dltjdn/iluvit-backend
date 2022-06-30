@@ -4,6 +4,7 @@ import FIS.iLUVit.controller.dto.CenterModifyRequestDto;
 import FIS.iLUVit.domain.embeddable.*;
 import FIS.iLUVit.domain.enumtype.KindOf;
 import lombok.Builder;
+import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.Cascade;
@@ -24,6 +25,7 @@ import static org.hibernate.annotations.CascadeType.*;
 @DiscriminatorColumn(name = "kindOf")
 @Getter
 @NoArgsConstructor
+@EqualsAndHashCode(of = "id", callSuper = false)
 public class Center extends BaseEntity{
     @Id @GeneratedValue
     protected Long id;
@@ -86,6 +88,8 @@ public class Center extends BaseEntity{
     protected List<Review> reviews = new ArrayList<>();
     @OneToMany(mappedBy = "center")
     protected List<Board> boards = new ArrayList<>();
+    @OneToMany(mappedBy = "center")
+    protected List<Child> children = new ArrayList<>();
 
     @Builder(toBuilder = true)
     public Center(Long id, String name, String owner, String director, String estType, String estDate, String tel, String homepage, String startTime, String endTime, Integer minAge, Integer maxAge, String address, String zipcode, Area area, String offerService, Integer maxChildCnt, Integer curChildCnt, LocalDate updateDate, Boolean recruit, String introText, Integer imgCnt, Integer videoCnt, ClassInfo classInfo, TeacherInfo teacherInfo, CostInfo costInfo, BasicInfra basicInfra, Theme theme) {

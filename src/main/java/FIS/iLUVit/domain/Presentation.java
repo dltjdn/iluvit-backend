@@ -84,7 +84,7 @@ public class Presentation extends BaseEntity {
 
     public void canRegister() {
         LocalDate now = LocalDate.now();
-        if(!startDate.isBefore(now) || !endDate.isAfter(now)){
+        if(now.isBefore(startDate) || now.isAfter(endDate)){
             throw new PresentationException("신청기간이 지났습니다");
         }
     }

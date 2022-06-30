@@ -27,7 +27,6 @@ public class BoardService {
     private final BoardRepository boardRepository;
     private final BookmarkRepository bookmarkRepository;
     private final CenterRepository centerRepository;
-    private final UserRepository userRepository;
 
     public BoardListDTO findAllWithBookmark(Long userId) {
         BoardListDTO dto = new BoardListDTO();
@@ -71,15 +70,15 @@ public class BoardService {
         });
     }
 
-    public void create(Long center_id, CreateBoardRequest request) {
+    public Long create(Long center_id, CreateBoardRequest request) {
         // 센터 아이디가 null 인 모두의 이야기에서 게시판 이름 중복성 검사 및 저장
         if (center_id == null) {
             boardRepository.findByName(request.getBoard_name())
                     .ifPresent((b) -> {
                         throw new BoardException(b.getName() + " == " + request.getBoard_name() + " : 이름 중복");
                     });
-            boardRepository.save(Board.createBoard(request.getBoard_name(), request.getBoardKind(), null, false));
-            return;
+            return boardRepository.save(Board.createBoard(
+                    request.getBoard_name(), request.getBoardKind(), null, false)).getId();
         }
 
         // 시설의 이야기에서 게시판 이름 중복성 검사 및 저장
@@ -92,10 +91,11 @@ public class BoardService {
                 .orElseThrow(() -> new CenterException("존재하지 않는 시설"));
 
         Board board = Board.createBoard(request.getBoard_name(), request.getBoardKind(), findCenter,false);
-        boardRepository.save(board);
+        Board savedBoard = boardRepository.save(board);
+        return savedBoard.getId();
     }
 
-    public void remove(Long userId, Long boardId) {
+    public Long remove(Long userId, Long boardId) {
         Board findBoard = boardRepository.findById(boardId)
                 .orElseThrow(() -> new BoardException("존재하지 않는 게시판"));
 
@@ -104,5 +104,6 @@ public class BoardService {
         }
 
         boardRepository.delete(findBoard);
+        return boardId;
     }
 }

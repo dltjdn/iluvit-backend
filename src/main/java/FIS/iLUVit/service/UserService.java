@@ -1,13 +1,16 @@
 package FIS.iLUVit.service;
 
+import FIS.iLUVit.controller.dto.AlarmDto;
 import FIS.iLUVit.controller.dto.UpdatePasswordRequest;
 import FIS.iLUVit.domain.AuthNumber;
 import FIS.iLUVit.domain.User;
+import FIS.iLUVit.domain.alarms.Alarm;
 import FIS.iLUVit.domain.enumtype.AuthKind;
 import FIS.iLUVit.exception.InputException;
 import FIS.iLUVit.exception.SignupException;
 import FIS.iLUVit.exception.UserException;
 import FIS.iLUVit.filter.LoginResponse;
+import FIS.iLUVit.repository.AlarmRepository;
 import FIS.iLUVit.repository.AuthNumberRepository;
 import FIS.iLUVit.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
@@ -17,6 +20,8 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.Duration;
 import java.time.LocalDateTime;
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @Transactional
@@ -26,6 +31,7 @@ public class UserService {
     private final UserRepository userRepository;
     private final BCryptPasswordEncoder encoder;
     private final AuthNumberRepository authNumberRepository;
+    private final AlarmRepository alarmRepository;
 
     /**
     *   작성날짜: 2022/05/16 11:57 AM
@@ -76,5 +82,12 @@ public class UserService {
         }
 
         return encoder.encode(password);
+    }
+
+    public List<AlarmDto> findUserAlarm(Long userId) {
+        return alarmRepository.findByUser(userId)
+                .stream()
+                .map(Alarm::exportAlarm)
+                .collect(Collectors.toList());
     }
 }

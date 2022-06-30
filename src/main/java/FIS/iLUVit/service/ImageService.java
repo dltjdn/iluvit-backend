@@ -70,7 +70,7 @@ public class ImageService {
     /**
      * Presentation Id를 넣으면 해당 child profile 이미지 경로 반환
      */
-    public String getChileProfileDir(){
+    public String getChildProfileDir(){
         return childProfileImagePath;
     }
 
@@ -86,21 +86,28 @@ public class ImageService {
                 return name.matches(regex);
             };
             File file = new File(imageDirPath);
-            File[] files = file.listFiles(filter);
-            if(files == null) throw new ImageException("해당 image가 없습니다");
-            for (File temp : files){
-                if(temp.isFile()){
-                    String encodeImage = null;
-                    try {
-                        encodeImage = encodeImage(temp);
-                    } catch (IOException e) {
-                        log.error("{} 시설 이미지 로드중 {}에서 예외 발생", imageDirPath, temp.getName());
-                        encodeImage = null;
-                    }
-                    if(encodeImage != null){
-                        images.add(encodeImage);
+            try {
+                File[] files = file.listFiles(filter);
+                if(files == null) {
+                    log.error("{} 시설 이미지 로드중 예외발생", imageDirPath);
+                    return null;
+                }
+                for (File temp : files){
+                    if(temp.isFile()){
+                        String encodeImage = null;
+                        try {
+                            encodeImage = encodeImage(temp);
+                        } catch (IOException e) {
+                            log.error("{} 시설 이미지 로드중 {}에서 예외 발생", imageDirPath, temp.getName());
+                            encodeImage = null;
+                        }
+                        if(encodeImage != null){
+                            images.add(encodeImage);
+                        }
                     }
                 }
+            } catch (Exception exception) {
+                return null;
             }
         }
         return images;
@@ -194,7 +201,7 @@ public class ImageService {
     private void clear(String destDir) {
         File file = new File(destDir);
         File[] files = file.listFiles();
-        if(files.length != 0){
+        if(files != null && files.length != 0){
             for(File temp : files){
                 temp.delete();
             }

@@ -47,7 +47,7 @@ public class PostRepositoryImpl extends PostQueryMethod implements PostRepositor
                 .from(post)
                 .join(post.board, board).fetchJoin()
                 .join(board.center, center).fetchJoin()
-                .where(center.id.eq(centerId), keywordContains(keyword))
+                .where(centerIdEq(centerId), keywordContains(keyword))
                 .orderBy(post.createdDate.desc())
                 .offset(pageable.getOffset())
                 .limit(pageable.getPageSize() + 1)

@@ -1,9 +1,11 @@
 package FIS.iLUVit.domain;
 
+import FIS.iLUVit.controller.dto.UpdateChildRequest;
 import FIS.iLUVit.domain.enumtype.Approval;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.springframework.web.multipart.MultipartFile;
 
 import javax.persistence.*;
 import java.time.LocalDate;
@@ -54,5 +56,17 @@ public class Child extends BaseEntity {
 
     public void mappingCenter(Center center) {
         this.center = center;
+    }
+
+    public void update(Center center, String name, LocalDate birthDate, MultipartFile image) {
+        if (!center.getId().equals(this.getCenter().getId())) {
+            this.center = center;
+            this.approval = Approval.WAITING;
+        }
+        this.name = name;
+        this.birthDate = birthDate;
+        if (image != null) {
+            this.hasProfileImg = true;
+        }
     }
 }

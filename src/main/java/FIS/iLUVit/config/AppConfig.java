@@ -1,14 +1,18 @@
 package FIS.iLUVit.config;
 
+import FIS.iLUVit.config.argumentResolver.ForDB;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 
+import org.springframework.context.MessageSource;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.support.ReloadableResourceBundleMessageSource;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
 import javax.persistence.EntityManager;
 
 @Configuration
+@ForDB
 public class AppConfig {
 
     @Bean
@@ -20,5 +24,13 @@ public class AppConfig {
     @Bean
     public BCryptPasswordEncoder passwordEncoder(){
         return new BCryptPasswordEncoder();
+    }
+
+    @Bean
+    public MessageSource messageSource() {
+        ReloadableResourceBundleMessageSource messageSource = new ReloadableResourceBundleMessageSource();
+        messageSource.setBasename("classpath:/message");
+        messageSource.setDefaultEncoding("UTF-8");
+        return messageSource;
     }
 }
