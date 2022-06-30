@@ -1,10 +1,7 @@
 package FIS.iLUVit.controller;
 
 import FIS.iLUVit.config.argumentResolver.Login;
-import FIS.iLUVit.controller.dto.ChildInfoDTO;
-import FIS.iLUVit.controller.dto.ChildInfoDetailResponse;
-import FIS.iLUVit.controller.dto.SaveChildRequest;
-import FIS.iLUVit.controller.dto.UpdateChildRequest;
+import FIS.iLUVit.controller.dto.*;
 import FIS.iLUVit.service.ChildService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -62,12 +59,22 @@ public class ChildController {
     }
 
     /**
-    *   작성날짜: 2022/06/28 3:17 PM
-    *   작성자: 이승범
-    *   작성내용: 아이삭제
-    */
+     * 작성날짜: 2022/06/28 3:17 PM
+     * 작성자: 이승범
+     * 작성내용: 아이삭제
+     */
     @DeleteMapping("/parent/child/{childId}")
     public ChildInfoDTO deleteChild(@Login Long userId, @PathVariable("childId") Long childId) {
         return childService.deleteChild(userId, childId);
+    }
+
+    /**
+    *   작성날짜: 2022/06/30 10:36 AM
+    *   작성자: 이승범
+    *   작성내용: 아이 승인 페이지를 위한 시설에 등록된 아이들 정보 조회
+    */
+    @GetMapping("/director/child/approval")
+    public ChildApprovalListResponse approvalList(@Login Long userId) {
+        return childService.findChildApprovalInfoList(userId);
     }
 }

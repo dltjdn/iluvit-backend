@@ -1,10 +1,7 @@
 package FIS.iLUVit.service;
 
 import FIS.iLUVit.controller.dto.*;
-import FIS.iLUVit.domain.Board;
-import FIS.iLUVit.domain.Center;
-import FIS.iLUVit.domain.Child;
-import FIS.iLUVit.domain.Parent;
+import FIS.iLUVit.domain.*;
 import FIS.iLUVit.domain.enumtype.Approval;
 import FIS.iLUVit.exception.CenterException;
 import FIS.iLUVit.exception.UserException;
@@ -19,7 +16,6 @@ import org.springframework.transaction.annotation.Transactional;
 import java.io.IOException;
 import java.util.List;
 import java.util.Objects;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Slf4j
@@ -29,12 +25,12 @@ import java.util.stream.Collectors;
 public class ChildService {
 
     private final ParentRepository parentRepository;
-    private final BookmarkService bookmarkService;
     private final CenterRepository centerRepository;
     private final ChildRepository childRepository;
     private final ImageService imageService;
     private final BoardRepository boardRepository;
     private final BookmarkRepository bookmarkRepository;
+    private final TeacherRepository teacherRepository;
 
     /**
      * 작성날짜: 2022/05/13 4:43 PM
@@ -183,7 +179,7 @@ public class ChildService {
                 .filter(child-> child.getApproval() == Approval.ACCEPT)
                 .collect(Collectors.toList());
 
-        // 없으면 해당 시설과 연관된 bookMark 싹 다 삭제
+        // 없으면 해당 시설과 연관된 bookmark 싹 다 삭제
         if (sameCenterChildren.isEmpty()) {
             List<Board> boards = boardRepository.findByCenter(belongedCenter.getId());
             List<Long> boardIds = boards.stream()
@@ -196,4 +192,32 @@ public class ChildService {
 
         return childrenInfo(userId);
     }
+
+    /**
+    *   작성날짜: 2022/06/30 10:36 AM
+    *   작성자: 이승범
+    *   작성내용: 아이 승인 페이지를 위한 시설에 등록된 아이들 정보 조회
+    */
+    public ChildApprovalListResponse findChildApprovalInfoList(Long userId) {
+        Teacher director = teacherRepository.findDirectorByIdWithCenterWithChildWithParent(userId)
+                .orElseThrow(() -> new UserException("해당 요청에 대한 권한이 없습니다."));
+
+        ChildApprovalListResponse response = new ChildApprovalListResponse();
+
+        director.getCenter().getChildren().forEach(child -> {
+            ChildApprovalListResponse.ChildInfoForAdmin childInfo =
+                    new ChildApprovalListResponse.ChildInfoForAdmin(child);
+
+            if (child.getHasProfileImg()) {
+                String imagePath = imageService.getChildProfileDir();
+                String image = imageService.getEncodedProfileImage(imagePath, child.getId());
+                childInfo.setChild_profileImg(image);
+            }
+
+            response.getData().add(childInfo);
+        });
+        return response;
+    }
+
+
 }

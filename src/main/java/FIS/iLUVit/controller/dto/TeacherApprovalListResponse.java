@@ -18,7 +18,7 @@ public class TeacherApprovalListResponse {
 
     @Data
     @NoArgsConstructor
-    public static class TeacherInfoForAdmin{
+    public static class TeacherInfoForAdmin {
         private Long teacher_id;
         private String name;
         private Approval approval;

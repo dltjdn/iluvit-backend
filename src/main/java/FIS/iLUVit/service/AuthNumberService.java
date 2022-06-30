@@ -28,7 +28,7 @@ import java.util.Random;
 @Slf4j
 @Service
 @Transactional
-public class SignService {
+public class AuthNumberService {
 
     private final DefaultMessageService messageService;
     private final UserRepository userRepository;
@@ -36,8 +36,8 @@ public class SignService {
     private final BCryptPasswordEncoder encoder;
 
     @Autowired
-    public SignService(AuthNumberRepository authNumberRepository, UserRepository userRepository, BCryptPasswordEncoder encoder,
-                       @Value("${coolsms.api_key}") String api_key, @Value("${coolsms.api_secret}") String api_secret, @Value("${coolsms.domain}") String domain) {
+    public AuthNumberService(AuthNumberRepository authNumberRepository, UserRepository userRepository, BCryptPasswordEncoder encoder,
+                             @Value("${coolsms.api_key}") String api_key, @Value("${coolsms.api_secret}") String api_secret, @Value("${coolsms.domain}") String domain) {
         this.messageService = NurigoApp.INSTANCE.initialize(api_key, api_secret, domain);
         this.userRepository = userRepository;
         this.authNumberRepository = authNumberRepository;
