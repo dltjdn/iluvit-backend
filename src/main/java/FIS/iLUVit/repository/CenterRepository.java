@@ -1,5 +1,6 @@
 package FIS.iLUVit.repository;
 
+import FIS.iLUVit.controller.dto.TeacherApprovalListResponse;
 import FIS.iLUVit.domain.Center;
 import FIS.iLUVit.domain.embeddable.Theme;
 import FIS.iLUVit.repository.dto.CenterBannerDto;
