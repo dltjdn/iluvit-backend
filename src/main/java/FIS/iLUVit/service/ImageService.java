@@ -86,24 +86,28 @@ public class ImageService {
                 return name.matches(regex);
             };
             File file = new File(imageDirPath);
-            File[] files = file.listFiles(filter);
-            if(files == null) {
-                log.error("{} 시설 이미지 로드중 예외발생", imageDirPath);
-                return null;
-            }
-            for (File temp : files){
-                if(temp.isFile()){
-                    String encodeImage = null;
-                    try {
-                        encodeImage = encodeImage(temp);
-                    } catch (IOException e) {
-                        log.error("{} 시설 이미지 로드중 {}에서 예외 발생", imageDirPath, temp.getName());
-                        encodeImage = null;
-                    }
-                    if(encodeImage != null){
-                        images.add(encodeImage);
+            try {
+                File[] files = file.listFiles(filter);
+                if(files == null) {
+                    log.error("{} 시설 이미지 로드중 예외발생", imageDirPath);
+                    return null;
+                }
+                for (File temp : files){
+                    if(temp.isFile()){
+                        String encodeImage = null;
+                        try {
+                            encodeImage = encodeImage(temp);
+                        } catch (IOException e) {
+                            log.error("{} 시설 이미지 로드중 {}에서 예외 발생", imageDirPath, temp.getName());
+                            encodeImage = null;
+                        }
+                        if(encodeImage != null){
+                            images.add(encodeImage);
+                        }
                     }
                 }
+            } catch (Exception exception) {
+                return null;
             }
         }
         return images;
