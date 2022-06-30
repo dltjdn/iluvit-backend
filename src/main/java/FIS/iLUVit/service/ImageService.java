@@ -201,7 +201,7 @@ public class ImageService {
     private void clear(String destDir) {
         File file = new File(destDir);
         File[] files = file.listFiles();
-        if(files.length != 0){
+        if(files != null && files.length != 0){
             for(File temp : files){
                 temp.delete();
             }
