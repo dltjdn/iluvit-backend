@@ -2,7 +2,6 @@ package FIS.iLUVit.service;
 
 import FIS.iLUVit.controller.dto.BookmarkMainDTO;
 import FIS.iLUVit.domain.*;
-import FIS.iLUVit.exception.BoardException;
 import FIS.iLUVit.exception.BookmarkException;
 import FIS.iLUVit.exception.UserException;
 import FIS.iLUVit.repository.*;
@@ -13,7 +12,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.*;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 @Service
 @Transactional
@@ -75,13 +73,9 @@ public class BookmarkService {
     }
 
     public Long create(Long userId, Long boardId) {
-        // 가장 최근에 추가한 북마크의 order 가져옴.
-        int max = bookmarkRepository.findMaxOrder(userId)
-                .orElse(0);
-
         User findUser = userRepository.getById(userId);
         Board findBoard = boardRepository.getById(boardId);
-        Bookmark bookmark = new Bookmark(max + 1, findBoard, findUser);
+        Bookmark bookmark = new Bookmark(findBoard, findUser);
         return bookmarkRepository.save(bookmark).getId();
     }
 

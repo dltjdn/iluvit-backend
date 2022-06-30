@@ -20,7 +20,7 @@ public interface CenterRepositoryCustom {
 
     List<Long> findByThemeAndAgeOnly3(Theme theme, Pageable pageable);
 
-    Slice<CenterInfoDto> findForSignup(CenterInfoRequest request, Pageable pageable);
+    Slice<CenterInfoDto> findForSignup(String sido, String sigungu, String centerName, Pageable pageable);
 
-    Slice<CenterInfoDto> findCenterForAddChild(CenterInfoRequest request, Pageable pageable);
+    Slice<CenterInfoDto> findCenterForAddChild(String sido, String sigungu, String centerName, Pageable pageable);
 }

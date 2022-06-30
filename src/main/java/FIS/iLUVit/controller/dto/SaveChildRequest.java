@@ -30,6 +30,7 @@ public class SaveChildRequest {
                 .approval(Approval.WAITING)
                 .center(center)
                 .parent(parent)
+                .hasProfileImg(!this.profileImg.isEmpty())
                 .build();
     }
 }

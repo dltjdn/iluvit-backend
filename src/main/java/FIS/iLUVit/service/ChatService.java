@@ -21,6 +21,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 @Service
@@ -63,9 +64,49 @@ public class ChatService {
         return chatList.map(c -> new ChatListDTO(c));
     }
 
-    public Slice<ChatDTO> findByOpponent(Long userId, Long otherId, Pageable pageable) {
+    public Slice<ChatDTO> findByOpponent(Long userId, Long chatId, Pageable pageable) {
+        Long otherId;
+        Chat findChat = chatRepository.findById(chatId)
+                .orElseThrow(() -> new IllegalStateException("존재하지 않는 쪽지"));
 
-        Slice<Chat> chatList = chatRepository.findByOpponent(userId, otherId, pageable);
+        Long receiverId = findChat.getReceiver().getId();
+        Long senderId = findChat.getSender().getId();
+
+        // userId와 받는 유저면 otherId는 보내는 유저
+        // userId와 보내는 유저면 otherId는 받는 유저
+        if (Objects.equals(receiverId, userId)) {
+            otherId = senderId;
+        } else {
+            otherId = receiverId;
+        }
+        Long postId = findChat.getPost().getId();
+        Slice<Chat> chatList = chatRepository.findByOpponent(userId, otherId, postId, pageable);
         return chatList.map(c -> new ChatDTO(c));
+    }
+
+    public Long deleteChat(Long userId, Long chatId) {
+        Long otherId, myId;
+        Chat findChat = chatRepository.findById(chatId)
+                .orElseThrow(() -> new IllegalStateException("존재하지 않는 쪽지"));
+        Long receiverId = findChat.getReceiver().getId();
+        Long senderId = findChat.getSender().getId();
+
+        // userId와 받는 유저면 otherId는 보내는 유저
+        // userId와 보내는 유저면 otherId는 받는 유저
+        if (Objects.equals(receiverId, userId)) {
+            otherId = senderId;
+            myId = receiverId;
+        } else {
+            otherId = receiverId;
+            myId = senderId;
+        }
+
+        if (!Objects.equals(myId, userId)) {
+            throw new IllegalStateException("삭제 권한 없는 유저");
+        }
+
+        chatRepository.deleteByOpponent(userId, otherId, findChat.getPost().getId());
+
+        return otherId;
     }
 }

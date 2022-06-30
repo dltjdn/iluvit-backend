@@ -1,5 +1,6 @@
 package FIS.iLUVit.domain.alarms;
 
+import FIS.iLUVit.controller.dto.AlarmDto;
 import FIS.iLUVit.domain.Comment;
 import FIS.iLUVit.domain.Post;
 import FIS.iLUVit.domain.User;
@@ -26,5 +27,19 @@ public class PostAlarm extends Alarm {
         this.message = AlarmUtils.getMessage(mode, args);
     }
 
+    @Override
+    public AlarmDto exportAlarm() {
+        return new PostAlarmDto(message, dtype, post.getId());
+    }
+
+    @Getter
+    public static class PostAlarmDto extends AlarmDto{
+        protected Long postId;
+
+        public PostAlarmDto(String message, String type, Long postId) {
+            super(message, type);
+            this.postId = postId;
+        }
+    }
 }
 

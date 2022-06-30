@@ -1,5 +1,6 @@
 package FIS.iLUVit.domain.alarms;
 
+import FIS.iLUVit.controller.dto.AlarmDto;
 import FIS.iLUVit.domain.Presentation;
 import FIS.iLUVit.domain.User;
 import FIS.iLUVit.service.AlarmUtils;
@@ -25,6 +26,22 @@ public class PresentationPeriodClosedAlarm extends Alarm{
         this.mode = AlarmUtils.PRESENTATION_CLOSED;
         this.presentation = presentation;
         message = AlarmUtils.getMessage(mode, null);
+    }
+
+    @Override
+    public AlarmDto exportAlarm() {
+        return new PresentationPeriodClosedAlarmDto(message, dtype, presentation.getId());
+    }
+
+    @Getter
+    public static class PresentationPeriodClosedAlarmDto extends AlarmDto{
+
+        protected Long presentationId;
+
+        public PresentationPeriodClosedAlarmDto(String message, String type, Long presentationId) {
+            super(message, type);
+            this.presentationId = presentationId;
+        }
     }
 
 }
