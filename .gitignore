@@ -1,10 +1,13 @@
 HELP.md
 .gradle
-build
+build/classes
+build/generated
+build/resources
+build/tmp
 !gradle/wrapper/gradle-wrapper.jar
 !**/src/main/**/build/
 !**/src/test/**/build/
-!build/libs/iLUVit-0.0.1-SNAPSHOT.jar
+
 
 ### STS ###
 .apt_generated
