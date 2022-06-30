@@ -51,7 +51,7 @@ public class TeacherController {
     *   작성자: 이승범
     *   작성내용: 교사 관리 페이지 정보
     */
-    @GetMapping("/teacher/approval")
+    @GetMapping("/director/approval")
     public TeacherApprovalListResponse teacherApprovalList(@Login Long userId) {
         return teacherService.findTeacherApprovalList(userId);
     }
@@ -61,7 +61,7 @@ public class TeacherController {
     *   작성자: 이승범
     *   작성내용: 교사 승인
     */
-    @PatchMapping("/teacher/approval/accept/{teacherId}")
+    @PatchMapping("/director/approval/accept/{teacherId}")
     public void acceptTeacher(@Login Long userId, @PathVariable("teacherId") Long teacherId) {
         teacherService.acceptTeacher(userId, teacherId);
     }
@@ -71,8 +71,28 @@ public class TeacherController {
      * 작성자: 이승범
      * 작성내용: 교사 해고
      */
-    @PatchMapping("/teacher/fire/{teacherId}")
+    @PatchMapping("/director/fire/{teacherId}")
     public void fireTeacher(@Login Long userId, @PathVariable("teacherId") Long teacherId) {
         teacherService.fireTeacher(userId, teacherId);
+    }
+
+    /**
+     * 작성날짜: 2022/06/30 11:41 AM
+     * 작성자: 이승범
+     * 작성내용: 시설 탈퇴하기
+     */
+    @PatchMapping("/teacher/center/escape")
+    public void escapeCenter(@Login Long userId) {
+        teacherService.escapeCenter(userId);
+    }
+
+    /**
+     * 작성날짜: 2022/06/30 11:59 AM
+     * 작성자: 이승범
+     * 작성내용: 시설에 등록신청
+     */
+    @PatchMapping("/teacher/{centerId}/assign")
+    public void assignCenter(@Login Long userId, @PathVariable("centerId") Long centerId) {
+        teacherService.assignCenter(userId, centerId);
     }
 }

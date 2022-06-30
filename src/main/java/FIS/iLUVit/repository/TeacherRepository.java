@@ -1,9 +1,6 @@
 package FIS.iLUVit.repository;
 
-import FIS.iLUVit.controller.dto.TeacherApprovalListResponse;
-import FIS.iLUVit.domain.Parent;
 import FIS.iLUVit.domain.Teacher;
-import FIS.iLUVit.domain.enumtype.Auth;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
@@ -22,7 +19,7 @@ public interface TeacherRepository extends JpaRepository<Teacher, Long> {
             "left join fetch c.teachers " +
             "where t.id =:userId " +
             "and t.auth = 'DIRECTOR'")
-    Optional<Teacher> findDirectorByIdWithCenter(@Param("userId") Long userId);
+    Optional<Teacher> findDirectorByIdWithCenterWithTeacher(@Param("userId") Long userId);
 
 
     @Query("select t " +
@@ -44,4 +41,39 @@ public interface TeacherRepository extends JpaRepository<Teacher, Long> {
             "set t.center.id = null " +
             "where t.id =:teacherId")
     void fireTeacher(@Param("teacherId") Long teacherId);
+
+    @Query("select distinct t " +
+            "from Teacher t " +
+            "join fetch t.center c " +
+            "left join fetch c.children cc " +
+            "join fetch cc.parent " +
+            "where t.id =:userId " +
+            "and t.auth = 'DIRECTOR' ")
+    Optional<Teacher> findDirectorByIdWithCenterWithChildWithParent(@Param("userId") Long userId);
+
+    @Query("select t " +
+            "from Teacher t " +
+            "where t.id =:userId " +
+            "and t.center is not null")
+    Optional<Teacher> findByIdAndAssign(@Param("userId") Long userId);
+
+    @Modifying
+    @Query("update Teacher t " +
+            "set t.center = null " +
+            "where t.id =:userId")
+    void escapeCenter(Long userId);
+
+    @Query("select t " +
+            "from Teacher t " +
+            "where t.id =:userId " +
+            "and t.center is null")
+    Optional<Teacher> findByIdAndNotAssign(@Param("userId") Long userId);
+
+    @Modifying
+    @Query("update Teacher t " +
+            "set t.center.id =:centerId, t.approval = 'WAITING' " +
+            "where t.id =:userId ")
+    void assignCenter(@Param("userId") Long userId, @Param("centerId") Long centerId);
+
+
 }
