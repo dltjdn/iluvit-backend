@@ -69,12 +69,32 @@ public class ChildController {
     }
 
     /**
-    *   작성날짜: 2022/06/30 10:36 AM
-    *   작성자: 이승범
-    *   작성내용: 아이 승인 페이지를 위한 시설에 등록된 아이들 정보 조회
-    */
+     * 작성날짜: 2022/06/30 10:36 AM
+     * 작성자: 이승범
+     * 작성내용: 아이 승인 페이지를 위한 시설에 등록된 아이들 정보 조회
+     */
     @GetMapping("/director/child/approval")
     public ChildApprovalListResponse approvalList(@Login Long userId) {
         return childService.findChildApprovalInfoList(userId);
+    }
+
+    /**
+     * 작성날짜: 2022/06/30 2:54 PM
+     * 작성자: 이승범
+     * 작성내용: 아이 시설에 승인
+     */
+    @PatchMapping("/director/child/accept/{childId}")
+    public void acceptChild(@Login Long userId, @PathVariable("childId") Long childId) {
+        childService.acceptChild(userId, childId);
+    }
+
+    /**
+     * 작성날짜: 2022/06/30 4:25 PM
+     * 작성자: 이승범
+     * 작성내용: 시설에서 아이 삭제/승인거절
+     */
+    @PatchMapping("/director/child/fire/{childId}")
+    public void fireChild(@Login Long userId, @PathVariable("childId") Long childId) {
+        childService.fireChild(userId, childId);
     }
 }
