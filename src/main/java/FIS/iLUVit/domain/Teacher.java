@@ -97,4 +97,8 @@ public class Teacher extends User {
     public LoginResponse getUserInfo() {
         return new LoginTeacherResponse(id, nickName, auth, center);
     }
+
+    public void beDirector() {
+        this.auth = Auth.DIRECTOR;
+    }
 }

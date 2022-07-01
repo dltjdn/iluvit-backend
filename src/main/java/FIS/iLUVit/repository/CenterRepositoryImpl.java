@@ -84,7 +84,7 @@ public class CenterRepositoryImpl extends CenterQueryMethod implements CenterRep
         List<CenterInfoDto> content = jpaQueryFactory.select(new QCenterInfoDto(center.id, center.name, center.address))
                 .from(center)
                 .where(areaEq(sido, sigungu)
-                        .and(centerNameEq(centerName)))
+                        ,(centerNameEq(centerName)))
                 .offset(pageable.getOffset())
                 .limit(pageable.getPageSize() + 1)
                 .fetch();
@@ -103,8 +103,8 @@ public class CenterRepositoryImpl extends CenterQueryMethod implements CenterRep
         List<CenterInfoDto> content = jpaQueryFactory.select(new QCenterInfoDto(center.id, center.name, center.address))
                 .from(center)
                 .where(center.signed.eq(true)
-                        .and(areaEq(sido, sigungu))
-                        .and(centerNameEq(centerName)))
+                        ,(areaEq(sido, sigungu))
+                        ,(centerNameEq(centerName)))
                 .offset(pageable.getOffset())
                 .limit(pageable.getPageSize()+1)
                 .fetch();
