@@ -14,7 +14,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.io.IOException;
 import java.util.Objects;
-import java.util.Optional;
 
 @Slf4j
 @Service
@@ -120,5 +119,16 @@ public class ParentService {
         authNumberRepository.deleteByPhoneNumAndAuthKind(request.getPhoneNum(), AuthKind.signup);
     }
 
+    /**
+    *   작성날짜: 2022/07/01 5:09 PM
+    *   작성자: 이승범
+    *   작성내용: 시설 찜하기
+    */
+    public void savePrefer(Long userId, Long centerId) {
+        Parent parent = parentRepository.findByIdWithPreferWithCenter(userId)
+                .orElseThrow(() -> new UserException("존재하지 않는 사용자입니다."));
 
+        parent.getPrefers().stream()
+                .filter(prefer -> Objects.equals(prefer.getCenter().getId(), centerId))
+    }
 }

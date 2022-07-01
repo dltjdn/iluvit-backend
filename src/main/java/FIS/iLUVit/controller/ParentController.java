@@ -46,5 +46,13 @@ public class ParentController {
         parentService.signup(request);
     }
 
-
+    /**
+     * 작성날짜: 2022/07/01 5:08 PM
+     * 작성자: 이승범
+     * 작성내용: 시설 찜하기
+     */
+    @PostMapping("/parent/prefer/{centerId}")
+    public void savePrefer(@Login Long userId, @PathVariable("centerId") Long centerId) {
+        parentService.savePrefer(userId, centerId);
+    }
 }
