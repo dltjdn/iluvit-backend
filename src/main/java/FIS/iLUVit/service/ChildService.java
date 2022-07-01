@@ -67,7 +67,7 @@ public class ChildService {
         Parent parent = parentRepository.findByIdWithChild(userId);
 
         // 새로 등록할 시설에 정보를 게시판 정보와 엮어서 가져오기
-        Center center = centerRepository.findByIdAndSignedWithBoard(request.getCenter_id(), true)
+        Center center = centerRepository.findByIdAndSigned(request.getCenter_id())
                 .orElseThrow(() -> new CenterException("잘못된 centerId 입니다."));
 
         // 아이 등록
