@@ -71,7 +71,9 @@ public class TeacherService {
         // 유저 닉네임 중복 검사
         if(!Objects.equals(findTeacher.getNickName(), request.getNickname())){
             teacherRepository.findByNickName(request.getNickname())
-                    .orElseThrow(()-> new UserException("이미 존재하는 닉네임 입니다."));
+                    .ifPresent(teacher -> {
+                        throw new UserException("이미 중복된 닉네입니다.");
+                    });
         }
 
         // 핸드폰 번호도 변경하는 경우
