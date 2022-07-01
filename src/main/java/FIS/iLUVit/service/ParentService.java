@@ -72,7 +72,9 @@ public class ParentService {
         // 유저 닉네임 중복 검사
         if(!Objects.equals(findParent.getNickName(), request.getNickname())){
             parentRepository.findByNickName(request.getNickname())
-                    .orElseThrow(()-> new UserException("이미 존재하는 닉네임 입니다."));
+                    .ifPresent(parent -> {
+                        throw new UserException("이미 존재하는 닉네임입니다.");
+                    });
         }
 
         // 핸드폰 번호도 변경하는 경우
