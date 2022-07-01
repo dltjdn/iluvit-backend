@@ -3,6 +3,7 @@ package FIS.iLUVit.service;
 import FIS.iLUVit.controller.dto.*;
 import FIS.iLUVit.domain.*;
 import FIS.iLUVit.domain.enumtype.Approval;
+import FIS.iLUVit.domain.enumtype.Auth;
 import FIS.iLUVit.domain.enumtype.AuthKind;
 import FIS.iLUVit.domain.enumtype.BoardKind;
 import FIS.iLUVit.exception.SignupException;
@@ -10,6 +11,7 @@ import FIS.iLUVit.exception.UserException;
 import FIS.iLUVit.repository.*;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -130,6 +132,54 @@ public class TeacherService {
     }
 
     /**
+     *   작성날짜: 2022/06/30 12:04 PM
+     *   작성자: 이승범
+     *   작성내용: 시설에 등록신청
+     */
+    public void assignCenter(Long userId, Long centerId) {
+        teacherRepository.findByIdAndNotAssign(userId)
+                .orElseThrow(()->new UserException("현재 속해있는 시설이 있습니다."));
+
+        // centerId가 유효하지 않다면 예외처리
+        try {
+            teacherRepository.assignCenter(userId, centerId);
+        } catch (DataIntegrityViolationException e) {
+            throw new UserException("존재하지 않는 시설입니다.");
+        }
+    }
+
+    /**
+     *   작성날짜: 2022/06/30 11:43 AM
+     *   작성자: 이승범
+     *   작성내용: 시설 스스로 탈주하기
+     */
+    public void escapeCenter(Long userId) {
+
+        Teacher escapedTeacher = teacherRepository.findByIdWithCenterWithTeacher(userId)
+                .orElseThrow(()-> new UserException("현재 속해있는 시설이 없습니다."));
+
+        // 시설에 속한 일반 교사들
+        List<Teacher> commons = escapedTeacher.getCenter().getTeachers().stream()
+                .filter(teacher -> teacher.getAuth() == Auth.TEACHER)
+                .collect(Collectors.toList());
+        // 시설에 속한 원장들
+        List<Teacher> directors = escapedTeacher.getCenter().getTeachers().stream()
+                .filter(teacher -> teacher.getAuth() == Auth.DIRECTOR)
+                .collect(Collectors.toList());
+
+        // 일반 교사가 남아있을때 최후의 원장이 탈퇴하려면 남은 교사에게 원장 권한을 위임해야함
+        if (directors.size() == 1 && !commons.isEmpty()) {
+            throw new UserException("원장 권한을 다른 교사에게 넘겨주세요");
+        }
+
+        // 속해있는 시설과 연관된 bookmark 모두 지우기
+        deleteBookmarkByCenter(escapedTeacher);
+
+        // 시설과의 연관관계 끊기
+        teacherRepository.exitCenter(userId);
+    }
+
+    /**
     *   작성날짜: 2022/06/29 10:49 AM
     *   작성자: 이승범
     *   작성내용: 교사관리 페이지에 필요한 교사들 정보 조회
@@ -165,7 +215,7 @@ public class TeacherService {
     *   작성내용: 교사 승인
     */
     public void acceptTeacher(Long userId, Long teacherId) {
-        // 로그인한 사용자가 원장인지 확인
+        // 로그인한 사용자가 원장인지 확인 && 사용자 시설에 등록된 교사들 싹 다 가져오기
         Teacher director = teacherRepository.findDirectorByIdWithCenterWithTeacher(userId)
                 .orElseThrow(() -> new UserException("해당 요청에대한 권한이 없습니다."));
 
@@ -175,7 +225,7 @@ public class TeacherService {
                 .findFirst()
                 .orElseThrow(() -> new UserException("잘못된 teacher_id 입니다."));
 
-        teacherRepository.approveTeacher(teacherId, director.getCenter().getId());
+        teacherRepository.acceptTeacher(teacherId, director.getCenter().getId());
 
         // center default boards bookmark 추가하기
         List<Board> defaultBoards = boardRepository.findDefaultByCenter(director.getCenter().getId());
@@ -188,7 +238,7 @@ public class TeacherService {
     /**
     *   작성날짜: 2022/06/29 5:16 PM
     *   작성자: 이승범
-    *   작성내용: 교사 해고
+    *   작성내용: 교사 삭제/승인거절
     */
     public void fireTeacher(Long userId, Long teacherId) {
 
@@ -197,45 +247,44 @@ public class TeacherService {
                 .orElseThrow(() -> new UserException("해당 정보를 열람할 권한이 없습니다."));
 
         // 삭제하고자 하는 교사가 해당 시설에 소속되어 있는지 확인
-        Teacher deletedTeacher = director.getCenter().getTeachers().stream()
+        Teacher firedTeacher = director.getCenter().getTeachers().stream()
                 .filter(teacher -> Objects.equals(teacher.getId(), teacherId))
                 .findFirst()
                 .orElseThrow(() -> new UserException("잘못된 teacher_id 입니다."));
 
-        teacherRepository.fireTeacher(teacherId);
 
         // 해당 시설과 연관된 bookmark 삭제
-        if (deletedTeacher.getApproval() == Approval.ACCEPT) {
-            List<Board> boards = boardRepository.findByCenter(director.getCenter().getId());
+        deleteBookmarkByCenter(firedTeacher);
+        teacherRepository.exitCenter(teacherId);
+    }
+
+    /**
+    *   작성날짜: 2022/07/01 3:09 PM
+    *   작성자: 이승범
+    *   작성내용: 원장권한 위임
+    */
+    public void mandateTeacher(Long userId, Long teacherId) {
+
+        Teacher director = teacherRepository.findDirectorByIdWithCenterWithTeacher(userId)
+                .orElseThrow(() -> new UserException("올바르지 않은 접근입니다."));
+
+        Teacher mandatedTeacher = director.getCenter().getTeachers().stream()
+                .filter(teacher -> Objects.equals(teacher.getId(), teacherId))
+                .findFirst()
+                .orElseThrow(() -> new UserException("잘못된 teacherId 입니다."));
+
+        mandatedTeacher.beDirector();
+    }
+
+    // 해당 시설과 연관된 bookmark 삭제
+    private void deleteBookmarkByCenter(Teacher escapedTeacher) {
+        if (escapedTeacher.getApproval() == Approval.ACCEPT) {
+            List<Board> boards = boardRepository.findByCenter(escapedTeacher.getCenter().getId());
             List<Long> boardIds = boards.stream()
                     .map(Board::getId)
                     .collect(Collectors.toList());
-            bookmarkRepository.deleteAllByBoardAndUser(deletedTeacher.getId(), boardIds);
+            bookmarkRepository.deleteAllByBoardAndUser(escapedTeacher.getId(), boardIds);
         }
-    }
-
-    /**
-    *   작성날짜: 2022/06/30 11:43 AM
-    *   작성자: 이승범
-    *   작성내용: 시설 스스로 탈주하기
-    */
-    public void escapeCenter(Long userId) {
-        teacherRepository.findByIdAndAssign(userId)
-                .orElseThrow(() -> new UserException("현재 속해있는 시설이 없습니다."));
-        teacherRepository.escapeCenter(userId);
-    }
-
-    /**
-    *   작성날짜: 2022/06/30 12:04 PM
-    *   작성자: 이승범
-    *   작성내용: 시설에 등록신청
-    */
-    public void assignCenter(Long userId, Long centerId) {
-        teacherRepository.findByIdAndNotAssign(userId)
-                .orElseThrow(()->new UserException("현재 속해있는 시설이 있습니다."));
-
-        // centerId가 유효하지 않다면?
-        teacherRepository.assignCenter(userId, centerId);
     }
 
     // 시설에 대한 최초 승인요청일 경우 기본 게시판(자유, 공지, 정보, 영상)생성 -> 나중에 관리자가 원장승인을 해줬을때로 바꿔야됨 and center signed to true
