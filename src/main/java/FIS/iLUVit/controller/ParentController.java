@@ -2,9 +2,12 @@ package FIS.iLUVit.controller;
 
 import FIS.iLUVit.config.argumentResolver.Login;
 import FIS.iLUVit.controller.dto.*;
+import FIS.iLUVit.repository.dto.CenterPreview;
 import FIS.iLUVit.service.ParentService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Slice;
 import org.springframework.web.bind.annotation.*;
 
 import java.io.IOException;
@@ -54,5 +57,15 @@ public class ParentController {
     @PostMapping("/parent/prefer/{centerId}")
     public void savePrefer(@Login Long userId, @PathVariable("centerId") Long centerId) {
         parentService.savePrefer(userId, centerId);
+    }
+
+    /**
+     * 작성날짜: 2022/07/04 2:16 PM
+     * 작성자: 이승범
+     * 작성내용: 시설 찜 해제
+     */
+    @DeleteMapping("/parent/prefer/{centerId}")
+    public void deletePrefer(@Login Long userId, @PathVariable("centerId") Long centerId) {
+        parentService.deletePrefer(userId, centerId);
     }
 }

@@ -49,4 +49,23 @@ public class CenterPreview {
         this.theme = center.getTheme();
         this.starAverage = starAverage;
     }
+
+    @QueryProjection
+    public CenterPreview(Center center) {
+        this.id = center.getId();
+        this.name = center.getName();
+        this.owner = center.getOwner();
+        this.director = center.getDirector();
+        this.estType = center.getEstType();
+        this.tel = center.getTel();
+        this.startTime = center.getStartTime();
+        this.endTime = center.getEndTime();
+        this.minAge = center.getMinAge();
+        this.maxAge = center.getMaxAge();
+        this.address = center.getAddress();
+        this.area = center.getArea();
+        this.longitude = center.getLongitude();
+        this.latitude = center.getLatitude();
+        this.theme = center.getTheme();
+    }
 }
