@@ -4,6 +4,7 @@ import FIS.iLUVit.config.argumentResolver.Login;
 import FIS.iLUVit.controller.dto.BoardListDTO;
 import FIS.iLUVit.controller.dto.CreateBoardRequest;
 import FIS.iLUVit.service.BoardService;
+import lombok.NoArgsConstructor;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
