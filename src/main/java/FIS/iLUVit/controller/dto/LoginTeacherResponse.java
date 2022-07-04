@@ -15,6 +15,7 @@ public class LoginTeacherResponse extends LoginResponse {
         super(id, nickName, auth);
         if (center != null) {
             this.center_id = center.getId();
+
         }
     }
 }
