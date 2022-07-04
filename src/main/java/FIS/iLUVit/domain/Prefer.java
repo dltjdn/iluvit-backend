@@ -1,5 +1,6 @@
 package FIS.iLUVit.domain;
 
+import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -9,7 +10,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 @Getter
-@NoArgsConstructor
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Entity
 public class Prefer extends BaseEntity {
 
@@ -23,8 +24,6 @@ public class Prefer extends BaseEntity {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "center_id")
     private Center center;
-
-    private LocalDateTime dateTime;// 찜한 시간
 
     public static Prefer createPrefer(Parent parent, Center center){
         Prefer prefer = new Prefer();

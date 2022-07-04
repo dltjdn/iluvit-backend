@@ -1,14 +1,11 @@
 package FIS.iLUVit.repository.dto;
 
-import FIS.iLUVit.domain.AddInfo;
 import FIS.iLUVit.domain.Center;
-import FIS.iLUVit.domain.Program;
 import FIS.iLUVit.domain.embeddable.Area;
 import FIS.iLUVit.domain.embeddable.Theme;
 import com.querydsl.core.annotations.QueryProjection;
+import lombok.Builder;
 import lombok.Data;
-
-import java.util.List;
 
 @Data
 public class CenterPreview {
@@ -47,6 +44,27 @@ public class CenterPreview {
         this.longitude = center.getLongitude();
         this.latitude = center.getLatitude();
         this.theme = center.getTheme();
+        this.starAverage = starAverage;
+    }
+
+    @Builder
+    public CenterPreview(Long id, String name, String owner, String director, String estType, String tel, String startTime, String endTime, Integer minAge, Integer maxAge, String address, Area area, Double longitude, Double latitude, Theme theme, String profileImage, Double starAverage) {
+        this.id = id;
+        this.name = name;
+        this.owner = owner;
+        this.director = director;
+        this.estType = estType;
+        this.tel = tel;
+        this.startTime = startTime;
+        this.endTime = endTime;
+        this.minAge = minAge;
+        this.maxAge = maxAge;
+        this.address = address;
+        this.area = area;
+        this.longitude = longitude;
+        this.latitude = latitude;
+        this.theme = theme;
+        this.profileImage = profileImage;
         this.starAverage = starAverage;
     }
 }

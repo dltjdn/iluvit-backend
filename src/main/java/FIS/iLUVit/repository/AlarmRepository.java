@@ -2,6 +2,7 @@ package FIS.iLUVit.repository;
 
 import FIS.iLUVit.domain.alarms.Alarm;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
@@ -11,4 +12,8 @@ public interface AlarmRepository extends JpaRepository<Alarm, Long> {
 
     @Query("select alarm from Alarm alarm where alarm.user.id =:userId")
     List<Alarm> findByUser(@Param("userId") Long userId);
+
+    @Modifying
+    @Query("delete from Alarm alarm where alarm.id= :alarmId and alarm.user.id = :userId")
+    Long deleteById(@Param("userId") Long userId, @Param("alarmId") Long alarmId);
 }

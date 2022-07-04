@@ -29,8 +29,8 @@ public class PresentationController {
      * 내용 - 신청기간, 내용, 사진, 동영상, 신청할 수 있는 설명회 목록?
      */
     @GetMapping("/presentation/center/{center_id}")
-    public List<PresentationResponseDto> findPresentationByCenterId(@PathVariable("center_id") Long centerId){
-        return presentationService.findPresentationByCenterIdAndDate(centerId);
+    public List<PresentationResponseDto> findPresentationByCenterId(@PathVariable("center_id") Long centerId, @Login Long userId){
+        return presentationService.findPresentationByCenterIdAndDate(centerId, userId);
     }
 
     /**

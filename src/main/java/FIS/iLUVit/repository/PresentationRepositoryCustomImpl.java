@@ -1,12 +1,10 @@
 package FIS.iLUVit.repository;
+
 import FIS.iLUVit.domain.embeddable.Area;
 import FIS.iLUVit.domain.embeddable.Theme;
 import FIS.iLUVit.domain.enumtype.KindOf;
 import FIS.iLUVit.repository.dto.PresentationPreviewForUsers;
 import FIS.iLUVit.repository.dto.QPresentationPreviewForUsers;
-import com.querydsl.core.types.dsl.DateExpression;
-import com.querydsl.core.types.dsl.DatePath;
-import com.querydsl.core.types.dsl.Expressions;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.AllArgsConstructor;
 import org.springframework.data.domain.Pageable;
@@ -49,4 +47,5 @@ public class PresentationRepositoryCustomImpl extends CenterQueryMethod implemen
         return new SliceImpl<>(content, pageable, hasNext);
 
     }
+
 }

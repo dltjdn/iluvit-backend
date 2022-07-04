@@ -12,6 +12,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -45,7 +46,7 @@ public class CenterController {
      * @return
      */
     @PostMapping("/center/search")
-    public Slice<CenterPreview> searchByFilter(@RequestBody CenterSearchFilterDTO dto, Pageable pageable){
+    public Slice<CenterPreview> searchByFilter(@RequestBody @Validated CenterSearchFilterDTO dto, Pageable pageable){
         return centerService.findByFilter(dto.getAreas(), dto.getTheme(), dto.getInterestedAge(), dto.getKindOf(), pageable);
     }
 
@@ -53,7 +54,7 @@ public class CenterController {
      * center 검색 정보 반환 front 검색인자 값 - 위도 경도 지도와 관련하여 api 던져준다
      */
     @PostMapping("/center/map/search")
-    public List<CenterAndDistancePreview> searchByFilterAndMap(@RequestBody CenterSearchMapFilterDTO dto){
+    public List<CenterAndDistancePreview> searchByFilterAndMap(@RequestBody @Validated CenterSearchMapFilterDTO dto){
         List<CenterAndDistancePreview> center = centerService.
                 findByFilterAndMap(dto.getLongitude(), dto.getLatitude() ,dto.getTheme(), dto.getInterestedAge(), dto.getKindOf(), dto.getDistance());
         return center;
@@ -115,4 +116,15 @@ public class CenterController {
     public Slice<CenterInfoDto> centerInfoForAddChild(@ModelAttribute CenterInfoRequest request, Pageable pageable) {
         return centerService.findCenterForAddChild(request, pageable);
     }
+
+    /**
+     *   작성날짜: 2022/07/04 2:26 PM
+     *   작성자: 이승범
+     *   작성내용: 찜한 시설 리스트
+     */
+    @GetMapping("/parent/prefer")
+    public Slice<CenterPreview> findCentersByPrefer(@Login Long userId, Pageable pageable) {
+        return centerService.findCentersByPrefer(userId, pageable);
+    }
+
 }
