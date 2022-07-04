@@ -3,6 +3,7 @@ package FIS.iLUVit.repository;
 import FIS.iLUVit.controller.dto.CenterInfoDto;
 import FIS.iLUVit.controller.dto.CenterInfoRequest;
 import FIS.iLUVit.controller.dto.QCenterInfoDto;
+import FIS.iLUVit.domain.Center;
 import FIS.iLUVit.domain.embeddable.Area;
 import FIS.iLUVit.domain.embeddable.Theme;
 import FIS.iLUVit.domain.enumtype.KindOf;
@@ -19,7 +20,9 @@ import org.springframework.data.domain.SliceImpl;
 import java.util.List;
 
 import static FIS.iLUVit.domain.QCenter.center;
+import static FIS.iLUVit.domain.QPrefer.prefer;
 import static FIS.iLUVit.domain.QReview.review;
+import static FIS.iLUVit.domain.QParent.parent;
 
 @AllArgsConstructor
 public class CenterRepositoryImpl extends CenterQueryMethod implements CenterRepositoryCustom {
@@ -117,4 +120,25 @@ public class CenterRepositoryImpl extends CenterQueryMethod implements CenterRep
 
         return new SliceImpl<>(content, pageable, hasNext);
     }
+
+    @Override
+    public Slice<CenterPreview> findByPrefer(Long userId, Pageable pageable) {
+        List<CenterPreview> content = jpaQueryFactory.select(new QCenterPreview(center, review.score.avg()))
+                .from(center)
+                .join(center.prefers, prefer).on(prefer.parent.id.eq(userId))
+                .leftJoin(center.reviews, review)
+                .groupBy(center)
+                .offset(pageable.getOffset())
+                .limit(pageable.getPageSize()+1)
+                .fetch();
+
+        boolean hasNext = false;
+        if (content.size() > pageable.getPageSize()) {
+            hasNext = true;
+            content.remove(pageable.getPageSize());
+        }
+
+        return new SliceImpl<>(content, pageable, hasNext);
+    }
+
 }
