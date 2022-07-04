@@ -41,19 +41,19 @@ public class ChatController {
         작성시간: 2022/06/24 4:34 PM
         내용: 쪽지 자세히 보기
     */
-    @GetMapping("/chat/{chat_id}")
-    public Slice<ChatDTO> searchByPost(@Login Long userId, @PathVariable("chat_id") Long chatId,
+    @GetMapping("/chat/{room_id}")
+    public ChatDTO searchByPost(@Login Long userId, @PathVariable("room_id") Long roomId,
                                            Pageable pageable) {
-        return chatService.findByOpponent(userId, chatId, pageable);
+        return chatService.findByOpponent(userId, roomId, pageable);
     }
 
     /**
         작성자: 이창윤
         작성시간: 2022/06/29 4:13 PM
-        내용: 대화방 모든 쪽지 삭제
+        내용: 대화방 모든 쪽지 삭제 ( 대화방 삭제 )
     */
-    @DeleteMapping("/chat/{chat_id}")
-    public Long deleteChat(@Login Long userId, @PathVariable("chat_id") Long chatId) {
-        return chatService.deleteChat(userId, chatId);
+    @DeleteMapping("/chat/{room_id}")
+    public Long deleteChatRoom(@Login Long userId, @PathVariable("room_id") Long roomId) {
+        return chatService.deleteChatRoom(userId, roomId);
     }
 }

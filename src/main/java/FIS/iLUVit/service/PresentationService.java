@@ -26,10 +26,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.time.LocalDate;
-import java.util.Collection;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 
 import static java.util.stream.Collectors.*;
@@ -47,8 +44,10 @@ public class PresentationService {
     private final UserRepository userRepository;
     private final WaitingRepository waitingRepository;
 
-    public List<PresentationResponseDto> findPresentationByCenterIdAndDate(Long centerId) {
-        List<PresentationWithPtDatesDto> queryDtos = presentationRepository.findByCenterAndDateWithPtDates(centerId, LocalDate.now());
+    public List<PresentationResponseDto> findPresentationByCenterIdAndDate(Long centerId, Long userId) {
+        List<PresentationWithPtDatesDto> queryDtos =
+                userId == null ? presentationRepository.findByCenterAndDateWithPtDates(centerId, LocalDate.now())
+                : presentationRepository.findByCenterAndDateWithPtDates(centerId, LocalDate.now(), userId);
         return queryDtos.stream().collect(
                 groupingBy(queryDto -> new PresentationQuryDto(queryDto),
                         mapping(queryDto -> new PtDateDto(queryDto), toList())
@@ -116,6 +115,8 @@ public class PresentationService {
                 .orElseThrow(() -> new PresentationException("존재하지않는 설명회 입니다"));
         String presentationDir = imageService.getPresentationDir(presentationId);
         List<String> encodedInfoImage = imageService.getEncodedInfoImage(presentationDir, presentation.getImgCnt());
+        // 로그인 되어있는 상태라면 신청유무 정보 삽입
+        List<Long> participantIds = new ArrayList<>();
         return new PresentationResponseDto(presentation, encodedInfoImage);
     }
 

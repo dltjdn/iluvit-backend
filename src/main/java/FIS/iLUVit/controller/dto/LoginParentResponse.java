@@ -9,11 +9,8 @@ import lombok.Data;
 @AllArgsConstructor
 public class LoginParentResponse extends LoginResponse {
 
-    private Integer interestAge;
-
-    public LoginParentResponse(Long id, String nickname, Auth auth, Integer interestAge) {
+    public LoginParentResponse(Long id, String nickname, Auth auth) {
         super(id, nickname, auth);
-        this.interestAge = interestAge;
     }
 }
 

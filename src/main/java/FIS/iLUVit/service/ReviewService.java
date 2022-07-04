@@ -91,7 +91,7 @@ public class ReviewService {
             log.info("userId: " + userId);
             Integer like = review.getReviewHearts().size();
             String imagePath = imageService.getUserProfileDir();
-            String encodedProfileImage = imageService.getEncodedProfileImage(imagePath, userId);
+            String encodedProfileImage = imageService.getEncodedProfileImage(imagePath, review.getParent().getId());
             Long teacherId = review.getTeacher() == null ? null : review.getTeacher().getId();
             return new ReviewByCenterDTO.ReviewCenterDto(
                     review.getId(), review.getParent().getId(), review.getParent().getNickName(), review.getContent(), review.getScore(),

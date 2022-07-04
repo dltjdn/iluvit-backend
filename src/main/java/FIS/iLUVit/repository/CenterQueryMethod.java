@@ -31,7 +31,7 @@ public class CenterQueryMethod {
 
     protected BooleanExpression themeEq(Theme theme) {
         try {
-            if(theme == null) return null;
+            if (theme == null) return null;
             // 관심 목록 추출한 trueList
             List<String> trueList = theme.trueList();
             // BooleanExpression 초기화 => in 절도 사용 할 수 없다. theme 별로 나뉘어져 있으므로
@@ -49,7 +49,7 @@ public class CenterQueryMethod {
                 }
             }
             return booleanExpression;
-        } catch(NoSuchFieldException | NoSuchMethodException | IllegalAccessException | InvocationTargetException e){
+        } catch (NoSuchFieldException | NoSuchMethodException | IllegalAccessException | InvocationTargetException e) {
             e.printStackTrace();
             throw new CenterException("센터 repository에서 오류");
         }
@@ -65,16 +65,12 @@ public class CenterQueryMethod {
         return distanceExpression;
     }
 
-    protected BooleanExpression signedEq(Boolean isSigned) {
-        return isSigned == null ? null : center.signed.eq(isSigned);
-    }
-
     protected BooleanExpression areaEq(String sido, String sigungu) {
-        if (sido == null && sigungu == null) {
+        if ((sido == null || sido.isEmpty()) && (sigungu == null || sigungu.isEmpty())) {
             return null;
-        } else if (sigungu == null) {
+        } else if (sigungu == null || sigungu.isEmpty()) {
             return center.area.sido.eq(sido);
-        } else if (sido == null) {
+        } else if (sido == null || sido.isEmpty()) {
             return center.area.sigungu.eq(sigungu);
         } else {
             return center.area.sido.eq(sido).and(center.area.sigungu.eq(sigungu));

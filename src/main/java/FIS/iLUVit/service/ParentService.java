@@ -4,20 +4,16 @@ import FIS.iLUVit.controller.dto.*;
 import FIS.iLUVit.domain.*;
 import FIS.iLUVit.domain.embeddable.Theme;
 import FIS.iLUVit.domain.enumtype.AuthKind;
-import FIS.iLUVit.exception.CenterException;
-import FIS.iLUVit.exception.SignupException;
 import FIS.iLUVit.exception.UserException;
 import FIS.iLUVit.repository.*;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.io.IOException;
-import java.time.Duration;
-import java.time.LocalDateTime;
+import java.util.Objects;
 import java.util.Optional;
 
 @Slf4j
@@ -28,7 +24,7 @@ public class ParentService {
 
     private final UserService userService;
     private final ImageService imageService;
-    private final SignService signService;
+    private final AuthNumberService authNumberService;
     private final ParentRepository parentRepository;
     private final AuthNumberRepository authNumberRepository;
     private final ScrapRepository scrapRepository;
@@ -74,21 +70,23 @@ public class ParentService {
         Theme theme = objectMapper.readValue(request.getTheme(), Theme.class);
 
         // 유저 닉네임 중복 검사
-        Optional<Parent> byNickName = parentRepository.findByNickName(request.getNickname());
-        if (byNickName.isEmpty()) {
-            // 핸드폰 번호도 변경하는 경우
-            if (request.getChangePhoneNum()) {
-                // 핸드폰 인증이 완료되었는지 검사
-                signService.validateAuthNumber(request.getPhoneNum(), AuthKind.updatePhoneNum);
-                // 핸드폰 번호와 함께 프로필 update
-                findParent.updateDetailWithPhoneNum(request, theme);
-                // 인증번호 테이블에서 지우기
-                authNumberRepository.deleteByPhoneNumAndAuthKind(request.getPhoneNum(), AuthKind.updatePhoneNum);
-            } else { // 핸드폰 번호 변경은 변경하지 않는 경우
-                findParent.updateDetail(request, theme);
-            }
-        } else {
-            throw new UserException("이미 존재하는 닉네임 입니다.");
+        if(!Objects.equals(findParent.getNickName(), request.getNickname())){
+            parentRepository.findByNickName(request.getNickname())
+                    .ifPresent(parent -> {
+                        throw new UserException("이미 존재하는 닉네임입니다.");
+                    });
+        }
+
+        // 핸드폰 번호도 변경하는 경우
+        if (request.getChangePhoneNum()) {
+            // 핸드폰 인증이 완료되었는지 검사
+            authNumberService.validateAuthNumber(request.getPhoneNum(), AuthKind.updatePhoneNum);
+            // 핸드폰 번호와 함께 프로필 update
+            findParent.updateDetailWithPhoneNum(request, theme);
+            // 인증번호 테이블에서 지우기
+            authNumberRepository.deleteByPhoneNumAndAuthKind(request.getPhoneNum(), AuthKind.updatePhoneNum);
+        } else { // 핸드폰 번호 변경은 변경하지 않는 경우
+            findParent.updateDetail(request, theme);
         }
         ParentDetailResponse response = new ParentDetailResponse(findParent);
 

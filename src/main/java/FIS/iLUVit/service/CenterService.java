@@ -62,6 +62,7 @@ public class CenterService {
                 centerRepository.findByMapFilter(longitude, latitude, theme, interestedAge, kindOf, distance)
                         .stream().collect(Collectors.toMap(CenterAndDistancePreview::getId,
                         centerAndDistancePreview -> centerAndDistancePreview));
+        // 거리 계산 삽입은 일단 취소 해놓음 나중에 협의후 결정
         List<Long> idList = new ArrayList<>(map.keySet());
         imageService.getEncodedProfileImage(imageService.getCenterProfileDir(), idList)
                 .forEach((id, image) -> {
@@ -114,7 +115,7 @@ public class CenterService {
     *   작성내용: 회원가입 과정에서 필요한 센터정보 가져오기
     */
     public Slice<CenterInfoDto> findCenterForSignup(CenterInfoRequest request, Pageable pageable) {
-        return centerRepository.findForSignup(request.getSido(), request.getSigungu(), request.getCenterName(), pageable);
+       return centerRepository.findForSignup(request.getSido(), request.getSigungu(), request.getCenterName(), pageable);
     }
 
     /**
@@ -123,6 +124,10 @@ public class CenterService {
     *   작성내용: 아이추가 과정에서 필요한 센터정보 가져오기
     */
     public Slice<CenterInfoDto> findCenterForAddChild(CenterInfoRequest request, Pageable pageable) {
+        System.out.println("request.getSido() = " + request.getSido());
+        System.out.println("request.getSigungu() = " + request.getSigungu());
+        System.out.println("request.getSido()==null = " + (request.getSido() == null));
+        System.out.println("request.getSigungu()==null = " + (request.getSigungu() == null));
         return centerRepository.findCenterForAddChild(request.getSido(), request.getSigungu(), request.getCenterName(), pageable);
     }
 }

@@ -53,6 +53,7 @@ node('I_LOVE_IT') {
         dir("./build/libs") {
             PATH = sh(encoding: 'UTF-8', returnStdout: true, script: "pwd")
             sh 'JENKINS_NODE_COOKIE=dontKillMe nohup java -jar ./iLUVit-0.0.1-SNAPSHOT.jar >> ./nohup.out 2>&1 &'
+            
         }
     }
 }

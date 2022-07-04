@@ -7,11 +7,13 @@ import lombok.NoArgsConstructor;
 import javax.persistence.*;
 import java.time.LocalDate;
 import java.time.LocalTime;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class Chat extends BaseEntity {
+public class ChatRoom extends BaseEntity {
     @Id @GeneratedValue
     private Long id;
     private LocalDate date;             // 쪽지 발생 날짜
@@ -19,35 +21,37 @@ public class Chat extends BaseEntity {
     private String message;             // 쪽지 내용
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "room_id")
-    private ChatRoom chatRoom;
-
-    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "receiver_id")
-    private User receiver;              // 수신자
-
-    private Boolean deletedByReceiver;
+    private User receiver;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "sender_id")
-    private User sender;                // 발신자
+    private User sender;
 
-    private Boolean deletedBySender;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "post_id")
+    private Post post;
 
-    public Chat(String message, User receiver, User sender) {
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "comment_id")
+    private Comment comment;
+
+    @OneToMany(mappedBy = "chatRoom", cascade = CascadeType.REMOVE)
+    private List<Chat> chatList = new ArrayList<>();
+
+    public ChatRoom(User receiver, User sender, Post post) {
         this.date = LocalDate.now();
         this.time = LocalTime.now();
-        this.message = message;
         this.receiver = receiver;
-        this.deletedByReceiver = false;
         this.sender = sender;
-        this.deletedBySender = false;
+        this.post = post;
     }
 
-    public void updateChatRoom(ChatRoom chatRoom) {
-        this.chatRoom = chatRoom;
-        chatRoom.getChatList().add(this);
-        chatRoom.updateMessage(this.message);
+    public void updateComment(Comment comment) {
+        this.comment = comment;
     }
 
+    public void updateMessage(String message) {
+        this.message = message;
+    }
 }

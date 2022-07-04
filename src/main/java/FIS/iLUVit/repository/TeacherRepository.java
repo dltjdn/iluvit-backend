@@ -1,9 +1,7 @@
 package FIS.iLUVit.repository;
 
-import FIS.iLUVit.controller.dto.TeacherApprovalListResponse;
-import FIS.iLUVit.domain.Parent;
+import FIS.iLUVit.domain.Center;
 import FIS.iLUVit.domain.Teacher;
-import FIS.iLUVit.domain.enumtype.Auth;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
@@ -22,7 +20,7 @@ public interface TeacherRepository extends JpaRepository<Teacher, Long> {
             "left join fetch c.teachers " +
             "where t.id =:userId " +
             "and t.auth = 'DIRECTOR'")
-    Optional<Teacher> findDirectorByIdWithCenter(@Param("userId") Long userId);
+    Optional<Teacher> findDirectorByIdWithCenterWithTeacher(@Param("userId") Long userId);
 
 
     @Query("select t " +
@@ -37,11 +35,49 @@ public interface TeacherRepository extends JpaRepository<Teacher, Long> {
             "set t.approval = 'ACCEPT' " +
             "where t.id =:teacherId " +
             "and t.center.id =:centerId")
-    void approveTeacher(@Param("teacherId") Long teacherId, @Param("centerId") Long centerId);
+    void acceptTeacher(@Param("teacherId") Long teacherId, @Param("centerId") Long centerId);
 
     @Modifying
     @Query("update Teacher t " +
-            "set t.center.id = null " +
+            "set t.center.id = null, t.auth = 'TEACHER' " +
             "where t.id =:teacherId")
-    void fireTeacher(@Param("teacherId") Long teacherId);
+    void exitCenter(@Param("teacherId") Long teacherId);
+
+    @Query("select distinct t " +
+            "from Teacher t " +
+            "join fetch t.center c " +
+            "left join fetch c.children cc " +
+            "join fetch cc.parent " +
+            "where t.id =:userId " +
+            "and t.auth = 'DIRECTOR' ")
+    Optional<Teacher> findDirectorByIdWithCenterWithChildWithParent(@Param("userId") Long userId);
+
+    @Query("select distinct t " +
+            "from Teacher t " +
+            "join fetch t.center c " +
+            "left join fetch c.boards " +
+            "where t.id =:userId ")
+    Optional<Teacher> findByIdAndAssign(@Param("userId") Long userId);
+
+    @Query("select t " +
+            "from Teacher t " +
+            "where t.id =:userId " +
+            "and t.center is null")
+    Optional<Teacher> findByIdAndNotAssign(@Param("userId") Long userId);
+
+    @Modifying
+    @Query("update Teacher t " +
+            "set t.center.id =:centerId, t.approval = 'WAITING' " +
+            "where t.id =:userId ")
+    void assignCenter(@Param("userId") Long userId, @Param("centerId") Long centerId);
+
+    @Query("select t from Teacher t where t.center.id =:centerId")
+    List<Center> findByCenter(@Param("centerId") Long centerId);
+
+    @Query("select distinct t " +
+            "from Teacher t " +
+            "join fetch t.center c " +
+            "join fetch c.teachers " +
+            "where t.id =:userId")
+    Optional<Teacher> findByIdWithCenterWithTeacher(@Param("userId") Long userId);
 }
