@@ -13,6 +13,8 @@ public class LoginTeacherResponse extends LoginResponse {
 
     public LoginTeacherResponse(Long id, String nickName, Auth auth, Center center) {
         super(id, nickName, auth);
-        this.center_id = center.getId();
+        if (center != null) {
+            this.center_id = center.getId();
+        }
     }
 }

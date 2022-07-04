@@ -16,6 +16,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.io.IOException;
 import java.util.List;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Slf4j
@@ -24,10 +25,11 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class ChildService {
 
+    private final ImageService imageService;
+    private final BookmarkService bookmarkService;
     private final ParentRepository parentRepository;
     private final CenterRepository centerRepository;
     private final ChildRepository childRepository;
-    private final ImageService imageService;
     private final BoardRepository boardRepository;
     private final BookmarkRepository bookmarkRepository;
     private final TeacherRepository teacherRepository;
@@ -65,24 +67,8 @@ public class ChildService {
         Parent parent = parentRepository.findByIdWithChild(userId);
 
         // 새로 등록할 시설에 정보를 게시판 정보와 엮어서 가져오기
-        Center center = centerRepository.findByIdAndSignedWithBoard(request.getCenter_id(), true)
+        Center center = centerRepository.findByIdAndSigned(request.getCenter_id())
                 .orElseThrow(() -> new CenterException("잘못된 centerId 입니다."));
-
-        // bookmark 처리
-//        // 기존에 있던 아이들중에 현재 등록하려는 아이와 같은 시설에 다니는 아이가 있는지 검사
-//        Optional<Child> alreadySignedChild = parent.getChildren().stream()
-//                .filter(child -> child.getCenter().getId().equals(center.getId()))
-//                .findFirst();
-//
-//
-//        // 기존 아이들과 다른 시설에 아이를 등록할 경우 해당 시설에 default board 북마크 추가
-//        if (alreadySignedChild.isEmpty()) {
-//            center.getBoards().forEach(board -> {
-//                if (board.getIsDefault()) {
-//                    bookmarkService.create(parent.getId(), board.getId());
-//                }
-//            });
-//        }
 
         // 아이 등록
         Child newChild = request.createChild(center, parent);
@@ -129,25 +115,38 @@ public class ChildService {
     */
     public ChildInfoDetailResponse updateChild(Long userId, Long childId, UpdateChildRequest request, Pageable pageable) throws IOException {
 
-        Child child = childRepository.findByIdWithParentAndCenter(userId, childId)
-                .orElseThrow(() -> new UserException("잘못된 child_id 입니다."));
+        // 요청 사용자가 등록한 모든 아이 가져오기
+        List<Child> childrenByUser = childRepository.findByUserWithCenter(userId);
 
-        Center center = centerRepository.getById(request.getCenter_id());
-        child.update(center, request.getName(), request.getBirthDate(), request.getProfileImg());
+        Child updatedChild = childrenByUser.stream()
+                .filter(child -> Objects.equals(child.getId(), childId))
+                .findFirst()
+                .orElseThrow(() -> new UserException("잘못된 childId 입니다."));
 
-        ChildInfoDetailResponse response = new ChildInfoDetailResponse(child);
+        Center center = centerRepository.findByIdAndSigned(request.getCenter_id())
+                .orElseThrow(() -> new CenterException("올바르지 않은 centerId 입니다."));
+
+        // 시설을 변경하는 경우 bookmark 처리
+        if (!Objects.equals(center.getId(), request.getCenter_id())) {
+            deleteBookmarkByCenter(userId, childrenByUser, updatedChild);
+        }
+
+        // update 진행
+        updatedChild.update(center, request.getName(), request.getBirthDate(), request.getProfileImg());
+
+        ChildInfoDetailResponse response = new ChildInfoDetailResponse(updatedChild);
 
         // 이미지가 있는 경우
         if (request.getProfileImg() != null) {
             String imagePath = imageService.getUserProfileDir();
             imageService.saveProfileImage(request.getProfileImg(), imagePath);
-            String image = imageService.getEncodedProfileImage(imagePath, child.getId());
+            String image = imageService.getEncodedProfileImage(imagePath, updatedChild.getId());
             response.setProfileImage(image);
         }
 
         // 프로필 수정에 필요한 시설정보들 가져오기
-        Slice<CenterInfoDto> centerInfos = centerRepository.findCenterForAddChild(child.getCenter().getArea().getSido(),
-                child.getCenter().getArea().getSigungu(), child.getCenter().getName(), pageable);
+        Slice<CenterInfoDto> centerInfos = centerRepository.findCenterForAddChild(updatedChild.getCenter().getArea().getSido(),
+                updatedChild.getCenter().getArea().getSigungu(), updatedChild.getCenter().getName(), pageable);
         response.setCenterInfoDtoSlice(centerInfos);
 
         return response;
@@ -169,24 +168,8 @@ public class ChildService {
                 .findFirst()
                 .orElseThrow(() -> new UserException("잘못된 childId 입니다."));
 
-        // 삭제하고자 하는 아이가 등록된 시설
-        Center belongedCenter = deletedChild.getCenter();
-
-        // 삭제하고자 하는 아이와 같은 시설에 다니는 또 다른 자녀가 있는지 확인
-        List<Child> sameCenterChildren = childrenByUser.stream()
-                .filter(child -> child.getCenter() == belongedCenter)
-                .filter(child-> !Objects.equals(child.getId(), deletedChild.getId()))
-                .filter(child-> child.getApproval() == Approval.ACCEPT)
-                .collect(Collectors.toList());
-
-        // 없으면 해당 시설과 연관된 bookmark 싹 다 삭제
-        if (sameCenterChildren.isEmpty()) {
-            List<Board> boards = boardRepository.findByCenter(belongedCenter.getId());
-            List<Long> boardIds = boards.stream()
-                    .map(Board::getId)
-                    .collect(Collectors.toList());
-            bookmarkRepository.deleteAllByBoardAndUser(userId, boardIds);
-        }
+        // 삭제하고자 하는 아이와 같은 시설에 다니는 또 다른 자녀가 있는지 확인해서 없으면 해당 시설과 관련된 bookmark 모두 삭제
+        deleteBookmarkByCenter(userId, childrenByUser, deletedChild);
 
         childRepository.delete(deletedChild);
 
@@ -199,25 +182,114 @@ public class ChildService {
     *   작성내용: 아이 승인 페이지를 위한 시설에 등록된 아이들 정보 조회
     */
     public ChildApprovalListResponse findChildApprovalInfoList(Long userId) {
+
         Teacher director = teacherRepository.findDirectorByIdWithCenterWithChildWithParent(userId)
                 .orElseThrow(() -> new UserException("해당 요청에 대한 권한이 없습니다."));
 
         ChildApprovalListResponse response = new ChildApprovalListResponse();
 
+
         director.getCenter().getChildren().forEach(child -> {
-            ChildApprovalListResponse.ChildInfoForAdmin childInfo =
-                    new ChildApprovalListResponse.ChildInfoForAdmin(child);
+            // 해당시설에 대해 거절/삭제 당하지 않은 아이들만 보여주기
+            if (child.getApproval() != Approval.REJECT) {
+                ChildApprovalListResponse.ChildInfoForAdmin childInfo =
+                        new ChildApprovalListResponse.ChildInfoForAdmin(child);
 
-            if (child.getHasProfileImg()) {
-                String imagePath = imageService.getChildProfileDir();
-                String image = imageService.getEncodedProfileImage(imagePath, child.getId());
-                childInfo.setChild_profileImg(image);
+                if (child.getHasProfileImg()) {
+                    String imagePath = imageService.getChildProfileDir();
+                    String image = imageService.getEncodedProfileImage(imagePath, child.getId());
+                    childInfo.setChild_profileImg(image);
+                }
+                response.getData().add(childInfo);
             }
-
-            response.getData().add(childInfo);
         });
         return response;
     }
 
 
+    /**
+    *   작성날짜: 2022/06/30 3:13 PM
+    *   작성자: 이승범
+    *   작성내용: 아이 승인
+    */
+    public void acceptChild(Long userId, Long childId) {
+
+        // 사용자가 등록된 시설과 연관된 아이들 목록 가져오기
+        Teacher director = teacherRepository.findDirectorByIdWithCenterWithChildWithParent(userId)
+                .orElseThrow(() -> new UserException("해당 요청에 대한 권한이 없습니다."));
+
+        // childId에 해당하는 아이가 시설에 승인 대기중인지 확인
+        Child acceptedChild = director.getCenter().getChildren().stream()
+                .filter(child -> Objects.equals(child.getId(), childId) && child.getApproval() == Approval.WAITING)
+                .findFirst()
+                .orElseThrow(() -> new UserException("잘못된 childId 입니다."));
+
+        // 승인
+        childRepository.acceptChild(childId, director.getCenter().getId());
+
+        // 승인하고자 하는 아이의 부모와 그 부모에 속한 모든 아이들 가져오기
+        Parent acceptedParent = parentRepository.findByIdWithChild(acceptedChild.getParent().getId());
+
+        // bookmark 처리
+        // 기존에 있던 아이들중에 현재 승인되는 아이와 같은 시설에 다니는 또 다른 아이가 있는지 검사
+        Optional<Child> alreadySignedChild = acceptedParent.getChildren().stream()
+                .filter(child -> Objects.equals(child.getCenter().getId(), director.getCenter().getId()))
+                .filter(child -> child.getApproval() == Approval.ACCEPT)
+                .findFirst();
+
+        // 새로운 시설에 아이가 승인될 경우 해당 시설에 default board 북마크에 추가
+        if (alreadySignedChild.isEmpty()) {
+            // 승인하고자 하는 시설의 게시판들 lazyLoading 통해 가져오기
+            director.getCenter().getBoards().forEach(board -> {
+                if (board.getIsDefault()) {
+                    bookmarkService.create(acceptedParent.getId(), board.getId());
+                }
+            });
+        }
+
+    }
+
+    /**
+    *   작성날짜: 2022/06/30 4:28 PM
+    *   작성자: 이승범
+    *   작성내용: 시설에서 아이 삭제/승인거절
+    */
+    public void fireChild(Long userId, Long childId) {
+
+        // 사용자가 등록된 시설과 연관된 아이들 목록 가져오기
+        Teacher director = teacherRepository.findDirectorByIdWithCenterWithChildWithParent(userId)
+                .orElseThrow(() -> new UserException("해당 요청에 대한 권한이 없습니다."));
+
+        Child firedChild = director.getCenter().getChildren().stream()
+                .filter(child -> Objects.equals(child.getId(), childId))
+                .findFirst()
+                .orElseThrow(() -> new UserException("잘못된 childId 입니다."));
+
+        // 시설과의 연관관계 끊기
+        childRepository.fireChild(childId);
+
+        // 식제하고자 하는 아이의 부모와 그 부모에 속한 모든 아이들 가져오기
+        List<Child> childrenByUser = childRepository.findByUserWithCenter(userId);
+
+        // bookmark 처리
+        deleteBookmarkByCenter(userId, childrenByUser, firedChild);
+    }
+
+    // 삭제되는 아이와 같은 시설에 다니는 또 다른 아이가 없을경우 해당 시설과 관련된 bookmark 모두 삭제
+    private void deleteBookmarkByCenter(Long userId, List<Child> childrenByUser, Child deletedChild) {
+        Optional<Child> sameCenterChildren = childrenByUser.stream()
+                .filter(child -> Objects.equals(child.getCenter().getId(), deletedChild.getCenter().getId()))
+                .filter(child -> !Objects.equals(child.getId(), deletedChild.getId()))
+                .filter(child -> child.getApproval() == Approval.ACCEPT)
+                .findFirst();
+
+        // 없으면 해당 시설과 연관된 bookmark 싹 다 삭제
+        if (sameCenterChildren.isEmpty()) {
+            List<Board> boards = boardRepository.findByCenter(deletedChild.getCenter().getId());
+            List<Long> boardIds = boards.stream()
+                    .map(Board::getId)
+                    .collect(Collectors.toList());
+            bookmarkRepository.deleteAllByBoardAndUser(userId, boardIds);
+        }
+    }
 }

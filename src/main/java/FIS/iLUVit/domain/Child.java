@@ -14,7 +14,8 @@ import java.time.LocalDate;
 @Getter
 @NoArgsConstructor
 public class Child extends BaseEntity {
-    @Id @GeneratedValue
+    @Id
+    @GeneratedValue
     private Long id;
     private String name;
     private LocalDate birthDate;
@@ -59,7 +60,7 @@ public class Child extends BaseEntity {
     }
 
     public void update(Center center, String name, LocalDate birthDate, MultipartFile image) {
-        if (!center.getId().equals(this.getCenter().getId())) {
+        if (!center.getId().equals(this.getCenter().getId()) || this.approval == Approval.REJECT) {
             this.center = center;
             this.approval = Approval.WAITING;
         }
