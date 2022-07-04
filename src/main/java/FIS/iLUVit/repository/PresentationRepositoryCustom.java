@@ -12,4 +12,5 @@ import java.util.List;
 public interface PresentationRepositoryCustom {
 
     SliceImpl<PresentationPreviewForUsers> findByFilter(List<Area> areas, Theme theme, Integer interestedAge, KindOf kindOf, Pageable pageable);
+
 }

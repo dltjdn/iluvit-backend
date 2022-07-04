@@ -22,4 +22,22 @@ public class PresentationWithPtDatesDto {
     private Integer ablePersonNum;      // 해당 회차에 신청 가능한 사람 수
     private Integer participantCnt;     // 신청 사람 수
     private Integer waitingCnt;         // 대기 수
+    private Long participationId;
+    private Long waitingId;
+
+    public PresentationWithPtDatesDto(Long presentationId, LocalDate startDate, LocalDate endDate, String place, String content, Integer imgCnt, Integer videoCnt, Long ptDateId, LocalDate date, String time, Integer ablePersonNum, Integer participantCnt, Integer waitingCnt) {
+        this.presentationId = presentationId;
+        this.startDate = startDate;
+        this.endDate = endDate;
+        this.place = place;
+        this.content = content;
+        this.imgCnt = imgCnt;
+        this.videoCnt = videoCnt;
+        this.ptDateId = ptDateId;
+        this.date = date;
+        this.time = time;
+        this.ablePersonNum = ablePersonNum;
+        this.participantCnt = participantCnt;
+        this.waitingCnt = waitingCnt;
+    }
 }
