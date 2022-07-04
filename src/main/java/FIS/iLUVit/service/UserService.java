@@ -90,4 +90,8 @@ public class UserService {
                 .map(Alarm::exportAlarm)
                 .collect(Collectors.toList());
     }
+
+    public Long deleteUserAlarm(Long userId, Long alarmId) {
+        return alarmRepository.deleteById(userId, alarmId);
+    }
 }

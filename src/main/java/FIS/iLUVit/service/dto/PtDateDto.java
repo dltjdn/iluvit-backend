@@ -15,6 +15,8 @@ public class PtDateDto {
     private Integer ablePersonNum;      // 해당 회차에 신청 가능한 사람 수
     private Integer participantCnt;     // 신청 사람 수
     private Integer waitingCnt;         // 대기 수
+    private Boolean isParticipant;
+    private Boolean isWaiting;
 
     public PtDateDto(PresentationWithPtDatesDto queryDto) {
         ptDateId = queryDto.getPtDateId();
@@ -23,6 +25,8 @@ public class PtDateDto {
         ablePersonNum = queryDto.getAblePersonNum();
         participantCnt = queryDto.getParticipantCnt();
         waitingCnt = queryDto.getWaitingCnt();
+        isParticipant = queryDto.getParticipationId() == null ? false : true;
+        isWaiting = queryDto.getWaitingId() == null ? false : true;
     }
 
     public PtDateDto(PtDate ptDate) {

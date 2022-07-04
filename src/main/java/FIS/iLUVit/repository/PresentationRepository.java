@@ -24,6 +24,17 @@ public interface PresentationRepository extends JpaRepository<Presentation, Long
             "and :date <= p.endDate")
     List<PresentationWithPtDatesDto> findByCenterAndDateWithPtDates(@Param("centerId") Long centerId, @Param("date") LocalDate date);
 
+    @Query("select new FIS.iLUVit.repository.dto.PresentationWithPtDatesDto" +
+            "(p.id, p.startDate, p.endDate, p.place, p.content, p.imgCnt, p.videoCnt, pd.id, pd.date, pd.time, pd.ablePersonNum, pd.participantCnt, pd.waitingCnt, participation.parent.id ,waiting.parent.id) " +
+            "from Presentation p " +
+            "join p.ptDates as pd " +
+            "left join pd.participations as participation on participation.parent.id =:userId and participation.status = FIS.iLUVit.domain.enumtype.Status.JOINED " +
+            "left join pd.waitings as waiting on waiting.parent.id =:userId " +
+            "where p.center.id =:centerId " +
+            "and p.startDate <= :date " +
+            "and :date <= p.endDate")
+    List<PresentationWithPtDatesDto> findByCenterAndDateWithPtDates(@Param("centerId") Long centerId, @Param("date") LocalDate date, @Param("userId") Long userId);
+
     @Query("select new FIS.iLUVit.repository.dto.PresentationPreviewForTeacher(p.id, p.startDate, p.endDate, p.place, p.content) " +
             "from Presentation p " +
             "where p.center.id = :centerId")

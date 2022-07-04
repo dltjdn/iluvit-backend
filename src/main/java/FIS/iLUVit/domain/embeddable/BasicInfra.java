@@ -21,7 +21,7 @@ public class BasicInfra {
     private Boolean hasHandWriteNote;       // 수기알림장 유무
     private Boolean hasPhysics;             // 체육시설 있는지
 
-    private Integer BusCnt;                 // 통합차량 수
+    private Integer busCnt;                 // 통합차량 수
     private Integer buildingYear;           // 건축년도 ( 이걸로 신축 여부 판단하기 )
     private Integer cctvCnt;                // CCTV 갯수
 }

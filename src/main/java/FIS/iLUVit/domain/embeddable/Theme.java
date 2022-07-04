@@ -1,9 +1,6 @@
 package FIS.iLUVit.domain.embeddable;
 
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import javax.persistence.Embeddable;
 import java.lang.reflect.Field;
@@ -13,6 +10,7 @@ import java.util.List;
 @Embeddable
 @AllArgsConstructor
 @NoArgsConstructor
+@EqualsAndHashCode
 @Getter
 public class Theme {
     private Boolean english;                // 양어
