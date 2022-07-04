@@ -223,21 +223,21 @@ public class initDB {
             em.persist(commentHeart4);
             em.persist(commentHeart5);
 
-            Chat chat1 = new Chat("안녕하세요", parent1, teacher1, post2);
-            Chat chat2 = new Chat("안녕하세요", teacher1, parent1, post2);
-            Chat chat3 = new Chat("안녕하세요", parent1, teacher1, post6);
-            Chat chat4 = new Chat("안녕하세요", teacher1, parent1, post2);
-            Chat chat5 = new Chat("안녕하세요", teacher2, parent1, post2);
-            Chat chat6 = new Chat("안녕하세요", teacher2, parent1, post6);
-            Chat chat7 = new Chat("안녕하세요", parent1, teacher2, post2);
-
-            em.persist(chat1);
-            em.persist(chat2);
-            em.persist(chat3);
-            em.persist(chat4);
-            em.persist(chat5);
-            em.persist(chat6);
-            em.persist(chat7);
+//            Chat chat1 = new Chat("안녕하세요", parent1, teacher1, post2);
+//            Chat chat2 = new Chat("안녕하세요", teacher1, parent1, post2);
+//            Chat chat3 = new Chat("안녕하세요", parent1, teacher1, post6);
+//            Chat chat4 = new Chat("안녕하세요", teacher1, parent1, post2);
+//            Chat chat5 = new Chat("안녕하세요", teacher2, parent1, post2);
+//            Chat chat6 = new Chat("안녕하세요", teacher2, parent1, post6);
+//            Chat chat7 = new Chat("안녕하세요", parent1, teacher2, post2);
+//
+//            em.persist(chat1);
+//            em.persist(chat2);
+//            em.persist(chat3);
+//            em.persist(chat4);
+//            em.persist(chat5);
+//            em.persist(chat6);
+//            em.persist(chat7);
         }
     }
 }
