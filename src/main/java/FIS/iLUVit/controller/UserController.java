@@ -1,6 +1,7 @@
 package FIS.iLUVit.controller;
 
 import FIS.iLUVit.config.argumentResolver.Login;
+import FIS.iLUVit.controller.dto.AlarmDeleteDto;
 import FIS.iLUVit.controller.dto.AlarmDto;
 import FIS.iLUVit.controller.dto.UpdatePasswordRequest;
 import FIS.iLUVit.filter.LoginResponse;
@@ -43,4 +44,7 @@ public class UserController {
     public List<AlarmDto> getAlarm(@Login Long userId){
         return userService.findUserAlarm(userId);
     }
+
+    @DeleteMapping("/alarm")
+    public Long deleteAlarm(@Login Long userId, @RequestBody AlarmDeleteDto request){ return userService.deleteUserAlarm(userId, request.getAlarmId()); }
 }

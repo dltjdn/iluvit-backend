@@ -62,6 +62,7 @@ public class CenterService {
                 centerRepository.findByMapFilter(longitude, latitude, theme, interestedAge, kindOf, distance)
                         .stream().collect(Collectors.toMap(CenterAndDistancePreview::getId,
                         centerAndDistancePreview -> centerAndDistancePreview));
+        // 거리 계산 삽입은 일단 취소 해놓음 나중에 협의후 결정
         List<Long> idList = new ArrayList<>(map.keySet());
         imageService.getEncodedProfileImage(imageService.getCenterProfileDir(), idList)
                 .forEach((id, image) -> {
