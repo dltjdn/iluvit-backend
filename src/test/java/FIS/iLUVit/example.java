@@ -1,41 +1,49 @@
 package FIS.iLUVit;
 
+import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.HashMap;
-import java.util.Optional;
 
-import static org.junit.Assert.*;
 
 @ExtendWith(MockitoExtension.class)
 public class example {
+
     private static String TALISKER = "Talisker";
     private static String HIGHLAND_PARK = "Highland Park";
     private Warehouse warehouse = new WarehouseImpl();
+    @Mock
+    private Warehouse mockWarehouse;
 
     @BeforeEach
     protected void setUp() throws Exception {
         warehouse.add(TALISKER, 50);
         warehouse.add(HIGHLAND_PARK, 25);
+        mockWarehouse.
     }
 
     @Test
     public void testOrderIsFilledIfEnoughInWarehouse() {
         Order order = new Order(TALISKER, 50);
+        // exercise
         order.fill(warehouse);
-        assertTrue(order.isFilled());
-        assertEquals(0, warehouse.getInventory(TALISKER));
+        // verify 상태검증
+        Assertions.assertThat(order.isFilled()).isTrue();
+        Assertions.assertThat(warehouse.getInventory(TALISKER)).isEqualTo(0);
     }
 
     @Test
     public void testOrderDoesNotRemoveIfNotEnough() {
         Order order = new Order(TALISKER, 51);
+        // exercise
         order.fill(warehouse);
-        assertFalse(order.isFilled());
-        assertEquals(50, warehouse.getInventory(TALISKER));
+        // verify 상태 검증
+        Assertions.assertThat(order.isFilled()).isFalse();
+        Assertions.assertThat(warehouse.getInventory(TALISKER)).isEqualTo(50);
     }
 
     private class Warehouse {
@@ -46,8 +54,8 @@ public class example {
             inventory.put(productName, cnt);
         }
 
-        public Optional<Integer> getInventory(String productName) {
-            return Optional.ofNullable(inventory.get(productName));
+        public Integer getInventory(String productName) {
+            return inventory.get(productName);
         }
 
         public boolean getProduct(String productName, Integer size) {

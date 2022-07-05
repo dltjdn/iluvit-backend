@@ -183,7 +183,7 @@ public class PresentationService {
 
     public List<ParentInfoForDirectorDto> findPtDateParticipatingParents(Long userId, Long ptDateId) {
         //
-        PtDate ptDate = ptDateRepository.findByIdAndJoinParticipation(ptDateId)
+        PtDate ptDate = ptDateRepository.findByIdAndJoinParticipationForSearch(ptDateId)
                 .orElseThrow(() -> new PresentationException("존재하지 않는 설명회 회차 입니다."));
         userRepository.findTeacherById(userId)
                 .orElseThrow(() -> new UserException("존재하지 않는 유저입니다"))
@@ -196,7 +196,7 @@ public class PresentationService {
 
     public List<ParentInfoForDirectorDto> findPtDateWaitingParents(Long userId, Long ptDateId) {
         //
-        PtDate ptDate = ptDateRepository.findByIdAndJoinWaiting(ptDateId)
+        PtDate ptDate = ptDateRepository.findByIdAndJoinWaitingForSearch(ptDateId)
                 .orElseThrow(() -> new PresentationException("존재하지 않는 설명회 회차 입니다."));
         userRepository.findTeacherById(userId)
                 .orElseThrow(() -> new UserException("존재하지 않는 유저입니다"))
