@@ -2,6 +2,8 @@ package FIS.iLUVit.service;
 
 import FIS.iLUVit.controller.dto.*;
 import FIS.iLUVit.domain.*;
+import FIS.iLUVit.domain.alarms.CenterApprovalAcceptedAlarm;
+import FIS.iLUVit.domain.alarms.CenterApprovalReceivedAlarm;
 import FIS.iLUVit.domain.enumtype.Approval;
 import FIS.iLUVit.exception.CenterException;
 import FIS.iLUVit.exception.UserException;
@@ -67,12 +69,17 @@ public class ChildService {
         Parent parent = parentRepository.findByIdWithChild(userId);
 
         // 새로 등록할 시설에 정보를 게시판 정보와 엮어서 가져오기
-        Center center = centerRepository.findByIdAndSigned(request.getCenter_id())
+        Center center = centerRepository.findByIdAndSignedWithTeacher(request.getCenter_id())
                 .orElseThrow(() -> new CenterException("잘못된 centerId 입니다."));
 
         // 아이 등록
         Child newChild = request.createChild(center, parent);
         childRepository.save(newChild);
+
+        // 아이 승인 요청 알람이 해당 시설의 모든 교사에게 감
+        center.getTeachers().forEach(teacher -> {
+            AlarmUtils.publishAlarmEvent(new CenterApprovalReceivedAlarm(teacher));
+        });
 
         // 프로필 이미지 설정
         if (!request.getProfileImg().isEmpty()) {
@@ -123,12 +130,16 @@ public class ChildService {
                 .findFirst()
                 .orElseThrow(() -> new UserException("잘못된 childId 입니다."));
 
-        Center center = centerRepository.findByIdAndSigned(request.getCenter_id())
+        Center center = centerRepository.findByIdAndSignedWithTeacher(request.getCenter_id())
                 .orElseThrow(() -> new CenterException("올바르지 않은 centerId 입니다."));
 
         // 시설을 변경하는 경우 bookmark 처리
         if (!Objects.equals(center.getId(), request.getCenter_id())) {
             deleteBookmarkByCenter(userId, childrenByUser, updatedChild);
+            // 아이 승인 요청 알람이 해당 시설의 모든 교사에게 감
+            center.getTeachers().forEach(teacher -> {
+                AlarmUtils.publishAlarmEvent(new CenterApprovalReceivedAlarm(teacher));
+            });
         }
 
         // update 진행
@@ -229,6 +240,9 @@ public class ChildService {
 
         // 승인하고자 하는 아이의 부모와 그 부모에 속한 모든 아이들 가져오기
         Parent acceptedParent = parentRepository.findByIdWithChild(acceptedChild.getParent().getId());
+
+        // 승인 완료 알람이 학부모에게로 감
+        AlarmUtils.publishAlarmEvent(new CenterApprovalAcceptedAlarm(acceptedParent, teacher.getCenter()));
 
         // bookmark 처리
         // 기존에 있던 아이들중에 현재 승인되는 아이와 같은 시설에 다니는 또 다른 아이가 있는지 검사

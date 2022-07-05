@@ -79,4 +79,10 @@ public interface TeacherRepository extends JpaRepository<Teacher, Long> {
             "join fetch c.teachers " +
             "where t.id =:userId")
     Optional<Teacher> findByIdWithCenterWithTeacher(@Param("userId") Long userId);
+
+    @Query("select t " +
+            "from Teacher t " +
+            "where t.center.id =:centerId " +
+            "and t.auth = 'DIRECTOR'")
+    List<Teacher> findDirectorByCenter(@Param("centerId") Long centerId);
 }

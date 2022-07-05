@@ -154,6 +154,12 @@ public class TeacherService {
         // centerId가 유효하지 않다면 예외처리
         try {
             teacherRepository.assignCenter(userId, centerId);
+
+            // 승인 요청 알람이 해당 시설의 원장들에게 감
+            List<Teacher> directors = teacherRepository.findDirectorByCenter(centerId);
+            directors.forEach(director->{
+                AlarmUtils.publishAlarmEvent(new CenterApprovalReceivedAlarm(director));
+            });
         } catch (DataIntegrityViolationException e) {
             throw new UserException("존재하지 않는 시설입니다.");
         }
@@ -237,6 +243,8 @@ public class TeacherService {
                 .orElseThrow(() -> new UserException("잘못된 teacher_id 입니다."));
 
         teacherRepository.acceptTeacher(teacherId, director.getCenter().getId());
+
+
 
         // center default boards bookmark 추가하기
         List<Board> defaultBoards = boardRepository.findDefaultByCenter(director.getCenter().getId());

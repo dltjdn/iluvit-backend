@@ -83,7 +83,7 @@ public class ChildController {
      * 작성자: 이승범
      * 작성내용: 아이 시설에 승인
      */
-    @PatchMapping("/director/child/accept/{childId}")
+    @PatchMapping("/teacher/child/accept/{childId}")
     public void acceptChild(@Login Long userId, @PathVariable("childId") Long childId) {
         childService.acceptChild(userId, childId);
     }
@@ -93,7 +93,7 @@ public class ChildController {
      * 작성자: 이승범
      * 작성내용: 시설에서 아이 삭제/승인거절
      */
-    @PatchMapping("/director/child/fire/{childId}")
+    @PatchMapping("/teacher/child/fire/{childId}")
     public void fireChild(@Login Long userId, @PathVariable("childId") Long childId) {
         childService.fireChild(userId, childId);
     }
