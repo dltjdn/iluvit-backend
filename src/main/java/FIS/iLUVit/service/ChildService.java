@@ -150,7 +150,7 @@ public class ChildService {
         // 이미지가 있는 경우
         if (!request.getProfileImg().isEmpty()) {
             String imagePath = imageService.getUserProfileDir();
-            imageService.saveProfileImage(request.getProfileImg(), imagePath);
+            imageService.saveProfileImage(request.getProfileImg(), imagePath + updatedChild.getId());
             String image = imageService.getEncodedProfileImage(imagePath, updatedChild.getId());
             response.setProfileImage(image);
         }
