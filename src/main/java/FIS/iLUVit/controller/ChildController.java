@@ -73,7 +73,7 @@ public class ChildController {
      * 작성자: 이승범
      * 작성내용: 아이 승인 페이지를 위한 시설에 등록된 아이들 정보 조회
      */
-    @GetMapping("/director/child/approval")
+    @GetMapping("/teacher/child/approval")
     public ChildApprovalListResponse approvalList(@Login Long userId) {
         return childService.findChildApprovalInfoList(userId);
     }

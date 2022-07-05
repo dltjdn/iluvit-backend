@@ -2,6 +2,7 @@ package FIS.iLUVit.service;
 
 import FIS.iLUVit.controller.dto.*;
 import FIS.iLUVit.domain.*;
+import FIS.iLUVit.domain.alarms.CenterApprovalReceivedAlarm;
 import FIS.iLUVit.domain.enumtype.Approval;
 import FIS.iLUVit.domain.enumtype.Auth;
 import FIS.iLUVit.domain.enumtype.AuthKind;
@@ -117,6 +118,12 @@ public class TeacherService {
                     .orElseThrow(() -> new SignupException("잘못된 시설로의 접근입니다."));
             Teacher teacher = request.createTeacher(center, hashedPwd);
             teacherRepository.save(teacher);
+            // 시설에 원장들에게 알람보내기
+            center.getTeachers().forEach(t->{
+                if (t.getAuth() == Auth.DIRECTOR) {
+                    AlarmUtils.publishAlarmEvent(new CenterApprovalReceivedAlarm(t));
+                }
+            });
             // 시설에 대한 최초 승인요청일 경우 기본 게시판(자유, 공지, 정보, 영상)생성
             if (center.getTeachers().isEmpty()) {
                 createCenterStory(center);

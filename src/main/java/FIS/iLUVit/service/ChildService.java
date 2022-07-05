@@ -183,13 +183,13 @@ public class ChildService {
     */
     public ChildApprovalListResponse findChildApprovalInfoList(Long userId) {
 
-        Teacher director = teacherRepository.findDirectorByIdWithCenterWithChildWithParent(userId)
+        Teacher teacher = teacherRepository.findByIdWithCenterWithChildWithParent(userId)
                 .orElseThrow(() -> new UserException("해당 요청에 대한 권한이 없습니다."));
 
         ChildApprovalListResponse response = new ChildApprovalListResponse();
 
 
-        director.getCenter().getChildren().forEach(child -> {
+        teacher.getCenter().getChildren().forEach(child -> {
             // 해당시설에 대해 거절/삭제 당하지 않은 아이들만 보여주기
             if (child.getApproval() != Approval.REJECT) {
                 ChildApprovalListResponse.ChildInfoForAdmin childInfo =
@@ -215,17 +215,17 @@ public class ChildService {
     public void acceptChild(Long userId, Long childId) {
 
         // 사용자가 등록된 시설과 연관된 아이들 목록 가져오기
-        Teacher director = teacherRepository.findDirectorByIdWithCenterWithChildWithParent(userId)
+        Teacher teacher = teacherRepository.findByIdWithCenterWithChildWithParent(userId)
                 .orElseThrow(() -> new UserException("해당 요청에 대한 권한이 없습니다."));
 
         // childId에 해당하는 아이가 시설에 승인 대기중인지 확인
-        Child acceptedChild = director.getCenter().getChildren().stream()
+        Child acceptedChild = teacher.getCenter().getChildren().stream()
                 .filter(child -> Objects.equals(child.getId(), childId) && child.getApproval() == Approval.WAITING)
                 .findFirst()
                 .orElseThrow(() -> new UserException("잘못된 childId 입니다."));
 
         // 승인
-        childRepository.acceptChild(childId, director.getCenter().getId());
+        childRepository.acceptChild(childId, teacher.getCenter().getId());
 
         // 승인하고자 하는 아이의 부모와 그 부모에 속한 모든 아이들 가져오기
         Parent acceptedParent = parentRepository.findByIdWithChild(acceptedChild.getParent().getId());
@@ -233,14 +233,14 @@ public class ChildService {
         // bookmark 처리
         // 기존에 있던 아이들중에 현재 승인되는 아이와 같은 시설에 다니는 또 다른 아이가 있는지 검사
         Optional<Child> alreadySignedChild = acceptedParent.getChildren().stream()
-                .filter(child -> Objects.equals(child.getCenter().getId(), director.getCenter().getId()))
+                .filter(child -> Objects.equals(child.getCenter().getId(), teacher.getCenter().getId()))
                 .filter(child -> child.getApproval() == Approval.ACCEPT)
                 .findFirst();
 
         // 새로운 시설에 아이가 승인될 경우 해당 시설에 default board 북마크에 추가
         if (alreadySignedChild.isEmpty()) {
             // 승인하고자 하는 시설의 게시판들 lazyLoading 통해 가져오기
-            director.getCenter().getBoards().forEach(board -> {
+            teacher.getCenter().getBoards().forEach(board -> {
                 if (board.getIsDefault()) {
                     bookmarkService.create(acceptedParent.getId(), board.getId());
                 }
@@ -257,10 +257,11 @@ public class ChildService {
     public void fireChild(Long userId, Long childId) {
 
         // 사용자가 등록된 시설과 연관된 아이들 목록 가져오기
-        Teacher director = teacherRepository.findDirectorByIdWithCenterWithChildWithParent(userId)
+        Teacher teacher = teacherRepository.findByIdWithCenterWithChildWithParent(userId)
                 .orElseThrow(() -> new UserException("해당 요청에 대한 권한이 없습니다."));
 
-        Child firedChild = director.getCenter().getChildren().stream()
+        // childId 검증
+        Child firedChild = teacher.getCenter().getChildren().stream()
                 .filter(child -> Objects.equals(child.getId(), childId))
                 .findFirst()
                 .orElseThrow(() -> new UserException("잘못된 childId 입니다."));
