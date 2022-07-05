@@ -90,6 +90,8 @@ public class Center extends BaseEntity{
     protected List<Board> boards = new ArrayList<>();
     @OneToMany(mappedBy = "center")
     protected List<Child> children = new ArrayList<>();
+    @OneToMany(mappedBy = "center")
+    protected List<Prefer> prefers = new ArrayList<>();
 
     @Builder(toBuilder = true)
     public Center(Long id, String name, String owner, String director, String estType, String estDate, String tel, String homepage, String startTime, String endTime, Integer minAge, Integer maxAge, String address, String zipcode, Area area, String offerService, Integer maxChildCnt, Integer curChildCnt, LocalDate updateDate, Boolean recruit, String introText, Integer imgCnt, Integer videoCnt, ClassInfo classInfo, TeacherInfo teacherInfo, CostInfo costInfo, BasicInfra basicInfra, Theme theme) {

@@ -19,9 +19,9 @@ public interface PostRepository extends JpaRepository<Post, Long>, PostRepositor
     Slice<Post> findByUser(@Param("userId") Long userId, Pageable pageable);
 
     @Query(value = "select * from " +
-            "(select row_number() over (partition by p.board_id order by p.createddate desc) as ranks, " +
-            "p.* from Post p where p.board_id in :boardIds) as ranking " +
-            "where ranking.ranks <= 4 order by board_id, createddate desc ",
+            "(select row_number() over (partition by p.board_id order by p.created_date desc) as ranks, " +
+            "p.* from post p where p.board_id in :boardIds) as ranking " +
+            "where ranking.ranks <= 4 order by board_id, created_date desc ",
             nativeQuery = true)
     List<Post> findTop4(@Param("boardIds") List<Long> boardIds);
 

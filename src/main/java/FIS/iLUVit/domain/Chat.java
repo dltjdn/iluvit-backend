@@ -19,32 +19,35 @@ public class Chat extends BaseEntity {
     private String message;             // 쪽지 내용
 
     @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "room_id")
+    private ChatRoom chatRoom;
+
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "receiver_id")
     private User receiver;              // 수신자
+
+    private Boolean deletedByReceiver;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "sender_id")
     private User sender;                // 발신자
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "post_id")
-    private Post post;
+    private Boolean deletedBySender;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "comment_id")
-    private Comment comment;
-
-
-    public Chat(String message, User receiver, User sender, Post post) {
+    public Chat(String message, User receiver, User sender) {
         this.date = LocalDate.now();
         this.time = LocalTime.now();
         this.message = message;
         this.receiver = receiver;
+        this.deletedByReceiver = false;
         this.sender = sender;
-        this.post = post;
+        this.deletedBySender = false;
     }
 
-    public void updateComment(Comment comment) {
-        this.comment = comment;
+    public void updateChatRoom(ChatRoom chatRoom) {
+        this.chatRoom = chatRoom;
+        chatRoom.getChatList().add(this);
+        chatRoom.updateMessage(this.message);
     }
+
 }
