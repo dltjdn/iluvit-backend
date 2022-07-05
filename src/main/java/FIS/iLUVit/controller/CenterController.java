@@ -116,4 +116,15 @@ public class CenterController {
     public Slice<CenterInfoDto> centerInfoForAddChild(@ModelAttribute CenterInfoRequest request, Pageable pageable) {
         return centerService.findCenterForAddChild(request, pageable);
     }
+
+    /**
+     *   작성날짜: 2022/07/04 2:26 PM
+     *   작성자: 이승범
+     *   작성내용: 찜한 시설 리스트
+     */
+    @GetMapping("/parent/prefer")
+    public Slice<CenterPreview> findCentersByPrefer(@Login Long userId, Pageable pageable) {
+        return centerService.findCentersByPrefer(userId, pageable);
+    }
+
 }

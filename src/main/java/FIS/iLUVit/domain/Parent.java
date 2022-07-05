@@ -20,7 +20,7 @@ import java.util.List;
 public class Parent extends User {
 
     @OneToMany(mappedBy = "parent")
-    private List<Child> children;
+    private List<Child> children = new ArrayList<>();
 
     @Embedded
     private Theme theme;                    // 테마 (학부모 관심사)
@@ -29,6 +29,9 @@ public class Parent extends User {
 
     @OneToMany(mappedBy = "parent")
     private List<Participation> participations = new ArrayList<>();
+
+    @OneToMany(mappedBy = "parent")
+    private List<Prefer> prefers = new ArrayList<>();
 
 
     @Builder

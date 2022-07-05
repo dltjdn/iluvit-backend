@@ -2,6 +2,7 @@ package FIS.iLUVit.repository;
 
 import FIS.iLUVit.controller.dto.CenterInfoDto;
 import FIS.iLUVit.controller.dto.CenterInfoRequest;
+import FIS.iLUVit.domain.Center;
 import FIS.iLUVit.domain.embeddable.Area;
 import FIS.iLUVit.domain.embeddable.Theme;
 import FIS.iLUVit.domain.enumtype.KindOf;
@@ -23,4 +24,6 @@ public interface CenterRepositoryCustom {
     Slice<CenterInfoDto> findForSignup(String sido, String sigungu, String centerName, Pageable pageable);
 
     Slice<CenterInfoDto> findCenterForAddChild(String sido, String sigungu, String centerName, Pageable pageable);
+
+    Slice<CenterPreview> findByPrefer(Long userId, Pageable pageable);
 }
