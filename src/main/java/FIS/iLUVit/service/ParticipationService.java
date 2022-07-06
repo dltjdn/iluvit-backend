@@ -73,13 +73,19 @@ public class ParticipationService {
 
     public Map<Status, List<MyParticipationsDto>> getMyParticipation(Long userId) {
         // 학부모 조회
-        Parent parent = parentRepository.findByIdAndFetchPresentation(userId)
+        Parent parent = parentRepository.findMyParticipation(userId)
                 .orElseThrow(() -> new UserException("해당 사용자가 존재하지 않습니다"));
+        parentRepository.findMyWaiting(userId);
 
-        List<Participation> participations = parent.getParticipations();
-        List<MyParticipationsDto> myParticipationsDtos = participations.stream()
+        List<MyParticipationsDto> myParticipationsDtos = parent.getParticipations().stream()
                 .map(participation -> MyParticipationsDto.createDto(participation))
                 .collect(Collectors.toList());
+
+        myParticipationsDtos.addAll(
+                parent.getWaitings().stream()
+                .map(waiting -> MyParticipationsDto.createDto(waiting))
+                .collect(Collectors.toList())
+        );
 
         return myParticipationsDtos.stream()
                 .collect(Collectors.groupingBy(myParticipationsDto -> myParticipationsDto.getStatus()));

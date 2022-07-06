@@ -1,6 +1,5 @@
 package FIS.iLUVit;
 
-import FIS.iLUVit.domain.Waiting;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.autoconfigure.security.servlet.SecurityAutoConfiguration;
@@ -13,7 +12,6 @@ public class ILuVitApplication {
 
 	public static void main(String[] args) {
 		ConfigurableApplicationContext run = SpringApplication.run(ILuVitApplication.class, args);
-		run.getBean(Waiting.class);
 	}
 
 }

@@ -13,6 +13,14 @@ import java.util.Optional;
 
 public interface CenterRepository extends JpaRepository<Center, Long>, CenterRepositoryCustom {
 
+    @Query("select new FIS.iLUVit.repository.dto.CenterBannerDto(center.id, center.name, center.maxChildCnt, center.curChildCnt, center.signed, center.recruit, center.waitingNum, avg(review.score), prefer.id) " +
+            "from Center center " +
+            "left join center.reviews as review " +
+            "left join center.prefers as prefer on prefer.parent.id = :userId " +
+            "where center.id=:id " +
+            "group by center")
+    CenterBannerDto findBannerById(@Param("id") Long id, @Param("userId") Long userId);
+
     @Query("select new FIS.iLUVit.repository.dto.CenterBannerDto(center.id, center.name, center.maxChildCnt, center.curChildCnt, center.signed, center.recruit, center.waitingNum, avg(review.score)) " +
             "from Center center " +
             "left join center.reviews as review " +

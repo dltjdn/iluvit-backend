@@ -8,6 +8,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
+import java.time.LocalDateTime;
 
 @Entity
 @NoArgsConstructor
@@ -27,7 +28,7 @@ public class PresentationFullAlarm extends Alarm{
 
     @Override
     public AlarmDto exportAlarm() {
-        return new PresentationFullAlarmDto(message, dtype, presentation.getId());
+        return new PresentationFullAlarmDto(id, createdDate, message, dtype, presentation.getId());
     }
 
     @Getter
@@ -35,8 +36,8 @@ public class PresentationFullAlarm extends Alarm{
 
         protected Long presentationId;
 
-        public PresentationFullAlarmDto(String message, String type, Long presentationId) {
-            super(message, type);
+        public PresentationFullAlarmDto(Long id, LocalDateTime createdDate, String message, String type, Long presentationId) {
+            super(id, createdDate, message, type);
             this.presentationId = presentationId;
         }
     }

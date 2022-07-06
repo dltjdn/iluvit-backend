@@ -84,8 +84,10 @@ public class CenterService {
         return centerInfoResponseDto;
     }
 
-    public CenterBannerDto findBannerById(Long id) {
-        CenterBannerDto dto = centerRepository.findBannerById(id);
+    public CenterBannerDto findBannerById(Long id, Long userId) {
+        CenterBannerDto dto = userId == null ?
+                centerRepository.findBannerById(id) :
+                centerRepository.findBannerById(id, userId);
         String profileDir = imageService.getCenterProfileDir();
         dto.setProfileImage(imageService.getEncodedProfileImage(profileDir, id));
         return dto;
