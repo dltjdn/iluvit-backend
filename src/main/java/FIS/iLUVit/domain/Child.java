@@ -66,6 +66,8 @@ public class Child extends BaseEntity {
         }
         this.name = name;
         this.birthDate = birthDate;
+        System.out.println("image = " + image);
+        System.out.println("image.isEmpty() = " + image.isEmpty());
         this.hasProfileImg = !image.isEmpty();
     }
 }
