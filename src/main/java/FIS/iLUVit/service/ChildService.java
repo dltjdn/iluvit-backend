@@ -43,17 +43,19 @@ public class ChildService {
      */
     public ChildInfoDTO childrenInfo(Long id) {
         Parent findParent = parentRepository.findWithChildren(id)
-                .orElse(null);
+                .orElseThrow(() -> new UserException("존재하지 않는 사용자입니다."));
 
         ChildInfoDTO childInfoDTO = new ChildInfoDTO();
 
-        if (findParent != null) {
-            findParent.getChildren().forEach(child -> {
+        findParent.getChildren().forEach(child -> {
+            if (child.getHasProfileImg()) {
                 String imagePath = imageService.getChildProfileDir();
                 String encodedImage = imageService.getEncodedProfileImage(imagePath, child.getId());
                 childInfoDTO.getData().add(new ChildInfoDTO.ChildInfo(child, encodedImage));
-            });
-        }
+            } else {
+                childInfoDTO.getData().add(new ChildInfoDTO.ChildInfo(child, null));
+            }
+        });
 
         return childInfoDTO;
     }
@@ -89,14 +91,14 @@ public class ChildService {
     }
 
     /**
-    *   작성날짜: 2022/06/27 4:57 PM
-    *   작성자: 이승범
-    *   작성내용: 아이 프로필 조회
-    */
+     * 작성날짜: 2022/06/27 4:57 PM
+     * 작성자: 이승범
+     * 작성내용: 아이 프로필 조회
+     */
     public ChildInfoDetailResponse findChildInfoDetail(Long userId, Long childId, Pageable pageable) {
         // 프로필 수정하고자 하는 아이 가져오기
         Child child = childRepository.findByIdWithParentAndCenter(userId, childId)
-                        .orElseThrow(() -> new UserException("잘못된 child_id 입니다."));
+                .orElseThrow(() -> new UserException("잘못된 child_id 입니다."));
 
         ChildInfoDetailResponse response = new ChildInfoDetailResponse(child);
 
@@ -116,10 +118,10 @@ public class ChildService {
     }
 
     /**
-    *   작성날짜: 2022/06/27 5:47 PM
-    *   작성자: 이승범
-    *   작성내용: 아이 프로필 수정
-    */
+     * 작성날짜: 2022/06/27 5:47 PM
+     * 작성자: 이승범
+     * 작성내용: 아이 프로필 수정
+     */
     public ChildInfoDetailResponse updateChild(Long userId, Long childId, UpdateChildRequest request, Pageable pageable) throws IOException {
 
         // 요청 사용자가 등록한 모든 아이 가져오기
@@ -164,10 +166,10 @@ public class ChildService {
     }
 
     /**
-    *   작성날짜: 2022/06/28 3:18 PM
-    *   작성자: 이승범
-    *   작성내용: 아이 삭제
-    */
+     * 작성날짜: 2022/06/28 3:18 PM
+     * 작성자: 이승범
+     * 작성내용: 아이 삭제
+     */
     public ChildInfoDTO deleteChild(Long userId, Long childId) {
 
         // 요청 사용자가 등록한 모든 아이 가져오기
@@ -188,10 +190,10 @@ public class ChildService {
     }
 
     /**
-    *   작성날짜: 2022/06/30 10:36 AM
-    *   작성자: 이승범
-    *   작성내용: 아이 승인 페이지를 위한 시설에 등록된 아이들 정보 조회
-    */
+     * 작성날짜: 2022/06/30 10:36 AM
+     * 작성자: 이승범
+     * 작성내용: 아이 승인 페이지를 위한 시설에 등록된 아이들 정보 조회
+     */
     public ChildApprovalListResponse findChildApprovalInfoList(Long userId) {
 
         Teacher teacher = teacherRepository.findByIdWithCenterWithChildWithParent(userId)
@@ -219,10 +221,10 @@ public class ChildService {
 
 
     /**
-    *   작성날짜: 2022/06/30 3:13 PM
-    *   작성자: 이승범
-    *   작성내용: 아이 승인
-    */
+     * 작성날짜: 2022/06/30 3:13 PM
+     * 작성자: 이승범
+     * 작성내용: 아이 승인
+     */
     public void acceptChild(Long userId, Long childId) {
 
         // 사용자가 등록된 시설과 연관된 아이들 목록 가져오기
@@ -264,10 +266,10 @@ public class ChildService {
     }
 
     /**
-    *   작성날짜: 2022/06/30 4:28 PM
-    *   작성자: 이승범
-    *   작성내용: 시설에서 아이 삭제/승인거절
-    */
+     * 작성날짜: 2022/06/30 4:28 PM
+     * 작성자: 이승범
+     * 작성내용: 시설에서 아이 삭제/승인거절
+     */
     public void fireChild(Long userId, Long childId) {
 
         // 사용자가 등록된 시설과 연관된 아이들 목록 가져오기
