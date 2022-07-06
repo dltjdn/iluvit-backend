@@ -5,13 +5,14 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
+import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.HashMap;
 
 
 @ExtendWith(MockitoExtension.class)
-public class example {
+public class TestExample {
 
     private static String TALISKER = "Talisker";
     private static String HIGHLAND_PARK = "Highland Park";
@@ -23,7 +24,6 @@ public class example {
     protected void setUp() throws Exception {
         warehouse.add(TALISKER, 50);
         warehouse.add(HIGHLAND_PARK, 25);
-        mockWarehouse.
     }
 
     @Test
@@ -44,6 +44,28 @@ public class example {
         // verify 상태 검증
         Assertions.assertThat(order.isFilled()).isFalse();
         Assertions.assertThat(warehouse.getInventory(TALISKER)).isEqualTo(50);
+    }
+
+    @Test
+    public void mockOrderTest() throws Exception {
+        //given
+        // mocking 혹은 stubbing
+        Order order = new Order(TALISKER, 50);
+        Order order2 = new Order(TALISKER, 51);
+
+        Mockito.doReturn(true).when(mockWarehouse).getProduct(TALISKER, 50);
+        Mockito.doReturn(false).when(mockWarehouse).getProduct(TALISKER, 51);
+        //when
+
+        order.fill(mockWarehouse);
+        order2.fill(mockWarehouse);
+        //then
+
+        Mockito.verify(mockWarehouse, Mockito.times(1)).getProduct(TALISKER, 50);
+        Mockito.verify(mockWarehouse, Mockito.times(1)).getProduct(TALISKER, 51);
+
+        Assertions.assertThat(order.isFilled()).isTrue();
+        Assertions.assertThat(order2.isFilled()).isFalse();
     }
 
     private class Warehouse {

@@ -9,7 +9,6 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.EntityManager;
-import java.util.List;
 
 @SpringBootTest
 @Transactional
@@ -37,5 +36,18 @@ public class PersistenceTest {
             System.out.println("teacher.getName() = " + teacher.getName());
         }
 
+    }
+
+    @Test
+    public void dd() throws Exception {
+        //given
+        Center center = new Center();
+        centerRepository.save(center);
+        System.out.println("-=========== 나가나? ============= ");
+        em.flush();
+        System.out.println("-=========== 나가나? ============= ");
+        //when
+        centerRepository.findById(center.getId());
+        //then
     }
 }
