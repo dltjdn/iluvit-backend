@@ -10,6 +10,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
+import java.time.LocalDateTime;
 
 /**
  * 설명회 알림 발생 시나리오
@@ -45,7 +46,7 @@ public class PresentationCreatedAlarm extends Alarm {
 
     @Override
     public AlarmDto exportAlarm() {
-        return new PresentationCreatedAlarmDto(message, dtype, center.getId(), presentation.getId());
+        return new PresentationCreatedAlarmDto(id, createdDate, message, dtype, center.getId(), presentation.getId());
     }
 
     @Getter
@@ -53,8 +54,8 @@ public class PresentationCreatedAlarm extends Alarm {
         protected Long presentationId;
         protected Long centerId;
 
-        public PresentationCreatedAlarmDto(String message, String type, Long centerId, Long presentationId) {
-            super(message, type);
+        public PresentationCreatedAlarmDto(Long id, LocalDateTime createdDate, String message, String type, Long centerId, Long presentationId) {
+            super(id, createdDate, message, type);
             this.centerId = centerId;
             this.presentationId = presentationId;
         }

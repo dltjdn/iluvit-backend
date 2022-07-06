@@ -9,6 +9,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
+import java.time.LocalDateTime;
 
 @Entity
 @NoArgsConstructor
@@ -29,15 +30,15 @@ public class PostAlarm extends Alarm {
 
     @Override
     public AlarmDto exportAlarm() {
-        return new PostAlarmDto(message, dtype, post.getId());
+        return new PostAlarmDto(id, createdDate, message, dtype, post.getId());
     }
 
     @Getter
     public static class PostAlarmDto extends AlarmDto{
         protected Long postId;
 
-        public PostAlarmDto(String message, String type, Long postId) {
-            super(message, type);
+        public PostAlarmDto(Long id, LocalDateTime createdDate, String message, String type, Long postId) {
+            super(id, createdDate, message, type);
             this.postId = postId;
         }
     }

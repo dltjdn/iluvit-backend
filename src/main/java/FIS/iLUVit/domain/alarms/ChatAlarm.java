@@ -10,6 +10,7 @@ import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import java.time.LocalDateTime;
 
 @Entity
 @NoArgsConstructor
@@ -30,15 +31,15 @@ public class ChatAlarm extends Alarm{
 
     @Override
     public AlarmDto exportAlarm() {
-        return new ChatAlarmDto(message, dtype, sender.getId());
+        return new ChatAlarmDto(id, createdDate, message, dtype, sender.getId());
     }
 
     @Getter
     public static class ChatAlarmDto extends AlarmDto{
 
         protected Long senderId;
-        public ChatAlarmDto(String message, String type, Long senderId) {
-            super(message, type);
+        public ChatAlarmDto(Long id, LocalDateTime createdDate, String message, String type, Long senderId) {
+            super(id, createdDate, message, type);
             this.senderId = senderId;
         }
     }

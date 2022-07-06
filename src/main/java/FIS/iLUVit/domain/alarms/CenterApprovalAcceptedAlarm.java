@@ -11,6 +11,7 @@ import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import java.time.LocalDateTime;
 
 @Entity
 @NoArgsConstructor
@@ -30,15 +31,15 @@ public class CenterApprovalAcceptedAlarm extends Alarm{
 
     @Override
     public AlarmDto exportAlarm() {
-        return new CenterApprovalAcceptedAlarmDto(message, dtype, center.getId());
+        return new CenterApprovalAcceptedAlarmDto(id, createdDate, message, dtype, center.getId());
     }
 
     @Getter
     public static class CenterApprovalAcceptedAlarmDto extends AlarmDto{
         protected Long centerId;
 
-        public CenterApprovalAcceptedAlarmDto(String message, String type, Long centerId) {
-            super(message, type);
+        public CenterApprovalAcceptedAlarmDto(Long id, LocalDateTime createdDate, String message, String type, Long centerId) {
+            super(id, createdDate, message, type);
             this.centerId = centerId;
         }
     }

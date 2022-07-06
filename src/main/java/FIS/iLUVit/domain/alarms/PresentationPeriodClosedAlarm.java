@@ -11,6 +11,7 @@ import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import java.time.LocalDateTime;
 
 @Entity
 @NoArgsConstructor
@@ -30,7 +31,7 @@ public class PresentationPeriodClosedAlarm extends Alarm{
 
     @Override
     public AlarmDto exportAlarm() {
-        return new PresentationPeriodClosedAlarmDto(message, dtype, presentation.getId());
+        return new PresentationPeriodClosedAlarmDto(id, createdDate, message, dtype, presentation.getId());
     }
 
     @Getter
@@ -38,8 +39,8 @@ public class PresentationPeriodClosedAlarm extends Alarm{
 
         protected Long presentationId;
 
-        public PresentationPeriodClosedAlarmDto(String message, String type, Long presentationId) {
-            super(message, type);
+        public PresentationPeriodClosedAlarmDto(Long id, LocalDateTime createdDate, String message, String type, Long presentationId) {
+            super(id, createdDate, message, type);
             this.presentationId = presentationId;
         }
     }

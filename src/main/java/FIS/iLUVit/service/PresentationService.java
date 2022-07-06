@@ -8,6 +8,7 @@ import FIS.iLUVit.domain.alarms.PresentationCreatedAlarm;
 import FIS.iLUVit.domain.embeddable.Area;
 import FIS.iLUVit.domain.embeddable.Theme;
 import FIS.iLUVit.domain.enumtype.KindOf;
+import FIS.iLUVit.domain.enumtype.Status;
 import FIS.iLUVit.exception.PresentationException;
 import FIS.iLUVit.exception.UserException;
 import FIS.iLUVit.repository.*;
@@ -189,6 +190,7 @@ public class PresentationService {
                 .orElseThrow(() -> new UserException("존재하지 않는 유저입니다"))
                 .canRead(ptDate.getPresentation().getCenter().getId());
         return ptDate.getParticipations().stream()
+                .filter(participation -> participation.getStatus().equals(Status.JOINED))
                 .map(participation -> new ParentInfoForDirectorDto(participation.getParent()))
                 .collect(Collectors.toList());
 

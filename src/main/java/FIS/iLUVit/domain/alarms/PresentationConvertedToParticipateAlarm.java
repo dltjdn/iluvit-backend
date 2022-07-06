@@ -7,6 +7,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
+import java.time.LocalDateTime;
 
 @Entity
 @NoArgsConstructor
@@ -32,7 +33,7 @@ public class PresentationConvertedToParticipateAlarm extends Alarm {
 
     @Override
     public AlarmDto exportAlarm() {
-        return new PresentationConvertedToParticipateAlarmDto(message, dtype, center.getId(), presentation.getId());
+        return new PresentationConvertedToParticipateAlarmDto(id, createdDate, message, dtype, center.getId(), presentation.getId());
     }
 
     @Getter
@@ -40,8 +41,8 @@ public class PresentationConvertedToParticipateAlarm extends Alarm {
         protected Long presentationId;
         protected Long centerId;
 
-        public PresentationConvertedToParticipateAlarmDto(String message, String type, Long centerId, Long presentationId) {
-            super(message, type);
+        public PresentationConvertedToParticipateAlarmDto(Long id, LocalDateTime createdDate, String message, String type, Long centerId, Long presentationId) {
+            super(id, createdDate, message, type);
             this.centerId = centerId;
             this.presentationId = presentationId;
         }
