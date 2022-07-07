@@ -23,7 +23,7 @@ public interface PtDateRepository extends JpaRepository<PtDate, Long> {
             "left join fetch ptDate.presentation as presentation " +
             "left join fetch presentation.center " +
             "left join fetch participation.parent " +
-            "where ptDate.id = :id and participation.status = FIS.iLUVit.domain.enumtype.Status.JOINED")
+            "where ptDate.id = :id")
     Optional<PtDate> findByIdAndJoinParticipationForSearch(@Param("id") Long ptDateId);
 
     @Query("select distinct ptDate from PtDate ptDate " +

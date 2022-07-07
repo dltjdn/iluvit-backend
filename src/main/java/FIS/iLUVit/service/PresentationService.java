@@ -8,6 +8,7 @@ import FIS.iLUVit.domain.alarms.PresentationCreatedAlarm;
 import FIS.iLUVit.domain.embeddable.Area;
 import FIS.iLUVit.domain.embeddable.Theme;
 import FIS.iLUVit.domain.enumtype.KindOf;
+import FIS.iLUVit.domain.enumtype.Status;
 import FIS.iLUVit.exception.PresentationException;
 import FIS.iLUVit.exception.UserException;
 import FIS.iLUVit.repository.*;
@@ -95,8 +96,6 @@ public class PresentationService {
             log.info("알림 메시지 생성 {}", prefer.getParent().getId());
             AlarmUtils.publishAlarmEvent(new PresentationCreatedAlarm(prefer.getParent(), presentation, center));
         });
-
-        log.info("언제 되는지?");
 
         return presentation;
     }
@@ -189,6 +188,7 @@ public class PresentationService {
                 .orElseThrow(() -> new UserException("존재하지 않는 유저입니다"))
                 .canRead(ptDate.getPresentation().getCenter().getId());
         return ptDate.getParticipations().stream()
+                .filter(participation -> participation.getStatus().equals(Status.JOINED))
                 .map(participation -> new ParentInfoForDirectorDto(participation.getParent()))
                 .collect(Collectors.toList());
 

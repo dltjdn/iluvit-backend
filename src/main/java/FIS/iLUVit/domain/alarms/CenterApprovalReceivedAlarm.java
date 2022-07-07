@@ -7,6 +7,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.Entity;
+import java.time.LocalDateTime;
 
 @Entity
 @NoArgsConstructor
@@ -20,13 +21,13 @@ public class CenterApprovalReceivedAlarm extends Alarm{
 
     @Override
     public AlarmDto exportAlarm() {
-        return new CenterApprovalReceivedAlarmDto(message, dtype);
+        return new CenterApprovalReceivedAlarmDto(id, createdDate, message, dtype);
     }
 
     @Getter
     public static class CenterApprovalReceivedAlarmDto extends AlarmDto{
-        public CenterApprovalReceivedAlarmDto(String message, String type) {
-            super(message, type);
+        public CenterApprovalReceivedAlarmDto(Long id, LocalDateTime createdDate, String message, String type) {
+            super(id, createdDate, message, type);
         }
     }
 }

@@ -17,6 +17,7 @@ import java.time.LocalDate;
 public class MyParticipationsDto {
     private Long parentId;
     private Long participantId;
+    private Long waitingId;
     private Long ptDateId;
     private Long presentationId;
     private Long centerId;
@@ -51,4 +52,27 @@ public class MyParticipationsDto {
                 .status(participation.getStatus())
                 .build();
     }
+
+    public static MyParticipationsDto createDto(Waiting waiting){
+        PtDate ptDate = waiting.getPtDate();
+        Parent parent = waiting.getParent();
+        Presentation presentation = ptDate.getPresentation();
+        Center center = presentation.getCenter();
+        return MyParticipationsDto.builder()
+                .parentId(parent.getId())
+                .participantId(waiting.getId())
+                .ptDateId(ptDate.getId())
+                .presentationId(presentation.getId())
+                .centerId(center.getId())
+                .presentationDate(ptDate.getDate())
+                .time(ptDate.getTime())
+                .place(presentation.getPlace())
+                .content(presentation.getContent())
+                .centerName(center.getName())
+                .tel(center.getTel())
+                .address(center.getAddress())
+                .status(Status.WAITING)
+                .build();
+    }
+
 }

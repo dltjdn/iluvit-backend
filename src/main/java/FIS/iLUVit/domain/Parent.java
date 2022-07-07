@@ -31,6 +31,9 @@ public class Parent extends User {
     private List<Participation> participations = new ArrayList<>();
 
     @OneToMany(mappedBy = "parent")
+    private List<Waiting> waitings = new ArrayList<>();
+
+    @OneToMany(mappedBy = "parent")
     private List<Prefer> prefers = new ArrayList<>();
 
 

@@ -15,5 +15,5 @@ public interface AlarmRepository extends JpaRepository<Alarm, Long> {
 
     @Modifying
     @Query("delete from Alarm alarm where alarm.id= :alarmId and alarm.user.id = :userId")
-    Long deleteById(@Param("userId") Long userId, @Param("alarmId") Long alarmId);
+    Integer deleteById(@Param("userId") Long userId, @Param("alarmId") Long alarmId);
 }

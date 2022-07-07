@@ -1,12 +1,11 @@
 package FIS.iLUVit.controller.dto;
 
-import FIS.iLUVit.domain.Presentation;
 import lombok.Data;
-import lombok.Getter;
 import org.springframework.format.annotation.DateTimeFormat;
 
 import javax.validation.constraints.Size;
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
 
 @Data
@@ -20,5 +19,5 @@ public class PresentationModifyRequestDto {
     private String content;             // 설명회 내용
 
     @Size(min = 1, message = "설명회 작성 미완료")
-    private List<PtDateModifyDto> ptDateDtos;
+    private List<PtDateModifyDto> ptDateDtos = new ArrayList<>();
 }
