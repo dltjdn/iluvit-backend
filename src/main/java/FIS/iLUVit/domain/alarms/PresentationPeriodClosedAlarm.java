@@ -1,6 +1,7 @@
 package FIS.iLUVit.domain.alarms;
 
 import FIS.iLUVit.controller.dto.AlarmDto;
+import FIS.iLUVit.domain.Center;
 import FIS.iLUVit.domain.Presentation;
 import FIS.iLUVit.domain.User;
 import FIS.iLUVit.service.AlarmUtils;
@@ -22,7 +23,11 @@ public class PresentationPeriodClosedAlarm extends Alarm{
     @JoinColumn(name = "presentationId")
     private Presentation presentation;
 
-    public PresentationPeriodClosedAlarm(User user, Presentation presentation) {
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "centerId")
+    private Center center;
+
+    public PresentationPeriodClosedAlarm(User user, Presentation presentation, Center center) {
         super(user);
         this.mode = AlarmUtils.PRESENTATION_CLOSED;
         this.presentation = presentation;

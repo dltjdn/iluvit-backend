@@ -45,7 +45,7 @@ public class ParticipationService {
         participationRepository.save(participation);
         if(ptDate.getAblePersonNum() >= ptDate.getParticipantCnt()){
             userRepository.findTeacherByCenter(presentation.getCenter()).forEach((user) -> {
-                AlarmUtils.publishAlarmEvent(new PresentationFullAlarm(user, presentation));
+                AlarmUtils.publishAlarmEvent(new PresentationFullAlarm(user, presentation, presentation.getCenter()));
             });
         }
         return participation.getId();
