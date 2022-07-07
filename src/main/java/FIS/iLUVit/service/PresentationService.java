@@ -97,8 +97,6 @@ public class PresentationService {
             AlarmUtils.publishAlarmEvent(new PresentationCreatedAlarm(prefer.getParent(), presentation, center));
         });
 
-        log.info("언제 되는지?");
-
         return presentation;
     }
 

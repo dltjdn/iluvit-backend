@@ -11,6 +11,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.SliceImpl;
 import org.springframework.http.MediaType;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -48,7 +49,7 @@ public class PresentationController {
      * 원장, 선생의 설명회 수정
      */
     @PatchMapping(value = "/presentation", consumes = {MediaType.APPLICATION_JSON_VALUE, MediaType.MULTIPART_FORM_DATA_VALUE})
-    public PresentationModifyResponseDto modifyPresentation(@RequestPart PresentationModifyRequestDto request,
+    public PresentationModifyResponseDto modifyPresentation(@RequestPart @Validated PresentationModifyRequestDto request,
                                                             @RequestPart List<MultipartFile> images,
                                                             @Login Long userId){
         return new PresentationModifyResponseDto(presentationService.modifyWithPtDate(request, images, userId));

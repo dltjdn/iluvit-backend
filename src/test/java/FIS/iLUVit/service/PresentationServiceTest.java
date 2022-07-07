@@ -9,10 +9,12 @@ import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Spy;
+import org.springframework.mock.web.MockMultipartFile;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
 import java.time.LocalDate;
-
-import static org.junit.jupiter.api.Assertions.*;
 
 class PresentationServiceTest {
 
@@ -31,11 +33,31 @@ class PresentationServiceTest {
     @InjectMocks
     private PresentationService presentationService;
 
+    Center center;
+    Presentation presentation;
+    Center kindergarten;
+    PtDate ptDate1;
+    MockMultipartFile mockMultipartFile;
+
+    private MockMultipartFile getMockMultipartFile(String fileName, String contentType, String path) throws IOException {
+        FileInputStream fileInputStream = new FileInputStream(new File(path));
+        return new MockMultipartFile(fileName, fileName + "." + contentType, contentType, fileInputStream);
+    }
+
     @BeforeEach
-    void init(){
+    void init() throws IOException {
 
+        String fileName = "testCustomerUpload";
+        String contentType = "xls";
+        String filePath = "src/test/resources/excel/testCustomerUpload.xls";
+        mockMultipartFile = getMockMultipartFile(fileName, contentType, filePath);
 
-        Presentation presentation = Presentation.builder()
+        center = Center.builder()
+                .id(1L)
+                .name("test 유치원")
+                .build();
+
+        presentation = Presentation.builder()
                 .id(1L)
                 .startDate(LocalDate.now())
                 .endDate(LocalDate.now())
@@ -43,16 +65,16 @@ class PresentationServiceTest {
                 .content("테스트 설명회")
                 .imgCnt(3)
                 .videoCnt(1)
-                .center(null)
+                .center(center)
                 .build();
 
-        Center kindergarten = Center.builder()
+        kindergarten = Center.builder()
                 .id(1L)
                 .address("test 주소")
                 .name("test 유치원")
                 .build();
 
-        PtDate ptDate1 = PtDate.builder()
+        ptDate1 = PtDate.builder()
                 .id(1L)
                 .date(LocalDate.now())
                 .time("오후 9시")
@@ -60,8 +82,6 @@ class PresentationServiceTest {
                 .participantCnt(1)
                 .waitingCnt(0)
                 .build();
-
-
 
     }
 
