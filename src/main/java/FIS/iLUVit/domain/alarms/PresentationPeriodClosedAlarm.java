@@ -31,22 +31,25 @@ public class PresentationPeriodClosedAlarm extends Alarm{
         super(user);
         this.mode = AlarmUtils.PRESENTATION_CLOSED;
         this.presentation = presentation;
+        this.center = center;
         message = AlarmUtils.getMessage(mode, null);
     }
 
     @Override
     public AlarmDto exportAlarm() {
-        return new PresentationPeriodClosedAlarmDto(id, createdDate, message, dtype, presentation.getId());
+        return new PresentationPeriodClosedAlarmDto(id, createdDate, message, dtype, presentation.getId(), center.getId());
     }
 
     @Getter
     public static class PresentationPeriodClosedAlarmDto extends AlarmDto{
 
         protected Long presentationId;
+        protected Long centerId;
 
-        public PresentationPeriodClosedAlarmDto(Long id, LocalDateTime createdDate, String message, String type, Long presentationId) {
+        public PresentationPeriodClosedAlarmDto(Long id, LocalDateTime createdDate, String message, String type, Long presentationId, Long centerId) {
             super(id, createdDate, message, type);
             this.presentationId = presentationId;
+            this.centerId = centerId;
         }
     }
 
