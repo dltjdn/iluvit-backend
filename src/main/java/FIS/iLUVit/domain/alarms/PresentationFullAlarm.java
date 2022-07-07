@@ -28,22 +28,25 @@ public class PresentationFullAlarm extends Alarm{
         super(user);
         this.mode = AlarmUtils.PRESENTATION_APPLICANTS_FULL;
         this.presentation = presentation;
+        this.center = center;
         message = AlarmUtils.getMessage(mode, null);
     }
 
     @Override
     public AlarmDto exportAlarm() {
-        return new PresentationFullAlarmDto(id, createdDate, message, dtype, presentation.getId());
+        return new PresentationFullAlarmDto(id, createdDate, message, dtype, presentation.getId(), center.getId());
     }
 
     @Getter
     public static class PresentationFullAlarmDto extends AlarmDto{
 
         protected Long presentationId;
+        protected Long centerId;
 
-        public PresentationFullAlarmDto(Long id, LocalDateTime createdDate, String message, String type, Long presentationId) {
+        public PresentationFullAlarmDto(Long id, LocalDateTime createdDate, String message, String type, Long presentationId, Long centerId) {
             super(id, createdDate, message, type);
             this.presentationId = presentationId;
+            this.centerId = centerId;
         }
     }
 }
