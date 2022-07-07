@@ -36,8 +36,6 @@ public class ParentService {
     private final PreferRepository preferRepository;
     private final BoardRepository boardRepository;
     private final BookmarkRepository bookmarkRepository;
-    private final ChildRepository childRepository;
-    private final BookmarkService bookmarkService;
 
 
 
