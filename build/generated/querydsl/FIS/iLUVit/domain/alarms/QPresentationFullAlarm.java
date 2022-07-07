@@ -24,6 +24,8 @@ public class QPresentationFullAlarm extends EntityPathBase<PresentationFullAlarm
 
     public final QAlarm _super;
 
+    public final FIS.iLUVit.domain.QCenter center;
+
     //inherited
     public final DateTimePath<java.time.LocalDateTime> createdDate;
 
@@ -63,6 +65,7 @@ public class QPresentationFullAlarm extends EntityPathBase<PresentationFullAlarm
     public QPresentationFullAlarm(Class<? extends PresentationFullAlarm> type, PathMetadata metadata, PathInits inits) {
         super(type, metadata, inits);
         this._super = new QAlarm(type, metadata, inits);
+        this.center = inits.isInitialized("center") ? new FIS.iLUVit.domain.QCenter(forProperty("center"), inits.get("center")) : null;
         this.createdDate = _super.createdDate;
         this.dtype = _super.dtype;
         this.id = _super.id;
