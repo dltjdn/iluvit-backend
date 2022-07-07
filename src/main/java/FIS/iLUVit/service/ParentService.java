@@ -17,6 +17,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.io.IOException;
+import java.util.List;
 import java.util.Objects;
 
 @Slf4j
@@ -33,6 +34,8 @@ public class ParentService {
     private final ScrapRepository scrapRepository;
     private final CenterRepository centerRepository;
     private final PreferRepository preferRepository;
+    private final BoardRepository boardRepository;
+    private final BookmarkRepository bookmarkRepository;
     private final ChildRepository childRepository;
     private final BookmarkService bookmarkService;
 
@@ -122,6 +125,13 @@ public class ParentService {
 
         // 사용이 끝난 인증번호를 테이블에서 지우기
         authNumberRepository.deleteByPhoneNumAndAuthKind(request.getPhoneNum(), AuthKind.signup);
+
+        // 모두의 이야기 default boards bookmark 추가하기
+        List<Board> defaultBoards = boardRepository.findDefaultByModu();
+        for (Board defaultBoard : defaultBoards) {
+            Bookmark bookmark = Bookmark.createBookmark(defaultBoard, parent);
+            bookmarkRepository.save(bookmark);
+        }
     }
 
     /**
