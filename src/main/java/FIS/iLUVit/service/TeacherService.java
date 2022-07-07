@@ -34,6 +34,7 @@ public class TeacherService {
     private final AuthNumberRepository authNumberRepository;
     private final BoardRepository boardRepository;
     private final BookmarkRepository bookmarkRepository;
+    private final ScrapRepository scrapRepository;
 
     /**
      * 작성날짜: 2022/05/20 4:43 PM
@@ -139,6 +140,11 @@ public class TeacherService {
             Bookmark bookmark = Bookmark.createBookmark(defaultBoard, teacher);
             bookmarkRepository.save(bookmark);
         }
+
+        // default 스크랩 생성
+        Scrap scrap = Scrap.createScrap(teacher, "default");
+
+        scrapRepository.save(scrap);
 
         authNumberRepository.deleteByPhoneNumAndAuthKind(request.getPhoneNum(), AuthKind.signup);
     }
