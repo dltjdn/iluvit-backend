@@ -46,5 +46,5 @@ public class UserController {
     }
 
     @DeleteMapping("/alarm")
-    public Long deleteAlarm(@Login Long userId, @RequestBody AlarmDeleteDto request){ return userService.deleteUserAlarm(userId, request.getAlarmId()); }
+    public Integer deleteAlarm(@Login Long userId, @RequestBody AlarmDeleteDto request){ return userService.deleteUserAlarm(userId, request.getAlarmId()); }
 }

@@ -91,7 +91,7 @@ public class UserService {
                 .collect(Collectors.toList());
     }
 
-    public Long deleteUserAlarm(Long userId, Long alarmId) {
+    public Integer deleteUserAlarm(Long userId, Long alarmId) {
         return alarmRepository.deleteById(userId, alarmId);
     }
 }
