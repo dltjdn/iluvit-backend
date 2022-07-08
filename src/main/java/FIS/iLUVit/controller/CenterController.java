@@ -73,8 +73,8 @@ public class CenterController {
      * id 기반 으로 센터 클릭시 배너로 나올 center 이름, 모집 상황 반환할 api
      */
     @GetMapping("/center/{center_id}/recruit")
-    public CenterBannerResponseDto centerBanner(@PathVariable("center_id") Long id){
-        return new CenterBannerResponseDto(centerService.findBannerById(id));
+    public CenterBannerResponseDto centerBanner(@PathVariable("center_id") Long id, @Login Long userId){
+        return new CenterBannerResponseDto(centerService.findBannerById(id, userId));
     }
 
     /**
@@ -116,4 +116,15 @@ public class CenterController {
     public Slice<CenterInfoDto> centerInfoForAddChild(@ModelAttribute CenterInfoRequest request, Pageable pageable) {
         return centerService.findCenterForAddChild(request, pageable);
     }
+
+    /**
+     *   작성날짜: 2022/07/04 2:26 PM
+     *   작성자: 이승범
+     *   작성내용: 찜한 시설 리스트
+     */
+    @GetMapping("/parent/prefer")
+    public Slice<CenterPreview> findCentersByPrefer(@Login Long userId, Pageable pageable) {
+        return centerService.findCentersByPrefer(userId, pageable);
+    }
+
 }

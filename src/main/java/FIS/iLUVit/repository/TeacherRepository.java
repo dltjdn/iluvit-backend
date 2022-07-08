@@ -49,8 +49,8 @@ public interface TeacherRepository extends JpaRepository<Teacher, Long> {
             "left join fetch c.children cc " +
             "join fetch cc.parent " +
             "where t.id =:userId " +
-            "and t.auth = 'DIRECTOR' ")
-    Optional<Teacher> findDirectorByIdWithCenterWithChildWithParent(@Param("userId") Long userId);
+            "and t.approval = 'ACCEPT'")
+    Optional<Teacher> findByIdWithCenterWithChildWithParent(@Param("userId") Long userId);
 
     @Query("select distinct t " +
             "from Teacher t " +
@@ -80,4 +80,10 @@ public interface TeacherRepository extends JpaRepository<Teacher, Long> {
             "join fetch c.teachers " +
             "where t.id =:userId")
     Optional<Teacher> findByIdWithCenterWithTeacher(@Param("userId") Long userId);
+
+    @Query("select t " +
+            "from Teacher t " +
+            "where t.center.id =:centerId " +
+            "and t.auth = 'DIRECTOR'")
+    List<Teacher> findDirectorByCenter(@Param("centerId") Long centerId);
 }

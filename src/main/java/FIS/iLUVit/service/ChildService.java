@@ -2,6 +2,8 @@ package FIS.iLUVit.service;
 
 import FIS.iLUVit.controller.dto.*;
 import FIS.iLUVit.domain.*;
+import FIS.iLUVit.domain.alarms.CenterApprovalAcceptedAlarm;
+import FIS.iLUVit.domain.alarms.CenterApprovalReceivedAlarm;
 import FIS.iLUVit.domain.enumtype.Approval;
 import FIS.iLUVit.exception.CenterException;
 import FIS.iLUVit.exception.UserException;
@@ -41,17 +43,19 @@ public class ChildService {
      */
     public ChildInfoDTO childrenInfo(Long id) {
         Parent findParent = parentRepository.findWithChildren(id)
-                .orElse(null);
+                .orElseThrow(() -> new UserException("존재하지 않는 사용자입니다."));
 
         ChildInfoDTO childInfoDTO = new ChildInfoDTO();
 
-        if (findParent != null) {
-            findParent.getChildren().forEach(child -> {
+        findParent.getChildren().forEach(child -> {
+            if (child.getHasProfileImg()) {
                 String imagePath = imageService.getChildProfileDir();
                 String encodedImage = imageService.getEncodedProfileImage(imagePath, child.getId());
                 childInfoDTO.getData().add(new ChildInfoDTO.ChildInfo(child, encodedImage));
-            });
-        }
+            } else {
+                childInfoDTO.getData().add(new ChildInfoDTO.ChildInfo(child, null));
+            }
+        });
 
         return childInfoDTO;
     }
@@ -67,12 +71,17 @@ public class ChildService {
         Parent parent = parentRepository.findByIdWithChild(userId);
 
         // 새로 등록할 시설에 정보를 게시판 정보와 엮어서 가져오기
-        Center center = centerRepository.findByIdAndSigned(request.getCenter_id())
+        Center center = centerRepository.findByIdAndSignedWithTeacher(request.getCenter_id())
                 .orElseThrow(() -> new CenterException("잘못된 centerId 입니다."));
 
         // 아이 등록
         Child newChild = request.createChild(center, parent);
         childRepository.save(newChild);
+
+        // 아이 승인 요청 알람이 해당 시설의 모든 교사에게 감
+        center.getTeachers().forEach(teacher -> {
+            AlarmUtils.publishAlarmEvent(new CenterApprovalReceivedAlarm(teacher));
+        });
 
         // 프로필 이미지 설정
         if (!request.getProfileImg().isEmpty()) {
@@ -82,14 +91,14 @@ public class ChildService {
     }
 
     /**
-    *   작성날짜: 2022/06/27 4:57 PM
-    *   작성자: 이승범
-    *   작성내용: 아이 프로필 조회
-    */
+     * 작성날짜: 2022/06/27 4:57 PM
+     * 작성자: 이승범
+     * 작성내용: 아이 프로필 조회
+     */
     public ChildInfoDetailResponse findChildInfoDetail(Long userId, Long childId, Pageable pageable) {
         // 프로필 수정하고자 하는 아이 가져오기
         Child child = childRepository.findByIdWithParentAndCenter(userId, childId)
-                        .orElseThrow(() -> new UserException("잘못된 child_id 입니다."));
+                .orElseThrow(() -> new UserException("잘못된 child_id 입니다."));
 
         ChildInfoDetailResponse response = new ChildInfoDetailResponse(child);
 
@@ -109,10 +118,10 @@ public class ChildService {
     }
 
     /**
-    *   작성날짜: 2022/06/27 5:47 PM
-    *   작성자: 이승범
-    *   작성내용: 아이 프로필 수정
-    */
+     * 작성날짜: 2022/06/27 5:47 PM
+     * 작성자: 이승범
+     * 작성내용: 아이 프로필 수정
+     */
     public ChildInfoDetailResponse updateChild(Long userId, Long childId, UpdateChildRequest request, Pageable pageable) throws IOException {
 
         // 요청 사용자가 등록한 모든 아이 가져오기
@@ -123,12 +132,16 @@ public class ChildService {
                 .findFirst()
                 .orElseThrow(() -> new UserException("잘못된 childId 입니다."));
 
-        Center center = centerRepository.findByIdAndSigned(request.getCenter_id())
+        Center center = centerRepository.findByIdAndSignedWithTeacher(request.getCenter_id())
                 .orElseThrow(() -> new CenterException("올바르지 않은 centerId 입니다."));
 
         // 시설을 변경하는 경우 bookmark 처리
         if (!Objects.equals(center.getId(), request.getCenter_id())) {
             deleteBookmarkByCenter(userId, childrenByUser, updatedChild);
+            // 아이 승인 요청 알람이 해당 시설의 모든 교사에게 감
+            center.getTeachers().forEach(teacher -> {
+                AlarmUtils.publishAlarmEvent(new CenterApprovalReceivedAlarm(teacher));
+            });
         }
 
         // update 진행
@@ -137,9 +150,9 @@ public class ChildService {
         ChildInfoDetailResponse response = new ChildInfoDetailResponse(updatedChild);
 
         // 이미지가 있는 경우
-        if (request.getProfileImg() != null) {
-            String imagePath = imageService.getUserProfileDir();
-            imageService.saveProfileImage(request.getProfileImg(), imagePath);
+        if (!request.getProfileImg().isEmpty()) {
+            String imagePath = imageService.getChildProfileDir();
+            imageService.saveProfileImage(request.getProfileImg(), imagePath + updatedChild.getId());
             String image = imageService.getEncodedProfileImage(imagePath, updatedChild.getId());
             response.setProfileImage(image);
         }
@@ -153,10 +166,10 @@ public class ChildService {
     }
 
     /**
-    *   작성날짜: 2022/06/28 3:18 PM
-    *   작성자: 이승범
-    *   작성내용: 아이 삭제
-    */
+     * 작성날짜: 2022/06/28 3:18 PM
+     * 작성자: 이승범
+     * 작성내용: 아이 삭제
+     */
     public ChildInfoDTO deleteChild(Long userId, Long childId) {
 
         // 요청 사용자가 등록한 모든 아이 가져오기
@@ -177,19 +190,19 @@ public class ChildService {
     }
 
     /**
-    *   작성날짜: 2022/06/30 10:36 AM
-    *   작성자: 이승범
-    *   작성내용: 아이 승인 페이지를 위한 시설에 등록된 아이들 정보 조회
-    */
+     * 작성날짜: 2022/06/30 10:36 AM
+     * 작성자: 이승범
+     * 작성내용: 아이 승인 페이지를 위한 시설에 등록된 아이들 정보 조회
+     */
     public ChildApprovalListResponse findChildApprovalInfoList(Long userId) {
 
-        Teacher director = teacherRepository.findDirectorByIdWithCenterWithChildWithParent(userId)
+        Teacher teacher = teacherRepository.findByIdWithCenterWithChildWithParent(userId)
                 .orElseThrow(() -> new UserException("해당 요청에 대한 권한이 없습니다."));
 
         ChildApprovalListResponse response = new ChildApprovalListResponse();
 
 
-        director.getCenter().getChildren().forEach(child -> {
+        teacher.getCenter().getChildren().forEach(child -> {
             // 해당시설에 대해 거절/삭제 당하지 않은 아이들만 보여주기
             if (child.getApproval() != Approval.REJECT) {
                 ChildApprovalListResponse.ChildInfoForAdmin childInfo =
@@ -208,39 +221,42 @@ public class ChildService {
 
 
     /**
-    *   작성날짜: 2022/06/30 3:13 PM
-    *   작성자: 이승범
-    *   작성내용: 아이 승인
-    */
+     * 작성날짜: 2022/06/30 3:13 PM
+     * 작성자: 이승범
+     * 작성내용: 아이 승인
+     */
     public void acceptChild(Long userId, Long childId) {
 
         // 사용자가 등록된 시설과 연관된 아이들 목록 가져오기
-        Teacher director = teacherRepository.findDirectorByIdWithCenterWithChildWithParent(userId)
+        Teacher teacher = teacherRepository.findByIdWithCenterWithChildWithParent(userId)
                 .orElseThrow(() -> new UserException("해당 요청에 대한 권한이 없습니다."));
 
         // childId에 해당하는 아이가 시설에 승인 대기중인지 확인
-        Child acceptedChild = director.getCenter().getChildren().stream()
+        Child acceptedChild = teacher.getCenter().getChildren().stream()
                 .filter(child -> Objects.equals(child.getId(), childId) && child.getApproval() == Approval.WAITING)
                 .findFirst()
                 .orElseThrow(() -> new UserException("잘못된 childId 입니다."));
 
         // 승인
-        childRepository.acceptChild(childId, director.getCenter().getId());
+        childRepository.acceptChild(childId, teacher.getCenter().getId());
 
         // 승인하고자 하는 아이의 부모와 그 부모에 속한 모든 아이들 가져오기
         Parent acceptedParent = parentRepository.findByIdWithChild(acceptedChild.getParent().getId());
 
+        // 승인 완료 알람이 학부모에게로 감
+        AlarmUtils.publishAlarmEvent(new CenterApprovalAcceptedAlarm(acceptedParent, teacher.getCenter()));
+
         // bookmark 처리
         // 기존에 있던 아이들중에 현재 승인되는 아이와 같은 시설에 다니는 또 다른 아이가 있는지 검사
         Optional<Child> alreadySignedChild = acceptedParent.getChildren().stream()
-                .filter(child -> Objects.equals(child.getCenter().getId(), director.getCenter().getId()))
+                .filter(child -> Objects.equals(child.getCenter().getId(), teacher.getCenter().getId()))
                 .filter(child -> child.getApproval() == Approval.ACCEPT)
                 .findFirst();
 
         // 새로운 시설에 아이가 승인될 경우 해당 시설에 default board 북마크에 추가
         if (alreadySignedChild.isEmpty()) {
             // 승인하고자 하는 시설의 게시판들 lazyLoading 통해 가져오기
-            director.getCenter().getBoards().forEach(board -> {
+            teacher.getCenter().getBoards().forEach(board -> {
                 if (board.getIsDefault()) {
                     bookmarkService.create(acceptedParent.getId(), board.getId());
                 }
@@ -250,17 +266,18 @@ public class ChildService {
     }
 
     /**
-    *   작성날짜: 2022/06/30 4:28 PM
-    *   작성자: 이승범
-    *   작성내용: 시설에서 아이 삭제/승인거절
-    */
+     * 작성날짜: 2022/06/30 4:28 PM
+     * 작성자: 이승범
+     * 작성내용: 시설에서 아이 삭제/승인거절
+     */
     public void fireChild(Long userId, Long childId) {
 
         // 사용자가 등록된 시설과 연관된 아이들 목록 가져오기
-        Teacher director = teacherRepository.findDirectorByIdWithCenterWithChildWithParent(userId)
+        Teacher teacher = teacherRepository.findByIdWithCenterWithChildWithParent(userId)
                 .orElseThrow(() -> new UserException("해당 요청에 대한 권한이 없습니다."));
 
-        Child firedChild = director.getCenter().getChildren().stream()
+        // childId 검증
+        Child firedChild = teacher.getCenter().getChildren().stream()
                 .filter(child -> Objects.equals(child.getId(), childId))
                 .findFirst()
                 .orElseThrow(() -> new UserException("잘못된 childId 입니다."));

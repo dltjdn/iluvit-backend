@@ -1,14 +1,11 @@
 package FIS.iLUVit.repository.dto;
 
-import FIS.iLUVit.domain.embeddable.Area;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import javax.persistence.Embedded;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
-import java.time.LocalDate;
 
 @Data
 @AllArgsConstructor
@@ -25,6 +22,19 @@ public class CenterBannerDto {
     private Integer waitingNum;             // 원아 모집이 false 일때 대기자 수
     private String profileImage;
     private Double starAverage;
+    private Boolean prefer;
+
+    public CenterBannerDto(Long id, String name, Integer maxChildCnt, Integer curChildCnt, Boolean signed, Boolean recruit, Integer waitingNum, Double starAverage, Long preferId) {
+        this.id = id;
+        this.name = name;
+        this.maxChildCnt = maxChildCnt;
+        this.curChildCnt = curChildCnt;
+        this.signed = signed;
+        this.recruit = recruit;
+        this.waitingNum = waitingNum;
+        this.starAverage = starAverage;
+        this.prefer = preferId == null ? false : true;
+    }
 
     public CenterBannerDto(Long id, String name, Integer maxChildCnt, Integer curChildCnt, Boolean signed, Boolean recruit, Integer waitingNum, Double starAverage) {
         this.id = id;

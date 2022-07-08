@@ -8,6 +8,7 @@ import FIS.iLUVit.domain.alarms.PresentationCreatedAlarm;
 import FIS.iLUVit.domain.embeddable.Area;
 import FIS.iLUVit.domain.embeddable.Theme;
 import FIS.iLUVit.domain.enumtype.KindOf;
+import FIS.iLUVit.domain.enumtype.Status;
 import FIS.iLUVit.exception.PresentationException;
 import FIS.iLUVit.exception.UserException;
 import FIS.iLUVit.repository.*;
@@ -96,8 +97,6 @@ public class PresentationService {
             AlarmUtils.publishAlarmEvent(new PresentationCreatedAlarm(prefer.getParent(), presentation, center));
         });
 
-        log.info("언제 되는지?");
-
         return presentation;
     }
 
@@ -183,12 +182,13 @@ public class PresentationService {
 
     public List<ParentInfoForDirectorDto> findPtDateParticipatingParents(Long userId, Long ptDateId) {
         //
-        PtDate ptDate = ptDateRepository.findByIdAndJoinParticipation(ptDateId)
+        PtDate ptDate = ptDateRepository.findByIdAndJoinParticipationForSearch(ptDateId)
                 .orElseThrow(() -> new PresentationException("존재하지 않는 설명회 회차 입니다."));
         userRepository.findTeacherById(userId)
                 .orElseThrow(() -> new UserException("존재하지 않는 유저입니다"))
                 .canRead(ptDate.getPresentation().getCenter().getId());
         return ptDate.getParticipations().stream()
+                .filter(participation -> participation.getStatus().equals(Status.JOINED))
                 .map(participation -> new ParentInfoForDirectorDto(participation.getParent()))
                 .collect(Collectors.toList());
 
@@ -196,7 +196,7 @@ public class PresentationService {
 
     public List<ParentInfoForDirectorDto> findPtDateWaitingParents(Long userId, Long ptDateId) {
         //
-        PtDate ptDate = ptDateRepository.findByIdAndJoinWaiting(ptDateId)
+        PtDate ptDate = ptDateRepository.findByIdAndJoinWaitingForSearch(ptDateId)
                 .orElseThrow(() -> new PresentationException("존재하지 않는 설명회 회차 입니다."));
         userRepository.findTeacherById(userId)
                 .orElseThrow(() -> new UserException("존재하지 않는 유저입니다"))

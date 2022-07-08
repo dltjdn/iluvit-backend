@@ -12,6 +12,7 @@ import FIS.iLUVit.domain.enumtype.KindOf;
 import FIS.iLUVit.exception.CenterException;
 import FIS.iLUVit.exception.UserException;
 import FIS.iLUVit.repository.ParentRepository;
+import FIS.iLUVit.repository.ReviewRepository;
 import FIS.iLUVit.repository.UserRepository;
 import FIS.iLUVit.repository.dto.CenterAndDistancePreview;
 import FIS.iLUVit.repository.CenterRepository;
@@ -40,6 +41,7 @@ public class CenterService {
     private final ImageService imageService;
     private final ParentRepository parentRepository;
     private final UserRepository userRepository;
+    private final ReviewRepository reviewRepository;
 
     public Slice<CenterPreview> findByFilter(List<Area> areas, Theme theme, Integer interestedAge, KindOf kindOf, Pageable pageable) {
         if (!(kindOf == KindOf.Kindergarten) && !(kindOf == KindOf.Childhouse) && !(kindOf == KindOf.ALL)) {
@@ -82,8 +84,10 @@ public class CenterService {
         return centerInfoResponseDto;
     }
 
-    public CenterBannerDto findBannerById(Long id) {
-        CenterBannerDto dto = centerRepository.findBannerById(id);
+    public CenterBannerDto findBannerById(Long id, Long userId) {
+        CenterBannerDto dto = userId == null ?
+                centerRepository.findBannerById(id) :
+                centerRepository.findBannerById(id, userId);
         String profileDir = imageService.getCenterProfileDir();
         dto.setProfileImage(imageService.getEncodedProfileImage(profileDir, id));
         return dto;
@@ -124,10 +128,21 @@ public class CenterService {
     *   작성내용: 아이추가 과정에서 필요한 센터정보 가져오기
     */
     public Slice<CenterInfoDto> findCenterForAddChild(CenterInfoRequest request, Pageable pageable) {
-        System.out.println("request.getSido() = " + request.getSido());
-        System.out.println("request.getSigungu() = " + request.getSigungu());
-        System.out.println("request.getSido()==null = " + (request.getSido() == null));
-        System.out.println("request.getSigungu()==null = " + (request.getSigungu() == null));
         return centerRepository.findCenterForAddChild(request.getSido(), request.getSigungu(), request.getCenterName(), pageable);
+    }
+
+    /**
+     *   작성날짜: 2022/07/04 3:04 PM
+     *   작성자: 이승범
+     *   작성내용: 찜한 시설 리스트
+     */
+    public Slice<CenterPreview> findCentersByPrefer(Long userId, Pageable pageable) {
+        Slice<CenterPreview> centersByPrefer = centerRepository.findByPrefer(userId, pageable);
+        centersByPrefer.getContent().forEach(centerPreview -> {
+            Long centerId = centerPreview.getId();
+            String centerProfileDir = imageService.getCenterProfileDir();
+            centerPreview.setProfileImage(imageService.getEncodedProfileImage(centerProfileDir, centerId));
+        });
+        return centersByPrefer;
     }
 }

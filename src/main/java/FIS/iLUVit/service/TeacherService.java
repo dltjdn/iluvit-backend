@@ -2,6 +2,7 @@ package FIS.iLUVit.service;
 
 import FIS.iLUVit.controller.dto.*;
 import FIS.iLUVit.domain.*;
+import FIS.iLUVit.domain.alarms.CenterApprovalReceivedAlarm;
 import FIS.iLUVit.domain.enumtype.Approval;
 import FIS.iLUVit.domain.enumtype.Auth;
 import FIS.iLUVit.domain.enumtype.AuthKind;
@@ -33,6 +34,7 @@ public class TeacherService {
     private final AuthNumberRepository authNumberRepository;
     private final BoardRepository boardRepository;
     private final BookmarkRepository bookmarkRepository;
+    private final ScrapRepository scrapRepository;
 
     /**
      * 작성날짜: 2022/05/20 4:43 PM
@@ -111,26 +113,38 @@ public class TeacherService {
         String hashedPwd = userService.signupValidation(request.getPassword(), request.getPasswordCheck(), request.getLoginId(), request.getPhoneNum());
 
         // 교사 객체 생성
+        Teacher teacher;
         // 센터를 선택한 경우
         if (request.getCenterId() != null) {
             Center center = centerRepository.findByIdWithTeacher(request.getCenterId())
                     .orElseThrow(() -> new SignupException("잘못된 시설로의 접근입니다."));
-            Teacher teacher = request.createTeacher(center, hashedPwd);
+            teacher = request.createTeacher(center, hashedPwd);
             teacherRepository.save(teacher);
+            // 시설에 원장들에게 알람보내기
+            center.getTeachers().forEach(t->{
+                if (t.getAuth() == Auth.DIRECTOR) {
+                    AlarmUtils.publishAlarmEvent(new CenterApprovalReceivedAlarm(t));
+                }
+            });
             // 시설에 대한 최초 승인요청일 경우 기본 게시판(자유, 공지, 정보, 영상)생성
             if (center.getTeachers().isEmpty()) {
                 createCenterStory(center);
             }
-            // 모두의 이야기 default boards bookmark 추가하기
-            List<Board> defaultBoards = boardRepository.findDefaultByModu();
-            for (Board defaultBoard : defaultBoards) {
-                Bookmark bookmark = Bookmark.createBookmark(defaultBoard, teacher);
-                bookmarkRepository.save(bookmark);
-            }
         } else {   // 센터를 선택하지 않은 경우
-            Teacher teacher = request.createTeacher(null, hashedPwd);
+            teacher = request.createTeacher(null, hashedPwd);
             teacherRepository.save(teacher);
         }
+        // 모두의 이야기 default boards bookmark 추가하기
+        List<Board> defaultBoards = boardRepository.findDefaultByModu();
+        for (Board defaultBoard : defaultBoards) {
+            Bookmark bookmark = Bookmark.createBookmark(defaultBoard, teacher);
+            bookmarkRepository.save(bookmark);
+        }
+
+        // default 스크랩 생성
+        Scrap scrap = Scrap.createScrap(teacher, "default");
+
+        scrapRepository.save(scrap);
 
         authNumberRepository.deleteByPhoneNumAndAuthKind(request.getPhoneNum(), AuthKind.signup);
     }
@@ -147,6 +161,12 @@ public class TeacherService {
         // centerId가 유효하지 않다면 예외처리
         try {
             teacherRepository.assignCenter(userId, centerId);
+
+            // 승인 요청 알람이 해당 시설의 원장들에게 감
+            List<Teacher> directors = teacherRepository.findDirectorByCenter(centerId);
+            directors.forEach(director->{
+                AlarmUtils.publishAlarmEvent(new CenterApprovalReceivedAlarm(director));
+            });
         } catch (DataIntegrityViolationException e) {
             throw new UserException("존재하지 않는 시설입니다.");
         }
@@ -230,6 +250,8 @@ public class TeacherService {
                 .orElseThrow(() -> new UserException("잘못된 teacher_id 입니다."));
 
         teacherRepository.acceptTeacher(teacherId, director.getCenter().getId());
+
+
 
         // center default boards bookmark 추가하기
         List<Board> defaultBoards = boardRepository.findDefaultByCenter(director.getCenter().getId());

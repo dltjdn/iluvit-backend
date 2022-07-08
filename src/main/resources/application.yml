@@ -17,9 +17,6 @@ spring:
     pathmatch:
       matching-strategy: ant_path_matcher
 
-  messages:
-    encoding: UTF-8
-
   # 작성자: 원보라, 작성내용: agent 사진 multipart
   servlet:
     multipart:

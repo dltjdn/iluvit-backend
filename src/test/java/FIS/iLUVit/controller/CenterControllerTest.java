@@ -48,9 +48,7 @@ class CenterControllerTest extends ResponseRequests {
     CenterController centerController;
     @Mock
     CenterService centerService;
-
     MockMvc mockMvc;
-
     ObjectMapper objectMapper;
 
     @BeforeEach

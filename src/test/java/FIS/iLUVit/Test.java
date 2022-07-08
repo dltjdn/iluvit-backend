@@ -35,5 +35,4 @@ class UserTest {
                 .getSingleResult();
         System.out.println("teacher = " + user.getDtype());
     }
-
 }

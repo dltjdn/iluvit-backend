@@ -1,6 +1,5 @@
 package FIS.iLUVit.repository;
 
-import FIS.iLUVit.controller.dto.TeacherApprovalListResponse;
 import FIS.iLUVit.domain.Center;
 import FIS.iLUVit.domain.embeddable.Theme;
 import FIS.iLUVit.repository.dto.CenterBannerDto;
@@ -13,6 +12,14 @@ import java.util.List;
 import java.util.Optional;
 
 public interface CenterRepository extends JpaRepository<Center, Long>, CenterRepositoryCustom {
+
+    @Query("select new FIS.iLUVit.repository.dto.CenterBannerDto(center.id, center.name, center.maxChildCnt, center.curChildCnt, center.signed, center.recruit, center.waitingNum, avg(review.score), prefer.center.id) " +
+            "from Center center " +
+            "left join center.reviews as review " +
+            "left join center.prefers as prefer on prefer.parent.id = :userId " +
+            "where center.id=:id " +
+            "group by center")
+    CenterBannerDto findBannerById(@Param("id") Long id, @Param("userId") Long userId);
 
     @Query("select new FIS.iLUVit.repository.dto.CenterBannerDto(center.id, center.name, center.maxChildCnt, center.curChildCnt, center.signed, center.recruit, center.waitingNum, avg(review.score)) " +
             "from Center center " +
@@ -39,8 +46,9 @@ public interface CenterRepository extends JpaRepository<Center, Long>, CenterRep
 
     @Query("select c " +
             "from Center c " +
+            "join fetch c.teachers " +
             "where c.id =:centerId " +
             "and c.signed = true")
-    Optional<Center> findByIdAndSigned(@Param("centerId") Long center_id);
+    Optional<Center> findByIdAndSignedWithTeacher(@Param("centerId") Long center_id);
 
 }

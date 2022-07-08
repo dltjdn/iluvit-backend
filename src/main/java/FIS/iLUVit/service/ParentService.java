@@ -6,15 +6,19 @@ import FIS.iLUVit.domain.embeddable.Theme;
 import FIS.iLUVit.domain.enumtype.AuthKind;
 import FIS.iLUVit.exception.UserException;
 import FIS.iLUVit.repository.*;
+import FIS.iLUVit.repository.dto.CenterPreview;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Slice;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.io.IOException;
+import java.util.List;
 import java.util.Objects;
-import java.util.Optional;
 
 @Slf4j
 @Service
@@ -29,8 +33,9 @@ public class ParentService {
     private final AuthNumberRepository authNumberRepository;
     private final ScrapRepository scrapRepository;
     private final CenterRepository centerRepository;
-    private final ChildRepository childRepository;
-    private final BookmarkService bookmarkService;
+    private final PreferRepository preferRepository;
+    private final BoardRepository boardRepository;
+    private final BookmarkRepository bookmarkRepository;
 
 
 
@@ -118,7 +123,55 @@ public class ParentService {
 
         // 사용이 끝난 인증번호를 테이블에서 지우기
         authNumberRepository.deleteByPhoneNumAndAuthKind(request.getPhoneNum(), AuthKind.signup);
+
+        // 모두의 이야기 default boards bookmark 추가하기
+        List<Board> defaultBoards = boardRepository.findDefaultByModu();
+        for (Board defaultBoard : defaultBoards) {
+            Bookmark bookmark = Bookmark.createBookmark(defaultBoard, parent);
+            bookmarkRepository.save(bookmark);
+        }
     }
 
+    /**
+     *   작성날짜: 2022/07/01 5:09 PM
+     *   작성자: 이승범
+     *   작성내용: 시설 찜하기
+     */
+    public void savePrefer(Long userId, Long centerId) {
+        Parent parent = parentRepository.findByIdWithPreferWithCenter(userId)
+                .orElseThrow(() -> new UserException("존재하지 않는 사용자입니다."));
+
+        parent.getPrefers().stream()
+                .filter(prefer -> Objects.equals(prefer.getCenter().getId(), centerId))
+                .findFirst()
+                .ifPresent(prefer -> {
+                    throw new UserException("이미 찜한 시설입니다.");
+                });
+
+        try {
+            Center center = centerRepository.getById(centerId);
+            Prefer newPrefer = Prefer.createPrefer(parent, center);
+            preferRepository.saveAndFlush(newPrefer);
+        } catch (DataIntegrityViolationException e) {
+            throw new UserException("잘못된 시설 입니다.");
+        }
+    }
+
+    /**
+    *   작성날짜: 2022/07/04 2:17 PM
+    *   작성자: 이승범
+    *   작성내용: 시설 찜 해제하기
+    */
+    public void deletePrefer(Long userId, Long centerId) {
+        Parent parent = parentRepository.findByIdWithPreferWithCenter(userId)
+                .orElseThrow(() -> new UserException("존재하지 않는 사용자입니다."));
+
+        Prefer deletedPrefer = parent.getPrefers().stream()
+                .filter(prefer -> Objects.equals(prefer.getCenter().getId(), centerId))
+                .findFirst()
+                .orElseThrow(() -> new UserException("이미 찜한 시설입니다."));
+
+        preferRepository.delete(deletedPrefer);
+    }
 
 }
