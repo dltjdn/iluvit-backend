@@ -17,7 +17,6 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.test.util.ReflectionTestUtils;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
@@ -154,7 +153,7 @@ class BoardServiceTest {
         //mocking
         given(bookmarkRepository.findBoardByUser(parentId))
                 .willReturn(bookmarkList);
-        given(boardRepository.findByUserWithCenterIsNull())
+        given(boardRepository.findByCenterIsNull())
                 .willReturn(boardList);
 
         //when

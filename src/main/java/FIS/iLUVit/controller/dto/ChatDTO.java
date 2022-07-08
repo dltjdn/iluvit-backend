@@ -1,9 +1,6 @@
 package FIS.iLUVit.controller.dto;
 
-import FIS.iLUVit.domain.Board;
-import FIS.iLUVit.domain.Center;
-import FIS.iLUVit.domain.Chat;
-import FIS.iLUVit.domain.ChatRoom;
+import FIS.iLUVit.domain.*;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.springframework.data.domain.Slice;
@@ -49,14 +46,20 @@ public class ChatDTO {
     }
 
     public ChatDTO(ChatRoom chatRoom, Slice<ChatInfo> chatList) {
-        Board getBoard = chatRoom.getPost().getBoard();
-        Center getCenter = getBoard.getCenter();
+        Post getPost = chatRoom.getPost();
+        if (getPost != null) {
+            this.board_id = getPost.getBoard().getId();
+            this.boardName = getPost.getBoard().getName();
+            this.post_id = getPost.getId();
+            Center getCenter = getPost.getBoard().getCenter();
+            if (getCenter != null) {
+                this.center_id = getPost.getBoard().getCenter().getId();
+                this.centerName = getPost.getBoard().getCenter().getName() + "의 이야기";
+            } else {
+                this.centerName = "모두의 이야기";
+            }
+        }
         this.room_id = chatRoom.getId();
-        this.center_id = getCenter != null ? getCenter.getId() : null;
-        this.centerName =  getCenter != null ? getCenter.getName() : "모두의 이야기";
-        this.board_id = getBoard.getId();
-        this.boardName = getBoard.getName();
-        this.post_id = chatRoom.getPost().getId();
         if (chatRoom.getComment() != null) {
             this.comment_id = chatRoom.getComment().getId();
         }

@@ -2,6 +2,7 @@ package FIS.iLUVit.controller.dto;
 
 import FIS.iLUVit.domain.Center;
 import FIS.iLUVit.domain.ChatRoom;
+import FIS.iLUVit.domain.Post;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
@@ -31,20 +32,23 @@ public class ChatListDTO {
 
     public ChatListDTO(ChatRoom chatRoom) {
         this.room_id = chatRoom.getId();
-        Center getCenter = chatRoom.getPost().getBoard().getCenter();
-        if (getCenter != null) {
-            this.center_id = chatRoom.getPost().getBoard().getCenter().getId();
-            this.centerName = chatRoom.getPost().getBoard().getCenter().getName() + "의 이야기";
-        } else {
-            this.centerName = "모두의 이야기";
+        Post getPost = chatRoom.getPost();
+        if (getPost != null) {
+            this.board_id = getPost.getBoard().getId();
+            this.boardName = getPost.getBoard().getName();
+            this.post_id = getPost.getId();
+            Center getCenter = getPost.getBoard().getCenter();
+            if (getCenter != null) {
+                this.center_id = getPost.getBoard().getCenter().getId();
+                this.centerName = getPost.getBoard().getCenter().getName() + "의 이야기";
+            } else {
+                this.centerName = "모두의 이야기";
+            }
         }
-        this.board_id = chatRoom.getPost().getBoard().getId();
-        this.boardName = chatRoom.getPost().getBoard().getName();
         this.recentMessage = chatRoom.getMessage();
         this.date = chatRoom.getDate();
         this.time = chatRoom.getTime();
         this.receiver_id = chatRoom.getReceiver().getId();
-        this.post_id = chatRoom.getPost().getId();
         if (chatRoom.getComment() != null) {
             this.comment_id = chatRoom.getComment().getId();
         }
