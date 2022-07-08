@@ -23,6 +23,16 @@ public class BookmarkController {
     }
 
     /**
+     작성자: 이창윤
+     작성시간: 2022/06/24 2:57 PM
+     내용: 게시글 목록 한번에 불러오기 (비회원 전용)
+     */
+    @GetMapping("/bookmark-main/un-auth")
+    public BookmarkMainDTO.StoryDTO searchByDefault() {
+        return bookmarkService.searchByDefault();
+    }
+
+    /**
         작성자: 이창윤
         작성시간: 2022/06/24 3:08 PM
         내용: 즐겨찾는 게시판 추가

@@ -18,6 +18,7 @@ public class ReviewByParentDTO {
     static public class ReviewDto {
 
         private Long reviewId;
+        private Long centerId;
         private String centerName;
         private String content;
         private LocalDate createDate;

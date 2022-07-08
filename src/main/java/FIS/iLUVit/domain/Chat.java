@@ -3,6 +3,8 @@ package FIS.iLUVit.domain;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
 
 import javax.persistence.*;
 import java.time.LocalDate;
@@ -20,6 +22,7 @@ public class Chat extends BaseEntity {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "room_id")
+    @OnDelete(action = OnDeleteAction.CASCADE)
     private ChatRoom chatRoom;
 
     @ManyToOne(fetch = FetchType.LAZY)

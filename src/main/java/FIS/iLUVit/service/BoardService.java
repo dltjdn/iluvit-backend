@@ -10,7 +10,6 @@ import FIS.iLUVit.exception.CenterException;
 import FIS.iLUVit.repository.BoardRepository;
 import FIS.iLUVit.repository.BookmarkRepository;
 import FIS.iLUVit.repository.CenterRepository;
-import FIS.iLUVit.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -33,7 +32,7 @@ public class BoardService {
         // 모두의 이야기 내 유저의 북마크 정보
         List<Bookmark> bookmarks = bookmarkRepository.findBoardByUser(userId);
         // 모두의 이야기 내 모든 게시판
-        List<Board> boards = boardRepository.findByUserWithCenterIsNull();
+        List<Board> boards = boardRepository.findByCenterIsNull();
         // DTO 생성 후 반환
         createDTO(bookmarks, boards, dto);
 
@@ -45,7 +44,7 @@ public class BoardService {
         // 시설(유치원)의 이야기 내 유저의 북마크 정보
         List<Bookmark> bookmarks = bookmarkRepository.findBoardByUserAndCenter(userId, centerId);
         // 시설(유치원)의 이야기 모든 게시판
-        List<Board> boards = boardRepository.findByUserWithCenter(centerId);
+        List<Board> boards = boardRepository.findByCenter(centerId);
         // DTO 생성 후 반환
         createDTO(bookmarks, boards, dto);
 
