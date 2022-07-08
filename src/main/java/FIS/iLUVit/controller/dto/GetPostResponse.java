@@ -19,6 +19,7 @@ import java.util.stream.Collectors;
 public class GetPostResponse {
 
     private Long id;
+    private Long writer_id;
     private String nickname;
     private LocalDate date;
     private LocalTime time;
@@ -42,7 +43,10 @@ public class GetPostResponse {
 
     public GetPostResponse(Post post, List<String> encodedImages, String encodedProfileImage) {
         this.id = post.getId();
-        this.nickname = post.getUser().getNickName();
+        if (post.getUser() != null) {
+            this.writer_id = post.getUser().getId();
+            this.nickname = post.getUser().getNickName();
+        }
         this.date = post.getDate();
         this.time = post.getTime();
         this.title = post.getTitle();
