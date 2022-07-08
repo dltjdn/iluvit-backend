@@ -14,6 +14,4 @@ public class CreateChatRoomRequest {
     @NotBlank(message = "대화방 id 필요")
     private Long room_id;
 
-    @NotBlank(message = "받는 사람 id 필요")
-    private Long receiver_id;
 }

@@ -110,17 +110,20 @@ public class ChatService {
 
     public Long saveChatInRoom(Long userId, CreateChatRoomRequest request) {
 
-        if (Objects.equals(userId, request.getReceiver_id())) {
+        ChatRoom findRoom = chatRoomRepository.findById(request.getRoom_id())
+                .orElseThrow(() -> new IllegalStateException("room_id 값 오류"));
+
+        Long partnerUserId = findRoom.getSender().getId();
+
+        if (Objects.equals(userId, partnerUserId)) {
             throw new IllegalStateException("자기 자신에게 쪽지를 보낼 수 없습니다");
         }
 
         User sendUser = userRepository.getById(userId);
-        User receiveUser = userRepository.getById(request.getReceiver_id());
+        User receiveUser = userRepository.getById(partnerUserId);
         Chat chat1 = new Chat(request.getMessage(), receiveUser, sendUser);
         Chat chat2 = new Chat(request.getMessage(), receiveUser, sendUser);
 
-        ChatRoom findRoom = chatRoomRepository.findById(request.getRoom_id())
-                .orElseThrow(() -> new IllegalStateException("room_id 값 오류"));
         chat1.updateChatRoom(findRoom);
 
         // 삭제된 대화방이면 새로 생성
