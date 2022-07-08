@@ -58,13 +58,16 @@ public class GetCommentResponse {
 
         public Answer(Comment comment) {
             this.id = comment.getId();
-            this.writer_id = comment.getUser().getId();
-            this.nickname = comment.getUser().getNickName();
+            User writer = comment.getUser();
+            if (writer != null) {
+                this.writer_id = writer.getId();
+                this.nickname = writer.getNickName();
+                this.heartCnt = comment.getCommentHearts().size();
+                this.anonymous = comment.getAnonymous();
+            }
             this.content = comment.getContent();
-            this.heartCnt = comment.getCommentHearts().size();
             this.date = comment.getDate();
             this.time = comment.getTime();
-            this.anonymous = comment.getAnonymous();
         }
     }
 }
