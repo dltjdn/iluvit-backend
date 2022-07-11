@@ -21,6 +21,8 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
+import java.util.Optional;
+
 import static org.assertj.core.api.Assertions.*;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
@@ -34,16 +36,14 @@ public class AuthNumberServiceTest {
     private UserRepository userRepository;
     @Mock
     private BCryptPasswordEncoder encoder;
-    @Spy
-    private DefaultMessageService messageService = NurigoApp.INSTANCE.initialize();
 
     @InjectMocks
-    private AuthNumberService target;
+    private AuthNumberService target = new AuthNumberService(authNumberRepository, userRepository, encoder, "NCSF7WSXFTOPKPM4", "49UO4W0AUTMPD8T5AEFVLH6YQ1DSCNJQ", "https://api.coolsms.co.kr");
 
     @Test
     public void 인증번호받기_실패_이미가입된번호() {
         // given
-        doReturn(Parent.builder().build()).when(userRepository).findByPhoneNumber("01067150071");
+        doReturn(Optional.of(Parent.builder().build())).when(userRepository).findByPhoneNumber("01067150071");
 
         // when
         AuthNumberException result = assertThrows(AuthNumberException.class,
