@@ -3,6 +3,7 @@ package FIS.iLUVit.service;
 import FIS.iLUVit.controller.dto.ChatDTO;
 import FIS.iLUVit.controller.dto.ChatListDTO;
 import FIS.iLUVit.controller.dto.CreateChatRequest;
+import FIS.iLUVit.controller.dto.CreateChatRoomRequest;
 import FIS.iLUVit.domain.*;
 import FIS.iLUVit.domain.alarms.ChatAlarm;
 import FIS.iLUVit.repository.*;
@@ -42,8 +43,10 @@ public class ChatService {
         Chat chat1 = new Chat(request.getMessage(), receiveUser, sendUser);
         Chat chat2 = new Chat(request.getMessage(), receiveUser, sendUser);
 
-        validateChatRoom(sendUser, receiveUser, comment_id, findPost, chat1);
-        validateChatRoom(receiveUser, sendUser, comment_id, findPost, chat2);
+        ChatRoom chatRoom1 = validateChatRoom(sendUser, receiveUser, comment_id, findPost, chat1);
+        ChatRoom chatRoom2 = validateChatRoom(receiveUser, sendUser, comment_id, findPost, chat2);
+        chatRoom1.updatePartnerId(chatRoom2.getId());
+        chatRoom2.updatePartnerId(chatRoom1.getId());
 
         AlarmUtils.publishAlarmEvent(new ChatAlarm(receiveUser, sendUser));
 
@@ -54,21 +57,24 @@ public class ChatService {
 
     }
 
-    private void validateChatRoom(User sendUser, User receiveUser, Long comment_id, Post post, Chat chat) {
-        chatRoomRepository.findByReceiverAndSenderAndPost(receiveUser, sendUser, post)
-                .ifPresentOrElse(cr -> {
-                    chat.updateChatRoom(cr);
-                }, () -> {
-                    // 대화방 없으면 새로 생성
-                    ChatRoom chatRoom = new ChatRoom(receiveUser, sendUser, post);
-                    // 댓글 작성자와 쪽지 교환이면 comment 정보도 엮여줌.
-                    if (comment_id != null) {
-                        Comment findComment = commentRepository.getById(comment_id);
-                        chatRoom.updateComment(findComment);
-                    }
-                    chatRoomRepository.save(chatRoom);
-                    chat.updateChatRoom(chatRoom);
-                });
+    private ChatRoom validateChatRoom(User sendUser, User receiveUser, Long comment_id, Post post, Chat chat) {
+        ChatRoom findRoom = chatRoomRepository.findByReceiverAndSenderAndPost(receiveUser, sendUser, post)
+                .orElse(null);
+        if (findRoom == null) {
+            // 대화방 없으면 새로 생성
+            ChatRoom chatRoom = new ChatRoom(receiveUser, sendUser, post);
+            // 댓글 작성자와 쪽지 교환이면 comment 정보도 엮여줌.
+            if (comment_id != null) {
+                Comment findComment = commentRepository.getById(comment_id);
+                chatRoom.updateComment(findComment);
+            }
+            chatRoomRepository.save(chatRoom);
+            chat.updateChatRoom(chatRoom);
+            return chatRoom;
+        } else {
+            chat.updateChatRoom(findRoom);
+            return findRoom;
+        }
     }
 
     public Slice<ChatListDTO> findAll(Long userId, Pageable pageable) {
@@ -95,7 +101,48 @@ public class ChatService {
                     if (cr.getReceiver().getId() != userId) {
                         throw new IllegalStateException("삭제 권한 없는 유저");
                     }
+                    chatRoomRepository.findById(cr.getPartner_id())
+                            .ifPresent(c -> c.updatePartnerId(null));
                 });
-        return Long.valueOf(chatRepository.deleteByChatRoom(roomId));
+        chatRoomRepository.deleteById(roomId);
+        return roomId;
     }
+
+    public Long saveChatInRoom(Long userId, CreateChatRoomRequest request) {
+
+        ChatRoom findRoom = chatRoomRepository.findById(request.getRoom_id())
+                .orElseThrow(() -> new IllegalStateException("room_id 값 오류"));
+
+        Long partnerUserId = findRoom.getSender().getId();
+
+        if (Objects.equals(userId, partnerUserId)) {
+            throw new IllegalStateException("자기 자신에게 쪽지를 보낼 수 없습니다");
+        }
+
+        User sendUser = userRepository.getById(userId);
+        User receiveUser = userRepository.getById(partnerUserId);
+        Chat chat1 = new Chat(request.getMessage(), receiveUser, sendUser);
+        Chat chat2 = new Chat(request.getMessage(), receiveUser, sendUser);
+
+        chat1.updateChatRoom(findRoom);
+
+        // 삭제된 대화방이면 새로 생성
+        ChatRoom chatRoom;
+        if (findRoom.getPartner_id() == null) {
+            chatRoom = new ChatRoom(receiveUser, sendUser, null);
+            chatRoomRepository.save(chatRoom);
+        } else {
+            chatRoom = chatRoomRepository.findById(findRoom.getPartner_id())
+                    .orElseThrow(() -> new IllegalStateException("partner_id 값 오류"));
+        }
+        findRoom.updatePartnerId(chatRoom.getId());
+        chatRoom.updatePartnerId(findRoom.getId());
+        chat2.updateChatRoom(chatRoom);
+
+        chatRepository.save(chat1);
+        chatRepository.save(chat2);
+
+        return chat1.getId();
+    }
+
 }

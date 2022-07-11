@@ -24,6 +24,10 @@ public class CommentHeartService {
     public Long save(Long userId, Long comment_id) {
         User findUser = userRepository.getById(userId);
         Comment findComment = commentRepository.getById(comment_id);
+        commentHeartRepository.findByUserAndComment(userId, comment_id)
+                .ifPresent((ch) -> {
+                    throw new CommentException("이미 좋아요한 댓글");
+                });
 
         CommentHeart commentHeart = new CommentHeart(findUser, findComment);
         return commentHeartRepository.save(commentHeart).getId();

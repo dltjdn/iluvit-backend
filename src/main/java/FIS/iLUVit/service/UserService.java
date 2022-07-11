@@ -14,13 +14,15 @@ import FIS.iLUVit.repository.AlarmRepository;
 import FIS.iLUVit.repository.AuthNumberRepository;
 import FIS.iLUVit.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Slice;
+import org.springframework.data.domain.SliceImpl;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.Duration;
 import java.time.LocalDateTime;
-import java.util.List;
 import java.util.stream.Collectors;
 
 @Service
@@ -84,11 +86,12 @@ public class UserService {
         return encoder.encode(password);
     }
 
-    public List<AlarmDto> findUserAlarm(Long userId) {
-        return alarmRepository.findByUser(userId)
-                .stream()
+    public Slice<AlarmDto> findUserAlarm(Long userId, Pageable pageable) {
+        Slice<Alarm> alarmSlice = alarmRepository.findByUser(userId, pageable);
+        return new SliceImpl<>(alarmSlice.stream()
                 .map(Alarm::exportAlarm)
-                .collect(Collectors.toList());
+                .collect(Collectors.toList()),
+                pageable, alarmSlice.hasNext());
     }
 
     public Integer deleteUserAlarm(Long userId, Long alarmId) {

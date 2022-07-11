@@ -1,9 +1,11 @@
+
 package FIS.iLUVit.controller;
 
 import FIS.iLUVit.config.argumentResolver.Login;
 import FIS.iLUVit.controller.dto.ChatDTO;
 import FIS.iLUVit.controller.dto.ChatListDTO;
 import FIS.iLUVit.controller.dto.CreateChatRequest;
+import FIS.iLUVit.controller.dto.CreateChatRoomRequest;
 import FIS.iLUVit.service.ChatService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
@@ -19,11 +21,21 @@ public class ChatController {
     /**
      작성자: 이창윤
      작성시간: 2022/06/24 3:11 PM
-     내용: 쪽지 작성
+     내용: 쪽지 작성 ( 대화방 생성 )
      */
     @PostMapping("/chat")
     public Long createChat(@Login Long userId, @RequestBody CreateChatRequest request) {
         return chatService.saveChat(userId, request);
+    }
+
+    /**
+     작성자: 이창윤
+     작성시간: 2022/06/24 3:11 PM
+     내용: 쪽지 작성 ( 대화방 생성 후 쪽지 작성 )
+     */
+    @PostMapping("/chat/inRoom")
+    public Long createChatInRoom(@Login Long userId, @RequestBody CreateChatRoomRequest request) {
+        return chatService.saveChatInRoom(userId, request);
     }
 
     /**

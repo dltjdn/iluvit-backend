@@ -46,7 +46,7 @@ public class PostRepositoryImpl extends PostQueryMethod implements PostRepositor
         List<GetPostResponsePreview> posts = jpaQueryFactory.select(new QGetPostResponsePreview(post))
                 .from(post)
                 .join(post.board, board).fetchJoin()
-                .join(board.center, center).fetchJoin()
+                .leftJoin(board.center, center).fetchJoin()
                 .where(centerIdEq(centerId), keywordContains(keyword))
                 .orderBy(post.createdDate.desc())
                 .offset(pageable.getOffset())

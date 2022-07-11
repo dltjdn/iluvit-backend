@@ -4,6 +4,7 @@ import FIS.iLUVit.domain.alarms.PresentationConvertedToParticipateAlarm;
 import FIS.iLUVit.domain.enumtype.Status;
 import FIS.iLUVit.exception.PresentationException;
 import FIS.iLUVit.service.AlarmUtils;
+import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -14,6 +15,8 @@ import java.util.List;
 @Entity
 @NoArgsConstructor
 @Getter
+@Builder
+@AllArgsConstructor
 public class Participation extends BaseEntity {
     @Id
     @GeneratedValue
@@ -30,7 +33,6 @@ public class Participation extends BaseEntity {
     @JoinColumn(name = "ptDate_id")
     private PtDate ptDate;
 
-    @Builder
     public Participation(Parent parent, PtDate ptDate, Status status) {
         this.parent = parent;
         this.ptDate = ptDate;
