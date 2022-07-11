@@ -30,6 +30,4 @@ spring:
       - mysql
 logging:
   level:
-    org.hibernate.SQL: debug
-    org.hibernate.Type: trace
-    org.hibernate.type.descriptor.sql: trace
+    org.hibernate.SQL: info

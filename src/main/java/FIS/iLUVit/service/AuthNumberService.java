@@ -175,7 +175,7 @@ public class AuthNumberService {
             // 인증번호 보내고
             requestCoolSMS(toNumber, authNumber);
             // 인증번호 관련 정보를 db에 저장
-            AuthNumber authNumberInfo = new AuthNumber(toNumber, authNumber, authKind);
+            AuthNumber authNumberInfo = AuthNumber.createAuthNumber(toNumber, authNumber, authKind);
             authNumberRepository.save(authNumberInfo);
 
             // 이미 인증번호를 받았지만 제한시간이 지난 경우
@@ -186,7 +186,7 @@ public class AuthNumberService {
             // 인증번호 보낸 후
             requestCoolSMS(toNumber, authNumber);
             // 인증번호 관련 정보를 db에 저장
-            AuthNumber authNumberInfo = new AuthNumber(toNumber, authNumber, authKind);
+            AuthNumber authNumberInfo = AuthNumber.createAuthNumber(toNumber, authNumber, authKind);
             authNumberRepository.save(authNumberInfo);
 
             // 이미 인증번호를 요청하였고 제한시간이 지나지 않은 경우
