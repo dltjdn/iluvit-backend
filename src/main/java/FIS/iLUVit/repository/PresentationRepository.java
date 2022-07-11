@@ -20,7 +20,6 @@ public interface PresentationRepository extends JpaRepository<Presentation, Long
             "from Presentation p " +
             "join p.ptDates as pd " +
             "where p.center.id =:centerId " +
-            "and p.startDate <= :date " +
             "and :date <= p.endDate")
     List<PresentationWithPtDatesDto> findByCenterAndDateWithPtDates(@Param("centerId") Long centerId, @Param("date") LocalDate date);
 

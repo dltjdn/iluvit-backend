@@ -44,3 +44,4 @@ src/main/resources/application-secret.yml
 src/main/resources/application-mysql.yml
 src/main/resources/application.properties
 src/main/resources/application.yml
+src/test/resources/application-secret.yml

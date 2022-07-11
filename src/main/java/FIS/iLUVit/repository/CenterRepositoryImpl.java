@@ -1,9 +1,7 @@
 package FIS.iLUVit.repository;
 
 import FIS.iLUVit.controller.dto.CenterInfoDto;
-import FIS.iLUVit.controller.dto.CenterInfoRequest;
 import FIS.iLUVit.controller.dto.QCenterInfoDto;
-import FIS.iLUVit.domain.Center;
 import FIS.iLUVit.domain.embeddable.Area;
 import FIS.iLUVit.domain.embeddable.Theme;
 import FIS.iLUVit.domain.enumtype.KindOf;
@@ -22,7 +20,6 @@ import java.util.List;
 import static FIS.iLUVit.domain.QCenter.center;
 import static FIS.iLUVit.domain.QPrefer.prefer;
 import static FIS.iLUVit.domain.QReview.review;
-import static FIS.iLUVit.domain.QParent.parent;
 
 @AllArgsConstructor
 public class CenterRepositoryImpl extends CenterQueryMethod implements CenterRepositoryCustom {
@@ -38,7 +35,7 @@ public class CenterRepositoryImpl extends CenterQueryMethod implements CenterRep
                         .and(kindOfEq(kindOf))
                         .and(themeEq(theme))
                         .and(interestedAgeEq(interestedAge)))
-                .orderBy(center.score.asc())
+                .orderBy(center.score.desc(), center.id.desc())
                 .groupBy(center)
                 .offset(pageable.getOffset())
                 .limit(pageable.getPageSize() + 1)

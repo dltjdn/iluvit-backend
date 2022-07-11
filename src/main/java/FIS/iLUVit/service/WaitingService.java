@@ -54,4 +54,6 @@ public class WaitingService {
         waitingRepository.delete(waiting);
         return waitingId;
     }
+
+
 }

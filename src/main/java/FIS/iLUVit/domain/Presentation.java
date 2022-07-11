@@ -36,6 +36,7 @@ public class Presentation extends BaseEntity {
     @Cascade({PERSIST, REMOVE})
     private List<PtDate> ptDates = new ArrayList<>();
 
+
     @Builder
     public Presentation(Long id, LocalDate startDate, LocalDate endDate, String place, String content, Integer imgCnt, Integer videoCnt, Center center) {
         this.id = id;

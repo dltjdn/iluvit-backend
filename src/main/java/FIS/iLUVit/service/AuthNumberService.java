@@ -5,11 +5,12 @@ import FIS.iLUVit.controller.dto.FindPasswordRequest;
 import FIS.iLUVit.domain.AuthNumber;
 import FIS.iLUVit.domain.User;
 import FIS.iLUVit.domain.enumtype.AuthKind;
-import FIS.iLUVit.exception.AuthNumException;
+import FIS.iLUVit.exception.AuthNumberException;
 import FIS.iLUVit.exception.SignupException;
 import FIS.iLUVit.exception.UserException;
 import FIS.iLUVit.repository.AuthNumberRepository;
 import FIS.iLUVit.repository.UserRepository;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import net.nurigo.sdk.NurigoApp;
 import net.nurigo.sdk.message.model.Message;
@@ -57,7 +58,7 @@ public class AuthNumberService {
         User findUser = userRepository.findByPhoneNumber(toNumber).orElse(null);
 
         if (findUser != null) {
-            throw new AuthNumException("이미 서비스에 가입된 핸드폰 번호입니다.");
+            throw new AuthNumberException("이미 서비스에 가입된 핸드폰 번호입니다.");
         }
         sendAuthNumber(toNumber, authKind);
     }
@@ -72,7 +73,7 @@ public class AuthNumberService {
         User findUser = userRepository.findByPhoneNumber(toNumber).orElse(null);
 
         if (findUser == null) {
-            throw new AuthNumException("서비스에 가입되지 않은 핸드폰 번호입니다.");
+            throw new AuthNumberException("서비스에 가입되지 않은 핸드폰 번호입니다.");
         }
         sendAuthNumber(toNumber, AuthKind.findLoginId);
     }
@@ -87,7 +88,7 @@ public class AuthNumberService {
         User findUser = userRepository.findByLoginIdAndPhoneNumber(loginId, toNumber).orElse(null);
 
         if (findUser == null) {
-            throw new AuthNumException("아이디와 휴대폰번호를 확인해주세요.");
+            throw new AuthNumberException("아이디와 휴대폰번호를 확인해주세요.");
         }
         sendAuthNumber(toNumber, AuthKind.findPwd);
     }
@@ -104,9 +105,9 @@ public class AuthNumberService {
                         .orElse(null);
 
         if (authNumber == null) {
-            throw new AuthNumException("인증번호가 일치하지 않습니다.");
+            throw new AuthNumberException("인증번호가 일치하지 않습니다.");
         } else if (Duration.between(authNumber.getCreatedDate(), LocalDateTime.now()).getSeconds() > 60) {
-            throw new AuthNumException("인증번호가 만료되었습니다.");
+            throw new AuthNumberException("인증번호가 만료되었습니다.");
         } else {
             authNumber.AuthComplete();
         }
@@ -123,7 +124,7 @@ public class AuthNumberService {
         AuthNumber authNumber = authenticateAuthNum(request);
 
         User findUser = userRepository.findByPhoneNumber(authNumber.getPhoneNum())
-                .orElseThrow(() -> new AuthNumException("핸드폰 번호를 확인해 주세요"));
+                .orElseThrow(() -> new AuthNumberException("핸드폰 번호를 확인해 주세요"));
 
         authNumberRepository.delete(authNumber);
         return blindLoginId(findUser.getLoginId());
@@ -191,7 +192,7 @@ public class AuthNumberService {
 
             // 이미 인증번호를 요청하였고 제한시간이 지나지 않은 경우
         } else {
-            throw new AuthNumException("해당 번호로 인증 진행중입니다. 인증번호를 분실하였다면 3분 후 다시 시도해주세요");
+            throw new AuthNumberException("해당 번호로 인증 진행중입니다. 인증번호를 분실하였다면 3분 후 다시 시도해주세요");
         }
     }
 

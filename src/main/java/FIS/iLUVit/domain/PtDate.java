@@ -8,6 +8,7 @@ import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
@@ -31,10 +32,10 @@ public class PtDate extends BaseEntity {
 
     // Set 으로 변경해야 할까?
     @OneToMany(mappedBy = "ptDate")
-    private List<Participation> participations;
+    private List<Participation> participations = new ArrayList<>();
 
     @OneToMany(mappedBy = "ptDate")
-    private List<Waiting> waitings;       // 인원 마감이 된 회차에 대기
+    private List<Waiting> waitings = new ArrayList<>();       // 인원 마감이 된 회차에 대기
 
     @Builder(toBuilder = true)
     public PtDate(Long id, LocalDate date, String time, Integer ablePersonNum, Integer participantCnt, Integer waitingCnt, Presentation presentation) {

@@ -1,12 +1,29 @@
 package FIS.iLUVit.service;
 
+import FIS.iLUVit.domain.*;
+import FIS.iLUVit.domain.enumtype.Auth;
+import FIS.iLUVit.domain.enumtype.Status;
+import FIS.iLUVit.exception.PresentationErrorResult;
+import FIS.iLUVit.exception.PresentationException;
 import FIS.iLUVit.repository.ParticipationRepository;
 import FIS.iLUVit.repository.PtDateRepository;
 import FIS.iLUVit.repository.UserRepository;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.ArgumentMatchers;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.mockito.Mockito;
+import org.mockito.junit.jupiter.MockitoExtension;
 
+import java.time.LocalDate;
+import java.util.Optional;
+
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+
+@ExtendWith(MockitoExtension.class)
 class ParticipationServiceTest {
 
     /**
@@ -26,18 +43,213 @@ class ParticipationServiceTest {
     @InjectMocks
     ParticipationService participationService;
 
+    Center center;
+    Center center2;
+    Presentation presentation1;
+    Presentation presentation2;
+    PtDate ptDate1;
+    PtDate ptDate2;
+    PtDate ptDate3;
+    PtDate ptDate4;
+    Participation participation;
+    Parent parent;
+
+    @BeforeEach
+    public void init(){
+        center = Center.builder()
+                .id(1L)
+                .name("test 유치원")
+                .build();
+
+        presentation1 = Presentation.builder()
+                .id(1L)
+                .startDate(LocalDate.of(2022, 7, 3))
+                .endDate(LocalDate.of(2022, 7, 3))
+                .place("테스트 장소")
+                .content("테스트 설명회")
+                .imgCnt(3)
+                .videoCnt(1)
+                .center(center)
+                .build();
+
+        presentation2 = Presentation.builder()
+                .id(1L)
+                .startDate(LocalDate.now())
+                .endDate(LocalDate.now())
+                .place("테스트 장소")
+                .content("테스트 설명회")
+                .imgCnt(3)
+                .videoCnt(1)
+                .center(center)
+                .build();
+
+        center2 = Center.builder()
+                .id(1L)
+                .address("test 주소")
+                .name("test 유치원")
+                .build();
+
+        ptDate1 = PtDate.builder()
+                .id(1L)
+                .date(LocalDate.now())
+                .time("오후 9시")
+                .presentation(presentation1)
+                .ablePersonNum(3)
+                .participantCnt(1)
+                .waitingCnt(0)
+                .build();
+
+        ptDate2 = PtDate.builder()
+                .id(2L)
+                .date(LocalDate.now())
+                .time("오후 9시")
+                .ablePersonNum(3)
+                .participantCnt(1)
+                .waitingCnt(0)
+                .presentation(presentation2)
+                .build();
+
+        ptDate3 = PtDate.builder()
+                .id(3L)
+                .date(LocalDate.now())
+                .time("오후 9시")
+                .ablePersonNum(3)
+                .participantCnt(1)
+                .waitingCnt(0)
+                .presentation(presentation2)
+                .build();
+
+        ptDate4 = PtDate.builder()
+                .id(4L)
+                .date(LocalDate.now())
+                .time("오후 9시")
+                .ablePersonNum(1)
+                .participantCnt(1)
+                .waitingCnt(0)
+                .presentation(presentation2)
+                .build();
+
+        parent = Parent.builder()
+                .id(1L)
+                .auth(Auth.PARENT)
+                .name("test")
+                .build();
+
+        participation = Participation.builder()
+                .ptDate(ptDate2)
+                .parent(parent)
+                .status(Status.JOINED)
+                .build();
+
+        ptDate2.getParticipations().add(participation);
+
+    }
 
     @Test
-    public void 설명회_신청_신청기간이지남_예외() throws Exception {
+    public void 잘못된_설명회_회차_아이디로_신청() throws Exception {
+        //given
+        Mockito.doReturn(Optional.ofNullable(null))
+                .when(ptDateRepository)
+                .findByIdAndJoinParticipation(ArgumentMatchers.any(Long.class));
+
+        //when
+        PresentationException result = assertThrows(PresentationException.class,
+                () -> participationService.register(parent.getId(), ptDate1.getId()));     // 예외가 발생 해야한다.
+
+        //then
+        assertThat(result.getErrorResult())
+                .isEqualTo(PresentationErrorResult.WRONG_PTDATE_ID_REQUEST);
+    }
+
+    @Test
+    public void 설명회_신청_신청기간이_지남() throws Exception {
         //given
         /**
          * 설명회 신청을 위해서는 설명회 정보가 필요하다.
-         * 컨트롤러에서 넘어온
+         * 연관 관계 매핑 되어있음
+         * service => 데이터베이스에서 정보 가져왔을 때
+         *
          */
+        Mockito.doReturn(Optional.of(ptDate1))
+                .when(ptDateRepository)
+                .findByIdAndJoinParticipation(ptDate1.getId());
+        // ptdate => 섦명회, 센터
 
         //when
+        PresentationException result = assertThrows(PresentationException.class,
+                () -> participationService.register(parent.getId(), ptDate1.getId()));     // 예외가 발생 해야한다.
 
         //then
+        assertThat(result.getErrorResult())
+                .isEqualTo(PresentationErrorResult.PARTICIPATION_PERIOD_PASSED);
 
+    }
+
+    @Test
+    public void 설명회_신청_이미_신청한_사용자() throws Exception {
+        //given
+        Mockito.doReturn(Optional.of(ptDate2))
+                .when(ptDateRepository)
+                .findByIdAndJoinParticipation(ptDate2.getId());
+
+        //when
+        PresentationException result = assertThrows(PresentationException.class,
+                () -> participationService.register(parent.getId(), ptDate2.getId()));
+
+        //then
+        assertThat(result.getErrorResult())
+                .isEqualTo(PresentationErrorResult.ALREADY_PARTICIPATED_IN);
+    }
+
+    @Test
+    public void 설명회_신청_인원_초과() throws Exception {
+        //given
+        Mockito.doReturn(Optional.of(ptDate4))
+                .when(ptDateRepository)
+                .findByIdAndJoinParticipation(ptDate4.getId());
+        //when
+
+        PresentationException result = assertThrows(PresentationException.class,
+                () -> participationService.register(parent.getId(), ptDate4.getId()));
+
+        //then
+        assertThat(result.getErrorResult())
+                .isEqualTo(PresentationErrorResult.PRESENTATION_OVERCAPACITY);
+    }
+
+    @Test
+    public void 설명회_신청_성공() throws Exception {
+        //given
+        Participation participation1 = Participation.builder()
+                .id(2L)
+                .ptDate(ptDate2)
+                .parent(parent)
+                .status(Status.JOINED)
+                .build();
+
+        Mockito.doReturn(Optional.of(ptDate3))
+                .when(ptDateRepository)
+                .findByIdAndJoinParticipation(ptDate3.getId());
+
+        Mockito.doReturn(participation1)
+                .when(participationRepository)
+                .save(ArgumentMatchers.any(Participation.class));
+
+        Mockito.doReturn(Parent.builder().id(parent.getId()).build())
+                .when(userRepository)
+                .getById(parent.getId());
+
+        //when
+        Long result = participationService.register(parent.getId(), ptDate3.getId());
+
+        //then
+        assertThat(result).isEqualTo(participation1.getId());
+        // register 에서 repository
+        Mockito.verify(ptDateRepository, Mockito.times(1))
+                .findByIdAndJoinParticipation(ptDate3.getId());
+        Mockito.verify(participationRepository, Mockito.times(1))
+                .save(ArgumentMatchers.any(Participation.class));
+        Mockito.verify(userRepository, Mockito.times(1))
+                .getById(parent.getId());
     }
 }
