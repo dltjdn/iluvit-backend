@@ -123,6 +123,7 @@ public class PostController {
     */
     @GetMapping("/post/modu-main")
     public List<BoardPreview> searchMainPreview(@Login Long userId) {
+
         return postService.searchMainPreview(userId);
     }
 

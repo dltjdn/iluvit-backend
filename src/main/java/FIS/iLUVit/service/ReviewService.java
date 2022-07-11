@@ -40,7 +40,7 @@ public class ReviewService {
 
         reviews.forEach((review) -> {
             reviewDtoList.getReviews().add(new ReviewByParentDTO.ReviewDto(
-                    review.getId(), review.getCenter().getName(), review.getContent(), review.getCreateDate()
+                    review.getId(), review.getCenter().getId(), review.getCenter().getName(), review.getContent(), review.getCreateDate()
             ));
         });
         return reviewDtoList;

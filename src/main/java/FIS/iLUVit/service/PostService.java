@@ -35,6 +35,7 @@ public class PostService {
     private final BookmarkRepository bookmarkRepository;
     private final ScrapPostRepository scrapPostRepository;
     private final PostHeartRepository postHeartRepository;
+    private final ChatRoomRepository chatRoomRepository;
 
     public Long savePost(PostRegisterRequest request, List<MultipartFile> images, Long userId) {
 
@@ -65,10 +66,15 @@ public class PostService {
     }
 
     public Long deleteById(Long postId, Long userId) {
+
         User findUser = userRepository.findById(userId)
                 .orElseThrow(() -> new UserException("존재하지 않는 유저"));
         Post findPost = postRepository.findById(postId)
                 .orElseThrow(() -> new PostException("존재하지 않는 게시글"));
+
+        // 게시글과 연관된 모든 채팅방의 post_id(fk) 를 null 값으로 만들어줘야함.
+        chatRoomRepository.findByPost(postId);
+
         if (!Objects.equals(findPost.getUser().getId(), findUser.getId())) {
             throw new UserException("삭제 권한이 없는 유저");
         }
@@ -147,7 +153,16 @@ public class PostService {
     public List<BoardPreview> searchMainPreview(Long userId) {
         List<BoardPreview> boardPreviews = new ArrayList<>();
         List<Bookmark> bookmarkList = bookmarkRepository.findBoardByUser(userId);
-        getBoardPreviews(bookmarkList, boardPreviews);
+
+        if (userId == null) {
+            List<Long> boardIds = boardRepository.findDefaultByModu()
+                    .stream().map(Board::getId)
+                    .collect(Collectors.toList());
+
+            addBoardPreviews(boardPreviews, boardIds);
+        } else {
+            getBoardPreviews(bookmarkList, boardPreviews);
+        }
 
         // HOT 게시판 정보 추가
         List<Post> hotPosts = postRepository.findByHeartCnt(2, PageRequest.of(0, 4));
@@ -203,6 +218,10 @@ public class PostService {
                 .map(bm -> bm.getBoard().getId())
                 .collect(Collectors.toList());
 
+        addBoardPreviews(boardPreviews, boardIds);
+    }
+
+    private void addBoardPreviews(List<BoardPreview> boardPreviews, List<Long> boardIds) {
         List<Post> top4 = postRepository.findTop4(boardIds);
         Map<Board, List<Post>> boardPostMap = top4.stream()
                 .collect(Collectors.groupingBy(Post::getBoard));
