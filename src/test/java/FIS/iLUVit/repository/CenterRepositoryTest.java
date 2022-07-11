@@ -1,30 +1,25 @@
 package FIS.iLUVit.repository;
 
-import FIS.iLUVit.config.AppConfig;
 import FIS.iLUVit.config.argumentResolver.ForDB;
+import FIS.iLUVit.domain.Center;
 import FIS.iLUVit.domain.Kindergarten;
 import FIS.iLUVit.domain.embeddable.Area;
+import FIS.iLUVit.domain.embeddable.BasicInfra;
+import FIS.iLUVit.domain.embeddable.Theme;
 import FIS.iLUVit.repository.dto.CenterPreview;
-import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.context.annotation.ComponentScan;
-import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.FilterType;
-import org.springframework.context.annotation.Import;
 import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
-import org.springframework.stereotype.Component;
-import org.springframework.stereotype.Repository;
-import org.springframework.stereotype.Service;
 
 import javax.persistence.EntityManager;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
+import static FIS.iLUVit.Creator.*;
 import static org.assertj.core.api.Assertions.assertThat;
 
 @DataJpaTest(includeFilters = @ComponentScan.Filter(ForDB.class))
@@ -32,6 +27,9 @@ class CenterRepositoryTest {
 
     @Autowired
     CenterRepository centerRepository;
+
+    @Autowired
+    EntityManager em;
 
     @Test
     void findBannerById() {
@@ -50,22 +48,29 @@ class CenterRepositoryTest {
     }
 
     @Test
-    void findByThemeAndAgeOnly3() {
-    }
+    public void 시설_프리뷰_정보_조회() throws Exception {
+        //given
+        Area gumchon = createArea("서울특별시", "금천구");
+        Theme theme = Theme.builder()
+                .english(true)
+                .art(true)
+                .build();
+        BasicInfra basicInfra = BasicInfra.builder()
+                .hasCCTV(true)
+                .cctvCnt(3)
+                .build();
+        Center center1 = createKindergarten(gumchon, "test1", theme, 2, 4, "test", "test", basicInfra);
+        Center center2 = createKindergarten(gumchon, "test2", theme, 4, 5, "test", "test", basicInfra);
+        Center center3 = createKindergarten(gumchon, "test3", theme, 2, 3, "test", "test", basicInfra);
 
-    @Test
-    void findCenterByTeacher() {
-    }
+        em.persist(center1);
+        em.persist(center2);
+        em.persist(center3);
+        em.flush();
+        //when
 
-    @Test
-    void findByUser() {
-    }
+        //centerRepository.findByFilter(gumchon, theme, 4, "ALL",)
 
-    @Test
-    void findByIdAndSignedWithBoard() {
-    }
-
-    @Test
-    void findByIdWithTeacher() {
+        //then
     }
 }
