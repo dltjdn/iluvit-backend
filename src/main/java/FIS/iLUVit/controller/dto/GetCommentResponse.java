@@ -1,6 +1,7 @@
 package FIS.iLUVit.controller.dto;
 
 import FIS.iLUVit.domain.Comment;
+import FIS.iLUVit.domain.User;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -15,6 +16,7 @@ import java.util.stream.Collectors;
 @NoArgsConstructor
 public class GetCommentResponse {
     private Long id;
+    private Long writer_id;
     private String nickname;
     private String content;
     private Integer heartCnt;
@@ -26,12 +28,16 @@ public class GetCommentResponse {
 
     public GetCommentResponse(Comment comment) {
         this.id = comment.getId();
-        this.nickname = comment.getUser().getNickName();
+        User writer = comment.getUser();
+        if (writer != null) {
+            this.writer_id = writer.getId();
+            this.nickname = writer.getNickName();
+            this.heartCnt = comment.getCommentHearts().size();
+            this.anonymous = comment.getAnonymous();
+        }
         this.content = comment.getContent();
-        this.heartCnt = comment.getCommentHearts().size();
         this.date = comment.getDate();
         this.time = comment.getTime();
-        this.anonymous = comment.getAnonymous();
         this.answers = comment.getSubComments().stream()
                 .map(c -> new Answer(c))
                 .collect(Collectors.toList());
@@ -42,6 +48,7 @@ public class GetCommentResponse {
     @NoArgsConstructor
     static class Answer {
         private Long id;
+        private Long writer_id;
         private String nickname;
         private String content;
         private Integer heartCnt;
@@ -51,12 +58,16 @@ public class GetCommentResponse {
 
         public Answer(Comment comment) {
             this.id = comment.getId();
-            this.nickname = comment.getUser().getNickName();
+            User writer = comment.getUser();
+            if (writer != null) {
+                this.writer_id = writer.getId();
+                this.nickname = writer.getNickName();
+                this.heartCnt = comment.getCommentHearts().size();
+                this.anonymous = comment.getAnonymous();
+            }
             this.content = comment.getContent();
-            this.heartCnt = comment.getCommentHearts().size();
             this.date = comment.getDate();
             this.time = comment.getTime();
-            this.anonymous = comment.getAnonymous();
         }
     }
 }

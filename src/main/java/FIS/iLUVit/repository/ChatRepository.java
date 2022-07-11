@@ -20,7 +20,4 @@ public interface ChatRepository extends JpaRepository<Chat, Long> {
             "and cr.receiver.id = :userId order by c.createdDate desc ")
     Slice<Chat> findByChatRoom(@Param("userId") Long userId, @Param("roomId") Long roomId, Pageable pageable);
 
-    @Modifying(clearAutomatically = true)
-    @Query("delete from Chat c where c.chatRoom.id = :roomId ")
-    Integer deleteByChatRoom(@Param("roomId") Long roomId);
 }

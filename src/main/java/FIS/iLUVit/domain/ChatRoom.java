@@ -20,6 +20,8 @@ public class ChatRoom extends BaseEntity {
     private LocalTime time;             // 쪽지 발생 시간
     private String message;             // 쪽지 내용
 
+    private Long partner_id;            // 상대 ChatRoom 아이디
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "receiver_id")
     private User receiver;
@@ -36,7 +38,7 @@ public class ChatRoom extends BaseEntity {
     @JoinColumn(name = "comment_id")
     private Comment comment;
 
-    @OneToMany(mappedBy = "chatRoom", cascade = CascadeType.REMOVE)
+    @OneToMany(mappedBy = "chatRoom")
     private List<Chat> chatList = new ArrayList<>();
 
     public ChatRoom(User receiver, User sender, Post post) {
@@ -53,5 +55,9 @@ public class ChatRoom extends BaseEntity {
 
     public void updateMessage(String message) {
         this.message = message;
+    }
+
+    public void updatePartnerId(Long partner_id) {
+        this.partner_id = partner_id;
     }
 }
