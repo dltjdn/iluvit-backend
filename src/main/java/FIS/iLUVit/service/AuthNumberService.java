@@ -5,6 +5,7 @@ import FIS.iLUVit.controller.dto.FindPasswordRequest;
 import FIS.iLUVit.domain.AuthNumber;
 import FIS.iLUVit.domain.User;
 import FIS.iLUVit.domain.enumtype.AuthKind;
+import FIS.iLUVit.exception.AuthNumberErrorResult;
 import FIS.iLUVit.exception.AuthNumberException;
 import FIS.iLUVit.exception.SignupException;
 import FIS.iLUVit.exception.UserException;
@@ -29,21 +30,24 @@ import java.util.Random;
 @Slf4j
 @Service
 @Transactional
+@RequiredArgsConstructor
 public class AuthNumberService {
 
-    private final DefaultMessageService messageService;
+    private final DefaultMessageService defaultMessageService;
     private final UserRepository userRepository;
     private final AuthNumberRepository authNumberRepository;
     private final BCryptPasswordEncoder encoder;
 
-    @Autowired
-    public AuthNumberService(AuthNumberRepository authNumberRepository, UserRepository userRepository, BCryptPasswordEncoder encoder,
-                             @Value("${coolsms.api_key}") String api_key, @Value("${coolsms.api_secret}") String api_secret, @Value("${coolsms.domain}") String domain) {
-        this.messageService = NurigoApp.INSTANCE.initialize(api_key, api_secret, domain);
-        this.userRepository = userRepository;
-        this.authNumberRepository = authNumberRepository;
-        this.encoder = encoder;
-    }
+//    @Autowired
+//    public AuthNumberService(AuthNumberRepository authNumberRepository, UserRepository userRepository, BCryptPasswordEncoder encoder, DefaultMessageService defaultMessageService
+////                             @Value("${coolsms.api_key}") String api_key, @Value("${coolsms.api_secret}") String api_secret, @Value("${coolsms.domain}") String domain
+//    ) {
+////        this.messageService = NurigoApp.INSTANCE.initialize(api_key, api_secret, domain);
+//        this.defaultMessageService = defaultMessageService;
+//        this.userRepository = userRepository;
+//        this.authNumberRepository = authNumberRepository;
+//        this.encoder = encoder;
+//    }
 
     @Value("${coolsms.fromNumber}")
     private String fromNumber;
@@ -58,7 +62,7 @@ public class AuthNumberService {
         User findUser = userRepository.findByPhoneNumber(toNumber).orElse(null);
 
         if (findUser != null) {
-            throw new AuthNumberException("이미 서비스에 가입된 핸드폰 번호입니다.");
+            throw new AuthNumberException(AuthNumberErrorResult.ALREADY_PHONENUMBER_REGISTER);
         }
         sendAuthNumber(toNumber, authKind);
     }
@@ -101,8 +105,8 @@ public class AuthNumberService {
     public AuthNumber authenticateAuthNum(AuthenticateAuthNumRequest request) {
 
         AuthNumber authNumber = authNumberRepository
-                        .findByPhoneNumAndAuthNumAndAuthKind(request.getPhoneNum(), request.getAuthNum(), request.getAuthKind())
-                        .orElse(null);
+                .findByPhoneNumAndAuthNumAndAuthKind(request.getPhoneNum(), request.getAuthNum(), request.getAuthKind())
+                .orElse(null);
 
         if (authNumber == null) {
             throw new AuthNumberException("인증번호가 일치하지 않습니다.");
@@ -214,7 +218,7 @@ public class AuthNumberService {
         message.setTo(toNumber);
         message.setText("[아이러빗] 인증번호 " + authNumber + " 를 입력하세요.");
 
-        this.messageService.sendOne(new SingleMessageSendingRequest(message));
+        this.defaultMessageService.sendOne(new SingleMessageSendingRequest(message));
     }
 
     // 4자리 랜던 숫자 생성
@@ -228,3 +232,4 @@ public class AuthNumberService {
         return authNumber;
     }
 }
+
