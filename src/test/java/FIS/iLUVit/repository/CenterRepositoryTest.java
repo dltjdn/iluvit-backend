@@ -69,7 +69,7 @@ class CenterRepositoryTest {
         em.flush();
         //when
 
-        //centerRepository.findByFilter(gumchon, theme, 4, "ALL",)
+//        centerRepository.findByFilter(gumchon, theme, 4, "ALL",)
 
         //then
     }
