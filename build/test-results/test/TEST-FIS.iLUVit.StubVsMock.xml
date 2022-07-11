@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="FIS.iLUVit.StubVsMock" tests="2" skipped="0" failures="0" errors="0" timestamp="2022-07-08T06:08:57" hostname="hyeonseung-guui-MacBookPro.local" time="0.383">
+  <properties/>
+  <testcase name="이메일_stub_test()" classname="FIS.iLUVit.StubVsMock" time="0.359"/>
+  <testcase name="이메일_mock_test()" classname="FIS.iLUVit.StubVsMock" time="0.023"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

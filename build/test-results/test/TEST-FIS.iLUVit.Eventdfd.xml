@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="FIS.iLUVit.Eventdfd" tests="1" skipped="0" failures="0" errors="0" timestamp="2022-07-08T06:08:44" hostname="hyeonseung-guui-MacBookPro.local" time="0.106">
+  <properties/>
+  <testcase name="dd" classname="FIS.iLUVit.Eventdfd" time="0.106"/>
+  <system-out><![CDATA[15:08:44.445 [Test worker] DEBUG org.springframework.context.annotation.AnnotationConfigApplicationContext - Refreshing org.springframework.context.annotation.AnnotationConfigApplicationContext@6a9287b1
+15:08:44.453 [Test worker] DEBUG org.springframework.beans.factory.support.DefaultListableBeanFactory - Creating shared instance of singleton bean 'org.springframework.context.annotation.internalConfigurationAnnotationProcessor'
+15:08:44.470 [Test worker] DEBUG org.springframework.beans.factory.support.DefaultListableBeanFactory - Creating shared instance of singleton bean 'org.springframework.context.event.internalEventListenerProcessor'
+15:08:44.472 [Test worker] DEBUG org.springframework.beans.factory.support.DefaultListableBeanFactory - Creating shared instance of singleton bean 'org.springframework.context.event.internalEventListenerFactory'
+15:08:44.473 [Test worker] DEBUG org.springframework.beans.factory.support.DefaultListableBeanFactory - Creating shared instance of singleton bean 'org.springframework.context.annotation.internalAutowiredAnnotationProcessor'
+15:08:44.474 [Test worker] DEBUG org.springframework.beans.factory.support.DefaultListableBeanFactory - Creating shared instance of singleton bean 'org.springframework.context.annotation.internalCommonAnnotationProcessor'
+15:08:44.477 [Test worker] DEBUG org.springframework.beans.factory.support.DefaultListableBeanFactory - Creating shared instance of singleton bean 'org.springframework.context.annotation.internalPersistenceAnnotationProcessor'
+15:08:44.481 [Test worker] DEBUG org.springframework.beans.factory.support.DefaultListableBeanFactory - Creating shared instance of singleton bean 'eventdfd.SomeEventListener'
+15:08:44.487 [Test worker] DEBUG org.springframework.context.event.EventListenerMethodProcessor - 1 @EventListener methods processed on bean 'eventdfd.SomeEventListener': {public void FIS.iLUVit.Eventdfd$SomeEventListener.listen(FIS.iLUVit.event.AlarmEvent)=@org.springframework.context.event.EventListener(classes={FIS.iLUVit.event.AlarmEvent.class}, condition="", id="", value={FIS.iLUVit.event.AlarmEvent.class})}
+dddd
+15:08:44.504 [Test worker] DEBUG org.springframework.context.annotation.AnnotationConfigApplicationContext - Closing org.springframework.context.annotation.AnnotationConfigApplicationContext@6a9287b1, started on Fri Jul 08 15:08:44 KST 2022
+]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

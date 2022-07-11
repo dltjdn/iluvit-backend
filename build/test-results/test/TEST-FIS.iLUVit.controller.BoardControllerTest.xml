@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="FIS.iLUVit.controller.BoardControllerTest" tests="4" skipped="0" failures="0" errors="0" timestamp="2022-07-08T06:09:05" hostname="hyeonseung-guui-MacBookPro.local" time="0.493">
+  <properties/>
+  <testcase name="게시판_생성()" classname="FIS.iLUVit.controller.BoardControllerTest" time="0.394"/>
+  <testcase name="게시판_삭제()" classname="FIS.iLUVit.controller.BoardControllerTest" time="0.017"/>
+  <testcase name="모두의_이야기_내_게시판_목록_조회()" classname="FIS.iLUVit.controller.BoardControllerTest" time="0.067"/>
+  <testcase name="시설_유치원_내_게시판_목록_조회()" classname="FIS.iLUVit.controller.BoardControllerTest" time="0.014"/>
+  <system-out><![CDATA[2022-07-08 15:09:05.674  INFO 6000 --- [    Test worker] o.s.mock.web.MockServletContext          : Initializing Spring TestDispatcherServlet ''
+2022-07-08 15:09:05.674  INFO 6000 --- [    Test worker] o.s.t.web.servlet.TestDispatcherServlet  : Initializing Servlet ''
+2022-07-08 15:09:05.675  INFO 6000 --- [    Test worker] o.s.t.web.servlet.TestDispatcherServlet  : Completed initialization in 1 ms
+2022-07-08 15:09:05.942  INFO 6000 --- [    Test worker] o.s.mock.web.MockServletContext          : Initializing Spring TestDispatcherServlet ''
+2022-07-08 15:09:05.942  INFO 6000 --- [    Test worker] o.s.t.web.servlet.TestDispatcherServlet  : Initializing Servlet ''
+2022-07-08 15:09:05.942  INFO 6000 --- [    Test worker] o.s.t.web.servlet.TestDispatcherServlet  : Completed initialization in 0 ms
+2022-07-08 15:09:05.957  INFO 6000 --- [    Test worker] o.s.mock.web.MockServletContext          : Initializing Spring TestDispatcherServlet ''
+2022-07-08 15:09:05.957  INFO 6000 --- [    Test worker] o.s.t.web.servlet.TestDispatcherServlet  : Initializing Servlet ''
+2022-07-08 15:09:05.957  INFO 6000 --- [    Test worker] o.s.t.web.servlet.TestDispatcherServlet  : Completed initialization in 0 ms
+2022-07-08 15:09:06.024  INFO 6000 --- [    Test worker] o.s.mock.web.MockServletContext          : Initializing Spring TestDispatcherServlet ''
+2022-07-08 15:09:06.024  INFO 6000 --- [    Test worker] o.s.t.web.servlet.TestDispatcherServlet  : Initializing Servlet ''
+2022-07-08 15:09:06.025  INFO 6000 --- [    Test worker] o.s.t.web.servlet.TestDispatcherServlet  : Completed initialization in 1 ms
+]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

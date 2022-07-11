@@ -1,8 +1,8 @@
 package FIS.iLUVit.service;
 
-import FIS.iLUVit.domain.Center;
-import FIS.iLUVit.domain.Presentation;
-import FIS.iLUVit.domain.PtDate;
+import FIS.iLUVit.domain.*;
+import FIS.iLUVit.domain.enumtype.Auth;
+import FIS.iLUVit.domain.enumtype.Status;
 import FIS.iLUVit.repository.*;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -34,9 +34,10 @@ class PresentationServiceTest {
     private PresentationService presentationService;
 
     Center center;
+    Center center2;
     Presentation presentation;
-    Center kindergarten;
     PtDate ptDate1;
+    PtDate ptDate2;
     MockMultipartFile mockMultipartFile;
 
     private MockMultipartFile getMockMultipartFile(String fileName, String contentType, String path) throws IOException {
@@ -47,10 +48,10 @@ class PresentationServiceTest {
     @BeforeEach
     void init() throws IOException {
 
-        String fileName = "testCustomerUpload";
-        String contentType = "xls";
-        String filePath = "src/test/resources/excel/testCustomerUpload.xls";
-        mockMultipartFile = getMockMultipartFile(fileName, contentType, filePath);
+        //String fileName = "testCustomerUpload";
+        //String contentType = "xls";
+        //String filePath = "src/test/resources/excel/testCustomerUpload.xls";
+        //mockMultipartFile = getMockMultipartFile(fileName, contentType, filePath);
 
         center = Center.builder()
                 .id(1L)
@@ -68,7 +69,7 @@ class PresentationServiceTest {
                 .center(center)
                 .build();
 
-        kindergarten = Center.builder()
+        center2 = Center.builder()
                 .id(1L)
                 .address("test 주소")
                 .name("test 유치원")
@@ -83,12 +84,33 @@ class PresentationServiceTest {
                 .waitingCnt(0)
                 .build();
 
+        ptDate2 = PtDate.builder()
+                .id(2L)
+                .date(LocalDate.now())
+                .time("오후 9시")
+                .ablePersonNum(3)
+                .participantCnt(1)
+                .waitingCnt(0)
+                .presentation(presentation)
+                .build();
+
+        Parent parent = Parent.builder()
+                .auth(Auth.PARENT)
+                .name("test")
+                .build();
+
+        Participation participation = Participation.builder()
+                .ptDate(ptDate1)
+                .parent(parent)
+                .status(Status.JOINED)
+                .build();
+
     }
 
     @Test
     void 설명회_수정하기() {
         //given
-
+        String centerDir = imageService.getCenterDir(1L);
         //when
 
         //then

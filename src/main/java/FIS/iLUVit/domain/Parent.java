@@ -38,7 +38,8 @@ public class Parent extends User {
 
 
     @Builder
-    public Parent(String nickName, String loginId, String password, String phoneNumber, Boolean hasProfileImg, String emailAddress, String name, Theme theme, Integer interestAge, Auth auth, String address, String detailAddress) {
+    public Parent(Long id, String nickName, String loginId, String password, String phoneNumber, Boolean hasProfileImg, String emailAddress, String name, Theme theme, Integer interestAge, Auth auth, String address, String detailAddress) {
+        this.id = id;
         this.loginId = loginId;
         this.name = name;
         this.nickName = nickName;

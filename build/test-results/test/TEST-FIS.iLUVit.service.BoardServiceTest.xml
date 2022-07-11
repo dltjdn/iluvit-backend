@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="FIS.iLUVit.service.BoardServiceTest" tests="5" skipped="0" failures="0" errors="0" timestamp="2022-07-08T06:09:14" hostname="hyeonseung-guui-MacBookPro.local" time="0.08">
+  <properties/>
+  <testcase name="센터의_이야기_게시판_추가()" classname="FIS.iLUVit.service.BoardServiceTest" time="0.066"/>
+  <testcase name="모두의_이야기_게시판_추가()" classname="FIS.iLUVit.service.BoardServiceTest" time="0.001"/>
+  <testcase name="모두의_이야기_게시판_추가_중복이름검증()" classname="FIS.iLUVit.service.BoardServiceTest" time="0.007"/>
+  <testcase name="센터의_이야기_게시판_추가_중복이름검증()" classname="FIS.iLUVit.service.BoardServiceTest" time="0.002"/>
+  <testcase name="모두의_이야기_모든_게시판_조회()" classname="FIS.iLUVit.service.BoardServiceTest" time="0.002"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

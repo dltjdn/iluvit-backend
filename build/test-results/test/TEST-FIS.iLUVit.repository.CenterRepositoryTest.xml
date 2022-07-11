@@ -1,0 +1,288 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="FIS.iLUVit.repository.CenterRepositoryTest" tests="6" skipped="0" failures="0" errors="0" timestamp="2022-07-08T06:09:09" hostname="hyeonseung-guui-MacBookPro.local" time="0.133">
+  <properties/>
+  <testcase name="findBannerById()" classname="FIS.iLUVit.repository.CenterRepositoryTest" time="0.101"/>
+  <testcase name="findByIdWithTeacher()" classname="FIS.iLUVit.repository.CenterRepositoryTest" time="0.005"/>
+  <testcase name="findByThemeAndAgeOnly3()" classname="FIS.iLUVit.repository.CenterRepositoryTest" time="0.005"/>
+  <testcase name="findByIdAndSignedWithBoard()" classname="FIS.iLUVit.repository.CenterRepositoryTest" time="0.006"/>
+  <testcase name="findCenterByTeacher()" classname="FIS.iLUVit.repository.CenterRepositoryTest" time="0.006"/>
+  <testcase name="findByUser()" classname="FIS.iLUVit.repository.CenterRepositoryTest" time="0.005"/>
+  <system-out><![CDATA[2022-07-08 15:09:09.280  INFO 6000 --- [    Test worker] b.t.a.o.j.DataJpaTestContextBootstrapper : Neither @ContextConfiguration nor @ContextHierarchy found for test class [FIS.iLUVit.repository.CenterRepositoryTest], using SpringBootContextLoader
+2022-07-08 15:09:09.281  INFO 6000 --- [    Test worker] o.s.t.c.support.AbstractContextLoader    : Could not detect default resource locations for test class [FIS.iLUVit.repository.CenterRepositoryTest]: no resource found for suffixes {-context.xml, Context.groovy}.
+2022-07-08 15:09:09.281  INFO 6000 --- [    Test worker] t.c.s.AnnotationConfigContextLoaderUtils : Could not detect default configuration classes for test class [FIS.iLUVit.repository.CenterRepositoryTest]: CenterRepositoryTest does not declare any static, non-private, non-final, nested classes annotated with @Configuration.
+2022-07-08 15:09:09.282  INFO 6000 --- [    Test worker] .b.t.c.SpringBootTestContextBootstrapper : Found @SpringBootConfiguration FIS.iLUVit.ILuVitApplication for test class FIS.iLUVit.repository.CenterRepositoryTest
+2022-07-08 15:09:09.283  INFO 6000 --- [    Test worker] b.t.a.o.j.DataJpaTestContextBootstrapper : Loaded default TestExecutionListener class names from location [META-INF/spring.factories]: [org.springframework.security.test.context.support.WithSecurityContextTestExecutionListener, org.springframework.security.test.context.support.ReactorContextTestExecutionListener, org.springframework.boot.test.autoconfigure.restdocs.RestDocsTestExecutionListener, org.springframework.boot.test.autoconfigure.web.client.MockRestServiceServerResetTestExecutionListener, org.springframework.boot.test.autoconfigure.web.servlet.MockMvcPrintOnlyOnFailureTestExecutionListener, org.springframework.boot.test.autoconfigure.web.servlet.WebDriverTestExecutionListener, org.springframework.boot.test.autoconfigure.webservices.client.MockWebServiceServerTestExecutionListener, org.springframework.boot.test.mock.mockito.MockitoTestExecutionListener, org.springframework.boot.test.mock.mockito.ResetMocksTestExecutionListener, org.springframework.test.context.web.ServletTestExecutionListener, org.springframework.test.context.support.DirtiesContextBeforeModesTestExecutionListener, org.springframework.test.context.event.ApplicationEventsTestExecutionListener, org.springframework.test.context.support.DependencyInjectionTestExecutionListener, org.springframework.test.context.support.DirtiesContextTestExecutionListener, org.springframework.test.context.transaction.TransactionalTestExecutionListener, org.springframework.test.context.jdbc.SqlScriptsTestExecutionListener, org.springframework.test.context.event.EventPublishingTestExecutionListener]
+2022-07-08 15:09:09.283  INFO 6000 --- [    Test worker] b.t.a.o.j.DataJpaTestContextBootstrapper : Using TestExecutionListeners: [org.springframework.test.context.web.ServletTestExecutionListener@94cdf07, org.springframework.test.context.support.DirtiesContextBeforeModesTestExecutionListener@1976008c, org.springframework.test.context.event.ApplicationEventsTestExecutionListener@3a9b4a6e, org.springframework.boot.test.mock.mockito.MockitoTestExecutionListener@481c2454, org.springframework.boot.test.autoconfigure.SpringBootDependencyInjectionTestExecutionListener@27477eb7, org.springframework.test.context.support.DirtiesContextTestExecutionListener@e9c78b3, org.springframework.test.context.transaction.TransactionalTestExecutionListener@6eb48b34, org.springframework.test.context.jdbc.SqlScriptsTestExecutionListener@47232c32, org.springframework.security.test.context.support.WithSecurityContextTestExecutionListener@5b0d50a7, org.springframework.test.context.event.EventPublishingTestExecutionListener@36b9f295, org.springframework.security.test.context.support.ReactorContextTestExecutionListener@7c1e325d, org.springframework.boot.test.autoconfigure.restdocs.RestDocsTestExecutionListener@2202c350, org.springframework.boot.test.autoconfigure.web.client.MockRestServiceServerResetTestExecutionListener@133b27df, org.springframework.boot.test.autoconfigure.web.servlet.MockMvcPrintOnlyOnFailureTestExecutionListener@6aef4277, org.springframework.boot.test.autoconfigure.web.servlet.WebDriverTestExecutionListener@67ee19ad, org.springframework.boot.test.autoconfigure.webservices.client.MockWebServiceServerTestExecutionListener@53c25e43, org.springframework.boot.test.mock.mockito.ResetMocksTestExecutionListener@198d9e3b]
+2022-07-08 15:09:09.287  INFO 6000 --- [    Test worker] o.s.t.c.transaction.TransactionContext   : Began transaction (1) for test context [DefaultTestContext@2f151750 testClass = CenterRepositoryTest, testInstance = FIS.iLUVit.repository.CenterRepositoryTest@1f33e4b5, testMethod = findBannerById@CenterRepositoryTest, testException = [null], mergedContextConfiguration = [MergedContextConfiguration@6500d306 testClass = CenterRepositoryTest, locations = '{}', classes = '{class FIS.iLUVit.ILuVitApplication}', contextInitializerClasses = '[]', activeProfiles = '{}', propertySourceLocations = '{}', propertySourceProperties = '{org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTestContextBootstrapper=true}', contextCustomizers = set[org.springframework.boot.test.autoconfigure.OverrideAutoConfigurationContextCustomizerFactory$DisableAutoConfigurationContextCustomizer@1f404aa1, org.springframework.boot.test.autoconfigure.actuate.metrics.MetricsExportContextCustomizerFactory$DisableMetricExportContextCustomizer@2dd29a59, org.springframework.boot.test.autoconfigure.filter.TypeExcludeFiltersContextCustomizer@801efc8c, org.springframework.boot.test.autoconfigure.properties.PropertyMappingContextCustomizer@c5c6ab73, org.springframework.boot.test.autoconfigure.web.servlet.WebDriverContextCustomizerFactory$Customizer@ec2cc4, [ImportsContextCustomizer@230a9783 key = [org.springframework.boot.autoconfigure.cache.CacheAutoConfiguration, org.springframework.boot.autoconfigure.data.jpa.JpaRepositoriesAutoConfiguration, org.springframework.boot.autoconfigure.flyway.FlywayAutoConfiguration, org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration, org.springframework.boot.autoconfigure.jdbc.DataSourceTransactionManagerAutoConfiguration, org.springframework.boot.autoconfigure.jdbc.JdbcTemplateAutoConfiguration, org.springframework.boot.autoconfigure.liquibase.LiquibaseAutoConfiguration, org.springframework.boot.autoconfigure.orm.jpa.HibernateJpaAutoConfiguration, org.springframework.boot.autoconfigure.sql.init.SqlInitializationAutoConfiguration, org.springframework.boot.autoconfigure.transaction.TransactionAutoConfiguration, org.springframework.boot.test.autoconfigure.jdbc.TestDatabaseAutoConfiguration, org.springframework.boot.test.autoconfigure.orm.jpa.TestEntityManagerAutoConfiguration]], org.springframework.boot.test.context.filter.ExcludeFilterContextCustomizer@2101b44a, org.springframework.boot.test.json.DuplicateJsonObjectContextCustomizerFactory$DuplicateJsonObjectContextCustomizer@119020fb, org.springframework.boot.test.mock.mockito.MockitoContextCustomizer@0, org.springframework.boot.test.context.SpringBootTestArgs@1, org.springframework.boot.test.context.SpringBootTestWebEnvironment@0], contextLoader = 'org.springframework.boot.test.context.SpringBootContextLoader', parent = [null]], attributes = map['org.springframework.test.context.event.ApplicationEventsTestExecutionListener.recordApplicationEvents' -> false]]; transaction manager [org.springframework.orm.jpa.JpaTransactionManager@47e83e72]; rollback [true]
+2022-07-08 15:09:09.290 DEBUG 6000 --- [    Test worker] org.hibernate.SQL                        : 
+    call next value for hibernate_sequence
+Hibernate: 
+    call next value for hibernate_sequence
+2022-07-08 15:09:09.363 DEBUG 6000 --- [    Test worker] org.hibernate.SQL                        : 
+    insert 
+    into
+        Center
+        (createdDate, updatedDate, addInfo, address, sido, sigungu, buildingYear, busCnt, cctvCnt, hasBackpack, hasBus, hasCCTV, hasHandWriteNote, hasKidsNote, hasPhysics, hasPlayground, hasSwimPool, hasUniform, child_0, child_1, child_2, child_3, child_4, child_5, child_spe, class_0, class_1, class_2, class_3, class_4, class_5, cost0, cost1, cost2, cost3, cost4, cost5, curChildCnt, director, endTime, estDate, estType, homepage, imgCnt, introText, latitude, longitude, maxAge, maxChildCnt, minAge, name, offerService, participation, visited, owner, program, recruit, score, signed, startTime, status, dur12, dur24, dur46, dur6_, dur_1, totalCnt, tel, animal, art, buddhism, camping, catholic, christianity, clean, coding, english, foreigner, genius, manner, math, music, nature, plant, sport, updateDate, videoCnt, waitingNum, zipcode, kindOf, id) 
+    values
+        (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 'Kindergarten', ?)
+Hibernate: 
+    insert 
+    into
+        Center
+        (createdDate, updatedDate, addInfo, address, sido, sigungu, buildingYear, busCnt, cctvCnt, hasBackpack, hasBus, hasCCTV, hasHandWriteNote, hasKidsNote, hasPhysics, hasPlayground, hasSwimPool, hasUniform, child_0, child_1, child_2, child_3, child_4, child_5, child_spe, class_0, class_1, class_2, class_3, class_4, class_5, cost0, cost1, cost2, cost3, cost4, cost5, curChildCnt, director, endTime, estDate, estType, homepage, imgCnt, introText, latitude, longitude, maxAge, maxChildCnt, minAge, name, offerService, participation, visited, owner, program, recruit, score, signed, startTime, status, dur12, dur24, dur46, dur6_, dur_1, totalCnt, tel, animal, art, buddhism, camping, catholic, christianity, clean, coding, english, foreigner, genius, manner, math, music, nature, plant, sport, updateDate, videoCnt, waitingNum, zipcode, kindOf, id) 
+    values
+        (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 'Kindergarten', ?)
+2022-07-08 15:09:09.369 DEBUG 6000 --- [    Test worker] org.hibernate.SQL                        : 
+    insert 
+    into
+        Kindergarten
+        (id) 
+    values
+        (?)
+Hibernate: 
+    insert 
+    into
+        Kindergarten
+        (id) 
+    values
+        (?)
+2022-07-08 15:09:09.373 DEBUG 6000 --- [    Test worker] org.hibernate.SQL                        : 
+    select
+        center0_.id as col_0_0_,
+        avg(cast(reviews1_.score as double)) as col_1_0_,
+        center0_.id as id2_5_,
+        center0_.createdDate as createdd3_5_,
+        center0_.updatedDate as updatedd4_5_,
+        center0_.addInfo as addinfo5_5_,
+        center0_.address as address6_5_,
+        center0_.sido as sido7_5_,
+        center0_.sigungu as sigungu8_5_,
+        center0_.buildingYear as building9_5_,
+        center0_.busCnt as buscnt10_5_,
+        center0_.cctvCnt as cctvcnt11_5_,
+        center0_.hasBackpack as hasback12_5_,
+        center0_.hasBus as hasbus13_5_,
+        center0_.hasCCTV as hascctv14_5_,
+        center0_.hasHandWriteNote as hashand15_5_,
+        center0_.hasKidsNote as haskids16_5_,
+        center0_.hasPhysics as hasphys17_5_,
+        center0_.hasPlayground as hasplay18_5_,
+        center0_.hasSwimPool as hasswim19_5_,
+        center0_.hasUniform as hasunif20_5_,
+        center0_.child_0 as child_21_5_,
+        center0_.child_1 as child_22_5_,
+        center0_.child_2 as child_23_5_,
+        center0_.child_3 as child_24_5_,
+        center0_.child_4 as child_25_5_,
+        center0_.child_5 as child_26_5_,
+        center0_.child_spe as child_s27_5_,
+        center0_.class_0 as class_28_5_,
+        center0_.class_1 as class_29_5_,
+        center0_.class_2 as class_30_5_,
+        center0_.class_3 as class_31_5_,
+        center0_.class_4 as class_32_5_,
+        center0_.class_5 as class_33_5_,
+        center0_.cost0 as cost34_5_,
+        center0_.cost1 as cost35_5_,
+        center0_.cost2 as cost36_5_,
+        center0_.cost3 as cost37_5_,
+        center0_.cost4 as cost38_5_,
+        center0_.cost5 as cost39_5_,
+        center0_.curChildCnt as curchil40_5_,
+        center0_.director as directo41_5_,
+        center0_.endTime as endtime42_5_,
+        center0_.estDate as estdate43_5_,
+        center0_.estType as esttype44_5_,
+        center0_.homepage as homepag45_5_,
+        center0_.imgCnt as imgcnt46_5_,
+        center0_.introText as introte47_5_,
+        center0_.kindOf as kindof1_5_,
+        center0_.latitude as latitud48_5_,
+        center0_.longitude as longitu49_5_,
+        center0_.maxAge as maxage50_5_,
+        center0_.maxChildCnt as maxchil51_5_,
+        center0_.minAge as minage52_5_,
+        center0_.name as name53_5_,
+        center0_.offerService as offerse54_5_,
+        center0_.participation as partici55_5_,
+        center0_.visited as visited56_5_,
+        center0_.owner as owner57_5_,
+        center0_.program as program58_5_,
+        center0_.recruit as recruit59_5_,
+        center0_.score as score60_5_,
+        center0_.signed as signed61_5_,
+        center0_.startTime as startti62_5_,
+        center0_.status as status63_5_,
+        center0_.dur12 as dur64_5_,
+        center0_.dur24 as dur65_5_,
+        center0_.dur46 as dur66_5_,
+        center0_.dur6_ as dur67_5_,
+        center0_.dur_1 as dur_68_5_,
+        center0_.totalCnt as totalcn69_5_,
+        center0_.tel as tel70_5_,
+        center0_.animal as animal71_5_,
+        center0_.art as art72_5_,
+        center0_.buddhism as buddhis73_5_,
+        center0_.camping as camping74_5_,
+        center0_.catholic as catholi75_5_,
+        center0_.christianity as christi76_5_,
+        center0_.clean as clean77_5_,
+        center0_.coding as coding78_5_,
+        center0_.english as english79_5_,
+        center0_.foreigner as foreign80_5_,
+        center0_.genius as genius81_5_,
+        center0_.manner as manner82_5_,
+        center0_.math as math83_5_,
+        center0_.music as music84_5_,
+        center0_.nature as nature85_5_,
+        center0_.plant as plant86_5_,
+        center0_.sport as sport87_5_,
+        center0_.updateDate as updated88_5_,
+        center0_.videoCnt as videocn89_5_,
+        center0_.waitingNum as waiting90_5_,
+        center0_.zipcode as zipcode91_5_ 
+    from
+        Center center0_ 
+    left outer join
+        ChildHouse center0_1_ 
+            on center0_.id=center0_1_.id 
+    left outer join
+        Kindergarten center0_2_ 
+            on center0_.id=center0_2_.id 
+    left outer join
+        Review reviews1_ 
+            on center0_.id=reviews1_.center_id 
+    where
+        center0_.sido=? 
+        and center0_.sigungu=? 
+    group by
+        center0_.id 
+    order by
+        center0_.score asc limit ?
+Hibernate: 
+    select
+        center0_.id as col_0_0_,
+        avg(cast(reviews1_.score as double)) as col_1_0_,
+        center0_.id as id2_5_,
+        center0_.createdDate as createdd3_5_,
+        center0_.updatedDate as updatedd4_5_,
+        center0_.addInfo as addinfo5_5_,
+        center0_.address as address6_5_,
+        center0_.sido as sido7_5_,
+        center0_.sigungu as sigungu8_5_,
+        center0_.buildingYear as building9_5_,
+        center0_.busCnt as buscnt10_5_,
+        center0_.cctvCnt as cctvcnt11_5_,
+        center0_.hasBackpack as hasback12_5_,
+        center0_.hasBus as hasbus13_5_,
+        center0_.hasCCTV as hascctv14_5_,
+        center0_.hasHandWriteNote as hashand15_5_,
+        center0_.hasKidsNote as haskids16_5_,
+        center0_.hasPhysics as hasphys17_5_,
+        center0_.hasPlayground as hasplay18_5_,
+        center0_.hasSwimPool as hasswim19_5_,
+        center0_.hasUniform as hasunif20_5_,
+        center0_.child_0 as child_21_5_,
+        center0_.child_1 as child_22_5_,
+        center0_.child_2 as child_23_5_,
+        center0_.child_3 as child_24_5_,
+        center0_.child_4 as child_25_5_,
+        center0_.child_5 as child_26_5_,
+        center0_.child_spe as child_s27_5_,
+        center0_.class_0 as class_28_5_,
+        center0_.class_1 as class_29_5_,
+        center0_.class_2 as class_30_5_,
+        center0_.class_3 as class_31_5_,
+        center0_.class_4 as class_32_5_,
+        center0_.class_5 as class_33_5_,
+        center0_.cost0 as cost34_5_,
+        center0_.cost1 as cost35_5_,
+        center0_.cost2 as cost36_5_,
+        center0_.cost3 as cost37_5_,
+        center0_.cost4 as cost38_5_,
+        center0_.cost5 as cost39_5_,
+        center0_.curChildCnt as curchil40_5_,
+        center0_.director as directo41_5_,
+        center0_.endTime as endtime42_5_,
+        center0_.estDate as estdate43_5_,
+        center0_.estType as esttype44_5_,
+        center0_.homepage as homepag45_5_,
+        center0_.imgCnt as imgcnt46_5_,
+        center0_.introText as introte47_5_,
+        center0_.kindOf as kindof1_5_,
+        center0_.latitude as latitud48_5_,
+        center0_.longitude as longitu49_5_,
+        center0_.maxAge as maxage50_5_,
+        center0_.maxChildCnt as maxchil51_5_,
+        center0_.minAge as minage52_5_,
+        center0_.name as name53_5_,
+        center0_.offerService as offerse54_5_,
+        center0_.participation as partici55_5_,
+        center0_.visited as visited56_5_,
+        center0_.owner as owner57_5_,
+        center0_.program as program58_5_,
+        center0_.recruit as recruit59_5_,
+        center0_.score as score60_5_,
+        center0_.signed as signed61_5_,
+        center0_.startTime as startti62_5_,
+        center0_.status as status63_5_,
+        center0_.dur12 as dur64_5_,
+        center0_.dur24 as dur65_5_,
+        center0_.dur46 as dur66_5_,
+        center0_.dur6_ as dur67_5_,
+        center0_.dur_1 as dur_68_5_,
+        center0_.totalCnt as totalcn69_5_,
+        center0_.tel as tel70_5_,
+        center0_.animal as animal71_5_,
+        center0_.art as art72_5_,
+        center0_.buddhism as buddhis73_5_,
+        center0_.camping as camping74_5_,
+        center0_.catholic as catholi75_5_,
+        center0_.christianity as christi76_5_,
+        center0_.clean as clean77_5_,
+        center0_.coding as coding78_5_,
+        center0_.english as english79_5_,
+        center0_.foreigner as foreign80_5_,
+        center0_.genius as genius81_5_,
+        center0_.manner as manner82_5_,
+        center0_.math as math83_5_,
+        center0_.music as music84_5_,
+        center0_.nature as nature85_5_,
+        center0_.plant as plant86_5_,
+        center0_.sport as sport87_5_,
+        center0_.updateDate as updated88_5_,
+        center0_.videoCnt as videocn89_5_,
+        center0_.waitingNum as waiting90_5_,
+        center0_.zipcode as zipcode91_5_ 
+    from
+        Center center0_ 
+    left outer join
+        ChildHouse center0_1_ 
+            on center0_.id=center0_1_.id 
+    left outer join
+        Kindergarten center0_2_ 
+            on center0_.id=center0_2_.id 
+    left outer join
+        Review reviews1_ 
+            on center0_.id=reviews1_.center_id 
+    where
+        center0_.sido=? 
+        and center0_.sigungu=? 
+    group by
+        center0_.id 
+    order by
+        center0_.score asc limit ?
+2022-07-08 15:09:09.387  INFO 6000 --- [    Test worker] o.s.t.c.transaction.TransactionContext   : Rolled back transaction for test: [DefaultTestContext@2f151750 testClass = CenterRepositoryTest, testInstance = FIS.iLUVit.repository.CenterRepositoryTest@1f33e4b5, testMethod = findBannerById@CenterRepositoryTest, testException = [null], mergedContextConfiguration = [MergedContextConfiguration@6500d306 testClass = CenterRepositoryTest, locations = '{}', classes = '{class FIS.iLUVit.ILuVitApplication}', contextInitializerClasses = '[]', activeProfiles = '{}', propertySourceLocations = '{}', propertySourceProperties = '{org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTestContextBootstrapper=true}', contextCustomizers = set[org.springframework.boot.test.autoconfigure.OverrideAutoConfigurationContextCustomizerFactory$DisableAutoConfigurationContextCustomizer@1f404aa1, org.springframework.boot.test.autoconfigure.actuate.metrics.MetricsExportContextCustomizerFactory$DisableMetricExportContextCustomizer@2dd29a59, org.springframework.boot.test.autoconfigure.filter.TypeExcludeFiltersContextCustomizer@801efc8c, org.springframework.boot.test.autoconfigure.properties.PropertyMappingContextCustomizer@c5c6ab73, org.springframework.boot.test.autoconfigure.web.servlet.WebDriverContextCustomizerFactory$Customizer@ec2cc4, [ImportsContextCustomizer@230a9783 key = [org.springframework.boot.autoconfigure.cache.CacheAutoConfiguration, org.springframework.boot.autoconfigure.data.jpa.JpaRepositoriesAutoConfiguration, org.springframework.boot.autoconfigure.flyway.FlywayAutoConfiguration, org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration, org.springframework.boot.autoconfigure.jdbc.DataSourceTransactionManagerAutoConfiguration, org.springframework.boot.autoconfigure.jdbc.JdbcTemplateAutoConfiguration, org.springframework.boot.autoconfigure.liquibase.LiquibaseAutoConfiguration, org.springframework.boot.autoconfigure.orm.jpa.HibernateJpaAutoConfiguration, org.springframework.boot.autoconfigure.sql.init.SqlInitializationAutoConfiguration, org.springframework.boot.autoconfigure.transaction.TransactionAutoConfiguration, org.springframework.boot.test.autoconfigure.jdbc.TestDatabaseAutoConfiguration, org.springframework.boot.test.autoconfigure.orm.jpa.TestEntityManagerAutoConfiguration]], org.springframework.boot.test.context.filter.ExcludeFilterContextCustomizer@2101b44a, org.springframework.boot.test.json.DuplicateJsonObjectContextCustomizerFactory$DuplicateJsonObjectContextCustomizer@119020fb, org.springframework.boot.test.mock.mockito.MockitoContextCustomizer@0, org.springframework.boot.test.context.SpringBootTestArgs@1, org.springframework.boot.test.context.SpringBootTestWebEnvironment@0], contextLoader = 'org.springframework.boot.test.context.SpringBootContextLoader', parent = [null]], attributes = map['org.springframework.test.context.event.ApplicationEventsTestExecutionListener.recordApplicationEvents' -> false]]
+2022-07-08 15:09:09.389  INFO 6000 --- [    Test worker] o.s.t.c.transaction.TransactionContext   : Began transaction (1) for test context [DefaultTestContext@2f151750 testClass = CenterRepositoryTest, testInstance = FIS.iLUVit.repository.CenterRepositoryTest@4f8365b2, testMethod = findByIdWithTeacher@CenterRepositoryTest, testException = [null], mergedContextConfiguration = [MergedContextConfiguration@6500d306 testClass = CenterRepositoryTest, locations = '{}', classes = '{class FIS.iLUVit.ILuVitApplication}', contextInitializerClasses = '[]', activeProfiles = '{}', propertySourceLocations = '{}', propertySourceProperties = '{org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTestContextBootstrapper=true}', contextCustomizers = set[org.springframework.boot.test.autoconfigure.OverrideAutoConfigurationContextCustomizerFactory$DisableAutoConfigurationContextCustomizer@1f404aa1, org.springframework.boot.test.autoconfigure.actuate.metrics.MetricsExportContextCustomizerFactory$DisableMetricExportContextCustomizer@2dd29a59, org.springframework.boot.test.autoconfigure.filter.TypeExcludeFiltersContextCustomizer@801efc8c, org.springframework.boot.test.autoconfigure.properties.PropertyMappingContextCustomizer@c5c6ab73, org.springframework.boot.test.autoconfigure.web.servlet.WebDriverContextCustomizerFactory$Customizer@ec2cc4, [ImportsContextCustomizer@230a9783 key = [org.springframework.boot.autoconfigure.cache.CacheAutoConfiguration, org.springframework.boot.autoconfigure.data.jpa.JpaRepositoriesAutoConfiguration, org.springframework.boot.autoconfigure.flyway.FlywayAutoConfiguration, org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration, org.springframework.boot.autoconfigure.jdbc.DataSourceTransactionManagerAutoConfiguration, org.springframework.boot.autoconfigure.jdbc.JdbcTemplateAutoConfiguration, org.springframework.boot.autoconfigure.liquibase.LiquibaseAutoConfiguration, org.springframework.boot.autoconfigure.orm.jpa.HibernateJpaAutoConfiguration, org.springframework.boot.autoconfigure.sql.init.SqlInitializationAutoConfiguration, org.springframework.boot.autoconfigure.transaction.TransactionAutoConfiguration, org.springframework.boot.test.autoconfigure.jdbc.TestDatabaseAutoConfiguration, org.springframework.boot.test.autoconfigure.orm.jpa.TestEntityManagerAutoConfiguration]], org.springframework.boot.test.context.filter.ExcludeFilterContextCustomizer@2101b44a, org.springframework.boot.test.json.DuplicateJsonObjectContextCustomizerFactory$DuplicateJsonObjectContextCustomizer@119020fb, org.springframework.boot.test.mock.mockito.MockitoContextCustomizer@0, org.springframework.boot.test.context.SpringBootTestArgs@1, org.springframework.boot.test.context.SpringBootTestWebEnvironment@0], contextLoader = 'org.springframework.boot.test.context.SpringBootContextLoader', parent = [null]], attributes = map['org.springframework.test.context.event.ApplicationEventsTestExecutionListener.recordApplicationEvents' -> false]]; transaction manager [org.springframework.orm.jpa.JpaTransactionManager@47e83e72]; rollback [true]
+2022-07-08 15:09:09.393  INFO 6000 --- [    Test worker] o.s.t.c.transaction.TransactionContext   : Rolled back transaction for test: [DefaultTestContext@2f151750 testClass = CenterRepositoryTest, testInstance = FIS.iLUVit.repository.CenterRepositoryTest@4f8365b2, testMethod = findByIdWithTeacher@CenterRepositoryTest, testException = [null], mergedContextConfiguration = [MergedContextConfiguration@6500d306 testClass = CenterRepositoryTest, locations = '{}', classes = '{class FIS.iLUVit.ILuVitApplication}', contextInitializerClasses = '[]', activeProfiles = '{}', propertySourceLocations = '{}', propertySourceProperties = '{org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTestContextBootstrapper=true}', contextCustomizers = set[org.springframework.boot.test.autoconfigure.OverrideAutoConfigurationContextCustomizerFactory$DisableAutoConfigurationContextCustomizer@1f404aa1, org.springframework.boot.test.autoconfigure.actuate.metrics.MetricsExportContextCustomizerFactory$DisableMetricExportContextCustomizer@2dd29a59, org.springframework.boot.test.autoconfigure.filter.TypeExcludeFiltersContextCustomizer@801efc8c, org.springframework.boot.test.autoconfigure.properties.PropertyMappingContextCustomizer@c5c6ab73, org.springframework.boot.test.autoconfigure.web.servlet.WebDriverContextCustomizerFactory$Customizer@ec2cc4, [ImportsContextCustomizer@230a9783 key = [org.springframework.boot.autoconfigure.cache.CacheAutoConfiguration, org.springframework.boot.autoconfigure.data.jpa.JpaRepositoriesAutoConfiguration, org.springframework.boot.autoconfigure.flyway.FlywayAutoConfiguration, org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration, org.springframework.boot.autoconfigure.jdbc.DataSourceTransactionManagerAutoConfiguration, org.springframework.boot.autoconfigure.jdbc.JdbcTemplateAutoConfiguration, org.springframework.boot.autoconfigure.liquibase.LiquibaseAutoConfiguration, org.springframework.boot.autoconfigure.orm.jpa.HibernateJpaAutoConfiguration, org.springframework.boot.autoconfigure.sql.init.SqlInitializationAutoConfiguration, org.springframework.boot.autoconfigure.transaction.TransactionAutoConfiguration, org.springframework.boot.test.autoconfigure.jdbc.TestDatabaseAutoConfiguration, org.springframework.boot.test.autoconfigure.orm.jpa.TestEntityManagerAutoConfiguration]], org.springframework.boot.test.context.filter.ExcludeFilterContextCustomizer@2101b44a, org.springframework.boot.test.json.DuplicateJsonObjectContextCustomizerFactory$DuplicateJsonObjectContextCustomizer@119020fb, org.springframework.boot.test.mock.mockito.MockitoContextCustomizer@0, org.springframework.boot.test.context.SpringBootTestArgs@1, org.springframework.boot.test.context.SpringBootTestWebEnvironment@0], contextLoader = 'org.springframework.boot.test.context.SpringBootContextLoader', parent = [null]], attributes = map['org.springframework.test.context.event.ApplicationEventsTestExecutionListener.recordApplicationEvents' -> false]]
+2022-07-08 15:09:09.395  INFO 6000 --- [    Test worker] o.s.t.c.transaction.TransactionContext   : Began transaction (1) for test context [DefaultTestContext@2f151750 testClass = CenterRepositoryTest, testInstance = FIS.iLUVit.repository.CenterRepositoryTest@6d093764, testMethod = findByThemeAndAgeOnly3@CenterRepositoryTest, testException = [null], mergedContextConfiguration = [MergedContextConfiguration@6500d306 testClass = CenterRepositoryTest, locations = '{}', classes = '{class FIS.iLUVit.ILuVitApplication}', contextInitializerClasses = '[]', activeProfiles = '{}', propertySourceLocations = '{}', propertySourceProperties = '{org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTestContextBootstrapper=true}', contextCustomizers = set[org.springframework.boot.test.autoconfigure.OverrideAutoConfigurationContextCustomizerFactory$DisableAutoConfigurationContextCustomizer@1f404aa1, org.springframework.boot.test.autoconfigure.actuate.metrics.MetricsExportContextCustomizerFactory$DisableMetricExportContextCustomizer@2dd29a59, org.springframework.boot.test.autoconfigure.filter.TypeExcludeFiltersContextCustomizer@801efc8c, org.springframework.boot.test.autoconfigure.properties.PropertyMappingContextCustomizer@c5c6ab73, org.springframework.boot.test.autoconfigure.web.servlet.WebDriverContextCustomizerFactory$Customizer@ec2cc4, [ImportsContextCustomizer@230a9783 key = [org.springframework.boot.autoconfigure.cache.CacheAutoConfiguration, org.springframework.boot.autoconfigure.data.jpa.JpaRepositoriesAutoConfiguration, org.springframework.boot.autoconfigure.flyway.FlywayAutoConfiguration, org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration, org.springframework.boot.autoconfigure.jdbc.DataSourceTransactionManagerAutoConfiguration, org.springframework.boot.autoconfigure.jdbc.JdbcTemplateAutoConfiguration, org.springframework.boot.autoconfigure.liquibase.LiquibaseAutoConfiguration, org.springframework.boot.autoconfigure.orm.jpa.HibernateJpaAutoConfiguration, org.springframework.boot.autoconfigure.sql.init.SqlInitializationAutoConfiguration, org.springframework.boot.autoconfigure.transaction.TransactionAutoConfiguration, org.springframework.boot.test.autoconfigure.jdbc.TestDatabaseAutoConfiguration, org.springframework.boot.test.autoconfigure.orm.jpa.TestEntityManagerAutoConfiguration]], org.springframework.boot.test.context.filter.ExcludeFilterContextCustomizer@2101b44a, org.springframework.boot.test.json.DuplicateJsonObjectContextCustomizerFactory$DuplicateJsonObjectContextCustomizer@119020fb, org.springframework.boot.test.mock.mockito.MockitoContextCustomizer@0, org.springframework.boot.test.context.SpringBootTestArgs@1, org.springframework.boot.test.context.SpringBootTestWebEnvironment@0], contextLoader = 'org.springframework.boot.test.context.SpringBootContextLoader', parent = [null]], attributes = map['org.springframework.test.context.event.ApplicationEventsTestExecutionListener.recordApplicationEvents' -> false]]; transaction manager [org.springframework.orm.jpa.JpaTransactionManager@47e83e72]; rollback [true]
+2022-07-08 15:09:09.399  INFO 6000 --- [    Test worker] o.s.t.c.transaction.TransactionContext   : Rolled back transaction for test: [DefaultTestContext@2f151750 testClass = CenterRepositoryTest, testInstance = FIS.iLUVit.repository.CenterRepositoryTest@6d093764, testMethod = findByThemeAndAgeOnly3@CenterRepositoryTest, testException = [null], mergedContextConfiguration = [MergedContextConfiguration@6500d306 testClass = CenterRepositoryTest, locations = '{}', classes = '{class FIS.iLUVit.ILuVitApplication}', contextInitializerClasses = '[]', activeProfiles = '{}', propertySourceLocations = '{}', propertySourceProperties = '{org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTestContextBootstrapper=true}', contextCustomizers = set[org.springframework.boot.test.autoconfigure.OverrideAutoConfigurationContextCustomizerFactory$DisableAutoConfigurationContextCustomizer@1f404aa1, org.springframework.boot.test.autoconfigure.actuate.metrics.MetricsExportContextCustomizerFactory$DisableMetricExportContextCustomizer@2dd29a59, org.springframework.boot.test.autoconfigure.filter.TypeExcludeFiltersContextCustomizer@801efc8c, org.springframework.boot.test.autoconfigure.properties.PropertyMappingContextCustomizer@c5c6ab73, org.springframework.boot.test.autoconfigure.web.servlet.WebDriverContextCustomizerFactory$Customizer@ec2cc4, [ImportsContextCustomizer@230a9783 key = [org.springframework.boot.autoconfigure.cache.CacheAutoConfiguration, org.springframework.boot.autoconfigure.data.jpa.JpaRepositoriesAutoConfiguration, org.springframework.boot.autoconfigure.flyway.FlywayAutoConfiguration, org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration, org.springframework.boot.autoconfigure.jdbc.DataSourceTransactionManagerAutoConfiguration, org.springframework.boot.autoconfigure.jdbc.JdbcTemplateAutoConfiguration, org.springframework.boot.autoconfigure.liquibase.LiquibaseAutoConfiguration, org.springframework.boot.autoconfigure.orm.jpa.HibernateJpaAutoConfiguration, org.springframework.boot.autoconfigure.sql.init.SqlInitializationAutoConfiguration, org.springframework.boot.autoconfigure.transaction.TransactionAutoConfiguration, org.springframework.boot.test.autoconfigure.jdbc.TestDatabaseAutoConfiguration, org.springframework.boot.test.autoconfigure.orm.jpa.TestEntityManagerAutoConfiguration]], org.springframework.boot.test.context.filter.ExcludeFilterContextCustomizer@2101b44a, org.springframework.boot.test.json.DuplicateJsonObjectContextCustomizerFactory$DuplicateJsonObjectContextCustomizer@119020fb, org.springframework.boot.test.mock.mockito.MockitoContextCustomizer@0, org.springframework.boot.test.context.SpringBootTestArgs@1, org.springframework.boot.test.context.SpringBootTestWebEnvironment@0], contextLoader = 'org.springframework.boot.test.context.SpringBootContextLoader', parent = [null]], attributes = map['org.springframework.test.context.event.ApplicationEventsTestExecutionListener.recordApplicationEvents' -> false]]
+2022-07-08 15:09:09.401  INFO 6000 --- [    Test worker] o.s.t.c.transaction.TransactionContext   : Began transaction (1) for test context [DefaultTestContext@2f151750 testClass = CenterRepositoryTest, testInstance = FIS.iLUVit.repository.CenterRepositoryTest@27e05d64, testMethod = findByIdAndSignedWithBoard@CenterRepositoryTest, testException = [null], mergedContextConfiguration = [MergedContextConfiguration@6500d306 testClass = CenterRepositoryTest, locations = '{}', classes = '{class FIS.iLUVit.ILuVitApplication}', contextInitializerClasses = '[]', activeProfiles = '{}', propertySourceLocations = '{}', propertySourceProperties = '{org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTestContextBootstrapper=true}', contextCustomizers = set[org.springframework.boot.test.autoconfigure.OverrideAutoConfigurationContextCustomizerFactory$DisableAutoConfigurationContextCustomizer@1f404aa1, org.springframework.boot.test.autoconfigure.actuate.metrics.MetricsExportContextCustomizerFactory$DisableMetricExportContextCustomizer@2dd29a59, org.springframework.boot.test.autoconfigure.filter.TypeExcludeFiltersContextCustomizer@801efc8c, org.springframework.boot.test.autoconfigure.properties.PropertyMappingContextCustomizer@c5c6ab73, org.springframework.boot.test.autoconfigure.web.servlet.WebDriverContextCustomizerFactory$Customizer@ec2cc4, [ImportsContextCustomizer@230a9783 key = [org.springframework.boot.autoconfigure.cache.CacheAutoConfiguration, org.springframework.boot.autoconfigure.data.jpa.JpaRepositoriesAutoConfiguration, org.springframework.boot.autoconfigure.flyway.FlywayAutoConfiguration, org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration, org.springframework.boot.autoconfigure.jdbc.DataSourceTransactionManagerAutoConfiguration, org.springframework.boot.autoconfigure.jdbc.JdbcTemplateAutoConfiguration, org.springframework.boot.autoconfigure.liquibase.LiquibaseAutoConfiguration, org.springframework.boot.autoconfigure.orm.jpa.HibernateJpaAutoConfiguration, org.springframework.boot.autoconfigure.sql.init.SqlInitializationAutoConfiguration, org.springframework.boot.autoconfigure.transaction.TransactionAutoConfiguration, org.springframework.boot.test.autoconfigure.jdbc.TestDatabaseAutoConfiguration, org.springframework.boot.test.autoconfigure.orm.jpa.TestEntityManagerAutoConfiguration]], org.springframework.boot.test.context.filter.ExcludeFilterContextCustomizer@2101b44a, org.springframework.boot.test.json.DuplicateJsonObjectContextCustomizerFactory$DuplicateJsonObjectContextCustomizer@119020fb, org.springframework.boot.test.mock.mockito.MockitoContextCustomizer@0, org.springframework.boot.test.context.SpringBootTestArgs@1, org.springframework.boot.test.context.SpringBootTestWebEnvironment@0], contextLoader = 'org.springframework.boot.test.context.SpringBootContextLoader', parent = [null]], attributes = map['org.springframework.test.context.event.ApplicationEventsTestExecutionListener.recordApplicationEvents' -> false]]; transaction manager [org.springframework.orm.jpa.JpaTransactionManager@47e83e72]; rollback [true]
+2022-07-08 15:09:09.406  INFO 6000 --- [    Test worker] o.s.t.c.transaction.TransactionContext   : Rolled back transaction for test: [DefaultTestContext@2f151750 testClass = CenterRepositoryTest, testInstance = FIS.iLUVit.repository.CenterRepositoryTest@27e05d64, testMethod = findByIdAndSignedWithBoard@CenterRepositoryTest, testException = [null], mergedContextConfiguration = [MergedContextConfiguration@6500d306 testClass = CenterRepositoryTest, locations = '{}', classes = '{class FIS.iLUVit.ILuVitApplication}', contextInitializerClasses = '[]', activeProfiles = '{}', propertySourceLocations = '{}', propertySourceProperties = '{org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTestContextBootstrapper=true}', contextCustomizers = set[org.springframework.boot.test.autoconfigure.OverrideAutoConfigurationContextCustomizerFactory$DisableAutoConfigurationContextCustomizer@1f404aa1, org.springframework.boot.test.autoconfigure.actuate.metrics.MetricsExportContextCustomizerFactory$DisableMetricExportContextCustomizer@2dd29a59, org.springframework.boot.test.autoconfigure.filter.TypeExcludeFiltersContextCustomizer@801efc8c, org.springframework.boot.test.autoconfigure.properties.PropertyMappingContextCustomizer@c5c6ab73, org.springframework.boot.test.autoconfigure.web.servlet.WebDriverContextCustomizerFactory$Customizer@ec2cc4, [ImportsContextCustomizer@230a9783 key = [org.springframework.boot.autoconfigure.cache.CacheAutoConfiguration, org.springframework.boot.autoconfigure.data.jpa.JpaRepositoriesAutoConfiguration, org.springframework.boot.autoconfigure.flyway.FlywayAutoConfiguration, org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration, org.springframework.boot.autoconfigure.jdbc.DataSourceTransactionManagerAutoConfiguration, org.springframework.boot.autoconfigure.jdbc.JdbcTemplateAutoConfiguration, org.springframework.boot.autoconfigure.liquibase.LiquibaseAutoConfiguration, org.springframework.boot.autoconfigure.orm.jpa.HibernateJpaAutoConfiguration, org.springframework.boot.autoconfigure.sql.init.SqlInitializationAutoConfiguration, org.springframework.boot.autoconfigure.transaction.TransactionAutoConfiguration, org.springframework.boot.test.autoconfigure.jdbc.TestDatabaseAutoConfiguration, org.springframework.boot.test.autoconfigure.orm.jpa.TestEntityManagerAutoConfiguration]], org.springframework.boot.test.context.filter.ExcludeFilterContextCustomizer@2101b44a, org.springframework.boot.test.json.DuplicateJsonObjectContextCustomizerFactory$DuplicateJsonObjectContextCustomizer@119020fb, org.springframework.boot.test.mock.mockito.MockitoContextCustomizer@0, org.springframework.boot.test.context.SpringBootTestArgs@1, org.springframework.boot.test.context.SpringBootTestWebEnvironment@0], contextLoader = 'org.springframework.boot.test.context.SpringBootContextLoader', parent = [null]], attributes = map['org.springframework.test.context.event.ApplicationEventsTestExecutionListener.recordApplicationEvents' -> false]]
+2022-07-08 15:09:09.408  INFO 6000 --- [    Test worker] o.s.t.c.transaction.TransactionContext   : Began transaction (1) for test context [DefaultTestContext@2f151750 testClass = CenterRepositoryTest, testInstance = FIS.iLUVit.repository.CenterRepositoryTest@33d4ed23, testMethod = findCenterByTeacher@CenterRepositoryTest, testException = [null], mergedContextConfiguration = [MergedContextConfiguration@6500d306 testClass = CenterRepositoryTest, locations = '{}', classes = '{class FIS.iLUVit.ILuVitApplication}', contextInitializerClasses = '[]', activeProfiles = '{}', propertySourceLocations = '{}', propertySourceProperties = '{org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTestContextBootstrapper=true}', contextCustomizers = set[org.springframework.boot.test.autoconfigure.OverrideAutoConfigurationContextCustomizerFactory$DisableAutoConfigurationContextCustomizer@1f404aa1, org.springframework.boot.test.autoconfigure.actuate.metrics.MetricsExportContextCustomizerFactory$DisableMetricExportContextCustomizer@2dd29a59, org.springframework.boot.test.autoconfigure.filter.TypeExcludeFiltersContextCustomizer@801efc8c, org.springframework.boot.test.autoconfigure.properties.PropertyMappingContextCustomizer@c5c6ab73, org.springframework.boot.test.autoconfigure.web.servlet.WebDriverContextCustomizerFactory$Customizer@ec2cc4, [ImportsContextCustomizer@230a9783 key = [org.springframework.boot.autoconfigure.cache.CacheAutoConfiguration, org.springframework.boot.autoconfigure.data.jpa.JpaRepositoriesAutoConfiguration, org.springframework.boot.autoconfigure.flyway.FlywayAutoConfiguration, org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration, org.springframework.boot.autoconfigure.jdbc.DataSourceTransactionManagerAutoConfiguration, org.springframework.boot.autoconfigure.jdbc.JdbcTemplateAutoConfiguration, org.springframework.boot.autoconfigure.liquibase.LiquibaseAutoConfiguration, org.springframework.boot.autoconfigure.orm.jpa.HibernateJpaAutoConfiguration, org.springframework.boot.autoconfigure.sql.init.SqlInitializationAutoConfiguration, org.springframework.boot.autoconfigure.transaction.TransactionAutoConfiguration, org.springframework.boot.test.autoconfigure.jdbc.TestDatabaseAutoConfiguration, org.springframework.boot.test.autoconfigure.orm.jpa.TestEntityManagerAutoConfiguration]], org.springframework.boot.test.context.filter.ExcludeFilterContextCustomizer@2101b44a, org.springframework.boot.test.json.DuplicateJsonObjectContextCustomizerFactory$DuplicateJsonObjectContextCustomizer@119020fb, org.springframework.boot.test.mock.mockito.MockitoContextCustomizer@0, org.springframework.boot.test.context.SpringBootTestArgs@1, org.springframework.boot.test.context.SpringBootTestWebEnvironment@0], contextLoader = 'org.springframework.boot.test.context.SpringBootContextLoader', parent = [null]], attributes = map['org.springframework.test.context.event.ApplicationEventsTestExecutionListener.recordApplicationEvents' -> false]]; transaction manager [org.springframework.orm.jpa.JpaTransactionManager@47e83e72]; rollback [true]
+2022-07-08 15:09:09.412  INFO 6000 --- [    Test worker] o.s.t.c.transaction.TransactionContext   : Rolled back transaction for test: [DefaultTestContext@2f151750 testClass = CenterRepositoryTest, testInstance = FIS.iLUVit.repository.CenterRepositoryTest@33d4ed23, testMethod = findCenterByTeacher@CenterRepositoryTest, testException = [null], mergedContextConfiguration = [MergedContextConfiguration@6500d306 testClass = CenterRepositoryTest, locations = '{}', classes = '{class FIS.iLUVit.ILuVitApplication}', contextInitializerClasses = '[]', activeProfiles = '{}', propertySourceLocations = '{}', propertySourceProperties = '{org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTestContextBootstrapper=true}', contextCustomizers = set[org.springframework.boot.test.autoconfigure.OverrideAutoConfigurationContextCustomizerFactory$DisableAutoConfigurationContextCustomizer@1f404aa1, org.springframework.boot.test.autoconfigure.actuate.metrics.MetricsExportContextCustomizerFactory$DisableMetricExportContextCustomizer@2dd29a59, org.springframework.boot.test.autoconfigure.filter.TypeExcludeFiltersContextCustomizer@801efc8c, org.springframework.boot.test.autoconfigure.properties.PropertyMappingContextCustomizer@c5c6ab73, org.springframework.boot.test.autoconfigure.web.servlet.WebDriverContextCustomizerFactory$Customizer@ec2cc4, [ImportsContextCustomizer@230a9783 key = [org.springframework.boot.autoconfigure.cache.CacheAutoConfiguration, org.springframework.boot.autoconfigure.data.jpa.JpaRepositoriesAutoConfiguration, org.springframework.boot.autoconfigure.flyway.FlywayAutoConfiguration, org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration, org.springframework.boot.autoconfigure.jdbc.DataSourceTransactionManagerAutoConfiguration, org.springframework.boot.autoconfigure.jdbc.JdbcTemplateAutoConfiguration, org.springframework.boot.autoconfigure.liquibase.LiquibaseAutoConfiguration, org.springframework.boot.autoconfigure.orm.jpa.HibernateJpaAutoConfiguration, org.springframework.boot.autoconfigure.sql.init.SqlInitializationAutoConfiguration, org.springframework.boot.autoconfigure.transaction.TransactionAutoConfiguration, org.springframework.boot.test.autoconfigure.jdbc.TestDatabaseAutoConfiguration, org.springframework.boot.test.autoconfigure.orm.jpa.TestEntityManagerAutoConfiguration]], org.springframework.boot.test.context.filter.ExcludeFilterContextCustomizer@2101b44a, org.springframework.boot.test.json.DuplicateJsonObjectContextCustomizerFactory$DuplicateJsonObjectContextCustomizer@119020fb, org.springframework.boot.test.mock.mockito.MockitoContextCustomizer@0, org.springframework.boot.test.context.SpringBootTestArgs@1, org.springframework.boot.test.context.SpringBootTestWebEnvironment@0], contextLoader = 'org.springframework.boot.test.context.SpringBootContextLoader', parent = [null]], attributes = map['org.springframework.test.context.event.ApplicationEventsTestExecutionListener.recordApplicationEvents' -> false]]
+2022-07-08 15:09:09.415  INFO 6000 --- [    Test worker] o.s.t.c.transaction.TransactionContext   : Began transaction (1) for test context [DefaultTestContext@2f151750 testClass = CenterRepositoryTest, testInstance = FIS.iLUVit.repository.CenterRepositoryTest@35815f9d, testMethod = findByUser@CenterRepositoryTest, testException = [null], mergedContextConfiguration = [MergedContextConfiguration@6500d306 testClass = CenterRepositoryTest, locations = '{}', classes = '{class FIS.iLUVit.ILuVitApplication}', contextInitializerClasses = '[]', activeProfiles = '{}', propertySourceLocations = '{}', propertySourceProperties = '{org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTestContextBootstrapper=true}', contextCustomizers = set[org.springframework.boot.test.autoconfigure.OverrideAutoConfigurationContextCustomizerFactory$DisableAutoConfigurationContextCustomizer@1f404aa1, org.springframework.boot.test.autoconfigure.actuate.metrics.MetricsExportContextCustomizerFactory$DisableMetricExportContextCustomizer@2dd29a59, org.springframework.boot.test.autoconfigure.filter.TypeExcludeFiltersContextCustomizer@801efc8c, org.springframework.boot.test.autoconfigure.properties.PropertyMappingContextCustomizer@c5c6ab73, org.springframework.boot.test.autoconfigure.web.servlet.WebDriverContextCustomizerFactory$Customizer@ec2cc4, [ImportsContextCustomizer@230a9783 key = [org.springframework.boot.autoconfigure.cache.CacheAutoConfiguration, org.springframework.boot.autoconfigure.data.jpa.JpaRepositoriesAutoConfiguration, org.springframework.boot.autoconfigure.flyway.FlywayAutoConfiguration, org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration, org.springframework.boot.autoconfigure.jdbc.DataSourceTransactionManagerAutoConfiguration, org.springframework.boot.autoconfigure.jdbc.JdbcTemplateAutoConfiguration, org.springframework.boot.autoconfigure.liquibase.LiquibaseAutoConfiguration, org.springframework.boot.autoconfigure.orm.jpa.HibernateJpaAutoConfiguration, org.springframework.boot.autoconfigure.sql.init.SqlInitializationAutoConfiguration, org.springframework.boot.autoconfigure.transaction.TransactionAutoConfiguration, org.springframework.boot.test.autoconfigure.jdbc.TestDatabaseAutoConfiguration, org.springframework.boot.test.autoconfigure.orm.jpa.TestEntityManagerAutoConfiguration]], org.springframework.boot.test.context.filter.ExcludeFilterContextCustomizer@2101b44a, org.springframework.boot.test.json.DuplicateJsonObjectContextCustomizerFactory$DuplicateJsonObjectContextCustomizer@119020fb, org.springframework.boot.test.mock.mockito.MockitoContextCustomizer@0, org.springframework.boot.test.context.SpringBootTestArgs@1, org.springframework.boot.test.context.SpringBootTestWebEnvironment@0], contextLoader = 'org.springframework.boot.test.context.SpringBootContextLoader', parent = [null]], attributes = map['org.springframework.test.context.event.ApplicationEventsTestExecutionListener.recordApplicationEvents' -> false]]; transaction manager [org.springframework.orm.jpa.JpaTransactionManager@47e83e72]; rollback [true]
+2022-07-08 15:09:09.419  INFO 6000 --- [    Test worker] o.s.t.c.transaction.TransactionContext   : Rolled back transaction for test: [DefaultTestContext@2f151750 testClass = CenterRepositoryTest, testInstance = FIS.iLUVit.repository.CenterRepositoryTest@35815f9d, testMethod = findByUser@CenterRepositoryTest, testException = [null], mergedContextConfiguration = [MergedContextConfiguration@6500d306 testClass = CenterRepositoryTest, locations = '{}', classes = '{class FIS.iLUVit.ILuVitApplication}', contextInitializerClasses = '[]', activeProfiles = '{}', propertySourceLocations = '{}', propertySourceProperties = '{org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTestContextBootstrapper=true}', contextCustomizers = set[org.springframework.boot.test.autoconfigure.OverrideAutoConfigurationContextCustomizerFactory$DisableAutoConfigurationContextCustomizer@1f404aa1, org.springframework.boot.test.autoconfigure.actuate.metrics.MetricsExportContextCustomizerFactory$DisableMetricExportContextCustomizer@2dd29a59, org.springframework.boot.test.autoconfigure.filter.TypeExcludeFiltersContextCustomizer@801efc8c, org.springframework.boot.test.autoconfigure.properties.PropertyMappingContextCustomizer@c5c6ab73, org.springframework.boot.test.autoconfigure.web.servlet.WebDriverContextCustomizerFactory$Customizer@ec2cc4, [ImportsContextCustomizer@230a9783 key = [org.springframework.boot.autoconfigure.cache.CacheAutoConfiguration, org.springframework.boot.autoconfigure.data.jpa.JpaRepositoriesAutoConfiguration, org.springframework.boot.autoconfigure.flyway.FlywayAutoConfiguration, org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration, org.springframework.boot.autoconfigure.jdbc.DataSourceTransactionManagerAutoConfiguration, org.springframework.boot.autoconfigure.jdbc.JdbcTemplateAutoConfiguration, org.springframework.boot.autoconfigure.liquibase.LiquibaseAutoConfiguration, org.springframework.boot.autoconfigure.orm.jpa.HibernateJpaAutoConfiguration, org.springframework.boot.autoconfigure.sql.init.SqlInitializationAutoConfiguration, org.springframework.boot.autoconfigure.transaction.TransactionAutoConfiguration, org.springframework.boot.test.autoconfigure.jdbc.TestDatabaseAutoConfiguration, org.springframework.boot.test.autoconfigure.orm.jpa.TestEntityManagerAutoConfiguration]], org.springframework.boot.test.context.filter.ExcludeFilterContextCustomizer@2101b44a, org.springframework.boot.test.json.DuplicateJsonObjectContextCustomizerFactory$DuplicateJsonObjectContextCustomizer@119020fb, org.springframework.boot.test.mock.mockito.MockitoContextCustomizer@0, org.springframework.boot.test.context.SpringBootTestArgs@1, org.springframework.boot.test.context.SpringBootTestWebEnvironment@0], contextLoader = 'org.springframework.boot.test.context.SpringBootContextLoader', parent = [null]], attributes = map['org.springframework.test.context.event.ApplicationEventsTestExecutionListener.recordApplicationEvents' -> false]]
+]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

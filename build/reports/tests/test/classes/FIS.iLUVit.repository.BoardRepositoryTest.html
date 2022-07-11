@@ -1,0 +1,1682 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+<meta http-equiv="x-ua-compatible" content="IE=edge"/>
+<title>Test results - BoardRepositoryTest</title>
+<link href="../css/base-style.css" rel="stylesheet" type="text/css"/>
+<link href="../css/style.css" rel="stylesheet" type="text/css"/>
+<script src="../js/report.js" type="text/javascript"></script>
+</head>
+<body>
+<div id="content">
+<h1>BoardRepositoryTest</h1>
+<div class="breadcrumbs">
+<a href="../index.html">all</a> &gt; 
+<a href="../packages/FIS.iLUVit.repository.html">FIS.iLUVit.repository</a> &gt; BoardRepositoryTest</div>
+<div id="summary">
+<table>
+<tr>
+<td>
+<div class="summaryGroup">
+<table>
+<tr>
+<td>
+<div class="infoBox" id="tests">
+<div class="counter">1</div>
+<p>tests</p>
+</div>
+</td>
+<td>
+<div class="infoBox" id="failures">
+<div class="counter">0</div>
+<p>failures</p>
+</div>
+</td>
+<td>
+<div class="infoBox" id="ignored">
+<div class="counter">0</div>
+<p>ignored</p>
+</div>
+</td>
+<td>
+<div class="infoBox" id="duration">
+<div class="counter">0.050s</div>
+<p>duration</p>
+</div>
+</td>
+</tr>
+</table>
+</div>
+</td>
+<td>
+<div class="infoBox success" id="successRate">
+<div class="percent">100%</div>
+<p>successful</p>
+</div>
+</td>
+</tr>
+</table>
+</div>
+<div id="tabs">
+<ul class="tabLinks">
+<li>
+<a href="#tab0">Tests</a>
+</li>
+<li>
+<a href="#tab1">Standard output</a>
+</li>
+</ul>
+<div id="tab0" class="tab">
+<h2>Tests</h2>
+<table>
+<thead>
+<tr>
+<th>Test</th>
+<th>Duration</th>
+<th>Result</th>
+</tr>
+</thead>
+<tr>
+<td class="success">센터로_게시판_찾기()</td>
+<td class="success">0.050s</td>
+<td class="success">passed</td>
+</tr>
+</table>
+</div>
+<div id="tab1" class="tab">
+<h2>Standard output</h2>
+<span class="code">
+<pre>2022-07-08 15:09:06.463  INFO 6000 --- [    Test worker] b.t.a.o.j.DataJpaTestContextBootstrapper : Neither @ContextConfiguration nor @ContextHierarchy found for test class [FIS.iLUVit.repository.BoardRepositoryTest], using SpringBootContextLoader
+2022-07-08 15:09:06.464  INFO 6000 --- [    Test worker] o.s.t.c.support.AbstractContextLoader    : Could not detect default resource locations for test class [FIS.iLUVit.repository.BoardRepositoryTest]: no resource found for suffixes {-context.xml, Context.groovy}.
+2022-07-08 15:09:06.464  INFO 6000 --- [    Test worker] t.c.s.AnnotationConfigContextLoaderUtils : Could not detect default configuration classes for test class [FIS.iLUVit.repository.BoardRepositoryTest]: BoardRepositoryTest does not declare any static, non-private, non-final, nested classes annotated with @Configuration.
+2022-07-08 15:09:06.483  INFO 6000 --- [    Test worker] .b.t.c.SpringBootTestContextBootstrapper : Found @SpringBootConfiguration FIS.iLUVit.ILuVitApplication for test class FIS.iLUVit.repository.BoardRepositoryTest
+2022-07-08 15:09:06.484  INFO 6000 --- [    Test worker] b.t.a.o.j.DataJpaTestContextBootstrapper : Loaded default TestExecutionListener class names from location [META-INF/spring.factories]: [org.springframework.security.test.context.support.WithSecurityContextTestExecutionListener, org.springframework.security.test.context.support.ReactorContextTestExecutionListener, org.springframework.boot.test.autoconfigure.restdocs.RestDocsTestExecutionListener, org.springframework.boot.test.autoconfigure.web.client.MockRestServiceServerResetTestExecutionListener, org.springframework.boot.test.autoconfigure.web.servlet.MockMvcPrintOnlyOnFailureTestExecutionListener, org.springframework.boot.test.autoconfigure.web.servlet.WebDriverTestExecutionListener, org.springframework.boot.test.autoconfigure.webservices.client.MockWebServiceServerTestExecutionListener, org.springframework.boot.test.mock.mockito.MockitoTestExecutionListener, org.springframework.boot.test.mock.mockito.ResetMocksTestExecutionListener, org.springframework.test.context.web.ServletTestExecutionListener, org.springframework.test.context.support.DirtiesContextBeforeModesTestExecutionListener, org.springframework.test.context.event.ApplicationEventsTestExecutionListener, org.springframework.test.context.support.DependencyInjectionTestExecutionListener, org.springframework.test.context.support.DirtiesContextTestExecutionListener, org.springframework.test.context.transaction.TransactionalTestExecutionListener, org.springframework.test.context.jdbc.SqlScriptsTestExecutionListener, org.springframework.test.context.event.EventPublishingTestExecutionListener]
+2022-07-08 15:09:06.485  INFO 6000 --- [    Test worker] b.t.a.o.j.DataJpaTestContextBootstrapper : Using TestExecutionListeners: [org.springframework.test.context.web.ServletTestExecutionListener@109fa8e2, org.springframework.test.context.support.DirtiesContextBeforeModesTestExecutionListener@743fc1ee, org.springframework.test.context.event.ApplicationEventsTestExecutionListener@4967d14c, org.springframework.boot.test.mock.mockito.MockitoTestExecutionListener@38aa5ffe, org.springframework.boot.test.autoconfigure.SpringBootDependencyInjectionTestExecutionListener@551f38b1, org.springframework.test.context.support.DirtiesContextTestExecutionListener@5f25b34d, org.springframework.test.context.transaction.TransactionalTestExecutionListener@283fe454, org.springframework.test.context.jdbc.SqlScriptsTestExecutionListener@42000b02, org.springframework.security.test.context.support.WithSecurityContextTestExecutionListener@6e767943, org.springframework.test.context.event.EventPublishingTestExecutionListener@1cbb101b, org.springframework.security.test.context.support.ReactorContextTestExecutionListener@4bf14a9c, org.springframework.boot.test.autoconfigure.restdocs.RestDocsTestExecutionListener@96b00fb, org.springframework.boot.test.autoconfigure.web.client.MockRestServiceServerResetTestExecutionListener@540accf4, org.springframework.boot.test.autoconfigure.web.servlet.MockMvcPrintOnlyOnFailureTestExecutionListener@10f535a6, org.springframework.boot.test.autoconfigure.web.servlet.WebDriverTestExecutionListener@5191288e, org.springframework.boot.test.autoconfigure.webservices.client.MockWebServiceServerTestExecutionListener@2c969f, org.springframework.boot.test.mock.mockito.ResetMocksTestExecutionListener@2438702]
+
+  .   ____          _            __ _ _
+ /\\ / ___'_ __ _ _(_)_ __  __ _ \ \ \ \
+( ( )\___ | '_ | '_| | '_ \/ _` | \ \ \ \
+ \\/  ___)| |_)| | | | | || (_| |  ) ) ) )
+  '  |____| .__|_| |_|_| |_\__, | / / / /
+ =========|_|==============|___/=/_/_/_/
+ :: Spring Boot ::                (v2.6.7)
+
+2022-07-08 15:09:06.506  INFO 6000 --- [    Test worker] F.iLUVit.repository.BoardRepositoryTest  : Starting BoardRepositoryTest using Java 11.0.11 on hyeonseung-guui-MacBookPro.local with PID 6000 (started by hyeonseung-gu in /Users/hyeonseung-gu/Documents/iLUVit)
+2022-07-08 15:09:06.506  INFO 6000 --- [    Test worker] F.iLUVit.repository.BoardRepositoryTest  : The following 1 profile is active: &quot;secret&quot;
+2022-07-08 15:09:06.612  INFO 6000 --- [    Test worker] .s.d.r.c.RepositoryConfigurationDelegate : Bootstrapping Spring Data JPA repositories in DEFAULT mode.
+2022-07-08 15:09:06.670  INFO 6000 --- [    Test worker] .s.d.r.c.RepositoryConfigurationDelegate : Finished Spring Data repository scanning in 56 ms. Found 24 JPA repository interfaces.
+2022-07-08 15:09:06.690  INFO 6000 --- [    Test worker] beddedDataSourceBeanFactoryPostProcessor : Replacing 'dataSource' DataSource bean with embedded version
+2022-07-08 15:09:06.738  INFO 6000 --- [    Test worker] o.s.j.d.e.EmbeddedDatabaseFactory        : Starting embedded database: url='jdbc:h2:mem:2240e18b-ef35-4a48-ac39-011e4a68683a;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=false', username='sa'
+2022-07-08 15:09:06.877  INFO 6000 --- [    Test worker] o.hibernate.jpa.internal.util.LogHelper  : HHH000204: Processing PersistenceUnitInfo [name: default]
+2022-07-08 15:09:06.907  INFO 6000 --- [    Test worker] org.hibernate.dialect.Dialect            : HHH000400: Using dialect: org.hibernate.dialect.H2Dialect
+2022-07-08 15:09:07.138  WARN 6000 --- [    Test worker] org.hibernate.cfg.AnnotationBinder       : HHH000457: Joined inheritance hierarchy [FIS.iLUVit.domain.Center] defined explicit @DiscriminatorColumn.  Legacy Hibernate behavior was to ignore the @DiscriminatorColumn.  However, as part of issue HHH-6911 we now apply the explicit @DiscriminatorColumn.  If you would prefer the legacy behavior, enable the `hibernate.discriminator.ignore_explicit_for_joined` setting (hibernate.discriminator.ignore_explicit_for_joined=true)
+2022-07-08 15:09:07.163  WARN 6000 --- [    Test worker] org.hibernate.cfg.AnnotationBinder       : HHH000457: Joined inheritance hierarchy [FIS.iLUVit.domain.User] defined explicit @DiscriminatorColumn.  Legacy Hibernate behavior was to ignore the @DiscriminatorColumn.  However, as part of issue HHH-6911 we now apply the explicit @DiscriminatorColumn.  If you would prefer the legacy behavior, enable the `hibernate.discriminator.ignore_explicit_for_joined` setting (hibernate.discriminator.ignore_explicit_for_joined=true)
+2022-07-08 15:09:07.304  WARN 6000 --- [    Test worker] o.hibernate.internal.SessionFactoryImpl  : HHH000483: An experimental feature has been enabled (hibernate.create_empty_composites.enabled=true) that instantiates empty composite/embedded objects when all of its attribute values are null. This feature has known issues and should not be used in production until it is stabilized. See Hibernate Jira issue HHH-11936 for details.
+2022-07-08 15:09:07.891 DEBUG 6000 --- [    Test worker] org.hibernate.SQL                        : 
+    
+    create table AddInfo (
+       id bigint not null,
+        createdDate timestamp,
+        updatedDate timestamp,
+        info varchar(255),
+        center_id bigint,
+        primary key (id)
+    )
+Hibernate: 
+    
+    create table AddInfo (
+       id bigint not null,
+        createdDate timestamp,
+        updatedDate timestamp,
+        info varchar(255),
+        center_id bigint,
+        primary key (id)
+    )
+2022-07-08 15:09:07.896 DEBUG 6000 --- [    Test worker] org.hibernate.SQL                        : 
+    
+    create table Alarm (
+       dtype varchar(31),
+        id bigint not null,
+        createdDate timestamp,
+        updatedDate timestamp,
+        message varchar(255),
+        user_id bigint,
+        centerId bigint,
+        senderId bigint,
+        postId bigint,
+        presentationId bigint,
+        primary key (id)
+    )
+Hibernate: 
+    
+    create table Alarm (
+       dtype varchar(31),
+        id bigint not null,
+        createdDate timestamp,
+        updatedDate timestamp,
+        message varchar(255),
+        user_id bigint,
+        centerId bigint,
+        senderId bigint,
+        postId bigint,
+        presentationId bigint,
+        primary key (id)
+    )
+2022-07-08 15:09:07.897 DEBUG 6000 --- [    Test worker] org.hibernate.SQL                        : 
+    
+    create table AuthNumber (
+       id bigint not null,
+        createdDate timestamp,
+        updatedDate timestamp,
+        authKind varchar(255),
+        authNum varchar(255),
+        authTime timestamp,
+        phoneNum varchar(255),
+        primary key (id)
+    )
+Hibernate: 
+    
+    create table AuthNumber (
+       id bigint not null,
+        createdDate timestamp,
+        updatedDate timestamp,
+        authKind varchar(255),
+        authNum varchar(255),
+        authTime timestamp,
+        phoneNum varchar(255),
+        primary key (id)
+    )
+2022-07-08 15:09:07.898 DEBUG 6000 --- [    Test worker] org.hibernate.SQL                        : 
+    
+    create table Board (
+       id bigint not null,
+        createdDate timestamp,
+        updatedDate timestamp,
+        boardKind varchar(255),
+        isDefault boolean,
+        name varchar(255),
+        center_id bigint,
+        primary key (id)
+    )
+Hibernate: 
+    
+    create table Board (
+       id bigint not null,
+        createdDate timestamp,
+        updatedDate timestamp,
+        boardKind varchar(255),
+        isDefault boolean,
+        name varchar(255),
+        center_id bigint,
+        primary key (id)
+    )
+2022-07-08 15:09:07.899 DEBUG 6000 --- [    Test worker] org.hibernate.SQL                        : 
+    
+    create table Bookmark (
+       id bigint not null,
+        createdDate timestamp,
+        updatedDate timestamp,
+        board_id bigint,
+        user_id bigint,
+        primary key (id)
+    )
+Hibernate: 
+    
+    create table Bookmark (
+       id bigint not null,
+        createdDate timestamp,
+        updatedDate timestamp,
+        board_id bigint,
+        user_id bigint,
+        primary key (id)
+    )
+2022-07-08 15:09:07.900 DEBUG 6000 --- [    Test worker] org.hibernate.SQL                        : 
+    
+    create table Center (
+       kindOf varchar(31),
+        id bigint not null,
+        createdDate timestamp,
+        updatedDate timestamp,
+        addInfo varchar(255),
+        address varchar(255),
+        sido varchar(255),
+        sigungu varchar(255),
+        buildingYear integer,
+        busCnt integer,
+        cctvCnt integer,
+        hasBackpack boolean,
+        hasBus boolean,
+        hasCCTV boolean,
+        hasHandWriteNote boolean,
+        hasKidsNote boolean,
+        hasPhysics boolean,
+        hasPlayground boolean,
+        hasSwimPool boolean,
+        hasUniform boolean,
+        child_0 integer,
+        child_1 integer,
+        child_2 integer,
+        child_3 integer,
+        child_4 integer,
+        child_5 integer,
+        child_spe integer,
+        class_0 integer,
+        class_1 integer,
+        class_2 integer,
+        class_3 integer,
+        class_4 integer,
+        class_5 integer,
+        cost0 integer,
+        cost1 integer,
+        cost2 integer,
+        cost3 integer,
+        cost4 integer,
+        cost5 integer,
+        curChildCnt integer,
+        director varchar(255),
+        endTime varchar(255),
+        estDate varchar(255),
+        estType varchar(255),
+        homepage varchar(255),
+        imgCnt integer,
+        introText clob,
+        latitude double,
+        longitude double,
+        maxAge integer,
+        maxChildCnt integer,
+        minAge integer,
+        name varchar(255),
+        offerService varchar(255),
+        participation varchar(255),
+        visited varchar(255),
+        owner varchar(255),
+        program varchar(255),
+        recruit boolean,
+        score integer,
+        signed boolean,
+        startTime varchar(255),
+        status varchar(255),
+        dur12 integer,
+        dur24 integer,
+        dur46 integer,
+        dur6_ integer,
+        dur_1 integer,
+        totalCnt integer,
+        tel varchar(255),
+        animal boolean,
+        art boolean,
+        buddhism boolean,
+        camping boolean,
+        catholic boolean,
+        christianity boolean,
+        clean boolean,
+        coding boolean,
+        english boolean,
+        foreigner boolean,
+        genius boolean,
+        manner boolean,
+        math boolean,
+        music boolean,
+        nature boolean,
+        plant boolean,
+        sport boolean,
+        updateDate date,
+        videoCnt integer,
+        waitingNum integer,
+        zipcode varchar(255),
+        primary key (id)
+    )
+Hibernate: 
+    
+    create table Center (
+       kindOf varchar(31),
+        id bigint not null,
+        createdDate timestamp,
+        updatedDate timestamp,
+        addInfo varchar(255),
+        address varchar(255),
+        sido varchar(255),
+        sigungu varchar(255),
+        buildingYear integer,
+        busCnt integer,
+        cctvCnt integer,
+        hasBackpack boolean,
+        hasBus boolean,
+        hasCCTV boolean,
+        hasHandWriteNote boolean,
+        hasKidsNote boolean,
+        hasPhysics boolean,
+        hasPlayground boolean,
+        hasSwimPool boolean,
+        hasUniform boolean,
+        child_0 integer,
+        child_1 integer,
+        child_2 integer,
+        child_3 integer,
+        child_4 integer,
+        child_5 integer,
+        child_spe integer,
+        class_0 integer,
+        class_1 integer,
+        class_2 integer,
+        class_3 integer,
+        class_4 integer,
+        class_5 integer,
+        cost0 integer,
+        cost1 integer,
+        cost2 integer,
+        cost3 integer,
+        cost4 integer,
+        cost5 integer,
+        curChildCnt integer,
+        director varchar(255),
+        endTime varchar(255),
+        estDate varchar(255),
+        estType varchar(255),
+        homepage varchar(255),
+        imgCnt integer,
+        introText clob,
+        latitude double,
+        longitude double,
+        maxAge integer,
+        maxChildCnt integer,
+        minAge integer,
+        name varchar(255),
+        offerService varchar(255),
+        participation varchar(255),
+        visited varchar(255),
+        owner varchar(255),
+        program varchar(255),
+        recruit boolean,
+        score integer,
+        signed boolean,
+        startTime varchar(255),
+        status varchar(255),
+        dur12 integer,
+        dur24 integer,
+        dur46 integer,
+        dur6_ integer,
+        dur_1 integer,
+        totalCnt integer,
+        tel varchar(255),
+        animal boolean,
+        art boolean,
+        buddhism boolean,
+        camping boolean,
+        catholic boolean,
+        christianity boolean,
+        clean boolean,
+        coding boolean,
+        english boolean,
+        foreigner boolean,
+        genius boolean,
+        manner boolean,
+        math boolean,
+        music boolean,
+        nature boolean,
+        plant boolean,
+        sport boolean,
+        updateDate date,
+        videoCnt integer,
+        waitingNum integer,
+        zipcode varchar(255),
+        primary key (id)
+    )
+2022-07-08 15:09:07.902 DEBUG 6000 --- [    Test worker] org.hibernate.SQL                        : 
+    
+    create table Chat (
+       id bigint not null,
+        createdDate timestamp,
+        updatedDate timestamp,
+        date date,
+        deletedByReceiver boolean,
+        deletedBySender boolean,
+        message varchar(255),
+        time time,
+        room_id bigint,
+        receiver_id bigint,
+        sender_id bigint,
+        primary key (id)
+    )
+Hibernate: 
+    
+    create table Chat (
+       id bigint not null,
+        createdDate timestamp,
+        updatedDate timestamp,
+        date date,
+        deletedByReceiver boolean,
+        deletedBySender boolean,
+        message varchar(255),
+        time time,
+        room_id bigint,
+        receiver_id bigint,
+        sender_id bigint,
+        primary key (id)
+    )
+2022-07-08 15:09:07.903 DEBUG 6000 --- [    Test worker] org.hibernate.SQL                        : 
+    
+    create table ChatRoom (
+       id bigint not null,
+        createdDate timestamp,
+        updatedDate timestamp,
+        date date,
+        message varchar(255),
+        time time,
+        comment_id bigint,
+        post_id bigint,
+        receiver_id bigint,
+        sender_id bigint,
+        primary key (id)
+    )
+Hibernate: 
+    
+    create table ChatRoom (
+       id bigint not null,
+        createdDate timestamp,
+        updatedDate timestamp,
+        date date,
+        message varchar(255),
+        time time,
+        comment_id bigint,
+        post_id bigint,
+        receiver_id bigint,
+        sender_id bigint,
+        primary key (id)
+    )
+2022-07-08 15:09:07.904 DEBUG 6000 --- [    Test worker] org.hibernate.SQL                        : 
+    
+    create table Child (
+       id bigint not null,
+        createdDate timestamp,
+        updatedDate timestamp,
+        approval varchar(255),
+        birthDate date,
+        hasProfileImg boolean,
+        name varchar(255),
+        center_id bigint,
+        parent_id bigint,
+        primary key (id)
+    )
+Hibernate: 
+    
+    create table Child (
+       id bigint not null,
+        createdDate timestamp,
+        updatedDate timestamp,
+        approval varchar(255),
+        birthDate date,
+        hasProfileImg boolean,
+        name varchar(255),
+        center_id bigint,
+        parent_id bigint,
+        primary key (id)
+    )
+2022-07-08 15:09:07.905 DEBUG 6000 --- [    Test worker] org.hibernate.SQL                        : 
+    
+    create table ChildHouse (
+       id bigint not null,
+        primary key (id)
+    )
+Hibernate: 
+    
+    create table ChildHouse (
+       id bigint not null,
+        primary key (id)
+    )
+2022-07-08 15:09:07.906 DEBUG 6000 --- [    Test worker] org.hibernate.SQL                        : 
+    
+    create table CommentHeart (
+       id bigint not null,
+        createdDate timestamp,
+        updatedDate timestamp,
+        comment_id bigint,
+        user_id bigint,
+        primary key (id)
+    )
+Hibernate: 
+    
+    create table CommentHeart (
+       id bigint not null,
+        createdDate timestamp,
+        updatedDate timestamp,
+        comment_id bigint,
+        user_id bigint,
+        primary key (id)
+    )
+2022-07-08 15:09:07.907 DEBUG 6000 --- [    Test worker] org.hibernate.SQL                        : 
+    
+    create table Comments (
+       id bigint not null,
+        createdDate timestamp,
+        updatedDate timestamp,
+        anonymous boolean,
+        content varchar(255),
+        date date,
+        time time,
+        pComment_id bigint,
+        post_id bigint,
+        user_id bigint,
+        primary key (id)
+    )
+Hibernate: 
+    
+    create table Comments (
+       id bigint not null,
+        createdDate timestamp,
+        updatedDate timestamp,
+        anonymous boolean,
+        content varchar(255),
+        date date,
+        time time,
+        pComment_id bigint,
+        post_id bigint,
+        user_id bigint,
+        primary key (id)
+    )
+2022-07-08 15:09:07.909 DEBUG 6000 --- [    Test worker] org.hibernate.SQL                        : 
+    
+    create table Kindergarten (
+       id bigint not null,
+        primary key (id)
+    )
+Hibernate: 
+    
+    create table Kindergarten (
+       id bigint not null,
+        primary key (id)
+    )
+2022-07-08 15:09:07.909 DEBUG 6000 --- [    Test worker] org.hibernate.SQL                        : 
+    
+    create table Parent (
+       interestAge integer,
+        animal boolean,
+        art boolean,
+        buddhism boolean,
+        camping boolean,
+        catholic boolean,
+        christianity boolean,
+        clean boolean,
+        coding boolean,
+        english boolean,
+        foreigner boolean,
+        genius boolean,
+        manner boolean,
+        math boolean,
+        music boolean,
+        nature boolean,
+        plant boolean,
+        sport boolean,
+        id bigint not null,
+        primary key (id)
+    )
+Hibernate: 
+    
+    create table Parent (
+       interestAge integer,
+        animal boolean,
+        art boolean,
+        buddhism boolean,
+        camping boolean,
+        catholic boolean,
+        christianity boolean,
+        clean boolean,
+        coding boolean,
+        english boolean,
+        foreigner boolean,
+        genius boolean,
+        manner boolean,
+        math boolean,
+        music boolean,
+        nature boolean,
+        plant boolean,
+        sport boolean,
+        id bigint not null,
+        primary key (id)
+    )
+2022-07-08 15:09:07.910 DEBUG 6000 --- [    Test worker] org.hibernate.SQL                        : 
+    
+    create table Participation (
+       id bigint not null,
+        createdDate timestamp,
+        updatedDate timestamp,
+        status varchar(255),
+        parent_id bigint,
+        ptDate_id bigint,
+        primary key (id)
+    )
+Hibernate: 
+    
+    create table Participation (
+       id bigint not null,
+        createdDate timestamp,
+        updatedDate timestamp,
+        status varchar(255),
+        parent_id bigint,
+        ptDate_id bigint,
+        primary key (id)
+    )
+2022-07-08 15:09:07.912 DEBUG 6000 --- [    Test worker] org.hibernate.SQL                        : 
+    
+    create table Post (
+       id bigint not null,
+        createdDate timestamp,
+        updatedDate timestamp,
+        anonymous boolean,
+        commentCnt integer,
+        content clob,
+        date date,
+        heartCnt integer,
+        imgCnt integer,
+        postCreateDate timestamp,
+        postUpdateDate timestamp,
+        time time,
+        title varchar(255),
+        videoCnt integer,
+        board_id bigint,
+        user_id bigint,
+        primary key (id)
+    )
+Hibernate: 
+    
+    create table Post (
+       id bigint not null,
+        createdDate timestamp,
+        updatedDate timestamp,
+        anonymous boolean,
+        commentCnt integer,
+        content clob,
+        date date,
+        heartCnt integer,
+        imgCnt integer,
+        postCreateDate timestamp,
+        postUpdateDate timestamp,
+        time time,
+        title varchar(255),
+        videoCnt integer,
+        board_id bigint,
+        user_id bigint,
+        primary key (id)
+    )
+2022-07-08 15:09:07.913 DEBUG 6000 --- [    Test worker] org.hibernate.SQL                        : 
+    
+    create table PostHeart (
+       id bigint not null,
+        createdDate timestamp,
+        updatedDate timestamp,
+        post_id bigint,
+        user_id bigint,
+        primary key (id)
+    )
+Hibernate: 
+    
+    create table PostHeart (
+       id bigint not null,
+        createdDate timestamp,
+        updatedDate timestamp,
+        post_id bigint,
+        user_id bigint,
+        primary key (id)
+    )
+2022-07-08 15:09:07.914 DEBUG 6000 --- [    Test worker] org.hibernate.SQL                        : 
+    
+    create table Prefer (
+       id bigint not null,
+        createdDate timestamp,
+        updatedDate timestamp,
+        center_id bigint,
+        parent_id bigint,
+        primary key (id)
+    )
+Hibernate: 
+    
+    create table Prefer (
+       id bigint not null,
+        createdDate timestamp,
+        updatedDate timestamp,
+        center_id bigint,
+        parent_id bigint,
+        primary key (id)
+    )
+2022-07-08 15:09:07.915 DEBUG 6000 --- [    Test worker] org.hibernate.SQL                        : 
+    
+    create table Presentation (
+       id bigint not null,
+        createdDate timestamp,
+        updatedDate timestamp,
+        content clob,
+        endDate date,
+        imgCnt integer,
+        place varchar(255),
+        startDate date,
+        videoCnt integer,
+        center_id bigint,
+        primary key (id)
+    )
+Hibernate: 
+    
+    create table Presentation (
+       id bigint not null,
+        createdDate timestamp,
+        updatedDate timestamp,
+        content clob,
+        endDate date,
+        imgCnt integer,
+        place varchar(255),
+        startDate date,
+        videoCnt integer,
+        center_id bigint,
+        primary key (id)
+    )
+2022-07-08 15:09:07.916 DEBUG 6000 --- [    Test worker] org.hibernate.SQL                        : 
+    
+    create table Program (
+       id bigint not null,
+        createdDate timestamp,
+        updatedDate timestamp,
+        name varchar(255),
+        center_id bigint,
+        primary key (id)
+    )
+Hibernate: 
+    
+    create table Program (
+       id bigint not null,
+        createdDate timestamp,
+        updatedDate timestamp,
+        name varchar(255),
+        center_id bigint,
+        primary key (id)
+    )
+2022-07-08 15:09:07.917 DEBUG 6000 --- [    Test worker] org.hibernate.SQL                        : 
+    
+    create table PtDate (
+       id bigint not null,
+        createdDate timestamp,
+        updatedDate timestamp,
+        ablePersonNum integer,
+        date date,
+        participantCnt integer,
+        time varchar(255),
+        waitingCnt integer,
+        presentation_id bigint,
+        primary key (id)
+    )
+Hibernate: 
+    
+    create table PtDate (
+       id bigint not null,
+        createdDate timestamp,
+        updatedDate timestamp,
+        ablePersonNum integer,
+        date date,
+        participantCnt integer,
+        time varchar(255),
+        waitingCnt integer,
+        presentation_id bigint,
+        primary key (id)
+    )
+2022-07-08 15:09:07.918 DEBUG 6000 --- [    Test worker] org.hibernate.SQL                        : 
+    
+    create table Review (
+       id bigint not null,
+        createdDate timestamp,
+        updatedDate timestamp,
+        anonymous boolean,
+        answer clob,
+        answerCreateDate date,
+        answerCreateTime time,
+        content clob,
+        createDate date,
+        createTime time,
+        score integer,
+        updateDate date,
+        updateTime time,
+        center_id bigint,
+        parent_id bigint,
+        teacher_id bigint,
+        primary key (id)
+    )
+Hibernate: 
+    
+    create table Review (
+       id bigint not null,
+        createdDate timestamp,
+        updatedDate timestamp,
+        anonymous boolean,
+        answer clob,
+        answerCreateDate date,
+        answerCreateTime time,
+        content clob,
+        createDate date,
+        createTime time,
+        score integer,
+        updateDate date,
+        updateTime time,
+        center_id bigint,
+        parent_id bigint,
+        teacher_id bigint,
+        primary key (id)
+    )
+2022-07-08 15:09:07.919 DEBUG 6000 --- [    Test worker] org.hibernate.SQL                        : 
+    
+    create table ReviewHeart (
+       id bigint not null,
+        createdDate timestamp,
+        updatedDate timestamp,
+        review_id bigint,
+        user_id bigint,
+        primary key (id)
+    )
+Hibernate: 
+    
+    create table ReviewHeart (
+       id bigint not null,
+        createdDate timestamp,
+        updatedDate timestamp,
+        review_id bigint,
+        user_id bigint,
+        primary key (id)
+    )
+2022-07-08 15:09:07.921 DEBUG 6000 --- [    Test worker] org.hibernate.SQL                        : 
+    
+    create table Scrap (
+       id bigint not null,
+        createdDate timestamp,
+        updatedDate timestamp,
+        name varchar(255),
+        user_id bigint,
+        primary key (id)
+    )
+Hibernate: 
+    
+    create table Scrap (
+       id bigint not null,
+        createdDate timestamp,
+        updatedDate timestamp,
+        name varchar(255),
+        user_id bigint,
+        primary key (id)
+    )
+2022-07-08 15:09:07.922 DEBUG 6000 --- [    Test worker] org.hibernate.SQL                        : 
+    
+    create table ScrapPost (
+       id bigint not null,
+        createdDate timestamp,
+        updatedDate timestamp,
+        post_id bigint,
+        scrap_id bigint,
+        primary key (id)
+    )
+Hibernate: 
+    
+    create table ScrapPost (
+       id bigint not null,
+        createdDate timestamp,
+        updatedDate timestamp,
+        post_id bigint,
+        scrap_id bigint,
+        primary key (id)
+    )
+2022-07-08 15:09:07.923 DEBUG 6000 --- [    Test worker] org.hibernate.SQL                        : 
+    
+    create table Teacher (
+       approval varchar(255),
+        id bigint not null,
+        center_id bigint,
+        primary key (id)
+    )
+Hibernate: 
+    
+    create table Teacher (
+       approval varchar(255),
+        id bigint not null,
+        center_id bigint,
+        primary key (id)
+    )
+2022-07-08 15:09:07.925 DEBUG 6000 --- [    Test worker] org.hibernate.SQL                        : 
+    
+    create table User (
+       DTYPE varchar(31),
+        id bigint not null,
+        createdDate timestamp,
+        updatedDate timestamp,
+        address varchar(255),
+        auth varchar(255),
+        detailAddress varchar(255),
+        emailAddress varchar(255),
+        hasProfileImg boolean,
+        loginId varchar(255),
+        name varchar(255),
+        nickName varchar(255),
+        password varchar(255),
+        phoneNumber varchar(255),
+        primary key (id)
+    )
+Hibernate: 
+    
+    create table User (
+       DTYPE varchar(31),
+        id bigint not null,
+        createdDate timestamp,
+        updatedDate timestamp,
+        address varchar(255),
+        auth varchar(255),
+        detailAddress varchar(255),
+        emailAddress varchar(255),
+        hasProfileImg boolean,
+        loginId varchar(255),
+        name varchar(255),
+        nickName varchar(255),
+        password varchar(255),
+        phoneNumber varchar(255),
+        primary key (id)
+    )
+2022-07-08 15:09:07.926 DEBUG 6000 --- [    Test worker] org.hibernate.SQL                        : 
+    
+    create table Waiting (
+       id bigint not null,
+        createdDate timestamp,
+        updatedDate timestamp,
+        waitingOrder integer,
+        parent_id bigint,
+        ptDate_id bigint,
+        primary key (id)
+    )
+Hibernate: 
+    
+    create table Waiting (
+       id bigint not null,
+        createdDate timestamp,
+        updatedDate timestamp,
+        waitingOrder integer,
+        parent_id bigint,
+        ptDate_id bigint,
+        primary key (id)
+    )
+2022-07-08 15:09:07.928 DEBUG 6000 --- [    Test worker] org.hibernate.SQL                        : 
+    
+    alter table AuthNumber 
+       drop constraint if exists UK1xiabmd40u1rkcqc5doxr5sma
+Hibernate: 
+    
+    alter table AuthNumber 
+       drop constraint if exists UK1xiabmd40u1rkcqc5doxr5sma
+2022-07-08 15:09:07.928 DEBUG 6000 --- [    Test worker] org.hibernate.SQL                        : 
+    
+    alter table AuthNumber 
+       add constraint UK1xiabmd40u1rkcqc5doxr5sma unique (phoneNum, authKind)
+Hibernate: 
+    
+    alter table AuthNumber 
+       add constraint UK1xiabmd40u1rkcqc5doxr5sma unique (phoneNum, authKind)
+2022-07-08 15:09:07.931 DEBUG 6000 --- [    Test worker] org.hibernate.SQL                        : 
+    
+    alter table Bookmark 
+       drop constraint if exists UKlxfhenp6cp1u32i44io89k410
+Hibernate: 
+    
+    alter table Bookmark 
+       drop constraint if exists UKlxfhenp6cp1u32i44io89k410
+2022-07-08 15:09:07.931 DEBUG 6000 --- [    Test worker] org.hibernate.SQL                        : 
+    
+    alter table Bookmark 
+       add constraint UKlxfhenp6cp1u32i44io89k410 unique (board_id, user_id)
+Hibernate: 
+    
+    alter table Bookmark 
+       add constraint UKlxfhenp6cp1u32i44io89k410 unique (board_id, user_id)
+2022-07-08 15:09:07.932 DEBUG 6000 --- [    Test worker] org.hibernate.SQL                        : 
+    
+    alter table User 
+       drop constraint if exists UK_3vielscbibbf2msvo7q8rvvoq
+Hibernate: 
+    
+    alter table User 
+       drop constraint if exists UK_3vielscbibbf2msvo7q8rvvoq
+2022-07-08 15:09:07.932 DEBUG 6000 --- [    Test worker] org.hibernate.SQL                        : 
+    
+    alter table User 
+       add constraint UK_3vielscbibbf2msvo7q8rvvoq unique (loginId)
+Hibernate: 
+    
+    alter table User 
+       add constraint UK_3vielscbibbf2msvo7q8rvvoq unique (loginId)
+2022-07-08 15:09:07.933 DEBUG 6000 --- [    Test worker] org.hibernate.SQL                        : 
+    
+    alter table User 
+       drop constraint if exists UK_cyph21kbta5k1v5ftu52r4lva
+Hibernate: 
+    
+    alter table User 
+       drop constraint if exists UK_cyph21kbta5k1v5ftu52r4lva
+2022-07-08 15:09:07.933 DEBUG 6000 --- [    Test worker] org.hibernate.SQL                        : 
+    
+    alter table User 
+       add constraint UK_cyph21kbta5k1v5ftu52r4lva unique (phoneNumber)
+Hibernate: 
+    
+    alter table User 
+       add constraint UK_cyph21kbta5k1v5ftu52r4lva unique (phoneNumber)
+2022-07-08 15:09:07.933 DEBUG 6000 --- [    Test worker] org.hibernate.SQL                        : create sequence hibernate_sequence start with 1 increment by 1
+Hibernate: create sequence hibernate_sequence start with 1 increment by 1
+2022-07-08 15:09:07.935 DEBUG 6000 --- [    Test worker] org.hibernate.SQL                        : 
+    
+    alter table AddInfo 
+       add constraint FKibt9erg4x8i4oqhu08astmrxx 
+       foreign key (center_id) 
+       references Center
+Hibernate: 
+    
+    alter table AddInfo 
+       add constraint FKibt9erg4x8i4oqhu08astmrxx 
+       foreign key (center_id) 
+       references Center
+2022-07-08 15:09:07.937 DEBUG 6000 --- [    Test worker] org.hibernate.SQL                        : 
+    
+    alter table Alarm 
+       add constraint FKqmbm2bq8x6yoc9drwqcrychi9 
+       foreign key (user_id) 
+       references User
+Hibernate: 
+    
+    alter table Alarm 
+       add constraint FKqmbm2bq8x6yoc9drwqcrychi9 
+       foreign key (user_id) 
+       references User
+2022-07-08 15:09:07.939 DEBUG 6000 --- [    Test worker] org.hibernate.SQL                        : 
+    
+    alter table Alarm 
+       add constraint FKnosmx51ygmne412skiysg5h8a 
+       foreign key (centerId) 
+       references Center
+Hibernate: 
+    
+    alter table Alarm 
+       add constraint FKnosmx51ygmne412skiysg5h8a 
+       foreign key (centerId) 
+       references Center
+2022-07-08 15:09:07.940 DEBUG 6000 --- [    Test worker] org.hibernate.SQL                        : 
+    
+    alter table Alarm 
+       add constraint FK4d1g5emvm9dwaq42ijhplx5yb 
+       foreign key (senderId) 
+       references User
+Hibernate: 
+    
+    alter table Alarm 
+       add constraint FK4d1g5emvm9dwaq42ijhplx5yb 
+       foreign key (senderId) 
+       references User
+2022-07-08 15:09:07.941 DEBUG 6000 --- [    Test worker] org.hibernate.SQL                        : 
+    
+    alter table Alarm 
+       add constraint FKdbqqwxrx2u27pq0u5jgkonquc 
+       foreign key (postId) 
+       references Post
+Hibernate: 
+    
+    alter table Alarm 
+       add constraint FKdbqqwxrx2u27pq0u5jgkonquc 
+       foreign key (postId) 
+       references Post
+2022-07-08 15:09:07.943 DEBUG 6000 --- [    Test worker] org.hibernate.SQL                        : 
+    
+    alter table Alarm 
+       add constraint FK536vpy4yurn8g9ms9wn84n4kx 
+       foreign key (presentationId) 
+       references Presentation
+Hibernate: 
+    
+    alter table Alarm 
+       add constraint FK536vpy4yurn8g9ms9wn84n4kx 
+       foreign key (presentationId) 
+       references Presentation
+2022-07-08 15:09:07.944 DEBUG 6000 --- [    Test worker] org.hibernate.SQL                        : 
+    
+    alter table Board 
+       add constraint FK7phpsi9y0lbwm0y89ln40chqt 
+       foreign key (center_id) 
+       references Center
+Hibernate: 
+    
+    alter table Board 
+       add constraint FK7phpsi9y0lbwm0y89ln40chqt 
+       foreign key (center_id) 
+       references Center
+2022-07-08 15:09:07.945 DEBUG 6000 --- [    Test worker] org.hibernate.SQL                        : 
+    
+    alter table Bookmark 
+       add constraint FK4k5q1tib29xiadkvdod5t7d06 
+       foreign key (board_id) 
+       references Board
+Hibernate: 
+    
+    alter table Bookmark 
+       add constraint FK4k5q1tib29xiadkvdod5t7d06 
+       foreign key (board_id) 
+       references Board
+2022-07-08 15:09:07.946 DEBUG 6000 --- [    Test worker] org.hibernate.SQL                        : 
+    
+    alter table Bookmark 
+       add constraint FKem360dy7slvw5s2x9uu0d911n 
+       foreign key (user_id) 
+       references User
+Hibernate: 
+    
+    alter table Bookmark 
+       add constraint FKem360dy7slvw5s2x9uu0d911n 
+       foreign key (user_id) 
+       references User
+2022-07-08 15:09:07.947 DEBUG 6000 --- [    Test worker] org.hibernate.SQL                        : 
+    
+    alter table Chat 
+       add constraint FK1bo7ocbtuio41vidg1ah7idec 
+       foreign key (room_id) 
+       references ChatRoom
+Hibernate: 
+    
+    alter table Chat 
+       add constraint FK1bo7ocbtuio41vidg1ah7idec 
+       foreign key (room_id) 
+       references ChatRoom
+2022-07-08 15:09:07.949 DEBUG 6000 --- [    Test worker] org.hibernate.SQL                        : 
+    
+    alter table Chat 
+       add constraint FK5k9jsnispcq3c0b6yngs0nmgs 
+       foreign key (receiver_id) 
+       references User
+Hibernate: 
+    
+    alter table Chat 
+       add constraint FK5k9jsnispcq3c0b6yngs0nmgs 
+       foreign key (receiver_id) 
+       references User
+2022-07-08 15:09:07.950 DEBUG 6000 --- [    Test worker] org.hibernate.SQL                        : 
+    
+    alter table Chat 
+       add constraint FK7g102hdvebt0gf5ws4ubbq6h 
+       foreign key (sender_id) 
+       references User
+Hibernate: 
+    
+    alter table Chat 
+       add constraint FK7g102hdvebt0gf5ws4ubbq6h 
+       foreign key (sender_id) 
+       references User
+2022-07-08 15:09:07.951 DEBUG 6000 --- [    Test worker] org.hibernate.SQL                        : 
+    
+    alter table ChatRoom 
+       add constraint FKo3cywkpvq5vr8efqoqymvpqwg 
+       foreign key (comment_id) 
+       references Comments
+Hibernate: 
+    
+    alter table ChatRoom 
+       add constraint FKo3cywkpvq5vr8efqoqymvpqwg 
+       foreign key (comment_id) 
+       references Comments
+2022-07-08 15:09:07.952 DEBUG 6000 --- [    Test worker] org.hibernate.SQL                        : 
+    
+    alter table ChatRoom 
+       add constraint FKde4wr9ymg32u0il15b31rwb9d 
+       foreign key (post_id) 
+       references Post
+Hibernate: 
+    
+    alter table ChatRoom 
+       add constraint FKde4wr9ymg32u0il15b31rwb9d 
+       foreign key (post_id) 
+       references Post
+2022-07-08 15:09:07.953 DEBUG 6000 --- [    Test worker] org.hibernate.SQL                        : 
+    
+    alter table ChatRoom 
+       add constraint FKm1negkuv94b69p5v4bpuog6xu 
+       foreign key (receiver_id) 
+       references User
+Hibernate: 
+    
+    alter table ChatRoom 
+       add constraint FKm1negkuv94b69p5v4bpuog6xu 
+       foreign key (receiver_id) 
+       references User
+2022-07-08 15:09:07.955 DEBUG 6000 --- [    Test worker] org.hibernate.SQL                        : 
+    
+    alter table ChatRoom 
+       add constraint FKmodbdprj6bqjrx5jm987webc5 
+       foreign key (sender_id) 
+       references User
+Hibernate: 
+    
+    alter table ChatRoom 
+       add constraint FKmodbdprj6bqjrx5jm987webc5 
+       foreign key (sender_id) 
+       references User
+2022-07-08 15:09:07.956 DEBUG 6000 --- [    Test worker] org.hibernate.SQL                        : 
+    
+    alter table Child 
+       add constraint FKiwr3lqg3rr3p7xv1qskq291ej 
+       foreign key (center_id) 
+       references Center
+Hibernate: 
+    
+    alter table Child 
+       add constraint FKiwr3lqg3rr3p7xv1qskq291ej 
+       foreign key (center_id) 
+       references Center
+2022-07-08 15:09:07.957 DEBUG 6000 --- [    Test worker] org.hibernate.SQL                        : 
+    
+    alter table Child 
+       add constraint FKlh67j1n7x7gt59u0pbkwqh6o6 
+       foreign key (parent_id) 
+       references Parent
+Hibernate: 
+    
+    alter table Child 
+       add constraint FKlh67j1n7x7gt59u0pbkwqh6o6 
+       foreign key (parent_id) 
+       references Parent
+2022-07-08 15:09:07.958 DEBUG 6000 --- [    Test worker] org.hibernate.SQL                        : 
+    
+    alter table ChildHouse 
+       add constraint FKqu23cobfepiew767ioukyuku1 
+       foreign key (id) 
+       references Center
+Hibernate: 
+    
+    alter table ChildHouse 
+       add constraint FKqu23cobfepiew767ioukyuku1 
+       foreign key (id) 
+       references Center
+2022-07-08 15:09:07.959 DEBUG 6000 --- [    Test worker] org.hibernate.SQL                        : 
+    
+    alter table CommentHeart 
+       add constraint FKpbevq5jj2b2w9vr0irhjgbl35 
+       foreign key (comment_id) 
+       references Comments
+Hibernate: 
+    
+    alter table CommentHeart 
+       add constraint FKpbevq5jj2b2w9vr0irhjgbl35 
+       foreign key (comment_id) 
+       references Comments
+2022-07-08 15:09:07.960 DEBUG 6000 --- [    Test worker] org.hibernate.SQL                        : 
+    
+    alter table CommentHeart 
+       add constraint FKi3l0ddv80n2w9w1wx3xs1jlgl 
+       foreign key (user_id) 
+       references User
+Hibernate: 
+    
+    alter table CommentHeart 
+       add constraint FKi3l0ddv80n2w9w1wx3xs1jlgl 
+       foreign key (user_id) 
+       references User
+2022-07-08 15:09:07.961 DEBUG 6000 --- [    Test worker] org.hibernate.SQL                        : 
+    
+    alter table Comments 
+       add constraint FK8o691yavolpiuxji5rrv72433 
+       foreign key (pComment_id) 
+       references Comments
+Hibernate: 
+    
+    alter table Comments 
+       add constraint FK8o691yavolpiuxji5rrv72433 
+       foreign key (pComment_id) 
+       references Comments
+2022-07-08 15:09:07.962 DEBUG 6000 --- [    Test worker] org.hibernate.SQL                        : 
+    
+    alter table Comments 
+       add constraint FKojv15lcp7l97alpxkrw3lbn5x 
+       foreign key (post_id) 
+       references Post
+Hibernate: 
+    
+    alter table Comments 
+       add constraint FKojv15lcp7l97alpxkrw3lbn5x 
+       foreign key (post_id) 
+       references Post
+2022-07-08 15:09:07.963 DEBUG 6000 --- [    Test worker] org.hibernate.SQL                        : 
+    
+    alter table Comments 
+       add constraint FK96ioqwrgscafc6odxpthrt99s 
+       foreign key (user_id) 
+       references User
+Hibernate: 
+    
+    alter table Comments 
+       add constraint FK96ioqwrgscafc6odxpthrt99s 
+       foreign key (user_id) 
+       references User
+2022-07-08 15:09:07.964 DEBUG 6000 --- [    Test worker] org.hibernate.SQL                        : 
+    
+    alter table Kindergarten 
+       add constraint FKih0v70kw63jp05x8hivijmmhd 
+       foreign key (id) 
+       references Center
+Hibernate: 
+    
+    alter table Kindergarten 
+       add constraint FKih0v70kw63jp05x8hivijmmhd 
+       foreign key (id) 
+       references Center
+2022-07-08 15:09:07.965 DEBUG 6000 --- [    Test worker] org.hibernate.SQL                        : 
+    
+    alter table Parent 
+       add constraint FKmcmr531knmcccww3ygpluembn 
+       foreign key (id) 
+       references User 
+       on delete cascade
+Hibernate: 
+    
+    alter table Parent 
+       add constraint FKmcmr531knmcccww3ygpluembn 
+       foreign key (id) 
+       references User 
+       on delete cascade
+2022-07-08 15:09:07.966 DEBUG 6000 --- [    Test worker] org.hibernate.SQL                        : 
+    
+    alter table Participation 
+       add constraint FK7kvx1v08x6xcdiqcyvg6it94b 
+       foreign key (parent_id) 
+       references Parent
+Hibernate: 
+    
+    alter table Participation 
+       add constraint FK7kvx1v08x6xcdiqcyvg6it94b 
+       foreign key (parent_id) 
+       references Parent
+2022-07-08 15:09:07.967 DEBUG 6000 --- [    Test worker] org.hibernate.SQL                        : 
+    
+    alter table Participation 
+       add constraint FKnebgr7orwss9t0bwne9sdjodi 
+       foreign key (ptDate_id) 
+       references PtDate
+Hibernate: 
+    
+    alter table Participation 
+       add constraint FKnebgr7orwss9t0bwne9sdjodi 
+       foreign key (ptDate_id) 
+       references PtDate
+2022-07-08 15:09:07.968 DEBUG 6000 --- [    Test worker] org.hibernate.SQL                        : 
+    
+    alter table Post 
+       add constraint FK4e2721v2h08vwclwy10esa6jo 
+       foreign key (board_id) 
+       references Board
+Hibernate: 
+    
+    alter table Post 
+       add constraint FK4e2721v2h08vwclwy10esa6jo 
+       foreign key (board_id) 
+       references Board
+2022-07-08 15:09:07.969 DEBUG 6000 --- [    Test worker] org.hibernate.SQL                        : 
+    
+    alter table Post 
+       add constraint FKg7x75nqlmhufeeoxcuh22awxx 
+       foreign key (user_id) 
+       references User
+Hibernate: 
+    
+    alter table Post 
+       add constraint FKg7x75nqlmhufeeoxcuh22awxx 
+       foreign key (user_id) 
+       references User
+2022-07-08 15:09:07.971 DEBUG 6000 --- [    Test worker] org.hibernate.SQL                        : 
+    
+    alter table PostHeart 
+       add constraint FK3509h1m9yav73i1sf6y052afy 
+       foreign key (post_id) 
+       references Post
+Hibernate: 
+    
+    alter table PostHeart 
+       add constraint FK3509h1m9yav73i1sf6y052afy 
+       foreign key (post_id) 
+       references Post
+2022-07-08 15:09:07.972 DEBUG 6000 --- [    Test worker] org.hibernate.SQL                        : 
+    
+    alter table PostHeart 
+       add constraint FKtq7h472oc98t24258dawej449 
+       foreign key (user_id) 
+       references User
+Hibernate: 
+    
+    alter table PostHeart 
+       add constraint FKtq7h472oc98t24258dawej449 
+       foreign key (user_id) 
+       references User
+2022-07-08 15:09:07.973 DEBUG 6000 --- [    Test worker] org.hibernate.SQL                        : 
+    
+    alter table Prefer 
+       add constraint FKci6vmvh5sleb923qvxx77jqpi 
+       foreign key (center_id) 
+       references Center
+Hibernate: 
+    
+    alter table Prefer 
+       add constraint FKci6vmvh5sleb923qvxx77jqpi 
+       foreign key (center_id) 
+       references Center
+2022-07-08 15:09:07.974 DEBUG 6000 --- [    Test worker] org.hibernate.SQL                        : 
+    
+    alter table Prefer 
+       add constraint FKd6qqyqomafme1h6juyeouy261 
+       foreign key (parent_id) 
+       references Parent
+Hibernate: 
+    
+    alter table Prefer 
+       add constraint FKd6qqyqomafme1h6juyeouy261 
+       foreign key (parent_id) 
+       references Parent
+2022-07-08 15:09:07.976 DEBUG 6000 --- [    Test worker] org.hibernate.SQL                        : 
+    
+    alter table Presentation 
+       add constraint FK90k0cywu5rvkfsc02g72cgut4 
+       foreign key (center_id) 
+       references Center
+Hibernate: 
+    
+    alter table Presentation 
+       add constraint FK90k0cywu5rvkfsc02g72cgut4 
+       foreign key (center_id) 
+       references Center
+2022-07-08 15:09:07.977 DEBUG 6000 --- [    Test worker] org.hibernate.SQL                        : 
+    
+    alter table Program 
+       add constraint FK2fx545y4644rv4pprihgcrorv 
+       foreign key (center_id) 
+       references Center
+Hibernate: 
+    
+    alter table Program 
+       add constraint FK2fx545y4644rv4pprihgcrorv 
+       foreign key (center_id) 
+       references Center
+2022-07-08 15:09:07.978 DEBUG 6000 --- [    Test worker] org.hibernate.SQL                        : 
+    
+    alter table PtDate 
+       add constraint FKjyno4ui8blxhoavx6kd8atnxv 
+       foreign key (presentation_id) 
+       references Presentation
+Hibernate: 
+    
+    alter table PtDate 
+       add constraint FKjyno4ui8blxhoavx6kd8atnxv 
+       foreign key (presentation_id) 
+       references Presentation
+2022-07-08 15:09:07.979 DEBUG 6000 --- [    Test worker] org.hibernate.SQL                        : 
+    
+    alter table Review 
+       add constraint FK8h2xoy2jd625tgdw68gm3ows8 
+       foreign key (center_id) 
+       references Center
+Hibernate: 
+    
+    alter table Review 
+       add constraint FK8h2xoy2jd625tgdw68gm3ows8 
+       foreign key (center_id) 
+       references Center
+2022-07-08 15:09:07.980 DEBUG 6000 --- [    Test worker] org.hibernate.SQL                        : 
+    
+    alter table Review 
+       add constraint FK2rao7nlscm67fd34wmh5arii4 
+       foreign key (parent_id) 
+       references Parent
+Hibernate: 
+    
+    alter table Review 
+       add constraint FK2rao7nlscm67fd34wmh5arii4 
+       foreign key (parent_id) 
+       references Parent
+2022-07-08 15:09:07.981 DEBUG 6000 --- [    Test worker] org.hibernate.SQL                        : 
+    
+    alter table Review 
+       add constraint FK3nnlx8whevq39es2jst3oxuph 
+       foreign key (teacher_id) 
+       references Teacher
+Hibernate: 
+    
+    alter table Review 
+       add constraint FK3nnlx8whevq39es2jst3oxuph 
+       foreign key (teacher_id) 
+       references Teacher
+2022-07-08 15:09:07.982 DEBUG 6000 --- [    Test worker] org.hibernate.SQL                        : 
+    
+    alter table ReviewHeart 
+       add constraint FK8g38ma10a65nmatcocc7xp49c 
+       foreign key (review_id) 
+       references Review
+Hibernate: 
+    
+    alter table ReviewHeart 
+       add constraint FK8g38ma10a65nmatcocc7xp49c 
+       foreign key (review_id) 
+       references Review
+2022-07-08 15:09:07.983 DEBUG 6000 --- [    Test worker] org.hibernate.SQL                        : 
+    
+    alter table ReviewHeart 
+       add constraint FKilcjd6aw53o2a9kxotutewan2 
+       foreign key (user_id) 
+       references User
+Hibernate: 
+    
+    alter table ReviewHeart 
+       add constraint FKilcjd6aw53o2a9kxotutewan2 
+       foreign key (user_id) 
+       references User
+2022-07-08 15:09:07.984 DEBUG 6000 --- [    Test worker] org.hibernate.SQL                        : 
+    
+    alter table Scrap 
+       add constraint FK45q4kxro1ryaw4pecrlce3gef 
+       foreign key (user_id) 
+       references User
+Hibernate: 
+    
+    alter table Scrap 
+       add constraint FK45q4kxro1ryaw4pecrlce3gef 
+       foreign key (user_id) 
+       references User
+2022-07-08 15:09:07.985 DEBUG 6000 --- [    Test worker] org.hibernate.SQL                        : 
+    
+    alter table ScrapPost 
+       add constraint FK5vy2tt1skc8wpm03kj00ng3ss 
+       foreign key (post_id) 
+       references Post
+Hibernate: 
+    
+    alter table ScrapPost 
+       add constraint FK5vy2tt1skc8wpm03kj00ng3ss 
+       foreign key (post_id) 
+       references Post
+2022-07-08 15:09:07.986 DEBUG 6000 --- [    Test worker] org.hibernate.SQL                        : 
+    
+    alter table ScrapPost 
+       add constraint FK8ypw2dl17bsicl3kvj6b4j7yh 
+       foreign key (scrap_id) 
+       references Scrap 
+       on delete cascade
+Hibernate: 
+    
+    alter table ScrapPost 
+       add constraint FK8ypw2dl17bsicl3kvj6b4j7yh 
+       foreign key (scrap_id) 
+       references Scrap 
+       on delete cascade
+2022-07-08 15:09:07.987 DEBUG 6000 --- [    Test worker] org.hibernate.SQL                        : 
+    
+    alter table Teacher 
+       add constraint FK3ftoo0ge7shp58bo6j15m4p78 
+       foreign key (center_id) 
+       references Center
+Hibernate: 
+    
+    alter table Teacher 
+       add constraint FK3ftoo0ge7shp58bo6j15m4p78 
+       foreign key (center_id) 
+       references Center
+2022-07-08 15:09:07.988 DEBUG 6000 --- [    Test worker] org.hibernate.SQL                        : 
+    
+    alter table Teacher 
+       add constraint FKe6cn4wt3ves62krml7vxnt982 
+       foreign key (id) 
+       references User 
+       on delete cascade
+Hibernate: 
+    
+    alter table Teacher 
+       add constraint FKe6cn4wt3ves62krml7vxnt982 
+       foreign key (id) 
+       references User 
+       on delete cascade
+2022-07-08 15:09:07.989 DEBUG 6000 --- [    Test worker] org.hibernate.SQL                        : 
+    
+    alter table Waiting 
+       add constraint FKtqa7rlpdnbqddq4fot0o5qw9w 
+       foreign key (parent_id) 
+       references Parent
+Hibernate: 
+    
+    alter table Waiting 
+       add constraint FKtqa7rlpdnbqddq4fot0o5qw9w 
+       foreign key (parent_id) 
+       references Parent
+2022-07-08 15:09:07.989 DEBUG 6000 --- [    Test worker] org.hibernate.SQL                        : 
+    
+    alter table Waiting 
+       add constraint FKv6ct0xsb771ei8vbs1cndnpc 
+       foreign key (ptDate_id) 
+       references PtDate
+Hibernate: 
+    
+    alter table Waiting 
+       add constraint FKv6ct0xsb771ei8vbs1cndnpc 
+       foreign key (ptDate_id) 
+       references PtDate
+2022-07-08 15:09:07.990  INFO 6000 --- [    Test worker] o.h.e.t.j.p.i.JtaPlatformInitiator       : HHH000490: Using JtaPlatform implementation: [org.hibernate.engine.transaction.jta.platform.internal.NoJtaPlatform]
+2022-07-08 15:09:07.997  INFO 6000 --- [    Test worker] j.LocalContainerEntityManagerFactoryBean : Initialized JPA EntityManagerFactory for persistence unit 'default'
+2022-07-08 15:09:09.218  INFO 6000 --- [    Test worker] F.iLUVit.repository.BoardRepositoryTest  : Started BoardRepositoryTest in 2.729 seconds (JVM running for 25.895)
+2022-07-08 15:09:09.237  INFO 6000 --- [    Test worker] o.s.t.c.transaction.TransactionContext   : Began transaction (1) for test context [DefaultTestContext@52ccf81e testClass = BoardRepositoryTest, testInstance = FIS.iLUVit.repository.BoardRepositoryTest@eeb48a1, testMethod = 센터로_게시판_찾기@BoardRepositoryTest, testException = [null], mergedContextConfiguration = [MergedContextConfiguration@4e6fa97c testClass = BoardRepositoryTest, locations = '{}', classes = '{class FIS.iLUVit.ILuVitApplication}', contextInitializerClasses = '[]', activeProfiles = '{}', propertySourceLocations = '{}', propertySourceProperties = '{org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTestContextBootstrapper=true}', contextCustomizers = set[org.springframework.boot.test.autoconfigure.OverrideAutoConfigurationContextCustomizerFactory$DisableAutoConfigurationContextCustomizer@1f404aa1, org.springframework.boot.test.autoconfigure.actuate.metrics.MetricsExportContextCustomizerFactory$DisableMetricExportContextCustomizer@2dd29a59, org.springframework.boot.test.autoconfigure.filter.TypeExcludeFiltersContextCustomizer@801efc8c, org.springframework.boot.test.autoconfigure.properties.PropertyMappingContextCustomizer@c5c6ab73, org.springframework.boot.test.autoconfigure.web.servlet.WebDriverContextCustomizerFactory$Customizer@ec2cc4, [ImportsContextCustomizer@b6eea98 key = [org.springframework.boot.autoconfigure.cache.CacheAutoConfiguration, org.springframework.boot.autoconfigure.data.jpa.JpaRepositoriesAutoConfiguration, org.springframework.boot.autoconfigure.flyway.FlywayAutoConfiguration, org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration, org.springframework.boot.autoconfigure.jdbc.DataSourceTransactionManagerAutoConfiguration, org.springframework.boot.autoconfigure.jdbc.JdbcTemplateAutoConfiguration, org.springframework.boot.autoconfigure.liquibase.LiquibaseAutoConfiguration, org.springframework.boot.autoconfigure.orm.jpa.HibernateJpaAutoConfiguration, org.springframework.boot.autoconfigure.sql.init.SqlInitializationAutoConfiguration, org.springframework.boot.autoconfigure.transaction.TransactionAutoConfiguration, org.springframework.boot.test.autoconfigure.jdbc.TestDatabaseAutoConfiguration, org.springframework.boot.test.autoconfigure.orm.jpa.TestEntityManagerAutoConfiguration]], org.springframework.boot.test.context.filter.ExcludeFilterContextCustomizer@2101b44a, org.springframework.boot.test.json.DuplicateJsonObjectContextCustomizerFactory$DuplicateJsonObjectContextCustomizer@119020fb, org.springframework.boot.test.mock.mockito.MockitoContextCustomizer@0, org.springframework.boot.test.context.SpringBootTestArgs@1, org.springframework.boot.test.context.SpringBootTestWebEnvironment@0], contextLoader = 'org.springframework.boot.test.context.SpringBootContextLoader', parent = [null]], attributes = map['org.springframework.test.context.event.ApplicationEventsTestExecutionListener.recordApplicationEvents' -&gt; false]]; transaction manager [org.springframework.orm.jpa.JpaTransactionManager@47e83e72]; rollback [true]
+2022-07-08 15:09:09.253 DEBUG 6000 --- [    Test worker] org.hibernate.SQL                        : 
+    call next value for hibernate_sequence
+Hibernate: 
+    call next value for hibernate_sequence
+2022-07-08 15:09:09.279  INFO 6000 --- [    Test worker] o.s.t.c.transaction.TransactionContext   : Rolled back transaction for test: [DefaultTestContext@52ccf81e testClass = BoardRepositoryTest, testInstance = FIS.iLUVit.repository.BoardRepositoryTest@eeb48a1, testMethod = 센터로_게시판_찾기@BoardRepositoryTest, testException = [null], mergedContextConfiguration = [MergedContextConfiguration@4e6fa97c testClass = BoardRepositoryTest, locations = '{}', classes = '{class FIS.iLUVit.ILuVitApplication}', contextInitializerClasses = '[]', activeProfiles = '{}', propertySourceLocations = '{}', propertySourceProperties = '{org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTestContextBootstrapper=true}', contextCustomizers = set[org.springframework.boot.test.autoconfigure.OverrideAutoConfigurationContextCustomizerFactory$DisableAutoConfigurationContextCustomizer@1f404aa1, org.springframework.boot.test.autoconfigure.actuate.metrics.MetricsExportContextCustomizerFactory$DisableMetricExportContextCustomizer@2dd29a59, org.springframework.boot.test.autoconfigure.filter.TypeExcludeFiltersContextCustomizer@801efc8c, org.springframework.boot.test.autoconfigure.properties.PropertyMappingContextCustomizer@c5c6ab73, org.springframework.boot.test.autoconfigure.web.servlet.WebDriverContextCustomizerFactory$Customizer@ec2cc4, [ImportsContextCustomizer@b6eea98 key = [org.springframework.boot.autoconfigure.cache.CacheAutoConfiguration, org.springframework.boot.autoconfigure.data.jpa.JpaRepositoriesAutoConfiguration, org.springframework.boot.autoconfigure.flyway.FlywayAutoConfiguration, org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration, org.springframework.boot.autoconfigure.jdbc.DataSourceTransactionManagerAutoConfiguration, org.springframework.boot.autoconfigure.jdbc.JdbcTemplateAutoConfiguration, org.springframework.boot.autoconfigure.liquibase.LiquibaseAutoConfiguration, org.springframework.boot.autoconfigure.orm.jpa.HibernateJpaAutoConfiguration, org.springframework.boot.autoconfigure.sql.init.SqlInitializationAutoConfiguration, org.springframework.boot.autoconfigure.transaction.TransactionAutoConfiguration, org.springframework.boot.test.autoconfigure.jdbc.TestDatabaseAutoConfiguration, org.springframework.boot.test.autoconfigure.orm.jpa.TestEntityManagerAutoConfiguration]], org.springframework.boot.test.context.filter.ExcludeFilterContextCustomizer@2101b44a, org.springframework.boot.test.json.DuplicateJsonObjectContextCustomizerFactory$DuplicateJsonObjectContextCustomizer@119020fb, org.springframework.boot.test.mock.mockito.MockitoContextCustomizer@0, org.springframework.boot.test.context.SpringBootTestArgs@1, org.springframework.boot.test.context.SpringBootTestWebEnvironment@0], contextLoader = 'org.springframework.boot.test.context.SpringBootContextLoader', parent = [null]], attributes = map['org.springframework.test.context.event.ApplicationEventsTestExecutionListener.recordApplicationEvents' -&gt; false]]
+</pre>
+</span>
+</div>
+</div>
+<div id="footer">
+<p>
+<div>
+<label class="hidden" id="label-for-line-wrapping-toggle" for="line-wrapping-toggle">Wrap lines
+<input id="line-wrapping-toggle" type="checkbox" autocomplete="off"/>
+</label>
+</div>Generated by 
+<a href="http://www.gradle.org">Gradle 7.4.1</a> at 2022. 7. 8. 오후 3:09:17</p>
+</div>
+</div>
+</body>
+</html>
