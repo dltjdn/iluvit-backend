@@ -1,7 +1,5 @@
 package FIS.iLUVit.service;
 
-
-
 import FIS.iLUVit.domain.Parent;
 import FIS.iLUVit.domain.enumtype.AuthKind;
 import FIS.iLUVit.exception.AuthNumberErrorResult;
@@ -37,17 +35,20 @@ public class AuthNumberServiceTest {
     @Mock
     private BCryptPasswordEncoder encoder;
 
+    @Spy
+    private DefaultMessageService messageService;// = NurigoApp.INSTANCE.initialize("NCSF7WSXFTOPKPM4", "49UO4W0AUTMPD8T5AEFVLH6YQ1DSCNJQ", "https://api.coolsms.co.kr");
+
     @InjectMocks
-    private AuthNumberService target = new AuthNumberService(authNumberRepository, userRepository, encoder, "NCSF7WSXFTOPKPM4", "49UO4W0AUTMPD8T5AEFVLH6YQ1DSCNJQ", "https://api.coolsms.co.kr");
+    private AuthNumberService target;
 
     @Test
     public void 인증번호받기_실패_이미가입된번호() {
         // given
-        doReturn(Optional.of(Parent.builder().build())).when(userRepository).findByPhoneNumber("01067150071");
+        doReturn(Optional.of(Parent.builder().name("asd").build())).when(userRepository).findByPhoneNumber("phoneNumber");
 
         // when
         AuthNumberException result = assertThrows(AuthNumberException.class,
-                () -> target.sendAuthNumberForSignup("01067150071", AuthKind.signup));
+                () -> target.sendAuthNumberForSignup("phoneNumber", AuthKind.signup));
 
         // then
         assertThat(result.getErrorResult()).isEqualTo(AuthNumberErrorResult.ALREADY_PHONENUMBER_REGISTER);
