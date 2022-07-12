@@ -8,9 +8,9 @@ import FIS.iLUVit.filter.LoginResponse;
 import FIS.iLUVit.service.UserService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Slice;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
 
 
 @Slf4j
@@ -41,10 +41,12 @@ public class UserController {
     }
 
     @GetMapping("/alarm")
-    public List<AlarmDto> getAlarm(@Login Long userId){
-        return userService.findUserAlarm(userId);
+    public Slice<AlarmDto> getAlarm(@Login Long userId, Pageable pageable){
+        return userService.findUserAlarm(userId, pageable);
     }
 
     @DeleteMapping("/alarm")
-    public Integer deleteAlarm(@Login Long userId, @RequestBody AlarmDeleteDto request){ return userService.deleteUserAlarm(userId, request.getAlarmId()); }
+    public Integer deleteAlarm(@Login Long userId, @RequestBody AlarmDeleteDto request){
+        return userService.deleteUserAlarm(userId, request.getAlarmId());
+    }
 }

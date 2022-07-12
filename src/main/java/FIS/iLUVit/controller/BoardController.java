@@ -35,14 +35,15 @@ public class BoardController {
     }
 
     /**
-        작성자: 이창윤
-        작성시간: 2022/06/24 2:51 PM
-        내용: 게시판 생성 - center_id 값 유무에 따라 모두/시설 이야기 내 게시판 생성
-    */
+     * 작성자: 이창윤
+     * 작성시간: 2022/06/24 2:51 PM
+     * 내용: 게시판 생성 - center_id 값 유무에 따라 모두/시설 이야기 내 게시판 생성
+     */
     @PostMapping("/board")
-    public Long createBoard(@RequestParam(value = "center_id", required = false) Long center_id,
+    public Long createBoard(@Login Long userId,
+                            @RequestParam(value = "center_id", required = false) Long center_id,
                             @RequestBody CreateBoardRequest request) {
-        return boardService.create(center_id, request);
+        return boardService.create(userId, center_id, request);
     }
 
     /**

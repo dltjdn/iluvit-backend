@@ -54,6 +54,7 @@ public class JwtAuthorizationFilter extends BasicAuthenticationFilter {
             DecodedJWT decodedJWT = JWT.require(Algorithm.HMAC512("symmetricKey")).build().verify(jwtToken);
             id = decodedJWT.getClaim("id").asLong();
         } catch (JWTVerificationException e) {
+            // jwt 만료등 유효성 검사에 실패할 경우 -> 예외처리 해야됨
             chain.doFilter(request, response);
             return ;
         }
@@ -61,7 +62,7 @@ public class JwtAuthorizationFilter extends BasicAuthenticationFilter {
         // 서명이 정상적인지 확인
         User user = userRepository.findById(id).orElse(null);
         if (user == null) {
-            throw new TokenExpiredException("인증되지 않은 사용자입니다.");
+            throw new TokenExpiredException("존재하지 않는 사용자입니다.");
         }
 
         // Jwt 토큰 서명을 통해서 서명이 정상이면 Authentication 객체를 만들어준다.

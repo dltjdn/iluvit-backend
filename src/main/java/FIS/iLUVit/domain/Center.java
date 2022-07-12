@@ -3,11 +3,7 @@ package FIS.iLUVit.domain;
 import FIS.iLUVit.controller.dto.CenterModifyRequestDto;
 import FIS.iLUVit.domain.embeddable.*;
 import FIS.iLUVit.domain.enumtype.KindOf;
-import lombok.Builder;
-import lombok.EqualsAndHashCode;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import org.hibernate.annotations.Cascade;
+import lombok.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.persistence.*;
@@ -17,14 +13,13 @@ import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import static org.hibernate.annotations.CascadeType.*;
-
 @Entity
 @Inheritance(strategy = InheritanceType.JOINED)
 @DiscriminatorValue("null")
 @DiscriminatorColumn(name = "kindOf")
 @Getter
 @NoArgsConstructor
+@AllArgsConstructor
 @EqualsAndHashCode(of = "id", callSuper = false)
 public class Center extends BaseEntity{
     @Id @GeneratedValue
@@ -59,9 +54,9 @@ public class Center extends BaseEntity{
     protected String introText;               // 시설 소개글
     protected Integer imgCnt;                 // 시설 이미지 개수 최대 20장
     protected Integer videoCnt;               // 시설 동영상 갯수 최대 5개
-    private Integer score;                    // 시설 order By 기준 중 하나
-    private String addInfo;
-    private String program;
+    protected Integer score;                    // 시설 order By 기준 중 하나
+    protected String addInfo;
+    protected String program;
 
     @Column(name="kindOf", insertable = false, updatable = false)
     @Enumerated(EnumType.STRING)
@@ -93,13 +88,14 @@ public class Center extends BaseEntity{
     @OneToMany(mappedBy = "center")
     protected List<Prefer> prefers = new ArrayList<>();
 
-    @Builder(toBuilder = true)
-    public Center(Long id, String name, String owner, String director, String estType, String estDate, String tel, String homepage, String startTime, String endTime, Integer minAge, Integer maxAge, String address, String zipcode, Area area, String offerService, Integer maxChildCnt, Integer curChildCnt, LocalDate updateDate, Boolean recruit, String introText, Integer imgCnt, Integer videoCnt, ClassInfo classInfo, TeacherInfo teacherInfo, CostInfo costInfo, BasicInfra basicInfra, Theme theme) {
+    @Builder
+    public Center(Long id, String name, String owner, String director, String estType, String status, String estDate, String tel, String homepage, String startTime, String endTime, Integer minAge, Integer maxAge, String address, String zipcode, Area area, Double longitude, Double latitude, String offerService, Integer maxChildCnt, Integer curChildCnt, LocalDate updateDate, Boolean signed, Boolean recruit, Integer waitingNum, String introText, Integer imgCnt, Integer videoCnt, Integer score, String addInfo, String program, KindOf kindOf, ClassInfo classInfo, TeacherInfo teacherInfo, CostInfo costInfo, BasicInfra basicInfra, Theme theme, OtherInfo otherInfo) {
         this.id = id;
         this.name = name;
         this.owner = owner;
         this.director = director;
         this.estType = estType;
+        this.status = status;
         this.estDate = estDate;
         this.tel = tel;
         this.homepage = homepage;
@@ -110,19 +106,28 @@ public class Center extends BaseEntity{
         this.address = address;
         this.zipcode = zipcode;
         this.area = area;
+        this.longitude = longitude;
+        this.latitude = latitude;
         this.offerService = offerService;
         this.maxChildCnt = maxChildCnt;
         this.curChildCnt = curChildCnt;
         this.updateDate = updateDate;
+        this.signed = signed;
         this.recruit = recruit;
+        this.waitingNum = waitingNum;
         this.introText = introText;
         this.imgCnt = imgCnt;
         this.videoCnt = videoCnt;
+        this.score = score;
+        this.addInfo = addInfo;
+        this.program = program;
+        this.kindOf = kindOf;
         this.classInfo = classInfo;
         this.teacherInfo = teacherInfo;
         this.costInfo = costInfo;
         this.basicInfra = basicInfra;
         this.theme = theme;
+        this.otherInfo = otherInfo;
     }
 
     public void update(CenterModifyRequestDto requestDto) {

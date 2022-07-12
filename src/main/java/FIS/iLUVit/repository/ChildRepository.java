@@ -17,7 +17,7 @@ public interface ChildRepository extends JpaRepository<Child, Long> {
             "join c.center ct " +
             "where p.id = :userId " +
             "and ct.id = :centerId")
-    Child findByParentAndCenter(@Param("userId") Long userId, @Param("centerId") Long centerId);
+    Optional<Child> findByParentAndCenter(@Param("userId") Long userId, @Param("centerId") Long centerId);
 
     @Query("select c " +
             "from Child c " +

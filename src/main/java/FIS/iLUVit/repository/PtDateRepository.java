@@ -44,4 +44,5 @@ public interface PtDateRepository extends JpaRepository<PtDate, Long> {
     @Modifying
     @Query("delete from PtDate ptdate where ptdate.id in :ptDateKeys")
     void deletePtDateByIds(@Param("ptDateKeys") Set<Long> ptDateKeysDeleteTarget);
+
 }
