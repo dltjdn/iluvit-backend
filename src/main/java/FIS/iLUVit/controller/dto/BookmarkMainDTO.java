@@ -31,11 +31,13 @@ public class BookmarkMainDTO {
         private Long board_id;
         private String board_name;
         private String post_title;
+        private Long post_id;
 
-        public BoardDTO(Long board_id, String board_name, String post_title) {
+        public BoardDTO(Long board_id, String board_name, String post_title, Long post_id) {
             this.board_id = board_id;
             this.board_name = board_name;
             this.post_title = post_title;
+            this.post_id = post_id;
         }
     }
 }

@@ -36,6 +36,7 @@ public class PostService {
     private final ScrapPostRepository scrapPostRepository;
     private final PostHeartRepository postHeartRepository;
     private final ChatRoomRepository chatRoomRepository;
+    private final AlarmRepository alarmRepository;
 
     public Long savePost(PostRegisterRequest request, List<MultipartFile> images, Long userId) {
 
@@ -73,7 +74,9 @@ public class PostService {
                 .orElseThrow(() -> new PostException("존재하지 않는 게시글"));
 
         // 게시글과 연관된 모든 채팅방의 post_id(fk) 를 null 값으로 만들어줘야함.
-        chatRoomRepository.findByPost(postId);
+        chatRoomRepository.setPostIsNull(postId);
+        // 게시글과 연관된 모든 알람의 post_id(fk) 를 null 값으로 만들어줘야함.
+        alarmRepository.setPostIsNull(postId);
 
         if (!Objects.equals(findPost.getUser().getId(), findUser.getId())) {
             throw new UserException("삭제 권한이 없는 유저");

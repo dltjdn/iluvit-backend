@@ -2,14 +2,10 @@ package FIS.iLUVit.service;
 
 import FIS.iLUVit.controller.dto.BoardListDTO;
 import FIS.iLUVit.controller.dto.CreateBoardRequest;
-import FIS.iLUVit.domain.Board;
-import FIS.iLUVit.domain.Bookmark;
-import FIS.iLUVit.domain.Center;
-import FIS.iLUVit.exception.BoardException;
-import FIS.iLUVit.exception.CenterException;
-import FIS.iLUVit.repository.BoardRepository;
-import FIS.iLUVit.repository.BookmarkRepository;
-import FIS.iLUVit.repository.CenterRepository;
+import FIS.iLUVit.domain.*;
+import FIS.iLUVit.domain.enumtype.Auth;
+import FIS.iLUVit.exception.*;
+import FIS.iLUVit.repository.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -26,6 +22,8 @@ public class BoardService {
     private final BoardRepository boardRepository;
     private final BookmarkRepository bookmarkRepository;
     private final CenterRepository centerRepository;
+    private final UserRepository userRepository;
+    private final ChildRepository childRepository;
 
     public BoardListDTO findAllWithBookmark(Long userId) {
         BoardListDTO dto = new BoardListDTO();
@@ -69,25 +67,46 @@ public class BoardService {
         });
     }
 
-    public Long create(Long center_id, CreateBoardRequest request) {
-        // 센터 아이디가 null 인 모두의 이야기에서 게시판 이름 중복성 검사 및 저장
+    public Long create(Long userId, Long center_id, CreateBoardRequest request) {
+        // userId 가 null 인 경우 게시판 생성 제한
+        if (userId == null) {
+            throw new BoardException(BoardErrorResult.UNAUTHORIZED_USER_ACCESS);
+        }
+
+        // 모두의 이야기에서 게시판 이름 중복성 검사 및 저장
         if (center_id == null) {
             boardRepository.findByName(request.getBoard_name())
                     .ifPresent((b) -> {
-                        throw new BoardException(b.getName() + " == " + request.getBoard_name() + " : 이름 중복");
+                        throw new BoardException(BoardErrorResult.BOARD_NAME_DUPLICATION);
                     });
             return boardRepository.save(Board.createBoard(
                     request.getBoard_name(), request.getBoardKind(), null, false)).getId();
         }
 
+        // 센터가 존재하는 지 검사
+        Center findCenter = centerRepository.findById(center_id)
+                .orElseThrow(() -> new CenterException(CenterErrorResult.CENTER_NOT_EXIST));
+
+        // 시설의 이야기에서 센터에 속하지 않은 회원은 게시판 생성 불가
+        User findUser = userRepository.findById(userId)
+                .orElseThrow(() -> new UserException("유저 아이디 오류"));
+
+        if (findUser.getAuth() == Auth.PARENT) {
+            childRepository.findByParentAndCenter(userId, center_id)
+                    .orElseThrow(() -> new BoardException(BoardErrorResult.UNAUTHORIZED_USER_ACCESS));
+        } else {
+            Teacher teacher = (Teacher) findUser;
+            if (teacher.getCenter() == null || teacher.getCenter().getId() != center_id) {
+                throw new BoardException(BoardErrorResult.UNAUTHORIZED_USER_ACCESS);
+            }
+        }
+
         // 시설의 이야기에서 게시판 이름 중복성 검사 및 저장
         boardRepository.findByNameWithCenter(request.getBoard_name(), center_id)
                 .ifPresent((b) -> {
-                    throw new BoardException(b.getName() + " == " + request.getBoard_name() + " : 이름 중복");
+                    throw new BoardException(BoardErrorResult.BOARD_NAME_DUPLICATION);
                 });
 
-        Center findCenter = centerRepository.findById(center_id)
-                .orElseThrow(() -> new CenterException("존재하지 않는 시설"));
 
         Board board = Board.createBoard(request.getBoard_name(), request.getBoardKind(), findCenter,false);
         Board savedBoard = boardRepository.save(board);
@@ -95,11 +114,42 @@ public class BoardService {
     }
 
     public Long remove(Long userId, Long boardId) {
+        // userId 가 null 인 경우 게시판 삭제 제한
+        if (userId == null) {
+            throw new BoardException(BoardErrorResult.UNAUTHORIZED_USER_ACCESS);
+        }
+
+        // board id 오류
         Board findBoard = boardRepository.findById(boardId)
-                .orElseThrow(() -> new BoardException("존재하지 않는 게시판"));
+                .orElseThrow(() -> new BoardException(BoardErrorResult.BOARD_NOT_EXIST));
+
+        /**
+         * 1. 학부모 -> 삭제 불가
+         * 2. DIRECTOR 권한X -> 삭제 불가
+         * 3. 센터 값X -> 삭제 불가
+         * 4. 원장이 속한 센터 != 게시판이 속한 센터 -> 삭제 불가
+         * 5. 디폴트 게시판 -> 삭제 불가
+         */
+        userRepository.findById(userId)
+                .ifPresent(u -> {
+                    if (u.getAuth() == Auth.PARENT) {
+                        throw new BoardException(BoardErrorResult.UNAUTHORIZED_USER_ACCESS);
+                    } else {
+                        Teacher t = (Teacher) u;
+                        if (t.getAuth() != Auth.DIRECTOR) {
+                            throw new BoardException(BoardErrorResult.UNAUTHORIZED_USER_ACCESS);
+                        }
+                        if (t.getCenter() == null) {
+                            throw new BoardException(BoardErrorResult.UNAUTHORIZED_USER_ACCESS);
+                        }
+                        if (t.getCenter().getId() != findBoard.getCenter().getId()) {
+                            throw new BoardException(BoardErrorResult.UNAUTHORIZED_USER_ACCESS);
+                        }
+                    }
+                });
 
         if (findBoard.getIsDefault()) {
-            throw new BoardException("기본 게시판들은 삭제할 수 없습니다.");
+            throw new BoardException(BoardErrorResult.DEFAULT_BOARD_DELETE_BAN);
         }
 
         boardRepository.delete(findBoard);

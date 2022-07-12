@@ -27,5 +27,5 @@ public interface ChatRoomRepository extends JpaRepository<ChatRoom, Long> {
 
     @Modifying(clearAutomatically = true)
     @Query("update ChatRoom cr set cr.post.id = null, cr.comment.id = null where cr.post.id = :postId")
-    Integer findByPost(@Param("postId") Long postId);
+    Integer setPostIsNull(@Param("postId") Long postId);
 }
