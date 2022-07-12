@@ -44,9 +44,6 @@ public class CenterService {
     private final ReviewRepository reviewRepository;
 
     public Slice<CenterPreview> findByFilter(List<Area> areas, Theme theme, Integer interestedAge, KindOf kindOf, Pageable pageable) {
-        if (!(kindOf == KindOf.Kindergarten) && !(kindOf == KindOf.Childhouse) && !(kindOf == KindOf.ALL)) {
-            throw new RuntimeException();
-        }
         Slice<CenterPreview> results = centerRepository.findByFilter(areas, theme, interestedAge, kindOf, pageable);
         results.getContent().forEach(centerPreview -> {
             Long centerId = centerPreview.getId();

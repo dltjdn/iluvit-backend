@@ -20,6 +20,8 @@ import org.springframework.data.domain.Slice;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Objects;
+
 @Service
 @RequiredArgsConstructor
 @Transactional
@@ -51,7 +53,7 @@ public class CommentService {
                 .ifPresentOrElse(c -> {
                     log.info("댓글 작성자 아이디 = {}, 접속 중인 유저 아이디 = {}", c.getUser().getId(), userId);
                     // 내용 -> 삭제된 댓글입니다. + 작성자 -> null
-                    if (c.getUser().getId() == userId) {
+                    if (Objects.equals(c.getUser().getId(), userId)) {
                         c.updateContent("삭제된 댓글입니다.");
                         c.updateUser(null);
                     } else {
