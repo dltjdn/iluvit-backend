@@ -33,7 +33,7 @@ public class PresentationRepositoryCustomImpl extends CenterQueryMethod implemen
                         .and(themeEq(theme))
                         .and(interestedAgeEq(interestedAge))
                         .and(kindOfEq(kindOf))
-                        .and(presentation.startDate.loe(now).and(presentation.endDate.goe(now)))
+                        .and(presentation.endDate.goe(now))
                 )
                 .offset(pageable.getOffset())
                 .limit(pageable.getPageSize() + 1)

@@ -8,28 +8,27 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Embeddable
-@AllArgsConstructor
 @NoArgsConstructor
 @EqualsAndHashCode
 @Getter
 public class Theme {
-    private Boolean english;                // 양어
-    private Boolean foreigner;              // 원어민
-    private Boolean clean;                  // 청결
-    private Boolean buddhism;               // 불교
-    private Boolean christianity;           // 기독교
-    private Boolean catholic;               // 천주교
-    private Boolean animal;                 // 동물
-    private Boolean plant;                  // 식물
-    private Boolean camping;                // 캠핑
-    private Boolean nature;                 // 자연친화
-    private Boolean art;                    // 미술
-    private Boolean music;                  // 음악
-    private Boolean math;                   // 수학
-    private Boolean sport;                  // 체육
-    private Boolean coding;                 // 코딩
-    private Boolean manner;                 // 예절
-    private Boolean genius;                 // 양재
+    private Boolean english = false;                // 양어
+    private Boolean foreigner = false;              // 원어민
+    private Boolean clean = false;                  // 청결
+    private Boolean buddhism = false;               // 불교
+    private Boolean christianity = false;           // 기독교
+    private Boolean catholic = false;               // 천주교
+    private Boolean animal = false;                 // 동물
+    private Boolean plant = false;                  // 식물
+    private Boolean camping = false;                // 캠핑
+    private Boolean nature = false;                 // 자연친화
+    private Boolean art = false;                    // 미술
+    private Boolean music = false;                  // 음악
+    private Boolean math = false;                   // 수학
+    private Boolean sport = false;                  // 체육
+    private Boolean coding = false;                 // 코딩
+    private Boolean manner = false;                 // 예절
+    private Boolean genius = false;                 // 양재
 
     // 필터링 사용하기 위해서 관심 목록만 뽑아내기
     public List<String> trueList() throws IllegalAccessException {
@@ -42,5 +41,26 @@ public class Theme {
             }
         }
         return trueList;
+    }
+
+    @Builder
+    public Theme(Boolean english, Boolean foreigner, Boolean clean, Boolean buddhism, Boolean christianity, Boolean catholic, Boolean animal, Boolean plant, Boolean camping, Boolean nature, Boolean art, Boolean music, Boolean math, Boolean sport, Boolean coding, Boolean manner, Boolean genius) {
+        this.english = english;
+        this.foreigner = foreigner;
+        this.clean = clean;
+        this.buddhism = buddhism;
+        this.christianity = christianity;
+        this.catholic = catholic;
+        this.animal = animal;
+        this.plant = plant;
+        this.camping = camping;
+        this.nature = nature;
+        this.art = art;
+        this.music = music;
+        this.math = math;
+        this.sport = sport;
+        this.coding = coding;
+        this.manner = manner;
+        this.genius = genius;
     }
 }

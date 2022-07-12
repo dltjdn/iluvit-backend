@@ -28,10 +28,12 @@ public class AuthNumber extends BaseEntity{
     @Enumerated(EnumType.STRING)
     private AuthKind authKind;
 
-    public AuthNumber(String phoneNum, String authNum, AuthKind authKind) {
-        this.phoneNum = phoneNum;
-        this.authNum = authNum;
-        this.authKind = authKind;
+    public static AuthNumber createAuthNumber(String phoneNum, String authNum, AuthKind authKind) {
+        AuthNumber authNumber = new AuthNumber();
+        authNumber.phoneNum = phoneNum;
+        authNumber.authNum = authNum;
+        authNumber.authKind = authKind;
+        return authNumber;
     }
 
     public void AuthComplete(){

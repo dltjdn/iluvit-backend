@@ -38,5 +38,4 @@ spring:
       - secret
 logging:
   level:
-    org.hibernate.SQL: debug
-    org.hibernate.Type: trace
+    org.hibernate.SQL: info

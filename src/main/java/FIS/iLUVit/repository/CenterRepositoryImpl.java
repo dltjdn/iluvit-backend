@@ -35,7 +35,7 @@ public class CenterRepositoryImpl extends CenterQueryMethod implements CenterRep
                         .and(kindOfEq(kindOf))
                         .and(themeEq(theme))
                         .and(interestedAgeEq(interestedAge)))
-                .orderBy(center.score.asc(), center.id.desc())
+                .orderBy(center.score.desc(), center.id.desc())
                 .groupBy(center)
                 .offset(pageable.getOffset())
                 .limit(pageable.getPageSize() + 1)
