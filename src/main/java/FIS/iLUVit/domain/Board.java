@@ -1,6 +1,7 @@
 package FIS.iLUVit.domain;
 
 import FIS.iLUVit.domain.enumtype.BoardKind;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -36,5 +37,16 @@ public class Board extends BaseEntity{
         board.center = center;
         board.isDefault = isDefault;
         return board;
+    }
+
+    @Builder(toBuilder = true)
+    public Board(Long id, String name, BoardKind boardKind, Boolean isDefault, List<Post> posts, List<Bookmark> bookmarks, Center center) {
+        this.id = id;
+        this.name = name;
+        this.boardKind = boardKind;
+        this.isDefault = isDefault;
+        this.posts = posts;
+        this.bookmarks = bookmarks;
+        this.center = center;
     }
 }

@@ -45,7 +45,7 @@ public class BookmarkService {
             // (~의 이야기안의 게시판 + 최신글 1개씩) DTO를 모아 리스트로 만듬.
             List<BookmarkMainDTO.BoardDTO> boardDTOS = pl.stream()
                     .map(p -> new BookmarkMainDTO.BoardDTO(
-                            p.getBoard().getId(), p.getBoard().getName(), p.getTitle()))
+                            p.getBoard().getId(), p.getBoard().getName(), p.getTitle(), p.getId()))
                     .collect(Collectors.toList());
             // ~의 이야기에 (게시판+최신글) DTO 리스트 넣어줌.
             storyDTO.setBoardDTOList(boardDTOS);
@@ -77,7 +77,7 @@ public class BookmarkService {
         List<Post> posts = boardRepository.findPostByDefault();
         List<BookmarkMainDTO.BoardDTO> boardDTOS = posts.stream()
                 .map(p -> new BookmarkMainDTO.BoardDTO(
-                        p.getBoard().getId(), p.getBoard().getName(), p.getTitle()))
+                        p.getBoard().getId(), p.getBoard().getName(), p.getTitle(), p.getId()))
                 .collect(Collectors.toList());
         storyDTO.setBoardDTOList(boardDTOS);
         return storyDTO;

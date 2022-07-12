@@ -1,5 +1,6 @@
 package FIS.iLUVit.domain;
 import lombok.AccessLevel;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.OnDelete;
@@ -40,5 +41,12 @@ public class Bookmark extends BaseEntity {
         bookmark.board = board;
         bookmark.user = user;
         return bookmark;
+    }
+
+    @Builder(toBuilder = true)
+    public Bookmark(Long id, Board board, User user) {
+        this.id = id;
+        this.board = board;
+        this.user = user;
     }
 }
