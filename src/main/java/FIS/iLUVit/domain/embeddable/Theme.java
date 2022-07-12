@@ -36,7 +36,7 @@ public class Theme {
         Field[] fields = Theme.class.getDeclaredFields();
         for(Field field : fields){
             field.setAccessible(true);
-            if((Boolean) field.get(this)){
+            if(field.get(this) != null && (Boolean) field.get(this)){
                 trueList.add(field.getName());
             }
         }

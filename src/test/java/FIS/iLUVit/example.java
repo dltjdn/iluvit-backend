@@ -23,7 +23,7 @@ public class example {
     protected void setUp() throws Exception {
         warehouse.add(TALISKER, 50);
         warehouse.add(HIGHLAND_PARK, 25);
-        mockWarehouse.
+//        mockWarehouse
     }
 
     @Test

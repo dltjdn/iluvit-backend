@@ -5,6 +5,7 @@ import FIS.iLUVit.domain.Parent;
 import FIS.iLUVit.domain.Participation;
 import FIS.iLUVit.domain.Presentation;
 import FIS.iLUVit.domain.PtDate;
+import FIS.iLUVit.domain.alarms.PresentationFullAlarm;
 import FIS.iLUVit.domain.enumtype.Status;
 import FIS.iLUVit.event.ParticipationCancelEvent;
 import FIS.iLUVit.exception.PresentationErrorResult;
@@ -36,6 +37,7 @@ public class ParticipationService {
     private final ParentRepository parentRepository;
     private final UserRepository userRepository;
     private final ApplicationEventPublisher publisher;
+    private final AlarmUtils alarmUtils;
 
     public Long register(Long userId, Long ptDateId) {
 
@@ -43,7 +45,7 @@ public class ParticipationService {
         // 잘못된 설명회 회차 id일 경우 error throw
         PtDate ptDate = ptDateRepository.findByIdAndJoinParticipation(ptDateId)
                 .orElseThrow(() -> new PresentationException(PresentationErrorResult.WRONG_PTDATE_ID_REQUEST));
-
+        System.out.println(alarmUtils.toString());
         // 설명회 신청기간이 지났을경우 error throw
         if(LocalDate.now().isAfter(ptDate.getPresentation().getEndDate()))
             // 핵심 비지니스 로직 => 설명회 canRegister
@@ -59,7 +61,7 @@ public class ParticipationService {
         Presentation presentation = ptDate.getPresentation();
 
         // 학부모 조회
-        Parent parent = (Parent) userRepository.getById(userId);
+        Parent parent = parentRepository.getById(userId);
 
         participations.forEach(participation -> {
             if(participation.getParent().getId() == userId)
@@ -71,11 +73,12 @@ public class ParticipationService {
                 Participation.createAndRegister(parent, presentation, ptDate, participations)
         );
 
-//        if(ptDate.getAblePersonNum() >= ptDate.getParticipantCnt()){
-//            userRepository.findTeacherByCenter(presentation.getCenter()).forEach((user) -> {
-//                AlarmUtils.publishAlarmEvent(new PresentationFullAlarm(user, presentation, presentation.getCenter()));
-//            });
-//        }
+        if(ptDate.getAblePersonNum() >= ptDate.getParticipantCnt()){
+            userRepository.findTeacherByCenter(presentation.getCenter()).forEach((user) -> {
+                AlarmUtils.publishAlarmEvent(new PresentationFullAlarm(user, presentation, presentation.getCenter()));
+            });
+        }
+
         return participation.getId();
     }
 

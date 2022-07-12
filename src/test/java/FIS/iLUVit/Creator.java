@@ -26,7 +26,7 @@ public class Creator {
                 .build();
     }
 
-    public static Kindergarten createKindergarten(Area area, String name, Theme theme, Integer minAge, Integer maxAge, String addInfo, String program, BasicInfra basicInfra){
+    public static Kindergarten createKindergarten(Area area, String name, Theme theme, Integer minAge, Integer maxAge, String addInfo, String program, BasicInfra basicInfra, Integer score){
         return Kindergarten.kBuilder()
                 .area(area)
                 .name(name)
@@ -36,6 +36,7 @@ public class Creator {
                 .addInfo(addInfo)
                 .program(program)
                 .basicInfra(basicInfra)
+                .score(score)
                 .build();
     }
 
