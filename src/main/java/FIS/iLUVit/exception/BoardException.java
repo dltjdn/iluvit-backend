@@ -1,6 +1,12 @@
 package FIS.iLUVit.exception;
 
+import lombok.Getter;
+
+@Getter
 public class BoardException extends RuntimeException {
+
+    private BoardErrorResult errorResult;
+
     public BoardException() {
         super();
     }
@@ -8,4 +14,10 @@ public class BoardException extends RuntimeException {
     public BoardException(String message) {
         super(message);
     }
+
+    public BoardException(BoardErrorResult errorResult) {
+        super();
+        this.errorResult = errorResult;
+    }
+
 }
