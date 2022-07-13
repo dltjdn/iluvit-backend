@@ -5,6 +5,7 @@ import FIS.iLUVit.domain.Parent;
 import FIS.iLUVit.domain.Participation;
 import FIS.iLUVit.domain.Presentation;
 import FIS.iLUVit.domain.PtDate;
+import FIS.iLUVit.domain.alarms.PresentationFullAlarm;
 import FIS.iLUVit.domain.enumtype.Status;
 import FIS.iLUVit.event.ParticipationCancelEvent;
 import FIS.iLUVit.exception.PresentationErrorResult;
@@ -59,10 +60,10 @@ public class ParticipationService {
         Presentation presentation = ptDate.getPresentation();
 
         // 학부모 조회
-        Parent parent = (Parent) userRepository.getById(userId);
+        Parent parent = parentRepository.getById(userId);
 
         participations.forEach(participation -> {
-            if(participation.getParent().getId() == userId)
+            if(participation.getStatus().equals(Status.JOINED) && participation.getParent().getId().equals(userId))
                 throw new PresentationException(PresentationErrorResult.ALREADY_PARTICIPATED_IN);
         });
 
@@ -71,11 +72,12 @@ public class ParticipationService {
                 Participation.createAndRegister(parent, presentation, ptDate, participations)
         );
 
-//        if(ptDate.getAblePersonNum() >= ptDate.getParticipantCnt()){
-//            userRepository.findTeacherByCenter(presentation.getCenter()).forEach((user) -> {
-//                AlarmUtils.publishAlarmEvent(new PresentationFullAlarm(user, presentation, presentation.getCenter()));
-//            });
-//        }
+        if(ptDate.getAblePersonNum() <= ptDate.getParticipantCnt()){
+            userRepository.findTeacherByCenter(presentation.getCenter()).forEach((user) -> {
+                AlarmUtils.publishAlarmEvent(new PresentationFullAlarm(user, presentation, presentation.getCenter()));
+            });
+        }
+
         return participation.getId();
     }
 

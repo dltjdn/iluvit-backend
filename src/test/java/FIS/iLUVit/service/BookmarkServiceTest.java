@@ -5,6 +5,8 @@ import FIS.iLUVit.controller.dto.BookmarkMainDTO;
 import FIS.iLUVit.domain.*;
 import FIS.iLUVit.domain.enumtype.Auth;
 import FIS.iLUVit.domain.enumtype.BoardKind;
+import FIS.iLUVit.exception.BookmarkErrorResult;
+import FIS.iLUVit.exception.BookmarkException;
 import FIS.iLUVit.repository.BoardRepository;
 import FIS.iLUVit.repository.BookmarkRepository;
 import FIS.iLUVit.repository.UserRepository;
@@ -20,6 +22,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Optional;
 
 import static FIS.iLUVit.service.createmethod.CreateTest.*;
 import static FIS.iLUVit.service.createmethod.CreateTest.createBookmark;
@@ -154,11 +157,100 @@ class BookmarkServiceTest {
     }
 
     @Test
-    public void 북마크_생성() throws Exception {
+    public void 북마크_생성_유저X() throws Exception {
         //given
-
+        Mockito.doReturn(Optional.empty())
+                .when(userRepository)
+                .findById(any());
         //when
+        BookmarkException result = assertThrows(BookmarkException.class,
+                () -> bookmarkService.create(parent1.getId(), board1.getId()));
+        //then
+        assertThat(result.getErrorResult())
+                .isEqualTo(BookmarkErrorResult.USER_NOT_EXIST);
+    }
+
+    @Test
+    public void 북마크_생성_게시판X() throws Exception {
+        //given
+        Mockito.doReturn(Optional.ofNullable(parent1))
+                .when(userRepository)
+                .findById(any());
+
+        Mockito.doReturn(Optional.empty())
+                .when(boardRepository)
+                .findById(any());
+        //when
+        BookmarkException result = assertThrows(BookmarkException.class,
+                () -> bookmarkService.create(parent1.getId(), board1.getId()));
+        //then
+        assertThat(result.getErrorResult())
+                .isEqualTo(BookmarkErrorResult.BOARD_NOT_EXIST);
+    }
+
+    @Test
+    public void 북마크_생성_성공() throws Exception {
+        //given
+        Mockito.doReturn(Optional.ofNullable(parent1))
+                .when(userRepository)
+                .findById(any());
+
+        Mockito.doReturn(Optional.ofNullable(board1))
+                .when(boardRepository)
+                .findById(any());
+
+        Mockito.doReturn(bookmark1)
+                .when(bookmarkRepository)
+                .save(any());
+        //when
+        Long bookmarkId = bookmarkService.create(parent1.getId(), board1.getId());
+        //then
+        assertThat(bookmarkId).isEqualTo(bookmark1.getId());
+    }
+
+    @Test
+    public void 북마크_삭제_북마크X() throws Exception {
+        //given
+        Mockito.doReturn(Optional.empty())
+                .when(bookmarkRepository)
+                .findById(any());
+        //when
+        BookmarkException result = assertThrows(BookmarkException.class,
+                () -> bookmarkService.delete(parent1.getId(), bookmark1.getId()));
 
         //then
+        assertThat(result.getErrorResult())
+                .isEqualTo(BookmarkErrorResult.BOOKMARK_NOT_EXIST);
     }
+
+    @Test
+    public void 북마크_삭제_권한없는_유저() throws Exception {
+        //given
+        Mockito.doReturn(Optional.ofNullable(bookmark1))
+                .when(bookmarkRepository)
+                .findById(any());
+
+        //when
+        BookmarkException result = assertThrows(BookmarkException.class,
+                () -> bookmarkService.delete(teacher1.getId(), bookmark1.getId()));
+
+        //then
+        assertThat(result.getErrorResult())
+                .isEqualTo(BookmarkErrorResult.UNAUTHORIZED_USER_ACCESS);
+    }
+
+    @Test
+    public void 북마크_삭제_성공() throws Exception {
+        //given
+        Mockito.doReturn(Optional.ofNullable(bookmark1))
+                .when(bookmarkRepository)
+                .findById(any());
+
+        //when
+        Long deletedId = bookmarkService.delete(parent1.getId(), bookmark1.getId());
+
+        //then
+        assertThat(deletedId).isEqualTo(bookmark1.getId());
+    }
+
 }

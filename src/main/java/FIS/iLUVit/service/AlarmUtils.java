@@ -2,13 +2,14 @@ package FIS.iLUVit.service;
 
 import FIS.iLUVit.domain.alarms.Alarm;
 import FIS.iLUVit.event.AlarmEvent;
+import lombok.NoArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.context.MessageSource;
-import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Component;
 
 @Component
+@NoArgsConstructor
 public class AlarmUtils {
 
     private static MessageSource messageSource;

@@ -12,8 +12,18 @@ import java.util.List;
 
 public class Creator {
 
-    public static User createUser(){
-        return null;
+    public static Parent createParent(String phoneNum){
+        return Parent.builder()
+                .nickName("asd")
+                .loginId("asd")
+                .password("asd")
+                .phoneNumber(phoneNum)
+                .hasProfileImg(false)
+                .emailAddress("asd@asd")
+                .name("asd")
+                .address("asd")
+                .detailAddress("asd")
+                .build();
     }
 
     public static Kindergarten createKindergarten(Long id, Area area, String name, Theme theme, Integer minAge, Integer maxAge, String addInfo, String program, BasicInfra basicInfra){
@@ -30,7 +40,7 @@ public class Creator {
                 .build();
     }
 
-    public static Kindergarten createKindergarten(Area area, String name, Theme theme, Integer minAge, Integer maxAge, String addInfo, String program, BasicInfra basicInfra){
+    public static Kindergarten createKindergarten(Area area, String name, Theme theme, Integer minAge, Integer maxAge, String addInfo, String program, BasicInfra basicInfra, Integer score){
         return Kindergarten.kBuilder()
                 .area(area)
                 .name(name)
@@ -40,6 +50,7 @@ public class Creator {
                 .addInfo(addInfo)
                 .program(program)
                 .basicInfra(basicInfra)
+                .score(score)
                 .build();
     }
 

@@ -2,6 +2,7 @@ package FIS.iLUVit.service;
 
 import FIS.iLUVit.controller.dto.BookmarkMainDTO;
 import FIS.iLUVit.domain.*;
+import FIS.iLUVit.exception.BookmarkErrorResult;
 import FIS.iLUVit.exception.BookmarkException;
 import FIS.iLUVit.exception.UserException;
 import FIS.iLUVit.repository.*;
@@ -86,17 +87,19 @@ public class BookmarkService {
     }
 
     public Long create(Long userId, Long boardId) {
-        User findUser = userRepository.getById(userId);
-        Board findBoard = boardRepository.getById(boardId);
+        User findUser = userRepository.findById(userId)
+                .orElseThrow(() -> new BookmarkException(BookmarkErrorResult.USER_NOT_EXIST));
+        Board findBoard = boardRepository.findById(boardId)
+                .orElseThrow(() -> new BookmarkException(BookmarkErrorResult.BOARD_NOT_EXIST));
         Bookmark bookmark = new Bookmark(findBoard, findUser);
         return bookmarkRepository.save(bookmark).getId();
     }
 
     public Long delete(Long userId, Long bookmarkId) {
         Bookmark findBookmark = bookmarkRepository.findById(bookmarkId)
-                .orElseThrow(() -> new BookmarkException("존재하지 않는 북마크"));
+                .orElseThrow(() -> new BookmarkException(BookmarkErrorResult.BOOKMARK_NOT_EXIST));
         if (!Objects.equals(findBookmark.getUser().getId(), userId)) {
-            throw new UserException("삭제 권한 없는 유저");
+            throw new BookmarkException(BookmarkErrorResult.UNAUTHORIZED_USER_ACCESS);
         }
         bookmarkRepository.delete(findBookmark);
         return bookmarkId;
