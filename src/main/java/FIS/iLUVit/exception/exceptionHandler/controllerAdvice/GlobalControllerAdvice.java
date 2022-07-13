@@ -55,7 +55,6 @@ public class GlobalControllerAdvice extends ResponseEntityExceptionHandler {
 //    }
 
     // repository에서 쿼리 날릴때 parameter가 null이면 생기는 예외(토큰이 유효하지 않아 @Login이 Null일 확률이 높음)
-    //
     @ResponseStatus(HttpStatus.FORBIDDEN)
     @ExceptionHandler(InvalidDataAccessApiUsageException.class)
     public ErrorResult illegalExHandler(InvalidDataAccessApiUsageException e) {

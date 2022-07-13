@@ -16,7 +16,7 @@ public interface AuthNumberRepository extends JpaRepository<AuthNumber, Long> {
     @Query("delete from AuthNumber a where a.phoneNum =:pNum and a.authKind =:kind")
     void deleteExpiredNumber(@Param("pNum") String toNumber, @Param("kind")AuthKind authKind);
 
-    @Query("select a from AuthNumber a where a.phoneNum = :pNum and a.authKind =:kind order by a.createdDate")
+    @Query("select a from AuthNumber a where a.phoneNum = :pNum and a.authKind =:kind")
     Optional<AuthNumber> findOverlap(@Param("pNum") String toNumber, @Param("kind")AuthKind authKind);
 
     Optional<AuthNumber> findByPhoneNumAndAuthNumAndAuthKind(String phoneNum, String authNum, AuthKind authKind);
