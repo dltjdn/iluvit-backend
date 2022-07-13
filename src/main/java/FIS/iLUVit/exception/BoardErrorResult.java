@@ -1,12 +1,13 @@
 package FIS.iLUVit.exception;
 
+import FIS.iLUVit.exception.exceptionHandler.ErrorResult;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 
 @Getter
 @RequiredArgsConstructor
-public enum BoardErrorResult {
+public enum BoardErrorResult implements ErrorResult {
 
     BOARD_NAME_DUPLICATION(HttpStatus.BAD_REQUEST, "해당 이름의 게시판이 이미 존재합니다."),
     UNAUTHORIZED_USER_ACCESS(HttpStatus.BAD_REQUEST, "게시판 생성 권한이 없는 유저입니다."),
