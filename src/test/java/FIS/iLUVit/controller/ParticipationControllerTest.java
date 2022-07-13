@@ -7,7 +7,7 @@ import FIS.iLUVit.domain.User;
 import FIS.iLUVit.domain.enumtype.Auth;
 import FIS.iLUVit.exception.PresentationErrorResult;
 import FIS.iLUVit.exception.PresentationException;
-import FIS.iLUVit.exception.exceptionHandler.ErrorResult;
+import FIS.iLUVit.exception.exceptionHandler.ErrorResponse;
 import FIS.iLUVit.exception.exceptionHandler.controllerAdvice.GlobalControllerAdvice;
 import FIS.iLUVit.service.ParticipationService;
 import com.auth0.jwt.JWT;
@@ -91,7 +91,7 @@ class ParticipationControllerTest {
         resultActions.andDo(print())
                 .andExpect(status().isForbidden())
                 .andExpect(content().json(objectMapper.writeValueAsString(
-                        new ErrorResult(HttpStatus.FORBIDDEN.toString()
+                        new ErrorResponse(HttpStatus.FORBIDDEN
                                 , "쿼리파라미터가 null 입니다. 토큰이 유효한지 확인해보세요")
                 )));
     }
@@ -112,7 +112,7 @@ class ParticipationControllerTest {
                 .andExpect(status().isBadRequest())
                 .andExpect(
                         content().json(objectMapper.writeValueAsString(
-                                new ErrorResult(HttpStatus.BAD_REQUEST.toString(), "[잘못된 설명회 회차 아이디 입니다]"))
+                                new ErrorResponse(HttpStatus.BAD_REQUEST, "[잘못된 설명회 회차 아이디 입니다]"))
                         ));
     }
 
@@ -140,7 +140,7 @@ class ParticipationControllerTest {
                 .andExpect(status().isBadRequest())
                 .andExpect(
                         content().json(objectMapper.writeValueAsString(
-                            new ErrorResult(error.getHttpStatus().toString(), error.getMessage())
+                            new ErrorResponse(error.getHttpStatus(), error.getMessage())
                         ))
                 );
     }
@@ -168,7 +168,7 @@ class ParticipationControllerTest {
                 .andExpect(status().isBadRequest())
                 .andExpect(
                         content().json(objectMapper.writeValueAsString(
-                                new ErrorResult(error.getHttpStatus().toString(), error.getMessage())
+                                new ErrorResponse(error.getHttpStatus(), error.getMessage())
                         ))
                 );
     }
@@ -195,7 +195,7 @@ class ParticipationControllerTest {
                 .andExpect(status().isBadRequest())
                 .andExpect(
                         content().json(objectMapper.writeValueAsString(
-                                new ErrorResult(error.getHttpStatus().toString(), error.getMessage())
+                                new ErrorResponse(error.getHttpStatus(), error.getMessage())
                         ))
                 );
     }

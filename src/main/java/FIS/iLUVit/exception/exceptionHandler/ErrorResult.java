@@ -2,10 +2,9 @@ package FIS.iLUVit.exception.exceptionHandler;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
+import org.springframework.http.HttpStatus;
 
-@Data
-@AllArgsConstructor
-public class ErrorResult {
-    private String code;
-    private String message;
+public interface ErrorResult {
+    HttpStatus getHttpStatus();
+    String getMessage();
 }
