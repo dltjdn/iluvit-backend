@@ -72,7 +72,8 @@ public class BookmarkService {
         return dto;
     }
 
-    public BookmarkMainDTO.StoryDTO searchByDefault() {
+    public BookmarkMainDTO searchByDefault() {
+        BookmarkMainDTO dto = new BookmarkMainDTO();
         BookmarkMainDTO.StoryDTO storyDTO = new BookmarkMainDTO.StoryDTO(null, "모두의 이야기");
         List<Post> posts = boardRepository.findPostByDefault();
         List<BookmarkMainDTO.BoardDTO> boardDTOS = posts.stream()
@@ -80,7 +81,8 @@ public class BookmarkService {
                         p.getBoard().getId(), p.getBoard().getName(), p.getTitle(), p.getId()))
                 .collect(Collectors.toList());
         storyDTO.setBoardDTOList(boardDTOS);
-        return storyDTO;
+        dto.getStories().add(storyDTO);
+        return dto;
     }
 
     public Long create(Long userId, Long boardId) {

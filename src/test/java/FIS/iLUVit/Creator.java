@@ -1,10 +1,14 @@
 package FIS.iLUVit;
 
-import FIS.iLUVit.domain.Kindergarten;
-import FIS.iLUVit.domain.User;
+import FIS.iLUVit.domain.*;
 import FIS.iLUVit.domain.embeddable.Area;
 import FIS.iLUVit.domain.embeddable.BasicInfra;
 import FIS.iLUVit.domain.embeddable.Theme;
+
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
+import java.util.List;
 
 public class Creator {
 
@@ -52,4 +56,25 @@ public class Creator {
     public static BasicInfra createBasicInfra(Boolean hasBus, Boolean hasPlayground,  Boolean hasCCTV, Boolean hasSwimPool, Boolean hasBackpack, Boolean hasUniform, Boolean hasKidsNote, Boolean hasHandWriteNote, Boolean hasPhysics, Integer busCnt, Integer buildingYear, Integer cctvCnt){
         return new BasicInfra(hasBus, hasPlayground, hasCCTV, hasSwimPool, hasBackpack, hasUniform, hasKidsNote, hasHandWriteNote, hasPhysics, busCnt, buildingYear, cctvCnt);
     }
+
+    public static Post createPost(Long id, String title, String content, Boolean anonymous, Board board, User user) {
+        return Post.builder()
+                .id(id)
+                .title(title)
+                .content(content)
+                .anonymous(anonymous)
+                .commentCnt(0)
+                .heartCnt(0)
+                .imgCnt(0)
+                .videoCnt(0)
+                .board(board)
+                .user(user)
+                .build();
+    }
+
+    public static Post createPost(String title, String content, Boolean anonymous, Integer commentCnt, Integer heartCnt, Integer imgCnt, Integer videoCnt, Board board, User user) {
+        return new Post(title, content, anonymous, commentCnt, heartCnt, imgCnt, videoCnt, board, user);
+    }
+
+
 }
