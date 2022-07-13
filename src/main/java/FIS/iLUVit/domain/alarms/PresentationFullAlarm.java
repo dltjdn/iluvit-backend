@@ -29,7 +29,7 @@ public class PresentationFullAlarm extends Alarm{
         this.mode = AlarmUtils.PRESENTATION_APPLICANTS_FULL;
         this.presentation = presentation;
         this.center = center;
-        message = AlarmUtils.getMessage(mode, null);
+//        message = AlarmUtils.getMessage(mode, null);
     }
 
     @Override

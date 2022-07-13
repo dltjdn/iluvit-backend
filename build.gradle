@@ -63,7 +63,6 @@ dependencies {
 
 	// Mockito
 	testImplementation 'org.mockito:mockito-inline:4.6.1'
-
 }
 
 test {

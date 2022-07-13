@@ -1,27 +1,32 @@
 package FIS.iLUVit.service;
 
 import FIS.iLUVit.domain.*;
+import FIS.iLUVit.domain.alarms.Alarm;
+import FIS.iLUVit.domain.alarms.PresentationFullAlarm;
 import FIS.iLUVit.domain.enumtype.Auth;
 import FIS.iLUVit.domain.enumtype.Status;
+import FIS.iLUVit.event.AlarmEvent;
 import FIS.iLUVit.exception.PresentationErrorResult;
 import FIS.iLUVit.exception.PresentationException;
+import FIS.iLUVit.repository.ParentRepository;
 import FIS.iLUVit.repository.ParticipationRepository;
 import FIS.iLUVit.repository.PtDateRepository;
 import FIS.iLUVit.repository.UserRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.ArgumentMatchers;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
-import org.mockito.Mockito;
+import org.mockito.*;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.boot.test.context.runner.ApplicationContextRunner;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.mockito.ArgumentMatchers.any;
 
 @ExtendWith(MockitoExtension.class)
 class ParticipationServiceTest {
@@ -35,13 +40,18 @@ class ParticipationServiceTest {
      */
 
     @Mock
-    UserRepository userRepository;
+    ParentRepository parentRepository;
     @Mock
     ParticipationRepository participationRepository;
     @Mock
     PtDateRepository ptDateRepository;
+    @Mock
+    UserRepository userRepository;
     @InjectMocks
-    ParticipationService participationService;
+    ParticipationService target;
+
+
+    private final ApplicationContextRunner runner = new ApplicationContextRunner();
 
     Center center;
     Center center2;
@@ -113,7 +123,7 @@ class ParticipationServiceTest {
                 .id(3L)
                 .date(LocalDate.now())
                 .time("오후 9시")
-                .ablePersonNum(3)
+                .ablePersonNum(2)
                 .participantCnt(1)
                 .waitingCnt(0)
                 .presentation(presentation2)
@@ -143,6 +153,7 @@ class ParticipationServiceTest {
 
         ptDate2.getParticipations().add(participation);
 
+
     }
 
     @Test
@@ -150,11 +161,11 @@ class ParticipationServiceTest {
         //given
         Mockito.doReturn(Optional.ofNullable(null))
                 .when(ptDateRepository)
-                .findByIdAndJoinParticipation(ArgumentMatchers.any(Long.class));
+                .findByIdAndJoinParticipation(any(Long.class));
 
         //when
         PresentationException result = assertThrows(PresentationException.class,
-                () -> participationService.register(parent.getId(), ptDate1.getId()));     // 예외가 발생 해야한다.
+                () -> target.register(parent.getId(), ptDate1.getId()));     // 예외가 발생 해야한다.
 
         //then
         assertThat(result.getErrorResult())
@@ -177,7 +188,7 @@ class ParticipationServiceTest {
 
         //when
         PresentationException result = assertThrows(PresentationException.class,
-                () -> participationService.register(parent.getId(), ptDate1.getId()));     // 예외가 발생 해야한다.
+                () -> target.register(parent.getId(), ptDate1.getId()));     // 예외가 발생 해야한다.
 
         //then
         assertThat(result.getErrorResult())
@@ -194,7 +205,7 @@ class ParticipationServiceTest {
 
         //when
         PresentationException result = assertThrows(PresentationException.class,
-                () -> participationService.register(parent.getId(), ptDate2.getId()));
+                () -> target.register(parent.getId(), ptDate2.getId()));
 
         //then
         assertThat(result.getErrorResult())
@@ -210,7 +221,7 @@ class ParticipationServiceTest {
         //when
 
         PresentationException result = assertThrows(PresentationException.class,
-                () -> participationService.register(parent.getId(), ptDate4.getId()));
+                () -> target.register(parent.getId(), ptDate4.getId()));
 
         //then
         assertThat(result.getErrorResult())
@@ -220,9 +231,11 @@ class ParticipationServiceTest {
     @Test
     public void 설명회_신청_성공() throws Exception {
         //given
+        MockedStatic<AlarmUtils> alarmUtils = Mockito.mockStatic(AlarmUtils.class);
+
         Participation participation1 = Participation.builder()
                 .id(2L)
-                .ptDate(ptDate2)
+                .ptDate(ptDate3)
                 .parent(parent)
                 .status(Status.JOINED)
                 .build();
@@ -233,23 +246,38 @@ class ParticipationServiceTest {
 
         Mockito.doReturn(participation1)
                 .when(participationRepository)
-                .save(ArgumentMatchers.any(Participation.class));
+                .save(any(Participation.class));
 
         Mockito.doReturn(Parent.builder().id(parent.getId()).build())
-                .when(userRepository)
+                .when(parentRepository)
                 .getById(parent.getId());
 
-        //when
-        Long result = participationService.register(parent.getId(), ptDate3.getId());
 
-        //then
+        List<Teacher> teachers = new ArrayList<>();
+        teachers.add(Teacher.builder().name("test").build());
+
+        Mockito.doReturn(teachers)
+                .when(userRepository)
+                .findTeacherByCenter(any(Center.class));
+
+        alarmUtils.when(() -> AlarmUtils.getMessage(any(String.class), any(Object[].class)))
+                .thenReturn("설명회가 가득 찼습니다");
+
+        alarmUtils.when(() -> AlarmUtils.publishAlarmEvent(any(Alarm.class)))
+                .thenReturn(new AlarmEvent(new PresentationFullAlarm(parent, presentation1, center)));
+
+        //when
+        Long result = target.register(parent.getId(), ptDate3.getId());
+
+        // then
         assertThat(result).isEqualTo(participation1.getId());
         // register 에서 repository
         Mockito.verify(ptDateRepository, Mockito.times(1))
                 .findByIdAndJoinParticipation(ptDate3.getId());
         Mockito.verify(participationRepository, Mockito.times(1))
-                .save(ArgumentMatchers.any(Participation.class));
-        Mockito.verify(userRepository, Mockito.times(1))
+                .save(any(Participation.class));
+        Mockito.verify(parentRepository, Mockito.times(1))
                 .getById(parent.getId());
+
     }
 }

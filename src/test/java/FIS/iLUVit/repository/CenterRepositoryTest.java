@@ -6,6 +6,7 @@ import FIS.iLUVit.domain.Kindergarten;
 import FIS.iLUVit.domain.embeddable.Area;
 import FIS.iLUVit.domain.embeddable.BasicInfra;
 import FIS.iLUVit.domain.embeddable.Theme;
+import FIS.iLUVit.domain.enumtype.KindOf;
 import FIS.iLUVit.repository.dto.CenterPreview;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,7 +20,8 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
-import static FIS.iLUVit.Creator.*;
+import static FIS.iLUVit.Creator.createArea;
+import static FIS.iLUVit.Creator.createKindergarten;
 import static org.assertj.core.api.Assertions.assertThat;
 
 @DataJpaTest(includeFilters = @ComponentScan.Filter(ForDB.class))
@@ -50,7 +52,9 @@ class CenterRepositoryTest {
     @Test
     public void 시설_프리뷰_정보_조회() throws Exception {
         //given
+        List areas = new ArrayList<Area>();
         Area gumchon = createArea("서울특별시", "금천구");
+        areas.add(gumchon);
         Theme theme = Theme.builder()
                 .english(true)
                 .art(true)
@@ -59,18 +63,65 @@ class CenterRepositoryTest {
                 .hasCCTV(true)
                 .cctvCnt(3)
                 .build();
-        Center center1 = createKindergarten(gumchon, "test1", theme, 2, 4, "test", "test", basicInfra);
-        Center center2 = createKindergarten(gumchon, "test2", theme, 4, 5, "test", "test", basicInfra);
-        Center center3 = createKindergarten(gumchon, "test3", theme, 2, 3, "test", "test", basicInfra);
+        Center center1 = createKindergarten(gumchon, "test1", theme, 2, 4, "test", "test", basicInfra, 5);
+        Center center2 = createKindergarten(gumchon, "test2", theme, 3, 5, "test", "test", basicInfra, 3);
+        Center center3 = createKindergarten(gumchon, "test3", theme, 2, 3, "test", "test", basicInfra, 1);
 
         em.persist(center1);
         em.persist(center2);
         em.persist(center3);
         em.flush();
         //when
+        PageRequest pageable = PageRequest.of(0, 5);
 
-//        centerRepository.findByFilter(gumchon, theme, 4, "ALL",)
+        Slice<CenterPreview> byFilter = centerRepository.findByFilter(areas, theme, 3, KindOf.ALL, pageable);
+        List<CenterPreview> contents = byFilter.getContent();
 
         //then
+        assertThat(byFilter.hasNext()).isFalse();
+        assertThat(byFilter.getSize()).isEqualTo(5);
+        assertThat(byFilter.hasNext()).isFalse();
+        assertThat(byFilter.getNumberOfElements()).isEqualTo(3);
+         assertThat(contents.get(0).getName()).isEqualTo("test1");
+        assertThat(contents.get(1).getName()).isEqualTo("test2");
+        assertThat(contents.get(2).getName()).isEqualTo("test3");
+    }
+
+    @Test
+    public void 시설_프리뷰_정보_조회_테마가_전부_null_일때() throws Exception {
+        //given
+        List areas = new ArrayList<Area>();
+        Area gumchon = createArea("서울특별시", "금천구");
+        areas.add(gumchon);
+        Theme theme = Theme.builder()
+                .english(null)
+                .art(null)
+                .build();
+        BasicInfra basicInfra = BasicInfra.builder()
+                .hasCCTV(true)
+                .cctvCnt(3)
+                .build();
+        Center center1 = createKindergarten(gumchon, "test1", theme, 2, 4, "test", "test", basicInfra, 5);
+        Center center2 = createKindergarten(gumchon, "test2", theme, 3, 5, "test", "test", basicInfra, 3);
+        Center center3 = createKindergarten(gumchon, "test3", theme, 2, 3, "test", "test", basicInfra, 1);
+
+        em.persist(center1);
+        em.persist(center2);
+        em.persist(center3);
+        em.flush();
+        //when
+        PageRequest pageable = PageRequest.of(0, 5);
+
+        Slice<CenterPreview> byFilter = centerRepository.findByFilter(areas, theme, 3, KindOf.ALL, pageable);
+        List<CenterPreview> contents = byFilter.getContent();
+
+        //then
+        assertThat(byFilter.hasNext()).isFalse();
+        assertThat(byFilter.getSize()).isEqualTo(5);
+        assertThat(byFilter.hasNext()).isFalse();
+        assertThat(byFilter.getNumberOfElements()).isEqualTo(3);
+        assertThat(contents.get(0).getName()).isEqualTo("test1");
+        assertThat(contents.get(1).getName()).isEqualTo("test2");
+        assertThat(contents.get(2).getName()).isEqualTo("test3");
     }
 }

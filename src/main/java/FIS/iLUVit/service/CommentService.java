@@ -13,15 +13,19 @@ import FIS.iLUVit.repository.CommentRepository;
 import FIS.iLUVit.repository.PostRepository;
 import FIS.iLUVit.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Objects;
+
 @Service
 @RequiredArgsConstructor
 @Transactional
+@Slf4j
 public class CommentService {
     private final CommentRepository commentRepository;
     private final PostRepository postRepository;
@@ -47,8 +51,9 @@ public class CommentService {
     public Long deleteComment(Long userId, Long commentId) {
         commentRepository.findById(commentId)
                 .ifPresentOrElse(c -> {
+                    log.info("댓글 작성자 아이디 = {}, 접속 중인 유저 아이디 = {}", c.getUser().getId(), userId);
                     // 내용 -> 삭제된 댓글입니다. + 작성자 -> null
-                    if (c.getUser().getId() == userId) {
+                    if (Objects.equals(c.getUser().getId(), userId)) {
                         c.updateContent("삭제된 댓글입니다.");
                         c.updateUser(null);
                     } else {

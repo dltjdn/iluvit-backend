@@ -47,10 +47,10 @@ class BoardControllerTest {
     public void 게시판_생성() throws Exception {
         //given
 
-        given(boardService.create(eq(1L), any()))
+        given(boardService.create(eq(null), eq(1L), any()))
                 .willReturn(2L);
 
-        given(boardService.create(eq(null), any()))
+        given(boardService.create(eq(null), eq(null), any()))
                 .willReturn(3L);
         //when
 
