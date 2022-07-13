@@ -1,7 +1,8 @@
-package FIS.iLUVit.exception;
+package FIS.iLUVit.exception.exceptionHandler;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
+import org.springframework.http.HttpStatus;
 
 import java.time.LocalDateTime;
 
@@ -9,10 +10,10 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 public class ErrorResponse {
 
-    private Integer status;
+    private HttpStatus status;
     private String error;
 
-    public ErrorResponse(String message, int status) {
+    public ErrorResponse(String message, HttpStatus status) {
         this.status = status;
         this.error = message;
     }
