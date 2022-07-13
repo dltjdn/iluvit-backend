@@ -11,6 +11,7 @@ import FIS.iLUVit.exception.SignupException;
 import FIS.iLUVit.exception.UserException;
 import FIS.iLUVit.repository.AuthNumberRepository;
 import FIS.iLUVit.repository.UserRepository;
+import FIS.iLUVit.service.messageService.MessageService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import net.nurigo.sdk.NurigoApp;
@@ -33,21 +34,10 @@ import java.util.Random;
 @RequiredArgsConstructor
 public class AuthNumberService {
 
-    private final DefaultMessageService defaultMessageService;
+    private final MessageService defaultMessageService;
     private final UserRepository userRepository;
     private final AuthNumberRepository authNumberRepository;
     private final BCryptPasswordEncoder encoder;
-
-//    @Autowired
-//    public AuthNumberService(AuthNumberRepository authNumberRepository, UserRepository userRepository, BCryptPasswordEncoder encoder, DefaultMessageService defaultMessageService
-////                             @Value("${coolsms.api_key}") String api_key, @Value("${coolsms.api_secret}") String api_secret, @Value("${coolsms.domain}") String domain
-//    ) {
-////        this.messageService = NurigoApp.INSTANCE.initialize(api_key, api_secret, domain);
-//        this.defaultMessageService = defaultMessageService;
-//        this.userRepository = userRepository;
-//        this.authNumberRepository = authNumberRepository;
-//        this.encoder = encoder;
-//    }
 
     @Value("${coolsms.fromNumber}")
     private String fromNumber;
@@ -57,14 +47,14 @@ public class AuthNumberService {
      * 작성자: 이승범
      * 작성내용: 회원가입을 위한 인증번호 전송
      */
-    public void sendAuthNumberForSignup(String toNumber, AuthKind authKind) {
+    public AuthNumber sendAuthNumberForSignup(String toNumber, AuthKind authKind) {
 
         User findUser = userRepository.findByPhoneNumber(toNumber).orElse(null);
 
         if (findUser != null) {
             throw new AuthNumberException(AuthNumberErrorResult.ALREADY_PHONENUMBER_REGISTER);
         }
-        sendAuthNumber(toNumber, authKind);
+        return sendAuthNumber(toNumber, authKind);
     }
 
     /**
@@ -72,14 +62,14 @@ public class AuthNumberService {
      * 작성자: 이승범
      * 작성내용: 로그인 아이디를 찾기위한 인증번호 전송
      */
-    public void sendAuthNumberForFindLoginId(String toNumber) {
+    public AuthNumber sendAuthNumberForFindLoginId(String toNumber) {
 
         User findUser = userRepository.findByPhoneNumber(toNumber).orElse(null);
 
         if (findUser == null) {
             throw new AuthNumberException("서비스에 가입되지 않은 핸드폰 번호입니다.");
         }
-        sendAuthNumber(toNumber, AuthKind.findLoginId);
+        return sendAuthNumber(toNumber, AuthKind.findLoginId);
     }
 
     /**
@@ -87,14 +77,14 @@ public class AuthNumberService {
      * 작성자: 이승범
      * 작성내용: 비밀번호를 찾기위한 인증번호 전송
      */
-    public void sendAuthNumberForFindPassword(String loginId, String toNumber) {
+    public AuthNumber sendAuthNumberForFindPassword(String loginId, String toNumber) {
 
         User findUser = userRepository.findByLoginIdAndPhoneNumber(loginId, toNumber).orElse(null);
 
         if (findUser == null) {
             throw new AuthNumberException("아이디와 휴대폰번호를 확인해주세요.");
         }
-        sendAuthNumber(toNumber, AuthKind.findPwd);
+        return sendAuthNumber(toNumber, AuthKind.findPwd);
     }
 
     /**
@@ -167,36 +157,30 @@ public class AuthNumberService {
     }
 
     // 인증번호 전송 로직
-    private void sendAuthNumber(String toNumber, AuthKind authKind) {
+    private AuthNumber sendAuthNumber(String toNumber, AuthKind authKind) {
 
         // 4자리 랜덤 숫자 생성
-        String authNumber = createRandomNumber();
+        String authNum = createRandomNumber();
 
         AuthNumber overlaps = authNumberRepository.findOverlap(toNumber, authKind).orElse(null);
 
-        // 인증번호 최초 요청인 경우
-        if (overlaps == null) {
-
-            // 인증번호 보내고
-            requestCoolSMS(toNumber, authNumber);
-            // 인증번호 관련 정보를 db에 저장
-            AuthNumber authNumberInfo = AuthNumber.createAuthNumber(toNumber, authNumber, authKind);
-            authNumberRepository.save(authNumberInfo);
+        // 인증번호 최초 요청인 경우 || 이미 인증번호를 받았지만 제한시간이 지난 경우
+        if (overlaps == null || Duration.between(overlaps.getCreatedDate(), LocalDateTime.now()).getSeconds() > 60) {
 
             // 이미 인증번호를 받았지만 제한시간이 지난 경우
-        } else if (Duration.between(overlaps.getCreatedDate(), LocalDateTime.now()).getSeconds() > 60) {
-
-            // 예전 인증번호 관련 정보를 db에서 지우고
-            authNumberRepository.deleteExpiredNumber(toNumber, authKind);
-            // 인증번호 보낸 후
-            requestCoolSMS(toNumber, authNumber);
+            if (overlaps != null) {
+                // 예전 인증번호 관련 정보를 db에서 지우고
+                authNumberRepository.deleteExpiredNumber(toNumber, authKind);
+            }
+            // 인증번호 보내고
+            requestCoolSMS(toNumber, authNum);
             // 인증번호 관련 정보를 db에 저장
-            AuthNumber authNumberInfo = AuthNumber.createAuthNumber(toNumber, authNumber, authKind);
-            authNumberRepository.save(authNumberInfo);
+            AuthNumber authNumber = AuthNumber.createAuthNumber(toNumber, authNum, authKind);
+            return authNumberRepository.save(authNumber);
 
-            // 이미 인증번호를 요청하였고 제한시간이 지나지 않은 경우
+        // 이미 인증번호를 요청하였고 제한시간이 지나지 않은 경우
         } else {
-            throw new AuthNumberException("해당 번호로 인증 진행중입니다. 인증번호를 분실하였다면 3분 후 다시 시도해주세요");
+            throw new AuthNumberException(AuthNumberErrorResult.YET_AUTHNUMBER_VALID);
         }
     }
 

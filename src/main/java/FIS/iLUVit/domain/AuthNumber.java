@@ -2,6 +2,7 @@ package FIS.iLUVit.domain;
 
 import FIS.iLUVit.domain.enumtype.AuthKind;
 import lombok.AccessLevel;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -28,12 +29,20 @@ public class AuthNumber extends BaseEntity{
     @Enumerated(EnumType.STRING)
     private AuthKind authKind;
 
+    @Builder
+    public AuthNumber(Long id, String phoneNum, String authNum, AuthKind authKind) {
+        this.id = id;
+        this.phoneNum = phoneNum;
+        this.authNum = authNum;
+        this.authKind = authKind;
+    }
+
     public static AuthNumber createAuthNumber(String phoneNum, String authNum, AuthKind authKind) {
-        AuthNumber authNumber = new AuthNumber();
-        authNumber.phoneNum = phoneNum;
-        authNumber.authNum = authNum;
-        authNumber.authKind = authKind;
-        return authNumber;
+        return AuthNumber.builder()
+                .phoneNum(phoneNum)
+                .authNum(authNum)
+                .authKind(authKind)
+                .build();
     }
 
     public void AuthComplete(){
