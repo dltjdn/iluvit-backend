@@ -87,6 +87,9 @@ public class BookmarkService {
     }
 
     public Long create(Long userId, Long boardId) {
+        if (userId == null) {
+            throw new BookmarkException(BookmarkErrorResult.UNAUTHORIZED_USER_ACCESS);
+        }
         User findUser = userRepository.findById(userId)
                 .orElseThrow(() -> new BookmarkException(BookmarkErrorResult.USER_NOT_EXIST));
         Board findBoard = boardRepository.findById(boardId)
@@ -96,6 +99,9 @@ public class BookmarkService {
     }
 
     public Long delete(Long userId, Long bookmarkId) {
+        if (userId == null) {
+            throw new BookmarkException(BookmarkErrorResult.UNAUTHORIZED_USER_ACCESS);
+        }
         Bookmark findBookmark = bookmarkRepository.findById(bookmarkId)
                 .orElseThrow(() -> new BookmarkException(BookmarkErrorResult.BOOKMARK_NOT_EXIST));
         if (!Objects.equals(findBookmark.getUser().getId(), userId)) {

@@ -156,6 +156,18 @@ class BookmarkServiceTest {
                 .containsOnly("자유게시판", "맛집게시판");
     }
 
+
+    @Test
+    public void 북마크_생성_비회원() throws Exception {
+        //given
+        //when
+        BookmarkException result = assertThrows(BookmarkException.class,
+                () -> bookmarkService.create(null, board1.getId()));
+        //then
+        assertThat(result.getErrorResult())
+                .isEqualTo(BookmarkErrorResult.UNAUTHORIZED_USER_ACCESS);
+    }
+
     @Test
     public void 북마크_생성_유저X() throws Exception {
         //given
@@ -221,6 +233,18 @@ class BookmarkServiceTest {
         //then
         assertThat(result.getErrorResult())
                 .isEqualTo(BookmarkErrorResult.BOOKMARK_NOT_EXIST);
+    }
+
+    @Test
+    public void 북마크_삭제_비회원() throws Exception {
+        //given
+        //when
+        BookmarkException result = assertThrows(BookmarkException.class,
+                () -> bookmarkService.delete(null, bookmark1.getId()));
+
+        //then
+        assertThat(result.getErrorResult())
+                .isEqualTo(BookmarkErrorResult.UNAUTHORIZED_USER_ACCESS);
     }
 
     @Test
