@@ -63,7 +63,8 @@ public class AuthNumberRepositoryTest {
     @Test
     public void 회원가입용인증번호를받은적이있는지확인() {
         // given
-        em.persist(authNumber1);
+        authNumberRepository.save(authNumber1);
+        authNumberRepository.save(authNumber2);
         em.flush();
         em.clear();
 
@@ -80,6 +81,9 @@ public class AuthNumberRepositoryTest {
     public void 이미발급받은인증번호db에서지우기() {
         // given
         authNumberRepository.save(authNumber1);
+        authNumberRepository.save(authNumber2);
+        authNumberRepository.save(authNumber3);
+        authNumberRepository.save(authNumber4);
         em.flush();
         em.clear();
 
@@ -95,6 +99,9 @@ public class AuthNumberRepositoryTest {
     public void 이미인증번호발급받음() {
         // given
         authNumberRepository.save(authNumber1);
+        authNumberRepository.save(authNumber2);
+        authNumberRepository.save(authNumber3);
+        authNumberRepository.save(authNumber4);
         em.flush();
         em.clear();
 
@@ -111,6 +118,9 @@ public class AuthNumberRepositoryTest {
     public void 인증번호정보일치여부확인() {
         // given
         authNumberRepository.save(authNumber1);
+        authNumberRepository.save(authNumber2);
+        authNumberRepository.save(authNumber3);
+        authNumberRepository.save(authNumber4);
         em.flush();
         em.clear();
 
@@ -122,5 +132,7 @@ public class AuthNumberRepositoryTest {
         assertThat(target).isNotNull();
         assertThat(target.getId()).isEqualTo(authNumber1.getId());
     }
+
+
 
 }

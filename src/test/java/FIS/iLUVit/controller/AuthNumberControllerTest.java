@@ -7,6 +7,7 @@ import FIS.iLUVit.domain.enumtype.AuthKind;
 import FIS.iLUVit.exception.AuthNumberErrorResult;
 import FIS.iLUVit.exception.AuthNumberException;
 import FIS.iLUVit.exception.exceptionHandler.ErrorResponse;
+import FIS.iLUVit.exception.exceptionHandler.ErrorResult;
 import FIS.iLUVit.exception.exceptionHandler.controllerAdvice.GlobalControllerAdvice;
 import FIS.iLUVit.service.AuthNumberService;
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -178,6 +179,38 @@ public class AuthNumberControllerTest {
         // then
         resultActions.andDo(print())
                 .andExpect(status().isOk());
+    }
+
+    @Test
+    public void 아이디찾기인증번호받기_실패_가입하지않은핸드폰() throws Exception {
+        // given
+        final String url = "/authNumber/loginId";
+        AuthNumberErrorResult error = AuthNumberErrorResult.NOT_SIGNUP_PHONE;
+        doThrow(new AuthNumberException(error))
+                .when(authNumberService)
+                .sendAuthNumberForFindLoginId(phoneNum);
+        // when
+        ResultActions resultActions = mockMvc.perform(
+                MockMvcRequestBuilders.get(url)
+                        .param("phoneNumber", phoneNum)
+                        .contentType(MediaType.APPLICATION_JSON)
+        );
+        // then
+        resultActions.andExpect(status().isBadRequest())
+                .andExpect(content().json(
+                        objectMapper.writeValueAsString(
+                                new ErrorResponse(error.getHttpStatus(), error.getMessage())))
+                );
+    }
+
+    @Test
+    public void () {
+        // given
+
+        // when
+
+        // then
+
     }
 
 

@@ -64,11 +64,9 @@ public class AuthNumberService {
      */
     public AuthNumber sendAuthNumberForFindLoginId(String toNumber) {
 
-        User findUser = userRepository.findByPhoneNumber(toNumber).orElse(null);
+        userRepository.findByPhoneNumber(toNumber)
+                .orElseThrow(() -> new AuthNumberException(AuthNumberErrorResult.NOT_SIGNUP_PHONE));
 
-        if (findUser == null) {
-            throw new AuthNumberException("서비스에 가입되지 않은 핸드폰 번호입니다.");
-        }
         return sendAuthNumber(toNumber, AuthKind.findLoginId);
     }
 
