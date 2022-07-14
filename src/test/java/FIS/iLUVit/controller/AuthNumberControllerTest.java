@@ -1,6 +1,7 @@
 package FIS.iLUVit.controller;
 
 import FIS.iLUVit.config.argumentResolver.LoginUserArgumentResolver;
+import FIS.iLUVit.controller.dto.AuthenticateAuthNumRequest;
 import FIS.iLUVit.domain.AuthNumber;
 import FIS.iLUVit.domain.enumtype.AuthKind;
 import FIS.iLUVit.exception.AuthNumberErrorResult;
@@ -8,6 +9,7 @@ import FIS.iLUVit.exception.AuthNumberException;
 import FIS.iLUVit.exception.exceptionHandler.ErrorResponse;
 import FIS.iLUVit.exception.exceptionHandler.controllerAdvice.GlobalControllerAdvice;
 import FIS.iLUVit.service.AuthNumberService;
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -41,6 +43,7 @@ public class AuthNumberControllerTest {
     private MockMvc mockMvc;
     private ObjectMapper objectMapper;
     private final String phoneNum = "phoneNumber";
+    private final String authNum = "authNumber";
 
     @BeforeEach
     public void init() {
@@ -115,6 +118,66 @@ public class AuthNumberControllerTest {
         );
         // then
         resultActions.andExpect(status().isOk());
+    }
+
+    @Test
+    public void 회원가입용인증번호인증_실패_인증정보불일치() throws Exception {
+        // given
+        final String url = "/authNumber";
+        AuthenticateAuthNumRequest request = new AuthenticateAuthNumRequest(phoneNum, authNum, AuthKind.signup);
+        AuthNumberErrorResult error = AuthNumberErrorResult.AUTHENTICATION_FAIL;
+        doThrow(new AuthNumberException(error))
+                .when(authNumberService)
+                .authenticateAuthNum(request);
+        // when
+        ResultActions resultActions = mockMvc.perform(
+                MockMvcRequestBuilders.post(url)
+                        .content(objectMapper.writeValueAsString(request))
+                        .contentType(MediaType.APPLICATION_JSON)
+        );
+        // then
+        resultActions.andDo(print())
+                .andExpect(status().isBadRequest())
+                .andExpect(content().json(objectMapper.writeValueAsString(new ErrorResponse(error.getHttpStatus(), error.getMessage()))));
+    }
+
+    @Test
+    public void 회원가입용인증번호인증_실패_인증번호만료() throws Exception {
+        // given
+        final String url = "/authNumber";
+        AuthenticateAuthNumRequest request = new AuthenticateAuthNumRequest(phoneNum, authNum, AuthKind.signup);
+        AuthNumberErrorResult error = AuthNumberErrorResult.EXPIRED;
+        doThrow(new AuthNumberException(error))
+                .when(authNumberService)
+                .authenticateAuthNum(request);
+        // when
+        ResultActions resultActions = mockMvc.perform(
+                MockMvcRequestBuilders.post(url)
+                        .content(objectMapper.writeValueAsString(request))
+                        .contentType(MediaType.APPLICATION_JSON)
+        );
+        // then
+        resultActions.andDo(print())
+                .andExpect(status().isBadRequest())
+                .andExpect(content().json(objectMapper.writeValueAsString(new ErrorResponse(error.getHttpStatus(), error.getMessage()))));
+
+    }
+
+    @Test
+    public void 회원가입용인증번호인증_성공() throws Exception {
+        // given
+        final String url = "/authNumber";
+        AuthenticateAuthNumRequest request = new AuthenticateAuthNumRequest(phoneNum, authNum, AuthKind.signup);
+
+        // when
+        ResultActions resultActions = mockMvc.perform(
+                MockMvcRequestBuilders.post(url)
+                        .content(objectMapper.writeValueAsString(request))
+                        .contentType(MediaType.APPLICATION_JSON)
+        );
+        // then
+        resultActions.andDo(print())
+                .andExpect(status().isOk());
     }
 
 

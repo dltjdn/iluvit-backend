@@ -90,18 +90,16 @@ public class AuthNumberService {
     /**
      * 작성날짜: 2022/05/24 10:40 AM
      * 작성자: 이승범
-     * 작성내용: 인증번호 입력로직
+     * 작성내용: 인증번호 인증
      */
     public AuthNumber authenticateAuthNum(AuthenticateAuthNumRequest request) {
 
         AuthNumber authNumber = authNumberRepository
                 .findByPhoneNumAndAuthNumAndAuthKind(request.getPhoneNum(), request.getAuthNum(), request.getAuthKind())
-                .orElse(null);
+                .orElseThrow(() -> new AuthNumberException(AuthNumberErrorResult.AUTHENTICATION_FAIL));
 
-        if (authNumber == null) {
-            throw new AuthNumberException("인증번호가 일치하지 않습니다.");
-        } else if (Duration.between(authNumber.getCreatedDate(), LocalDateTime.now()).getSeconds() > 60) {
-            throw new AuthNumberException("인증번호가 만료되었습니다.");
+        if (Duration.between(authNumber.getCreatedDate(), LocalDateTime.now()).getSeconds() > 60) {
+            throw new AuthNumberException(AuthNumberErrorResult.EXPIRED);
         } else {
             authNumber.AuthComplete();
         }
