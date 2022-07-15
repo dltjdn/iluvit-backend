@@ -5,6 +5,7 @@ server:
       charset: UTF-8
       enabled: true
       force: true
+
 spring:
   servlet:
     multipart:
@@ -44,5 +45,3 @@ spring:
 logging:
   level:
     org.hibernate.SQL: info
-
-

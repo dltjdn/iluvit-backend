@@ -2,12 +2,10 @@ package FIS.iLUVit.domain;
 
 import FIS.iLUVit.domain.enumtype.Auth;
 import FIS.iLUVit.filter.LoginResponse;
-import lombok.AccessLevel;
-import lombok.Data;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import javax.persistence.*;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
@@ -41,11 +39,10 @@ public class User extends BaseImageEntity {
     protected String dtype;               // Teacher or Parent
 
     @OneToMany(mappedBy = "receiver")
-    protected List<Chat> receiveChats;
+    protected List<Chat> receiveChats = new ArrayList<>();
 
     @OneToMany(mappedBy = "sender")
-    protected List<Chat> sendChats;
-
+    protected List<Chat> sendChats = new ArrayList<>();
 
     public void changePassword(String newPwd) {
         this.password = newPwd;

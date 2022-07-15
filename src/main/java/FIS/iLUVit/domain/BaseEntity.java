@@ -29,4 +29,9 @@ public class BaseEntity {
     public void preUpdate(){
         updatedDate = LocalDateTime.now();
     }
+
+    public BaseEntity setCreatedDateForTest(LocalDateTime localDateTime) {
+        this.createdDate = localDateTime;
+        return this;
+    }
 }

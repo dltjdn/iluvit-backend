@@ -1,5 +1,6 @@
 package FIS.iLUVit.service;
 
+import FIS.iLUVit.Creator;
 import FIS.iLUVit.controller.dto.BoardListDTO;
 import FIS.iLUVit.controller.dto.CreateBoardRequest;
 import FIS.iLUVit.domain.*;
@@ -112,6 +113,7 @@ class BoardServiceTest {
         bookmark1 = createBookmark(7L, board3, parent1);
         bookmark2 = createBookmark(8L, board5, parent1);
         bookmark3 = createBookmark(11L, board2, parent1);
+
     }
 
     @Test

@@ -1,9 +1,10 @@
 package FIS.iLUVit.filter;
 
-import FIS.iLUVit.exception.ErrorResponse;
+import FIS.iLUVit.exception.exceptionHandler.ErrorResponse;
 import com.auth0.jwt.exceptions.JWTVerificationException;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.springframework.http.HttpStatus;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import javax.servlet.FilterChain;
@@ -18,7 +19,7 @@ public class ExceptionHandlerFilter extends OncePerRequestFilter {
         try {
             filterChain.doFilter(request, response);
         } catch (JWTVerificationException e) {
-            ErrorResponse errorResponse = new ErrorResponse(e.getMessage(), 403);
+            ErrorResponse errorResponse = new ErrorResponse(HttpStatus.FORBIDDEN, e.getMessage());
             response.setContentType("application/json");
             response.setStatus(HttpServletResponse.SC_FORBIDDEN);
             response.getWriter().write(convertObjectToJson(errorResponse));

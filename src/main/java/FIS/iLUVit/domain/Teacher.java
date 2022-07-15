@@ -31,16 +31,16 @@ public class Teacher extends User {
 
     @Builder
     public Teacher(String nickName, String loginId, String password, String phoneNumber, Boolean hasProfileImg, String emailAddress, String name, Auth auth, Approval approval, Center center, String address, String detailAddress) {
+        this.nickName = nickName;
         this.loginId = loginId;
         this.password = password;
-        this.name = name;
-        this.nickName = nickName;
         this.phoneNumber = phoneNumber;
         this.hasProfileImg = hasProfileImg;
         this.emailAddress = emailAddress;
-        this.auth = auth;
+        this.name = name;
         this.address = address;
         this.detailAddress = detailAddress;
+        this.auth = auth;
         this.approval = approval;
         this.center = center;
     }

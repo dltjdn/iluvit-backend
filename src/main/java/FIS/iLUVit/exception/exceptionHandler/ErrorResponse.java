@@ -4,7 +4,12 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import org.springframework.http.HttpStatus;
 
-public interface ErrorResult {
-    HttpStatus getHttpStatus();
-    String getMessage();
+import java.time.LocalDateTime;
+
+@Data
+@AllArgsConstructor
+public class ErrorResponse {
+
+    private HttpStatus status;
+    private String error;
 }

@@ -2,6 +2,13 @@ package FIS.iLUVit.config;
 
 import FIS.iLUVit.config.argumentResolver.ForDB;
 import com.querydsl.jpa.impl.JPAQueryFactory;
+<<<<<<< HEAD
+=======
+
+import net.nurigo.sdk.NurigoApp;
+import net.nurigo.sdk.message.service.DefaultMessageService;
+import org.springframework.beans.factory.annotation.Value;
+>>>>>>> 7e2a332354789fe04e334be779faa032855dbb42
 import org.springframework.context.MessageSource;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -31,6 +38,11 @@ public class AppConfig {
         messageSource.setBasename("classpath:/message");
         messageSource.setDefaultEncoding("UTF-8");
         return messageSource;
+    }
+
+    @Bean
+    public DefaultMessageService defaultMessageService(@Value("${coolsms.api_key}") String api_key, @Value("${coolsms.api_secret}") String api_secret, @Value("${coolsms.domain}") String domain) {
+        return NurigoApp.INSTANCE.initialize(api_key, api_secret, domain);
     }
 
 }
