@@ -11,9 +11,6 @@ import org.springframework.data.repository.query.Param;
 
 public interface ChatRepository extends JpaRepository<Chat, Long> {
 
-    @Query("select c from Chat c where c.receiver.id = :userId or c.sender.id = :userId order by c.createdDate desc ")
-    Slice<Chat> findByUser(@Param("userId") Long userId, Pageable pageable);
-
     @Query("select c from Chat c " +
             "join fetch c.chatRoom cr " +
             "where cr.id = :roomId " +

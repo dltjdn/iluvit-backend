@@ -1,6 +1,7 @@
 package FIS.iLUVit.domain;
 
 import lombok.AccessLevel;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -47,6 +48,20 @@ public class ChatRoom extends BaseEntity {
         this.receiver = receiver;
         this.sender = sender;
         this.post = post;
+    }
+
+    @Builder(toBuilder = true)
+    public ChatRoom(Long id, LocalDate date, LocalTime time, String message, Long partner_id, User receiver, User sender, Post post, Comment comment, List<Chat> chatList) {
+        this.id = id;
+        this.date = date;
+        this.time = time;
+        this.message = message;
+        this.partner_id = partner_id;
+        this.receiver = receiver;
+        this.sender = sender;
+        this.post = post;
+        this.comment = comment;
+        this.chatList = chatList;
     }
 
     public void updateComment(Comment comment) {

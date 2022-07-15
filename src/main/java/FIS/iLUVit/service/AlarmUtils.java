@@ -38,6 +38,7 @@ public class AlarmUtils {
     }
 
     public static String getMessage(String code, Object[] args){
+        System.out.println(CHAT_RECEIVED);
         return messageSource.getMessage(code, args, null);
     }
 
