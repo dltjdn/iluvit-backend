@@ -17,7 +17,7 @@ import static org.hibernate.annotations.CascadeType.*;
 @Entity
 @NoArgsConstructor
 @Getter
-public class Presentation extends BaseEntity {
+public class Presentation extends BaseImageEntity {
     @Id @GeneratedValue
     private Long id;
 
@@ -26,7 +26,6 @@ public class Presentation extends BaseEntity {
     private String place;               // 설명회 장소
     @Lob
     private String content;             // 설명회 내용
-    private Integer imgCnt;             // 설명회 이미지 개수 최대 __장
     private Integer videoCnt;           // 설명회 동영상 개수 최대 _개
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn

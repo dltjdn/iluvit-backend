@@ -61,7 +61,14 @@ dependencies {
 	// test 위한 Gson 라이브러리 추가
 	implementation 'com.google.code.gson:gson:2.8.7'
 
+	// static method mock 을 위한 의존성 추가
 	testImplementation('org.mockito:mockito-inline:3.4.0')
+
+	// AWS S3 사용을 위한 의존성 추가 Spring-Cloud-AWS 추가
+	implementation 'io.awspring.cloud:spring-cloud-starter-aws:2.3.1'
+	// yml customizing 를 하기위해 resolver 만들기 위한 의존성 추갇
+	annotationProcessor "org.springframework.boot:spring-boot-configuration-processor"
+
 }
 
 test {

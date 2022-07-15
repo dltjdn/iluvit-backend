@@ -49,11 +49,11 @@ public class TeacherService {
         TeacherDetailResponse response = new TeacherDetailResponse(findTeacher);
 
         // 현재 등록한 프로필 이미지가 있으면 보여주기
-        if (findTeacher.getHasProfileImg()) {
-            String imagePath = imageService.getUserProfileDir();
-            response.setProfileImg(imageService.getEncodedProfileImage(imagePath, id));
-        }
-
+//        if (findTeacher.getHasProfileImg()) {
+//            String imagePath = imageService.getUserProfileDir();
+//            response.setProfileImg(imageService.getEncodedProfileImage(imagePath, id));
+//        }
+        response.setProfileImg(imageService.getProfileImage(findTeacher));
         return response;
     }
 
@@ -67,8 +67,6 @@ public class TeacherService {
 
         Teacher findTeacher = teacherRepository.findById(id)
                 .orElseThrow(() -> new UserException("유효하지 않은 토큰으로 사용자 접근입니디."));
-
-        Optional<Teacher> byNickName = teacherRepository.findByNickName(request.getNickname());
 
         // 유저 닉네임 중복 검사
         if(!Objects.equals(findTeacher.getNickName(), request.getNickname())){
@@ -93,11 +91,12 @@ public class TeacherService {
         TeacherDetailResponse response = new TeacherDetailResponse(findTeacher);
 
         // 프로필 이미지 수정
-        if (!request.getProfileImg().isEmpty()) {
-            String imagePath = imageService.getUserProfileDir();
-            imageService.saveProfileImage(request.getProfileImg(), imagePath + findTeacher.getId());
-            response.setProfileImg(imageService.getEncodedProfileImage(imagePath, id));
-        }
+//        if (!request.getProfileImg().isEmpty()) {
+//            String imagePath = imageService.getUserProfileDir();
+//            imageService.saveProfileImage(request.getProfileImg(), imagePath + findTeacher.getId());
+//            response.setProfileImg(imageService.getEncodedProfileImage(imagePath, id));
+//        }
+        imageService.saveProfileImage(request.getProfileImg(), findTeacher);
 
         return response;
     }
@@ -222,11 +221,12 @@ public class TeacherService {
                 TeacherApprovalListResponse.TeacherInfoForAdmin teacherInfoForAdmin =
                         new TeacherApprovalListResponse.TeacherInfoForAdmin(teacher.getId(), teacher.getName(), teacher.getApproval(), teacher.getAuth());
                 // 프로필 이미지 있는 교사들은 이미지 채우기
-                if (teacher.getHasProfileImg()) {
-                    String imagePath = imageService.getUserProfileDir();
-                    String image = imageService.getEncodedProfileImage(imagePath, teacher.getId());
-                    teacherInfoForAdmin.setProfileImg(image);
-                }
+//                if (teacher.getHasProfileImg()) {
+//                    String imagePath = imageService.getUserProfileDir();
+//                    String image = imageService.getEncodedProfileImage(imagePath, teacher.getId());
+//                    teacherInfoForAdmin.setProfileImg(image);
+//                }
+                teacherInfoForAdmin.setProfileImg(imageService.getProfileImage(teacher));
                 response.getData().add(teacherInfoForAdmin);
             }
         });

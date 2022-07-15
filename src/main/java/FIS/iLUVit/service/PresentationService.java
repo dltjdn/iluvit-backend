@@ -50,16 +50,13 @@ public class PresentationService {
                 userId == null ? presentationRepository.findByCenterAndDateWithPtDates(centerId, LocalDate.now())
                 : presentationRepository.findByCenterAndDateWithPtDates(centerId, LocalDate.now(), userId);
         return queryDtos.stream().collect(
-                groupingBy(queryDto -> new PresentationQuryDto(queryDto),
-                        mapping(queryDto -> new PtDateDto(queryDto), toList())
+                groupingBy(PresentationQuryDto::new,
+                        mapping(PtDateDto::new, toList())
                 ))
                 .entrySet().stream()
                 .map(e -> {
                     PresentationResponseDto presentationResponseDto = new PresentationResponseDto(e.getKey(), e.getValue());
-                    Long presentationId = presentationResponseDto.getPresentationId();
-                    String presentationDir = imageService.getPresentationDir(presentationId);
-                    presentationResponseDto.setImages(
-                            imageService.getEncodedInfoImage(presentationDir, presentationResponseDto.getImgCnt()));
+                    presentationResponseDto.setImages(imageService.getInfoImages(e.getKey().getInfoImages()));
                     return presentationResponseDto;
                 })
                 .collect(toList());
@@ -76,10 +73,7 @@ public class PresentationService {
         if (presentationRepository.findByCenterIdAndDate(request.getCenterId(), LocalDate.now()) != null)
             throw new PresentationException("아직 유효한 설명회가 있습니다");
         Center center = centerRepository.getById(request.getCenterId());
-        Presentation presentation = PresentationRequestRequestFormDto.toPresentation(request);
-        presentation.updateImageCnt(images.size())
-                .updateCenter(center);
-        List<PtDate> ptDates = presentation.getPtDates();
+        Presentation presentation = PresentationRequestRequestFormDto.toPresentation(request).updateCenter(center);
 
         request.getPtDateDtos().forEach(ptDateRequestDto -> {
             PtDate.register(presentation,
@@ -88,9 +82,8 @@ public class PresentationService {
                             ptDateRequestDto.getAblePersonNum());
         });
 
+        imageService.saveInfoImages(images, presentation);
         presentationRepository.save(presentation);
-        String presentationDir = imageService.getPresentationDir(presentation.getId());
-        imageService.saveInfoImage(images, presentationDir);
 
         userRepository.getUserPreferByCenterId(center).forEach(prefer -> {
             log.info("알림 메시지 생성 {}", prefer.getParent().getId());
@@ -112,11 +105,7 @@ public class PresentationService {
         //
         Presentation presentation = presentationRepository.findByIdAndJoinPtDate(presentationId)
                 .orElseThrow(() -> new PresentationException("존재하지않는 설명회 입니다"));
-        String presentationDir = imageService.getPresentationDir(presentationId);
-        List<String> encodedInfoImage = imageService.getEncodedInfoImage(presentationDir, presentation.getImgCnt());
-        // 로그인 되어있는 상태라면 신청유무 정보 삽입
-        List<Long> participantIds = new ArrayList<>();
-        return new PresentationResponseDto(presentation, encodedInfoImage);
+        return new PresentationResponseDto(presentation, imageService.getInfoImages(presentation));
     }
 
     public Presentation modifyWithPtDate(PresentationModifyRequestDto request, List<MultipartFile> images, Long userId) {
@@ -170,13 +159,11 @@ public class PresentationService {
         Set<Long> ptDateKeysDeleteTarget = ptDateMap.keySet();
         Collection<PtDate> ptDateSet = ptDateMap.values();
 
-        ptDateSet.forEach(ptDate -> ptDate.canDelete());
+        ptDateSet.forEach(PtDate::canDelete);
         presentation.getPtDates().removeAll(ptDateSet);
         ptDateRepository.deletePtDateByIds(ptDateKeysDeleteTarget);
+        imageService.saveInfoImages(images, presentation);
 
-        presentation.update(request, images.size(), 0);
-        String presentationDir = imageService.getPresentationDir(presentation.getId());
-        imageService.saveInfoImage(images, presentationDir);
         return presentation;
     }
 

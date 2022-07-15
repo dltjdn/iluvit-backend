@@ -2,7 +2,6 @@ package FIS.iLUVit.config;
 
 import FIS.iLUVit.config.argumentResolver.ForDB;
 import com.querydsl.jpa.impl.JPAQueryFactory;
-
 import org.springframework.context.MessageSource;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -33,4 +32,5 @@ public class AppConfig {
         messageSource.setDefaultEncoding("UTF-8");
         return messageSource;
     }
+
 }

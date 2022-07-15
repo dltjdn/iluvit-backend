@@ -16,7 +16,7 @@ import java.util.Optional;
 public interface PresentationRepository extends JpaRepository<Presentation, Long>, PresentationRepositoryCustom {
 
     @Query("select new FIS.iLUVit.repository.dto.PresentationWithPtDatesDto" +
-            "(p.id, p.startDate, p.endDate, p.place, p.content, p.imgCnt, p.videoCnt, pd.id, pd.date, pd.time, pd.ablePersonNum, pd.participantCnt, pd.waitingCnt) " +
+            "(p.id, p.startDate, p.endDate, p.place, p.content, p.imgCnt, p.videoCnt, p.infoImagePath, pd.id, pd.date, pd.time, pd.ablePersonNum, pd.participantCnt, pd.waitingCnt) " +
             "from Presentation p " +
             "join p.ptDates as pd " +
             "where p.center.id =:centerId " +
@@ -24,7 +24,7 @@ public interface PresentationRepository extends JpaRepository<Presentation, Long
     List<PresentationWithPtDatesDto> findByCenterAndDateWithPtDates(@Param("centerId") Long centerId, @Param("date") LocalDate date);
 
     @Query("select new FIS.iLUVit.repository.dto.PresentationWithPtDatesDto" +
-            "(p.id, p.startDate, p.endDate, p.place, p.content, p.imgCnt, p.videoCnt, pd.id, pd.date, pd.time, pd.ablePersonNum, pd.participantCnt, pd.waitingCnt, participation.id ,waiting.id) " +
+            "(p.id, p.startDate, p.endDate, p.place, p.content, p.imgCnt, p.videoCnt, p.infoImagePath, pd.id, pd.date, pd.time, pd.ablePersonNum, pd.participantCnt, pd.waitingCnt, participation.id ,waiting.id) " +
             "from Presentation p " +
             "join p.ptDates as pd " +
             "left join pd.participations as participation on participation.parent.id =:userId and participation.status = FIS.iLUVit.domain.enumtype.Status.JOINED " +

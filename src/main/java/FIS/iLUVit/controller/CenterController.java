@@ -82,8 +82,8 @@ public class CenterController {
      * 회원로직 완료후에 작업 시작
      */
     @GetMapping("/center/theme")
-    public CenterThemeBannerResponseDto centerThemeBanner(@Login Long userId){
-        return new CenterThemeBannerResponseDto(centerService.findCenterForParent(userId));
+    public List<CenterRecommendDto> centerThemeBanner(@Login Long userId){
+        return centerService.findCenterForParent(userId);
     }
 
     /**
@@ -93,8 +93,9 @@ public class CenterController {
     public Long modifyCenter(@PathVariable("centerId") Long centerId,
                              @Login Long userId,
                              @RequestPart CenterModifyRequestDto requestDto,
-                             @RequestPart List<MultipartFile> infoFiles){
-        return centerService.modifyCenter(centerId, userId, requestDto, infoFiles);
+                             @RequestPart List<MultipartFile> infoImages,
+                             @RequestPart MultipartFile profileImage){
+        return centerService.modifyCenter(centerId, userId, requestDto, infoImages, profileImage);
     }
 
     /**
