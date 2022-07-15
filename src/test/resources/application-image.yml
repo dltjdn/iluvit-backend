@@ -1,0 +1,16 @@
+spring:
+  config.activate.on-profile: local-image
+
+image:
+  location:
+    prefix: http://localhost:8081
+    path: /Users/hyeonseung-gu/Desktop
+---
+
+spring:
+  config.activate.on-profile: server-image
+
+image:
+  location:
+    prefix: http://localhost:8081
+    path: /home/image

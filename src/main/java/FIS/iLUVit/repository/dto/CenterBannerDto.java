@@ -24,7 +24,7 @@ public class CenterBannerDto {
     private Double starAverage;
     private Boolean prefer;
 
-    public CenterBannerDto(Long id, String name, Integer maxChildCnt, Integer curChildCnt, Boolean signed, Boolean recruit, Integer waitingNum, Double starAverage, Long preferId) {
+    public CenterBannerDto(Long id, String name, Integer maxChildCnt, Integer curChildCnt, Boolean signed, Boolean recruit, Integer waitingNum, Double starAverage, Long preferId, String profileImage) {
         this.id = id;
         this.name = name;
         this.maxChildCnt = maxChildCnt;
@@ -33,10 +33,11 @@ public class CenterBannerDto {
         this.recruit = recruit;
         this.waitingNum = waitingNum;
         this.starAverage = starAverage;
+        this.profileImage = profileImage;
         this.prefer = preferId == null ? false : true;
     }
 
-    public CenterBannerDto(Long id, String name, Integer maxChildCnt, Integer curChildCnt, Boolean signed, Boolean recruit, Integer waitingNum, Double starAverage) {
+    public CenterBannerDto(Long id, String name, Integer maxChildCnt, Integer curChildCnt, Boolean signed, Boolean recruit, Integer waitingNum, Double starAverage, String profileImage) {
         this.id = id;
         this.name = name;
         this.maxChildCnt = maxChildCnt;
@@ -45,5 +46,6 @@ public class CenterBannerDto {
         this.recruit = recruit;
         this.waitingNum = waitingNum;
         this.starAverage = starAverage;
+        this.profileImage = profileImage;
     }
 }

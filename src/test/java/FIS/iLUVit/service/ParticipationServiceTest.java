@@ -259,7 +259,7 @@ class ParticipationServiceTest {
         Mockito.doReturn(teachers)
                 .when(userRepository)
                 .findTeacherByCenter(any(Center.class));
-
+        
         alarmUtils.when(() -> AlarmUtils.getMessage(any(String.class), any(Object[].class)))
                 .thenReturn("설명회가 가득 찼습니다");
 

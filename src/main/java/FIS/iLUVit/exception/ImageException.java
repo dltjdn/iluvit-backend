@@ -1,11 +1,14 @@
 package FIS.iLUVit.exception;
 
-public class ImageException extends RuntimeException {
-    public ImageException() {
-        super();
-    }
+import lombok.Getter;
 
-    public ImageException(String message) {
-        super(message);
+@Getter
+public class ImageException extends RuntimeException {
+
+    private final ImageErrorResult imageExceptionErrorResult;
+
+    public ImageException(ImageErrorResult imageExceptionErrorResult) {
+        super();
+        this.imageExceptionErrorResult = imageExceptionErrorResult;
     }
 }

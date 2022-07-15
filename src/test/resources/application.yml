@@ -19,7 +19,7 @@ spring:
         create_empty_composites:
           enabled: true
   config:
-    import: application-database.yml, application-img.yml
+    import: application-database.yml, application-image.yml
   profiles:
     include:
       - secret
@@ -35,7 +35,7 @@ spring:
 
 logging:
   level:
-    org.hibernate.SQL: debug
+    org.hibernate.sql: info
 
 ---
 spring:
@@ -43,4 +43,6 @@ spring:
 
 logging:
   level:
-    org.hibernate.SQL: info
+    org.hibernate.sql: info
+
+

@@ -9,7 +9,6 @@ import lombok.Data;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Data
 @AllArgsConstructor
@@ -43,7 +42,8 @@ public class CenterInfoResponseDto {
     private CostInfo costInfo;              // 보육료 정보
     private BasicInfra basicInfra;          // 기본시설
     private Theme theme;                    // 테마
-    private List<String> images = new ArrayList<>();
+    private String profileImage;
+    private List<String> infoImages = new ArrayList<>();
     private List<String> programs = new ArrayList<>();
     private List<String> addInfos = new ArrayList<>();
 

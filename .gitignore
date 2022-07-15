@@ -41,6 +41,9 @@ out/
 .vscode/
 **/.DS_Store
 src/main/resources/application-secret.yml
-src/main/resources/application-mysql.yml
+src/main/resources/application-database.yml
 src/main/resources/application.properties
-src/test/resources/application-secret.yml
+src/main/resources/application-img.yml
+src/main/resources/application-s3.yml
+
+src/test/resources

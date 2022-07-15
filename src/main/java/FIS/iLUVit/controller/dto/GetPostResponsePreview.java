@@ -50,6 +50,7 @@ public class GetPostResponsePreview {
         this.board_id = post.getBoard().getId();
         this.date = post.getDate();
         this.time = post.getTime();
+        this.previewImage = post.getInfoImagePath();
 
         if (post.getBoard().getCenter() != null) {
             this.center_id = post.getBoard().getCenter().getId();

@@ -51,16 +51,16 @@ public class PostService {
         }
 
 
-        Integer imgSize = (images == null ? 0 : images.size());
+        //Integer imgSize = (images == null ? 0 : images.size());
         Post post = new Post(request.getTitle(), request.getContent(), request.getAnonymous(),
-                0, 0, imgSize, 0, findBoard, findUser);
-
+                0, 0, 0, 0, findBoard, findUser);
+        imageService.saveInfoImages(images, post);
         Post savedPost = postRepository.save(post); // 게시글 저장 -> Id 생김
 
-        if (imgSize > 0) {
-            String imagePath = imageService.getPostDir(savedPost.getId()); // id로 경로얻어서 이미지 저장
-            imageService.saveInfoImage(images, imagePath);
-        }
+//        if (imgSize > 0) {
+//            String imagePath = imageService.getPostDir(savedPost.getId()); // id로 경로얻어서 이미지 저장
+//            imageService.saveInfoImage(images, imagePath);
+//        }
 
         return savedPost.getId();
 
@@ -134,17 +134,18 @@ public class PostService {
     }
 
     public GetPostResponse getPostResponseDto(Post post) {
-        String postDir = imageService.getPostDir(post.getId());
-        List<String> encodedInfoImage = imageService.getEncodedInfoImage(postDir, post.getImgCnt());
-        String userProfileDir = imageService.getUserProfileDir();
-        String encodedProfileImage = imageService.getEncodedProfileImage(userProfileDir, post.getUser().getId());
-        return new GetPostResponse(post, encodedInfoImage, encodedProfileImage);
+//        String postDir = imageService.getPostDir(post.getId());
+//        List<String> encodedInfoImage = imageService.getEncodedInfoImage(postDir, post.getImgCnt());
+//        String userProfileDir = imageService.getUserProfileDir();
+//        String encodedProfileImage = imageService.getEncodedProfileImage(userProfileDir, post.getUser().getId());
+        return new GetPostResponse(post, imageService.getInfoImages(post), imageService.getProfileImage(post.getUser()));
     }
 
     public void setPreviewImage(GetPostResponsePreview preview) {
-        String postDir = imageService.getPostDir(preview.getPost_id());
-        List<String> encodedInfoImage = imageService.getEncodedInfoImage(postDir, preview.getImgCnt());
-        preview.updatePreviewImage(encodedInfoImage);
+//        String postDir = imageService.getPostDir(preview.getPost_id());
+//        List<String> encodedInfoImage = imageService.getEncodedInfoImage(postDir, preview.getImgCnt());
+        List<String> infoImages = imageService.getInfoImages(preview.getPreviewImage());
+        preview.updatePreviewImage(infoImages);
     }
 
     public PostList searchByUser(Long userId, Pageable pageable) {
@@ -235,9 +236,10 @@ public class PostService {
             List<BoardPreview.PostInfo> postInfos = v.stream()
                     .map(p -> {
                         BoardPreview.PostInfo postInfo = new BoardPreview.PostInfo(p);
-                        String postDir = imageService.getPostDir(p.getId());
-                        List<String> images = imageService.getEncodedInfoImage(postDir, p.getImgCnt());
-                        postInfo.setImages(images);
+//                        String postDir = imageService.getPostDir(p.getId());
+//                        List<String> images = imageService.getEncodedInfoImage(postDir, p.getImgCnt());
+//                        postInfo.setImages(images);
+                        postInfo.setImages(imageService.getInfoImages(p));
                         return postInfo;
                     })
                     .collect(Collectors.toList());

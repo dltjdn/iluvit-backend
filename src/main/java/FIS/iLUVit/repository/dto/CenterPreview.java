@@ -45,6 +45,7 @@ public class CenterPreview {
         this.latitude = center.getLatitude();
         this.theme = center.getTheme();
         this.starAverage = starAverage;
+        this.profileImage = center.getInfoImagePath();
     }
 
     @Builder

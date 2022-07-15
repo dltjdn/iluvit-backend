@@ -22,8 +22,6 @@ public class PresentationResponseDto {
     private Integer imgCnt;             // 설명회 이미지 개수 최대 __장
     private Integer videoCnt;           // 설명회 동영상 개수 최대 _개
     private List<String> images = new ArrayList<>();
-
-
     List<PtDateDto> ptDateDtos = new ArrayList<>();
 
     public PresentationResponseDto(PresentationQuryDto key, List<PtDateDto> value){
@@ -34,7 +32,7 @@ public class PresentationResponseDto {
         this.content = key.getContent();
         this.imgCnt = key.getImgCnt();
         this.videoCnt = key.getVideoCnt();
-        value.forEach(ptDateDto -> ptDateDtos.add(ptDateDto));
+        ptDateDtos.addAll(value);
     }
 
     public PresentationResponseDto(Presentation presentation, List<String> encodedInfoImage){

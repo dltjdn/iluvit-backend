@@ -21,7 +21,7 @@ import java.util.regex.Pattern;
 @NoArgsConstructor
 @AllArgsConstructor
 @EqualsAndHashCode(of = "id", callSuper = false)
-public class Center extends BaseEntity{
+public class Center extends BaseImageEntity {
     @Id @GeneratedValue
     protected Long id;
 
@@ -52,7 +52,6 @@ public class Center extends BaseEntity{
     protected Integer waitingNum;             // 원아 모집이 false 일때 대기자 수
     @Lob
     protected String introText;               // 시설 소개글
-    protected Integer imgCnt;                 // 시설 이미지 개수 최대 20장
     protected Integer videoCnt;               // 시설 동영상 갯수 최대 5개
     protected Integer score;                    // 시설 order By 기준 중 하나
     protected String addInfo;
@@ -89,7 +88,7 @@ public class Center extends BaseEntity{
     protected List<Prefer> prefers = new ArrayList<>();
 
     @Builder
-    public Center(Long id, String name, String owner, String director, String estType, String status, String estDate, String tel, String homepage, String startTime, String endTime, Integer minAge, Integer maxAge, String address, String zipcode, Area area, Double longitude, Double latitude, String offerService, Integer maxChildCnt, Integer curChildCnt, LocalDate updateDate, Boolean signed, Boolean recruit, Integer waitingNum, String introText, Integer imgCnt, Integer videoCnt, Integer score, String addInfo, String program, KindOf kindOf, ClassInfo classInfo, TeacherInfo teacherInfo, CostInfo costInfo, BasicInfra basicInfra, Theme theme, OtherInfo otherInfo) {
+    public Center(Long id, String name, String owner, String director, String estType, String status, String estDate, String tel, String homepage, String startTime, String endTime, Integer minAge, Integer maxAge, String address, String zipcode, Area area, Double longitude, Double latitude, String offerService, Integer maxChildCnt, Integer curChildCnt, LocalDate updateDate, Boolean signed, Boolean recruit, Integer waitingNum, String introText, Integer imgCnt, Integer videoCnt, Integer score, String addInfo, String program, KindOf kindOf, ClassInfo classInfo, TeacherInfo teacherInfo, CostInfo costInfo, BasicInfra basicInfra, Theme theme, OtherInfo otherInfo, String infoImagePath, String profileImagePath) {
         this.id = id;
         this.name = name;
         this.owner = owner;
@@ -128,6 +127,8 @@ public class Center extends BaseEntity{
         this.basicInfra = basicInfra;
         this.theme = theme;
         this.otherInfo = otherInfo;
+        this.profileImagePath = profileImagePath;
+        this.infoImagePath = infoImagePath;
     }
 
     public void update(CenterModifyRequestDto requestDto) {
@@ -169,11 +170,6 @@ public class Center extends BaseEntity{
         } else if (mode == Score.Review){
             this.score += Score.Review.getScore();
         }
-    }
-
-    public void updateImageCntAndVideoCnt(List<MultipartFile> files, Integer videoCnt){
-        imgCnt = files.size();
-        this.videoCnt = videoCnt;
     }
 
 
