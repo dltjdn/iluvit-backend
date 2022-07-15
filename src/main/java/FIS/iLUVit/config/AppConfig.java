@@ -2,13 +2,9 @@ package FIS.iLUVit.config;
 
 import FIS.iLUVit.config.argumentResolver.ForDB;
 import com.querydsl.jpa.impl.JPAQueryFactory;
-<<<<<<< HEAD
-=======
-
 import net.nurigo.sdk.NurigoApp;
 import net.nurigo.sdk.message.service.DefaultMessageService;
 import org.springframework.beans.factory.annotation.Value;
->>>>>>> 7e2a332354789fe04e334be779faa032855dbb42
 import org.springframework.context.MessageSource;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
