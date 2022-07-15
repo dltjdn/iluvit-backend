@@ -263,7 +263,7 @@ public class AuthNumberControllerTest {
     }
 
     @Test
-    public void 비밀번호인증번호받기_성공() throws Exception {
+    public void 비밀번호찾기인증번호받기_성공() throws Exception {
         // given
         String url = "/authNumber/password";
         // when
@@ -276,5 +276,7 @@ public class AuthNumberControllerTest {
         // then
         resultActions.andExpect(status().isOk());
     }
+
+    
 
 }

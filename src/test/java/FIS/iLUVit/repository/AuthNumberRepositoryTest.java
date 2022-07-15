@@ -1,5 +1,6 @@
 package FIS.iLUVit.repository;
 
+import FIS.iLUVit.Creator;
 import FIS.iLUVit.config.argumentResolver.ForDB;
 import FIS.iLUVit.domain.AuthNumber;
 import FIS.iLUVit.domain.enumtype.AuthKind;
@@ -13,6 +14,7 @@ import org.springframework.context.annotation.ComponentScan;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceException;
 
+import java.time.LocalDateTime;
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -131,6 +133,33 @@ public class AuthNumberRepositoryTest {
         // then
         assertThat(target).isNotNull();
         assertThat(target.getId()).isEqualTo(authNumber1.getId());
+    }
+
+    @Test
+    public void 인증번호인증여부검사_인증된거없음() {
+        // given
+        AuthNumber authNumber = Creator.createAuthNumber(phoneNum1, authNum, AuthKind.findPwd, null);
+        authNumberRepository.save(authNumber);
+        em.flush();
+        em.clear();
+        // when
+        AuthNumber target = authNumberRepository.findAuthComplete(phoneNum1, AuthKind.findPwd).orElse(null);
+        // then
+        assertThat(target).isNull();
+    }
+
+    @Test
+    public void 인증번호인증여부검사_인증된거있음() {
+        // given
+        AuthNumber authNumber = Creator.createAuthNumber(phoneNum1, authNum, AuthKind.findPwd, LocalDateTime.now());
+        authNumberRepository.save(authNumber);
+        em.flush();
+        em.clear();
+        // when
+        AuthNumber target = authNumberRepository.findAuthComplete(phoneNum1, AuthKind.findPwd).orElse(null);
+        // then
+        assertThat(target).isNotNull();
+        assertThat(target.getId()).isEqualTo(authNumber.getId());
     }
 
 

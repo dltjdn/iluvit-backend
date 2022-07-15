@@ -15,6 +15,8 @@ public enum AuthNumberErrorResult implements ErrorResult {
     EXPIRED(HttpStatus.BAD_REQUEST, "인증번호가 만료되었습니다."),
     NOT_SIGNUP_PHONE(HttpStatus.BAD_REQUEST, "서비스에 가입되지 않은 핸드폰 번호입니다."),
     NOT_MATCH_INFO(HttpStatus.BAD_REQUEST, "아이디와 휴대폰번호를 확인해주세요."),
+    NOT_MATCH_CHECKPWD(HttpStatus.BAD_REQUEST, "비밀번호와 비밀번호확인이 서로 다릅니다."),
+    NOT_AUTHENTICATION(HttpStatus.BAD_REQUEST, "핸드폰 인증이 완료되지 않았습니다."),
     ;
 
     private final HttpStatus httpStatus;

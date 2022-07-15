@@ -56,7 +56,7 @@ public class AuthNumberController {
     /**
      * 작성날짜: 2022/05/24 3:24 PM
      * 작성자: 이승범
-     * 작성내용: 인증번호를 통한 핸드폰 인증 (회원가입, loginId 찾기, 핸드폰번호 변경)
+     * 작성내용: 인증번호를 통한 핸드폰 인증 (회원가입, 비밀번호 찾기, 핸드폰번호 변경)
      */
     @PostMapping("/authNumber")
     public void authenticateAuthNum(@RequestBody AuthenticateAuthNumRequest request) {

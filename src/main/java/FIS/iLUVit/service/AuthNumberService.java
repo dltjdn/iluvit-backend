@@ -12,13 +12,11 @@ import FIS.iLUVit.exception.UserException;
 import FIS.iLUVit.repository.AuthNumberRepository;
 import FIS.iLUVit.repository.UserRepository;
 import FIS.iLUVit.service.messageService.MessageService;
+import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import net.nurigo.sdk.NurigoApp;
 import net.nurigo.sdk.message.model.Message;
 import net.nurigo.sdk.message.request.SingleMessageSendingRequest;
-import net.nurigo.sdk.message.service.DefaultMessageService;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -41,6 +39,12 @@ public class AuthNumberService {
 
     @Value("${coolsms.fromNumber}")
     private String fromNumber;
+
+    // 인증번호 제한시간(초)
+    private final Integer authValidTime = 60;
+
+    // 인증한 후 인증이 유지되는 시간(초)
+    private final Integer authNumberValidTime = 60 * 60;
 
     /**
      * 작성날짜: 2022/05/24 10:38 AM
@@ -96,7 +100,7 @@ public class AuthNumberService {
                 .findByPhoneNumAndAuthNumAndAuthKind(request.getPhoneNum(), request.getAuthNum(), request.getAuthKind())
                 .orElseThrow(() -> new AuthNumberException(AuthNumberErrorResult.AUTHENTICATION_FAIL));
 
-        if (Duration.between(authNumber.getCreatedDate(), LocalDateTime.now()).getSeconds() > 60) {
+        if (Duration.between(authNumber.getCreatedDate(), LocalDateTime.now()).getSeconds() > authValidTime) {
             throw new AuthNumberException(AuthNumberErrorResult.EXPIRED);
         } else {
             authNumber.AuthComplete();
@@ -128,8 +132,9 @@ public class AuthNumberService {
      */
     public void changePassword(FindPasswordRequest request) {
 
+        // 비밀번호와 비밀번호 확인 불일치
         if (!request.getNewPwd().equals(request.getNewPwdCheck())) {
-            throw new SignupException("비밀번호와 비밀번호확인이 서로 다릅니다.");
+            throw new AuthNumberException(AuthNumberErrorResult.NOT_MATCH_CHECKPWD);
         }
 
         // 인증완료된 핸드폰번호인지 확인
@@ -143,11 +148,12 @@ public class AuthNumberService {
     }
 
     // 인증이 완료된 인증번호인지 검사
-    public AuthNumber validateAuthNumber(String phoneNum, AuthKind authKind){
-        AuthNumber authComplete = authNumberRepository.findAuthComplete(phoneNum, authKind).orElse(null);
-        if (authComplete == null) {
-            throw new SignupException("핸드폰 인증이 완료되지 않았습니다.");
-        } else if (Duration.between(authComplete.getAuthTime(), LocalDateTime.now()).getSeconds() > (60 * 60)) {
+    public AuthNumber validateAuthNumber(String phoneNum, AuthKind authKind) {
+        // 핸드폰 인증여부 확인
+        AuthNumber authComplete = authNumberRepository.findAuthComplete(phoneNum, authKind)
+                .orElseThrow(() -> new AuthNumberException(AuthNumberErrorResult.NOT_AUTHENTICATION));
+        // 핸드폰 인증 후 일정시간이 지나면 무효화
+        if (Duration.between(authComplete.getAuthTime(), LocalDateTime.now()).getSeconds() > authNumberValidTime) {
             throw new SignupException("핸드폰 인증시간이 만료되었습니다. 핸드폰 인증을 다시 해주세요");
         }
         return authComplete;
@@ -162,7 +168,7 @@ public class AuthNumberService {
         AuthNumber overlaps = authNumberRepository.findOverlap(toNumber, authKind).orElse(null);
 
         // 인증번호 최초 요청인 경우 || 이미 인증번호를 받았지만 제한시간이 지난 경우
-        if (overlaps == null || Duration.between(overlaps.getCreatedDate(), LocalDateTime.now()).getSeconds() > 60) {
+        if (overlaps == null || Duration.between(overlaps.getCreatedDate(), LocalDateTime.now()).getSeconds() > authValidTime) {
 
             // 이미 인증번호를 받았지만 제한시간이 지난 경우
             if (overlaps != null) {
@@ -175,7 +181,7 @@ public class AuthNumberService {
             AuthNumber authNumber = AuthNumber.createAuthNumber(toNumber, authNum, authKind);
             return authNumberRepository.save(authNumber);
 
-        // 이미 인증번호를 요청하였고 제한시간이 지나지 않은 경우
+            // 이미 인증번호를 요청하였고 제한시간이 지나지 않은 경우
         } else {
             throw new AuthNumberException(AuthNumberErrorResult.YET_AUTHNUMBER_VALID);
         }
@@ -211,6 +217,14 @@ public class AuthNumberService {
             authNumber += ran;
         }
         return authNumber;
+    }
+
+    public Integer getAuthValidTime() {
+        return authValidTime;
+    }
+
+    public Integer getAuthNumberValidTime() {
+        return authNumberValidTime;
     }
 }
 

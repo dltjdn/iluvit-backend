@@ -1,6 +1,8 @@
 package FIS.iLUVit.service;
 
+import FIS.iLUVit.Creator;
 import FIS.iLUVit.controller.dto.AuthenticateAuthNumRequest;
+import FIS.iLUVit.controller.dto.FindPasswordRequest;
 import FIS.iLUVit.domain.AuthNumber;
 import FIS.iLUVit.domain.Parent;
 import FIS.iLUVit.domain.Teacher;
@@ -106,7 +108,7 @@ public class AuthNumberServiceTest {
                 .when(userRepository)
                 .findByPhoneNumber(phoneNum);
 
-        doReturn(Optional.of(createAuthNumber(AuthKind.signup).setCreatedDateForTest(LocalDateTime.now().minusMinutes(6))))
+        doReturn(Optional.of(createAuthNumber(AuthKind.signup).setCreatedDateForTest(LocalDateTime.now().minusSeconds(target.getAuthValidTime() + 1))))
                 .when(authNumberRepository)
                 .findOverlap(phoneNum, AuthKind.signup);
 
@@ -143,7 +145,7 @@ public class AuthNumberServiceTest {
     public void 인증번호인증_실패_인증번호만료() {
         // given
         AuthenticateAuthNumRequest request = new AuthenticateAuthNumRequest(phoneNum, authNum, AuthKind.signup);
-        doReturn(Optional.of(createAuthNumber(AuthKind.signup).setCreatedDateForTest(LocalDateTime.now().minusMinutes(6))))
+        doReturn(Optional.of(createAuthNumber(AuthKind.signup).setCreatedDateForTest(LocalDateTime.now().minusMinutes(target.getAuthValidTime()))))
                 .when(authNumberRepository)
                 .findByPhoneNumAndAuthNumAndAuthKind(phoneNum, authNum, AuthKind.signup);
         // when
@@ -299,6 +301,55 @@ public class AuthNumberServiceTest {
         assertThat(authNumber).isNotNull();
         assertThat(authNumber.getAuthKind()).isEqualTo(AuthKind.findPwd);
     }
+
+    @Test
+    public void 비밀번호찾기실행_실패_비밀번호틀림() {
+        // given
+        FindPasswordRequest request = new FindPasswordRequest("loginId", "phoneNum", "authNum", "newPwd", "nwePwdCheck");
+        // when
+        AuthNumberException result = assertThrows(AuthNumberException.class,
+                () -> target.changePassword(request));
+        // then
+        assertThat(result.getErrorResult()).isEqualTo(AuthNumberErrorResult.NOT_MATCH_CHECKPWD);
+    }
+
+    @Test
+    public void 비밀번호찾기실행_실패_핸드폰미인증() {
+        // given
+        FindPasswordRequest request = new FindPasswordRequest("loginId", "phoneNum", "authNum", "newPwd", "newPwd");
+
+        doReturn(Optional.empty())
+                .when(authNumberRepository)
+                .findAuthComplete(phoneNum, AuthKind.findPwd);
+        // when
+        AuthNumberException result = assertThrows(AuthNumberException.class,
+                () -> target.changePassword(request));
+        // then
+        assertThat(result.getErrorResult()).isEqualTo(AuthNumberErrorResult.NOT_AUTHENTICATION);
+    }
+
+    @Test
+    public void 비밀번호찾기실행_실패_인증시간만료() {
+        // given
+        FindPasswordRequest request = new FindPasswordRequest("loginId", "phoneNum", "authNum", "newPwd", "newPwd");
+        doReturn(Creator.createAuthNumber("phoneNum", "authNum", AuthKind.findPwd, LocalDateTime.now().minusHours(2)));
+
+        // when
+
+        // then
+
+    }
+
+//    @Test
+//    public void 비밀번호찾기실행_실패_로그인아이디틀림() {
+//        // given
+//        FindPasswordRequest request = new FindPasswordRequest("loginId", "phoneNum", "authNum", "newPwd", "newPwd");
+//        // when
+//        AuthNumberException result = assertThrows(AuthNumberException.class,
+//                () -> target.changePassword(request));
+//        // then
+//        assertThat(result.getErrorResult()).isEqualTo(AuthNumberErrorResult.NOT_MATCH_CHECKPWD);
+//    }
 
 
     private AuthNumber createAuthNumber(AuthKind authKind) {
