@@ -2,31 +2,24 @@ package FIS.iLUVit.controller;
 
 import FIS.iLUVit.config.argumentResolver.LoginUserArgumentResolver;
 import FIS.iLUVit.controller.dto.AuthenticateAuthNumRequest;
-import FIS.iLUVit.domain.AuthNumber;
 import FIS.iLUVit.domain.enumtype.AuthKind;
 import FIS.iLUVit.exception.AuthNumberErrorResult;
 import FIS.iLUVit.exception.AuthNumberException;
 import FIS.iLUVit.exception.exceptionHandler.ErrorResponse;
-import FIS.iLUVit.exception.exceptionHandler.ErrorResult;
 import FIS.iLUVit.exception.exceptionHandler.controllerAdvice.GlobalControllerAdvice;
 import FIS.iLUVit.service.AuthNumberService;
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.google.gson.Gson;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.test.web.servlet.MockMvcBuilder;
 import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
-import org.springframework.test.web.servlet.result.MockMvcResultHandlers;
-import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
-import org.springframework.test.web.servlet.result.StatusResultMatchers;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
 import static org.mockito.Mockito.*;
@@ -77,7 +70,7 @@ public class AuthNumberControllerTest {
                 .andExpect(status().isBadRequest())
                 .andExpect(
                         content().json(objectMapper.writeValueAsString(
-                                        new ErrorResponse(error.getHttpStatus(), error.getMessage())))
+                                new ErrorResponse(error.getHttpStatus(), error.getMessage())))
                 );
     }
 
@@ -122,7 +115,7 @@ public class AuthNumberControllerTest {
     }
 
     @Test
-    public void 회원가입용인증번호인증_실패_인증정보불일치() throws Exception {
+    public void 인증번호인증_실패_인증정보불일치() throws Exception {
         // given
         final String url = "/authNumber";
         AuthenticateAuthNumRequest request = new AuthenticateAuthNumRequest(phoneNum, authNum, AuthKind.signup);
@@ -139,11 +132,14 @@ public class AuthNumberControllerTest {
         // then
         resultActions.andDo(print())
                 .andExpect(status().isBadRequest())
-                .andExpect(content().json(objectMapper.writeValueAsString(new ErrorResponse(error.getHttpStatus(), error.getMessage()))));
+                .andExpect(content().json(
+                        objectMapper.writeValueAsString(
+                                new ErrorResponse(error.getHttpStatus(), error.getMessage())))
+                );
     }
 
     @Test
-    public void 회원가입용인증번호인증_실패_인증번호만료() throws Exception {
+    public void 인증번호인증_실패_인증번호만료() throws Exception {
         // given
         final String url = "/authNumber";
         AuthenticateAuthNumRequest request = new AuthenticateAuthNumRequest(phoneNum, authNum, AuthKind.signup);
@@ -160,12 +156,15 @@ public class AuthNumberControllerTest {
         // then
         resultActions.andDo(print())
                 .andExpect(status().isBadRequest())
-                .andExpect(content().json(objectMapper.writeValueAsString(new ErrorResponse(error.getHttpStatus(), error.getMessage()))));
+                .andExpect(content().json(
+                        objectMapper.writeValueAsString(
+                                new ErrorResponse(error.getHttpStatus(), error.getMessage())))
+                );
 
     }
 
     @Test
-    public void 회원가입용인증번호인증_성공() throws Exception {
+    public void 인증번호인증_성공() throws Exception {
         // given
         final String url = "/authNumber";
         AuthenticateAuthNumRequest request = new AuthenticateAuthNumRequest(phoneNum, authNum, AuthKind.signup);
@@ -204,14 +203,78 @@ public class AuthNumberControllerTest {
     }
 
     @Test
-    public void () {
+    public void 아이디찾기인증번호받기_성공() throws Exception {
         // given
-
+        final String url = "/authNumber/loginId";
         // when
-
+        ResultActions resultActions = mockMvc.perform(
+                MockMvcRequestBuilders.get(url)
+                        .param("phoneNumber", phoneNum)
+                        .contentType(MediaType.APPLICATION_JSON)
+        );
         // then
-
+        resultActions.andExpect(status().isOk());
     }
 
+    @Test
+    public void 아이디찾기_성공() throws Exception {
+        // given
+        Gson gson = new Gson();
+        String url = "/findLoginId";
+        String loginId = "lo***Id";
+        AuthenticateAuthNumRequest request = new AuthenticateAuthNumRequest(phoneNum, authNum, AuthKind.findLoginId);
+        doReturn(loginId)
+                .when(authNumberService)
+                .findLoginId(request);
+        // when
+        ResultActions resultActions = mockMvc.perform(
+                MockMvcRequestBuilders.post(url)
+                        .content(objectMapper.writeValueAsString(request))
+                        .contentType(MediaType.APPLICATION_JSON)
+        );
+        // then
+        resultActions.andDo(print())
+                .andExpect(status().isOk())
+                .andExpect(content().string(loginId));
+    }
+
+    @Test
+    public void 비밀번호찾기인증번호받기_실패_아이디휴대폰불일치() throws Exception {
+        // given
+        String url = "/authNumber/password";
+        AuthNumberErrorResult error = AuthNumberErrorResult.NOT_MATCH_INFO;
+        doThrow(new AuthNumberException(error))
+                .when(authNumberService)
+                .sendAuthNumberForFindPassword("loginId", "phoneNumber");
+        // when
+        ResultActions resultActions = mockMvc.perform(
+                MockMvcRequestBuilders.get(url)
+                        .param("loginId", "loginId")
+                        .param("phoneNumber", "phoneNumber")
+                        .contentType(MediaType.APPLICATION_JSON)
+        );
+        // then
+        resultActions.andDo(print())
+                .andExpect(status().isBadRequest())
+                .andExpect(content().json(
+                        objectMapper.writeValueAsString(
+                                new ErrorResponse(error.getHttpStatus(), error.getMessage())))
+                );
+    }
+
+    @Test
+    public void 비밀번호인증번호받기_성공() throws Exception {
+        // given
+        String url = "/authNumber/password";
+        // when
+        ResultActions resultActions = mockMvc.perform(
+                MockMvcRequestBuilders.get(url)
+                        .param("loginId", "loginId")
+                        .param("phoneNumber", "phoneNumber")
+                        .contentType(MediaType.APPLICATION_JSON)
+        );
+        // then
+        resultActions.andExpect(status().isOk());
+    }
 
 }

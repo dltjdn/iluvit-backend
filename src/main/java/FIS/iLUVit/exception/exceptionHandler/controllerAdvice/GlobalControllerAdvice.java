@@ -23,7 +23,8 @@ import java.util.stream.Collectors;
 
 @Slf4j
 @RestControllerAdvice
-public class GlobalControllerAdvice extends ResponseEntityExceptionHandler {
+public class GlobalControllerAdvice extends ResponseEntityExceptionHandler
+{
 
     @Override
     protected ResponseEntity<Object> handleExceptionInternal(
@@ -32,7 +33,7 @@ public class GlobalControllerAdvice extends ResponseEntityExceptionHandler {
             HttpStatus status,
             WebRequest request) {
 
-        log.warn("[ResponseEntityExceptionHandler] e", ex);
+        log.warn("[ResponseEntityExceptionHandler] e : ", ex);
         return this.makeErrorResponseEntity(ex.getMessage());
     }
 

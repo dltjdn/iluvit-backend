@@ -11,6 +11,7 @@ import FIS.iLUVit.exception.exceptionHandler.ErrorResponse;
 import FIS.iLUVit.repository.AuthNumberRepository;
 import FIS.iLUVit.repository.UserRepository;
 import FIS.iLUVit.stub.MessageServiceStub;
+import kotlin.OptIn;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -125,7 +126,7 @@ public class AuthNumberServiceTest {
     }
 
     @Test
-    public void 회원가입용인증번호인증_실패_인증번호불일치() {
+    public void 인증번호인증_실패_인증번호불일치() {
         // given
         AuthenticateAuthNumRequest request = new AuthenticateAuthNumRequest(phoneNum, authNum, AuthKind.signup);
         doReturn(Optional.empty())
@@ -139,7 +140,7 @@ public class AuthNumberServiceTest {
     }
 
     @Test
-    public void 회원가입용인증번호인증_실패_인증번호만료() {
+    public void 인증번호인증_실패_인증번호만료() {
         // given
         AuthenticateAuthNumRequest request = new AuthenticateAuthNumRequest(phoneNum, authNum, AuthKind.signup);
         doReturn(Optional.of(createAuthNumber(AuthKind.signup).setCreatedDateForTest(LocalDateTime.now().minusMinutes(6))))
@@ -155,7 +156,7 @@ public class AuthNumberServiceTest {
     }
 
     @Test
-    public void 회원가입용인증번호인증_성공() {
+    public void 인증번호인증_성공() {
         // given
         AuthenticateAuthNumRequest request = new AuthenticateAuthNumRequest(phoneNum, authNum, AuthKind.signup);
         AuthNumber authNumber = createAuthNumber(AuthKind.signup);
@@ -244,6 +245,59 @@ public class AuthNumberServiceTest {
 
         // verify
         verify(authNumberRepository, times(1)).deleteExpiredNumber(phoneNum, AuthKind.findLoginId);
+    }
+
+    @Test
+    public void 아이디찾기_성공() {
+        // given
+        AuthenticateAuthNumRequest request = new AuthenticateAuthNumRequest(phoneNum, authNum, AuthKind.findLoginId);
+        doReturn(Optional.of(createAuthNumber(AuthKind.findLoginId)))
+                .when(authNumberRepository)
+                .findByPhoneNumAndAuthNumAndAuthKind(phoneNum, authNum, AuthKind.findLoginId);
+        doReturn(Optional.of(Parent.builder().loginId("asdfg").build()))
+                .when(userRepository)
+                .findByPhoneNumber(phoneNum);
+        // when
+        String result = target.findLoginId(request);
+        // then
+        assertThat(result).isNotNull();
+        assertThat(result).isEqualTo("a***g");
+    }
+
+    @Test
+    public void 비밀번호찾기를위한인증번호받기_실패_아이디와휴대폰불일치() {
+        // given
+        String loginId = "loginId";
+        doReturn(Optional.empty())
+                .when(userRepository)
+                .findByLoginIdAndPhoneNumber(loginId, phoneNum);
+        // when
+        AuthNumberException result = assertThrows(AuthNumberException.class,
+                () -> target.sendAuthNumberForFindPassword(loginId, phoneNum));
+        // then
+        assertThat(result.getErrorResult()).isEqualTo(AuthNumberErrorResult.NOT_MATCH_INFO);
+    }
+
+    @Test
+    public void 비밀번호찾기를위한인증번호받기_성공() {
+        // given
+        String loginId = "loginId";
+        doReturn(Optional.of(Parent.builder().build()))
+                .when(userRepository)
+                .findByLoginIdAndPhoneNumber(loginId, phoneNum);
+
+        doReturn(Optional.empty())
+                .when(authNumberRepository)
+                .findOverlap(phoneNum, AuthKind.findPwd);
+
+        doReturn(createAuthNumber(AuthKind.findPwd))
+                .when(authNumberRepository)
+                .save(any(AuthNumber.class));
+        // when
+        AuthNumber authNumber = target.sendAuthNumberForFindPassword(loginId, phoneNum);
+        // then
+        assertThat(authNumber).isNotNull();
+        assertThat(authNumber.getAuthKind()).isEqualTo(AuthKind.findPwd);
     }
 
 

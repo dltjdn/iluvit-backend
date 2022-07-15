@@ -45,7 +45,7 @@ public class AuthNumberService {
     /**
      * 작성날짜: 2022/05/24 10:38 AM
      * 작성자: 이승범
-     * 작성내용: 회원가입을 위한 인증번호 전송
+     * 작성내용: 회원가입 및 핸드폰번호 변경을 위한 인증번호 전송
      */
     public AuthNumber sendAuthNumberForSignup(String toNumber, AuthKind authKind) {
 
@@ -80,7 +80,7 @@ public class AuthNumberService {
         User findUser = userRepository.findByLoginIdAndPhoneNumber(loginId, toNumber).orElse(null);
 
         if (findUser == null) {
-            throw new AuthNumberException("아이디와 휴대폰번호를 확인해주세요.");
+            throw new AuthNumberException(AuthNumberErrorResult.NOT_MATCH_INFO);
         }
         return sendAuthNumber(toNumber, AuthKind.findPwd);
     }
@@ -111,10 +111,11 @@ public class AuthNumberService {
      */
     public String findLoginId(AuthenticateAuthNumRequest request) {
 
+        // request와 일치하는 유효한 인증번호가 있는지 검공
         AuthNumber authNumber = authenticateAuthNum(request);
 
         User findUser = userRepository.findByPhoneNumber(authNumber.getPhoneNum())
-                .orElseThrow(() -> new AuthNumberException("핸드폰 번호를 확인해 주세요"));
+                .orElseThrow(() -> new AuthNumberException(AuthNumberErrorResult.NOT_SIGNUP_PHONE));
 
         authNumberRepository.delete(authNumber);
         return blindLoginId(findUser.getLoginId());
