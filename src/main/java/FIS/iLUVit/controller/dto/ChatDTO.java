@@ -25,6 +25,10 @@ public class ChatDTO {
 
     private Slice<ChatInfo> chatList;
 
+    private Long my_id;
+    private Long opponent_id;
+    private String opponent_image;
+
     @Data
     @NoArgsConstructor
     public static class ChatInfo {
@@ -64,7 +68,17 @@ public class ChatDTO {
             this.comment_id = chatRoom.getComment().getId();
         }
         this.chatList = chatList;
+        if (chatRoom.getReceiver() != null) {
+            this.my_id = chatRoom.getReceiver().getId();
+        }
+        if (chatRoom.getSender() != null) {
+            this.opponent_id = chatRoom.getSender().getId();
+        }
+
     }
 
+    public void updateImage(String imageUrl) {
+        this.opponent_image = imageUrl;
+    }
 
 }

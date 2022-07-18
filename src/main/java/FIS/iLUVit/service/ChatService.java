@@ -27,6 +27,7 @@ public class ChatService {
     private final PostRepository postRepository;
     private final CommentRepository commentRepository;
     private final ChatRoomRepository chatRoomRepository;
+    private final ImageService imageService;
 
     public Long saveChat(Long userId, CreateChatRequest request) {
 
@@ -89,20 +90,25 @@ public class ChatService {
 
     public Slice<ChatListDTO> findAll(Long userId, Pageable pageable) {
         Slice<ChatRoom> chatList = chatRoomRepository.findByUser(userId, pageable);
-        return chatList.map(c -> new ChatListDTO(c));
+        return chatList.map(c -> {
+            ChatListDTO chatListDTO = new ChatListDTO(c);
+            String profileImage = imageService.getProfileImage(c.getSender());
+            chatListDTO.updateImage(profileImage);
+            return chatListDTO;
+        });
     }
 
     public ChatDTO findByOpponent(Long userId, Long roomId, Pageable pageable) {
         ChatRoom findRoom = chatRoomRepository.findById(roomId)
                 .orElseThrow(() -> new ChatException(ChatErrorResult.ROOM_NOT_EXIST));
 
-        // userId와 받는 유저면 otherId는 보내는 유저
-        // userId와 보내는 유저면 otherId는 받는 유저
-
         Slice<Chat> chatList = chatRepository.findByChatRoom(userId, roomId, pageable);
 
         Slice<ChatDTO.ChatInfo> chatInfos = chatList.map(ChatDTO.ChatInfo::new);
-        return new ChatDTO(findRoom, chatInfos);
+        ChatDTO chatDTO = new ChatDTO(findRoom, chatInfos);
+        String profileImage = imageService.getProfileImage(findRoom.getSender());
+        chatDTO.updateImage(profileImage);
+        return chatDTO;
     }
 
     public Long deleteChatRoom(Long userId, Long roomId) {
@@ -122,6 +128,10 @@ public class ChatService {
     }
 
     public Long saveChatInRoom(Long userId, CreateChatRoomRequest request) {
+
+        if (userId == null) {
+            throw new ChatException(ChatErrorResult.UNAUTHORIZED_USER_ACCESS);
+        }
 
         ChatRoom findRoom = chatRoomRepository.findById(request.getRoom_id())
                 .orElseThrow(() -> new ChatException(ChatErrorResult.ROOM_NOT_EXIST));

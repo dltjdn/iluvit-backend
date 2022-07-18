@@ -2,6 +2,8 @@ package FIS.iLUVit.controller;
 
 import FIS.iLUVit.Creator;
 import FIS.iLUVit.config.argumentResolver.LoginUserArgumentResolver;
+import FIS.iLUVit.controller.dto.ChatDTO;
+import FIS.iLUVit.controller.dto.ChatListDTO;
 import FIS.iLUVit.controller.dto.CreateChatRequest;
 import FIS.iLUVit.controller.dto.CreateChatRoomRequest;
 import FIS.iLUVit.domain.*;
@@ -25,16 +27,24 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Slice;
+import org.springframework.data.domain.SliceImpl;
+import org.springframework.data.web.PageableHandlerMethodArgumentResolver;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
+import java.util.Arrays;
 import java.util.Date;
+import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -75,7 +85,8 @@ class ChatControllerTest {
     @BeforeEach
     public void init() {
         mockMvc = MockMvcBuilders.standaloneSetup(chatController)
-                .setCustomArgumentResolvers(new LoginUserArgumentResolver())
+                .setCustomArgumentResolvers(new LoginUserArgumentResolver(),
+                        new PageableHandlerMethodArgumentResolver())
                 .setControllerAdvice(GlobalControllerAdvice.class)
                 .build();
 
@@ -122,10 +133,28 @@ class ChatControllerTest {
     @Test
     public void 쪽지_작성_대화방_생성_비회원_접근() throws Exception {
         //given
+        request.setMessage("안녕");
+        request.setPost_id(post1.getId());
+        request.setReceiver_id(receiver.getId());
+        final String url = "/chat";
+        final ChatErrorResult error = ChatErrorResult.UNAUTHORIZED_USER_ACCESS;
 
+        Mockito.doThrow(new ChatException(error))
+                .when(chatService)
+                .saveChat(eq(null), any(CreateChatRequest.class));
         //when
-
+        ResultActions resultActions = mockMvc.perform(
+                MockMvcRequestBuilders.post(url)
+                        .content(objectMapper.writeValueAsString(request))
+                        .contentType(MediaType.APPLICATION_JSON));
         //then
+        resultActions.andDo(print())
+                .andExpect(status().isBadRequest())
+                .andExpect(
+                        content().json(objectMapper.writeValueAsString(
+                                new ErrorResponse(error.getHttpStatus(), error.getMessage())
+                        ))
+                );
     }
 
     @Test
@@ -186,4 +215,308 @@ class ChatControllerTest {
                         ))
                 );
     }
+
+    @Test
+    public void 쪽지_작성_대화방_생성_게시글X() throws Exception {
+        //given
+        request.setMessage("안녕");
+        request.setPost_id(post1.getId());
+        request.setReceiver_id(receiver.getId());
+        final String url = "/chat";
+        final ChatErrorResult error = ChatErrorResult.POST_NOT_EXIST;
+
+        Mockito.doThrow(new ChatException(error))
+                .when(chatService)
+                .saveChat(any(Long.class), any(CreateChatRequest.class));
+        //when
+        ResultActions resultActions = mockMvc.perform(
+                MockMvcRequestBuilders.post(url)
+                        .header("Authorization", createJwtToken())
+                        .content(objectMapper.writeValueAsString(request))
+                        .contentType(MediaType.APPLICATION_JSON));
+        //then
+        resultActions.andDo(print())
+                .andExpect(status().isBadRequest())
+                .andExpect(
+                        content().json(objectMapper.writeValueAsString(
+                                new ErrorResponse(error.getHttpStatus(), error.getMessage())
+                        ))
+                );
+    }
+
+    @Test
+    public void 쪽지_작성_대화방_생성_성공() throws Exception {
+        //given
+        request.setMessage("안녕");
+        request.setPost_id(post1.getId());
+        request.setReceiver_id(receiver.getId());
+        final String url = "/chat";
+
+        Mockito.doReturn(chat2.getId())
+                .when(chatService)
+                .saveChat(any(Long.class), any(CreateChatRequest.class));
+        //when
+        ResultActions resultActions = mockMvc.perform(
+                MockMvcRequestBuilders.post(url)
+                        .header("Authorization", createJwtToken())
+                        .content(objectMapper.writeValueAsString(request))
+                        .contentType(MediaType.APPLICATION_JSON));
+        //then
+        resultActions.andDo(print())
+                .andExpect(status().isOk())
+                .andExpect(
+                        content().json(objectMapper.writeValueAsString(
+                                chat2.getId()
+                        ))
+                );
+    }
+
+    @Test
+    public void 쪽지_작성_대화방_생성_후_비회원_혹은_권한X() throws Exception {
+        //given
+        roomRequest.setRoom_id(chatRoom1.getId());
+        roomRequest.setMessage("안녕");
+
+        final String url = "/chat/inRoom";
+        final ChatErrorResult error = ChatErrorResult.UNAUTHORIZED_USER_ACCESS;
+        Mockito.doThrow(new ChatException(error))
+                .when(chatService)
+                .saveChatInRoom(eq(null), any(CreateChatRoomRequest.class));
+        //when
+        ResultActions resultActions = mockMvc.perform(
+                MockMvcRequestBuilders.post(url)
+                        .content(objectMapper.writeValueAsString(roomRequest))
+                        .contentType(MediaType.APPLICATION_JSON));
+        //then
+        resultActions.andDo(print())
+                .andExpect(status().isBadRequest())
+                .andExpect(
+                        content().json(objectMapper.writeValueAsString(
+                                new ErrorResponse(error.getHttpStatus(), error.getMessage())
+                        ))
+                );
+    }
+
+    @Test
+    public void 쪽지_작성_대화방_생성_후_채팅방_아이디X() throws Exception {
+        //given
+        roomRequest.setRoom_id(chatRoom1.getId());
+        roomRequest.setMessage("안녕");
+
+        final String url = "/chat/inRoom";
+        final ChatErrorResult error = ChatErrorResult.ROOM_NOT_EXIST;
+        Mockito.doThrow(new ChatException(error))
+                .when(chatService)
+                .saveChatInRoom(any(Long.class), any(CreateChatRoomRequest.class));
+        //when
+        ResultActions resultActions = mockMvc.perform(
+                MockMvcRequestBuilders.post(url)
+                        .header("Authorization", createJwtToken())
+                        .content(objectMapper.writeValueAsString(roomRequest))
+                        .contentType(MediaType.APPLICATION_JSON));
+        //then
+        resultActions.andDo(print())
+                .andExpect(status().isBadRequest())
+                .andExpect(
+                        content().json(objectMapper.writeValueAsString(
+                                new ErrorResponse(error.getHttpStatus(), error.getMessage())
+                        ))
+                );
+    }
+
+    @Test
+    public void 쪽지_작성_대화방_생성_후_탈퇴한_회원끼리_대화() throws Exception {
+        //given
+        roomRequest.setRoom_id(chatRoom1.getId());
+        roomRequest.setMessage("안녕");
+
+        final String url = "/chat/inRoom";
+        final ChatErrorResult error = ChatErrorResult.WITHDRAWN_MEMBER;
+        Mockito.doThrow(new ChatException(error))
+                .when(chatService)
+                .saveChatInRoom(any(Long.class), any(CreateChatRoomRequest.class));
+        //when
+        ResultActions resultActions = mockMvc.perform(
+                MockMvcRequestBuilders.post(url)
+                        .header("Authorization", createJwtToken())
+                        .content(objectMapper.writeValueAsString(roomRequest))
+                        .contentType(MediaType.APPLICATION_JSON));
+        //then
+        resultActions.andDo(print())
+                .andExpect(status().isBadRequest())
+                .andExpect(
+                        content().json(objectMapper.writeValueAsString(
+                                new ErrorResponse(error.getHttpStatus(), error.getMessage())
+                        ))
+                );
+    }
+
+    @Test
+    public void 쪽지_작성_대화방_생성_후_자신에게_쪽지작성() throws Exception {
+        //given
+        roomRequest.setRoom_id(chatRoom1.getId());
+        roomRequest.setMessage("안녕");
+
+        final String url = "/chat/inRoom";
+        final ChatErrorResult error = ChatErrorResult.NO_SEND_TO_SELF;
+        Mockito.doThrow(new ChatException(error))
+                .when(chatService)
+                .saveChatInRoom(any(Long.class), any(CreateChatRoomRequest.class));
+        //when
+        ResultActions resultActions = mockMvc.perform(
+                MockMvcRequestBuilders.post(url)
+                        .header("Authorization", createJwtToken())
+                        .content(objectMapper.writeValueAsString(roomRequest))
+                        .contentType(MediaType.APPLICATION_JSON));
+        //then
+        resultActions.andDo(print())
+                .andExpect(status().isBadRequest())
+                .andExpect(
+                        content().json(objectMapper.writeValueAsString(
+                                new ErrorResponse(error.getHttpStatus(), error.getMessage())
+                        ))
+                );
+    }
+
+    @Test
+    public void 쪽지_작성_대화방_생성_후_성공() throws Exception {
+        //given
+        roomRequest.setRoom_id(chatRoom1.getId());
+        roomRequest.setMessage("안녕");
+
+        final String url = "/chat/inRoom";
+
+        Mockito.doReturn(chat1.getId())
+                .when(chatService)
+                .saveChatInRoom(any(Long.class), any(CreateChatRoomRequest.class));
+        //when
+        ResultActions resultActions = mockMvc.perform(
+                MockMvcRequestBuilders.post(url)
+                        .header("Authorization", createJwtToken())
+                        .content(objectMapper.writeValueAsString(roomRequest))
+                        .contentType(MediaType.APPLICATION_JSON));
+        //then
+        resultActions.andDo(print())
+                .andExpect(status().isOk())
+                .andExpect(
+                        content().json(objectMapper.writeValueAsString(
+                                chat1.getId()
+                        ))
+                );
+    }
+
+    @Test
+    public void 나의_쪽지함_조회() throws Exception {
+        //given
+        ChatListDTO chatListDTO = new ChatListDTO(chatRoom1);
+        List<ChatListDTO> dtoList = List.of(chatListDTO);
+        Slice<ChatListDTO> chatListDTOSlice = new SliceImpl<>(dtoList);
+
+        final String url = "/chat/list";
+
+        Mockito.doReturn(chatListDTOSlice)
+                .when(chatService)
+                .findAll(receiver.getId(), PageRequest.of(0, 10));
+        //when
+        ResultActions resultActions = mockMvc.perform(
+                MockMvcRequestBuilders.get(url)
+                        .param("page", "0")
+                        .param("size", "10")
+                        .header("Authorization", createJwtToken())
+        );
+
+        //then
+        resultActions.andDo(print())
+                .andExpect(status().isOk());
+    }
+
+    @Test
+    public void 쪽지_자세히_보기() throws Exception {
+        //given
+        ChatDTO.ChatInfo chatInfo1 = new ChatDTO.ChatInfo(chat1);
+        ChatDTO.ChatInfo chatInfo2 = new ChatDTO.ChatInfo(chat2);
+        ChatDTO.ChatInfo chatInfo3 = new ChatDTO.ChatInfo(chat3);
+        SliceImpl<ChatDTO.ChatInfo> chatInfoSlice = new SliceImpl<>(Arrays.asList(chatInfo1, chatInfo2, chatInfo3));
+        ChatDTO chatDTO = new ChatDTO(chatRoom1, chatInfoSlice);
+
+        Mockito.doReturn(chatDTO)
+                .when(chatService)
+                .findByOpponent(any(), any(), any());
+
+        //when
+        ResultActions resultActions = mockMvc.perform(
+                MockMvcRequestBuilders.get("/chat/{room_id}", chatRoom1.getId())
+                        .param("page", "0")
+                        .param("size", "10")
+                        .header("Authorization", createJwtToken())
+        );
+
+        //then
+        resultActions.andDo(print())
+                .andExpect(status().isOk());
+    }
+
+    @Test
+    public void 대화방_삭제_탈퇴한_유저() throws Exception {
+        //given
+        final String url = "/chat/{room_id}";
+        ChatErrorResult error = ChatErrorResult.WITHDRAWN_MEMBER;
+        Mockito.doThrow(new ChatException(error))
+                .when(chatService)
+                .deleteChatRoom(any(), any());
+        //when
+        ResultActions resultActions = mockMvc.perform(
+                MockMvcRequestBuilders.delete(url, chatRoom1.getId())
+                        .header("Authorization", createJwtToken())
+        );
+        //then
+        resultActions.andDo(print())
+                .andExpect(status().isBadRequest())
+                .andExpect(content().json(objectMapper.writeValueAsString(
+                        new ErrorResponse(error.getHttpStatus(), error.getMessage())
+                )));
+    }
+
+    @Test
+    public void 대화방_삭제_권한없는_유저() throws Exception {
+        //given
+        final String url = "/chat/{room_id}";
+        ChatErrorResult error = ChatErrorResult.UNAUTHORIZED_USER_ACCESS;
+        Mockito.doThrow(new ChatException(error))
+                .when(chatService)
+                .deleteChatRoom(any(), any());
+        //when
+        ResultActions resultActions = mockMvc.perform(
+                MockMvcRequestBuilders.delete(url, chatRoom1.getId())
+                        .header("Authorization", createJwtToken())
+        );
+        //then
+        resultActions.andDo(print())
+                .andExpect(status().isBadRequest())
+                .andExpect(content().json(objectMapper.writeValueAsString(
+                        new ErrorResponse(error.getHttpStatus(), error.getMessage())
+                )));
+    }
+
+    @Test
+    public void 대화방_삭제_성공() throws Exception {
+        //given
+        final String url = "/chat/{room_id}";
+        Mockito.doReturn(chatRoom1.getId())
+                .when(chatService)
+                .deleteChatRoom(any(), any());
+        //when
+        ResultActions resultActions = mockMvc.perform(
+                MockMvcRequestBuilders.delete(url, chatRoom1.getId())
+                        .header("Authorization", createJwtToken())
+        );
+        //then
+        resultActions.andDo(print())
+                .andExpect(status().isOk())
+                .andExpect(content().json(objectMapper.writeValueAsString(
+                        chatRoom1.getId()
+                )));
+
+    }
+
 }

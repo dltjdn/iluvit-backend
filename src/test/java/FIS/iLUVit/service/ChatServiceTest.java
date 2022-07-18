@@ -46,6 +46,9 @@ class ChatServiceTest {
     private ChatService chatService;
 
     @Mock
+    private ImageService imageService;
+
+    @Mock
     private ChatRepository chatRepository;
     @Mock
     private UserRepository userRepository;
@@ -230,6 +233,8 @@ class ChatServiceTest {
         Long returnedId = chatService.saveChat(receiver.getId(), request);
         //then
         assertThat(returnedId).isEqualTo(chat2.getId());
+
+        alarmUtils.close();
     }
 
     @Test
@@ -239,6 +244,15 @@ class ChatServiceTest {
         Mockito.doReturn(new SliceImpl<>(chatRooms))
                 .when(chatRoomRepository)
                 .findByUser(receiver.getId(), PageRequest.of(0, 10));
+
+        ImageServiceStubAmazon stubAmazon = new ImageServiceStubAmazon();
+
+        String profileImagePath = receiver.getProfileImagePath();
+        System.out.println("profileImagePath = " + profileImagePath);
+        Mockito.doReturn(stubAmazon.getProfileImage(receiver))
+                .when(imageService)
+                .getProfileImage(any(BaseImageEntity.class));
+
         //when
         Slice<ChatListDTO> all = chatService
                 .findAll(receiver.getId(), PageRequest.of(0, 10));
@@ -247,7 +261,6 @@ class ChatServiceTest {
         assertThat(content.size()).isEqualTo(1);
         ChatListDTO chatListDTO = content.get(0);
         assertThat(chatListDTO.getRoom_id()).isEqualTo(chatRoom1.getId());
-
     }
 
     @Test

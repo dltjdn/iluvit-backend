@@ -25,6 +25,9 @@ public class ChatListDTO {
     private LocalDate date;
     private LocalTime time;
 
+    private Long opponent_id;
+    private String opponent_image;
+
     private Long receiver_id;
 
     private Long post_id;
@@ -48,9 +51,16 @@ public class ChatListDTO {
         this.recentMessage = chatRoom.getMessage();
         this.date = chatRoom.getDate();
         this.time = chatRoom.getTime();
+        if (chatRoom.getSender() != null) {
+            this.opponent_id = chatRoom.getSender().getId();
+        }
         this.receiver_id = chatRoom.getReceiver().getId();
         if (chatRoom.getComment() != null) {
             this.comment_id = chatRoom.getComment().getId();
         }
+    }
+
+    public void updateImage(String imageUrl) {
+        this.opponent_image = imageUrl;
     }
 }
