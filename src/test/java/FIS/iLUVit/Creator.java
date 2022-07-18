@@ -147,4 +147,12 @@ public class Creator {
                 .build();
     }
 
+    public static Teacher createTeacher(Long id, String name, Center center) {
+        return Teacher.builder()
+                .id(id)
+                .name(name)
+                .center(center)
+                .build();
+    }
+
 }

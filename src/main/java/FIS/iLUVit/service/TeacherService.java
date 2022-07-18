@@ -7,6 +7,7 @@ import FIS.iLUVit.domain.enumtype.Approval;
 import FIS.iLUVit.domain.enumtype.Auth;
 import FIS.iLUVit.domain.enumtype.AuthKind;
 import FIS.iLUVit.domain.enumtype.BoardKind;
+import FIS.iLUVit.exception.SignupErrorResult;
 import FIS.iLUVit.exception.SignupException;
 import FIS.iLUVit.exception.UserException;
 import FIS.iLUVit.repository.*;
@@ -109,14 +110,14 @@ public class TeacherService {
     public void signup(SignupTeacherRequest request) {
 
         // 회원가입 유효성 검사 및 비밀번호 해싱
-        String hashedPwd = userService.signupValidation(request.getPassword(), request.getPasswordCheck(), request.getLoginId(), request.getPhoneNum());
+        String hashedPwd = userService.signupValidation(request.getPassword(), request.getPasswordCheck(), request.getLoginId(), request.getPhoneNum(), request.getNickname());
 
         // 교사 객체 생성
         Teacher teacher;
         // 센터를 선택한 경우
         if (request.getCenterId() != null) {
             Center center = centerRepository.findByIdWithTeacher(request.getCenterId())
-                    .orElseThrow(() -> new SignupException("잘못된 시설로의 접근입니다."));
+                    .orElseThrow(() -> new SignupException(SignupErrorResult.NOT_EXIST_CENTER));
             teacher = request.createTeacher(center, hashedPwd);
             teacherRepository.save(teacher);
             // 시설에 원장들에게 알람보내기

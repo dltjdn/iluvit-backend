@@ -162,6 +162,20 @@ public class AuthNumberRepositoryTest {
         assertThat(target.getId()).isEqualTo(authNumber.getId());
     }
 
+    @Test
+    public void 사용이끝난인증번호지우기() {
+        // given
+        authNumberRepository.save(authNumber1);
+        authNumberRepository.save(authNumber2);
+        em.flush();
+        em.clear();
+        // when
+        authNumberRepository.deleteByPhoneNumAndAuthKind(authNumber1.getPhoneNum(), AuthKind.signup);
+        // then
+        AuthNumber result = authNumberRepository.findById(authNumber1.getId()).orElse(null);
+        assertThat(result).isNull();
+    }
+
 
 
 }

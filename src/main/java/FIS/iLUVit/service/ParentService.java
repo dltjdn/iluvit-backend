@@ -101,9 +101,9 @@ public class ParentService {
      * 작성자: 이승범
      * 작성내용: 학부모 회원가입
      */
-    public void signup(SignupParentRequest request) {
+    public Parent signup(SignupParentRequest request) {
 
-        String hashedPwd = userService.signupValidation(request.getPassword(), request.getPasswordCheck(), request.getLoginId(), request.getPhoneNum());
+        String hashedPwd = userService.signupValidation(request.getPassword(), request.getPasswordCheck(), request.getLoginId(), request.getPhoneNum(), request.getNickname());
         Parent parent = request.createParent(hashedPwd);
 
         // default 스크랩 생성
@@ -121,6 +121,7 @@ public class ParentService {
             Bookmark bookmark = Bookmark.createBookmark(defaultBoard, parent);
             bookmarkRepository.save(bookmark);
         }
+        return parent;
     }
 
     /**
