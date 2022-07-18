@@ -7,12 +7,14 @@ import FIS.iLUVit.domain.embeddable.Area;
 import FIS.iLUVit.domain.embeddable.Theme;
 import FIS.iLUVit.domain.enumtype.KindOf;
 import FIS.iLUVit.exception.exceptionHandler.ValidationErrorResult;
-import FIS.iLUVit.exception.exceptionHandler.controllerAdvice.ValidationControllerAdvice;
+import FIS.iLUVit.exception.exceptionHandler.controllerAdvice.GlobalControllerAdvice;
 import FIS.iLUVit.repository.dto.CenterAndDistancePreview;
 import FIS.iLUVit.repository.dto.CenterPreview;
 import FIS.iLUVit.service.CenterService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -55,7 +57,7 @@ class CenterControllerTest extends ResponseRequests {
     private void init(){
         mockMvc = MockMvcBuilders.standaloneSetup(centerController)
                 .setCustomArgumentResolvers(new PageableHandlerMethodArgumentResolver())
-                .setControllerAdvice(ValidationControllerAdvice.class)
+                .setControllerAdvice(GlobalControllerAdvice.class)
                 .build();
         objectMapper = new ObjectMapper();
     }
@@ -179,6 +181,22 @@ class CenterControllerTest extends ResponseRequests {
                 .andExpect(content().json(objectMapper.writeValueAsString(response)));
 
     }
+
+    @Nested
+    @DisplayName("센터_베너_정보_검색")
+    class BannerControllerTest {
+
+        @Test
+        public void 센터_정보_검색_배너() throws Exception {
+            //given
+
+            //when
+
+            //then
+        }
+
+    }
+
 }
 
 

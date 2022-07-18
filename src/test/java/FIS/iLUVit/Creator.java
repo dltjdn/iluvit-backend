@@ -6,9 +6,7 @@ import FIS.iLUVit.domain.embeddable.BasicInfra;
 import FIS.iLUVit.domain.embeddable.Theme;
 
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.time.LocalTime;
-import java.util.List;
 
 public class Creator {
 
@@ -137,4 +135,66 @@ public class Creator {
                 .build();
     }
 
+    public static Theme englishAndCoding(){
+        return Theme.builder()
+                .english(true)
+                .coding(true)
+                .build();
+    }
+
+    public static Center createCenter(Long centerId, String name, Boolean signed, Boolean recruit, Theme theme) {
+        Center center = Center.builder()
+                .id(centerId)
+                .name(name)
+                .signed(signed)
+                .recruit(recruit)
+                .theme(theme)
+                .build();
+        return center;
+    }
+
+    public static Center createCenter(String name, Boolean signed, Boolean recruit, Theme theme) {
+        Center center = Center.builder()
+                .name(name)
+                .signed(signed)
+                .recruit(recruit)
+                .theme(theme)
+                .build();
+        return center;
+    }
+
+    public static Review createReview(Long reviewId, Center center, Integer score){
+        return Review.builder()
+                .id(reviewId)
+                .center(center)
+                .score(score)
+                .build();
+    }
+
+    public static Review createReview(Center center, Integer score){
+        return Review.builder()
+                .center(center)
+                .score(score)
+                .build();
+    }
+
+    public static Parent createParent(){
+        return Parent.builder()
+                .build();
+    }
+
+    public static Prefer createPrefer(Long preferId, Parent parent, Center center){
+        return Prefer.builder()
+                .id(preferId)
+                .parent(parent)
+                .center(center)
+                .build();
+    }
+
+    public static Prefer createPrefer(Parent parent, Center center){
+        return Prefer.builder()
+                .parent(parent)
+                .center(center)
+                .build();
+    }
 }
