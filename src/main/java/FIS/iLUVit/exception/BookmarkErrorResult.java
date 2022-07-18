@@ -1,12 +1,13 @@
 package FIS.iLUVit.exception;
 
+import FIS.iLUVit.exception.exceptionHandler.ErrorResult;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 
 @Getter
 @RequiredArgsConstructor
-public enum BookmarkErrorResult {
+public enum BookmarkErrorResult implements ErrorResult {
     USER_NOT_EXIST(HttpStatus.BAD_REQUEST, "해당 아이디를 가진 유저가 존재하지 않습니다."),
     BOARD_NOT_EXIST(HttpStatus.BAD_REQUEST, "해당 아이디를 가진 게시판이 존재하지 않습니다."),
     BOOKMARK_NOT_EXIST(HttpStatus.BAD_REQUEST, "해당 아이디를 가진 북마크가 존재하지 않습니다."),

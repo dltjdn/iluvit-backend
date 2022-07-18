@@ -6,8 +6,7 @@ import FIS.iLUVit.controller.dto.CreateChatRequest;
 import FIS.iLUVit.controller.dto.CreateChatRoomRequest;
 import FIS.iLUVit.domain.*;
 import FIS.iLUVit.domain.alarms.ChatAlarm;
-import FIS.iLUVit.exception.ChatErrorResult;
-import FIS.iLUVit.exception.ChatException;
+import FIS.iLUVit.exception.*;
 import FIS.iLUVit.repository.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
@@ -27,8 +26,13 @@ public class ChatService {
     private final PostRepository postRepository;
     private final CommentRepository commentRepository;
     private final ChatRoomRepository chatRoomRepository;
+    private final ImageService imageService;
 
     public Long saveChat(Long userId, CreateChatRequest request) {
+
+        if (userId == null) {
+            throw new ChatException(ChatErrorResult.UNAUTHORIZED_USER_ACCESS);
+        }
 
         if (Objects.equals(userId, request.getReceiver_id())) {
             throw new ChatException(ChatErrorResult.NO_SEND_TO_SELF);
@@ -45,11 +49,24 @@ public class ChatService {
         Post findPost = postRepository.findById(post_id)
                 .orElseThrow(() -> new ChatException(ChatErrorResult.POST_NOT_EXIST));
 
+        if (request.getComment_id() != null) {
+            Comment findComment = commentRepository.findById(comment_id)
+                    .orElseThrow(() -> new CommentException(CommentErrorResult.NO_EXIST_COMMENT));
+            if (findComment.getAnonymous() != request.getAnonymous()) {
+                throw new CommentException(CommentErrorResult.NO_MATCH_ANONYMOUS_INFO);
+            }
+        } else {
+            if (findPost.getAnonymous() != request.getAnonymous()) {
+                throw new PostException(PostErrorResult.NO_MATCH_ANONYMOUS_INFO);
+            }
+        }
+
+
         Chat chat1 = new Chat(request.getMessage(), receiveUser, sendUser);
         Chat chat2 = new Chat(request.getMessage(), receiveUser, sendUser);
 
-        ChatRoom chatRoom1 = validateChatRoom(sendUser, receiveUser, comment_id, findPost, chat1);
-        ChatRoom chatRoom2 = validateChatRoom(receiveUser, sendUser, comment_id, findPost, chat2);
+        ChatRoom chatRoom1 = validateChatRoom(sendUser, receiveUser, comment_id, findPost, chat1, request.getAnonymous());
+        ChatRoom chatRoom2 = validateChatRoom(receiveUser, sendUser, comment_id, findPost, chat2, request.getAnonymous());
         chatRoom1.updatePartnerId(chatRoom2.getId());
         chatRoom2.updatePartnerId(chatRoom1.getId());
 
@@ -63,12 +80,13 @@ public class ChatService {
 
     }
 
-    private ChatRoom validateChatRoom(User sendUser, User receiveUser, Long comment_id, Post post, Chat chat) {
-        ChatRoom findRoom = chatRoomRepository.findByReceiverAndSenderAndPost(receiveUser, sendUser, post)
+    private ChatRoom validateChatRoom(User sendUser, User receiveUser, Long comment_id, Post post, Chat chat, Boolean anonymous) {
+        ChatRoom findRoom = chatRoomRepository.findByReceiverAndSenderAndPostAndAnonymous(
+                receiveUser, sendUser, post, anonymous)
                 .orElse(null);
         if (findRoom == null) {
             // 대화방 없으면 새로 생성
-            ChatRoom chatRoom = new ChatRoom(receiveUser, sendUser, post);
+            ChatRoom chatRoom = new ChatRoom(receiveUser, sendUser, post, anonymous);
             // 댓글 작성자와 쪽지 교환이면 comment 정보도 엮여줌.
             if (comment_id != null) {
                 Comment findComment = commentRepository.getById(comment_id);
@@ -85,27 +103,35 @@ public class ChatService {
 
     public Slice<ChatListDTO> findAll(Long userId, Pageable pageable) {
         Slice<ChatRoom> chatList = chatRoomRepository.findByUser(userId, pageable);
-        return chatList.map(c -> new ChatListDTO(c));
+        return chatList.map(c -> {
+            ChatListDTO chatListDTO = new ChatListDTO(c);
+            String profileImage = imageService.getProfileImage(c.getSender());
+            chatListDTO.updateImage(profileImage);
+            return chatListDTO;
+        });
     }
 
     public ChatDTO findByOpponent(Long userId, Long roomId, Pageable pageable) {
         ChatRoom findRoom = chatRoomRepository.findById(roomId)
                 .orElseThrow(() -> new ChatException(ChatErrorResult.ROOM_NOT_EXIST));
 
-        // userId와 받는 유저면 otherId는 보내는 유저
-        // userId와 보내는 유저면 otherId는 받는 유저
-
         Slice<Chat> chatList = chatRepository.findByChatRoom(userId, roomId, pageable);
 
         Slice<ChatDTO.ChatInfo> chatInfos = chatList.map(ChatDTO.ChatInfo::new);
-        return new ChatDTO(findRoom, chatInfos);
+        ChatDTO chatDTO = new ChatDTO(findRoom, chatInfos);
+        String profileImage = imageService.getProfileImage(findRoom.getSender());
+        chatDTO.updateImage(profileImage);
+        return chatDTO;
     }
 
     public Long deleteChatRoom(Long userId, Long roomId) {
         chatRoomRepository.findById(roomId)
                 .ifPresent(cr -> {
-                    if (cr.getReceiver().getId() != userId) {
-                        throw new IllegalStateException("삭제 권한 없는 유저");
+                    if (cr.getReceiver() == null) {
+                        throw new ChatException(ChatErrorResult.WITHDRAWN_MEMBER);
+                    }
+                    if (!Objects.equals(cr.getReceiver().getId(), userId)) {
+                        throw new ChatException(ChatErrorResult.UNAUTHORIZED_USER_ACCESS);
                     }
                     chatRoomRepository.findById(cr.getPartner_id())
                             .ifPresent(c -> c.updatePartnerId(null));
@@ -115,6 +141,10 @@ public class ChatService {
     }
 
     public Long saveChatInRoom(Long userId, CreateChatRoomRequest request) {
+
+        if (userId == null) {
+            throw new ChatException(ChatErrorResult.UNAUTHORIZED_USER_ACCESS);
+        }
 
         ChatRoom findRoom = chatRoomRepository.findById(request.getRoom_id())
                 .orElseThrow(() -> new ChatException(ChatErrorResult.ROOM_NOT_EXIST));
@@ -143,7 +173,7 @@ public class ChatService {
         // 삭제된 대화방이면 새로 생성
         ChatRoom chatRoom;
         if (findRoom.getPartner_id() == null) {
-            chatRoom = new ChatRoom(receiveUser, sendUser, findRoom.getPost());
+            chatRoom = new ChatRoom(receiveUser, sendUser, findRoom.getPost(), findRoom.getAnonymous());
             chatRoomRepository.save(chatRoom);
         } else {
             chatRoom = chatRoomRepository.findById(findRoom.getPartner_id())
