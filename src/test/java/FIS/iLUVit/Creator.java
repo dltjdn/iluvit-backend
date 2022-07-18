@@ -12,15 +12,16 @@ public class Creator {
 
     public static Parent createParent(String phoneNum){
         return Parent.builder()
-                .nickName("asd")
-                .loginId("asd")
-                .password("asd")
+                .id(-1L)
+                .nickName("nickName")
+                .loginId("loginId")
+                .password("pwd")
                 .phoneNumber(phoneNum)
                 .hasProfileImg(false)
                 .emailAddress("asd@asd")
-                .name("asd")
-                .address("asd")
-                .detailAddress("asd")
+                .name("name")
+                .address("address")
+                .detailAddress("detailAddress")
                 .build();
     }
 

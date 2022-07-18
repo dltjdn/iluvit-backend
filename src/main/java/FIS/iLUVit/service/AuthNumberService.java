@@ -130,7 +130,7 @@ public class AuthNumberService {
      * 작성자: 이승범
      * 작성내용: 비밀번호 찾기 근데 이제 변경을 곁들인
      */
-    public void changePassword(FindPasswordRequest request) {
+    public User changePassword(FindPasswordRequest request) {
 
         // 비밀번호와 비밀번호 확인 불일치
         if (!request.getNewPwd().equals(request.getNewPwdCheck())) {
@@ -141,10 +141,11 @@ public class AuthNumberService {
         AuthNumber authNumber = validateAuthNumber(request.getPhoneNum(), AuthKind.findPwd);
 
         User user = userRepository.findByLoginIdAndPhoneNumber(request.getLoginId(), request.getPhoneNum())
-                .orElseThrow(() -> new UserException("잘못된 로그인 아이디입니다."));
+                .orElseThrow(() -> new AuthNumberException(AuthNumberErrorResult.NOT_MATCH_INFO));
 
         user.changePassword(encoder.encode(request.getNewPwd()));
         authNumberRepository.delete(authNumber);
+        return user;
     }
 
     // 인증이 완료된 인증번호인지 검사
@@ -154,7 +155,7 @@ public class AuthNumberService {
                 .orElseThrow(() -> new AuthNumberException(AuthNumberErrorResult.NOT_AUTHENTICATION));
         // 핸드폰 인증 후 일정시간이 지나면 무효화
         if (Duration.between(authComplete.getAuthTime(), LocalDateTime.now()).getSeconds() > authNumberValidTime) {
-            throw new SignupException("핸드폰 인증시간이 만료되었습니다. 핸드폰 인증을 다시 해주세요");
+            throw new AuthNumberException(AuthNumberErrorResult.EXPIRED);
         }
         return authComplete;
     }

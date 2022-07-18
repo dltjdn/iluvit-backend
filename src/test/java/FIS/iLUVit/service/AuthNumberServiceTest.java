@@ -6,21 +6,19 @@ import FIS.iLUVit.controller.dto.FindPasswordRequest;
 import FIS.iLUVit.domain.AuthNumber;
 import FIS.iLUVit.domain.Parent;
 import FIS.iLUVit.domain.Teacher;
+import FIS.iLUVit.domain.User;
 import FIS.iLUVit.domain.enumtype.AuthKind;
 import FIS.iLUVit.exception.AuthNumberErrorResult;
 import FIS.iLUVit.exception.AuthNumberException;
-import FIS.iLUVit.exception.exceptionHandler.ErrorResponse;
 import FIS.iLUVit.repository.AuthNumberRepository;
 import FIS.iLUVit.repository.UserRepository;
 import FIS.iLUVit.stub.MessageServiceStub;
-import kotlin.OptIn;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Spy;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.security.core.userdetails.User;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
 import java.time.LocalDateTime;
@@ -145,7 +143,7 @@ public class AuthNumberServiceTest {
     public void 인증번호인증_실패_인증번호만료() {
         // given
         AuthenticateAuthNumRequest request = new AuthenticateAuthNumRequest(phoneNum, authNum, AuthKind.signup);
-        doReturn(Optional.of(createAuthNumber(AuthKind.signup).setCreatedDateForTest(LocalDateTime.now().minusMinutes(target.getAuthValidTime()))))
+        doReturn(Optional.of(createAuthNumber(AuthKind.signup).setCreatedDateForTest(LocalDateTime.now().minusSeconds(target.getAuthValidTime()+1))))
                 .when(authNumberRepository)
                 .findByPhoneNumAndAuthNumAndAuthKind(phoneNum, authNum, AuthKind.signup);
         // when
@@ -231,7 +229,7 @@ public class AuthNumberServiceTest {
                 .when(userRepository)
                 .findByPhoneNumber(phoneNum);
 
-        doReturn(Optional.of(createAuthNumber(AuthKind.findLoginId).setCreatedDateForTest(LocalDateTime.now().minusMinutes(6))))
+        doReturn(Optional.of(createAuthNumber(AuthKind.findLoginId).setCreatedDateForTest(LocalDateTime.now().minusSeconds(target.getAuthValidTime()+1))))
                 .when(authNumberRepository)
                 .findOverlap(phoneNum, AuthKind.findLoginId);
 
@@ -305,7 +303,7 @@ public class AuthNumberServiceTest {
     @Test
     public void 비밀번호찾기실행_실패_비밀번호틀림() {
         // given
-        FindPasswordRequest request = new FindPasswordRequest("loginId", "phoneNum", "authNum", "newPwd", "nwePwdCheck");
+        FindPasswordRequest request = new FindPasswordRequest("loginId", phoneNum, authNum, "newPwd", "nwePwdCheck");
         // when
         AuthNumberException result = assertThrows(AuthNumberException.class,
                 () -> target.changePassword(request));
@@ -316,7 +314,7 @@ public class AuthNumberServiceTest {
     @Test
     public void 비밀번호찾기실행_실패_핸드폰미인증() {
         // given
-        FindPasswordRequest request = new FindPasswordRequest("loginId", "phoneNum", "authNum", "newPwd", "newPwd");
+        FindPasswordRequest request = new FindPasswordRequest("loginId", phoneNum, authNum, "newPwd", "newPwd");
 
         doReturn(Optional.empty())
                 .when(authNumberRepository)
@@ -331,25 +329,53 @@ public class AuthNumberServiceTest {
     @Test
     public void 비밀번호찾기실행_실패_인증시간만료() {
         // given
-        FindPasswordRequest request = new FindPasswordRequest("loginId", "phoneNum", "authNum", "newPwd", "newPwd");
-        doReturn(Creator.createAuthNumber("phoneNum", "authNum", AuthKind.findPwd, LocalDateTime.now().minusHours(2)));
-
+        FindPasswordRequest request = new FindPasswordRequest("loginId", phoneNum, authNum, "newPwd", "newPwd");
+        doReturn(Optional.of(Creator.createAuthNumber(phoneNum, authNum, AuthKind.findPwd, LocalDateTime.now().minusSeconds(target.getAuthNumberValidTime() + 1))))
+                .when(authNumberRepository)
+                .findAuthComplete(phoneNum, AuthKind.findPwd);
         // when
-
+        AuthNumberException result = assertThrows(AuthNumberException.class,
+                () -> target.changePassword(request));
         // then
-
+        assertThat(result.getErrorResult()).isEqualTo(AuthNumberErrorResult.EXPIRED);
     }
 
-//    @Test
-//    public void 비밀번호찾기실행_실패_로그인아이디틀림() {
-//        // given
-//        FindPasswordRequest request = new FindPasswordRequest("loginId", "phoneNum", "authNum", "newPwd", "newPwd");
-//        // when
-//        AuthNumberException result = assertThrows(AuthNumberException.class,
-//                () -> target.changePassword(request));
-//        // then
-//        assertThat(result.getErrorResult()).isEqualTo(AuthNumberErrorResult.NOT_MATCH_CHECKPWD);
-//    }
+    @Test
+    public void 비밀번호찾기실행_실패_로그인아이디틀림() {
+        // given
+        FindPasswordRequest request = new FindPasswordRequest("loginId", phoneNum, authNum, "newPwd", "newPwd");
+        doReturn(Optional.of(Creator.createAuthNumber(phoneNum, authNum, AuthKind.findPwd, LocalDateTime.now().minusSeconds(target.getAuthNumberValidTime() - 1))))
+                .when(authNumberRepository)
+                .findAuthComplete(phoneNum, AuthKind.findPwd);
+        doReturn(Optional.empty())
+                .when(userRepository)
+                .findByLoginIdAndPhoneNumber("loginId", phoneNum);
+        // when
+        AuthNumberException result = assertThrows(AuthNumberException.class,
+                () -> target.changePassword(request));
+        // then
+        assertThat(result.getErrorResult()).isEqualTo(AuthNumberErrorResult.NOT_MATCH_INFO);
+    }
+
+    @Test
+    public void 비밀번호찾기실행_성공() {
+        // given
+        FindPasswordRequest request = new FindPasswordRequest("loginId", phoneNum, authNum, "newPwd", "newPwd");
+        AuthNumber authNumber = Creator.createAuthNumber(phoneNum, authNum, AuthKind.findPwd, LocalDateTime.now().minusSeconds(target.getAuthNumberValidTime() - 1));
+        doReturn(Optional.of(authNumber))
+                .when(authNumberRepository)
+                .findAuthComplete(phoneNum, AuthKind.findPwd);
+        Parent parent = Creator.createParent(phoneNum);
+        doReturn(Optional.of(Creator.createParent(phoneNum)))
+                .when(userRepository)
+                .findByLoginIdAndPhoneNumber("loginId", phoneNum);
+        // when
+        User user = target.changePassword(request);
+        // then
+        assertThat(user.getId()).isEqualTo(parent.getId());
+        assertThat(encoder.matches( "newPwd", user.getPassword())).isEqualTo(true);
+        verify(authNumberRepository, times(1)).delete(authNumber);
+    }
 
 
     private AuthNumber createAuthNumber(AuthKind authKind) {
