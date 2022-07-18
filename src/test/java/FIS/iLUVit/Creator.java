@@ -197,4 +197,9 @@ public class Creator {
                 .center(center)
                 .build();
     }
+
+    public static Teacher createTeacher() {
+        return Teacher.builder()
+                .build();
+    }
 }

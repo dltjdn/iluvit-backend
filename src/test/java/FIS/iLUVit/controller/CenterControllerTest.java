@@ -6,9 +6,10 @@ import FIS.iLUVit.controller.messagecreate.ResponseRequests;
 import FIS.iLUVit.domain.embeddable.Area;
 import FIS.iLUVit.domain.embeddable.Theme;
 import FIS.iLUVit.domain.enumtype.KindOf;
-import FIS.iLUVit.exception.exceptionHandler.ValidationErrorResult;
+import FIS.iLUVit.exception.exceptionHandler.ErrorResponse;
 import FIS.iLUVit.exception.exceptionHandler.controllerAdvice.GlobalControllerAdvice;
 import FIS.iLUVit.repository.dto.CenterAndDistancePreview;
+import FIS.iLUVit.repository.dto.CenterBannerDto;
 import FIS.iLUVit.repository.dto.CenterPreview;
 import FIS.iLUVit.service.CenterService;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -25,6 +26,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.SliceImpl;
 import org.springframework.data.web.PageableHandlerMethodArgumentResolver;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
@@ -110,7 +112,7 @@ class CenterControllerTest extends ResponseRequests {
                 .andExpect(status().isBadRequest())
                 //.andExpect(content().contentType(MediaType.APPLICATION_JSON))
                 .andExpect(content().json(objectMapper.writeValueAsString(
-                        new ValidationErrorResult("Request Bad", Arrays.asList("최소 1개 이상의 지역을 선택해야합니다"))
+                        new ErrorResponse(HttpStatus.BAD_REQUEST, "[최소 1개 이상의 지역을 선택해야합니다]")
                 )));
     }
 
@@ -135,7 +137,7 @@ class CenterControllerTest extends ResponseRequests {
                 .andExpect(status().isBadRequest())
                 //.andExpect(content().contentType(MediaType.APPLICATION_JSON))
                 .andExpect(content().json(objectMapper.writeValueAsString(
-                        new ValidationErrorResult("Request Bad", Arrays.asList("최소 1개 이상의 지역을 선택해야합니다"))
+                        new ErrorResponse(HttpStatus.BAD_REQUEST, "[최소 1개 이상의 지역을 선택해야합니다]")
                 )));
     }
 
@@ -189,6 +191,11 @@ class CenterControllerTest extends ResponseRequests {
         @Test
         public void 센터_정보_검색_배너() throws Exception {
             //given
+            CenterBannerDto centerBannerDto = new CenterBannerDto(1L, "test", true, true, 4.5, null,"testLocation");
+
+
+            doReturn(centerBannerDto)
+                    .when(centerService).findBannerById()
 
             //when
 

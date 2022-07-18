@@ -214,6 +214,7 @@ class CenterRepositoryTest {
             Review review1 = createReview(center, 5);
             Review review2 = createReview(center, 4);
             Review review3 = createReview(center, 3);
+            em.persist(parent);
             em.persist(center);
             em.persist(review1);
             em.persist(review2);
@@ -221,6 +222,32 @@ class CenterRepositoryTest {
             em.flush();
             //when
             CenterBannerDto result = target.findBannerById(center.getId(), parent.getId());
+
+            //then
+            assertThat(result.getCenterId()).isEqualTo(center.getId());
+            assertThat(result.getName()).isEqualTo("test");
+            assertThat(result.getPrefer()).isNotNull().isFalse();
+            assertThat(result.getStarAverage()).isEqualTo(4.0);
+
+        }
+
+        @Test
+        public void 특정_시설의_베너정보_찾아오기_로그인_O_선생으로_검색() throws Exception {
+            //given
+            Theme theme = englishAndCoding();
+            Teacher teacher = Creator.createTeacher();
+            Center center = createCenter("test", true, true, theme);
+            Review review1 = createReview(center, 5);
+            Review review2 = createReview(center, 4);
+            Review review3 = createReview(center, 3);
+            em.persist(teacher);
+            em.persist(center);
+            em.persist(review1);
+            em.persist(review2);
+            em.persist(review3);
+            em.flush();
+            //when
+            CenterBannerDto result = target.findBannerById(center.getId(), teacher.getId());
 
             //then
             assertThat(result.getCenterId()).isEqualTo(center.getId());
