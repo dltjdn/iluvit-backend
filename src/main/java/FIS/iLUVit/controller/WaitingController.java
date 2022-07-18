@@ -45,7 +45,7 @@ public class WaitingController {
     @GetMapping("/test")
     public String test(){
 
-        Teacher teacher = new Teacher("dddfsd","fdsfd", "ureiui", null, null, null, null, Auth.TEACHER, Approval.ACCEPT, null, null, null);
+        Teacher teacher = new Teacher(987654321L, "dddfsd","fdsfd", "ureiui", null, null, null, null, Auth.TEACHER, Approval.ACCEPT, null, null, null);
         userRepository.save(teacher);
         log.info("이벤트 시작");
         //publisher.publishEvent(new ParticipationCancelEvent(ptDate, null)); // 이벤트 리스너 호출

@@ -30,7 +30,8 @@ public class Teacher extends User {
     private Center center;
 
     @Builder
-    public Teacher(String nickName, String loginId, String password, String phoneNumber, Boolean hasProfileImg, String emailAddress, String name, Auth auth, Approval approval, Center center, String address, String detailAddress) {
+    public Teacher(Long id, String nickName, String loginId, String password, String phoneNumber, Boolean hasProfileImg, String emailAddress, String name, Auth auth, Approval approval, Center center, String address, String detailAddress) {
+        this.id = id;
         this.nickName = nickName;
         this.loginId = loginId;
         this.password = password;
