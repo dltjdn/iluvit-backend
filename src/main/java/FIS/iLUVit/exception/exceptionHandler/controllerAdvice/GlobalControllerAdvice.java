@@ -10,6 +10,7 @@ import org.springframework.dao.InvalidDataAccessApiUsageException;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
@@ -22,7 +23,19 @@ import java.util.stream.Collectors;
 
 @Slf4j
 @RestControllerAdvice
-public class GlobalControllerAdvice extends ResponseEntityExceptionHandler {
+public class GlobalControllerAdvice extends ResponseEntityExceptionHandler
+{
+
+    @Override
+    protected ResponseEntity<Object> handleExceptionInternal(
+            Exception ex, Object body,
+            HttpHeaders headers,
+            HttpStatus status,
+            WebRequest request) {
+
+        log.warn("[ResponseEntityExceptionHandler] e : ", ex);
+        return this.makeErrorResponseEntity(ex.getMessage());
+    }
 
     /**
      * validation 에서 Exception 발생시 자동으로 handleMethodArgumentNotValid 호출
@@ -43,16 +56,28 @@ public class GlobalControllerAdvice extends ResponseEntityExceptionHandler {
         return this.makeErrorResponseEntity(errorList.toString());
     }
 
+    // request dto type 불일치 exception
+    @Override
+    protected ResponseEntity<Object> handleHttpMessageNotReadable(
+            HttpMessageNotReadableException ex,
+            HttpHeaders headers,
+            HttpStatus status,
+            WebRequest request) {
+        log.warn("request type mapping error : ", ex);
+        return this.makeErrorResponseEntity("HttpMessageNotReadable error");
+    }
+
     private ResponseEntity<Object> makeErrorResponseEntity(final String errorDescription) {
         return ResponseEntity.status(HttpStatus.BAD_REQUEST)
                 .body(new ErrorResponse(HttpStatus.BAD_REQUEST, errorDescription));
     }
 
-//    @ResponseStatus(HttpStatus.BAD_REQUEST)
+
+    //    @ResponseStatus(HttpStatus.BAD_REQUEST)
 //    @ExceptionHandler(RuntimeException.class)
-//    public ErrorResult RuntimeException(RuntimeException e) {
+//    public ResponseEntity<Object> RuntimeException(RuntimeException e) {
 //        log.error("[exceptionHandler] ex", e);
-//        return new ErrorResult("BAD", e.getMessage());
+//        return makeErrorResponseEntity(e.getMessage());
 //    }
 
     // repository에서 쿼리 날릴때 parameter가 null이면 생기는 예외(토큰이 유효하지 않아 @Login이 Null일 확률이 높음)

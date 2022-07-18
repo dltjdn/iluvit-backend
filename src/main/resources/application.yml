@@ -46,4 +46,3 @@ logging:
   level:
     org.hibernate.SQL: info
 
-

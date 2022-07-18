@@ -30,11 +30,12 @@ public class AuthNumber extends BaseEntity{
     private AuthKind authKind;
 
     @Builder
-    public AuthNumber(Long id, String phoneNum, String authNum, AuthKind authKind) {
+    public AuthNumber(Long id, String phoneNum, String authNum, AuthKind authKind, LocalDateTime authTime) {
         this.id = id;
         this.phoneNum = phoneNum;
         this.authNum = authNum;
         this.authKind = authKind;
+        this.authTime = authTime;
     }
 
     public static AuthNumber createAuthNumber(String phoneNum, String authNum, AuthKind authKind) {

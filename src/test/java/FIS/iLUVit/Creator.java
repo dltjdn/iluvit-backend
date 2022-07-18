@@ -4,25 +4,26 @@ import FIS.iLUVit.domain.*;
 import FIS.iLUVit.domain.embeddable.Area;
 import FIS.iLUVit.domain.embeddable.BasicInfra;
 import FIS.iLUVit.domain.embeddable.Theme;
+import FIS.iLUVit.domain.enumtype.AuthKind;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
-import java.util.List;
 
 public class Creator {
 
     public static Parent createParent(String phoneNum){
         return Parent.builder()
-                .nickName("asd")
-                .loginId("asd")
-                .password("asd")
+                .id(-1L)
+                .nickName("nickName")
+                .loginId("loginId")
+                .password("pwd")
                 .phoneNumber(phoneNum)
                 .hasProfileImg(false)
                 .emailAddress("asd@asd")
-                .name("asd")
-                .address("asd")
-                .detailAddress("asd")
+                .name("name")
+                .address("address")
+                .detailAddress("detailAddress")
                 .build();
     }
 
@@ -85,6 +86,15 @@ public class Creator {
 
     public static Post createPost(String title, String content, Boolean anonymous, Integer commentCnt, Integer heartCnt, Integer imgCnt, Integer videoCnt, Board board, User user) {
         return new Post(title, content, anonymous, commentCnt, heartCnt, imgCnt, videoCnt, board, user);
+    }
+
+    public static AuthNumber createAuthNumber(String phoneNum, String authNum, AuthKind authKind, LocalDateTime time) {
+        return AuthNumber.builder()
+                .phoneNum(phoneNum)
+                .authKind(authKind)
+                .authNum(authNum)
+                .authTime(time)
+                .build();
     }
 
     public static Post createPost(String title, String content, Boolean anonymous, Board board, User user) {
