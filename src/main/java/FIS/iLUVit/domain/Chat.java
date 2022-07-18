@@ -1,6 +1,7 @@
 package FIS.iLUVit.domain;
 
 import lombok.AccessLevel;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.OnDelete;
@@ -29,22 +30,27 @@ public class Chat extends BaseEntity {
     @JoinColumn(name = "receiver_id")
     private User receiver;              // 수신자
 
-    private Boolean deletedByReceiver;
-
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "sender_id")
     private User sender;                // 발신자
-
-    private Boolean deletedBySender;
 
     public Chat(String message, User receiver, User sender) {
         this.date = LocalDate.now();
         this.time = LocalTime.now();
         this.message = message;
         this.receiver = receiver;
-        this.deletedByReceiver = false;
         this.sender = sender;
-        this.deletedBySender = false;
+    }
+
+    @Builder(toBuilder = true)
+    public Chat(Long id, LocalDate date, LocalTime time, String message, ChatRoom chatRoom, User receiver, User sender) {
+        this.id = id;
+        this.date = date;
+        this.time = time;
+        this.message = message;
+        this.chatRoom = chatRoom;
+        this.receiver = receiver;
+        this.sender = sender;
     }
 
     public void updateChatRoom(ChatRoom chatRoom) {

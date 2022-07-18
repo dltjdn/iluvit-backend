@@ -18,6 +18,8 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.mockito.junit.jupiter.MockitoSettings;
+import org.mockito.quality.Strictness;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -31,6 +33,7 @@ import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 
 @ExtendWith(MockitoExtension.class)
+@MockitoSettings(strictness = Strictness.LENIENT)
 class BookmarkServiceTest {
 
     @Mock
@@ -252,8 +255,7 @@ class BookmarkServiceTest {
         //given
         Mockito.doReturn(Optional.ofNullable(bookmark1))
                 .when(bookmarkRepository)
-                .findById(any());
-
+                .findById(bookmark1.getId());
         //when
         BookmarkException result = assertThrows(BookmarkException.class,
                 () -> bookmarkService.delete(teacher1.getId(), bookmark1.getId()));

@@ -3,6 +3,7 @@ package FIS.iLUVit.controller;
 import FIS.iLUVit.config.argumentResolver.LoginUserArgumentResolver;
 import FIS.iLUVit.controller.dto.BookmarkMainDTO;
 import FIS.iLUVit.domain.Board;
+import FIS.iLUVit.domain.Bookmark;
 import FIS.iLUVit.domain.Parent;
 import FIS.iLUVit.domain.User;
 import FIS.iLUVit.domain.embeddable.Theme;
@@ -36,6 +37,7 @@ import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
 import java.util.Date;
 
+import static org.assertj.core.api.Assertions.*;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyList;
@@ -50,17 +52,19 @@ class BookmarkControllerTest {
 
     private MockMvc mockMvc;
 
-    @InjectMocks
-    private BookmarkController bookmarkController;
-
     @Mock
     private BookmarkService bookmarkService;
+
+    @InjectMocks
+    private BookmarkController bookmarkController;
 
     ObjectMapper objectMapper;
 
     User user;
 
     Board board1;
+
+    Bookmark bookmark1;
 
     @BeforeEach
     public void init() {
@@ -77,6 +81,7 @@ class BookmarkControllerTest {
                 .build();
 
         board1 = CreateTest.createBoard(2L, "자유게시판", BoardKind.NORMAL, null, true);
+        bookmark1 = CreateTest.createBookmark(3L, board1, user);
     }
 
     public String createJwtToken(){
@@ -134,12 +139,43 @@ class BookmarkControllerTest {
                 .create(any(), any());
         //when
         //then
-        Assertions.assertThatThrownBy(() -> mockMvc.perform(
+        assertThatThrownBy(() -> mockMvc.perform(
                 MockMvcRequestBuilders.post(url, 2)
         )).hasCause(new BookmarkException(BookmarkErrorResult.UNAUTHORIZED_USER_ACCESS));
 
     }
 
+    @Test
+    public void 북마크_추가_회원X() throws Exception {
+        //given
+        final String url = "/bookmark/{board_id}";
+        Mockito.doThrow(new BookmarkException(BookmarkErrorResult.USER_NOT_EXIST))
+                .when(bookmarkService)
+                .create(user.getId(), board1.getId());
+        //when
+        //then
+        assertThatThrownBy(() -> mockMvc.perform(
+                MockMvcRequestBuilders.post(url, 2)
+                        .header("Authorization", createJwtToken())
+        )).hasCause(new BookmarkException(BookmarkErrorResult.USER_NOT_EXIST));
+
+    }
+
+    @Test
+    public void 북마크_추가_게시판X() throws Exception {
+        //given
+        final String url = "/bookmark/{board_id}";
+        Mockito.doThrow(new BookmarkException(BookmarkErrorResult.BOARD_NOT_EXIST))
+                .when(bookmarkService)
+                .create(user.getId(), 9999L);
+        //when
+        //then
+        assertThatThrownBy(() -> mockMvc.perform(
+                MockMvcRequestBuilders.post(url, 9999)
+                        .header("Authorization", createJwtToken())
+        )).hasCause(new BookmarkException(BookmarkErrorResult.BOARD_NOT_EXIST));
+
+    }
 
     @Test
     public void 북마크_추가_회원() throws Exception {
@@ -158,6 +194,55 @@ class BookmarkControllerTest {
         resultActions.andDo(print())
                 .andExpect(content().json(objectMapper.writeValueAsString(2L)));;
 
+    }
+
+    @Test
+    public void 북마크_삭제_비회원() throws Exception {
+        //given
+        final String url = "/bookmark/{bookmark_id}";
+        BookmarkErrorResult error = BookmarkErrorResult.UNAUTHORIZED_USER_ACCESS;
+        Mockito.doThrow(new BookmarkException(error))
+                .when(bookmarkService)
+                .delete(any(), any());
+        //when
+        //then
+        assertThatThrownBy(() -> mockMvc.perform(
+                MockMvcRequestBuilders.delete(url, bookmark1.getId())))
+                .hasCause(new BookmarkException(error));
+    }
+
+    @Test
+    public void 북마크_삭제_북마크X() throws Exception {
+        //given
+        final String url = "/bookmark/{bookmark_id}";
+        BookmarkErrorResult error = BookmarkErrorResult.BOOKMARK_NOT_EXIST;
+        Mockito.doThrow(new BookmarkException(error))
+                .when(bookmarkService)
+                .delete(any(), any());
+        //when
+        //then
+        assertThatThrownBy(() -> mockMvc.perform(
+                MockMvcRequestBuilders.delete(url, bookmark1.getId())
+                        .header("Authorization", createJwtToken()))
+        )
+                .hasCause(new BookmarkException(error));
+    }
+
+    @Test
+    public void 북마크_삭제_회원권한X() throws Exception {
+        //given
+        final String url = "/bookmark/{bookmark_id}";
+        BookmarkErrorResult error = BookmarkErrorResult.UNAUTHORIZED_USER_ACCESS;
+        Mockito.doThrow(new BookmarkException(error))
+                .when(bookmarkService)
+                .delete(any(), any());
+        //when
+        //then
+        assertThatThrownBy(() -> mockMvc.perform(
+                MockMvcRequestBuilders.delete(url, bookmark1.getId())
+                        .header("Authorization", createJwtToken()))
+        )
+                .hasCause(new BookmarkException(error));
     }
 
     @Test

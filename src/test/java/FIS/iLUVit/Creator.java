@@ -6,7 +6,9 @@ import FIS.iLUVit.domain.embeddable.BasicInfra;
 import FIS.iLUVit.domain.embeddable.Theme;
 import FIS.iLUVit.domain.enumtype.AuthKind;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.LocalTime;
 
 public class Creator {
 
@@ -95,5 +97,54 @@ public class Creator {
                 .build();
     }
 
+    public static Post createPost(String title, String content, Boolean anonymous, Board board, User user) {
+        return Post.builder()
+                .title(title)
+                .content(content)
+                .anonymous(anonymous)
+                .commentCnt(0)
+                .heartCnt(0)
+                .imgCnt(0)
+                .videoCnt(0)
+                .board(board)
+                .user(user)
+                .build();
+    }
+
+    public static ChatRoom createChatRoom(Long id, User receiver, User sender, Post post) {
+        return ChatRoom.builder()
+                .id(id)
+                .receiver(receiver)
+                .sender(sender)
+                .post(post)
+                .build();
+    }
+
+    public static ChatRoom createChatRoom(User receiver, User sender, Post post) {
+        return new ChatRoom(receiver, sender, post);
+    }
+
+    public static Chat createChat(Long id, String message, ChatRoom chatRoom, User receiver, User sender) {
+        return Chat.builder()
+                .id(id)
+                .date(LocalDate.now())
+                .time(LocalTime.now())
+                .message(message)
+                .chatRoom(chatRoom)
+                .receiver(receiver)
+                .sender(sender)
+                .build();
+    }
+
+    public static Chat createChat(String message, ChatRoom chatRoom, User receiver, User sender) {
+        return Chat.builder()
+                .date(LocalDate.now())
+                .time(LocalTime.now())
+                .message(message)
+                .chatRoom(chatRoom)
+                .receiver(receiver)
+                .sender(sender)
+                .build();
+    }
 
 }
