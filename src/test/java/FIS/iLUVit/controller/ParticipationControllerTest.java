@@ -163,7 +163,6 @@ class ParticipationControllerTest {
         );
 
         //then
-        //then
         resultActions.andDo(MockMvcResultHandlers.print())
                 .andExpect(status().isBadRequest())
                 .andExpect(

@@ -520,4 +520,95 @@ class ChatServiceTest {
         assertThat(actual)
                 .isEqualTo(expected);
     }
+
+    @Test
+    public void 채팅방_삭제_채팅방에_속한_유저_탈퇴한_회원() throws Exception {
+        //given
+        ChatRoom chatRoom3 = ChatRoom.builder()
+                .id(999L)
+                .chatList(new ArrayList<>())
+                .receiver(null)
+                .sender(sender)
+                .post(post1)
+                .partner_id(1000L)
+                .build();
+
+        Mockito.doReturn(Optional.of(chatRoom3))
+                .when(chatRoomRepository)
+                .findById(chatRoom3.getId());
+
+        //when
+        ChatException result = assertThrows(ChatException.class,
+                () -> chatService.deleteChatRoom(999L, chatRoom3.getId()));
+        //then
+        assertThat(result.getErrorResult())
+                .isEqualTo(ChatErrorResult.WITHDRAWN_MEMBER);
+    }
+
+    @Test
+    public void 채팅방_삭제_채팅방에_속한_유저X() throws Exception {
+        //given
+        ChatRoom chatRoom3 = ChatRoom.builder()
+                .id(999L)
+                .chatList(new ArrayList<>())
+                .receiver(receiver)
+                .sender(sender)
+                .post(post1)
+                .partner_id(1000L)
+                .build();
+
+        Mockito.doReturn(Optional.of(chatRoom3))
+                .when(chatRoomRepository)
+                .findById(chatRoom3.getId());
+
+        //when
+        ChatException result = assertThrows(ChatException.class,
+                () -> chatService.deleteChatRoom(9999L, chatRoom3.getId()));
+
+        //then
+        assertThat(result.getErrorResult())
+                .isEqualTo(ChatErrorResult.UNAUTHORIZED_USER_ACCESS);
+    }
+
+    @Test
+    public void 채팅방_삭제_성공() throws Exception {
+        //given
+        ChatRoom chatRoom3 = ChatRoom.builder()
+                .id(999L)
+                .chatList(new ArrayList<>())
+                .receiver(receiver)
+                .sender(sender)
+                .post(post1)
+                .partner_id(1000L)
+                .build();
+
+        ChatRoom chatRoom4 = ChatRoom.builder()
+                .id(1000L)
+                .chatList(new ArrayList<>())
+                .receiver(sender)
+                .sender(receiver)
+                .post(post1)
+                .partner_id(999L)
+                .build();
+
+        Mockito.doReturn(Optional.of(chatRoom3))
+                .when(chatRoomRepository)
+                .findById(chatRoom3.getId());
+
+        Mockito.doReturn(Optional.of(chatRoom4))
+                .when(chatRoomRepository)
+                .findById(chatRoom3.getPartner_id());
+
+        Mockito.doNothing()
+                .when(chatRoomRepository)
+                .deleteById(chatRoom3.getId());
+
+        //when
+        Long removedId = chatService.deleteChatRoom(receiver.getId(), chatRoom3.getId());
+
+        //then
+        assertThat(removedId).isEqualTo(chatRoom3.getId());
+        assertThat(chatRoom4.getPartner_id()).isNull();
+
+    }
 }

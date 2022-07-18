@@ -30,6 +30,10 @@ public class ChatService {
 
     public Long saveChat(Long userId, CreateChatRequest request) {
 
+        if (userId == null) {
+            throw new ChatException(ChatErrorResult.UNAUTHORIZED_USER_ACCESS);
+        }
+
         if (Objects.equals(userId, request.getReceiver_id())) {
             throw new ChatException(ChatErrorResult.NO_SEND_TO_SELF);
         }
@@ -104,8 +108,11 @@ public class ChatService {
     public Long deleteChatRoom(Long userId, Long roomId) {
         chatRoomRepository.findById(roomId)
                 .ifPresent(cr -> {
-                    if (cr.getReceiver().getId() != userId) {
-                        throw new IllegalStateException("삭제 권한 없는 유저");
+                    if (cr.getReceiver() == null) {
+                        throw new ChatException(ChatErrorResult.WITHDRAWN_MEMBER);
+                    }
+                    if (!Objects.equals(cr.getReceiver().getId(), userId)) {
+                        throw new ChatException(ChatErrorResult.UNAUTHORIZED_USER_ACCESS);
                     }
                     chatRoomRepository.findById(cr.getPartner_id())
                             .ifPresent(c -> c.updatePartnerId(null));
