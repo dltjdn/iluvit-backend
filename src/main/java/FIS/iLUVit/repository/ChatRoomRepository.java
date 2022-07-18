@@ -16,6 +16,8 @@ public interface ChatRoomRepository extends JpaRepository<ChatRoom, Long> {
 
     Optional<ChatRoom> findByReceiverAndSenderAndPost(User receiver, User sender, Post post);
 
+    Optional<ChatRoom> findByReceiverAndSenderAndPostAndAnonymous(User receiver, User sender, Post post, Boolean anonymous);
+
     @Query("select cr from ChatRoom cr " +
             "left join fetch cr.post p " +
             "left join fetch p.board b " +

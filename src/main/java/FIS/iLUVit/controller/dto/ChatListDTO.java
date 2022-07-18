@@ -25,6 +25,7 @@ public class ChatListDTO {
     private LocalDate date;
     private LocalTime time;
 
+    private Boolean anonymous;
     private Long opponent_id;
     private String opponent_image;
 
@@ -51,6 +52,7 @@ public class ChatListDTO {
         this.recentMessage = chatRoom.getMessage();
         this.date = chatRoom.getDate();
         this.time = chatRoom.getTime();
+        this.anonymous = chatRoom.getAnonymous();
         if (chatRoom.getSender() != null) {
             this.opponent_id = chatRoom.getSender().getId();
         }

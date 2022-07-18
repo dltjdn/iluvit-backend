@@ -11,8 +11,7 @@ import FIS.iLUVit.domain.alarms.ChatAlarm;
 import FIS.iLUVit.domain.enumtype.Auth;
 import FIS.iLUVit.domain.enumtype.BoardKind;
 import FIS.iLUVit.event.AlarmEvent;
-import FIS.iLUVit.exception.ChatErrorResult;
-import FIS.iLUVit.exception.ChatException;
+import FIS.iLUVit.exception.*;
 import FIS.iLUVit.repository.*;
 import FIS.iLUVit.service.createmethod.CreateTest;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -67,6 +66,7 @@ class ChatServiceTest {
     Board board1;
 
     Post post1;
+    Comment comment1;
 
     ChatRoom chatRoom1;
     ChatRoom chatRoom2;
@@ -102,6 +102,7 @@ class ChatServiceTest {
         board1 = CreateTest.createBoard(3L, "자유게시판", BoardKind.NORMAL, null, true);
 
         post1 = Creator.createPost(4L, "제목", "내용", true, board1, receiver);
+        comment1 = Creator.createComment(13L, true, "asdf", post1, receiver);
 
         chatRoom1 = Creator.createChatRoom(5L, receiver, sender, post1);
         chatRoom2 = Creator.createChatRoom(6L, sender, receiver, post1);
@@ -176,6 +177,8 @@ class ChatServiceTest {
         request.setMessage("안녕");
         request.setPost_id(post1.getId());
         request.setReceiver_id(sender.getId());
+        request.setComment_id(comment1.getId());
+        request.setAnonymous(true);
 
         Mockito.doReturn(Optional.of(receiver))
                 .when(userRepository)
@@ -198,6 +201,102 @@ class ChatServiceTest {
     }
 
     @Test
+    public void 쪽지_작성_댓글X() throws Exception {
+        //given
+        request.setMessage("안녕");
+        request.setPost_id(post1.getId());
+        request.setReceiver_id(sender.getId());
+        request.setComment_id(comment1.getId());
+
+        Mockito.doReturn(Optional.of(receiver))
+                .when(userRepository)
+                .findById(receiver.getId());
+
+        Mockito.doReturn(Optional.of(sender))
+                .when(userRepository)
+                .findById(sender.getId());
+
+        Mockito.doReturn(Optional.of(post1))
+                .when(postRepository)
+                .findById(post1.getId());
+
+        Mockito.doReturn(Optional.empty())
+                .when(commentRepository)
+                .findById(comment1.getId());
+
+        //when
+        CommentException result = assertThrows(CommentException.class,
+                () -> chatService.saveChat(receiver.getId(), request));
+
+        //then
+        assertThat(result.getErrorResult())
+                .isEqualTo(CommentErrorResult.NO_EXIST_COMMENT);
+    }
+
+    @Test
+    public void 쪽지_작성_댓글_익명인데_실명으로_보냄() throws Exception {
+        //given
+        request.setMessage("안녕");
+        request.setPost_id(post1.getId());
+        request.setReceiver_id(sender.getId());
+        request.setComment_id(comment1.getId());
+        request.setAnonymous(false);
+
+        Mockito.doReturn(Optional.of(receiver))
+                .when(userRepository)
+                .findById(receiver.getId());
+
+        Mockito.doReturn(Optional.of(sender))
+                .when(userRepository)
+                .findById(sender.getId());
+
+        Mockito.doReturn(Optional.of(post1))
+                .when(postRepository)
+                .findById(post1.getId());
+
+        Mockito.doReturn(Optional.of(comment1))
+                .when(commentRepository)
+                .findById(comment1.getId());
+
+        //when
+        CommentException result = assertThrows(CommentException.class,
+                () -> chatService.saveChat(receiver.getId(), request));
+
+        //then
+        assertThat(result.getErrorResult())
+                .isEqualTo(CommentErrorResult.NO_MATCH_ANONYMOUS_INFO);
+    }
+
+    @Test
+    public void 쪽지_작성_게시글_익명인데_실명으로_보냄() throws Exception {
+        //given
+        request.setMessage("안녕");
+        request.setPost_id(post1.getId());
+        request.setReceiver_id(sender.getId());
+        request.setAnonymous(false);
+
+        Mockito.doReturn(Optional.of(receiver))
+                .when(userRepository)
+                .findById(receiver.getId());
+
+        Mockito.doReturn(Optional.of(sender))
+                .when(userRepository)
+                .findById(sender.getId());
+
+        Mockito.doReturn(Optional.of(post1))
+                .when(postRepository)
+                .findById(post1.getId());
+
+        //when
+        PostException result = assertThrows(PostException.class,
+                () -> chatService.saveChat(receiver.getId(), request));
+
+        //then
+        assertThat(result.getErrorResult())
+                .isEqualTo(PostErrorResult.NO_MATCH_ANONYMOUS_INFO);
+    }
+
+    @Test
     public void 쪽지_작성_성공() throws Exception {
         //given
         MockedStatic<AlarmUtils> alarmUtils = Mockito.mockStatic(AlarmUtils.class);
@@ -205,6 +304,7 @@ class ChatServiceTest {
         request.setMessage("안녕");
         request.setPost_id(post1.getId());
         request.setReceiver_id(sender.getId());
+        request.setAnonymous(true);
 
         Mockito.doReturn(Optional.of(receiver))
                 .when(userRepository)

@@ -6,8 +6,7 @@ import FIS.iLUVit.controller.dto.CreateChatRequest;
 import FIS.iLUVit.controller.dto.CreateChatRoomRequest;
 import FIS.iLUVit.domain.*;
 import FIS.iLUVit.domain.alarms.ChatAlarm;
-import FIS.iLUVit.exception.ChatErrorResult;
-import FIS.iLUVit.exception.ChatException;
+import FIS.iLUVit.exception.*;
 import FIS.iLUVit.repository.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
@@ -50,11 +49,24 @@ public class ChatService {
         Post findPost = postRepository.findById(post_id)
                 .orElseThrow(() -> new ChatException(ChatErrorResult.POST_NOT_EXIST));
 
+        if (request.getComment_id() != null) {
+            Comment findComment = commentRepository.findById(comment_id)
+                    .orElseThrow(() -> new CommentException(CommentErrorResult.NO_EXIST_COMMENT));
+            if (findComment.getAnonymous() != request.getAnonymous()) {
+                throw new CommentException(CommentErrorResult.NO_MATCH_ANONYMOUS_INFO);
+            }
+        } else {
+            if (findPost.getAnonymous() != request.getAnonymous()) {
+                throw new PostException(PostErrorResult.NO_MATCH_ANONYMOUS_INFO);
+            }
+        }
+
+
         Chat chat1 = new Chat(request.getMessage(), receiveUser, sendUser);
         Chat chat2 = new Chat(request.getMessage(), receiveUser, sendUser);
 
-        ChatRoom chatRoom1 = validateChatRoom(sendUser, receiveUser, comment_id, findPost, chat1);
-        ChatRoom chatRoom2 = validateChatRoom(receiveUser, sendUser, comment_id, findPost, chat2);
+        ChatRoom chatRoom1 = validateChatRoom(sendUser, receiveUser, comment_id, findPost, chat1, request.getAnonymous());
+        ChatRoom chatRoom2 = validateChatRoom(receiveUser, sendUser, comment_id, findPost, chat2, request.getAnonymous());
         chatRoom1.updatePartnerId(chatRoom2.getId());
         chatRoom2.updatePartnerId(chatRoom1.getId());
 
@@ -68,12 +80,13 @@ public class ChatService {
 
     }
 
-    private ChatRoom validateChatRoom(User sendUser, User receiveUser, Long comment_id, Post post, Chat chat) {
-        ChatRoom findRoom = chatRoomRepository.findByReceiverAndSenderAndPost(receiveUser, sendUser, post)
+    private ChatRoom validateChatRoom(User sendUser, User receiveUser, Long comment_id, Post post, Chat chat, Boolean anonymous) {
+        ChatRoom findRoom = chatRoomRepository.findByReceiverAndSenderAndPostAndAnonymous(
+                receiveUser, sendUser, post, anonymous)
                 .orElse(null);
         if (findRoom == null) {
             // 대화방 없으면 새로 생성
-            ChatRoom chatRoom = new ChatRoom(receiveUser, sendUser, post);
+            ChatRoom chatRoom = new ChatRoom(receiveUser, sendUser, post, anonymous);
             // 댓글 작성자와 쪽지 교환이면 comment 정보도 엮여줌.
             if (comment_id != null) {
                 Comment findComment = commentRepository.getById(comment_id);
@@ -160,7 +173,7 @@ public class ChatService {
         // 삭제된 대화방이면 새로 생성
         ChatRoom chatRoom;
         if (findRoom.getPartner_id() == null) {
-            chatRoom = new ChatRoom(receiveUser, sendUser, findRoom.getPost());
+            chatRoom = new ChatRoom(receiveUser, sendUser, findRoom.getPost(), findRoom.getAnonymous());
             chatRoomRepository.save(chatRoom);
         } else {
             chatRoom = chatRoomRepository.findById(findRoom.getPartner_id())

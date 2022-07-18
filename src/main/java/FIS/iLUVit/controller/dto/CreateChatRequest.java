@@ -19,4 +19,7 @@ public class CreateChatRequest {
 
     @NotBlank(message = "받는 사람 id 필요")
     private Long receiver_id;
+
+    @NotBlank(message = "채팅방의 익명 여부를 결정해주세요")
+    private Boolean anonymous;
 }

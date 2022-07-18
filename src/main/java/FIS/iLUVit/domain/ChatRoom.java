@@ -23,6 +23,8 @@ public class ChatRoom extends BaseEntity {
 
     private Long partner_id;            // 상대 ChatRoom 아이디
 
+    private Boolean anonymous;          // 프로필 익명 여부 -> true 설정하면 양쪽 다 익명으로
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "receiver_id")
     private User receiver;
@@ -42,21 +44,23 @@ public class ChatRoom extends BaseEntity {
     @OneToMany(mappedBy = "chatRoom")
     private List<Chat> chatList = new ArrayList<>();
 
-    public ChatRoom(User receiver, User sender, Post post) {
+    public ChatRoom(User receiver, User sender, Post post, Boolean anonymous) {
         this.date = LocalDate.now();
         this.time = LocalTime.now();
         this.receiver = receiver;
         this.sender = sender;
         this.post = post;
+        this.anonymous = anonymous;
     }
 
     @Builder(toBuilder = true)
-    public ChatRoom(Long id, LocalDate date, LocalTime time, String message, Long partner_id, User receiver, User sender, Post post, Comment comment, List<Chat> chatList) {
+    public ChatRoom(Long id, LocalDate date, LocalTime time, String message, Long partner_id, Boolean anonymous, User receiver, User sender, Post post, Comment comment, List<Chat> chatList) {
         this.id = id;
         this.date = date;
         this.time = time;
         this.message = message;
         this.partner_id = partner_id;
+        this.anonymous = anonymous;
         this.receiver = receiver;
         this.sender = sender;
         this.post = post;
