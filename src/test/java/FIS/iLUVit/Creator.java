@@ -354,4 +354,12 @@ public class Creator {
                 .user(user)
                 .build();
     }
+
+    public static Waiting createWaiting(PtDate ptDate, Parent parent, Integer waitingOrder) {
+        return Waiting.builder()
+                .ptDate(ptDate)
+                .parent(parent)
+                .waitingOrder(waitingOrder)
+                .build();
+    }
 }
