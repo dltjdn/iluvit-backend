@@ -53,7 +53,7 @@ public class ChatService {
         chatRoom1.updatePartnerId(chatRoom2.getId());
         chatRoom2.updatePartnerId(chatRoom1.getId());
 
-        AlarmUtils.publishAlarmEvent(new ChatAlarm(receiveUser, sendUser));
+        AlarmUtils.publishAlarmEvent(new ChatAlarm(receiveUser, sendUser, false));
 
 
         chatRepository.save(chat1);

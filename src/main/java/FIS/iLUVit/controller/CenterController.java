@@ -5,7 +5,6 @@ import FIS.iLUVit.controller.dto.*;
 import FIS.iLUVit.domain.embeddable.Area;
 import FIS.iLUVit.domain.enumtype.KindOf;
 import FIS.iLUVit.repository.dto.CenterAndDistancePreview;
-import FIS.iLUVit.repository.dto.CenterBannerDto;
 import FIS.iLUVit.repository.dto.CenterPreview;
 import FIS.iLUVit.service.CenterService;
 import lombok.RequiredArgsConstructor;
@@ -78,7 +77,7 @@ public class CenterController {
      * id 기반 으로 센터 클릭시 배너로 나올 center 이름, 모집 상황 반환할 api
      */
     @GetMapping("/center/{center_id}/recruit")
-    public CenterBannerDto centerBanner(@PathVariable("center_id") Long id, @Login Long userId){
+    public CenterBannerResponseDto centerBanner(@PathVariable("center_id") Long id, @Login Long userId){
         return centerService.findBannerById(id, userId);
     }
 

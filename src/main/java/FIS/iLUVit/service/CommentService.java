@@ -14,7 +14,6 @@ import FIS.iLUVit.repository.PostRepository;
 import FIS.iLUVit.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
 import org.springframework.stereotype.Service;
@@ -32,7 +31,7 @@ public class CommentService {
     private final UserRepository userRepository;
 
     public Long registerComment(Long userId, Long postId, Long commentId, RegisterCommentRequest request) {
-        User findUser = userRepository.getById(userId);
+        User findUser = userRepository.findById(userId).orElse(null);
         Post findPost = postRepository.findById(postId)
                 .orElseThrow(() -> new PostException("존재하지 않는 게시글"));
 

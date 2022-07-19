@@ -1,5 +1,6 @@
 package FIS.iLUVit.service;
 
+import FIS.iLUVit.controller.dto.CenterBannerResponseDto;
 import FIS.iLUVit.domain.Center;
 import FIS.iLUVit.domain.embeddable.Theme;
 import FIS.iLUVit.repository.CenterRepository;
@@ -10,6 +11,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.mockito.Spy;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import static FIS.iLUVit.Creator.createCenter;
@@ -27,6 +29,9 @@ public class CenterServiceTest {
     @InjectMocks
     CenterService target;
 
+    @Spy
+    ImageService imageService;
+
     @Nested
     @DisplayName("센터_베너_서비스")
     class BannerServiceTest{
@@ -39,7 +44,7 @@ public class CenterServiceTest {
             doReturn(null)
                     .when(centerRepository).findBannerById(2L);
             //when
-            CenterBannerDto result = target.findBannerById(2L, null);
+            CenterBannerResponseDto result = target.findBannerById(2L, null);
 
             //then
             assertThat(result)
@@ -50,12 +55,12 @@ public class CenterServiceTest {
         @Test
         public void 센터_배너_서비스_테스트_로그인_O() throws Exception {
             //given
-            CenterBannerDto centerBannerDto = new CenterBannerDto(1L, "test", true, true, 4.5, 1L,"testLocation");
+            CenterBannerDto centerBannerDto = new CenterBannerDto(1L, "test", true, true, 4.5, 1L,"testLocation", "fdfd");
             doReturn(centerBannerDto)
                     .when(centerRepository).findBannerById(any(Long.class), any(Long.class));
 
             //when
-            CenterBannerDto result = target.findBannerById(1L, 1L);
+            CenterBannerResponseDto result = target.findBannerById(1L, 1L);
             //then
             verify(centerRepository, times(1))
                     .findBannerById(any(Long.class), any(Long.class));
@@ -71,7 +76,7 @@ public class CenterServiceTest {
                     .when(centerRepository).findBannerById(any(Long.class));
 
             //when
-            CenterBannerDto result = target.findBannerById(1L, null);
+            CenterBannerResponseDto result = target.findBannerById(1L, null);
             //then
             verify(centerRepository, times(1))
                     .findBannerById(any(Long.class));
