@@ -140,7 +140,7 @@ public class Creator {
     }
 
     public static ChatRoom createChatRoom(User receiver, User sender, Post post) {
-        return new ChatRoom(receiver, sender, post);
+        return new ChatRoom(receiver, sender, post, true);
     }
 
     public static Chat createChat(Long id, String message, ChatRoom chatRoom, User receiver, User sender) {
@@ -342,6 +342,16 @@ public class Creator {
                 .ptDate(ptDate)
                 .parent(parent)
                 .status(Status.CANCELED)
+                .build();
+    }
+
+    public static Comment createComment(Long id, Boolean anonymous, String content, Post post, User user) {
+        return Comment.builder()
+                .id(id)
+                .anonymous(anonymous)
+                .content(content)
+                .post(post)
+                .user(user)
                 .build();
     }
 }
