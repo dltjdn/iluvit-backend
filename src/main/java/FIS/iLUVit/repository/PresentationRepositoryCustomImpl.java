@@ -5,6 +5,7 @@ import FIS.iLUVit.domain.embeddable.Theme;
 import FIS.iLUVit.domain.enumtype.KindOf;
 import FIS.iLUVit.repository.dto.PresentationPreviewForUsers;
 import FIS.iLUVit.repository.dto.QPresentationPreviewForUsers;
+import com.querydsl.core.types.OrderSpecifier;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.AllArgsConstructor;
 import org.springframework.data.domain.Pageable;
@@ -12,9 +13,11 @@ import org.springframework.data.domain.SliceImpl;
 
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Objects;
 
 import static FIS.iLUVit.domain.QCenter.center;
 import static FIS.iLUVit.domain.QPresentation.presentation;
+import static FIS.iLUVit.repository.PresentationQueryMethod.presentationSort;
 
 @AllArgsConstructor
 public class PresentationRepositoryCustomImpl extends CenterQueryMethod implements PresentationRepositoryCustom {
@@ -35,6 +38,7 @@ public class PresentationRepositoryCustomImpl extends CenterQueryMethod implemen
                         .and(kindOfEq(kindOf))
                         .and(presentation.endDate.goe(now))
                 )
+                .orderBy(Objects.requireNonNull(presentationSort(pageable)).toArray(OrderSpecifier[]::new))
                 .offset(pageable.getOffset())
                 .limit(pageable.getPageSize() + 1)
                 .fetch();

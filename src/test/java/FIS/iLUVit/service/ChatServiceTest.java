@@ -16,7 +16,6 @@ import FIS.iLUVit.repository.*;
 import FIS.iLUVit.service.createmethod.CreateTest;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
-import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -34,8 +33,8 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 
-import static org.assertj.core.api.Assertions.*;
-import static org.junit.jupiter.api.Assertions.*;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
 
 @ExtendWith(MockitoExtension.class)
@@ -325,7 +324,7 @@ class ChatServiceTest {
         alarmUtils.when(() -> AlarmUtils.getMessage(any(String.class), any(Object[].class)))
                 .thenReturn("회원 {0}로 부터 새로운 채팅을 받았어요");
 
-        AlarmEvent alarmEvent = new AlarmEvent(new ChatAlarm(receiver, sender));
+        AlarmEvent alarmEvent = new AlarmEvent(new ChatAlarm(receiver, sender, false));
         alarmUtils.when(() -> AlarmUtils.publishAlarmEvent(any(Alarm.class)))
                 .thenReturn(alarmEvent);
 

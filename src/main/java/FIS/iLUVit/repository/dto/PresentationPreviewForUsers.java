@@ -23,6 +23,7 @@ public class PresentationPreviewForUsers {
     private String place;               // 설명회 장소
     private String content;             // 설명회 내용
     private Theme theme;
+    private String infoImages;
 
     @QueryProjection
     public PresentationPreviewForUsers(Presentation presentation, Center center) {
@@ -34,5 +35,6 @@ public class PresentationPreviewForUsers {
         place = presentation.getPlace();
         content = presentation.getContent();
         theme = center.getTheme();
+        infoImages = presentation.getInfoImagePath();
     }
 }
