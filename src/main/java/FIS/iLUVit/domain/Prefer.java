@@ -6,8 +6,6 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
-import java.time.LocalDateTime;
-import java.util.List;
 
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
@@ -30,5 +28,12 @@ public class Prefer extends BaseEntity {
         prefer.center = center;
         prefer.parent = parent;
         return prefer;
+    }
+
+    @Builder
+    public Prefer(Long id, Parent parent, Center center) {
+        this.id = id;
+        this.parent = parent;
+        this.center = center;
     }
 }

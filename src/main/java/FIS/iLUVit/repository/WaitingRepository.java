@@ -39,4 +39,6 @@ public interface WaitingRepository extends JpaRepository<Waiting, Long> {
     @Query("update Waiting waiting " +
             "set waiting.waitingOrder = waiting.waitingOrder - :changeNum ")
     void updateWaitingOrderForPtDateChange(@Param("changeNum") Integer changeNum);
+
+
 }

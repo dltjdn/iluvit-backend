@@ -15,7 +15,6 @@ import FIS.iLUVit.repository.PostRepository;
 import FIS.iLUVit.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
 import org.springframework.stereotype.Service;
@@ -37,7 +36,7 @@ public class CommentService {
             throw new CommentException(CommentErrorResult.UNAUTHORIZED_USER_ACCESS);
         }
 
-        User findUser = userRepository.getById(userId);
+        User findUser = userRepository.findById(userId).orElse(null);
         Post findPost = postRepository.findById(postId)
                 .orElseThrow(() -> new PostException("존재하지 않는 게시글"));
 
