@@ -42,10 +42,13 @@ class WaitingRepositoryTest {
             em.persist(ptDate);
             em.persist(parent);
             em.persist(participation);
+            em.persist(waiting1);
+            em.persist(waiting2);
+            em.persist(waiting3);
             em.flush();
 
             //when
-//            waitingRepository.findMinWaitingOrder()
+            waitingRepository.findMinWaitingOrder()
 
             //then
         }

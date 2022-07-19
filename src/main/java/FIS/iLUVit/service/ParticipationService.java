@@ -7,6 +7,7 @@ import FIS.iLUVit.domain.Presentation;
 import FIS.iLUVit.domain.PtDate;
 import FIS.iLUVit.domain.alarms.PresentationFullAlarm;
 import FIS.iLUVit.domain.enumtype.Status;
+import FIS.iLUVit.event.ParticipationCancelEvent;
 import FIS.iLUVit.exception.*;
 import FIS.iLUVit.repository.ParentRepository;
 import FIS.iLUVit.repository.ParticipationRepository;
@@ -93,16 +94,16 @@ public class ParticipationService {
 //        Participation participation = participationRepository.findByIdAndJoinPresentation(participationId)
 //                .orElseThrow(() -> new PresentationException("올바르지 않은 ptDate id 입니다"));
 //        // 설명회 회차 조회
-//        PtDate ptDate = participation.getPtDate();
+        PtDate ptDate = participation.getPtDate();
 //        // 학부모가 참여를 신청한게 맞는지 조회
 //        if (!participation.getParent().equals(parent))
 //            throw new PresentationException("해당 사용자가 설명회 신청한적 없습니다.");
 //        participation.cancel();
 //        // 참여를 취소할 경우 대기자 중에서 가장 높은 순번이 자동으로 등록 됨
-//        if(ptDate.hasWaiting()){
-//            publisher.publishEvent(new ParticipationCancelEvent(ptDate.getPresentation(), ptDate, null)); // 이벤트 리스너 호출
-//        }
-//        return participationId;
+        if(ptDate.hasWaiting()){
+            publisher.publishEvent(new ParticipationCancelEvent(ptDate.getPresentation(), ptDate, null)); // 이벤트 리스너 호출
+        }
+        return participationId;
         return participationId;
     }
 
