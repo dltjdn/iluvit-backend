@@ -6,13 +6,10 @@ import FIS.iLUVit.domain.embeddable.Theme;
 import FIS.iLUVit.domain.enumtype.AuthKind;
 import FIS.iLUVit.exception.UserException;
 import FIS.iLUVit.repository.*;
-import FIS.iLUVit.repository.dto.CenterPreview;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.dao.DataIntegrityViolationException;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Slice;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -50,13 +47,7 @@ public class ParentService {
                 .orElseThrow(() -> new UserException("유효하지 않은 토큰으로의 사용자 접근입니다."));
 
         ParentDetailResponse response = new ParentDetailResponse(findParent);
-
-        // 현재 등록한 프로필 이미지가 있으면 보여주기
-        if (findParent.getHasProfileImg()) {
-            String imagePath = imageService.getUserProfileDir();
-            response.setProfileImg(imageService.getEncodedProfileImage(imagePath, id));
-        }
-
+        response.setProfileImg(imageService.getProfileImage(findParent));
         return response;
     }
 
@@ -94,14 +85,14 @@ public class ParentService {
             findParent.updateDetail(request, theme);
         }
         ParentDetailResponse response = new ParentDetailResponse(findParent);
-
-        // 요청에 프로필 이미지 있으면 덮어씌우기
-        if (!request.getProfileImg().isEmpty()) {
-            String imagePath = imageService.getUserProfileDir();
-            imageService.saveProfileImage(request.getProfileImg(), imagePath + findParent.getId());
-            response.setProfileImg(imageService.getEncodedProfileImage(imagePath, id));
-        }
-
+//        // 요청에 프로필 이미지 있으면 덮어씌우기
+//        if (!request.getProfileImg().isEmpty()) {
+//            String imagePath = imageService.getUserProfileDir();
+//            imageService.saveProfileImage(request.getProfileImg(), imagePath + findParent.getId());
+//            response.setProfileImg(imageService.getEncodedProfileImage(imagePath, id));
+//        }
+        imageService.saveProfileImage(request.getProfileImg(), findParent);
+        response.setProfileImg(imageService.getProfileImage(findParent));
         return response;
     }
 

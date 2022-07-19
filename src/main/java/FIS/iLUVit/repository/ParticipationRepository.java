@@ -24,4 +24,12 @@ public interface ParticipationRepository extends JpaRepository<Participation, Lo
             "where participation.status = FIS.iLUVit.domain.enumtype.Status.JOINED " +
             "and participation.ptDate = :ptDate")
     List<Participation> findByptDateAndStatus(@Param("ptDate") PtDate ptDate);
+
+    @Query("select participation from Participation participation " +
+            "join fetch participation.ptDate as ptDate " +
+            "where participation.id = :participationId " +
+            "and participation.status = FIS.iLUVit.domain.enumtype.Status.JOINED " +
+            "and participation.parent.id = :parentId")
+    Optional<Participation> findByIdAndStatusWithPtDate(@Param("participationId") Long participantId, @Param("parentId") Long parentId);
+
 }

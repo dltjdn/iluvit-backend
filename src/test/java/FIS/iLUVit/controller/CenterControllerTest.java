@@ -1,18 +1,24 @@
 package FIS.iLUVit.controller;
 
+import FIS.iLUVit.config.argumentResolver.LoginUserArgumentResolver;
+import FIS.iLUVit.controller.dto.CenterBannerResponseDto;
 import FIS.iLUVit.controller.dto.CenterSearchFilterDTO;
 import FIS.iLUVit.controller.dto.CenterSearchMapFilterDTO;
 import FIS.iLUVit.controller.messagecreate.ResponseRequests;
+import FIS.iLUVit.domain.Parent;
+import FIS.iLUVit.domain.Teacher;
 import FIS.iLUVit.domain.embeddable.Area;
 import FIS.iLUVit.domain.embeddable.Theme;
 import FIS.iLUVit.domain.enumtype.KindOf;
-import FIS.iLUVit.exception.exceptionHandler.ValidationErrorResult;
-import FIS.iLUVit.exception.exceptionHandler.controllerAdvice.ValidationControllerAdvice;
+import FIS.iLUVit.exception.exceptionHandler.ErrorResponse;
+import FIS.iLUVit.exception.exceptionHandler.controllerAdvice.GlobalControllerAdvice;
 import FIS.iLUVit.repository.dto.CenterAndDistancePreview;
 import FIS.iLUVit.repository.dto.CenterPreview;
 import FIS.iLUVit.service.CenterService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -23,6 +29,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.SliceImpl;
 import org.springframework.data.web.PageableHandlerMethodArgumentResolver;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
@@ -33,6 +40,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import static FIS.iLUVit.Creator.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyList;
 import static org.mockito.Mockito.*;
@@ -55,7 +63,8 @@ class CenterControllerTest extends ResponseRequests {
     private void init(){
         mockMvc = MockMvcBuilders.standaloneSetup(centerController)
                 .setCustomArgumentResolvers(new PageableHandlerMethodArgumentResolver())
-                .setControllerAdvice(ValidationControllerAdvice.class)
+                .setCustomArgumentResolvers(new LoginUserArgumentResolver())
+                .setControllerAdvice(GlobalControllerAdvice.class)
                 .build();
         objectMapper = new ObjectMapper();
     }
@@ -108,7 +117,7 @@ class CenterControllerTest extends ResponseRequests {
                 .andExpect(status().isBadRequest())
                 //.andExpect(content().contentType(MediaType.APPLICATION_JSON))
                 .andExpect(content().json(objectMapper.writeValueAsString(
-                        new ValidationErrorResult("Request Bad", Arrays.asList("최소 1개 이상의 지역을 선택해야합니다"))
+                        new ErrorResponse(HttpStatus.BAD_REQUEST, "[최소 1개 이상의 지역을 선택해야합니다]")
                 )));
     }
 
@@ -133,7 +142,7 @@ class CenterControllerTest extends ResponseRequests {
                 .andExpect(status().isBadRequest())
                 //.andExpect(content().contentType(MediaType.APPLICATION_JSON))
                 .andExpect(content().json(objectMapper.writeValueAsString(
-                        new ValidationErrorResult("Request Bad", Arrays.asList("최소 1개 이상의 지역을 선택해야합니다"))
+                        new ErrorResponse(HttpStatus.BAD_REQUEST, "[최소 1개 이상의 지역을 선택해야합니다]")
                 )));
     }
 
@@ -179,6 +188,88 @@ class CenterControllerTest extends ResponseRequests {
                 .andExpect(content().json(objectMapper.writeValueAsString(response)));
 
     }
+
+    @Nested
+    @DisplayName("센터_베너_정보_검색")
+    class BannerControllerTest {
+
+        @Test
+        public void 센터_정보_검색_배너() throws Exception {
+            //given
+            CenterBannerResponseDto response = new CenterBannerResponseDto(1L, "test", true, true, 4.5, null,"testLocation", List.of(new String[]{"dfd", "fsdfs"}));
+            Parent parent = createParent(1L);
+            String jwtToken = createJwtToken(parent);
+
+            doReturn(response)
+                    .when(centerService).findBannerById(1L, 1L);
+
+            //when
+            ResultActions result = mockMvc.perform(
+                    MockMvcRequestBuilders.get("/center/1/recruit")
+                            .header("Authorization", jwtToken)
+            );
+
+            //then
+            verify(centerService, times(1))
+                    .findBannerById(1L, 1L);
+
+            result.andDo(print())
+                    .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+                    .andExpect(content().json(objectMapper.writeValueAsString(response)));
+
+        }
+
+        @Test
+        public void 베너_검색_성공_선생님으로_검색() throws Exception {
+            //given
+            CenterBannerResponseDto response = new CenterBannerResponseDto(1L, "test", true, true, 4.5, null,"testLocation", List.of(new String[]{"dfd", "fsdfs"}));
+            Teacher teacher = createTeacher(1L);
+            String jwtToken = createJwtToken(teacher);
+
+            doReturn(response)
+                    .when(centerService).findBannerById(1L, 1L);
+
+            //when
+            ResultActions result = mockMvc.perform(
+                    MockMvcRequestBuilders.get("/center/1/recruit")
+                            .header("Authorization", jwtToken)
+            );
+
+            //then
+            verify(centerService, times(1))
+                    .findBannerById(1L, 1L);
+
+            result.andDo(print())
+                    .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+                    .andExpect(content().json(objectMapper.writeValueAsString(response)));
+        }
+
+        @Test
+        public void 센터_베너_정보_검색_비회원() throws Exception {
+            //given
+            CenterBannerResponseDto response = new CenterBannerResponseDto(1L, "test", true, true, 4.5, null,"testLocation", List.of(new String[]{"dfd", "fsdfs"}));
+//            Teacher teacher = createTeacher(1L);
+//            String jwtToken = createJwtToken(teacher);
+
+            doReturn(response)
+                    .when(centerService).findBannerById(1L, null);
+
+            //when
+            ResultActions result = mockMvc.perform(
+                    MockMvcRequestBuilders.get("/center/1/recruit")
+            );
+
+            //then
+            verify(centerService, times(1))
+                    .findBannerById(1L, null);
+
+            result.andDo(print())
+                    .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+                    .andExpect(content().json(objectMapper.writeValueAsString(response)));
+        }
+
+    }
+
 }
 
 

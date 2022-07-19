@@ -12,9 +12,4 @@ public class ErrorResponse {
 
     private HttpStatus status;
     private String error;
-
-    public ErrorResponse(String message, HttpStatus status) {
-        this.status = status;
-        this.error = message;
-    }
 }

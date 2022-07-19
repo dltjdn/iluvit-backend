@@ -48,13 +48,16 @@ public class ChildService {
         ChildInfoDTO childInfoDTO = new ChildInfoDTO();
 
         findParent.getChildren().forEach(child -> {
-            if (child.getHasProfileImg()) {
-                String imagePath = imageService.getChildProfileDir();
-                String encodedImage = imageService.getEncodedProfileImage(imagePath, child.getId());
-                childInfoDTO.getData().add(new ChildInfoDTO.ChildInfo(child, encodedImage));
-            } else {
-                childInfoDTO.getData().add(new ChildInfoDTO.ChildInfo(child, null));
-            }
+//            if (child.getHasProfileImg()) {
+//                String imagePath = imageService.getChildProfileDir();
+//                String encodedImage = imageService.getEncodedProfileImage(imagePath, child.getId());
+//                childInfoDTO.getData().add(new ChildInfoDTO.ChildInfo(child, encodedImage));
+//            } else {
+//                childInfoDTO.getData().add(new ChildInfoDTO.ChildInfo(child, null));
+//            }
+            childInfoDTO.getData().add(
+                    new ChildInfoDTO.ChildInfo(child, imageService.getProfileImage(child))
+            );
         });
 
         return childInfoDTO;
@@ -84,10 +87,11 @@ public class ChildService {
         });
 
         // 프로필 이미지 설정
-        if (!request.getProfileImg().isEmpty()) {
-            String imagePath = imageService.getChildProfileDir();
-            imageService.saveProfileImage(request.getProfileImg(), imagePath + newChild.getId());
-        }
+//        if (!request.getProfileImg().isEmpty()) {
+//            String imagePath = imageService.getChildProfileDir();
+//            imageService.saveProfileImage(request.getProfileImg(), imagePath + newChild.getId());
+//        }
+        imageService.saveProfileImage(request.getProfileImg(), newChild);
     }
 
     /**
@@ -102,12 +106,10 @@ public class ChildService {
 
         ChildInfoDetailResponse response = new ChildInfoDetailResponse(child);
 
-        // 이미지가 있다면 가져오기
-        if (child.getHasProfileImg() != null && child.getHasProfileImg()) {
-            String imagePath = imageService.getChildProfileDir();
-            String image = imageService.getEncodedProfileImage(imagePath, child.getId());
-            response.setProfileImage(image);
-        }
+//            String imagePath = imageService.getChildProfileDir();
+//            String image = imageService.getEncodedProfileImage(imagePath, child.getId());
+        response.setProfileImage(imageService.getProfileImage(child));
+
 
         // 프로필 수정에 필요한 시설정보들 가져오기
         Slice<CenterInfoDto> centerInfos = centerRepository.findCenterForAddChild(child.getCenter().getArea().getSido(),
@@ -149,13 +151,13 @@ public class ChildService {
 
         ChildInfoDetailResponse response = new ChildInfoDetailResponse(updatedChild);
 
-        // 이미지가 있는 경우
-        if (!request.getProfileImg().isEmpty()) {
-            String imagePath = imageService.getChildProfileDir();
-            imageService.saveProfileImage(request.getProfileImg(), imagePath + updatedChild.getId());
-            String image = imageService.getEncodedProfileImage(imagePath, updatedChild.getId());
-            response.setProfileImage(image);
-        }
+//            String imagePath = imageService.getChildProfileDir();
+//            imageService.saveProfileImage(request.getProfileImg(), imagePath + updatedChild.getId());
+//            String image = imageService.getEncodedProfileImage(imagePath, updatedChild.getId());
+        imageService.saveProfileImage(request.getProfileImg(), updatedChild);
+//            response.setProfileImage(image);
+        response.setProfileImage(imageService.getProfileImage(updatedChild));
+
 
         // 프로필 수정에 필요한 시설정보들 가져오기
         Slice<CenterInfoDto> centerInfos = centerRepository.findCenterForAddChild(updatedChild.getCenter().getArea().getSido(),
@@ -208,11 +210,11 @@ public class ChildService {
                 ChildApprovalListResponse.ChildInfoForAdmin childInfo =
                         new ChildApprovalListResponse.ChildInfoForAdmin(child);
 
-                if (child.getHasProfileImg()) {
-                    String imagePath = imageService.getChildProfileDir();
-                    String image = imageService.getEncodedProfileImage(imagePath, child.getId());
-                    childInfo.setChild_profileImg(image);
-                }
+//                    String imagePath = imageService.getChildProfileDir();
+//                    String image = imageService.getEncodedProfileImage(imagePath, child.getId());
+//                    childInfo.setChild_profileImg(image);
+                childInfo.setChild_profileImg(imageService.getProfileImage(child));
+
                 response.getData().add(childInfo);
             }
         });

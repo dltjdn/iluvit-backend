@@ -16,8 +16,7 @@ import java.util.Objects;
 @DiscriminatorColumn
 @DiscriminatorValue("null")
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-@AllArgsConstructor
-public class User extends BaseEntity{
+public class User extends BaseImageEntity {
 
     @GeneratedValue @Id
     protected Long id;

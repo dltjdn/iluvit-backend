@@ -5,6 +5,8 @@ import FIS.iLUVit.domain.*;
 import FIS.iLUVit.domain.enumtype.Auth;
 import FIS.iLUVit.domain.enumtype.Status;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
@@ -109,6 +111,24 @@ class PtDateRepositoryTest {
         //when
 
         //then
+    }
+
+    @Nested
+    @DisplayName("설명회_신청")
+    class DoParticipation {
+
+//        @Test
+//        public void 설명회_신청_설명회_회차_정보_가져오기() throws Exception {
+//            //given
+//            Center center = createCenter("test", true, true, null);
+//            Presentation presentation = createInvalidPresentation(center);
+//            PtDate ptDate = Creator.createCanRegisterPtDate(presentation);
+//
+//            //when
+//            ptDateRepository.findByIdAndPresentationDate();
+//
+//            //then
+//        }
     }
 
 }

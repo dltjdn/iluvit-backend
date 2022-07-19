@@ -28,23 +28,7 @@ public class CenterAndDistancePreview {
     private Double distance;
     private String image;
     private Double starAverage;
-
-    public CenterAndDistancePreview(Long id, String name, String owner, String director, String estType, String tel, String startTime, String endTime, Integer minAge, Integer maxAge, String address, Area area, Double longitude, Double latitude) {
-        this.id = id;
-        this.name = name;
-        this.owner = owner;
-        this.director = director;
-        this.estType = estType;
-        this.tel = tel;
-        this.startTime = startTime;
-        this.endTime = endTime;
-        this.minAge = minAge;
-        this.maxAge = maxAge;
-        this.address = address;
-        this.area = area;
-        this.longitude = longitude;
-        this.latitude = latitude;
-    }
+    private String profileImage;
 
     @QueryProjection
     public CenterAndDistancePreview(Center center, Double starAverage){
@@ -64,10 +48,11 @@ public class CenterAndDistancePreview {
         this.latitude = center.getLatitude();
         this.starAverage = starAverage;
         this.theme = center.getTheme();
+        this.profileImage = center.getProfileImagePath();
     }
 
     @Builder
-    public CenterAndDistancePreview(Long id, String name, String owner, String director, String estType, String tel, String startTime, String endTime, Integer minAge, Integer maxAge, String address, Area area, Double longitude, Double latitude, Theme theme, Double distance, String image, Double starAverage) {
+    public CenterAndDistancePreview(Long id, String name, String owner, String director, String estType, String tel, String startTime, String endTime, Integer minAge, Integer maxAge, String address, Area area, Double longitude, Double latitude, Theme theme, Double distance, String image, Double starAverage, String profileImage) {
         this.id = id;
         this.name = name;
         this.owner = owner;
@@ -86,17 +71,18 @@ public class CenterAndDistancePreview {
         this.distance = distance;
         this.image = image;
         this.starAverage = starAverage;
+        this.profileImage = profileImage;
     }
 
-    public Double calculateDistance(double longitude, double latitude){
+    public CenterAndDistancePreview calculateDistance(double longitude, double latitude){
         double theta = this.longitude - longitude;
         double dist = Math.sin(deg2rad(this.latitude)) * Math.sin(deg2rad(latitude)) + Math.cos(deg2rad(this.latitude)) * Math.cos(deg2rad(latitude)) * Math.cos(deg2rad(theta));
 
         dist = Math.acos(dist);
         dist = rad2deg(dist);
         dist = dist * 60 * 1.1515 * 1609.344;
-        distance = dist/1000.0;               //km 단위로 끊음
-        return distance;
+        this.distance = dist/1000.0;               //km 단위로 끊음
+        return this;
     }
 
     // This function converts decimal degrees to radians

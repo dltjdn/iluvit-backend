@@ -25,7 +25,7 @@ class PresentationServiceTest {
     @Mock
     private CenterRepository centerRepository;
     @Spy
-    private ImageService imageService;
+    private LocalImageService imageService;
     @Mock
     private UserRepository userRepository;
     @Mock
@@ -110,7 +110,7 @@ class PresentationServiceTest {
     @Test
     void 설명회_수정하기() {
         //given
-        String centerDir = imageService.getCenterDir(1L);
+//        String centerDir = imageService.getCenterDir(1L);
         //when
 
         //then

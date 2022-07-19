@@ -1,4 +1,5 @@
 server:
+  port: 8081
   servlet:
     context-path: /
     encoding:
@@ -6,14 +7,9 @@ server:
       enabled: true
       force: true
 spring:
-  # 작성자: 원보라, 작성내용: swagger 라이브러리 오류 방지
-  mvc:
-    pathmatch:
-      matching-strategy: ant_path_matcher
-  # 작성자: 원보라, 작성내용: agent 사진 multipart
   servlet:
     multipart:
-      max-file-size: 20MB #최대 파일 사이즈 20MB
+      max-file-size: 20MB
   jpa:
     hibernate:
       ddl-auto: update
@@ -23,11 +19,30 @@ spring:
         default_batch_fetch_size: 100
         create_empty_composites:
           enabled: true
-  # 작성자 이승범, 작성내용: coolsms api 정보 불러오기
+  config:
+    import: application-database.yml, application-img.yml
   profiles:
     include:
       - secret
-      - mysql
+      - s3
+    active: develop
+    group:
+      develop: iluvit-develop, h2, local-image
+      release: iluvit-release, mysql, server-image
+
+---
+spring:
+  config.activate.on-profile: iluvit-develop
+
+logging:
+  level:
+    org.hibernate.SQL: debug
+
+---
+spring:
+  config.activate.on-profile: iluvit-release
+
 logging:
   level:
     org.hibernate.SQL: info
+

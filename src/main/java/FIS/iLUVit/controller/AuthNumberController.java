@@ -48,7 +48,7 @@ public class AuthNumberController {
     *   작성자: 이승범
     *   작성내용: 핸드폰번호 변경을 위한 인증번호 전송
     */
-    @GetMapping("/authNumber/phoneNumber")
+    @GetMapping("/user/authNumber/phoneNumber")
     public void sendAuthNumberForUpdatePhoneNum(@RequestParam String phoneNumber) {
         authNumberService.sendAuthNumberForSignup(phoneNumber, AuthKind.updatePhoneNum);
     }
@@ -56,10 +56,10 @@ public class AuthNumberController {
     /**
      * 작성날짜: 2022/05/24 3:24 PM
      * 작성자: 이승범
-     * 작성내용: 인증번호를 통한 핸드폰 인증
+     * 작성내용: 인증번호를 통한 핸드폰 인증 (회원가입, 비밀번호 찾기, 핸드폰번호 변경)
      */
     @PostMapping("/authNumber")
-    public void AuthenticateAuthNum(@RequestBody AuthenticateAuthNumRequest request) {
+    public void authenticateAuthNum(@RequestBody AuthenticateAuthNumRequest request) {
         authNumberService.authenticateAuthNum(request);
     }
 

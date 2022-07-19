@@ -16,6 +16,7 @@ public class PresentationQuryDto {
     private String content;             // 설명회 내용
     private Integer imgCnt;             // 설명회 이미지 개수 최대 __장
     private Integer videoCnt;           // 설명회 동영상 개수 최대 _개
+    private String infoImages;
 
     public PresentationQuryDto(PresentationWithPtDatesDto querydto) {
         presentationId = querydto.getPresentationId();
@@ -25,5 +26,6 @@ public class PresentationQuryDto {
         content = querydto.getContent();
         imgCnt = querydto.getImgCnt();
         videoCnt = querydto.getVideoCnt();
+        infoImages = querydto.getInfoImages();
     }
 }

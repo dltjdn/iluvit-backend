@@ -13,7 +13,6 @@ import FIS.iLUVit.exception.UserException;
 import FIS.iLUVit.repository.*;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
 import org.springframework.stereotype.Service;
@@ -90,14 +89,14 @@ public class ReviewService {
         Slice<ReviewByCenterDTO.ReviewCenterDto> dtos = reviews.map(review -> {
             log.info("userId: " + userId);
             Integer like = review.getReviewHearts().size();
-            String imagePath = imageService.getUserProfileDir();
-            String encodedProfileImage = imageService.getEncodedProfileImage(imagePath, review.getParent().getId());
+//            String imagePath = imageService.getUserProfileDir();
+//            String encodedProfileImage = imageService.getEncodedProfileImage(imagePath, review.getParent().getId());
             Long teacherId = review.getTeacher() == null ? null : review.getTeacher().getId();
             return new ReviewByCenterDTO.ReviewCenterDto(
                     review.getId(), review.getParent().getId(), review.getParent().getNickName(), review.getContent(), review.getScore(),
                     review.getCreateDate(), review.getCreateTime(), review.getUpdateDate(), review.getUpdateTime(),
                     teacherId, review.getAnswer(), review.getAnswerCreateDate(), review.getAnswerCreateTime(),
-                    review.getAnonymous(), like, encodedProfileImage
+                    review.getAnonymous(), like, imageService.getProfileImage(review.getParent())
             );
         });
 

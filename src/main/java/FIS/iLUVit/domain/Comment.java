@@ -1,6 +1,7 @@
 package FIS.iLUVit.domain;
 
 import lombok.AccessLevel;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.OnDelete;
@@ -67,5 +68,19 @@ public class Comment extends BaseEntity {
 
     public void updateUser(User user) {
         this.user = user;
+    }
+
+    @Builder(toBuilder = true)
+    public Comment(Long id, LocalDate date, LocalTime time, Boolean anonymous, String content, Post post, User user, List<CommentHeart> commentHearts, List<Comment> subComments, Comment parentComment) {
+        this.id = id;
+        this.date = date;
+        this.time = time;
+        this.anonymous = anonymous;
+        this.content = content;
+        this.post = post;
+        this.user = user;
+        this.commentHearts = commentHearts;
+        this.subComments = subComments;
+        this.parentComment = parentComment;
     }
 }

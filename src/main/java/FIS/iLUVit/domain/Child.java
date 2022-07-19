@@ -1,6 +1,5 @@
 package FIS.iLUVit.domain;
 
-import FIS.iLUVit.controller.dto.UpdateChildRequest;
 import FIS.iLUVit.domain.enumtype.Approval;
 import lombok.Builder;
 import lombok.Getter;
@@ -13,7 +12,7 @@ import java.time.LocalDate;
 @Entity
 @Getter
 @NoArgsConstructor
-public class Child extends BaseEntity {
+public class Child extends BaseImageEntity {
     @Id
     @GeneratedValue
     private Long id;
