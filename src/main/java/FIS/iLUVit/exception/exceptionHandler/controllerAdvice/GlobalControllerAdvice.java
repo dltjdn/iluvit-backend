@@ -22,8 +22,7 @@ import java.util.stream.Collectors;
 
 @Slf4j
 @RestControllerAdvice
-public class GlobalControllerAdvice extends ResponseEntityExceptionHandler
-{
+public class GlobalControllerAdvice extends ResponseEntityExceptionHandler {
 
     @Override
     protected ResponseEntity<Object> handleExceptionInternal(
@@ -118,6 +117,16 @@ public class GlobalControllerAdvice extends ResponseEntityExceptionHandler
 
     @ExceptionHandler(BoardException.class)
     public ResponseEntity<ErrorResponse> boardException(BoardException e) {
+        return makeErrorResponseEntity(e.getErrorResult());
+    }
+
+    @ExceptionHandler(CommentException.class)
+    public ResponseEntity<ErrorResponse> commentException(CommentException e) {
+        return makeErrorResponseEntity(e.getErrorResult());
+    }
+
+    @ExceptionHandler(PostException.class)
+    public ResponseEntity<ErrorResponse> postException(PostException e) {
         return makeErrorResponseEntity(e.getErrorResult());
     }
 }

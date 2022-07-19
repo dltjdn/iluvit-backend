@@ -6,10 +6,7 @@ import FIS.iLUVit.domain.Comment;
 import FIS.iLUVit.domain.Post;
 import FIS.iLUVit.domain.User;
 import FIS.iLUVit.domain.alarms.PostAlarm;
-import FIS.iLUVit.exception.CommentErrorResult;
-import FIS.iLUVit.exception.CommentException;
-import FIS.iLUVit.exception.PostException;
-import FIS.iLUVit.exception.UserException;
+import FIS.iLUVit.exception.*;
 import FIS.iLUVit.repository.CommentRepository;
 import FIS.iLUVit.repository.PostRepository;
 import FIS.iLUVit.repository.UserRepository;
@@ -36,9 +33,10 @@ public class CommentService {
             throw new CommentException(CommentErrorResult.UNAUTHORIZED_USER_ACCESS);
         }
 
-        User findUser = userRepository.findById(userId).orElse(null);
+        User findUser = userRepository.findById(userId)
+                .orElseThrow(() -> new UserException());
         Post findPost = postRepository.findById(postId)
-                .orElseThrow(() -> new PostException("존재하지 않는 게시글"));
+                .orElseThrow(() -> new PostException(PostErrorResult.POST_NOT_EXIST));
 
         Comment comment = new Comment(request.getAnonymous(), request.getContent(), findPost, findUser);
 
@@ -53,6 +51,9 @@ public class CommentService {
     }
 
     public Long deleteComment(Long userId, Long commentId) {
+        if (userId == null) {
+            throw new CommentException(CommentErrorResult.UNAUTHORIZED_USER_ACCESS);
+        }
         commentRepository.findById(commentId)
                 .ifPresentOrElse(c -> {
                     log.info("댓글 작성자 아이디 = {}, 접속 중인 유저 아이디 = {}", c.getUser().getId(), userId);
@@ -61,10 +62,10 @@ public class CommentService {
                         c.updateContent("삭제된 댓글입니다.");
                         c.updateUser(null);
                     } else {
-                        throw new UserException("삭제 권한없는 유저");
+                        throw new CommentException(CommentErrorResult.UNAUTHORIZED_USER_ACCESS);
                     }
                 }, () -> {
-                    throw new CommentException("존재하지 않는 댓글");
+                    throw new CommentException(CommentErrorResult.NO_EXIST_COMMENT);
                 });
         return commentId;
     }
