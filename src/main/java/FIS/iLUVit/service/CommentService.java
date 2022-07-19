@@ -6,6 +6,7 @@ import FIS.iLUVit.domain.Comment;
 import FIS.iLUVit.domain.Post;
 import FIS.iLUVit.domain.User;
 import FIS.iLUVit.domain.alarms.PostAlarm;
+import FIS.iLUVit.exception.CommentErrorResult;
 import FIS.iLUVit.exception.CommentException;
 import FIS.iLUVit.exception.PostException;
 import FIS.iLUVit.exception.UserException;
@@ -32,6 +33,10 @@ public class CommentService {
     private final UserRepository userRepository;
 
     public Long registerComment(Long userId, Long postId, Long commentId, RegisterCommentRequest request) {
+        if (userId == null) {
+            throw new CommentException(CommentErrorResult.UNAUTHORIZED_USER_ACCESS);
+        }
+
         User findUser = userRepository.getById(userId);
         Post findPost = postRepository.findById(postId)
                 .orElseThrow(() -> new PostException("존재하지 않는 게시글"));

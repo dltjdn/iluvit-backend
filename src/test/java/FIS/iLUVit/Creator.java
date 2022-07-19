@@ -156,4 +156,27 @@ public class Creator {
                 .user(user)
                 .build();
     }
+
+    public static Comment createComment(Boolean anonymous, String content, Post post, User user) {
+        return Comment.builder()
+                .anonymous(anonymous)
+                .content(content)
+                .post(post)
+                .user(user)
+                .build();
+    }
+
+    public static CommentHeart createCommentHeart(Long id, User user, Comment comment) {
+        return CommentHeart.builder()
+                .id(id)
+                .user(user)
+                .comment(comment)
+                .build();
+    }
+    public static CommentHeart createCommentHeart(User user, Comment comment) {
+        return CommentHeart.builder()
+                .user(user)
+                .comment(comment)
+                .build();
+    }
 }
