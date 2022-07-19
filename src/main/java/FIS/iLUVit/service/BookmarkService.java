@@ -2,6 +2,7 @@ package FIS.iLUVit.service;
 
 import FIS.iLUVit.controller.dto.BookmarkMainDTO;
 import FIS.iLUVit.domain.*;
+import FIS.iLUVit.exception.BookmarkErrorResult;
 import FIS.iLUVit.exception.BookmarkException;
 import FIS.iLUVit.exception.UserException;
 import FIS.iLUVit.repository.*;
@@ -72,7 +73,8 @@ public class BookmarkService {
         return dto;
     }
 
-    public BookmarkMainDTO.StoryDTO searchByDefault() {
+    public BookmarkMainDTO searchByDefault() {
+        BookmarkMainDTO dto = new BookmarkMainDTO();
         BookmarkMainDTO.StoryDTO storyDTO = new BookmarkMainDTO.StoryDTO(null, "모두의 이야기");
         List<Post> posts = boardRepository.findPostByDefault();
         List<BookmarkMainDTO.BoardDTO> boardDTOS = posts.stream()
@@ -80,21 +82,30 @@ public class BookmarkService {
                         p.getBoard().getId(), p.getBoard().getName(), p.getTitle(), p.getId()))
                 .collect(Collectors.toList());
         storyDTO.setBoardDTOList(boardDTOS);
-        return storyDTO;
+        dto.getStories().add(storyDTO);
+        return dto;
     }
 
     public Long create(Long userId, Long boardId) {
-        User findUser = userRepository.getById(userId);
-        Board findBoard = boardRepository.getById(boardId);
+        if (userId == null) {
+            throw new BookmarkException(BookmarkErrorResult.UNAUTHORIZED_USER_ACCESS);
+        }
+        User findUser = userRepository.findById(userId)
+                .orElseThrow(() -> new BookmarkException(BookmarkErrorResult.USER_NOT_EXIST));
+        Board findBoard = boardRepository.findById(boardId)
+                .orElseThrow(() -> new BookmarkException(BookmarkErrorResult.BOARD_NOT_EXIST));
         Bookmark bookmark = new Bookmark(findBoard, findUser);
         return bookmarkRepository.save(bookmark).getId();
     }
 
     public Long delete(Long userId, Long bookmarkId) {
+        if (userId == null) {
+            throw new BookmarkException(BookmarkErrorResult.UNAUTHORIZED_USER_ACCESS);
+        }
         Bookmark findBookmark = bookmarkRepository.findById(bookmarkId)
-                .orElseThrow(() -> new BookmarkException("존재하지 않는 북마크"));
+                .orElseThrow(() -> new BookmarkException(BookmarkErrorResult.BOOKMARK_NOT_EXIST));
         if (!Objects.equals(findBookmark.getUser().getId(), userId)) {
-            throw new UserException("삭제 권한 없는 유저");
+            throw new BookmarkException(BookmarkErrorResult.UNAUTHORIZED_USER_ACCESS);
         }
         bookmarkRepository.delete(findBookmark);
         return bookmarkId;

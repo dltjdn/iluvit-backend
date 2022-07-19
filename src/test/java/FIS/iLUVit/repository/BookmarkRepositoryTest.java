@@ -1,5 +1,6 @@
 package FIS.iLUVit.repository;
 
+import FIS.iLUVit.Creator;
 import FIS.iLUVit.config.argumentResolver.ForDB;
 import FIS.iLUVit.domain.*;
 import FIS.iLUVit.domain.enumtype.Auth;
@@ -12,7 +13,9 @@ import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.boot.test.autoconfigure.orm.jpa.TestEntityManager;
 import org.springframework.context.annotation.ComponentScan;
 
+import java.util.Arrays;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import static FIS.iLUVit.service.createmethod.CreateTest.*;
 import static FIS.iLUVit.service.createmethod.CreateTest.createCenter;
@@ -42,6 +45,7 @@ class BookmarkRepositoryTest {
     Bookmark bookmark1;
     Bookmark bookmark2;
     Bookmark bookmark3;
+    Bookmark bookmark4;
 
     Parent parent1;
     Teacher teacher1;
@@ -49,6 +53,13 @@ class BookmarkRepositoryTest {
     Teacher director2;
 
     Child child1;
+
+    Post post1;
+    Post post2;
+    Post post3;
+    Post post4;
+    Post post5;
+    Post post6;
 
     @BeforeEach
     public void init() {
@@ -81,11 +92,19 @@ class BookmarkRepositoryTest {
         board1 = createBoard("자유게시판", BoardKind.NORMAL, null, true);
         board2 = createBoard("맛집게시판", BoardKind.NORMAL, null, true);
         board3 = createBoard("정보게시판", BoardKind.NORMAL, center1, true);
-        board4 = createBoard("공지게시판", BoardKind.NORMAL, center2, true);
+        board4 = createBoard("공지게시판", BoardKind.NORMAL, center1, true);
 
         bookmark1 = createBookmark(board1, parent1);
         bookmark2 = createBookmark(board2, parent1);
         bookmark3 = createBookmark(board3, parent1);
+        bookmark4 = createBookmark(board4, parent1);
+
+        post1 = Creator.createPost("제목1", "내용1", true, 0, 0, 0, 0, board1, parent1);
+        post2 = Creator.createPost("제목2", "내용2", true, 0, 0, 0, 0, board2, parent1);
+        post3 = Creator.createPost("제목3", "내용3", true, 0, 0, 0, 0, board3, parent1);
+        post4 = Creator.createPost("제목4", "내용4", true, 0, 0, 0, 0, board4, parent1);
+        post5 = Creator.createPost("제목5", "내용5", true, 0, 0, 0, 0, board1, parent1);
+        post6 = Creator.createPost("제목6", "내용6", true, 0, 0, 0, 0, board2, parent1);
     }
 
     @Test
@@ -111,8 +130,6 @@ class BookmarkRepositoryTest {
     public void 센터의_이야기_북마크_조회() throws Exception {
         //given
         em.persist(center1);
-        em.flush();
-        em.clear();
         em.persist(board3);
         em.persist(parent1);
         em.persist(bookmark3);
@@ -126,4 +143,77 @@ class BookmarkRepositoryTest {
                 .contains(findBoard1);
     }
 
+    @Test
+    public void 북마크별_최신_게시글_하나씩_조회() throws Exception {
+        //given
+        em.persist(center1);
+        em.persist(board1);
+        em.persist(board2);
+        em.persist(board3);
+        em.persist(board4);
+        Parent saved1 = em.persist(parent1);
+        em.persist(bookmark1);
+        em.persist(bookmark2);
+        em.persist(bookmark3);
+        em.persist(bookmark4);
+        em.persist(post1);
+        em.persist(post2);
+        em.persist(post3);
+        em.persist(post4);
+        em.persist(post5);
+        em.persist(post6);
+        em.flush();
+        em.clear();
+        //when
+        List<Post> postList = bookmarkRepository.findPostByBoard(saved1.getId());
+        //then
+        List<Board> boardList = postList.stream()
+                .map(Post::getBoard)
+                .collect(Collectors.toList());
+
+        List<Center> centerList = boardList.stream()
+                .filter(b -> b.getCenter() != null)
+                .map(Board::getCenter)
+                .collect(Collectors.toList());
+
+        assertThat(postList).extracting("title")
+                .containsOnly("제목3", "제목4", "제목5", "제목6");
+
+        assertThat(boardList).extracting("name")
+                .containsOnly("정보게시판", "공지게시판", "자유게시판", "맛집게시판");
+
+        assertThat(centerList).extracting("name")
+                .containsOnly("떡잎유치원");
+    }
+
+    @Test
+    public void 북마크_삭제_게시판과_유저로() throws Exception {
+        //given
+        em.persist(center1);
+        Board saved1 = em.persist(board1);
+        Board saved2 = em.persist(board2);
+        Board saved3 = em.persist(board3);
+        Board saved4 = em.persist(board4);
+        Parent savedParent = em.persist(parent1);
+        em.persist(bookmark1);
+        em.persist(bookmark2);
+        em.persist(bookmark3);
+        em.persist(bookmark4);
+        em.flush();
+        em.clear();
+
+        List<Long> boardIds = Arrays
+                .asList(saved1.getId(), saved2.getId(), saved3.getId(), saved4.getId());
+
+        List<Bookmark> bookmarkList = bookmarkRepository.findAll();
+        //when
+        bookmarkRepository.deleteAllByBoardAndUser(savedParent.getId(), boardIds);
+
+        //then
+        List<Bookmark> postDelete = bookmarkRepository.findAll();
+
+        assertThat(bookmarkList.size()).isEqualTo(4);
+        assertThat(postDelete).isEmpty();
+
+    }
 }

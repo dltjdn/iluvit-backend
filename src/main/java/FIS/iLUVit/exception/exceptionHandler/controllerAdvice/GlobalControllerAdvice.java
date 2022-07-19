@@ -1,6 +1,7 @@
 package FIS.iLUVit.exception.exceptionHandler.controllerAdvice;
 
-import FIS.iLUVit.exception.PresentationErrorResult;
+import FIS.iLUVit.exception.AuthNumberException;
+import FIS.iLUVit.exception.exceptionHandler.ErrorResponse;
 import FIS.iLUVit.exception.PresentationException;
 import FIS.iLUVit.exception.exceptionHandler.ErrorResult;
 import lombok.extern.slf4j.Slf4j;
@@ -44,7 +45,7 @@ public class GlobalControllerAdvice extends ResponseEntityExceptionHandler {
 
     private ResponseEntity<Object> makeErrorResponseEntity(final String errorDescription) {
         return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-                .body(new ErrorResult(HttpStatus.BAD_REQUEST.toString(), errorDescription));
+                .body(new ErrorResponse(HttpStatus.BAD_REQUEST, errorDescription));
     }
 
 //    @ResponseStatus(HttpStatus.BAD_REQUEST)
@@ -55,22 +56,27 @@ public class GlobalControllerAdvice extends ResponseEntityExceptionHandler {
 //    }
 
     // repository에서 쿼리 날릴때 parameter가 null이면 생기는 예외(토큰이 유효하지 않아 @Login이 Null일 확률이 높음)
-    //
     @ResponseStatus(HttpStatus.FORBIDDEN)
     @ExceptionHandler(InvalidDataAccessApiUsageException.class)
-    public ErrorResult illegalExHandler(InvalidDataAccessApiUsageException e) {
+    public ErrorResponse illegalExHandler(InvalidDataAccessApiUsageException e) {
         log.error("[exceptionHandler] ex", e);
-        return new ErrorResult(HttpStatus.FORBIDDEN.toString(), "쿼리파라미터가 null 입니다. 토큰이 유효한지 확인해보세요");
+        return new ErrorResponse(HttpStatus.FORBIDDEN, "쿼리파라미터가 null 입니다. 토큰이 유효한지 확인해보세요");
     }
 
-    private ResponseEntity<ErrorResult> makeErrorResponseEntity(PresentationErrorResult errorResult) {
+    private ResponseEntity<ErrorResponse> makeErrorResponseEntity(ErrorResult errorResult) {
         return ResponseEntity.status(errorResult.getHttpStatus())
-                .body(new ErrorResult(errorResult.getHttpStatus().toString(), errorResult.getMessage()));
+                .body(new ErrorResponse(errorResult.getHttpStatus(), errorResult.getMessage()));
     }
 
     @ExceptionHandler(PresentationException.class)
-    public ResponseEntity<ErrorResult> PresenterExceptionHandler(PresentationException e){
+    public ResponseEntity<ErrorResponse> PresenterExceptionHandler(PresentationException e) {
         log.error("");
+        return makeErrorResponseEntity(e.getErrorResult());
+    }
+
+    @ExceptionHandler(AuthNumberException.class)
+    public ResponseEntity<ErrorResponse> authNumberExceptionHandler(AuthNumberException e) {
+        log.warn("[authNumberExceptionHandler] ex", e);
         return makeErrorResponseEntity(e.getErrorResult());
     }
 }

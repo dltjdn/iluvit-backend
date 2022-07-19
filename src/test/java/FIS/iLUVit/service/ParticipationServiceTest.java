@@ -8,6 +8,7 @@ import FIS.iLUVit.domain.enumtype.Status;
 import FIS.iLUVit.event.AlarmEvent;
 import FIS.iLUVit.exception.PresentationErrorResult;
 import FIS.iLUVit.exception.PresentationException;
+import FIS.iLUVit.repository.ParentRepository;
 import FIS.iLUVit.repository.ParticipationRepository;
 import FIS.iLUVit.repository.PtDateRepository;
 import FIS.iLUVit.repository.UserRepository;
@@ -39,11 +40,13 @@ class ParticipationServiceTest {
      */
 
     @Mock
-    UserRepository userRepository;
+    ParentRepository parentRepository;
     @Mock
     ParticipationRepository participationRepository;
     @Mock
     PtDateRepository ptDateRepository;
+    @Mock
+    UserRepository userRepository;
     @InjectMocks
     ParticipationService target;
 
@@ -246,7 +249,7 @@ class ParticipationServiceTest {
                 .save(any(Participation.class));
 
         Mockito.doReturn(Parent.builder().id(parent.getId()).build())
-                .when(userRepository)
+                .when(parentRepository)
                 .getById(parent.getId());
 
 
@@ -273,7 +276,7 @@ class ParticipationServiceTest {
                 .findByIdAndJoinParticipation(ptDate3.getId());
         Mockito.verify(participationRepository, Mockito.times(1))
                 .save(any(Participation.class));
-        Mockito.verify(userRepository, Mockito.times(1))
+        Mockito.verify(parentRepository, Mockito.times(1))
                 .getById(parent.getId());
 
     }
