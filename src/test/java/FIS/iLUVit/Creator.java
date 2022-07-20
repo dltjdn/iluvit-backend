@@ -234,6 +234,26 @@ public class Creator {
                 .build();
     }
 
+    public static Review createReview(Long id, Center center, Integer score, Parent parent, Teacher teacher, String content){
+        return Review.builder()
+                .id(id)
+                .center(center)
+                .score(score)
+                .parent(parent)
+                .teacher(teacher)
+                .content(content)
+                .build();
+    }
+    public static Review createReview(Center center, Integer score, Parent parent, Teacher teacher, String content){
+        return Review.builder()
+                .center(center)
+                .score(score)
+                .parent(parent)
+                .teacher(teacher)
+                .content(content)
+                .build();
+    }
+
     public static Parent createParent(){
         return Parent.builder()
                 .build();

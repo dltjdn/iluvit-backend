@@ -29,8 +29,8 @@ public class ReviewController {
         내용: 학부모가 쓴 리뷰 등록
     */
     @PostMapping("/review")
-    public void registerReview(@Login Long userId, @RequestBody ReviewCreateDTO reviewCreateDTO) {
-        reviewService.saveReview(userId, reviewCreateDTO);
+    public Long registerReview(@Login Long userId, @RequestBody ReviewCreateDTO reviewCreateDTO) {
+        return reviewService.saveReview(userId, reviewCreateDTO);
     }
 
     /**
@@ -60,10 +60,9 @@ public class ReviewController {
         내용: 센터에 올라온 리뷰들 조회
     */
     @GetMapping("/review/center/{center_id}")
-    public ReviewByCenterDTO searchByCenter(@Login Long userId,
-                                            @PathVariable(name = "center_id") Long centerId,
+    public ReviewByCenterDTO searchByCenter(@PathVariable(name = "center_id") Long centerId,
                                             Pageable pageable) {
-        return reviewService.findByCenter(centerId, userId, pageable);
+        return reviewService.findByCenter(centerId, pageable);
     }
 
     /**

@@ -17,6 +17,9 @@ public class CommentDTO {
     private String content;
 
     private Long post_id; // 연관된 게시글 아이디
+    private String post_title;
+    private Integer post_heart_cnt;
+    private Integer post_comment_cnt;
     private Long user_id; // 댓글 작성자 아이디
     private Long board_id; // 게시판 아이디
     private String board_name; // 게시판 이름
@@ -28,6 +31,9 @@ public class CommentDTO {
         this.anonymous = c.getAnonymous();
         this.content = c.getContent();
         this.post_id = c.getPost().getId();
+        this.post_title = c.getPost().getTitle();
+        this.post_heart_cnt = c.getPost().getHeartCnt();
+        this.post_comment_cnt = c.getPost().getCommentCnt();
         this.user_id = c.getUser().getId();
         this.board_id = c.getPost().getBoard().getId();
         this.board_name = c.getPost().getBoard().getName();
