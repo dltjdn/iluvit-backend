@@ -71,9 +71,9 @@ public class ReviewController {
         내용: 시설에 달린 리뷰 답글 등록 + 수정, 답글 달 수 있는 권한은 Director 만 가능
      */
     @PostMapping("/review/{review_id}/comment")
-    public void registerComment(@Login Long teacherId, @PathVariable("review_id") Long reviewId,
+    public Long registerComment(@Login Long teacherId, @PathVariable("review_id") Long reviewId,
                                 @RequestBody ReviewCommentDTO reviewCommentDTO) {
-        reviewService.saveComment(reviewId, reviewCommentDTO.getComment(), teacherId);
+        return reviewService.saveComment(reviewId, reviewCommentDTO.getComment(), teacherId);
     }
 
     /**

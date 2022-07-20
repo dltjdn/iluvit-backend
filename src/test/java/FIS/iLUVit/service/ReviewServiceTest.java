@@ -5,6 +5,7 @@ import FIS.iLUVit.controller.dto.ReviewByCenterDTO;
 import FIS.iLUVit.controller.dto.ReviewByParentDTO;
 import FIS.iLUVit.controller.dto.ReviewCreateDTO;
 import FIS.iLUVit.domain.*;
+import FIS.iLUVit.domain.enumtype.Approval;
 import FIS.iLUVit.domain.enumtype.Auth;
 import FIS.iLUVit.exception.*;
 import FIS.iLUVit.repository.CenterRepository;
@@ -62,6 +63,7 @@ public class ReviewServiceTest {
     Parent parent3;
 
     Teacher teacher1;
+    Teacher teacher2;
 
     Center center1;
 
@@ -103,12 +105,21 @@ public class ReviewServiceTest {
                 .build();
         teacher1 = Teacher.builder()
                 .id(4L)
+                .center(center1)
+                .approval(Approval.WAITING)
                 .name("TeacherA")
-                .auth(Auth.DIRECTOR)
+                .auth(Auth.TEACHER)
+                .build();
+        teacher2 = Teacher.builder()
+                .id(9L)
+                .center(center1)
+                .approval(Approval.ACCEPT)
+                .name("TeacherB")
+                .auth(Auth.TEACHER)
                 .build();
 
         review1 = Creator.createReview(6L, center1, 5, parent1, null, "위생에 철저해요");
-        review1.updateAnswer("리뷰5L,  남겨주셔서 감사합니다", teacher1);
+        review1.updateAnswer("리뷰 남겨주셔서 감사합니다", teacher1);
         review2 = Creator.createReview(7L, center1, 4, parent2, null, "나쁘지 않아요");
         review3 = Creator.createReview(8L, center1, 1, parent3, null, "불친절해요");
 
@@ -426,10 +437,187 @@ public class ReviewServiceTest {
     @Test
     public void 리뷰_답글_작성_리뷰X() throws Exception {
         //given
-
+        Mockito.doReturn(Optional.empty())
+                .when(reviewRepository)
+                .findById(review1.getId());
         //when
+        ReviewException result = assertThrows(ReviewException.class,
+                () -> reviewService.saveComment(
+                        review1.getId(), "리뷰 남겨주셔서 감사합니다", teacher1.getId()));
 
         //then
+        assertThat(result.getErrorResult())
+                .isEqualTo(ReviewErrorResult.REVIEW_NOT_EXIST);
+    }
+
+    @Test
+    public void 리뷰_답글_작성_교사X() throws Exception {
+        //given
+        Mockito.doReturn(Optional.of(review1))
+                .when(reviewRepository)
+                .findById(review1.getId());
+
+        Mockito.doReturn(Optional.empty())
+                .when(teacherRepository)
+                .findById(teacher1.getId());
+        //when
+        UserException result = assertThrows(UserException.class,
+                () -> reviewService.saveComment(
+                        review1.getId(), "리뷰 남겨주셔서 감사합니다", teacher1.getId()));
+        //then
+        assertThat(result.getErrorResult())
+                .isEqualTo(UserErrorResult.USER_NOT_EXIST);
+    }
+
+    @Test
+    public void 리뷰_답글_작성_교사_승인X() throws Exception {
+        //given
+        Mockito.doReturn(Optional.of(review1))
+                .when(reviewRepository)
+                .findById(review1.getId());
+
+        Mockito.doReturn(Optional.of(teacher1))
+                .when(teacherRepository)
+                .findById(teacher1.getId());
+        //when
+        ReviewException result = assertThrows(ReviewException.class,
+                () -> reviewService.saveComment(
+                        review1.getId(), "리뷰 남겨주셔서 감사합니다", teacher1.getId()));
+        //then
+        assertThat(result.getErrorResult())
+                .isEqualTo(ReviewErrorResult.APPROVAL_INCOMPLETE);
+    }
+
+    @Test
+    public void 리뷰_답글_작성_교사_승인O_디렉터X() throws Exception {
+        //given
+
+        Mockito.doReturn(Optional.of(review1))
+                .when(reviewRepository)
+                .findById(review1.getId());
+
+        Mockito.doReturn(Optional.of(teacher2))
+                .when(teacherRepository)
+                .findById(teacher2.getId());
+        //when
+        ReviewException result = assertThrows(ReviewException.class,
+                () -> reviewService.saveComment(
+                        review1.getId(), "리뷰 남겨주셔서 감사합니다", teacher2.getId()));
+        //then
+        assertThat(result.getErrorResult())
+                .isEqualTo(ReviewErrorResult.UNAUTHORIZED_USER_ACCESS);
+    }
+
+    @Test
+    public void 리뷰_답글_작성_교사_승인O_디렉터O_해당_센터_교사X() throws Exception {
+        //given
+        Center center2 = Creator.createCenter(55L, "핑핑유치원", true, true, null);
+
+        Teacher teacher3 = Teacher.builder()
+                .id(99L)
+                .center(center2)
+                .approval(Approval.ACCEPT)
+                .name("TeacherX")
+                .auth(Auth.DIRECTOR)
+                .build();
+
+        Mockito.doReturn(Optional.of(review1))
+                .when(reviewRepository)
+                .findById(review1.getId());
+
+        Mockito.doReturn(Optional.of(teacher3))
+                .when(teacherRepository)
+                .findById(teacher3.getId());
+        //when
+        ReviewException result = assertThrows(ReviewException.class,
+                () -> reviewService.saveComment(
+                        review1.getId(), "리뷰 남겨주셔서 감사합니다", teacher3.getId()));
+        //then
+        assertThat(result.getErrorResult())
+                .isEqualTo(ReviewErrorResult.UNAUTHORIZED_USER_ACCESS);
+    }
+
+    @Test
+    public void 리뷰_답글_작성_성공() throws Exception {
+        //given
+        teacher2.beDirector();
+
+        Mockito.doReturn(Optional.of(review2))
+                .when(reviewRepository)
+                .findById(review2.getId());
+
+        Mockito.doReturn(Optional.of(teacher2))
+                .when(teacherRepository)
+                .findById(teacher2.getId());
+
+        //when
+        Long savedId = reviewService
+                .saveComment(review2.getId(), "리뷰 남겨주셔서 감사합니다", teacher2.getId());
+        //then
+        assertThat(savedId)
+                .isEqualTo(review2.getId());
+        assertThat(review2.getAnswer())
+                .isEqualTo("리뷰 남겨주셔서 감사합니다");
+        assertThat(review2.getTeacher())
+                .isEqualTo(teacher2);
+
+    }
+
+    @Test
+    public void 리뷰_답글_삭제_리뷰X() throws Exception {
+        //given
+        Mockito.doReturn(Optional.empty())
+                .when(reviewRepository)
+                .findById(review1.getId());
+        //when
+        ReviewException result = assertThrows(ReviewException.class,
+                () -> reviewService.deleteComment(review1.getId(), teacher1.getId()));
+
+        //then
+        assertThat(result.getErrorResult())
+                .isEqualTo(ReviewErrorResult.REVIEW_NOT_EXIST);
+    }
+
+    @Test
+    public void 리뷰_답글_삭제_권한X() throws Exception {
+        //given
+        Center center2 = Creator.createCenter(55L, "핑핑유치원", true, true, null);
+
+        Teacher teacher3 = Teacher.builder()
+                .id(99L)
+                .center(center2)
+                .approval(Approval.ACCEPT)
+                .name("TeacherX")
+                .auth(Auth.DIRECTOR)
+                .build();
+
+        Mockito.doReturn(Optional.of(review1))
+                .when(reviewRepository)
+                .findById(review1.getId());
+        //when
+        ReviewException result = assertThrows(ReviewException.class,
+                () -> reviewService.deleteComment(review1.getId(), teacher3.getId()));
+
+        //then
+        assertThat(result.getErrorResult())
+                .isEqualTo(ReviewErrorResult.UNAUTHORIZED_USER_ACCESS);
+    }
+
+    @Test
+    public void 리뷰_답글_삭제_성공() throws Exception {
+        //given
+        Mockito.doReturn(Optional.of(review1))
+                .when(reviewRepository)
+                .findById(review1.getId());
+        //when
+        reviewService.deleteComment(review1.getId(), teacher1.getId());
+
+        //then
+        assertThat(review1.getAnswer())
+                .isNull();
+        assertThat(review1.getTeacher())
+                .isNull();
+
     }
 
 }

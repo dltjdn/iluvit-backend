@@ -142,4 +142,14 @@ public class GlobalControllerAdvice extends ResponseEntityExceptionHandler {
     public ResponseEntity<ErrorResponse> userException(UserException e) {
         return makeErrorResponseEntity(e.getErrorResult());
     }
+
+    @ExceptionHandler(ReviewException.class)
+    public ResponseEntity<ErrorResponse> reviewException(ReviewException e) {
+        return makeErrorResponseEntity(e.getErrorResult());
+    }
+
+    @ExceptionHandler(CenterException.class)
+    public ResponseEntity<ErrorResponse> centerException(CenterException e) {
+        return makeErrorResponseEntity(e.getErrorResult());
+    }
 }
