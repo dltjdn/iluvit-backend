@@ -86,9 +86,9 @@ public class PtDate extends BaseEntity {
             throw new PresentationException("정원이 가득 차지 않아 대기를 할 필요없습니다. 설명회 신청을 해주세요");
     }
 
-    public void acceptWaiting(Waiting waiting) {
-        waitingCnt++;
+    public PtDate acceptWaiting(Waiting waiting) {
         waitings.add(waiting);
+        return this;
     }
 
     // 등록이 가능한지 여부 체크
@@ -151,5 +151,15 @@ public class PtDate extends BaseEntity {
 
     public void resetWaitingCnt() {
         waitingCnt = 0;
+    }
+
+    public PtDate increaseWaitingCnt() {
+        waitingCnt++;
+        return this;
+    }
+
+    public PtDate decreaseWaitingCnt() {
+        waitingCnt--;
+        return this;
     }
 }

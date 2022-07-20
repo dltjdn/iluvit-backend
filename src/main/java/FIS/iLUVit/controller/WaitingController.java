@@ -33,13 +33,13 @@ public class WaitingController {
     @PostMapping("/waiting")
     public Long register(@Login Long userId, @RequestBody WaitingRegisterDto dto){
         Long ptDateId = dto.getPtDateId();
-        return waitingService.register(userId, ptDateId);
+        return waitingService.register(userId, ptDateId).getId();
     }
 
     @DeleteMapping("/waiting")
-    public Long cancel(@Login Long userid, @RequestBody WaitingCancelDto dto){
+    public Long cancel(@Login Long userId, @RequestBody WaitingCancelDto dto){
         Long waitingId = dto.getWaitingId();
-        return waitingService.cancel(waitingId);
+        return waitingService.cancel(waitingId, userId);
     }
 
     @GetMapping("/test")

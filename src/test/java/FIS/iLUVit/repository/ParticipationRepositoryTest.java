@@ -11,6 +11,7 @@ import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.context.annotation.ComponentScan;
 
 import javax.persistence.EntityManager;
+import java.util.List;
 import java.util.Optional;
 
 import static FIS.iLUVit.Creator.*;
@@ -90,6 +91,32 @@ class ParticipationRepositoryTest {
 
             //then
             assertThat(result.orElse(null)).isNull();
+        }
+
+        @Test
+        public void 신청_조회_JOINED되는_것만_출력() throws Exception {
+            //given
+            Center center = createCenter("test", true, true, null);
+            Parent parent = createParent();
+            Presentation presentation = createValidPresentation(center);
+            PtDate ptDate = createCanNotRegisterPtDate(presentation);
+            Participation joinParticipation = createJoinParticipation(ptDate, parent);
+            Participation cancelParticipation = createCancelParticipation(ptDate, parent);
+            em.persist(center);
+            em.persist(presentation);
+            em.persist(ptDate);
+            em.persist(parent);
+            em.persist(joinParticipation);
+            em.persist(cancelParticipation);
+            em.flush();
+
+            //when
+            List<Participation> target = participationRepository.findByPtDateAndStatusJOINED(ptDate.getId());
+
+            //then
+            assertThat(target.size()).isEqualTo(1);
+            assertThat(target.contains(cancelParticipation)).isFalse();
+
         }
     }
 }
