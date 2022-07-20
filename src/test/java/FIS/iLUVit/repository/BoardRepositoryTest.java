@@ -7,6 +7,7 @@ import FIS.iLUVit.domain.Kindergarten;
 import FIS.iLUVit.domain.embeddable.Area;
 import FIS.iLUVit.domain.enumtype.BoardKind;
 import FIS.iLUVit.exception.BoardException;
+import FIS.iLUVit.service.createmethod.CreateTest;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
@@ -191,6 +192,30 @@ class BoardRepositoryTest {
         assertThat(findBoard2).isEqualTo(board2);
         assertThat(findBoard2.getCenter()).isEqualTo(center1);
         assertThat(findBoard2.getIsDefault()).isEqualTo(true);
+    }
+
+    @Test
+    public void 모두의이야기defaul게시판조회() {
+        // given
+        Kindergarten center1 = Kindergarten.createKindergarten("떡잎유치원", "민병관", "민병관", "민간", "ㅁㄴㅇ", "2022-02-20", "02-123-1234", "www.www.www", "09:00", "19:00",
+                3, 90, "서울시 금천구 뉴티캐슬", "152-052", new Area("서울시", "금천구"), 123.123, 123.123, "흙찡구놀이, 비둘기잡기", 99999, 88888, LocalDate.now(), false,
+                false, 0, "gkgkgkgk", 3, 0, "얼쥡", null, null, null, null, null, null);
+        Board board1 = CreateTest.createBoard( "자유게시판", BoardKind.NORMAL, null, true);
+        Board board2 = CreateTest.createBoard("맛집게시판", BoardKind.NORMAL, null, false);
+        Board board3 = CreateTest.createBoard("맛집게시판", BoardKind.NORMAL, center1, true);
+        Board board4 = CreateTest.createBoard("맛집게시판", BoardKind.NORMAL, center1, true);
+        centerRepository.save(center1);
+        boardRepository.save(board1);
+        boardRepository.save(board2);
+        boardRepository.save(board3);
+        boardRepository.save(board4);
+        em.flush();
+        em.clear();
+        // when
+        List<Board> result = boardRepository.findDefaultByModu();
+        // then
+        assertThat(result.size()).isEqualTo(1);
+        assertThat(result.get(0).getId()).isEqualTo(board1.getId());
     }
 
 

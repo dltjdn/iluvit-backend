@@ -6,9 +6,7 @@ import FIS.iLUVit.domain.AuthNumber;
 import FIS.iLUVit.domain.User;
 import FIS.iLUVit.domain.alarms.Alarm;
 import FIS.iLUVit.domain.enumtype.AuthKind;
-import FIS.iLUVit.exception.InputException;
-import FIS.iLUVit.exception.SignupException;
-import FIS.iLUVit.exception.UserException;
+import FIS.iLUVit.exception.*;
 import FIS.iLUVit.filter.LoginResponse;
 import FIS.iLUVit.repository.AlarmRepository;
 import FIS.iLUVit.repository.AuthNumberRepository;
@@ -66,21 +64,26 @@ public class UserService {
     }
 
     // 회원가입 학부모, 교사 공통 로직(유효성 검사 및 비밀번호 해싱)
-    public String signupValidation(String password, String passwordCheck, String loginId, String phoneNum) {
+    public String signupValidation(String password, String passwordCheck, String loginId, String phoneNum, String nickName) {
+
+        // 비밀번호 확인
         if (!password.equals(passwordCheck)) {
-            throw new SignupException("비밀번호와 비밀번호확인이 서로 다릅니다.");
+            throw new SignupException(SignupErrorResult.NOT_MATCH_PWDCHECK);
         }
 
-        User reduplicatedUser = userRepository.findByLoginId(loginId).orElse(null);
-        if (reduplicatedUser != null) {
-            throw new SignupException("중복된 닉네임입니다.");
+        // 로그인 아이디, 닉네임 중복확인
+        User duplicatedUser = userRepository.findByLoginIdOrNickName(loginId, nickName).orElse(null);
+        if (duplicatedUser != null) {
+            throw new SignupException(SignupErrorResult.DUPLICATED_NICKNAME);
         }
 
-        AuthNumber authComplete = authNumberRepository.findAuthComplete(phoneNum, AuthKind.signup).orElse(null);
-        if (authComplete == null) {
-            throw new SignupException("핸드폰 인증이 완료되지 않았습니다.");
-        } else if (Duration.between(authComplete.getAuthTime(), LocalDateTime.now()).getSeconds() > (60 * 60)) {
-            throw new SignupException("핸드폰 인증시간이 만료되었습니다. 핸드폰 인증을 다시 해주세요");
+        // 핸드폰 인증확인
+        AuthNumber authComplete = authNumberRepository.findAuthComplete(phoneNum, AuthKind.signup)
+                .orElseThrow(() -> new AuthNumberException(AuthNumberErrorResult.NOT_AUTHENTICATION));
+
+        // 핸드폰 인증후 너무 많은 시간이 지났으면 인증 무효
+        if (Duration.between(authComplete.getAuthTime(), LocalDateTime.now()).getSeconds() > (60 * 60)) {
+            throw new AuthNumberException(AuthNumberErrorResult.EXPIRED);
         }
 
         return encoder.encode(password);

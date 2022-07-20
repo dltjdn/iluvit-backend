@@ -6,10 +6,12 @@ import FIS.iLUVit.repository.dto.CenterPreview;
 import FIS.iLUVit.service.ParentService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.context.MessageSource;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
 import java.io.IOException;
 
 @Slf4j
@@ -18,6 +20,7 @@ import java.io.IOException;
 public class ParentController {
 
     private final ParentService parentService;
+    private final MessageSource messageSource;
 
     /**
      * 작성날짜: 2022/05/13 4:43 PM
@@ -45,7 +48,7 @@ public class ParentController {
      * 작성내용: 학부모 회원가입
      */
     @PostMapping("/signup/parent")
-    public void signupParent(@RequestBody SignupParentRequest request) {
+    public void signupParent(@RequestBody @Valid SignupParentRequest request) {
         parentService.signup(request);
     }
 

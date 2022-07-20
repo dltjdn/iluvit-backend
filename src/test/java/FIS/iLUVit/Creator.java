@@ -168,6 +168,12 @@ public class Creator {
                 .build();
     }
 
+    public static Teacher createTeacher(Long id, String name, Center center) {
+        return Teacher.builder()
+                .id(id)
+                .name(name)
+                .build();
+    }
     public static Theme englishAndCoding(){
         return Theme.builder()
                 .english(true)
