@@ -3,6 +3,8 @@ package FIS.iLUVit.repository;
 import FIS.iLUVit.Creator;
 import FIS.iLUVit.config.argumentResolver.ForDB;
 import FIS.iLUVit.domain.AuthNumber;
+import FIS.iLUVit.domain.Parent;
+import FIS.iLUVit.domain.User;
 import FIS.iLUVit.domain.enumtype.AuthKind;
 import org.hibernate.exception.ConstraintViolationException;
 import org.junit.jupiter.api.BeforeEach;
@@ -26,7 +28,7 @@ public class AuthNumberRepositoryTest {
 
     @Autowired
     private AuthNumberRepository authNumberRepository;
-    
+
     @Autowired
     private EntityManager em;
 
@@ -34,16 +36,20 @@ public class AuthNumberRepositoryTest {
     AuthNumber authNumber2;
     AuthNumber authNumber3;
     AuthNumber authNumber4;
+    User user;
     String phoneNum1 = "phoneNumber1";
     String phoneNum2 = "phoneNumber2";
     String authNum = "1234";
 
     @BeforeEach
     void init() {
-        authNumber1 = AuthNumber.createAuthNumber(phoneNum1, authNum, AuthKind.signup);
-        authNumber2 = AuthNumber.createAuthNumber(phoneNum1, authNum, AuthKind.findLoginId);
-        authNumber3 = AuthNumber.createAuthNumber(phoneNum2, authNum, AuthKind.signup);
-        authNumber4 = AuthNumber.createAuthNumber(phoneNum2, authNum, AuthKind.findLoginId);
+        authNumber1 = AuthNumber.createAuthNumber(phoneNum1, authNum, AuthKind.signup, null);
+        authNumber2 = AuthNumber.createAuthNumber(phoneNum1, authNum, AuthKind.findLoginId, null);
+        authNumber3 = AuthNumber.createAuthNumber(phoneNum2, authNum, AuthKind.signup, null);
+        authNumber4 = AuthNumber.createAuthNumber(phoneNum2, authNum, AuthKind.findLoginId, null);
+        user = Parent.builder()
+                .phoneNumber(phoneNum1)
+                .build();
     }
 
 
@@ -63,7 +69,7 @@ public class AuthNumberRepositoryTest {
     }
 
     @Test
-    public void 회원가입용인증번호를받은적이있는지확인() {
+    public void findOverlap() {
         // given
         authNumberRepository.save(authNumber1);
         authNumberRepository.save(authNumber2);
@@ -80,7 +86,7 @@ public class AuthNumberRepositoryTest {
     }
 
     @Test
-    public void 이미발급받은인증번호db에서지우기() {
+    public void deleteExpiredNumber() {
         // given
         authNumberRepository.save(authNumber1);
         authNumberRepository.save(authNumber2);
@@ -108,7 +114,7 @@ public class AuthNumberRepositoryTest {
         em.clear();
 
         // when
-        AuthNumber over = AuthNumber.createAuthNumber(phoneNum1, authNum, AuthKind.signup);
+        AuthNumber over = AuthNumber.createAuthNumber(phoneNum1, authNum, AuthKind.signup, null);
         authNumberRepository.save(over);
 
         // then
@@ -117,7 +123,7 @@ public class AuthNumberRepositoryTest {
     }
 
     @Test
-    public void 인증번호정보일치여부확인() {
+    public void findByPhoneNumAndAuthNumAndAuthKind() {
         // given
         authNumberRepository.save(authNumber1);
         authNumberRepository.save(authNumber2);
@@ -136,7 +142,7 @@ public class AuthNumberRepositoryTest {
     }
 
     @Test
-    public void 인증번호인증여부검사_인증된거없음() {
+    public void findAuthComplete_인증된거없음() {
         // given
         AuthNumber authNumber = Creator.createAuthNumber(phoneNum1, authNum, AuthKind.findPwd, null);
         authNumberRepository.save(authNumber);
@@ -149,7 +155,7 @@ public class AuthNumberRepositoryTest {
     }
 
     @Test
-    public void 인증번호인증여부검사_인증된거있음() {
+    public void findAuthComplete_인증된거있음() {
         // given
         AuthNumber authNumber = Creator.createAuthNumber(phoneNum1, authNum, AuthKind.findPwd, LocalDateTime.now());
         authNumberRepository.save(authNumber);
@@ -162,6 +168,44 @@ public class AuthNumberRepositoryTest {
         assertThat(target.getId()).isEqualTo(authNumber.getId());
     }
 
+    @Test
+    public void deleteByPhoneNumAndAuthKind() {
+        // given
+        authNumberRepository.save(authNumber1);
+        authNumberRepository.save(authNumber2);
+        em.flush();
+        em.clear();
+        // when
+        authNumberRepository.deleteByPhoneNumAndAuthKind(authNumber1.getPhoneNum(), AuthKind.signup);
+        // then
+        AuthNumber result = authNumberRepository.findById(authNumber1.getId()).orElse(null);
+        assertThat(result).isNull();
+    }
+
+    @Test
+    public void findByPhoneNumAndAuthNumAndAuthKindAndUserId() {
+        // given
+        em.persist(user);
+        AuthNumber authNumber = AuthNumber.builder()
+                .phoneNum(phoneNum1)
+                .authNum(authNum)
+                .authKind(AuthKind.updatePhoneNum)
+                .userId(user.getId())
+                .build();
+        authNumberRepository.save(authNumber);
+        authNumberRepository.save(authNumber1);
+        authNumberRepository.save(authNumber2);
+        authNumberRepository.save(authNumber3);
+        authNumberRepository.save(authNumber4);
+        em.flush();
+        em.clear();
+        // when
+        AuthNumber target = authNumberRepository.findByPhoneNumAndAuthNumAndAuthKindAndUserId(phoneNum1, authNum, authNumber.getAuthKind(), user.getId())
+                .orElse(null);
+        // then
+        assertThat(target).isNotNull();
+        assertThat(target.getId()).isEqualTo(authNumber.getId());
+    }
 
 
 }

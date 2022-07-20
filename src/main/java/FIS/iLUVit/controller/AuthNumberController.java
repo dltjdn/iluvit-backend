@@ -1,5 +1,6 @@
 package FIS.iLUVit.controller;
 
+import FIS.iLUVit.config.argumentResolver.Login;
 import FIS.iLUVit.controller.dto.AuthenticateAuthNumRequest;
 import FIS.iLUVit.controller.dto.FindPasswordRequest;
 import FIS.iLUVit.domain.enumtype.AuthKind;
@@ -20,7 +21,7 @@ public class AuthNumberController {
      */
     @GetMapping("/authNumber/signup")
     public void sendAuthNumberForSignup(@RequestParam String phoneNumber) {
-        authNumberService.sendAuthNumberForSignup(phoneNumber, AuthKind.signup);
+        authNumberService.sendAuthNumberForSignup(phoneNumber);
     }
 
     /**
@@ -49,8 +50,8 @@ public class AuthNumberController {
     *   작성내용: 핸드폰번호 변경을 위한 인증번호 전송
     */
     @GetMapping("/user/authNumber/phoneNumber")
-    public void sendAuthNumberForUpdatePhoneNum(@RequestParam String phoneNumber) {
-        authNumberService.sendAuthNumberForSignup(phoneNumber, AuthKind.updatePhoneNum);
+    public void sendAuthNumberForUpdatePhoneNum(@Login Long userId, @RequestParam String phoneNumber) {
+        authNumberService.sendAuthNumberForChangePhone(userId, phoneNumber);
     }
 
     /**
@@ -59,8 +60,8 @@ public class AuthNumberController {
      * 작성내용: 인증번호를 통한 핸드폰 인증 (회원가입, 비밀번호 찾기, 핸드폰번호 변경)
      */
     @PostMapping("/authNumber")
-    public void authenticateAuthNum(@RequestBody AuthenticateAuthNumRequest request) {
-        authNumberService.authenticateAuthNum(request);
+    public void authenticateAuthNum(@Login Long userId, @RequestBody AuthenticateAuthNumRequest request) {
+        authNumberService.authenticateAuthNum(userId, request);
     }
 
     /**
