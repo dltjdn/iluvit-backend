@@ -4,6 +4,7 @@ import FIS.iLUVit.Creator;
 import FIS.iLUVit.config.argumentResolver.LoginUserArgumentResolver;
 import FIS.iLUVit.controller.dto.SignupTeacherRequest;
 import FIS.iLUVit.controller.dto.TeacherDetailResponse;
+import FIS.iLUVit.controller.dto.UpdateTeacherDetailRequest;
 import FIS.iLUVit.domain.Teacher;
 import FIS.iLUVit.exception.SignupErrorResult;
 import FIS.iLUVit.exception.SignupException;
@@ -18,11 +19,18 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.http.MediaType;
+import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
+
+import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 
 import static FIS.iLUVit.Creator.createJwtToken;
 import static org.mockito.Mockito.doReturn;
@@ -42,15 +50,20 @@ public class TeacherControllerTest {
     private ObjectMapper objectMapper;
     private MockMvc mockMvc;
     private Teacher teacher;
+    private MockMultipartFile multipartFile;
 
     @BeforeEach
-    public void init() {
+    public void init() throws IOException {
         objectMapper = new ObjectMapper();
         mockMvc = MockMvcBuilders.standaloneSetup(target)
                 .setCustomArgumentResolvers(new LoginUserArgumentResolver())
                 .setControllerAdvice(GlobalControllerAdvice.class)
                 .build();
         teacher = Creator.createTeacher(1L, "teacher", null);
+        String name = "162693895955046828.png";
+        Path path = Paths.get(new File("").getAbsolutePath() + '/' + name);
+        byte[] content = Files.readAllBytes(path);
+        multipartFile = new MockMultipartFile(name, name, "image", content);
     }
 
 
@@ -165,6 +178,43 @@ public class TeacherControllerTest {
                 .andExpect(content().json(
                         objectMapper.writeValueAsString(response)
                 ));
+    }
+
+    @Test
+    public void 교사프로필수정_실패_불완전한요청() {
+        // given
+        String url = "/teacher/detail";
+        UpdateTeacherDetailRequest request = UpdateTeacherDetailRequest.builder()
+                .nickname(teacher.getNickName())
+                .changePhoneNum(true)
+                .phoneNum("newPhoneNum")
+                .emailAddress(teacher.getEmailAddress())
+                .address(teacher.getAddress())
+                .detailAddress(teacher.getDetailAddress())
+                .profileImg(multipartFile)
+                .build();
+        // when
+
+        // then
+
+    }
+
+    @Test
+    public void 교사프로필수정_성공() {
+        // given
+        UpdateTeacherDetailRequest request = UpdateTeacherDetailRequest.builder()
+                .nickname(teacher.getNickName())
+                .changePhoneNum(true)
+                .phoneNum("newPhoneNum")
+                .emailAddress(teacher.getEmailAddress())
+                .address(teacher.getAddress())
+                .detailAddress(teacher.getDetailAddress())
+                .profileImg(multipartFile)
+                .build();
+        // when
+
+        // then
+
     }
 
 }

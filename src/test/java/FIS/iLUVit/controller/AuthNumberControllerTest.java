@@ -351,6 +351,4 @@ public class AuthNumberControllerTest {
         resultActions.andExpect(status().isOk());
     }
 
-
-
 }
