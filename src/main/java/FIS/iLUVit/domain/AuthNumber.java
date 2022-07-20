@@ -28,21 +28,24 @@ public class AuthNumber extends BaseEntity{
     private LocalDateTime authTime; // 인증 완료 시간
     @Enumerated(EnumType.STRING)
     private AuthKind authKind;
+    private Long userId;
 
     @Builder
-    public AuthNumber(Long id, String phoneNum, String authNum, AuthKind authKind, LocalDateTime authTime) {
+    public AuthNumber(Long id, String phoneNum, String authNum, AuthKind authKind, LocalDateTime authTime, Long userId) {
         this.id = id;
         this.phoneNum = phoneNum;
         this.authNum = authNum;
         this.authKind = authKind;
         this.authTime = authTime;
+        this.userId = userId;
     }
 
-    public static AuthNumber createAuthNumber(String phoneNum, String authNum, AuthKind authKind) {
+    public static AuthNumber createAuthNumber(String phoneNum, String authNum, AuthKind authKind, Long userId) {
         return AuthNumber.builder()
                 .phoneNum(phoneNum)
                 .authNum(authNum)
                 .authKind(authKind)
+                .userId(userId)
                 .build();
     }
 

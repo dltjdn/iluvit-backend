@@ -72,12 +72,6 @@ public class WaitingService {
     }
 
     public Long cancel(Long waitingId, Long userId) {
-//        Waiting waiting = waitingRepository.findByIdWithPtDate(waitingId)
-//                .orElseThrow(() -> new PresentationException("올바르지 않은 대기취소 입니다."));
-//        Integer waitingOrder = waiting.getWaitingOrder();
-//        waitingRepository.updateWaitingOrderForWaitCancel(waitingOrder, waiting.getPtDate());
-//        waitingRepository.delete(waiting);
-//        return waitingId;
 
         // 검색 결과 없으면 오류 반환
         Waiting waiting = waitingRepository.findByIdWithPtDate(waitingId, userId)

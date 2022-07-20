@@ -41,8 +41,8 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .addFilter(new JwtAuthorizationFilter(authenticationManager(), userRepository))
                 .authorizeRequests()
                 .requestMatchers(CorsUtils::isPreFlightRequest).permitAll()
-//                .antMatchers("/user/**")
-//                .access("hasRole('PARENT') or hasRole('TEACHER') or hasRole('DIRECTOR')")
+                .antMatchers("/user/**")
+                .access("hasRole('PARENT') or hasRole('TEACHER') or hasRole('DIRECTOR')")
                 .antMatchers("/parent/**")
                 .access("hasRole('PARENT')")
                 .anyRequest().permitAll();
