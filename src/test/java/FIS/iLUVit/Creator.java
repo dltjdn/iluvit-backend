@@ -326,7 +326,7 @@ public class Creator {
                 .time("오후 9시")
                 .ablePersonNum(3)
                 .participantCnt(3)
-                .waitingCnt(3)
+                .waitingCnt(1)
                 .presentation(presentation)
                 .build();
     }
@@ -380,6 +380,14 @@ public class Creator {
         return CommentHeart.builder()
                 .user(user)
                 .comment(comment)
+                .build();
+    }
+
+    public static Waiting createWaiting(PtDate ptDate, Parent parent, Integer waitingOrder) {
+        return Waiting.builder()
+                .ptDate(ptDate)
+                .parent(parent)
+                .waitingOrder(waitingOrder)
                 .build();
     }
 }

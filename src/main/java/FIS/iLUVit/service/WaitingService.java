@@ -10,6 +10,7 @@ import FIS.iLUVit.repository.WaitingRepository;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
@@ -25,6 +26,7 @@ public class WaitingService {
     private final ParentRepository parentRepository;
     private final ParticipationRepository participationRepository;
 
+    @Transactional(isolation = Isolation.SERIALIZABLE)
     public Long register(Long userId, Long ptDateId) {
         // 학부모 조회
         Parent parent = parentRepository.findById(userId)
@@ -39,18 +41,11 @@ public class WaitingService {
         return waiting.getId();
     }
 
-
-    public Waiting findFirstOrderWaiting(PtDate ptDate) {
-        waitingRepository.updateWaitingForParticipationCancel(ptDate);
-        return waitingRepository.findMinWaitingOrder(ptDate)
-                .orElseThrow(() -> new PresentationException("DB 적합성 오류 발생"));
-    }
-
     public Long cancel(Long waitingId) {
-        Waiting waiting = waitingRepository.findById(waitingId)
+        Waiting waiting = waitingRepository.findByIdWithPtDate(waitingId)
                 .orElseThrow(() -> new PresentationException("올바르지 않은 대기취소 입니다."));
         Integer waitingOrder = waiting.getWaitingOrder();
-        waitingRepository.updateWaitingOrderForWaitCancel(waitingOrder);
+        waitingRepository.updateWaitingOrderForWaitCancel(waitingOrder, waiting.getPtDate());
         waitingRepository.delete(waiting);
         return waitingId;
     }
