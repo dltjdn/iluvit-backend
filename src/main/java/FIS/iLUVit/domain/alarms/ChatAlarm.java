@@ -27,10 +27,10 @@ public class ChatAlarm extends Alarm{
         super(user);
         this.mode = AlarmUtils.CHAT_RECEIVED;
         this.sender = sender;
-        String[] args = {sender.getNickName()};
-        this.message = AlarmUtils.getMessage(mode, args);
         this.anonymous = anonymous;
         this.profileImage = anonymous ? null : sender.getProfileImagePath();
+        String[] args = anonymous ? new String[]{"익명"} : new String[]{sender.getNickName()};
+        this.message = AlarmUtils.getMessage(mode, args);
     }
 
     @Override

@@ -19,6 +19,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.*;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.boot.test.context.runner.ApplicationContextRunner;
+import org.springframework.context.ApplicationEventPublisher;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
@@ -51,6 +52,8 @@ class ParticipationServiceTest {
     PtDateRepository ptDateRepository;
     @Mock
     UserRepository userRepository;
+    @Spy
+    ApplicationEventPublisher publisher;
     @InjectMocks
     ParticipationService target;
 
@@ -329,6 +332,8 @@ class ParticipationServiceTest {
         @Test
         public void 대기자가_존재_하는_경우() throws Exception {
             //given
+            ApplicationContextRunner applicationContextRunner = new ApplicationContextRunner();
+
             Center center = createCenter("test", true, true, null);
             Presentation presentation = createValidPresentation(center);
             PtDate ptDate = createCanNotRegisterPtDate(presentation);
@@ -337,9 +342,19 @@ class ParticipationServiceTest {
             Participation participation = createJoinParticipation(ptDate, parent);
             Mockito.doReturn(Optional.ofNullable(participation))
                     .when(participationRepository).findByIdAndStatusWithPtDate(any(Long.class), any(Long.class));
+            Mockito.doNothing()
+                    .when(publisher).publishEvent(any(Object.class));
+
             //when
+            target.cancel(1L, 1L);
 
             //then
+            assertThat(participation.getStatus()).isEqualTo(Status.CANCELED);
+            assertThat(participation.getPtDate().getParticipantCnt()).isEqualTo(participantCnt - 1);
+            verify(participationRepository, times(1))
+                    .findByIdAndStatusWithPtDate(any(Long.class), any(Long.class));
+            verify(publisher, times(1))
+                    .publishEvent(any(Object.class));
         }
     }
 }

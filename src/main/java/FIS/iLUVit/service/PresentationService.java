@@ -145,7 +145,7 @@ public class PresentationService {
                     // 수용 인원들 waiting 에서 삭제
                     waitingRepository.deleteAllByIdInBatch(waitingIds);
                     // 수용 외의 인원들 order 감소
-                    waitingRepository.updateWaitingOrderForPtDateChange(changeNum);
+                    waitingRepository.updateWaitingOrderForPtDateChange(changeNum, ptDate);
                     ptDate.updateWaitingCntForPtDateChange(changeNum);
                     waitings.forEach(waiting -> {
                         Participation.createAndRegisterForWaitings(waiting.getParent(), presentation, ptDate, ptDate.getParticipations());

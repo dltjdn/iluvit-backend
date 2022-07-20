@@ -3,6 +3,7 @@ package FIS.iLUVit.service;
 import FIS.iLUVit.domain.Comment;
 import FIS.iLUVit.domain.CommentHeart;
 import FIS.iLUVit.domain.User;
+import FIS.iLUVit.exception.CommentErrorResult;
 import FIS.iLUVit.exception.CommentException;
 import FIS.iLUVit.exception.UserException;
 import FIS.iLUVit.repository.CommentHeartRepository;
@@ -11,6 +12,8 @@ import FIS.iLUVit.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.Objects;
 
 @Service
 @RequiredArgsConstructor
@@ -22,11 +25,14 @@ public class CommentHeartService {
     private final CommentRepository commentRepository;
 
     public Long save(Long userId, Long comment_id) {
+        if (userId == null) {
+            throw new CommentException(CommentErrorResult.UNAUTHORIZED_USER_ACCESS_HEART);
+        }
         User findUser = userRepository.getById(userId);
         Comment findComment = commentRepository.getById(comment_id);
         commentHeartRepository.findByUserAndComment(userId, comment_id)
                 .ifPresent((ch) -> {
-                    throw new CommentException("이미 좋아요한 댓글");
+                    throw new CommentException(CommentErrorResult.ALREADY_EXIST_HEART);
                 });
 
         CommentHeart commentHeart = new CommentHeart(findUser, findComment);
@@ -34,8 +40,16 @@ public class CommentHeartService {
     }
 
     public Long delete(Long userId, Long comment_id) {
+        if (userId == null) {
+            throw new CommentException(CommentErrorResult.UNAUTHORIZED_USER_ACCESS_HEART);
+        }
         CommentHeart commentHeart = commentHeartRepository.findByUserAndComment(userId, comment_id)
-                .orElseThrow(() -> new CommentException("존재하지 않는 좋아요"));
-        return commentHeart.getId();
+                .orElseThrow(() -> new CommentException(CommentErrorResult.NO_EXIST_COMMENT_HEART));
+        if (commentHeart.getUser() == null || !Objects.equals(commentHeart.getUser().getId(), userId)) {
+            throw new CommentException(CommentErrorResult.UNAUTHORIZED_USER_ACCESS_HEART);
+        }
+        Long deletedId = commentHeart.getId();
+        commentHeartRepository.delete(commentHeart);
+        return deletedId;
     }
 }
