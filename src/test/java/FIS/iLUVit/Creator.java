@@ -407,4 +407,11 @@ public class Creator {
         build.setCreatedDateForTest(LocalDateTime.now());
         return build;
     }
+
+    public static Theme createTheme() {
+        return Theme.builder()
+                .animal(true)
+                .art(true)
+                .build();
+    }
 }

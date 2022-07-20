@@ -1,7 +1,11 @@
 package FIS.iLUVit.controller;
 
+import FIS.iLUVit.Creator;
 import FIS.iLUVit.config.argumentResolver.LoginUserArgumentResolver;
+import FIS.iLUVit.controller.dto.ParentDetailRequest;
+import FIS.iLUVit.controller.dto.ParentDetailResponse;
 import FIS.iLUVit.controller.dto.SignupParentRequest;
+import FIS.iLUVit.domain.Parent;
 import FIS.iLUVit.exception.AuthNumberErrorResult;
 import FIS.iLUVit.exception.AuthNumberException;
 import FIS.iLUVit.exception.SignupErrorResult;
@@ -20,6 +24,7 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.http.MediaType;
+import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
@@ -27,6 +32,12 @@ import org.springframework.test.web.servlet.result.MockMvcResultHandlers;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 import org.springframework.test.web.servlet.result.StatusResultMatchers;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
+
+import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 
 import static org.assertj.core.api.Assertions.*;
 import static org.mockito.Mockito.*;
@@ -43,13 +54,24 @@ public class ParentControllerTest {
 
     private MockMvc mockMvc;
     private ObjectMapper objectMapper;
+    private MockMultipartFile multipartFile;
+    private Parent parent;
 
     @BeforeEach
-    public void init() {
+    public void init() throws IOException {
         objectMapper = new ObjectMapper();
         mockMvc = MockMvcBuilders.standaloneSetup(target)
                 .setCustomArgumentResolvers(new LoginUserArgumentResolver())
                 .setControllerAdvice(GlobalControllerAdvice.class)
+                .build();
+        String name = "162693895955046828.png";
+        Path path = Paths.get(new File("").getAbsolutePath() + '/' + name);
+        byte[] content = Files.readAllBytes(path);
+        multipartFile = new MockMultipartFile("profileImg", name, "image", content);
+        parent = Parent.builder()
+                .id(1L)
+                .nickName("nickname")
+                .name("name")
                 .build();
     }
 
@@ -265,6 +287,72 @@ public class ParentControllerTest {
                         .content(objectMapper.writeValueAsString(request))
                         .contentType(MediaType.APPLICATION_JSON)
         );
+        // then
+        result.andExpect(status().isOk());
+    }
+
+    @Test
+    public void 학부모프로필조회_성공() throws Exception {
+        // given
+        String url = "/parent/detail";
+        ParentDetailResponse response = new ParentDetailResponse();
+        doReturn(response)
+                .when(parentService)
+                .findDetail(parent.getId());
+        // when
+        ResultActions result = mockMvc.perform(
+                MockMvcRequestBuilders.get(url)
+                        .header("Authorization", Creator.createJwtToken(parent))
+        );
+        // then
+        result.andExpect(content().json(
+                objectMapper.writeValueAsString(new ParentDetailResponse())
+        ));
+    }
+
+    @Test
+    public void 학부모프로필수정_실패_불완전한요청() throws Exception {
+        // given
+        String url = "/parent/detail";
+        // when
+        ResultActions result = mockMvc.perform(
+                MockMvcRequestBuilders
+                        .multipart(url)
+                        .file(multipartFile)
+                        .header("Authorization", Creator.createJwtToken(parent))
+                        .param("name", "name")
+                        .param("changePhoneNum", "true")
+                        .param("phoneNum", "newPhoneNum")
+                        .param("address", "address")
+                        .param("detailAddress", "detailAddress")
+                        .param("emailAddress", "emailAddress")
+                        .param("interestAge", "3")
+                        .param("theme", objectMapper.writeValueAsString(Creator.createTheme()))
+        );
+        // then
+        result.andDo(print())
+                .andExpect(status().isBadRequest());
+    }
+
+    @Test
+    public void 학부모프로필수정_성공() throws Exception {
+        // given
+        String url = "/parent/detail";
+        // when
+        ResultActions result = mockMvc.perform(
+                MockMvcRequestBuilders
+                        .multipart(url)
+                        .file(multipartFile)
+                        .header("Authorization", Creator.createJwtToken(parent))
+                        .param("name", "name")
+                        .param("nickname", "nickname")
+                        .param("changePhoneNum", "true")
+                        .param("phoneNum", "newPhoneNum")
+                        .param("address", "address")
+                        .param("detailAddress", "detailAddress")
+                        .param("emailAddress", "emailAddress")
+                        .param("interestAge", "3")
+                        .param("theme", objectMapper.writeValueAsString(Creator.createTheme())));
         // then
         result.andExpect(status().isOk());
     }

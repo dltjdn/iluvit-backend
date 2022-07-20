@@ -12,17 +12,18 @@ import javax.validation.constraints.NotNull;
 @Builder
 @AllArgsConstructor
 public class UpdateTeacherDetailRequest {
-    @NotEmpty
+    @NotEmpty(message = "입력되지 않은 목록이 있습니다.")
+    private String name;
+    @NotEmpty(message = "입력되지 않은 목록이 있습니다.")
     private String nickname;
-    @NotEmpty
+    @NotNull(message = "입력되지 않은 목록이 있습니다.")
     private Boolean changePhoneNum;
     private String phoneNum;
-    @NotEmpty
+    @NotEmpty(message = "입력되지 않은 목록이 있습니다.")
     private String emailAddress;
-    @NotEmpty
+    @NotEmpty(message = "입력되지 않은 목록이 있습니다.")
     private String address;
-    @NotEmpty
+    @NotEmpty(message = "입력되지 않은 목록이 있습니다.")
     private String detailAddress;
-    @NotEmpty
     private MultipartFile profileImg;
 }

@@ -32,8 +32,8 @@ public class TeacherController {
      * 작성자: 이승범
      * 작성내용: 선생의 마이페이지에 정보 update
      */
-    @PutMapping("/teacher/detail")
-    public TeacherDetailResponse updateTeacherDetail(@Login Long id, @ModelAttribute UpdateTeacherDetailRequest request) throws IOException {
+    @PostMapping("/teacher/detail")
+    public TeacherDetailResponse updateTeacherDetail(@Login Long id, @Valid @ModelAttribute UpdateTeacherDetailRequest request) throws IOException {
         return teacherService.updateDetail(id, request);
     }
 
