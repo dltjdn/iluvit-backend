@@ -1,6 +1,7 @@
 package FIS.iLUVit.domain;
 
 import lombok.AccessLevel;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.OnDelete;
@@ -30,4 +31,10 @@ public class CommentHeart extends BaseEntity {
         comment.getCommentHearts().add(this);
     }
 
+    @Builder(toBuilder = true)
+    public CommentHeart(Long id, User user, Comment comment) {
+        this.id = id;
+        this.user = user;
+        this.comment = comment;
+    }
 }

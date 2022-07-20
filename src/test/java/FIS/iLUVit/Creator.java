@@ -12,6 +12,7 @@ import com.auth0.jwt.algorithms.Algorithm;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
+import java.util.ArrayList;
 import java.util.Date;
 
 public class Creator {
@@ -100,6 +101,7 @@ public class Creator {
                 .videoCnt(0)
                 .board(board)
                 .user(user)
+                .comments(new ArrayList<>())
                 .build();
     }
 
@@ -352,6 +354,32 @@ public class Creator {
                 .content(content)
                 .post(post)
                 .user(user)
+                .parentComment(null)
+                .subComments(new ArrayList<>())
+                .commentHearts(new ArrayList<>())
+                .build();
+    }
+
+    public static Comment createComment(Boolean anonymous, String content, Post post, User user) {
+        return Comment.builder()
+                .anonymous(anonymous)
+                .content(content)
+                .post(post)
+                .user(user)
+                .build();
+    }
+
+    public static CommentHeart createCommentHeart(Long id, User user, Comment comment) {
+        return CommentHeart.builder()
+                .id(id)
+                .user(user)
+                .comment(comment)
+                .build();
+    }
+    public static CommentHeart createCommentHeart(User user, Comment comment) {
+        return CommentHeart.builder()
+                .user(user)
+                .comment(comment)
                 .build();
     }
 
