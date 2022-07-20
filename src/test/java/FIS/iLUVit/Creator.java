@@ -396,4 +396,15 @@ public class Creator {
                 .waitingOrder(waitingOrder)
                 .build();
     }
+
+    public static AuthNumber createAuthNumber(AuthKind authKind) {
+        AuthNumber build = AuthNumber.builder()
+                .id(-1L)
+                .phoneNum("phoneNum")
+                .authNum("1234")
+                .authKind(authKind)
+                .build();
+        build.setCreatedDateForTest(LocalDateTime.now());
+        return build;
+    }
 }

@@ -9,6 +9,7 @@ import FIS.iLUVit.domain.enumtype.AuthKind;
 import FIS.iLUVit.domain.enumtype.BoardKind;
 import FIS.iLUVit.exception.SignupErrorResult;
 import FIS.iLUVit.exception.SignupException;
+import FIS.iLUVit.exception.UserErrorResult;
 import FIS.iLUVit.exception.UserException;
 import FIS.iLUVit.repository.*;
 import lombok.RequiredArgsConstructor;
@@ -73,7 +74,7 @@ public class TeacherService {
         if (!Objects.equals(findTeacher.getNickName(), request.getNickname())) {
             teacherRepository.findByNickName(request.getNickname())
                     .ifPresent(teacher -> {
-                        throw new UserException("이미 중복된 닉네입니다.");
+                        throw new UserException(UserErrorResult.DUPLICATED_NICKNAME);
                     });
         }
 

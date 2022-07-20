@@ -4,24 +4,17 @@ import FIS.iLUVit.Creator;
 import FIS.iLUVit.config.argumentResolver.LoginUserArgumentResolver;
 import FIS.iLUVit.controller.dto.SignupTeacherRequest;
 import FIS.iLUVit.controller.dto.TeacherDetailResponse;
+import FIS.iLUVit.controller.dto.UpdateTeacherDetailRequest;
 import FIS.iLUVit.domain.*;
-import FIS.iLUVit.domain.alarms.Alarm;
 import FIS.iLUVit.domain.alarms.CenterApprovalReceivedAlarm;
-import FIS.iLUVit.domain.embeddable.Area;
 import FIS.iLUVit.domain.enumtype.AuthKind;
 import FIS.iLUVit.domain.enumtype.BoardKind;
 import FIS.iLUVit.event.AlarmEvent;
-import FIS.iLUVit.exception.SignupErrorResult;
-import FIS.iLUVit.exception.SignupException;
-import FIS.iLUVit.exception.exceptionHandler.ErrorResponse;
+import FIS.iLUVit.exception.*;
 import FIS.iLUVit.exception.exceptionHandler.controllerAdvice.GlobalControllerAdvice;
 import FIS.iLUVit.repository.*;
 import FIS.iLUVit.service.createmethod.CreateTest;
-import com.auth0.jwt.JWT;
-import com.auth0.jwt.algorithms.Algorithm;
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -30,25 +23,24 @@ import org.mockito.Mock;
 import org.mockito.MockedStatic;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.http.MediaType;
+import org.springframework.http.converter.HttpMessageNotReadableException;
+import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.test.web.servlet.ResultActions;
-import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
-import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
+import java.io.File;
 import java.io.IOException;
-import java.time.LocalDate;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Date;
 import java.util.Optional;
 
 import static FIS.iLUVit.service.createmethod.CreateTest.createBoard;
 import static org.assertj.core.api.Assertions.*;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @ExtendWith(MockitoExtension.class)
 public class TeacherServiceTest {
@@ -88,9 +80,9 @@ public class TeacherServiceTest {
     private Board board2;
     private Board board3;
     private Board board4;
-
+    private MockMultipartFile multipartFile;
     @BeforeEach
-    public void init() {
+    public void init() throws IOException {
         objectMapper = new ObjectMapper();
         mockMvc = MockMvcBuilders.standaloneSetup(target)
                 .setCustomArgumentResolvers(new LoginUserArgumentResolver())
@@ -111,6 +103,10 @@ public class TeacherServiceTest {
         center1.getTeachers().add(teacher3);
         center1.getBoards().add(board3);
         center1.getBoards().add(board4);
+        String name = "162693895955046828.png";
+        Path path = Paths.get(new File("").getAbsolutePath() + '/' + name);
+        byte[] content = Files.readAllBytes(path);
+        multipartFile = new MockMultipartFile(name, name, "image", content);
     }
 
 
@@ -140,7 +136,7 @@ public class TeacherServiceTest {
     }
 
     @Test
-    public void 교사회원가입_성공_센터를선택한경우() {
+    public void 교사회원가입_성공_시설선택한경우() {
         // given
         SignupTeacherRequest request = SignupTeacherRequest.builder()
                 .loginId("loginId")
@@ -230,6 +226,72 @@ public class TeacherServiceTest {
         // then
         assertThat(result.getNickname()).isEqualTo(response.getNickname());
         assertThat(result.getProfileImg()).isEqualTo("imagePath");
+    }
+
+    @Test
+    public void 교사프로필수정_실패_닉네임중복() {
+        // given
+        UpdateTeacherDetailRequest request = UpdateTeacherDetailRequest.builder()
+                .nickname("중복닉네임")
+                .build();
+        doReturn(Optional.of(teacher1))
+                .when(teacherRepository)
+                .findById(teacher1.getId());
+        doReturn(Optional.of(Teacher.builder().build()))
+                .when(teacherRepository)
+                .findByNickName("중복닉네임");
+        // when
+        UserException result = assertThrows(UserException.class,
+                () -> target.updateDetail(teacher1.getId(), request));
+        // then
+        assertThat(result.getErrorResult()).isEqualTo(UserErrorResult.DUPLICATED_NICKNAME);
+    }
+
+    @Test
+    public void 교사프로필수정_실패_핸드폰변경시미인증() {
+        // given
+        UpdateTeacherDetailRequest request = UpdateTeacherDetailRequest.builder()
+                .nickname(teacher1.getNickName())
+                .changePhoneNum(true)
+                .phoneNum("newPhoneNum")
+                .emailAddress(teacher1.getEmailAddress())
+                .address(teacher1.getAddress())
+                .detailAddress(teacher1.getDetailAddress())
+                .profileImg(multipartFile)
+                .build();
+        doReturn(Optional.of(teacher1))
+                .when(teacherRepository)
+                .findById(teacher1.getId());
+        AuthNumberErrorResult error = AuthNumberErrorResult.NOT_AUTHENTICATION;
+        doThrow(new AuthNumberException(error))
+                .when(authNumberService)
+                .validateAuthNumber(request.getPhoneNum(), AuthKind.updatePhoneNum);
+        // when
+        AuthNumberException result = assertThrows(AuthNumberException.class,
+                () -> target.updateDetail(teacher1.getId(), request));
+        // then
+        assertThat(result.getErrorResult()).isEqualTo(AuthNumberErrorResult.NOT_AUTHENTICATION);
+    }
+
+    @Test
+    public void 교사프로필수정_성공_핸드폰포함() throws IOException {
+        // given
+        UpdateTeacherDetailRequest request = UpdateTeacherDetailRequest.builder()
+                .nickname(teacher1.getNickName())
+                .changePhoneNum(true)
+                .phoneNum("newPhoneNum")
+                .emailAddress(teacher1.getEmailAddress())
+                .address(teacher1.getAddress())
+                .detailAddress(teacher1.getDetailAddress())
+                .profileImg(multipartFile)
+                .build();
+        doReturn(Optional.of(teacher1))
+                .when(teacherRepository)
+                .findById(teacher1.getId());
+        // when
+        TeacherDetailResponse response = target.updateDetail(teacher1.getId(), request);
+        // then
+        assertThat(response.getPhoneNumber()).isEqualTo("newPhoneNum");
     }
 
 
