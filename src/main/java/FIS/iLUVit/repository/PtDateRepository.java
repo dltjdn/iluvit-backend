@@ -41,10 +41,16 @@ public interface PtDateRepository extends JpaRepository<PtDate, Long> {
             "left join fetch presentation.center " +
             "left join fetch waiting.parent " +
             "where ptDate.id = :ptDateId")
-    Optional<PtDate> findByIdAndJoinWaitingForSearch(@Param("ptDateId") Long ptDateId);
+    Optional<PtDate> findByIdWithWaitingAndPresentationAndCenterAndParent(@Param("ptDateId") Long ptDateId);
 
     @Modifying
     @Query("delete from PtDate ptdate where ptdate.id in :ptDateKeys")
     void deletePtDateByIds(@Param("ptDateKeys") Set<Long> ptDateKeysDeleteTarget);
 
+    // 설명회 대기 들록을 위한 ptDate 정보 가져오기
+    @Query("select distinct ptDate from PtDate ptDate " +
+            "left join fetch ptDate.presentation as presentation " +
+            "left join fetch ptDate.waitings as waiting " +
+            "where ptDate.id = :id ")
+    Optional<PtDate> findByIdWith(@Param("id") Long id);
 }

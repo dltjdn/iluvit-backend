@@ -16,6 +16,7 @@ import org.springframework.transaction.annotation.Transactional;
 import javax.persistence.EntityManager;
 import java.time.LocalDate;
 
+import static FIS.iLUVit.Creator.*;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 
 @DataJpaTest(includeFilters = @ComponentScan.Filter(ForDB.class))
@@ -129,6 +130,66 @@ class PtDateRepositoryTest {
 //
 //            //then
 //        }
+    }
+
+    @Nested
+    @DisplayName("설명회_대기_신청")
+    class DoWaiting {
+
+        @Test
+        public void 대기자_등록_ptDate_가져오기() throws Exception {
+            //given
+            Center center = createCenter("test", true, true, null);
+            Presentation presentation = createValidPresentation(center);
+            PtDate ptDate = createCanNotRegisterPtDate(presentation);
+            Parent parent = createParent();
+            Participation participation = createCancelParticipation(ptDate, parent);
+            em.persist(center);
+            em.persist(presentation);
+            em.persist(ptDate);
+            em.persist(parent);
+            em.persist(participation);
+            em.flush();
+
+            //when
+            PtDate target = ptDateRepository.findByIdWith(ptDate.getId()).get();
+
+            //then
+            assertThat(target.getId()).isEqualTo(ptDate.getId());
+            assertThat(target.getPresentation().getId()).isEqualTo(presentation.getId());
+        }
+
+        @Test
+        public void 대기자_등록_ptDate_가져오기2() throws Exception {
+            //given
+            Center center = createCenter("test", true, true, null);
+            Presentation presentation = createValidPresentation(center);
+            PtDate ptDate = createCanNotRegisterPtDate(presentation);
+            Parent parent1 = createParent();
+            Parent parent2 = createParent();
+            Participation participation = createCancelParticipation(ptDate, parent1);
+            Waiting waiting1 = createWaiting(ptDate, parent1, 1);
+            Waiting waiting2 = createWaiting(ptDate, parent2, 2);
+            em.persist(center);
+            em.persist(presentation);
+            em.persist(ptDate);
+            em.persist(parent1);
+            em.persist(parent2);
+            em.persist(participation);
+            em.persist(waiting1);
+            em.persist(waiting2);
+            em.flush();
+            em.clear();
+
+            //when
+            PtDate target = ptDateRepository.findByIdWith(ptDate.getId()).get();
+
+            //then
+            assertThat(target.getId()).isEqualTo(ptDate.getId());
+            assertThat(target.getPresentation().getId()).isEqualTo(presentation.getId());
+            assertThat(target.getWaitings().size()).isEqualTo(2);
+
+        }
     }
 
 }
