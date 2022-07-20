@@ -83,27 +83,12 @@ public class ParticipationService {
 
         Participation participation = participationRepository.findByIdAndStatusWithPtDate(participationId, userId)
                 .orElseThrow(() -> new ParticipationException(ParticipationErrorResult.PARTICIPATION_NO_RESULTS));
-
         // ptDate cnt 값을 1줄여야 한다.
         participation.cancel();
-
-//        // 학부모 조회
-//        Parent parent = parentRepository.findById(userId)
-//                .orElseThrow(() -> new UserException("해당 사용자가 존재하지 않습니다"));
-//        // 참여 조회 참여를 취소한 경우에는 ptDate 가 null 값이라 안나온다.
-//        Participation participation = participationRepository.findByIdAndJoinPresentation(participationId)
-//                .orElseThrow(() -> new PresentationException("올바르지 않은 ptDate id 입니다"));
-//        // 설명회 회차 조회
         PtDate ptDate = participation.getPtDate();
-//        // 학부모가 참여를 신청한게 맞는지 조회
-//        if (!participation.getParent().equals(parent))
-//            throw new PresentationException("해당 사용자가 설명회 신청한적 없습니다.");
-//        participation.cancel();
-//        // 참여를 취소할 경우 대기자 중에서 가장 높은 순번이 자동으로 등록 됨
         if(ptDate.hasWaiting()){
-            publisher.publishEvent(new ParticipationCancelEvent(ptDate.getPresentation(), ptDate, null)); // 이벤트 리스너 호출
+            publisher.publishEvent(new ParticipationCancelEvent(ptDate.getPresentation(), ptDate)); // 이벤트 리스너 호출
         }
-        return participationId;
         return participationId;
     }
 
