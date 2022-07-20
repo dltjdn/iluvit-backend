@@ -11,6 +11,9 @@ import java.util.List;
 @NoArgsConstructor
 public class BoardListDTO {
 
+    private Long center_id;
+    private String center_name;
+
     private List<BookmarkDTO> bookmarkList = new ArrayList<>(); // 즐겨찾기한 게시판
     private List<BookmarkDTO> boardList = new ArrayList<>(); // 나머지 게시판
 
@@ -27,4 +30,8 @@ public class BoardListDTO {
         }
     }
 
+    public BoardListDTO(Long center_id, String center_name) {
+        this.center_id = center_id;
+        this.center_name = center_name;
+    }
 }
