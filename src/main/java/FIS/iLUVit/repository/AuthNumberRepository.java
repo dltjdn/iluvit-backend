@@ -31,11 +31,10 @@ public interface AuthNumberRepository extends JpaRepository<AuthNumber, Long> {
 
     @Query("select a " +
             "from AuthNumber a " +
-            "join User u on u.phoneNumber = a.phoneNum " +
             "where a.phoneNum =:pNum " +
             "and a.authKind =:kind " +
             "and a.authNum =:aNum " +
-            "and u.id =:id")
+            "and a.userId =:id")
     Optional<AuthNumber> findByPhoneNumAndAuthNumAndAuthKindAndUserId(
             @Param("pNum") String pNum, @Param("aNum") String aNum,@Param("kind") AuthKind kind,@Param("id") Long id);
 }

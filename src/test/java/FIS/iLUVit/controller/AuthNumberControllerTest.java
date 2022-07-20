@@ -319,7 +319,7 @@ public class AuthNumberControllerTest {
     public void 핸드폰변경을위한인증번호받기_실패_토큰없음() throws Exception {
         // given
         String url = "/user/authNumber/phoneNumber";
-        AuthNumberErrorResult error = AuthNumberErrorResult.NOT_MATCH_INFO;
+        AuthNumberErrorResult error = AuthNumberErrorResult.AUTHENTICATION_FAIL;
         doThrow(new AuthNumberException(error))
                 .when(authNumberService)
                 .sendAuthNumberForChangePhone(null, phoneNum);

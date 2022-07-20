@@ -28,7 +28,7 @@ public class AuthNumberRepositoryTest {
 
     @Autowired
     private AuthNumberRepository authNumberRepository;
-    
+
     @Autowired
     private EntityManager em;
 
@@ -43,10 +43,10 @@ public class AuthNumberRepositoryTest {
 
     @BeforeEach
     void init() {
-        authNumber1 = AuthNumber.createAuthNumber(phoneNum1, authNum, AuthKind.signup);
-        authNumber2 = AuthNumber.createAuthNumber(phoneNum1, authNum, AuthKind.findLoginId);
-        authNumber3 = AuthNumber.createAuthNumber(phoneNum2, authNum, AuthKind.signup);
-        authNumber4 = AuthNumber.createAuthNumber(phoneNum2, authNum, AuthKind.findLoginId);
+        authNumber1 = AuthNumber.createAuthNumber(phoneNum1, authNum, AuthKind.signup, null);
+        authNumber2 = AuthNumber.createAuthNumber(phoneNum1, authNum, AuthKind.findLoginId, null);
+        authNumber3 = AuthNumber.createAuthNumber(phoneNum2, authNum, AuthKind.signup, null);
+        authNumber4 = AuthNumber.createAuthNumber(phoneNum2, authNum, AuthKind.findLoginId, null);
         user = Parent.builder()
                 .phoneNumber(phoneNum1)
                 .build();
@@ -114,7 +114,7 @@ public class AuthNumberRepositoryTest {
         em.clear();
 
         // when
-        AuthNumber over = AuthNumber.createAuthNumber(phoneNum1, authNum, AuthKind.signup);
+        AuthNumber over = AuthNumber.createAuthNumber(phoneNum1, authNum, AuthKind.signup, null);
         authNumberRepository.save(over);
 
         // then
@@ -181,25 +181,31 @@ public class AuthNumberRepositoryTest {
         AuthNumber result = authNumberRepository.findById(authNumber1.getId()).orElse(null);
         assertThat(result).isNull();
     }
-    
+
     @Test
     public void findByPhoneNumAndAuthNumAndAuthKindAndUserId() {
         // given
+        em.persist(user);
+        AuthNumber authNumber = AuthNumber.builder()
+                .phoneNum(phoneNum1)
+                .authNum(authNum)
+                .authKind(AuthKind.updatePhoneNum)
+                .userId(user.getId())
+                .build();
+        authNumberRepository.save(authNumber);
         authNumberRepository.save(authNumber1);
         authNumberRepository.save(authNumber2);
         authNumberRepository.save(authNumber3);
         authNumberRepository.save(authNumber4);
-        em.persist(user);
         em.flush();
         em.clear();
         // when
-        AuthNumber target = authNumberRepository.findByPhoneNumAndAuthNumAndAuthKindAndUserId(phoneNum1, authNum, authNumber1.getAuthKind(), user.getId())
+        AuthNumber target = authNumberRepository.findByPhoneNumAndAuthNumAndAuthKindAndUserId(phoneNum1, authNum, authNumber.getAuthKind(), user.getId())
                 .orElse(null);
         // then
         assertThat(target).isNotNull();
-        assertThat(target.getId()).isEqualTo(authNumber1.getId());
-    } 
-
+        assertThat(target.getId()).isEqualTo(authNumber.getId());
+    }
 
 
 }

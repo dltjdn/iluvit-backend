@@ -50,7 +50,9 @@ public class AuthNumberServiceTest {
     @Test
     public void 회원가입용인증번호받기_실패_이미가입된번호() {
         // given
-        doReturn(Optional.of(Parent.builder().build())).when(userRepository).findByPhoneNumber(phoneNum);
+        doReturn(Optional.of(Parent.builder().build()))
+                .when(userRepository)
+                .findByPhoneNumber(phoneNum);
 
         // when
         AuthNumberException result = assertThrows(AuthNumberException.class,
@@ -379,27 +381,26 @@ public class AuthNumberServiceTest {
     }
 
     @Test
-    public void 핸드폰변경을위한인증번호받기_실패_아이디핸드폰불일치() {
+    public void 핸드폰변경을위한인증번호받기_실패_이미등록된핸드폰() {
         // given
-        Long id = 1L;
-        doReturn(Optional.empty())
+        doReturn(Optional.of(Parent.builder().build()))
                 .when(userRepository)
-                .findByIdAndPhoneNumber(id, phoneNum);
+                .findByPhoneNumber(phoneNum);
         // when
         AuthNumberException result = assertThrows(AuthNumberException.class,
-                () -> target.sendAuthNumberForChangePhone(id, phoneNum));
+                () -> target.sendAuthNumberForChangePhone(any(Long.class), phoneNum));
         // then
-        assertThat(result.getErrorResult()).isEqualTo(AuthNumberErrorResult.NOT_MATCH_INFO);
+        assertThat(result.getErrorResult()).isEqualTo(AuthNumberErrorResult.ALREADY_PHONENUMBER_REGISTER);
     }
 
     @Test
-    public void 핸드폰변경을위한인증번호받기_성공() {
+    public void 핸드폰변경을위한인증번호받기_성공_최초요청() {
         // given
         Long id = 1L;
         AuthNumber authNumber = createAuthNumber(AuthKind.updatePhoneNum);
-        doReturn(Optional.of(Parent.builder().build()))
+        doReturn(Optional.empty())
                 .when(userRepository)
-                .findByIdAndPhoneNumber(id, phoneNum);
+                .findByPhoneNumber(phoneNum);
 
         doReturn(Optional.empty())
                 .when(authNumberRepository)

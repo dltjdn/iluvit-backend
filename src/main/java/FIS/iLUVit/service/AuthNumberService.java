@@ -56,7 +56,7 @@ public class AuthNumberService {
         if (findUser != null) {
             throw new AuthNumberException(AuthNumberErrorResult.ALREADY_PHONENUMBER_REGISTER);
         }
-        return sendAuthNumber(toNumber, AuthKind.signup);
+        return sendAuthNumber(toNumber, AuthKind.signup, null);
     }
 
     /**
@@ -66,10 +66,12 @@ public class AuthNumberService {
     */
     public AuthNumber sendAuthNumberForChangePhone(Long id, String toNumber) {
 
-        userRepository.findByIdAndPhoneNumber(id, toNumber)
-                .orElseThrow(() -> new AuthNumberException(AuthNumberErrorResult.NOT_MATCH_INFO));
+        User findUser = userRepository.findByPhoneNumber(toNumber).orElse(null);
 
-        return sendAuthNumber(toNumber, AuthKind.updatePhoneNum);
+        if (findUser != null) {
+            throw new AuthNumberException(AuthNumberErrorResult.ALREADY_PHONENUMBER_REGISTER);
+        }
+        return sendAuthNumber(toNumber, AuthKind.updatePhoneNum, id);
     }
 
     /**
@@ -82,7 +84,7 @@ public class AuthNumberService {
         userRepository.findByPhoneNumber(toNumber)
                 .orElseThrow(() -> new AuthNumberException(AuthNumberErrorResult.NOT_SIGNUP_PHONE));
 
-        return sendAuthNumber(toNumber, AuthKind.findLoginId);
+        return sendAuthNumber(toNumber, AuthKind.findLoginId, null);
     }
 
     /**
@@ -97,7 +99,7 @@ public class AuthNumberService {
         if (findUser == null) {
             throw new AuthNumberException(AuthNumberErrorResult.NOT_MATCH_INFO);
         }
-        return sendAuthNumber(toNumber, AuthKind.findPwd);
+        return sendAuthNumber(toNumber, AuthKind.findPwd, null);
     }
 
     /**
@@ -181,7 +183,7 @@ public class AuthNumberService {
     }
 
     // 인증번호 전송 로직
-    private AuthNumber sendAuthNumber(String toNumber, AuthKind authKind) {
+    private AuthNumber sendAuthNumber(String toNumber, AuthKind authKind, Long userId) {
 
         // 4자리 랜덤 숫자 생성
         String authNum = createRandomNumber();
@@ -199,7 +201,7 @@ public class AuthNumberService {
             // 인증번호 보내고
             requestCoolSMS(toNumber, authNum);
             // 인증번호 관련 정보를 db에 저장
-            AuthNumber authNumber = AuthNumber.createAuthNumber(toNumber, authNum, authKind);
+            AuthNumber authNumber = AuthNumber.createAuthNumber(toNumber, authNum, authKind, userId);
             return authNumberRepository.save(authNumber);
 
             // 이미 인증번호를 요청하였고 제한시간이 지나지 않은 경우
