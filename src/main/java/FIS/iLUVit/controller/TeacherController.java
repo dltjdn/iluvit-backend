@@ -7,6 +7,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
 import java.io.IOException;
 
 @Slf4j
@@ -42,7 +43,7 @@ public class TeacherController {
      * 작성내용: 교사 회원가입
      */
     @PostMapping("/signup/teacher")
-    public void signup(@RequestBody SignupTeacherRequest request) {
+    public void signup(@RequestBody @Valid SignupTeacherRequest request) {
         teacherService.signup(request);
     }
 

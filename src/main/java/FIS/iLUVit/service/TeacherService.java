@@ -7,7 +7,9 @@ import FIS.iLUVit.domain.enumtype.Approval;
 import FIS.iLUVit.domain.enumtype.Auth;
 import FIS.iLUVit.domain.enumtype.AuthKind;
 import FIS.iLUVit.domain.enumtype.BoardKind;
+import FIS.iLUVit.exception.SignupErrorResult;
 import FIS.iLUVit.exception.SignupException;
+import FIS.iLUVit.exception.UserErrorResult;
 import FIS.iLUVit.exception.UserException;
 import FIS.iLUVit.repository.*;
 import lombok.RequiredArgsConstructor;
@@ -69,10 +71,10 @@ public class TeacherService {
                 .orElseThrow(() -> new UserException("유효하지 않은 토큰으로 사용자 접근입니디."));
 
         // 유저 닉네임 중복 검사
-        if(!Objects.equals(findTeacher.getNickName(), request.getNickname())){
+        if (!Objects.equals(findTeacher.getNickName(), request.getNickname())) {
             teacherRepository.findByNickName(request.getNickname())
                     .ifPresent(teacher -> {
-                        throw new UserException("이미 중복된 닉네입니다.");
+                        throw new UserException(UserErrorResult.DUPLICATED_NICKNAME);
                     });
         }
 
@@ -106,29 +108,25 @@ public class TeacherService {
      * 작성자: 이승범
      * 작성내용: 교사 회원가입
      */
-    public void signup(SignupTeacherRequest request) {
+    public Teacher signup(SignupTeacherRequest request) {
 
         // 회원가입 유효성 검사 및 비밀번호 해싱
-        String hashedPwd = userService.signupValidation(request.getPassword(), request.getPasswordCheck(), request.getLoginId(), request.getPhoneNum());
+        String hashedPwd = userService.signupValidation(request.getPassword(), request.getPasswordCheck(), request.getLoginId(), request.getPhoneNum(), request.getNickname());
 
         // 교사 객체 생성
         Teacher teacher;
         // 센터를 선택한 경우
         if (request.getCenterId() != null) {
             Center center = centerRepository.findByIdWithTeacher(request.getCenterId())
-                    .orElseThrow(() -> new SignupException("잘못된 시설로의 접근입니다."));
+                    .orElseThrow(() -> new SignupException(SignupErrorResult.NOT_EXIST_CENTER));
             teacher = request.createTeacher(center, hashedPwd);
             teacherRepository.save(teacher);
             // 시설에 원장들에게 알람보내기
-            center.getTeachers().forEach(t->{
+            center.getTeachers().forEach(t -> {
                 if (t.getAuth() == Auth.DIRECTOR) {
                     AlarmUtils.publishAlarmEvent(new CenterApprovalReceivedAlarm(t));
                 }
             });
-            // 시설에 대한 최초 승인요청일 경우 기본 게시판(자유, 공지, 정보, 영상)생성
-            if (center.getTeachers().isEmpty()) {
-                createCenterStory(center);
-            }
         } else {   // 센터를 선택하지 않은 경우
             teacher = request.createTeacher(null, hashedPwd);
             teacherRepository.save(teacher);
@@ -142,20 +140,22 @@ public class TeacherService {
 
         // default 스크랩 생성
         Scrap scrap = Scrap.createScrap(teacher, "default");
-
         scrapRepository.save(scrap);
 
+        // 사용이 끝난 인증번호 지우기
         authNumberRepository.deleteByPhoneNumAndAuthKind(request.getPhoneNum(), AuthKind.signup);
+
+        return teacher;
     }
 
     /**
-     *   작성날짜: 2022/06/30 12:04 PM
-     *   작성자: 이승범
-     *   작성내용: 시설에 등록신청
+     * 작성날짜: 2022/06/30 12:04 PM
+     * 작성자: 이승범
+     * 작성내용: 시설에 등록신청
      */
     public void assignCenter(Long userId, Long centerId) {
         teacherRepository.findByIdAndNotAssign(userId)
-                .orElseThrow(()->new UserException("현재 속해있는 시설이 있습니다."));
+                .orElseThrow(() -> new UserException("현재 속해있는 시설이 있습니다."));
 
         // centerId가 유효하지 않다면 예외처리
         try {
@@ -163,7 +163,7 @@ public class TeacherService {
 
             // 승인 요청 알람이 해당 시설의 원장들에게 감
             List<Teacher> directors = teacherRepository.findDirectorByCenter(centerId);
-            directors.forEach(director->{
+            directors.forEach(director -> {
                 AlarmUtils.publishAlarmEvent(new CenterApprovalReceivedAlarm(director));
             });
         } catch (DataIntegrityViolationException e) {
@@ -172,14 +172,14 @@ public class TeacherService {
     }
 
     /**
-     *   작성날짜: 2022/06/30 11:43 AM
-     *   작성자: 이승범
-     *   작성내용: 시설 스스로 탈주하기
+     * 작성날짜: 2022/06/30 11:43 AM
+     * 작성자: 이승범
+     * 작성내용: 시설 스스로 탈주하기
      */
     public void escapeCenter(Long userId) {
 
         Teacher escapedTeacher = teacherRepository.findByIdWithCenterWithTeacher(userId)
-                .orElseThrow(()-> new UserException("현재 속해있는 시설이 없습니다."));
+                .orElseThrow(() -> new UserException("현재 속해있는 시설이 없습니다."));
 
         // 시설에 속한 일반 교사들
         List<Teacher> commons = escapedTeacher.getCenter().getTeachers().stream()
@@ -203,10 +203,10 @@ public class TeacherService {
     }
 
     /**
-    *   작성날짜: 2022/06/29 10:49 AM
-    *   작성자: 이승범
-    *   작성내용: 교사관리 페이지에 필요한 교사들 정보 조회
-    */
+     * 작성날짜: 2022/06/29 10:49 AM
+     * 작성자: 이승범
+     * 작성내용: 교사관리 페이지에 필요한 교사들 정보 조회
+     */
     public TeacherApprovalListResponse findTeacherApprovalList(Long userId) {
 
         // 로그인한 사용자가 원장인지 확인 및 원장으로 등록되어있는 시설에 모든 교사들 갖오기
@@ -215,9 +215,9 @@ public class TeacherService {
 
         TeacherApprovalListResponse response = new TeacherApprovalListResponse();
 
-        director.getCenter().getTeachers().forEach(teacher->{
+        director.getCenter().getTeachers().forEach(teacher -> {
             // 요청한 원장은 빼고 시설에 연관된 교사들 보여주기
-            if(!Objects.equals(teacher.getId(), userId)){
+            if (!Objects.equals(teacher.getId(), userId)) {
                 TeacherApprovalListResponse.TeacherInfoForAdmin teacherInfoForAdmin =
                         new TeacherApprovalListResponse.TeacherInfoForAdmin(teacher.getId(), teacher.getName(), teacher.getApproval(), teacher.getAuth());
                 // 프로필 이미지 있는 교사들은 이미지 채우기
@@ -234,10 +234,10 @@ public class TeacherService {
     }
 
     /**
-    *   작성날짜: 2022/06/29 11:31 AM
-    *   작성자: 이승범
-    *   작성내용: 교사 승인
-    */
+     * 작성날짜: 2022/06/29 11:31 AM
+     * 작성자: 이승범
+     * 작성내용: 교사 승인
+     */
     public void acceptTeacher(Long userId, Long teacherId) {
         // 로그인한 사용자가 원장인지 확인 && 사용자 시설에 등록된 교사들 싹 다 가져오기
         Teacher director = teacherRepository.findDirectorByIdWithCenterWithTeacher(userId)
@@ -252,7 +252,6 @@ public class TeacherService {
         teacherRepository.acceptTeacher(teacherId, director.getCenter().getId());
 
 
-
         // center default boards bookmark 추가하기
         List<Board> defaultBoards = boardRepository.findDefaultByCenter(director.getCenter().getId());
         for (Board defaultBoard : defaultBoards) {
@@ -262,10 +261,10 @@ public class TeacherService {
     }
 
     /**
-    *   작성날짜: 2022/06/29 5:16 PM
-    *   작성자: 이승범
-    *   작성내용: 교사 삭제/승인거절
-    */
+     * 작성날짜: 2022/06/29 5:16 PM
+     * 작성자: 이승범
+     * 작성내용: 교사 삭제/승인거절
+     */
     public void fireTeacher(Long userId, Long teacherId) {
 
         // 로그인한 사용자가 원장인지 확인 및 원장으로 등록되어있는 시설에 모든 교사들 갖오기
@@ -285,10 +284,10 @@ public class TeacherService {
     }
 
     /**
-    *   작성날짜: 2022/07/01 3:09 PM
-    *   작성자: 이승범
-    *   작성내용: 원장권한 위임
-    */
+     * 작성날짜: 2022/07/01 3:09 PM
+     * 작성자: 이승범
+     * 작성내용: 원장권한 위임
+     */
     public void mandateTeacher(Long userId, Long teacherId) {
 
         Teacher director = teacherRepository.findDirectorByIdWithCenterWithTeacher(userId)
@@ -311,17 +310,5 @@ public class TeacherService {
                     .collect(Collectors.toList());
             bookmarkRepository.deleteAllByBoardAndUser(escapedTeacher.getId(), boardIds);
         }
-    }
-
-    // 시설에 대한 최초 승인요청일 경우 기본 게시판(자유, 공지, 정보, 영상)생성 -> 나중에 관리자가 원장승인을 해줬을때로 바꿔야됨 and center signed to true
-    private void createCenterStory(Center center) {
-        Board noticeBoard = Board.createBoard("공지사항", BoardKind.NOTICE, center, true);
-        Board freeBoard = Board.createBoard("자유 게시판", BoardKind.NORMAL, center, true);
-        Board infoBoard = Board.createBoard("정보 게시판", BoardKind.NORMAL, center, true);
-        Board videoBoard = Board.createBoard("영상 게시판", BoardKind.VIDEO, center, true);
-        boardRepository.save(noticeBoard);
-        boardRepository.save(freeBoard);
-        boardRepository.save(infoBoard);
-        boardRepository.save(videoBoard);
     }
 }

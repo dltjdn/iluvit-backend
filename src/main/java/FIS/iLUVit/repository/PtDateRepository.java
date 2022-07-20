@@ -11,6 +11,7 @@ import java.util.Set;
 
 public interface PtDateRepository extends JpaRepository<PtDate, Long> {
 
+//    @Lock(LockModeType.PESSIMISTIC_WRITE)
     @Query("select distinct ptDate from PtDate ptDate " +
             "left join fetch ptDate.participations as participation " +
             "left join fetch ptDate.presentation as presentation " +
@@ -26,6 +27,7 @@ public interface PtDateRepository extends JpaRepository<PtDate, Long> {
             "where ptDate.id = :id")
     Optional<PtDate> findByIdAndJoinParticipationForSearch(@Param("id") Long ptDateId);
 
+//    @Lock(LockModeType.PESSIMISTIC_WRITE)
     @Query("select distinct ptDate from PtDate ptDate " +
             "left join fetch ptDate.waitings as waiting " +
             "left join fetch ptDate.presentation as presentation " +

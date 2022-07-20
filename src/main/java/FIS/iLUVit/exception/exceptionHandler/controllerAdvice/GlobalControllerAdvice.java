@@ -1,5 +1,7 @@
 package FIS.iLUVit.exception.exceptionHandler.controllerAdvice;
 
+import FIS.iLUVit.exception.AuthNumberException;
+import FIS.iLUVit.exception.SignupException;
 import FIS.iLUVit.exception.*;
 import FIS.iLUVit.exception.exceptionHandler.ErrorResponse;
 import FIS.iLUVit.exception.exceptionHandler.ErrorResult;
@@ -103,6 +105,12 @@ public class GlobalControllerAdvice extends ResponseEntityExceptionHandler {
         return makeErrorResponseEntity(e.getErrorResult());
     }
 
+    @ExceptionHandler(SignupException.class)
+    public ResponseEntity<ErrorResponse> signupExceptionHandler(SignupException e) {
+        log.warn("[signupExceptionHandler] ex", e);
+        return makeErrorResponseEntity(e.getErrorResult());
+    }
+
     @ExceptionHandler(ChatException.class)
     public ResponseEntity<ErrorResponse> chatExceptionHandler(ChatException e) {
         log.warn("[chatExceptionHandler] ex", e);
@@ -127,6 +135,11 @@ public class GlobalControllerAdvice extends ResponseEntityExceptionHandler {
 
     @ExceptionHandler(PostException.class)
     public ResponseEntity<ErrorResponse> postException(PostException e) {
+        return makeErrorResponseEntity(e.getErrorResult());
+    }
+
+    @ExceptionHandler(UserException.class)
+    public ResponseEntity<ErrorResponse> userException(UserException e) {
         return makeErrorResponseEntity(e.getErrorResult());
     }
 }

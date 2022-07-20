@@ -168,6 +168,12 @@ public class Creator {
                 .build();
     }
 
+    public static Teacher createTeacher(Long id, String name, Center center) {
+        return Teacher.builder()
+                .id(id)
+                .name(name)
+                .build();
+    }
     public static Theme englishAndCoding(){
         return Theme.builder()
                 .english(true)
@@ -346,7 +352,7 @@ public class Creator {
                 .time("오후 9시")
                 .ablePersonNum(3)
                 .participantCnt(3)
-                .waitingCnt(3)
+                .waitingCnt(1)
                 .presentation(presentation)
                 .build();
     }
@@ -401,5 +407,24 @@ public class Creator {
                 .user(user)
                 .comment(comment)
                 .build();
+    }
+
+    public static Waiting createWaiting(PtDate ptDate, Parent parent, Integer waitingOrder) {
+        return Waiting.builder()
+                .ptDate(ptDate)
+                .parent(parent)
+                .waitingOrder(waitingOrder)
+                .build();
+    }
+
+    public static AuthNumber createAuthNumber(AuthKind authKind) {
+        AuthNumber build = AuthNumber.builder()
+                .id(-1L)
+                .phoneNum("phoneNum")
+                .authNum("1234")
+                .authKind(authKind)
+                .build();
+        build.setCreatedDateForTest(LocalDateTime.now());
+        return build;
     }
 }
