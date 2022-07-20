@@ -4,6 +4,7 @@ import FIS.iLUVit.controller.dto.AuthenticateAuthNumRequest;
 import FIS.iLUVit.controller.dto.FindPasswordRequest;
 import FIS.iLUVit.domain.AuthNumber;
 import FIS.iLUVit.domain.User;
+import FIS.iLUVit.domain.enumtype.Auth;
 import FIS.iLUVit.domain.enumtype.AuthKind;
 import FIS.iLUVit.exception.AuthNumberErrorResult;
 import FIS.iLUVit.exception.AuthNumberException;
@@ -46,16 +47,29 @@ public class AuthNumberService {
     /**
      * 작성날짜: 2022/05/24 10:38 AM
      * 작성자: 이승범
-     * 작성내용: 회원가입 및 핸드폰번호 변경을 위한 인증번호 전송
+     * 작성내용: 회원가입을 위한 인증번호 전송
      */
-    public AuthNumber sendAuthNumberForSignup(String toNumber, AuthKind authKind) {
+    public AuthNumber sendAuthNumberForSignup(String toNumber) {
 
         User findUser = userRepository.findByPhoneNumber(toNumber).orElse(null);
 
         if (findUser != null) {
             throw new AuthNumberException(AuthNumberErrorResult.ALREADY_PHONENUMBER_REGISTER);
         }
-        return sendAuthNumber(toNumber, authKind);
+        return sendAuthNumber(toNumber, AuthKind.signup);
+    }
+
+    /**
+    *   작성날짜: 2022/07/19 4:32 PM
+    *   작성자: 이승범
+    *   작성내용: 핸드폰번호 변경을 위한 인증번호 전송
+    */
+    public AuthNumber sendAuthNumberForChangePhone(Long id, String toNumber) {
+
+        userRepository.findByIdAndPhoneNumber(id, toNumber)
+                .orElseThrow(() -> new AuthNumberException(AuthNumberErrorResult.NOT_MATCH_INFO));
+
+        return sendAuthNumber(toNumber, AuthKind.updatePhoneNum);
     }
 
     /**
@@ -91,11 +105,20 @@ public class AuthNumberService {
      * 작성자: 이승범
      * 작성내용: 인증번호 인증
      */
-    public AuthNumber authenticateAuthNum(AuthenticateAuthNumRequest request) {
+    public AuthNumber authenticateAuthNum(Long userId, AuthenticateAuthNumRequest request) {
 
-        AuthNumber authNumber = authNumberRepository
-                .findByPhoneNumAndAuthNumAndAuthKind(request.getPhoneNum(), request.getAuthNum(), request.getAuthKind())
-                .orElseThrow(() -> new AuthNumberException(AuthNumberErrorResult.AUTHENTICATION_FAIL));
+        AuthNumber authNumber;
+
+        if (request.getAuthKind().equals(AuthKind.updatePhoneNum)) {
+            authNumber = authNumberRepository
+                    .findByPhoneNumAndAuthNumAndAuthKindAndUserId(request.getPhoneNum(), request.getAuthNum(), request.getAuthKind(), userId)
+                    .orElseThrow(() -> new AuthNumberException(AuthNumberErrorResult.AUTHENTICATION_FAIL));
+
+        } else {
+            authNumber = authNumberRepository
+                    .findByPhoneNumAndAuthNumAndAuthKind(request.getPhoneNum(), request.getAuthNum(), request.getAuthKind())
+                    .orElseThrow(() -> new AuthNumberException(AuthNumberErrorResult.AUTHENTICATION_FAIL));
+        }
 
         if (Duration.between(authNumber.getCreatedDate(), LocalDateTime.now()).getSeconds() > authValidTime) {
             throw new AuthNumberException(AuthNumberErrorResult.EXPIRED);
@@ -113,7 +136,7 @@ public class AuthNumberService {
     public String findLoginId(AuthenticateAuthNumRequest request) {
 
         // request와 일치하는 유효한 인증번호가 있는지 검공
-        AuthNumber authNumber = authenticateAuthNum(request);
+        AuthNumber authNumber = authenticateAuthNum(null, request);
 
         User findUser = userRepository.findByPhoneNumber(authNumber.getPhoneNum())
                 .orElseThrow(() -> new AuthNumberException(AuthNumberErrorResult.NOT_SIGNUP_PHONE));

@@ -2,12 +2,17 @@ package FIS.iLUVit.controller;
 
 import FIS.iLUVit.config.argumentResolver.LoginUserArgumentResolver;
 import FIS.iLUVit.controller.dto.AuthenticateAuthNumRequest;
+import FIS.iLUVit.domain.Parent;
+import FIS.iLUVit.domain.User;
 import FIS.iLUVit.domain.enumtype.AuthKind;
 import FIS.iLUVit.exception.AuthNumberErrorResult;
 import FIS.iLUVit.exception.AuthNumberException;
 import FIS.iLUVit.exception.exceptionHandler.ErrorResponse;
 import FIS.iLUVit.exception.exceptionHandler.controllerAdvice.GlobalControllerAdvice;
 import FIS.iLUVit.service.AuthNumberService;
+import com.auth0.jwt.JWT;
+import com.auth0.jwt.algorithms.Algorithm;
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.gson.Gson;
 import org.junit.jupiter.api.BeforeEach;
@@ -21,6 +26,8 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
+
+import java.util.Date;
 
 import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.*;
@@ -36,6 +43,7 @@ public class AuthNumberControllerTest {
 
     private MockMvc mockMvc;
     private ObjectMapper objectMapper;
+    private User user;
     private final String phoneNum = "phoneNumber";
     private final String authNum = "authNumber";
 
@@ -46,6 +54,19 @@ public class AuthNumberControllerTest {
                 .setCustomArgumentResolvers(new LoginUserArgumentResolver())
                 .setControllerAdvice(GlobalControllerAdvice.class)
                 .build();
+        user = Parent.builder()
+                .id(1L)
+                .phoneNumber(phoneNum)
+                .name("parent")
+                .build();
+    }
+
+    public String createJwtToken(User user){
+        return JWT.create()
+                .withSubject("JWT")
+                .withExpiresAt(new Date(System.currentTimeMillis() + (60000 * 60 * 3))) // JWT 만료시간 밀리세컨단위
+                .withClaim("id", user.getId())
+                .sign(Algorithm.HMAC512("symmetricKey"));
     }
 
     @Test
@@ -56,7 +77,7 @@ public class AuthNumberControllerTest {
 
         doThrow(new AuthNumberException(error))
                 .when(authNumberService)
-                .sendAuthNumberForSignup(phoneNum, AuthKind.signup);
+                .sendAuthNumberForSignup(phoneNum);
 
         // when
         ResultActions resultActions = mockMvc.perform(
@@ -82,7 +103,7 @@ public class AuthNumberControllerTest {
 
         doThrow(new AuthNumberException(error))
                 .when(authNumberService)
-                .sendAuthNumberForSignup(phoneNum, AuthKind.signup);
+                .sendAuthNumberForSignup(phoneNum);
         // when
         ResultActions resultActions = mockMvc.perform(
                 MockMvcRequestBuilders.get(url)
@@ -122,7 +143,7 @@ public class AuthNumberControllerTest {
         AuthNumberErrorResult error = AuthNumberErrorResult.AUTHENTICATION_FAIL;
         doThrow(new AuthNumberException(error))
                 .when(authNumberService)
-                .authenticateAuthNum(request);
+                .authenticateAuthNum(null, request);
         // when
         ResultActions resultActions = mockMvc.perform(
                 MockMvcRequestBuilders.post(url)
@@ -146,7 +167,7 @@ public class AuthNumberControllerTest {
         AuthNumberErrorResult error = AuthNumberErrorResult.EXPIRED;
         doThrow(new AuthNumberException(error))
                 .when(authNumberService)
-                .authenticateAuthNum(request);
+                .authenticateAuthNum(null, request);
         // when
         ResultActions resultActions = mockMvc.perform(
                 MockMvcRequestBuilders.post(url)
@@ -178,6 +199,23 @@ public class AuthNumberControllerTest {
         // then
         resultActions.andDo(print())
                 .andExpect(status().isOk());
+    }
+
+    @Test
+    public void 인증번호인증_성공_핸드폰변경() throws Exception {
+        // given
+        final String url = "/authNumber";
+        AuthenticateAuthNumRequest request = new AuthenticateAuthNumRequest(phoneNum, authNum, AuthKind.updatePhoneNum);
+
+        // when
+        ResultActions resultActions = mockMvc.perform(
+                MockMvcRequestBuilders.post(url)
+                        .header("Authorization", createJwtToken(user))
+                        .content(objectMapper.writeValueAsString(request))
+                        .contentType(MediaType.APPLICATION_JSON)
+        );
+        // then
+        resultActions.andExpect(status().isOk());
     }
 
     @Test
@@ -277,6 +315,42 @@ public class AuthNumberControllerTest {
         resultActions.andExpect(status().isOk());
     }
 
-    
+    @Test
+    public void 핸드폰변경을위한인증번호받기_실패_토큰없음() throws Exception {
+        // given
+        String url = "/user/authNumber/phoneNumber";
+        AuthNumberErrorResult error = AuthNumberErrorResult.NOT_MATCH_INFO;
+        doThrow(new AuthNumberException(error))
+                .when(authNumberService)
+                .sendAuthNumberForChangePhone(null, phoneNum);
+        // when
+        ResultActions resultActions = mockMvc.perform(
+                MockMvcRequestBuilders.get(url)
+                        .param("phoneNumber", phoneNum)
+                        .contentType(MediaType.APPLICATION_JSON)
+        );
+        // then
+        resultActions.andExpect(status().isBadRequest())
+                .andExpect(content().json(
+                        objectMapper.writeValueAsString(new ErrorResponse(error.getHttpStatus(), error.getMessage()))
+                ));
+    }
+
+    @Test
+    public void 핸드폰변경을위한인증번호받기_성공() throws Exception {
+        // given
+        String url = "/user/authNumber/phoneNumber";
+        // when
+        ResultActions resultActions = mockMvc.perform(
+                MockMvcRequestBuilders.get(url)
+                        .header("Authorization", createJwtToken(user))
+                        .param("phoneNumber", phoneNum)
+                        .contentType(MediaType.APPLICATION_JSON)
+        );
+        // then
+        resultActions.andExpect(status().isOk());
+    }
+
+
 
 }

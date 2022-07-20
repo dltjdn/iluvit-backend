@@ -48,4 +48,6 @@ public interface UserRepository extends JpaRepository<User, Long> {
             "join fetch prefer.center " +
             "where prefer.center = :center")
     List<Prefer> getUserPreferByCenterId(@Param("center") Center center);
+
+    Optional<User> findByIdAndPhoneNumber(Long id, String phoneNumber);
 }

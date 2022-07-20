@@ -10,6 +10,7 @@ import FIS.iLUVit.domain.User;
 import FIS.iLUVit.domain.enumtype.AuthKind;
 import FIS.iLUVit.exception.AuthNumberErrorResult;
 import FIS.iLUVit.exception.AuthNumberException;
+import FIS.iLUVit.exception.exceptionHandler.ErrorResponse;
 import FIS.iLUVit.repository.AuthNumberRepository;
 import FIS.iLUVit.repository.UserRepository;
 import FIS.iLUVit.stub.MessageServiceStub;
@@ -53,7 +54,7 @@ public class AuthNumberServiceTest {
 
         // when
         AuthNumberException result = assertThrows(AuthNumberException.class,
-                () -> target.sendAuthNumberForSignup(phoneNum, AuthKind.signup));
+                () -> target.sendAuthNumberForSignup(phoneNum));
 
         // then
         assertThat(result.getErrorResult()).isEqualTo(AuthNumberErrorResult.ALREADY_PHONENUMBER_REGISTER);
@@ -68,7 +69,7 @@ public class AuthNumberServiceTest {
                 .findOverlap(phoneNum, AuthKind.signup);
         // when
         AuthNumberException result = assertThrows(AuthNumberException.class,
-                () -> target.sendAuthNumberForSignup(phoneNum, AuthKind.signup));
+                () -> target.sendAuthNumberForSignup(phoneNum));
 
         // then
         assertThat(result.getErrorResult()).isEqualTo(AuthNumberErrorResult.YET_AUTHNUMBER_VALID);
@@ -91,7 +92,7 @@ public class AuthNumberServiceTest {
                 .save(any(AuthNumber.class));
 
         // when
-        AuthNumber result = target.sendAuthNumberForSignup(phoneNum, AuthKind.signup);
+        AuthNumber result = target.sendAuthNumberForSignup(phoneNum);
 
         // then
         System.out.println("message = " + messageServiceStub.messageHistory);
@@ -114,7 +115,7 @@ public class AuthNumberServiceTest {
                 .when(authNumberRepository)
                 .save(any(AuthNumber.class));
         // when
-        AuthNumber result = target.sendAuthNumberForSignup(phoneNum, AuthKind.signup);
+        AuthNumber result = target.sendAuthNumberForSignup(phoneNum);
 
         // then
         System.out.println("message = " + messageServiceStub.messageHistory);
@@ -134,7 +135,7 @@ public class AuthNumberServiceTest {
                 .findByPhoneNumAndAuthNumAndAuthKind(phoneNum, authNum, AuthKind.signup);
         // when
         AuthNumberException result = assertThrows(AuthNumberException.class,
-                () -> target.authenticateAuthNum(request));
+                () -> target.authenticateAuthNum(null, request));
         // then
         assertThat(result.getErrorResult()).isEqualTo(AuthNumberErrorResult.AUTHENTICATION_FAIL);
     }
@@ -148,7 +149,7 @@ public class AuthNumberServiceTest {
                 .findByPhoneNumAndAuthNumAndAuthKind(phoneNum, authNum, AuthKind.signup);
         // when
         AuthNumberException result = assertThrows(AuthNumberException.class,
-                () -> target.authenticateAuthNum(request));
+                () -> target.authenticateAuthNum(null, request));
 
         // then
         assertThat(result.getErrorResult()).isEqualTo(AuthNumberErrorResult.EXPIRED);
@@ -165,7 +166,7 @@ public class AuthNumberServiceTest {
                 .findByPhoneNumAndAuthNumAndAuthKind(phoneNum, authNum, AuthKind.signup);
         assertThat(authNumber.getAuthTime()).isNull();
         // when
-        AuthNumber result = target.authenticateAuthNum(request);
+        AuthNumber result = target.authenticateAuthNum(null, request);
         // then
         assertThat(result.getId()).isEqualTo(authNumber.getId());
         assertThat(result.getAuthTime()).isNotNull();
@@ -375,6 +376,74 @@ public class AuthNumberServiceTest {
         assertThat(user.getId()).isEqualTo(parent.getId());
         assertThat(encoder.matches( "newPwd", user.getPassword())).isEqualTo(true);
         verify(authNumberRepository, times(1)).delete(authNumber);
+    }
+
+    @Test
+    public void 핸드폰변경을위한인증번호받기_실패_아이디핸드폰불일치() {
+        // given
+        Long id = 1L;
+        doReturn(Optional.empty())
+                .when(userRepository)
+                .findByIdAndPhoneNumber(id, phoneNum);
+        // when
+        AuthNumberException result = assertThrows(AuthNumberException.class,
+                () -> target.sendAuthNumberForChangePhone(id, phoneNum));
+        // then
+        assertThat(result.getErrorResult()).isEqualTo(AuthNumberErrorResult.NOT_MATCH_INFO);
+    }
+
+    @Test
+    public void 핸드폰변경을위한인증번호받기_성공() {
+        // given
+        Long id = 1L;
+        AuthNumber authNumber = createAuthNumber(AuthKind.updatePhoneNum);
+        doReturn(Optional.of(Parent.builder().build()))
+                .when(userRepository)
+                .findByIdAndPhoneNumber(id, phoneNum);
+
+        doReturn(Optional.empty())
+                .when(authNumberRepository)
+                .findOverlap(phoneNum, AuthKind.updatePhoneNum);
+
+        doReturn(createAuthNumber(AuthKind.updatePhoneNum))
+                .when(authNumberRepository)
+                .save(any(AuthNumber.class));
+        // when
+        AuthNumber result = target.sendAuthNumberForChangePhone(id, phoneNum);
+        // then
+        assertThat(result.getId()).isEqualTo(authNumber.getId());
+        assertThat(result.getAuthKind()).isEqualTo(authNumber.getAuthKind());
+    }
+
+    @Test
+    public void 핸드폰변경을위한인증번호인증_실패_정보불일치() {
+        // given
+        Long userId = 1L;
+        AuthenticateAuthNumRequest request = new AuthenticateAuthNumRequest(phoneNum, authNum, AuthKind.updatePhoneNum);
+        doReturn(Optional.empty())
+                .when(authNumberRepository)
+                .findByPhoneNumAndAuthNumAndAuthKindAndUserId(phoneNum, authNum, AuthKind.updatePhoneNum, userId);
+        // when
+        AuthNumberException result = assertThrows(AuthNumberException.class,
+                () -> target.authenticateAuthNum(userId, request));
+        // then
+        assertThat(result.getErrorResult()).isEqualTo(AuthNumberErrorResult.AUTHENTICATION_FAIL);
+    }
+
+    @Test
+    public void 핸드폰변경을위한인증번호인증_성공() {
+        // given
+        Long userId = 1L;
+        AuthenticateAuthNumRequest request = new AuthenticateAuthNumRequest(phoneNum, authNum, AuthKind.updatePhoneNum);
+        AuthNumber authNumber = createAuthNumber(AuthKind.updatePhoneNum);
+        doReturn(Optional.of(authNumber))
+                .when(authNumberRepository)
+                .findByPhoneNumAndAuthNumAndAuthKindAndUserId(phoneNum, authNum, AuthKind.updatePhoneNum, userId);
+        // when
+        AuthNumber result = target.authenticateAuthNum(userId, request);
+        // then
+        assertThat(result.getId()).isEqualTo(authNumber.getId());
+        assertThat(result.getAuthTime()).isNotNull();
     }
 
 

@@ -1,5 +1,7 @@
 package FIS.iLUVit.controller;
 
+import FIS.iLUVit.controller.dto.CenterInfoDto;
+import FIS.iLUVit.controller.dto.CenterInfoRequest;
 import FIS.iLUVit.controller.dto.CenterSearchFilterDTO;
 import FIS.iLUVit.controller.dto.CenterSearchMapFilterDTO;
 import FIS.iLUVit.controller.messagecreate.ResponseRequests;
@@ -11,6 +13,7 @@ import FIS.iLUVit.exception.exceptionHandler.controllerAdvice.ValidationControll
 import FIS.iLUVit.repository.dto.CenterAndDistancePreview;
 import FIS.iLUVit.repository.dto.CenterPreview;
 import FIS.iLUVit.service.CenterService;
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -178,6 +181,38 @@ class CenterControllerTest extends ResponseRequests {
         resultActions.andDo(print())
                 .andExpect(content().json(objectMapper.writeValueAsString(response)));
 
+    }
+
+    @Test
+    public void 회원가입과정에서center정보가져오기() throws Exception {
+        // given
+        String url = "/center/signup?page=0&size=5";
+        CenterInfoRequest request = CenterInfoRequest.builder()
+                .sido("서울시")
+                .sigungu("금천구")
+                .build();
+        List<CenterInfoDto> content = List.of(CenterInfoDto.builder()
+                .id(1L)
+                .name("name")
+                .address("address")
+                .build());
+        PageRequest pageable = PageRequest.of(0, 5);
+        SliceImpl<CenterInfoDto> response = new SliceImpl<>(content, pageable, false);
+        doReturn(response)
+                .when(centerService)
+                .findCenterForSignup(request, pageable);
+        // when
+        ResultActions result = mockMvc.perform(
+                MockMvcRequestBuilders.get(url)
+                        .param("sido", request.getSido())
+                        .param("sigungu", request.getSigungu())
+                        .param("centerName", request.getCenterName())
+                        .contentType(MediaType.APPLICATION_JSON)
+        );
+
+        // then
+        result.andExpect(status().isOk())
+                .andExpect(content().json(objectMapper.writeValueAsString(response)));
     }
 }
 

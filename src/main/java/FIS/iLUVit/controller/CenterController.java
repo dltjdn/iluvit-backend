@@ -101,7 +101,7 @@ public class CenterController {
     /**
     *   작성날짜: 2022/06/20 3:49 PM
     *   작성자: 이승범
-    *   작성내용: 회원가입, 아이추가, 이직 과정에서 center 정보 가져오기
+    *   작성내용: 회원가입, 이직 과정에서 center 정보 가져오기
     */
     @GetMapping("/center/signup")
     public Slice<CenterInfoDto> centerInfoForSignup(@ModelAttribute CenterInfoRequest request, Pageable pageable) {

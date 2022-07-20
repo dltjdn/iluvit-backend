@@ -113,4 +113,21 @@ public class UserRepositoryTest {
                 Arguments.of("parent1", "parent11")
         );
     }
+
+    @Test
+    public void findByIdAndPhoneNumber() {
+        // given
+        userRepository.save(parent1);
+        userRepository.save(parent2);
+        userRepository.save(teacher1);
+        em.persist(parent1);
+        em.persist(parent2);
+        em.persist(teacher1);
+        // when
+        User target = userRepository.findByIdAndPhoneNumber(parent2.getId(), parent2.getPhoneNumber())
+                .orElse(null);
+        // then
+        assertThat(target).isNotNull();
+        assertThat(target.getId()).isEqualTo(parent2.getId());
+    }
 }
