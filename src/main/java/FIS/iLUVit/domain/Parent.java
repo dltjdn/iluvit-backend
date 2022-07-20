@@ -72,16 +72,17 @@ public class Parent extends User {
     }
 
     public void updateDetail(ParentDetailRequest request, Theme theme) {
+        this.name = request.getName();
         this.nickName = request.getNickname();
         this.emailAddress = request.getEmailAddress();
         this.address = request.getAddress();
         this.detailAddress = request.getDetailAddress();
         this.interestAge = request.getInterestAge();
         this.theme = theme;
-        this.hasProfileImg = !request.getProfileImg().isEmpty();
     }
 
     public void updateDetailWithPhoneNum(ParentDetailRequest request, Theme theme) {
+        this.name = request.getName();
         this.nickName = request.getNickname();
         this.phoneNumber = request.getPhoneNum();
         this.emailAddress = request.getEmailAddress();
@@ -89,7 +90,6 @@ public class Parent extends User {
         this.detailAddress = request.getDetailAddress();
         this.interestAge = request.getInterestAge();
         this.theme = theme;
-        this.hasProfileImg = !request.getProfileImg().isEmpty();
     }
 
     @Override

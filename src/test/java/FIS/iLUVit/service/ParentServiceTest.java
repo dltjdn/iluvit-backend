@@ -1,6 +1,7 @@
 package FIS.iLUVit.service;
 
 import FIS.iLUVit.Creator;
+import FIS.iLUVit.controller.dto.ParentDetailRequest;
 import FIS.iLUVit.controller.dto.ParentDetailResponse;
 import FIS.iLUVit.controller.dto.SignupParentRequest;
 import FIS.iLUVit.domain.Board;
@@ -8,6 +9,7 @@ import FIS.iLUVit.domain.Parent;
 import FIS.iLUVit.domain.enumtype.BoardKind;
 import FIS.iLUVit.repository.*;
 import FIS.iLUVit.service.createmethod.CreateTest;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -47,11 +49,13 @@ public class ParentServiceTest {
     @Mock
     private ImageService imageService;
 
+    private ObjectMapper objectMapper;
     private Parent parent;
 
     @BeforeEach
     public void init() {
         parent = Creator.createParent("phoneNum");
+        objectMapper = new ObjectMapper();
     }
 
     @Test
@@ -89,4 +93,31 @@ public class ParentServiceTest {
         assertThat(result.getNickname()).isEqualTo(parent.getNickName());
         assertThat(result.getProfileImg()).isEqualTo("imagePath");
     }
+
+    @Test
+    public void 부모프로필정보수정_성공() throws IOException {
+        // given
+        doReturn(Optional.of(parent))
+                .when(parentRepository)
+                .findById(parent.getId());
+        ParentDetailRequest request = ParentDetailRequest
+                .builder()
+                .name("name")
+                .nickname("nickName")
+                .changePhoneNum(true)
+                .phoneNum("newPhoneNum")
+                .address("address")
+                .detailAddress("detailAddress")
+                .emailAddress("emailAddress")
+                .interestAge(3)
+                .theme(objectMapper.writeValueAsString(Creator.createTheme()))
+                .build();
+        // when
+        ParentDetailResponse result = target.updateDetail(parent.getId(), request);
+        // then
+        assertThat(result).isNotNull();
+        assertThat(result.getNickname()).isEqualTo("nickName");
+        assertThat(result.getPhoneNumber()).isEqualTo("newPhoneNum");
+    }
+
 }

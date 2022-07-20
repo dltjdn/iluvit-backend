@@ -12,6 +12,7 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageNotReadableException;
+import org.springframework.validation.BindException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
@@ -65,6 +66,18 @@ public class GlobalControllerAdvice extends ResponseEntityExceptionHandler {
             WebRequest request) {
         log.warn("request type mapping error : ", ex);
         return this.makeErrorResponseEntity("HttpMessageNotReadable error");
+    }
+
+    @Override
+    protected ResponseEntity<Object> handleBindException(BindException ex, HttpHeaders headers, HttpStatus status, WebRequest request) {
+        final List<String> errorList = ex.getBindingResult()
+                .getAllErrors()
+                .stream()
+                .map(DefaultMessageSourceResolvable::getDefaultMessage)
+                .collect(Collectors.toList());
+
+        log.warn("Invalid DTO Parameter errors : {}", errorList);
+        return this.makeErrorResponseEntity(errorList.get(0));
     }
 
     private ResponseEntity<Object> makeErrorResponseEntity(final String errorDescription) {

@@ -37,8 +37,8 @@ public class ParentController {
      * 작성자: 이승범
      * 작성내용: 부모의 마이페이지 수정
      */
-    @PutMapping("/parent/detail")
-    public ParentDetailResponse updateParentDetail(@Login Long id, @ModelAttribute ParentDetailRequest request) throws IOException {
+    @PostMapping("/parent/detail")
+    public ParentDetailResponse updateParentDetail(@Login Long id, @Valid @ModelAttribute ParentDetailRequest request) throws IOException {
         return parentService.updateDetail(id, request);
     }
 
