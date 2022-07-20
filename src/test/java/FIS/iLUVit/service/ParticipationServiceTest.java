@@ -6,27 +6,32 @@ import FIS.iLUVit.domain.alarms.PresentationFullAlarm;
 import FIS.iLUVit.domain.enumtype.Auth;
 import FIS.iLUVit.domain.enumtype.Status;
 import FIS.iLUVit.event.AlarmEvent;
+import FIS.iLUVit.exception.ParticipationErrorResult;
+import FIS.iLUVit.exception.ParticipationException;
 import FIS.iLUVit.exception.PresentationErrorResult;
 import FIS.iLUVit.exception.PresentationException;
 import FIS.iLUVit.repository.ParentRepository;
 import FIS.iLUVit.repository.ParticipationRepository;
 import FIS.iLUVit.repository.PtDateRepository;
 import FIS.iLUVit.repository.UserRepository;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.*;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.*;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.boot.test.context.runner.ApplicationContextRunner;
+import org.springframework.context.ApplicationEventPublisher;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
+import static FIS.iLUVit.Creator.*;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
 
 @ExtendWith(MockitoExtension.class)
 class ParticipationServiceTest {
@@ -47,6 +52,8 @@ class ParticipationServiceTest {
     PtDateRepository ptDateRepository;
     @Mock
     UserRepository userRepository;
+    @Spy
+    ApplicationEventPublisher publisher;
     @InjectMocks
     ParticipationService target;
 
@@ -156,128 +163,198 @@ class ParticipationServiceTest {
 
     }
 
-    @Test
-    public void 잘못된_설명회_회차_아이디로_신청() throws Exception {
-        //given
-        Mockito.doReturn(Optional.ofNullable(null))
-                .when(ptDateRepository)
-                .findByIdAndJoinParticipation(any(Long.class));
+    @Nested
+    @DisplayName("설명회 신청 관련")
+    class doParticipate {
 
-        //when
-        PresentationException result = assertThrows(PresentationException.class,
-                () -> target.register(parent.getId(), ptDate1.getId()));     // 예외가 발생 해야한다.
+        @Test
+        public void 잘못된_설명회_회차_아이디로_신청() throws Exception {
+            //given
+            Mockito.doReturn(Optional.ofNullable(null))
+                    .when(ptDateRepository)
+                    .findByIdAndJoinParticipation(any(Long.class));
 
-        //then
-        assertThat(result.getErrorResult())
-                .isEqualTo(PresentationErrorResult.WRONG_PTDATE_ID_REQUEST);
-    }
+            //when
+            PresentationException result = assertThrows(PresentationException.class,
+                    () -> target.register(parent.getId(), ptDate1.getId()));     // 예외가 발생 해야한다.
 
-    @Test
-    public void 설명회_신청_신청기간이_지남() throws Exception {
-        //given
-        /**
-         * 설명회 신청을 위해서는 설명회 정보가 필요하다.
-         * 연관 관계 매핑 되어있음
-         * service => 데이터베이스에서 정보 가져왔을 때
-         *
-         */
-        Mockito.doReturn(Optional.of(ptDate1))
-                .when(ptDateRepository)
-                .findByIdAndJoinParticipation(ptDate1.getId());
-        // ptdate => 섦명회, 센터
+            //then
+            assertThat(result.getErrorResult())
+                    .isEqualTo(PresentationErrorResult.WRONG_PTDATE_ID_REQUEST);
+        }
 
-        //when
-        PresentationException result = assertThrows(PresentationException.class,
-                () -> target.register(parent.getId(), ptDate1.getId()));     // 예외가 발생 해야한다.
+        @Test
+        public void 설명회_신청_신청기간이_지남() throws Exception {
+            //given
+            /**
+             * 설명회 신청을 위해서는 설명회 정보가 필요하다.
+             * 연관 관계 매핑 되어있음
+             * service => 데이터베이스에서 정보 가져왔을 때
+             *
+             */
+            Mockito.doReturn(Optional.of(ptDate1))
+                    .when(ptDateRepository)
+                    .findByIdAndJoinParticipation(ptDate1.getId());
+            // ptdate => 섦명회, 센터
 
-        //then
-        assertThat(result.getErrorResult())
-                .isEqualTo(PresentationErrorResult.PARTICIPATION_PERIOD_PASSED);
+            //when
+            PresentationException result = assertThrows(PresentationException.class,
+                    () -> target.register(parent.getId(), ptDate1.getId()));     // 예외가 발생 해야한다.
 
-    }
+            //then
+            assertThat(result.getErrorResult())
+                    .isEqualTo(PresentationErrorResult.PARTICIPATION_PERIOD_PASSED);
 
-    @Test
-    public void 설명회_신청_이미_신청한_사용자() throws Exception {
-        //given
-        Mockito.doReturn(Optional.of(ptDate2))
-                .when(ptDateRepository)
-                .findByIdAndJoinParticipation(ptDate2.getId());
+        }
 
-        //when
-        PresentationException result = assertThrows(PresentationException.class,
-                () -> target.register(parent.getId(), ptDate2.getId()));
+        @Test
+        public void 설명회_신청_이미_신청한_사용자() throws Exception {
+            //given
+            Mockito.doReturn(Optional.of(ptDate2))
+                    .when(ptDateRepository)
+                    .findByIdAndJoinParticipation(ptDate2.getId());
 
-        //then
-        assertThat(result.getErrorResult())
-                .isEqualTo(PresentationErrorResult.ALREADY_PARTICIPATED_IN);
-    }
+            //when
+            PresentationException result = assertThrows(PresentationException.class,
+                    () -> target.register(parent.getId(), ptDate2.getId()));
 
-    @Test
-    public void 설명회_신청_인원_초과() throws Exception {
-        //given
-        Mockito.doReturn(Optional.of(ptDate4))
-                .when(ptDateRepository)
-                .findByIdAndJoinParticipation(ptDate4.getId());
-        //when
+            //then
+            assertThat(result.getErrorResult())
+                    .isEqualTo(PresentationErrorResult.ALREADY_PARTICIPATED_IN);
+        }
 
-        PresentationException result = assertThrows(PresentationException.class,
-                () -> target.register(parent.getId(), ptDate4.getId()));
+        @Test
+        public void 설명회_신청_인원_초과() throws Exception {
+            //given
+            Mockito.doReturn(Optional.of(ptDate4))
+                    .when(ptDateRepository)
+                    .findByIdAndJoinParticipation(ptDate4.getId());
+            //when
 
-        //then
-        assertThat(result.getErrorResult())
-                .isEqualTo(PresentationErrorResult.PRESENTATION_OVERCAPACITY);
-    }
+            PresentationException result = assertThrows(PresentationException.class,
+                    () -> target.register(parent.getId(), ptDate4.getId()));
 
-    @Test
-    public void 설명회_신청_성공() throws Exception {
-        //given
-        MockedStatic<AlarmUtils> alarmUtils = Mockito.mockStatic(AlarmUtils.class);
+            //then
+            assertThat(result.getErrorResult())
+                    .isEqualTo(PresentationErrorResult.PRESENTATION_OVERCAPACITY);
+        }
 
-        Participation participation1 = Participation.builder()
-                .id(2L)
-                .ptDate(ptDate3)
-                .parent(parent)
-                .status(Status.JOINED)
-                .build();
+        @Test
+        public void 설명회_신청_성공() throws Exception {
+            //given
+            MockedStatic<AlarmUtils> alarmUtils = Mockito.mockStatic(AlarmUtils.class);
 
-        Mockito.doReturn(Optional.of(ptDate3))
-                .when(ptDateRepository)
-                .findByIdAndJoinParticipation(ptDate3.getId());
+            Participation participation1 = Participation.builder()
+                    .id(2L)
+                    .ptDate(ptDate3)
+                    .parent(parent)
+                    .status(Status.JOINED)
+                    .build();
 
-        Mockito.doReturn(participation1)
-                .when(participationRepository)
-                .save(any(Participation.class));
+            Mockito.doReturn(Optional.of(ptDate3))
+                    .when(ptDateRepository)
+                    .findByIdAndJoinParticipation(ptDate3.getId());
 
-        Mockito.doReturn(Parent.builder().id(parent.getId()).build())
-                .when(parentRepository)
-                .getById(parent.getId());
+            Mockito.doReturn(participation1)
+                    .when(participationRepository)
+                    .save(any(Participation.class));
+
+            Mockito.doReturn(Parent.builder().id(parent.getId()).build())
+                    .when(parentRepository)
+                    .getById(parent.getId());
 
 
-        List<Teacher> teachers = new ArrayList<>();
-        teachers.add(Teacher.builder().name("test").build());
+            List<Teacher> teachers = new ArrayList<>();
+            teachers.add(Teacher.builder().name("test").build());
 
-        Mockito.doReturn(teachers)
-                .when(userRepository)
-                .findTeacherByCenter(any(Center.class));
-        
-        alarmUtils.when(() -> AlarmUtils.getMessage(any(String.class), any(Object[].class)))
-                .thenReturn("설명회가 가득 찼습니다");
+            Mockito.doReturn(teachers)
+                    .when(userRepository)
+                    .findTeacherByCenter(any(Center.class));
 
-        alarmUtils.when(() -> AlarmUtils.publishAlarmEvent(any(Alarm.class)))
-                .thenReturn(new AlarmEvent(new PresentationFullAlarm(parent, presentation1, center)));
+            alarmUtils.when(() -> AlarmUtils.getMessage(any(String.class), any(Object[].class)))
+                    .thenReturn("설명회가 가득 찼습니다");
 
-        //when
-        Long result = target.register(parent.getId(), ptDate3.getId());
+            alarmUtils.when(() -> AlarmUtils.publishAlarmEvent(any(Alarm.class)))
+                    .thenReturn(new AlarmEvent(new PresentationFullAlarm(parent, presentation1, center)));
 
-        // then
-        assertThat(result).isEqualTo(participation1.getId());
-        // register 에서 repository
-        Mockito.verify(ptDateRepository, Mockito.times(1))
-                .findByIdAndJoinParticipation(ptDate3.getId());
-        Mockito.verify(participationRepository, Mockito.times(1))
-                .save(any(Participation.class));
-        Mockito.verify(parentRepository, Mockito.times(1))
-                .getById(parent.getId());
+            //when
+            Long result = target.register(parent.getId(), ptDate3.getId());
 
+            // then
+            assertThat(result).isEqualTo(participation1.getId());
+            // register 에서 repository
+            verify(ptDateRepository, times(1))
+                    .findByIdAndJoinParticipation(ptDate3.getId());
+            verify(participationRepository, times(1))
+                    .save(any(Participation.class));
+            verify(parentRepository, times(1))
+                    .getById(parent.getId());
+
+        }
+
+        @Test
+        public void 설명회_취소_쿼리_결과_없음() throws Exception {
+            //given
+            Mockito.doReturn(Optional.ofNullable(null))
+                    .when(participationRepository).findByIdAndStatusWithPtDate(any(Long.class), any(Long.class));
+            //when
+            ParticipationException result = assertThrows(ParticipationException.class, () -> {
+                target.cancel(1L, 1L);
+            });
+
+            //then
+            assertThat(result.getParticipationErrorResult())
+                    .isEqualTo(ParticipationErrorResult.PARTICIPATION_NO_RESULTS);
+        }
+
+        @Test
+        public void 설명회_취소_성공() throws Exception {
+            //given
+            Center center = createCenter("test", true, true, null);
+            Presentation presentation = createValidPresentation(center);
+            PtDate ptDate = createCanRegisterPtDate(presentation);
+            Integer participantCnt = ptDate.getParticipantCnt();
+            Parent parent = createParent();
+            Participation participation = createJoinParticipation(ptDate, parent);
+            Mockito.doReturn(Optional.ofNullable(participation))
+                    .when(participationRepository).findByIdAndStatusWithPtDate(any(Long.class), any(Long.class));
+
+            //when
+            Long result = target.cancel(1L, 2L);
+
+            //then
+            assertThat(participation.getStatus()).isEqualTo(Status.CANCELED);
+            assertThat(participation.getPtDate().getParticipantCnt()).isEqualTo(participantCnt - 1);
+            verify(participationRepository, times(1))
+                    .findByIdAndStatusWithPtDate(any(Long.class), any(Long.class));
+        }
+
+        @Test
+        public void 대기자가_존재_하는_경우() throws Exception {
+            //given
+            ApplicationContextRunner applicationContextRunner = new ApplicationContextRunner();
+
+            Center center = createCenter("test", true, true, null);
+            Presentation presentation = createValidPresentation(center);
+            PtDate ptDate = createCanNotRegisterPtDate(presentation);
+            Integer participantCnt = ptDate.getParticipantCnt();
+            Parent parent = createParent();
+            Participation participation = createJoinParticipation(ptDate, parent);
+            Mockito.doReturn(Optional.ofNullable(participation))
+                    .when(participationRepository).findByIdAndStatusWithPtDate(any(Long.class), any(Long.class));
+            Mockito.doNothing()
+                    .when(publisher).publishEvent(any(Object.class));
+
+            //when
+            target.cancel(1L, 1L);
+
+            //then
+            assertThat(participation.getStatus()).isEqualTo(Status.CANCELED);
+            assertThat(participation.getPtDate().getParticipantCnt()).isEqualTo(participantCnt - 1);
+            verify(participationRepository, times(1))
+                    .findByIdAndStatusWithPtDate(any(Long.class), any(Long.class));
+            verify(publisher, times(1))
+                    .publishEvent(any(Object.class));
+        }
     }
 }

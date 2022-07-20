@@ -2,8 +2,8 @@ package FIS.iLUVit.exception.exceptionHandler.controllerAdvice;
 
 import FIS.iLUVit.exception.AuthNumberException;
 import FIS.iLUVit.exception.SignupException;
+import FIS.iLUVit.exception.*;
 import FIS.iLUVit.exception.exceptionHandler.ErrorResponse;
-import FIS.iLUVit.exception.PresentationException;
 import FIS.iLUVit.exception.exceptionHandler.ErrorResult;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.support.DefaultMessageSourceResolvable;
@@ -108,6 +108,33 @@ public class GlobalControllerAdvice extends ResponseEntityExceptionHandler {
     @ExceptionHandler(SignupException.class)
     public ResponseEntity<ErrorResponse> signupExceptionHandler(SignupException e) {
         log.warn("[signupExceptionHandler] ex", e);
+        return makeErrorResponseEntity(e.getErrorResult());
+    }
+
+    @ExceptionHandler(ChatException.class)
+    public ResponseEntity<ErrorResponse> chatExceptionHandler(ChatException e) {
+        log.warn("[chatExceptionHandler] ex", e);
+        return makeErrorResponseEntity(e.getErrorResult());
+    }
+
+    @ExceptionHandler(BookmarkException.class)
+    public ResponseEntity<ErrorResponse> bookmarkException(BookmarkException e) {
+        log.warn("[BookmarkException] ex", e);
+        return makeErrorResponseEntity(e.getErrorResult());
+    }
+
+    @ExceptionHandler(BoardException.class)
+    public ResponseEntity<ErrorResponse> boardException(BoardException e) {
+        return makeErrorResponseEntity(e.getErrorResult());
+    }
+
+    @ExceptionHandler(CommentException.class)
+    public ResponseEntity<ErrorResponse> commentException(CommentException e) {
+        return makeErrorResponseEntity(e.getErrorResult());
+    }
+
+    @ExceptionHandler(PostException.class)
+    public ResponseEntity<ErrorResponse> postException(PostException e) {
         return makeErrorResponseEntity(e.getErrorResult());
     }
 }

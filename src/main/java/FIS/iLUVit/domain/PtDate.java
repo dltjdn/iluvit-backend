@@ -24,6 +24,10 @@ public class PtDate extends BaseEntity {
     private String time;            // 설명회 날짜 시간
     private Integer ablePersonNum;      // 해당 회차에 신청 가능한 사람 수
     private Integer participantCnt;     // 신청 사람 수
+
+    @Version
+    private Integer version;
+
     private Integer waitingCnt;         // 대기 수
 
     @ManyToOne(fetch = FetchType.LAZY)
@@ -143,5 +147,9 @@ public class PtDate extends BaseEntity {
         if(waitingCnt < 0)
             waitingCnt = 0;
         return this;
+    }
+
+    public void resetWaitingCnt() {
+        waitingCnt = 0;
     }
 }

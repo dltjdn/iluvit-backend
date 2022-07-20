@@ -18,16 +18,19 @@ public interface WaitingRepository extends JpaRepository<Waiting, Long> {
             "where waiting.ptDate = :ptDate")
     void updateWaitingForParticipationCancel(@Param("ptDate") PtDate ptDate);
 
-    @Query("select waiting from Waiting waiting " +
-            "join fetch waiting.parent " +
-            "where waiting.ptDate = :ptDate and waiting.waitingOrder = 0")
-    Optional<Waiting> findMinWaitingOrder(@Param("ptDate") PtDate ptDate);
-
     @Modifying
     @Query("update Waiting waiting " +
             "set waiting.waitingOrder = waiting.waitingOrder - 1 " +
-            "where waiting.waitingOrder > :waitingOrder")
-    void updateWaitingOrderForWaitCancel(@Param("waitingOrder") Integer waitingOrder);
+            "where waiting.waitingOrder > :waitingOrder and waiting.ptDate = :ptDate")
+    void updateWaitingOrderForWaitCancel(@Param("waitingOrder") Integer waitingOrder, @Param("ptDate") PtDate ptDate);
+
+
+//    @Lock(LockModeType.PESSIMISTIC_WRITE)
+    @Query("select waiting from Waiting waiting " +
+            "join fetch waiting.parent " +
+            "where waiting.ptDate = :ptDate " +
+            "and waiting.waitingOrder = (select min(w.waitingOrder) from Waiting w where w.ptDate =:ptDate) ")
+    Waiting findMinWaitingOrder(@Param("ptDate") PtDate ptDate);
 
     @Query("select distinct waiting from Waiting waiting " +
             "join fetch waiting.ptDate as ptDate " +
@@ -37,6 +40,12 @@ public interface WaitingRepository extends JpaRepository<Waiting, Long> {
 
     @Modifying
     @Query("update Waiting waiting " +
-            "set waiting.waitingOrder = waiting.waitingOrder - :changeNum ")
-    void updateWaitingOrderForPtDateChange(@Param("changeNum") Integer changeNum);
+            "set waiting.waitingOrder = waiting.waitingOrder - :changeNum " +
+            "where waiting.ptDate = :ptDate")
+    void updateWaitingOrderForPtDateChange(@Param("changeNum") Integer changeNum, @Param("ptDate") PtDate ptDate);
+
+//    @Lock(LockModeType.PESSIMISTIC_WRITE)
+    @Query("select waiting from Waiting waiting join fetch waiting.ptDate " +
+            "where waiting.id = :waitingId")
+    Optional<Waiting> findByIdWithPtDate(@Param("waitingId") Long waitingId);
 }

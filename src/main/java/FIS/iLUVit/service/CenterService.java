@@ -59,10 +59,16 @@ public class CenterService {
         return result;
     }
 
-    public CenterBannerDto findBannerById(Long id, Long userId) {
-        return userId == null ?
+    public CenterBannerResponseDto findBannerById(Long id, Long userId) {
+        CenterBannerDto data = userId == null ?
                 centerRepository.findBannerById(id) :
                 centerRepository.findBannerById(id, userId);
+
+        if(data == null)
+            return null;
+
+        List<String> infoImages = imageService.getInfoImages(data.getInfoImages());
+        return new CenterBannerResponseDto(data, infoImages);
     }
 
     public Long modifyCenter(Long centerId, Long userId, CenterModifyRequestDto requestDto, List<MultipartFile> infoImages, MultipartFile profileImage) {

@@ -1,31 +1,33 @@
 package FIS.iLUVit.repository;
 
+import FIS.iLUVit.Creator;
 import FIS.iLUVit.config.argumentResolver.ForDB;
 import FIS.iLUVit.controller.dto.CenterInfoDto;
 import FIS.iLUVit.domain.Center;
 import FIS.iLUVit.domain.Kindergarten;
 import FIS.iLUVit.domain.Teacher;
+import FIS.iLUVit.domain.*;
 import FIS.iLUVit.domain.embeddable.Area;
 import FIS.iLUVit.domain.embeddable.BasicInfra;
 import FIS.iLUVit.domain.embeddable.Theme;
 import FIS.iLUVit.domain.enumtype.KindOf;
+import FIS.iLUVit.repository.dto.CenterBannerDto;
 import FIS.iLUVit.repository.dto.CenterPreview;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
 
 import javax.persistence.EntityManager;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 
-import static FIS.iLUVit.Creator.createArea;
-import static FIS.iLUVit.Creator.createKindergarten;
+import static FIS.iLUVit.Creator.*;
 import static org.assertj.core.api.Assertions.assertThat;
 
 @DataJpaTest(includeFilters = @ComponentScan.Filter(ForDB.class))
@@ -33,6 +35,7 @@ class CenterRepositoryTest {
 
     @Autowired
     CenterRepository centerRepository;
+
 
     @Autowired
     EntityManager em;
@@ -220,5 +223,158 @@ class CenterRepositoryTest {
         assertThat(result.getContent().size()).isEqualTo(2);
         assertThat(result.getContent().get(0).getName()).isEqualTo(center1.getName());
         assertThat(result.getContent().get(0).getAddress()).isEqualTo(center1.getAddress());
-    } 
+    }
+
+    @Nested
+    @DisplayName("맵_기반_검색")
+    public class CenterMapTets{
+
+        @Test
+        public void 현재_위치_중심_센터_찾기() throws Exception {
+            //given
+            // 현재위치
+            double longitude;
+            double latitude;
+            Theme theme;
+            Integer interestAge;
+
+            //when
+            // 대략적인 거리로만 반환 거리 계산은 service 에서? ㄴㄴ querydsl 로 해서 할 것
+//            centerRepository.findByMapFilter()
+            //then
+        }
+    }
+
+    @Nested
+    @DisplayName("센터_베너찾기")
+    public class Banner{
+
+        @Test
+        public void 특정_시설의_베너정보_찾아오기_로그인_X() throws Exception {
+            //given
+            Theme theme = englishAndCoding();
+            Center center = createCenter("test", true, true, theme);
+            Review review1 = createReview(center, 5);
+            Review review2 = createReview(center, 4);
+            Review review3 = createReview(center, 3);
+
+            em.persist(center);
+            em.persist(review1);
+            em.persist(review2);
+            em.persist(review3);
+            em.flush();
+            //when
+            CenterBannerDto result = centerRepository.findBannerById(center.getId());
+
+            //then
+            assertThat(result.getCenterId()).isEqualTo(center.getId());
+            assertThat(result.getName()).isEqualTo("test");
+            assertThat(result.getPrefer()).isNotNull().isFalse();
+            assertThat(result.getStarAverage()).isEqualTo(4.0);
+
+        }
+
+        @Test
+        public void 특정_시설의_베너정보_찾아오기_로그인_O_시설_북마크_했음() throws Exception {
+            //given
+            Theme theme = englishAndCoding();
+            Parent parent = Creator.createParent();
+            Center center = createCenter("test", true, true, theme);
+            Prefer prefer = createPrefer(parent, center);
+            Review review1 = createReview(center, 5);
+            Review review2 = createReview( center, 4);
+            Review review3 = createReview(center, 3);
+            em.persist(center);
+            em.persist(parent);
+            em.persist(prefer);
+            em.persist(review1);
+            em.persist(review2);
+            em.persist(review3);
+            em.flush();
+            //when
+            CenterBannerDto result = centerRepository.findBannerById(center.getId(), parent.getId());
+
+            //then
+            assertThat(result.getCenterId()).isEqualTo(center.getId());
+            assertThat(result.getName()).isEqualTo("test");
+            assertThat(result.getPrefer()).isNotNull().isTrue();
+            assertThat(result.getStarAverage()).isEqualTo(4.0);
+
+        }
+
+        @Test
+        public void 특정_시설의_베너정보_찾아오기_로그인_O_시설_북마크_안했음() throws Exception {
+            //given
+            Theme theme = englishAndCoding();
+            Parent parent = Creator.createParent();
+            Center center = createCenter("test", true, true, theme);
+            Review review1 = createReview(center, 5);
+            Review review2 = createReview(center, 4);
+            Review review3 = createReview(center, 3);
+            em.persist(parent);
+            em.persist(center);
+            em.persist(review1);
+            em.persist(review2);
+            em.persist(review3);
+            em.flush();
+            //when
+            CenterBannerDto result = centerRepository.findBannerById(center.getId(), parent.getId());
+
+            //then
+            assertThat(result.getCenterId()).isEqualTo(center.getId());
+            assertThat(result.getName()).isEqualTo("test");
+            assertThat(result.getPrefer()).isNotNull().isFalse();
+            assertThat(result.getStarAverage()).isEqualTo(4.0);
+
+        }
+
+        @Test
+        public void 특정_시설의_베너정보_찾아오기_로그인_O_선생으로_검색() throws Exception {
+            //given
+            Theme theme = englishAndCoding();
+            Teacher teacher = Creator.createTeacher();
+            Center center = createCenter("test", true, true, theme);
+            Review review1 = createReview(center, 5);
+            Review review2 = createReview(center, 4);
+            Review review3 = createReview(center, 3);
+            em.persist(teacher);
+            em.persist(center);
+            em.persist(review1);
+            em.persist(review2);
+            em.persist(review3);
+            em.flush();
+            //when
+            CenterBannerDto result = centerRepository.findBannerById(center.getId(), teacher.getId());
+
+            //then
+            assertThat(result.getCenterId()).isEqualTo(center.getId());
+            assertThat(result.getName()).isEqualTo("test");
+            assertThat(result.getPrefer()).isNotNull().isFalse();
+            assertThat(result.getStarAverage()).isEqualTo(4.0);
+
+        }
+
+        @Test
+        public void 잘못된_시설_아이디_배너정보_없음() throws Exception {
+            Theme theme = englishAndCoding();
+            Parent parent = Creator.createParent();
+            Center center = createCenter("test", true, true, theme);
+            Review review1 = createReview(center, 5);
+            Review review2 = createReview(center, 4);
+            Review review3 = createReview(center, 3);
+            em.persist(center);
+            em.persist(review1);
+            em.persist(review2);
+            em.persist(review3);
+            em.flush();
+            //when
+            CenterBannerDto result = centerRepository.findBannerById(1000L, parent.getId());
+            CenterBannerDto result2 = centerRepository.findBannerById(1000L);
+            CenterBannerDto result3 = centerRepository.findBannerById(center.getId(), parent.getId());
+            //then
+            assertThat(result).isNull();
+            assertThat(result2).isNull();
+            assertThat(result3).isNotNull();
+        }
+    }
 }

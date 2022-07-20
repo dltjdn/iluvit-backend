@@ -27,6 +27,10 @@ public class CenterController {
     private final CenterService centerService;
 
     /**
+     * 수정사항 - 베너에서 테마 보여주기 + 리스트(맵)에서 bookmark 내용 추가 + 검색 api 개발
+     */
+
+    /**
      * 시설 둘러보기 페이지
      */
     @GetMapping("/center/preview")
@@ -74,7 +78,7 @@ public class CenterController {
      */
     @GetMapping("/center/{center_id}/recruit")
     public CenterBannerResponseDto centerBanner(@PathVariable("center_id") Long id, @Login Long userId){
-        return new CenterBannerResponseDto(centerService.findBannerById(id, userId));
+        return centerService.findBannerById(id, userId);
     }
 
     /**
