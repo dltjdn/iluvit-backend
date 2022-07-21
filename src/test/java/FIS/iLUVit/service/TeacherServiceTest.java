@@ -251,6 +251,7 @@ public class TeacherServiceTest {
     public void 교사프로필수정_실패_핸드폰변경시미인증() {
         // given
         UpdateTeacherDetailRequest request = UpdateTeacherDetailRequest.builder()
+                .name(teacher1.getName())
                 .nickname(teacher1.getNickName())
                 .changePhoneNum(true)
                 .phoneNum("newPhoneNum")
@@ -277,6 +278,7 @@ public class TeacherServiceTest {
     public void 교사프로필수정_성공_핸드폰포함() throws IOException {
         // given
         UpdateTeacherDetailRequest request = UpdateTeacherDetailRequest.builder()
+                .name(teacher1.getName())
                 .nickname(teacher1.getNickName())
                 .changePhoneNum(true)
                 .phoneNum("newPhoneNum")

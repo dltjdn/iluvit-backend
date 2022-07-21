@@ -435,4 +435,11 @@ public class Creator {
                 .user(user)
                 .build();
     }
+
+    public static Theme createTheme() {
+        return Theme.builder()
+                .animal(true)
+                .art(true)
+                .build();
+    }
 }

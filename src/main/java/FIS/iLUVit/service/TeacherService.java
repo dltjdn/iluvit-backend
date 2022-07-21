@@ -68,7 +68,7 @@ public class TeacherService {
     public TeacherDetailResponse updateDetail(Long id, UpdateTeacherDetailRequest request) throws IOException {
 
         Teacher findTeacher = teacherRepository.findById(id)
-                .orElseThrow(() -> new UserException("유효하지 않은 토큰으로 사용자 접근입니디."));
+                .orElseThrow(() -> new UserException(UserErrorResult.NOT_VALID_TOKEN));
 
         // 유저 닉네임 중복 검사
         if (!Objects.equals(findTeacher.getNickName(), request.getNickname())) {

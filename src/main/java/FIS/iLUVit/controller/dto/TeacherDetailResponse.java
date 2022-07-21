@@ -5,6 +5,7 @@ import lombok.Data;
 
 @Data
 public class TeacherDetailResponse {
+    private String name;
     private String nickname;
     private String phoneNumber;
     private String emailAddress;
@@ -13,6 +14,7 @@ public class TeacherDetailResponse {
     private String profileImg;
 
     public TeacherDetailResponse(Teacher teacher) {
+        this.name = teacher.getName();
         this.nickname = teacher.getNickName();
         this.phoneNumber = teacher.getPhoneNumber();
         this.emailAddress = teacher.getEmailAddress();

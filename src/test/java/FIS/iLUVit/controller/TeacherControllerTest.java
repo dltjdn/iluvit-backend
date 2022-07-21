@@ -8,6 +8,8 @@ import FIS.iLUVit.controller.dto.UpdateTeacherDetailRequest;
 import FIS.iLUVit.domain.Teacher;
 import FIS.iLUVit.exception.SignupErrorResult;
 import FIS.iLUVit.exception.SignupException;
+import FIS.iLUVit.exception.UserErrorResult;
+import FIS.iLUVit.exception.UserException;
 import FIS.iLUVit.exception.exceptionHandler.ErrorResponse;
 import FIS.iLUVit.exception.exceptionHandler.controllerAdvice.GlobalControllerAdvice;
 import FIS.iLUVit.service.TeacherService;
@@ -33,8 +35,10 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 
 import static FIS.iLUVit.Creator.createJwtToken;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.doThrow;
+import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -65,15 +69,6 @@ public class TeacherControllerTest {
         byte[] content = Files.readAllBytes(path);
         multipartFile = new MockMultipartFile(name, name, "image", content);
     }
-
-
-//    public String createJwtToken(User user){
-//        return JWT.create()
-//                .withSubject("JWT")
-//                .withExpiresAt(new Date(System.currentTimeMillis() + (60000 * 60 * 3))) // JWT 만료시간 밀리세컨단위
-//                .withClaim("id", user.getId())
-//                .sign(Algorithm.HMAC512("symmetricKey"));
-//    }
 
     @Test
     public void 교사회원가입_실패_로그인아이디길이() throws Exception {
@@ -181,40 +176,75 @@ public class TeacherControllerTest {
     }
 
     @Test
-    public void 교사프로필수정_실패_불완전한요청() {
+    public void 교사프로필수정_실패_불완전한요청() throws Exception {
         // given
         String url = "/teacher/detail";
-        UpdateTeacherDetailRequest request = UpdateTeacherDetailRequest.builder()
-                .nickname(teacher.getNickName())
-                .changePhoneNum(true)
-                .phoneNum("newPhoneNum")
-                .emailAddress(teacher.getEmailAddress())
-                .address(teacher.getAddress())
-                .detailAddress(teacher.getDetailAddress())
-                .profileImg(multipartFile)
-                .build();
         // when
-
+        ResultActions result = mockMvc.perform(
+                MockMvcRequestBuilders
+                        .multipart(url)
+                        .file(multipartFile)
+                        .header("Authorization", createJwtToken(teacher))
+                        .param("changePhoneNum", "true")
+                        .param("phoneNum", "newPhoneNum")
+                        .param("emailAddress", "emailAddress")
+                        .param("address", "address")
+                        .param("detailAddress", "detailAddress")
+        );
         // then
-
+        result.andDo(print())
+                .andExpect(status().isBadRequest());
     }
 
     @Test
-    public void 교사프로필수정_성공() {
+    public void 교사프로필수정_실패_닉네임중복() throws Exception {
         // given
-        UpdateTeacherDetailRequest request = UpdateTeacherDetailRequest.builder()
-                .nickname(teacher.getNickName())
-                .changePhoneNum(true)
-                .phoneNum("newPhoneNum")
-                .emailAddress(teacher.getEmailAddress())
-                .address(teacher.getAddress())
-                .detailAddress(teacher.getDetailAddress())
-                .profileImg(multipartFile)
-                .build();
+        String url = "/teacher/detail";
+        UserErrorResult error = UserErrorResult.DUPLICATED_NICKNAME;
+        doThrow(new UserException(error))
+                .when(teacherService)
+                .updateDetail(any(), any(UpdateTeacherDetailRequest.class));
         // when
-
+        ResultActions result = mockMvc.perform(
+                MockMvcRequestBuilders
+                        .multipart(url)
+                        .file(multipartFile)
+                        .header("Authorization", createJwtToken(teacher))
+                        .param("name", "name")
+                        .param("changePhoneNum", "true")
+                        .param("phoneNum", "newPhoneNum")
+                        .param("emailAddress", "emailAddress")
+                        .param("address", "address")
+                        .param("detailAddress", "detailAddress")
+                        .param("nickname", "nickname")
+        );
         // then
+        result.andExpect(status().isBadRequest())
+                .andExpect(content().json(
+                        objectMapper.writeValueAsString(new ErrorResponse(error.getHttpStatus(), error.getMessage()))
+                ));
+    }
 
+    @Test
+    public void 교사프로필수정_성공() throws Exception {
+        // given
+        String url = "/teacher/detail";
+        // when
+        ResultActions result = mockMvc.perform(
+                MockMvcRequestBuilders
+                        .multipart(url)
+                        .file(multipartFile)
+                        .header("Authorization", createJwtToken(teacher))
+                        .param("name", "name")
+                        .param("changePhoneNum", "true")
+                        .param("phoneNum", "newPhoneNum")
+                        .param("emailAddress", "emailAddress")
+                        .param("address", "address")
+                        .param("detailAddress", "detailAddress")
+                        .param("nickname", "nickname")
+        );
+        // then
+        result.andExpect(status().isOk());
     }
 
 }

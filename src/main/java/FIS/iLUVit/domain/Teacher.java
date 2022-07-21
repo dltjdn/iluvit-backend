@@ -68,20 +68,20 @@ public class Teacher extends User {
     }
 
     public void updateDetail(UpdateTeacherDetailRequest request) {
+        this.name = request.getName();
         this.nickName = request.getNickname();
         this.emailAddress = request.getEmailAddress();
         this.address = request.getAddress();
         this.detailAddress = request.getDetailAddress();
-        this.hasProfileImg = !request.getProfileImg().isEmpty();
     }
 
     public void updateDetailWithPhoneNum(UpdateTeacherDetailRequest request) {
+        this.name = request.getName();
         this.nickName = request.getNickname();
         this.emailAddress = request.getEmailAddress();
         this.address = request.getAddress();
         this.detailAddress = request.getDetailAddress();
         this.phoneNumber = request.getPhoneNum();
-        this.hasProfileImg = !request.getProfileImg().isEmpty();
     }
 
     public void canWrite(Long centerId) {

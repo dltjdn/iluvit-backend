@@ -3,20 +3,16 @@ package FIS.iLUVit.repository;
 import FIS.iLUVit.domain.PtDate;
 import FIS.iLUVit.domain.Waiting;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Lock;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
+import javax.persistence.LockModeType;
 import java.util.List;
 import java.util.Optional;
 
 public interface WaitingRepository extends JpaRepository<Waiting, Long> {
-
-    @Modifying
-    @Query("update Waiting waiting " +
-            "set waiting.waitingOrder = waiting.waitingOrder - 1 " +
-            "where waiting.ptDate = :ptDate")
-    void updateWaitingForParticipationCancel(@Param("ptDate") PtDate ptDate);
 
     @Modifying
     @Query("update Waiting waiting " +
@@ -44,8 +40,16 @@ public interface WaitingRepository extends JpaRepository<Waiting, Long> {
             "where waiting.ptDate = :ptDate")
     void updateWaitingOrderForPtDateChange(@Param("changeNum") Integer changeNum, @Param("ptDate") PtDate ptDate);
 
-//    @Lock(LockModeType.PESSIMISTIC_WRITE)
-    @Query("select waiting from Waiting waiting join fetch waiting.ptDate " +
-            "where waiting.id = :waitingId")
-    Optional<Waiting> findByIdWithPtDate(@Param("waitingId") Long waitingId);
+    @Lock(LockModeType.PESSIMISTIC_WRITE)
+    @Query("select waiting from Waiting waiting " +
+            "join fetch waiting.ptDate " +
+            "where waiting.id = :waitingId and waiting.parent.id = :userId")
+    Optional<Waiting> findByIdWithPtDate(@Param("waitingId") Long waitingId, @Param("userId") Long userId);
+
+    @Modifying
+    @Query("update Waiting waiting " +
+            "set waiting.waitingOrder = waiting.waitingOrder - 1 " +
+            "where waiting.waitingOrder > :waitingOrder and waiting.ptDate = :ptDate ")
+    void updateWaitingOrder(@Param("ptDate")PtDate ptDate, @Param("waitingOrder") Integer waitingOrder);
+
 }
