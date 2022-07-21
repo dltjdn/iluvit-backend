@@ -151,8 +151,24 @@ public class GlobalControllerAdvice extends ResponseEntityExceptionHandler {
         return makeErrorResponseEntity(e.getErrorResult());
     }
 
+    @ExceptionHandler(WaitingException.class)
+    public ResponseEntity<ErrorResponse> postException(WaitingException e) {
+        log.error("[WaitingExceptionHandler] {}", e.getMessage());
+        return makeErrorResponseEntity(e.getErrorResult());
+    }
+
     @ExceptionHandler(UserException.class)
     public ResponseEntity<ErrorResponse> userException(UserException e) {
+        return makeErrorResponseEntity(e.getErrorResult());
+    }
+
+    @ExceptionHandler(ReviewException.class)
+    public ResponseEntity<ErrorResponse> reviewException(ReviewException e) {
+        return makeErrorResponseEntity(e.getErrorResult());
+    }
+
+    @ExceptionHandler(CenterException.class)
+    public ResponseEntity<ErrorResponse> centerException(CenterException e) {
         return makeErrorResponseEntity(e.getErrorResult());
     }
 }

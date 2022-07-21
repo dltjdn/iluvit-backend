@@ -17,9 +17,9 @@ public class ReviewHeartController {
         내용: 리뷰 좋아요
     */
     @PostMapping("/reviewHeart/review/{review_id}")
-    public void like(@PathVariable("review_id") Long reviewId,
+    public Long like(@PathVariable("review_id") Long reviewId,
                      @Login Long userId) {
-        reviewHeartService.saveReviewHeart(reviewId, userId);
+        return reviewHeartService.saveReviewHeart(reviewId, userId);
     }
 
     /**

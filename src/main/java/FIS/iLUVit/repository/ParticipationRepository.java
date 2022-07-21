@@ -1,7 +1,6 @@
 package FIS.iLUVit.repository;
 
 import FIS.iLUVit.domain.Participation;
-import FIS.iLUVit.domain.PtDate;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -22,8 +21,8 @@ public interface ParticipationRepository extends JpaRepository<Participation, Lo
 
     @Query("select participation from Participation participation " +
             "where participation.status = FIS.iLUVit.domain.enumtype.Status.JOINED " +
-            "and participation.ptDate = :ptDate")
-    List<Participation> findByptDateAndStatus(@Param("ptDate") PtDate ptDate);
+            "and participation.ptDate.id = :ptDateId")
+    List<Participation> findByPtDateAndStatusJOINED(@Param("ptDateId") Long ptDateId);
 
 
     @Query("select participation from Participation participation " +

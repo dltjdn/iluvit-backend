@@ -255,6 +255,26 @@ public class Creator {
                 .build();
     }
 
+    public static Review createReview(Long id, Center center, Integer score, Parent parent, Teacher teacher, String content){
+        return Review.builder()
+                .id(id)
+                .center(center)
+                .score(score)
+                .parent(parent)
+                .teacher(teacher)
+                .content(content)
+                .build();
+    }
+    public static Review createReview(Center center, Integer score, Parent parent, Teacher teacher, String content){
+        return Review.builder()
+                .center(center)
+                .score(score)
+                .parent(parent)
+                .teacher(teacher)
+                .content(content)
+                .build();
+    }
+
     public static Parent createParent(){
         return Parent.builder()
                 .build();
@@ -421,6 +441,14 @@ public class Creator {
                 .build();
         build.setCreatedDateForTest(LocalDateTime.now());
         return build;
+    }
+
+    public static ReviewHeart createReviewHeart(Long id, Review review, User user) {
+        return ReviewHeart.builder()
+                .id(id)
+                .review(review)
+                .user(user)
+                .build();
     }
 
     public static Theme createTheme() {

@@ -29,8 +29,8 @@ public class ReviewController {
         내용: 학부모가 쓴 리뷰 등록
     */
     @PostMapping("/review")
-    public void registerReview(@Login Long userId, @RequestBody ReviewCreateDTO reviewCreateDTO) {
-        reviewService.saveReview(userId, reviewCreateDTO);
+    public Long registerReview(@Login Long userId, @RequestBody ReviewCreateDTO reviewCreateDTO) {
+        return reviewService.saveReview(userId, reviewCreateDTO);
     }
 
     /**
@@ -60,10 +60,9 @@ public class ReviewController {
         내용: 센터에 올라온 리뷰들 조회
     */
     @GetMapping("/review/center/{center_id}")
-    public ReviewByCenterDTO searchByCenter(@Login Long userId,
-                                            @PathVariable(name = "center_id") Long centerId,
+    public ReviewByCenterDTO searchByCenter(@PathVariable(name = "center_id") Long centerId,
                                             Pageable pageable) {
-        return reviewService.findByCenter(centerId, userId, pageable);
+        return reviewService.findByCenter(centerId, pageable);
     }
 
     /**
@@ -72,9 +71,9 @@ public class ReviewController {
         내용: 시설에 달린 리뷰 답글 등록 + 수정, 답글 달 수 있는 권한은 Director 만 가능
      */
     @PostMapping("/review/{review_id}/comment")
-    public void registerComment(@Login Long teacherId, @PathVariable("review_id") Long reviewId,
+    public Long registerComment(@Login Long teacherId, @PathVariable("review_id") Long reviewId,
                                 @RequestBody ReviewCommentDTO reviewCommentDTO) {
-        reviewService.saveComment(reviewId, reviewCommentDTO.getComment(), teacherId);
+        return reviewService.saveComment(reviewId, reviewCommentDTO.getComment(), teacherId);
     }
 
     /**
