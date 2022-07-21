@@ -40,7 +40,7 @@ public class PresentationController {
      */
     @PostMapping(value = "/presentation", consumes = {MediaType.APPLICATION_JSON_VALUE, MediaType.MULTIPART_FORM_DATA_VALUE})
     public PresentationSaveResponseDto registerPresentation(@RequestPart PresentationRequestRequestFormDto request,
-                                                            @RequestPart List<MultipartFile> images,
+                                                            @RequestPart(required = false) List<MultipartFile> images,
                                                             @Login Long userId){
         return new PresentationSaveResponseDto(presentationService.saveWithPtDate(request, images, userId));
     }
@@ -50,7 +50,7 @@ public class PresentationController {
      */
     @PatchMapping(value = "/presentation", consumes = {MediaType.APPLICATION_JSON_VALUE, MediaType.MULTIPART_FORM_DATA_VALUE})
     public PresentationModifyResponseDto modifyPresentation(@RequestPart @Validated PresentationModifyRequestDto request,
-                                                            @RequestPart List<MultipartFile> images,
+                                                            @RequestPart(required = false) List<MultipartFile> images,
                                                             @Login Long userId){
         return new PresentationModifyResponseDto(presentationService.modifyWithPtDate(request, images, userId));
     }
