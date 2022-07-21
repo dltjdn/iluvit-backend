@@ -341,6 +341,9 @@ class BoardServiceTest {
     @Test
     public void 센터의_이야기_모든_게시판_조회() throws Exception {
         //given
+        Mockito.doReturn(Optional.of(center1))
+                .when(centerRepository)
+                .findById(1L);
         Mockito.doReturn(Arrays.asList(bookmark1, bookmark2))
                 .when(bookmarkRepository)
                 .findBoardByUserAndCenter(parent1.getId(), 1L);
