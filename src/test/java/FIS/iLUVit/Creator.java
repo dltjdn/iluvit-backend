@@ -47,6 +47,21 @@ public class Creator {
                 .build();
     }
 
+    public static Parent createParent(Long userId, String phoneNum, String loginId, String nickname) {
+        return Parent.builder()
+                .id(userId)
+                .nickName(nickname)
+                .loginId(loginId)
+                .password("pwd")
+                .phoneNumber(phoneNum)
+                .hasProfileImg(false)
+                .emailAddress("asd@asd")
+                .name("name")
+                .address("address")
+                .detailAddress("detailAddress")
+                .build();
+    }
+
     public static Kindergarten createKindergarten(Long id, Area area, String name, Theme theme, Integer minAge, Integer maxAge, String addInfo, String program, BasicInfra basicInfra){
         return Kindergarten.kBuilder()
                 .id(id)
@@ -414,4 +429,21 @@ public class Creator {
                 .art(true)
                 .build();
     }
+
+    public static Scrap createScrap(Long id, User user, String name) {
+        return Scrap.builder()
+                .id(id)
+                .user(user)
+                .name(name)
+                .build();
+    }
+
+    public static ScrapPost createScrapPost(Long id, Post post, Scrap scrap) {
+        return ScrapPost.builder()
+                .id(id)
+                .post(post)
+                .scrap(scrap)
+                .build();
+    }
+
 }

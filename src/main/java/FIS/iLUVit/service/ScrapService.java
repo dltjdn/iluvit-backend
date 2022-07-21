@@ -52,7 +52,7 @@ public class ScrapService {
      * 작성자: 이승범
      * 작성내용: 스크랩 폴더 추가하기
      */
-    public ScrapListInfoResponse addScrapDir(Long id, addScrapRequest request) {
+    public ScrapListInfoResponse addScrapDir(Long id, AddScrapRequest request) {
         User user = userRepository.getById(id);
         Scrap newScrap = Scrap.createScrap(user, request.getName());
         scrapRepository.save(newScrap);
@@ -93,7 +93,7 @@ public class ScrapService {
                 if (Objects.equals(requestScrap.getScrapId(), s.getId())) {
                     isFindScrap = true;
                     Post post = postRepository.getById(request.getPostId());
-                    // 사용자의 스크랩 폴더에 해당 게시물이 존재하는 검사
+                    // 사용자의 스크랩 폴더에 해당 게시물이 존재하는지 검사
                     int scrapPostIndex = -1;
                     for (int i = 0; i < s.getScrapPosts().size(); i++) {
                         if (Objects.equals(s.getScrapPosts().get(i).getPost().getId(), post.getId())) {

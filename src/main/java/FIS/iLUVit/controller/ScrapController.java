@@ -30,7 +30,7 @@ public class ScrapController {
      * 작성내용: 스크랩 폴더 추가하기
      */
     @PostMapping("/user/scrap/dir")
-    public ScrapListInfoResponse addScrap(@Login Long id, @RequestBody addScrapRequest request) {
+    public ScrapListInfoResponse addScrap(@Login Long id, @RequestBody AddScrapRequest request) {
         return scrapService.addScrapDir(id, request);
     }
 

@@ -1,12 +1,13 @@
 package FIS.iLUVit.exception;
 
 
+import FIS.iLUVit.exception.exceptionHandler.ErrorResult;
 import lombok.Getter;
 
 @Getter
 public class SignupException extends RuntimeException {
 
-    private SignupErrorResult errorResult;
+    private ErrorResult errorResult;
 
     public SignupException() {
         super();

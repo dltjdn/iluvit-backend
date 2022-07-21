@@ -7,6 +7,6 @@ import lombok.NoArgsConstructor;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class addScrapRequest {
+public class AddScrapRequest {
     private String name;
 }

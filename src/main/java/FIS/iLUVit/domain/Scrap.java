@@ -26,6 +26,13 @@ public class Scrap extends BaseEntity {
     @OneToMany(mappedBy = "scrap")
     private List<ScrapPost> scrapPosts = new ArrayList<>();
 
+    @Builder
+    private Scrap(Long id, User user, String name) {
+        this.id = id;
+        this.user = user;
+        this.name = name;
+    }
+
     public static Scrap createScrap(User user, String name) {
         Scrap scrap = new Scrap();
         scrap.user = user;
