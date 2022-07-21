@@ -5,6 +5,8 @@ import FIS.iLUVit.controller.dto.WaitingRegisterDto;
 import FIS.iLUVit.domain.Parent;
 import FIS.iLUVit.domain.User;
 import FIS.iLUVit.domain.enumtype.Auth;
+import FIS.iLUVit.exception.PresentationErrorResult;
+import FIS.iLUVit.exception.PresentationException;
 import FIS.iLUVit.exception.exceptionHandler.ErrorResponse;
 import FIS.iLUVit.exception.exceptionHandler.controllerAdvice.GlobalControllerAdvice;
 import FIS.iLUVit.service.WaitingService;
@@ -18,7 +20,9 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
@@ -28,6 +32,8 @@ import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
 import java.util.Date;
 
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -94,7 +100,110 @@ class WaitingControllerTest {
                                     , "인증된 사용자가 아닙니다")
                     )));
         }
+        
+        @Test
+        @DisplayName("[error] 잘못 요청시 오류 발생")
+        public void 잘못된ptDateId요청() throws Exception {
+            //given
+            final String url = "/waiting";
+            String jwtToken = createJwtToken();
+            //when
+            ResultActions resultActions = mockMvc.perform(
+                    MockMvcRequestBuilders.post(url)
+                            .content(objectMapper.writeValueAsString(new WaitingRegisterDto(-1L)))
+                            .header(HttpHeaders.AUTHORIZATION, jwtToken)
+                            .contentType(MediaType.APPLICATION_JSON)
+            );
 
+            //then
+            resultActions.andDo(print())
+                    .andExpect(status().isBadRequest())
+                    .andExpect(content().json(objectMapper.writeValueAsString(
+                            new ErrorResponse(HttpStatus.BAD_REQUEST
+                                    , "[올바르지 않은 ptDateId 입니다]")
+                    )));
+        }
+
+        @Test
+        @DisplayName("[error] 서비스 계층 오류 잘못된 ptDate 요청")
+        public void 잘못된ptDate요청() throws Exception {
+            //given
+            final String url = "/waiting";
+            String jwtToken = createJwtToken();
+            Mockito.doThrow(new PresentationException(PresentationErrorResult.WRONG_PTDATE_ID_REQUEST))
+                    .when(waitingService).register(1L, 1L);
+
+            //when
+            ResultActions resultActions = mockMvc.perform(
+                    MockMvcRequestBuilders.post(url)
+                            .content(objectMapper.writeValueAsString(new WaitingRegisterDto(1L)))
+                            .header(HttpHeaders.AUTHORIZATION, jwtToken)
+                            .contentType(MediaType.APPLICATION_JSON)
+            );
+
+            //then
+            resultActions.andDo(print())
+                    .andExpect(status().isBadRequest())
+                    .andExpect(content().json(objectMapper.writeValueAsString(
+                            new ErrorResponse(HttpStatus.BAD_REQUEST
+                                    , "올바르지 않은 ptDateId 입니다")
+                    )));
+            verify(waitingService, times(1)).register(1L, 1L);
+        }
+
+        @Test
+        @DisplayName("[error] 설명회 신청기간이 지났을 경우")
+        public void 설명회신청기간이지남() throws Exception {
+            //given
+            final String url = "/waiting";
+            String jwtToken = createJwtToken();
+            Mockito.doThrow(new PresentationException(PresentationErrorResult.PARTICIPATION_PERIOD_PASSED))
+                    .when(waitingService).register(1L, 1L);
+
+            //when
+            ResultActions resultActions = mockMvc.perform(
+                    MockMvcRequestBuilders.post(url)
+                            .content(objectMapper.writeValueAsString(new WaitingRegisterDto(1L)))
+                            .header(HttpHeaders.AUTHORIZATION, jwtToken)
+                            .contentType(MediaType.APPLICATION_JSON)
+            );
+
+            //then
+            resultActions.andDo(print())
+                    .andExpect(status().isBadRequest())
+                    .andExpect(content().json(objectMapper.writeValueAsString(
+                            new ErrorResponse(HttpStatus.BAD_REQUEST
+                                    , "설명회 신청기간이 종료되었습니다")
+                    )));
+            verify(waitingService, times(1)).register(1L, 1L);
+        }
+
+        @Test
+        @DisplayName("[error] 대기등록을 이미 했을 경우")
+        public void 대기등록을이미했을경우() throws Exception {
+            //given
+            final String url = "/waiting";
+            String jwtToken = createJwtToken();
+            Mockito.doThrow(new PresentationException(PresentationErrorResult.PARTICIPATION_PERIOD_PASSED))
+                    .when(waitingService).register(1L, 1L);
+
+            //when
+            ResultActions resultActions = mockMvc.perform(
+                    MockMvcRequestBuilders.post(url)
+                            .content(objectMapper.writeValueAsString(new WaitingRegisterDto(1L)))
+                            .header(HttpHeaders.AUTHORIZATION, jwtToken)
+                            .contentType(MediaType.APPLICATION_JSON)
+            );
+
+            //then
+            resultActions.andDo(print())
+                    .andExpect(status().isBadRequest())
+                    .andExpect(content().json(objectMapper.writeValueAsString(
+                            new ErrorResponse(HttpStatus.BAD_REQUEST
+                                    , "설명회 신청기간이 종료되었습니다")
+                    )));
+            verify(waitingService, times(1)).register(1L, 1L);
+        }
     }
 
 

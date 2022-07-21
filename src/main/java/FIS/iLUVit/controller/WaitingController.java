@@ -9,6 +9,7 @@ import FIS.iLUVit.service.WaitingService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -23,7 +24,7 @@ public class WaitingController {
     private final WaitingService waitingService;
 
     @PostMapping("/waiting")
-    public Long register(@Login Long userId, @RequestBody WaitingRegisterDto dto){
+    public Long register(@Login Long userId, @RequestBody @Validated WaitingRegisterDto dto){
         if(userId == null)
             throw new UserException(UserErrorResult.NOT_AUTHORIZED_USER);
         Long ptDateId = dto.getPtDateId();

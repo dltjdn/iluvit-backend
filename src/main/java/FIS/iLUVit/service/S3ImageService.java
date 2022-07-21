@@ -112,8 +112,10 @@ public class S3ImageService implements ImageService {
 
     public String saveInfoImages(List<MultipartFile> images, BaseImageEntity entity) {
         // null 이거나 비어있다면 return
-        if (images == null || images.size() == 0)
+        if (images == null || images.size() == 0) {
+            entity.updateInfoImagePath(0, null);
             return null;
+        }
         // 이미지 분석 단계
         List<String> destPaths = getInfoDestPath(images, entity);
 
@@ -154,8 +156,10 @@ public class S3ImageService implements ImageService {
 
     public String saveProfileImage(MultipartFile image, BaseImageEntity entity) {
         // null 이거나 비어있다면 return
-        if (image == null || image.isEmpty())
+        if (image == null || image.isEmpty()) {
+            entity.updateProfileImagePath(null);
             return null;
+        }
         // image fullpath 완성
         String destPath = getProfileDestPath(image, entity);
         // 이미지 저장 로직 + entity 업데이트 추가 작업 필요
