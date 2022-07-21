@@ -26,7 +26,7 @@ public class BoardService {
     private final ChildRepository childRepository;
 
     public BoardListDTO findAllWithBookmark(Long userId) {
-        BoardListDTO dto = new BoardListDTO();
+        BoardListDTO dto = new BoardListDTO(null, "모두의 이야기");
         // 모두의 이야기 내 유저의 북마크 정보
         List<Bookmark> bookmarks = bookmarkRepository.findBoardByUser(userId);
         // 모두의 이야기 내 모든 게시판
@@ -38,7 +38,9 @@ public class BoardService {
     }
 
     public BoardListDTO findAllWithBookmarkInCenter(Long userId, Long centerId) {
-        BoardListDTO dto = new BoardListDTO();
+        Center findCenter = centerRepository.findById(centerId)
+                .orElseThrow(() -> new CenterException(CenterErrorResult.CENTER_NOT_EXIST));
+        BoardListDTO dto = new BoardListDTO(centerId, findCenter.getName());
         // 시설(유치원)의 이야기 내 유저의 북마크 정보
         List<Bookmark> bookmarks = bookmarkRepository.findBoardByUserAndCenter(userId, centerId);
         // 시설(유치원)의 이야기 모든 게시판
