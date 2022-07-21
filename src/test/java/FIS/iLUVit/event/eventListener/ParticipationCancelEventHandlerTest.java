@@ -16,6 +16,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockedStatic;
+import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import static FIS.iLUVit.Creator.*;
@@ -58,38 +59,39 @@ class ParticipationCancelEventHandlerTest {
 
         @Test
         public void 설명회_대기자_있음() throws Exception {
-            MockedStatic<AlarmUtils> alarmUtils = mockStatic(AlarmUtils.class);
-            //given
-            Center center = createCenter("test", true, true, null);
-            Presentation presentation = createValidPresentation(center);
-            PtDate ptDate = createCanNotRegisterPtDate(presentation);
-            Parent parent = createParent();
-            Participation participation = createCancelParticipation(ptDate, parent);
-            Waiting waiting1 = createWaiting(ptDate, parent, 5);
-            Waiting waiting2 = createWaiting(ptDate, parent, 2);
-            Waiting waiting3 = createWaiting(ptDate, parent, 3);
+            try (MockedStatic<AlarmUtils> alarmUtils = Mockito.mockStatic(AlarmUtils.class)) {
+                //given
+                Center center = createCenter("test", true, true, null);
+                Presentation presentation = createValidPresentation(center);
+                PtDate ptDate = createCanNotRegisterPtDate(presentation);
+                Parent parent = createParent();
+                Participation participation = createCancelParticipation(ptDate, parent);
+                Waiting waiting1 = createWaiting(ptDate, parent, 5);
+                Waiting waiting2 = createWaiting(ptDate, parent, 2);
+                Waiting waiting3 = createWaiting(ptDate, parent, 3);
 
-            ParticipationCancelEvent event = new ParticipationCancelEvent(presentation, ptDate);
+                ParticipationCancelEvent event = new ParticipationCancelEvent(presentation, ptDate);
 
-            doReturn(waiting2)
-                    .when(waitingRepository).findMinWaitingOrder(ptDate);
-            doReturn(null)
-                    .when(participationRepository).save(any(Participation.class));
-            doNothing()
-                    .when(waitingRepository).delete(waiting2);
-            alarmUtils.when(() -> AlarmUtils.getMessage(any(String.class), any(Object[].class)))
-                    .thenReturn("설명회 전환됨");
+                doReturn(waiting2)
+                        .when(waitingRepository).findMinWaitingOrder(ptDate);
+                doReturn(null)
+                        .when(participationRepository).save(any(Participation.class));
+                doNothing()
+                        .when(waitingRepository).delete(waiting2);
+                alarmUtils.when(() -> AlarmUtils.getMessage(any(String.class), any(Object[].class)))
+                        .thenReturn("설명회 전환됨");
 
-            PresentationConvertedToParticipateAlarm alarm = new PresentationConvertedToParticipateAlarm(parent, presentation, center);
-            alarmUtils.when(() -> AlarmUtils.publishAlarmEvent(any(Alarm.class)))
-                    .thenReturn(new AlarmEvent(alarm));
+                PresentationConvertedToParticipateAlarm alarm = new PresentationConvertedToParticipateAlarm(parent, presentation, center);
+                alarmUtils.when(() -> AlarmUtils.publishAlarmEvent(any(Alarm.class)))
+                        .thenReturn(new AlarmEvent(alarm));
 
-            //when
-            target.changeWaitingToParticipation(event);
+                //when
+                target.changeWaitingToParticipation(event);
 
-            //then
-            Assertions.assertThat(ptDate.getWaitingCnt()).isEqualTo(0);
-            verify(waitingRepository, times(1)).delete(waiting2);
+                //then
+                Assertions.assertThat(ptDate.getWaitingCnt()).isEqualTo(0);
+                verify(waitingRepository, times(1)).delete(waiting2);
+            }
         }
     }
 

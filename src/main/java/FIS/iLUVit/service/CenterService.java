@@ -42,11 +42,13 @@ public class CenterService {
 
     public List<CenterAndDistancePreview> findByFilterAndMap(double longitude, double latitude, Theme theme, Integer interestedAge, KindOf kindOf, Integer distance) {
 
-        List<CenterAndDistancePreview> results =
-                centerRepository.findByMapFilter(longitude, latitude, theme, interestedAge, kindOf, distance);
-        results.forEach(result -> result.calculateDistance(longitude, latitude));
-        return results;
+        return centerRepository.findByMapFilter(longitude, latitude, theme, interestedAge, kindOf, distance);
     }
+
+    public List<CenterAndDistancePreview> findByFilterAndMap(double longitude, double latitude, Integer distance) {
+        return centerRepository.findByMapFilter(longitude, latitude, distance);
+    }
+
 
     public CenterInfoResponseDto findInfoById(Long id) {
         Center center = centerRepository.findById(id)

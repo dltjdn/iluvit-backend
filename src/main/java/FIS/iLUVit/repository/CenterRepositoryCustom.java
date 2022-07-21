@@ -18,6 +18,8 @@ public interface CenterRepositoryCustom {
 
     List<CenterAndDistancePreview> findByMapFilter(double longitude, double latitude, Theme theme, Integer interestedAge, KindOf kindOf, Integer distance);
 
+    List<CenterAndDistancePreview> findByMapFilter(double longitude, double latitude, Integer distance);
+
     List<CenterRecommendDto> findRecommendCenter(Theme theme, Pageable pageable);
 
     Slice<CenterInfoDto> findForSignup(String sido, String sigungu, String centerName, Pageable pageable);

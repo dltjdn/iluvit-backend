@@ -166,7 +166,7 @@ class WaitingServiceTest {
             //when
             WaitingException result = assertThrows(WaitingException.class, () -> target.cancel(1L, 1L));
             //then
-            assertThat(result.getWaitingErrorResult()).isEqualTo(WaitingErrorResult.NO_RESULT);
+            assertThat(result.getErrorResult()).isEqualTo(WaitingErrorResult.NO_RESULT);
         }
 
         @Test

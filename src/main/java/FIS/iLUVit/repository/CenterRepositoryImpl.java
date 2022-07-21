@@ -18,6 +18,7 @@ import org.springframework.data.domain.Slice;
 import org.springframework.data.domain.SliceImpl;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 import static FIS.iLUVit.domain.QCenter.center;
 import static FIS.iLUVit.domain.QPrefer.prefer;
@@ -58,7 +59,7 @@ public class CenterRepositoryImpl extends CenterQueryMethod implements CenterRep
         double longitude_l = longitude - 0.009 * distance;
         double longitude_h = longitude + 0.009 * distance;
 
-        return jpaQueryFactory.select(new QCenterAndDistancePreview(center, review.score.avg()))
+        List<CenterAndDistancePreview> result = jpaQueryFactory.select(new QCenterAndDistancePreview(center, review.score.avg()))
                 .from(center)
                 .leftJoin(center.reviews, review)
                 .where(center.latitude.between(latitude_l, latitude_h)
@@ -68,6 +69,32 @@ public class CenterRepositoryImpl extends CenterQueryMethod implements CenterRep
                         .and(kindOfEq(kindOf)))
                 .groupBy(center)
                 .fetch();
+
+        return result.stream()
+                .filter(centerAndDistancePreview ->
+                        centerAndDistancePreview.calculateDistance(longitude, latitude) < distance)
+                .collect(Collectors.toList());
+    }
+
+    @Override
+    public List<CenterAndDistancePreview> findByMapFilter(double longitude, double latitude, Integer distance) {
+        double latitude_l = latitude - 0.01 * distance;
+        double latitude_h = latitude + 0.01 * distance;
+        double longitude_l = longitude - 0.01 * distance;
+        double longitude_h = longitude + 0.01 * distance;
+
+        List<CenterAndDistancePreview> result = jpaQueryFactory.select(new QCenterAndDistancePreview(center, review.score.avg()))
+                .from(center)
+                .leftJoin(center.reviews, review)
+                .where(center.latitude.between(latitude_l, latitude_h)
+                        .and(center.longitude.between(longitude_l, longitude_h)))
+                .groupBy(center)
+                .fetch();
+
+        return result.stream()
+                .filter(centerAndDistancePreview ->
+                        centerAndDistancePreview.calculateDistance(longitude, latitude) < distance)
+                .collect(Collectors.toList());
     }
 
     @Override

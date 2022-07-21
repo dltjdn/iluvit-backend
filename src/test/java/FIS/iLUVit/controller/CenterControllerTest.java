@@ -1,11 +1,7 @@
 package FIS.iLUVit.controller;
 
-import FIS.iLUVit.controller.dto.CenterInfoDto;
-import FIS.iLUVit.controller.dto.CenterInfoRequest;
 import FIS.iLUVit.config.argumentResolver.LoginUserArgumentResolver;
-import FIS.iLUVit.controller.dto.CenterBannerResponseDto;
-import FIS.iLUVit.controller.dto.CenterSearchFilterDTO;
-import FIS.iLUVit.controller.dto.CenterSearchMapFilterDTO;
+import FIS.iLUVit.controller.dto.*;
 import FIS.iLUVit.controller.messagecreate.ResponseRequests;
 import FIS.iLUVit.domain.Parent;
 import FIS.iLUVit.domain.Teacher;
@@ -17,7 +13,6 @@ import FIS.iLUVit.exception.exceptionHandler.controllerAdvice.GlobalControllerAd
 import FIS.iLUVit.repository.dto.CenterAndDistancePreview;
 import FIS.iLUVit.repository.dto.CenterPreview;
 import FIS.iLUVit.service.CenterService;
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -65,8 +60,7 @@ class CenterControllerTest extends ResponseRequests {
     @BeforeEach
     private void init(){
         mockMvc = MockMvcBuilders.standaloneSetup(centerController)
-                .setCustomArgumentResolvers(new PageableHandlerMethodArgumentResolver())
-                .setCustomArgumentResolvers(new LoginUserArgumentResolver())
+                .setCustomArgumentResolvers(new PageableHandlerMethodArgumentResolver(), new LoginUserArgumentResolver())
                 .setControllerAdvice(GlobalControllerAdvice.class)
                 .build();
         objectMapper = new ObjectMapper();
