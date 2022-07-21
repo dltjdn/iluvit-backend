@@ -1,6 +1,7 @@
 package FIS.iLUVit.domain;
 
 import lombok.AccessLevel;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.OnDelete;
@@ -28,5 +29,12 @@ public class ReviewHeart extends BaseEntity {
         this.review = review;
         this.user = user;
         review.getReviewHearts().add(this);
+    }
+
+    @Builder(toBuilder = true)
+    public ReviewHeart(Long id, Review review, User user) {
+        this.id = id;
+        this.review = review;
+        this.user = user;
     }
 }

@@ -438,6 +438,14 @@ public class Creator {
         return build;
     }
 
+    public static ReviewHeart createReviewHeart(Long id, Review review, User user) {
+        return ReviewHeart.builder()
+                .id(id)
+                .review(review)
+                .user(user)
+                .build();
+    }
+
     public static Theme createTheme() {
         return Theme.builder()
                 .animal(true)
