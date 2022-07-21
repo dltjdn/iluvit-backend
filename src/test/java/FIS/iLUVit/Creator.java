@@ -452,4 +452,10 @@ public class Creator {
                 .art(true)
                 .build();
     }
+
+    public static Waiting createWaiting(Long id) {
+        return Waiting.builder()
+                .id(id)
+                .build();
+    }
 }

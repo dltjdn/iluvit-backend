@@ -14,6 +14,8 @@ import com.auth0.jwt.JWT;
 import com.auth0.jwt.algorithms.Algorithm;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -224,6 +226,12 @@ class ParticipationControllerTest {
                                 1L
                         ))
                 );
+    }
+
+    @Nested
+    @DisplayName("설명회 취소")
+    class 설명회취소{
+
     }
 
 }

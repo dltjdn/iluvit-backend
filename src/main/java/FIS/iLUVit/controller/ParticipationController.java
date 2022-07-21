@@ -33,7 +33,7 @@ public class ParticipationController {
     @ResponseStatus(HttpStatus.CREATED)
     public Long register(@Login Long userId, @RequestBody @Validated ParticipationRegisterRequestDto dto){
         if(userId == null)
-            throw new UserException(UserErrorResult.NOT_AUTHORIZED_USER);
+            throw new UserException(UserErrorResult.NOT_LOGIN);
         return participationService.register(userId, dto.getPtDateId());
     }
 
@@ -42,11 +42,15 @@ public class ParticipationController {
      */
     @PatchMapping("/participation")
     public Long cancel(@Login Long userId, @RequestBody ParticipationCancelRequestDto dto){
+        if(userId == null)
+            throw new UserException(UserErrorResult.NOT_LOGIN);
         return participationService.cancel(userId, dto.getParticipationId());
     }
 
     @GetMapping("/participation/parent")
     public Map<Status, List<MyParticipationsDto>> getMyParticipation(@Login Long userId){
+        if(userId == null)
+            throw new UserException(UserErrorResult.NOT_LOGIN);
         return participationService.getMyParticipation(userId);
     }
 }
