@@ -427,4 +427,12 @@ public class Creator {
         build.setCreatedDateForTest(LocalDateTime.now());
         return build;
     }
+
+    public static ReviewHeart createReviewHeart(Long id, Review review, User user) {
+        return ReviewHeart.builder()
+                .id(id)
+                .review(review)
+                .user(user)
+                .build();
+    }
 }

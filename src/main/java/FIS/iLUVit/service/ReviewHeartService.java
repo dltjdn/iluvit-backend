@@ -3,7 +3,9 @@ package FIS.iLUVit.service;
 import FIS.iLUVit.domain.Review;
 import FIS.iLUVit.domain.ReviewHeart;
 import FIS.iLUVit.domain.User;
+import FIS.iLUVit.exception.ReviewErrorResult;
 import FIS.iLUVit.exception.ReviewException;
+import FIS.iLUVit.exception.UserErrorResult;
 import FIS.iLUVit.exception.UserException;
 import FIS.iLUVit.repository.ReviewHeartRepository;
 import FIS.iLUVit.repository.ReviewRepository;
@@ -20,22 +22,27 @@ public class ReviewHeartService {
     private final ReviewRepository reviewRepository;
     private final UserRepository userRepository;
 
-    public void saveReviewHeart(Long reviewId, Long userId) {
+    public Long saveReviewHeart(Long reviewId, Long userId) {
+        if (userId == null) {
+            throw new ReviewException(ReviewErrorResult.UNAUTHORIZED_USER_ACCESS);
+        }
         reviewHeartRepository.findByReviewAndUser(reviewId, userId)
                 .ifPresent(m -> {
-                    throw new ReviewException("이미 좋아요한 리뷰에 좋아요 불가능");
+                    throw new ReviewException(ReviewErrorResult.NO_MORE_THAN_ONE_REVIEW_HEART);
                 });
-        Review findReview = reviewRepository.getById(reviewId);
-        User user = userRepository.getById(userId);
+        Review findReview = reviewRepository.findById(reviewId)
+                .orElseThrow(() -> new ReviewException(ReviewErrorResult.REVIEW_NOT_EXIST));
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new UserException(UserErrorResult.USER_NOT_EXIST));
         ReviewHeart reviewHeart = new ReviewHeart(findReview, user);
-        reviewHeartRepository.save(reviewHeart);
+        return reviewHeartRepository.save(reviewHeart).getId();
     }
 
     public void deleteReviewHeart(Long reviewId, Long userId) {
         // 리뷰 좋아요한 데이터가 존재하면 삭제, 존재하지 않는데 삭제 요청을 보내면 Exception 터뜨림
         reviewHeartRepository.findByReviewAndUser(reviewId, userId)
                 .ifPresentOrElse(reviewHeartRepository::delete, () -> {
-                    throw new ReviewException("존재하지 않는 좋아요 취소 시도");
+                    throw new ReviewException(ReviewErrorResult.REVIEW_HEART_NOT_EXIST);
                 });
     }
 }
