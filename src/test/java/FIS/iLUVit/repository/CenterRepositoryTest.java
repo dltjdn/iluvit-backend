@@ -11,6 +11,7 @@ import FIS.iLUVit.domain.embeddable.Area;
 import FIS.iLUVit.domain.embeddable.BasicInfra;
 import FIS.iLUVit.domain.embeddable.Theme;
 import FIS.iLUVit.domain.enumtype.KindOf;
+import FIS.iLUVit.repository.dto.CenterAndDistancePreview;
 import FIS.iLUVit.repository.dto.CenterBannerDto;
 import FIS.iLUVit.repository.dto.CenterPreview;
 import org.junit.jupiter.api.DisplayName;
@@ -226,22 +227,32 @@ class CenterRepositoryTest {
     }
 
     @Nested
-    @DisplayName("맵_기반_검색")
-    public class CenterMapTets{
-
+    @DisplayName("지도 기반 센터 검색")
+    class 지도기반센터검색{
         @Test
-        public void 현재_위치_중심_센터_찾기() throws Exception {
+        @DisplayName("[success] 지도 기반 검색하기")
+        public void 지도기반검색하기() throws Exception {
             //given
-            // 현재위치
-            double longitude;
-            double latitude;
-            Theme theme;
-            Integer interestAge;
+            Center center1 = createCenter("이승범 어린이집", 3, 37.3912106, 127.0150178);
+            Center center2 = createCenter("현승구 어린이집", 3, 37.5686264, 127.0113184);
+            Center center3 = createCenter("이창윤 어린이집", 3, 37.5675523, 127.0147458);
+            Center center4 = createCenter("김유정 어린이집", 3, 37.5500494, 127.0097435);
+            Center center5 = createCenter("신은수 어린이집", 3, 37.5618861, 127.020072);
+            Center center6 = createCenter("한명수 어린이집", 3, 37.5105178, 127.0147458);
+            em.persist(center1);
+            em.persist(center2);
+            em.persist(center3);
+            em.persist(center4);
+            em.persist(center5);
+            em.persist(center6);
+            em.flush();
+            em.clear();
 
             //when
-            // 대략적인 거리로만 반환 거리 계산은 service 에서? ㄴㄴ querydsl 로 해서 할 것
-//            centerRepository.findByMapFilter()
+            List<CenterAndDistancePreview> result = centerRepository.findByMapFilter(127.0147458, 37.5015178, 6);
             //then
+            assertThat(result.size()).isEqualTo(2);
+            result.forEach(centerAndDistancePreview -> System.out.println("centerAndDistancePreview.getDistance() = " + centerAndDistancePreview.getDistance()));
         }
     }
 

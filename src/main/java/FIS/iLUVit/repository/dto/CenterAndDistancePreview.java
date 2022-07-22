@@ -26,7 +26,6 @@ public class CenterAndDistancePreview {
     private Double latitude;                // 위도
     private Theme theme;
     private Double distance;
-    private String image;
     private Double starAverage;
     private String profileImage;
 
@@ -52,7 +51,7 @@ public class CenterAndDistancePreview {
     }
 
     @Builder
-    public CenterAndDistancePreview(Long id, String name, String owner, String director, String estType, String tel, String startTime, String endTime, Integer minAge, Integer maxAge, String address, Area area, Double longitude, Double latitude, Theme theme, Double distance, String image, Double starAverage, String profileImage) {
+    public CenterAndDistancePreview(Long id, String name, String owner, String director, String estType, String tel, String startTime, String endTime, Integer minAge, Integer maxAge, String address, Area area, Double longitude, Double latitude, Theme theme, Double distance, Double starAverage, String profileImage) {
         this.id = id;
         this.name = name;
         this.owner = owner;
@@ -69,12 +68,11 @@ public class CenterAndDistancePreview {
         this.latitude = latitude;
         this.theme = theme;
         this.distance = distance;
-        this.image = image;
         this.starAverage = starAverage;
         this.profileImage = profileImage;
     }
 
-    public CenterAndDistancePreview calculateDistance(double longitude, double latitude){
+    public Double calculateDistance(double longitude, double latitude){
         double theta = this.longitude - longitude;
         double dist = Math.sin(deg2rad(this.latitude)) * Math.sin(deg2rad(latitude)) + Math.cos(deg2rad(this.latitude)) * Math.cos(deg2rad(latitude)) * Math.cos(deg2rad(theta));
 
@@ -82,7 +80,7 @@ public class CenterAndDistancePreview {
         dist = rad2deg(dist);
         dist = dist * 60 * 1.1515 * 1609.344;
         this.distance = dist/1000.0;               //km 단위로 끊음
-        return this;
+        return this.distance;
     }
 
     // This function converts decimal degrees to radians

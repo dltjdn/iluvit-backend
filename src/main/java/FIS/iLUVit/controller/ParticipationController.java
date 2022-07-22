@@ -5,10 +5,11 @@ import FIS.iLUVit.controller.dto.MyParticipationsDto;
 import FIS.iLUVit.controller.dto.ParticipationCancelRequestDto;
 import FIS.iLUVit.controller.dto.ParticipationRegisterRequestDto;
 import FIS.iLUVit.domain.enumtype.Status;
+import FIS.iLUVit.exception.UserErrorResult;
+import FIS.iLUVit.exception.UserException;
 import FIS.iLUVit.service.ParticipationService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.dao.InvalidDataAccessApiUsageException;
 import org.springframework.http.HttpStatus;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
@@ -32,7 +33,7 @@ public class ParticipationController {
     @ResponseStatus(HttpStatus.CREATED)
     public Long register(@Login Long userId, @RequestBody @Validated ParticipationRegisterRequestDto dto){
         if(userId == null)
-            throw new InvalidDataAccessApiUsageException("");
+            throw new UserException(UserErrorResult.NOT_AUTHORIZED_USER);
         return participationService.register(userId, dto.getPtDateId());
     }
 

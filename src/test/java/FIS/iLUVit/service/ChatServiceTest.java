@@ -298,42 +298,41 @@ class ChatServiceTest {
     @Test
     public void 쪽지_작성_성공() throws Exception {
         //given
-        MockedStatic<AlarmUtils> alarmUtils = Mockito.mockStatic(AlarmUtils.class);
+        try (MockedStatic<AlarmUtils> alarmUtils = Mockito.mockStatic(AlarmUtils.class)) {
 
-        request.setMessage("안녕");
-        request.setPost_id(post1.getId());
-        request.setReceiver_id(sender.getId());
-        request.setAnonymous(true);
+            request.setMessage("안녕");
+            request.setPost_id(post1.getId());
+            request.setReceiver_id(sender.getId());
+            request.setAnonymous(true);
 
-        Mockito.doReturn(Optional.of(receiver))
-                .when(userRepository)
-                .findById(receiver.getId());
+            Mockito.doReturn(Optional.of(receiver))
+                    .when(userRepository)
+                    .findById(receiver.getId());
 
-        Mockito.doReturn(Optional.of(sender))
-                .when(userRepository)
-                .findById(sender.getId());
+            Mockito.doReturn(Optional.of(sender))
+                    .when(userRepository)
+                    .findById(sender.getId());
 
-        Mockito.doReturn(Optional.of(post1))
-                .when(postRepository)
-                .findById(post1.getId());
+            Mockito.doReturn(Optional.of(post1))
+                    .when(postRepository)
+                    .findById(post1.getId());
 
-        Mockito.doReturn(chat2)
-                .when(chatRepository)
-                .save(any());
+            Mockito.doReturn(chat2)
+                    .when(chatRepository)
+                    .save(any());
 
-        alarmUtils.when(() -> AlarmUtils.getMessage(any(String.class), any(Object[].class)))
-                .thenReturn("회원 {0}로 부터 새로운 채팅을 받았어요");
+            alarmUtils.when(() -> AlarmUtils.getMessage(any(String.class), any(Object[].class)))
+                    .thenReturn("회원 {0}로 부터 새로운 채팅을 받았어요");
 
-        AlarmEvent alarmEvent = new AlarmEvent(new ChatAlarm(receiver, sender, false));
-        alarmUtils.when(() -> AlarmUtils.publishAlarmEvent(any(Alarm.class)))
-                .thenReturn(alarmEvent);
+            AlarmEvent alarmEvent = new AlarmEvent(new ChatAlarm(receiver, sender, false));
+            alarmUtils.when(() -> AlarmUtils.publishAlarmEvent(any(Alarm.class)))
+                    .thenReturn(alarmEvent);
 
-        //when
-        Long returnedId = chatService.saveChat(receiver.getId(), request);
-        //then
-        assertThat(returnedId).isEqualTo(chat2.getId());
-
-        alarmUtils.close();
+            //when
+            Long returnedId = chatService.saveChat(receiver.getId(), request);
+            //then
+            assertThat(returnedId).isEqualTo(chat2.getId());
+        }
     }
 
     @Test

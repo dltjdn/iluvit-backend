@@ -1,12 +1,11 @@
 package FIS.iLUVit.exception;
 
-import FIS.iLUVit.exception.exceptionHandler.ErrorResult;
 import lombok.Getter;
 
 @Getter
 public class UserException extends RuntimeException{
 
-    private ErrorResult errorResult;
+    private UserErrorResult errorResult;
 
     // String message
     public UserException() {

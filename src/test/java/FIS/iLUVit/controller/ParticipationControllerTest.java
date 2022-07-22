@@ -92,7 +92,7 @@ class ParticipationControllerTest {
                 .andExpect(status().isForbidden())
                 .andExpect(content().json(objectMapper.writeValueAsString(
                         new ErrorResponse(HttpStatus.FORBIDDEN
-                                , "쿼리파라미터가 null 입니다. 토큰이 유효한지 확인해보세요")
+                                , "인증된 사용자가 아닙니다")
                 )));
     }
 

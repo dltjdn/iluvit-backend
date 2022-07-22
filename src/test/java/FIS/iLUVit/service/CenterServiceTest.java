@@ -4,6 +4,7 @@ import FIS.iLUVit.controller.dto.CenterBannerResponseDto;
 import FIS.iLUVit.domain.Center;
 import FIS.iLUVit.domain.embeddable.Theme;
 import FIS.iLUVit.repository.CenterRepository;
+import FIS.iLUVit.repository.dto.CenterAndDistancePreview;
 import FIS.iLUVit.repository.dto.CenterBannerDto;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -11,8 +12,12 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.mockito.Mockito;
 import org.mockito.Spy;
 import org.mockito.junit.jupiter.MockitoExtension;
+
+import java.util.ArrayList;
+import java.util.List;
 
 import static FIS.iLUVit.Creator.createCenter;
 import static FIS.iLUVit.Creator.englishAndCoding;
@@ -83,5 +88,54 @@ public class CenterServiceTest {
             assertThat(result.getPrefer()).isFalse();
             assertThat(result.getSigned()).isTrue();
         }
+    }
+
+    @Nested
+    @DisplayName("센터 지도 기반으로 검색하기")
+    class 센터지도기반으로검색하기{
+        @Test
+        @DisplayName("[success] 위경도 기반으로 검색하기 성공 데이터 있음")
+        public void 위경도로검색1() throws Exception {
+            //given
+            Center center1 = createCenter("이승범 어린이집", 3, 37.3912106, 127.0150178);
+            Center center2 = createCenter("현승구 어린이집", 3, 37.5686264, 127.0113184);
+            Center center3 = createCenter("이창윤 어린이집", 3, 37.5675523, 127.0147458);
+            Center center4 = createCenter("김유정 어린이집", 3, 37.5500494, 127.0097435);
+            Center center5 = createCenter("신은수 어린이집", 3, 37.5618861, 127.020072);
+            Center center6 = createCenter("한명수 어린이집", 3, 37.5105178, 127.0147458);
+            List<CenterAndDistancePreview> data = new ArrayList<>();
+            data.add(new CenterAndDistancePreview(center1, 2.3));
+            data.add(new CenterAndDistancePreview(center2, 2.3));
+            data.add(new CenterAndDistancePreview(center3, 2.3));
+            data.add(new CenterAndDistancePreview(center4, 2.3));
+            data.add(new CenterAndDistancePreview(center5, 2.3));
+            data.add(new CenterAndDistancePreview(center6, 2.3));
+
+            Mockito.doReturn(data).when(centerRepository).findByMapFilter(1.2, 1.2, 10);
+
+            //when
+            List<CenterAndDistancePreview> result = target.findByFilterAndMap(1.2, 1.2, 10);
+
+            //then
+            verify(centerRepository, times(1)).findByMapFilter(1.2, 1.2, 10);
+            assertThat(result.size()).isEqualTo(6);
+        }
+
+        @Test
+        @DisplayName("[success] 위경도 기반으로 검색 자료가 없을 경우 빈 배열 반환")
+        public void 자료없으면빈배열반환() throws Exception {
+            //given
+            List<CenterAndDistancePreview> data = new ArrayList<>();
+            Mockito.doReturn(data).when(centerRepository).findByMapFilter(1.2, 1.2, 10);
+
+            //when
+            List<CenterAndDistancePreview> result = target.findByFilterAndMap(1.2, 1.2, 10);
+
+            //then
+            verify(centerRepository, times(1)).findByMapFilter(1.2, 1.2, 10);
+            assertThat(result.size()).isEqualTo(0);
+        }
+
+
     }
 }

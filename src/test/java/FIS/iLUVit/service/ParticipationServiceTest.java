@@ -242,53 +242,54 @@ class ParticipationServiceTest {
         @Test
         public void 설명회_신청_성공() throws Exception {
             //given
-            MockedStatic<AlarmUtils> alarmUtils = Mockito.mockStatic(AlarmUtils.class);
+            try (MockedStatic<AlarmUtils> alarmUtils = Mockito.mockStatic(AlarmUtils.class)) {
 
-            Participation participation1 = Participation.builder()
-                    .id(2L)
-                    .ptDate(ptDate3)
-                    .parent(parent)
-                    .status(Status.JOINED)
-                    .build();
+                Participation participation1 = Participation.builder()
+                        .id(2L)
+                        .ptDate(ptDate3)
+                        .parent(parent)
+                        .status(Status.JOINED)
+                        .build();
 
-            Mockito.doReturn(Optional.of(ptDate3))
-                    .when(ptDateRepository)
-                    .findByIdAndJoinParticipation(ptDate3.getId());
+                Mockito.doReturn(Optional.of(ptDate3))
+                        .when(ptDateRepository)
+                        .findByIdAndJoinParticipation(ptDate3.getId());
 
-            Mockito.doReturn(participation1)
-                    .when(participationRepository)
-                    .save(any(Participation.class));
+                Mockito.doReturn(participation1)
+                        .when(participationRepository)
+                        .save(any(Participation.class));
 
-            Mockito.doReturn(Parent.builder().id(parent.getId()).build())
-                    .when(parentRepository)
-                    .getById(parent.getId());
+                Mockito.doReturn(Parent.builder().id(parent.getId()).build())
+                        .when(parentRepository)
+                        .getById(parent.getId());
 
 
-            List<Teacher> teachers = new ArrayList<>();
-            teachers.add(Teacher.builder().name("test").build());
+                List<Teacher> teachers = new ArrayList<>();
+                teachers.add(Teacher.builder().name("test").build());
 
-            Mockito.doReturn(teachers)
-                    .when(userRepository)
-                    .findTeacherByCenter(any(Center.class));
+                Mockito.doReturn(teachers)
+                        .when(userRepository)
+                        .findTeacherByCenter(any(Center.class));
 
-            alarmUtils.when(() -> AlarmUtils.getMessage(any(String.class), any(Object[].class)))
-                    .thenReturn("설명회가 가득 찼습니다");
+                alarmUtils.when(() -> AlarmUtils.getMessage(any(String.class), any(Object[].class)))
+                        .thenReturn("설명회가 가득 찼습니다");
 
-            alarmUtils.when(() -> AlarmUtils.publishAlarmEvent(any(Alarm.class)))
-                    .thenReturn(new AlarmEvent(new PresentationFullAlarm(parent, presentation1, center)));
+                alarmUtils.when(() -> AlarmUtils.publishAlarmEvent(any(Alarm.class)))
+                        .thenReturn(new AlarmEvent(new PresentationFullAlarm(parent, presentation1, center)));
 
-            //when
-            Long result = target.register(parent.getId(), ptDate3.getId());
+                //when
+                Long result = target.register(parent.getId(), ptDate3.getId());
 
-            // then
-            assertThat(result).isEqualTo(participation1.getId());
-            // register 에서 repository
-            verify(ptDateRepository, times(1))
-                    .findByIdAndJoinParticipation(ptDate3.getId());
-            verify(participationRepository, times(1))
-                    .save(any(Participation.class));
-            verify(parentRepository, times(1))
-                    .getById(parent.getId());
+                // then
+                assertThat(result).isEqualTo(participation1.getId());
+                // register 에서 repository
+                verify(ptDateRepository, times(1))
+                        .findByIdAndJoinParticipation(ptDate3.getId());
+                verify(participationRepository, times(1))
+                        .save(any(Participation.class));
+                verify(parentRepository, times(1))
+                        .getById(parent.getId());
+            }
 
         }
 
