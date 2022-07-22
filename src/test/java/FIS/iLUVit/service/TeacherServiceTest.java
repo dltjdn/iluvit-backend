@@ -16,6 +16,7 @@ import FIS.iLUVit.repository.*;
 import FIS.iLUVit.service.createmethod.CreateTest;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -28,6 +29,7 @@ import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
+import javax.swing.plaf.basic.BasicDesktopIconUI;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
@@ -138,19 +140,19 @@ public class TeacherServiceTest {
     @Test
     public void 교사회원가입_성공_시설선택한경우() {
         // given
-        SignupTeacherRequest request = SignupTeacherRequest.builder()
-                .loginId("loginId")
-                .password("password")
-                .passwordCheck("password")
-                .phoneNum("phoneNum")
-                .nickname("nickName")
-                .name("name")
-                .emailAddress("asd@asd")
-                .address("address")
-                .detailAddress("detailAddress")
-                .centerId(center1.getId())
-                .build();
         try (MockedStatic<AlarmUtils> alarmUtils = Mockito.mockStatic(AlarmUtils.class)) {
+            SignupTeacherRequest request = SignupTeacherRequest.builder()
+                    .loginId("loginId")
+                    .password("password")
+                    .passwordCheck("password")
+                    .phoneNum("phoneNum")
+                    .nickname("nickName")
+                    .name("name")
+                    .emailAddress("asd@asd")
+                    .address("address")
+                    .detailAddress("detailAddress")
+                    .centerId(center1.getId())
+                    .build();
             alarmUtils.when(() -> AlarmUtils.getMessage(any(String.class), any(Object[].class)))
                     .thenReturn("설명회가 가득 찼습니다");
             AlarmEvent alarmEvent = new AlarmEvent(new CenterApprovalReceivedAlarm(Teacher.builder().build()));

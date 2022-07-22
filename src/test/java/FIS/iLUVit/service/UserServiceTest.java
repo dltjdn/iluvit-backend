@@ -1,8 +1,10 @@
 package FIS.iLUVit.service;
 
 import FIS.iLUVit.Creator;
+import FIS.iLUVit.controller.dto.UpdatePasswordRequest;
 import FIS.iLUVit.domain.AuthNumber;
 import FIS.iLUVit.domain.Parent;
+import FIS.iLUVit.domain.User;
 import FIS.iLUVit.domain.enumtype.AuthKind;
 import FIS.iLUVit.exception.AuthNumberErrorResult;
 import FIS.iLUVit.exception.AuthNumberException;
@@ -125,4 +127,57 @@ public class UserServiceTest {
         // then
         assertThat(encoder.matches("pwd", result)).isEqualTo(true);
     }
+
+    @Test
+    public void 비밀번호변경_실패_비밀번호틀림() {
+        // given
+        UpdatePasswordRequest request = new UpdatePasswordRequest("pwd", "newPwd", "newPwd");
+        Parent parent = Parent.builder()
+                .id(1L)
+                .password(encoder.encode("password"))
+                .build();
+        doReturn(Optional.of(parent))
+                .when(userRepository)
+                .findById(any());
+        // when
+        SignupException result = assertThrows(SignupException.class,
+                () -> target.updatePassword(parent.getId(), request));
+        // then
+        assertThat(result.getErrorResult()).isEqualTo(SignupErrorResult.NOT_MATCH_PWD);
+    }
+
+    @Test
+    public void 비밀번호변경_실패_비밀번호확인틀림() {
+        // given
+        UpdatePasswordRequest request = new UpdatePasswordRequest("password", "newPwd", "new");
+        Parent parent = Parent.builder()
+                .id(1L)
+                .password(encoder.encode("password"))
+                .build();
+        doReturn(Optional.of(parent))
+                .when(userRepository)
+                .findById(any());
+        // when
+        SignupException result = assertThrows(SignupException.class,
+                () -> target.updatePassword(parent.getId(), request));
+        // then
+        assertThat(result.getErrorResult()).isEqualTo(SignupErrorResult.NOT_MATCH_PWDCHECK);
+    }
+    
+    @Test
+    public void 비밀번호변경_성공() {
+        // given
+        UpdatePasswordRequest request = new UpdatePasswordRequest("password", "newPwd", "newPwd");
+        Parent parent = Parent.builder()
+                .id(1L)
+                .password(encoder.encode("password"))
+                .build();
+        doReturn(Optional.of(parent))
+                .when(userRepository)
+                .findById(any());
+        // when
+        User result = target.updatePassword(parent.getId(), request);
+        // then
+        assertThat(encoder.matches("newPwd", result.getPassword())).isTrue();
+    } 
 }

@@ -139,7 +139,7 @@ public class TeacherService {
         }
 
         // default 스크랩 생성
-        Scrap scrap = Scrap.createScrap(teacher, "default");
+        Scrap scrap = Scrap.createDefaultScrap(teacher);
         scrapRepository.save(scrap);
 
         // 사용이 끝난 인증번호 지우기
