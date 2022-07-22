@@ -463,6 +463,16 @@ public class Creator {
                 .id(id)
                 .user(user)
                 .name(name)
+                .isDefault(false)
+                .build();
+    }
+
+    public static Scrap createDefaultScrap(Long id, User user, String name) {
+        return Scrap.builder()
+                .id(id)
+                .user(user)
+                .name(name)
+                .isDefault(true)
                 .build();
     }
 

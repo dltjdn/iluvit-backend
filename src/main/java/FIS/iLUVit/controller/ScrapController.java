@@ -7,6 +7,8 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
+
 @Slf4j
 @RestController
 @RequiredArgsConstructor
@@ -30,7 +32,7 @@ public class ScrapController {
      * 작성내용: 스크랩 폴더 추가하기
      */
     @PostMapping("/user/scrap/dir")
-    public ScrapListInfoResponse addScrap(@Login Long id, @RequestBody AddScrapRequest request) {
+    public ScrapListInfoResponse addScrap(@Login Long id, @Valid @RequestBody AddScrapRequest request) {
         return scrapService.addScrapDir(id, request);
     }
 
@@ -50,14 +52,14 @@ public class ScrapController {
      * 작성내용: 스크랩 폴더 이름 바꾸기
      */
     @PutMapping("/user/scrap/dir/name")
-    public void updateScrapDirName(@Login Long id, @RequestBody updateScrapDirNameRequest request) {
+    public void updateScrapDirName(@Login Long id, @Valid @RequestBody UpdateScrapDirNameRequest request) {
         scrapService.updateScrapDirName(id, request);
     }
 
     /**
     *   작성날짜: 2022/06/22 2:13 PM
     *   작성자: 이승범
-    *   작성내용: 스크랩한 게시물 삭제
+    *   작성내용: 스크랩폴더에서 해당게시물 지우기
     */
     @DeleteMapping("/user/scrap/post")
     public void deleteScrapPost(@Login Long userId, @RequestParam Long scrapPostId) {
@@ -80,7 +82,7 @@ public class ScrapController {
      * 작성내용: 게시물 스크랩하기
      */
     @PutMapping("/user/scrap/post")
-    public void scrapPost(@Login Long userId, @RequestBody updateScrapByPostRequest request) {
+    public void scrapPost(@Login Long userId, @Valid @RequestBody UpdateScrapByPostRequest request) {
         scrapService.scrapPost(userId, request);
     }
 }

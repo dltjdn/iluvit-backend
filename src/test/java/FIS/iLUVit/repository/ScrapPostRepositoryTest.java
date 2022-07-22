@@ -6,6 +6,7 @@ import FIS.iLUVit.domain.Parent;
 import FIS.iLUVit.domain.Post;
 import FIS.iLUVit.domain.Scrap;
 import FIS.iLUVit.domain.ScrapPost;
+import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -15,16 +16,14 @@ import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.context.annotation.ComponentScan;
 
 import javax.persistence.EntityManager;
-import java.util.List;
-import java.util.Objects;
 
 import static org.assertj.core.api.Assertions.*;
 
 @DataJpaTest(includeFilters = @ComponentScan.Filter(ForDB.class))
-public class ScrapRepositoryTest {
+public class ScrapPostRepositoryTest {
 
     @Autowired
-    private ScrapRepository scrapRepository;
+    private ScrapPostRepository scrapPostRepository;
 
     @Autowired
     private EntityManager em;
@@ -40,6 +39,7 @@ public class ScrapRepositoryTest {
     private Scrap scrap3;
     private ScrapPost scrapPost1;
     private ScrapPost scrapPost2;
+    private ScrapPost scrapPost3;
 
     @BeforeEach
     public void init() {
@@ -54,6 +54,7 @@ public class ScrapRepositoryTest {
         scrap3 = Scrap.createScrap(parent2, "scrap3");
         scrapPost1 = ScrapPost.createScrapPost(post1, scrap1);
         scrapPost2 = ScrapPost.createScrapPost(post3, scrap1);
+        scrapPost3 = ScrapPost.createScrapPost(post2, scrap3);
         em.persist(parent1);
         em.persist(parent2);
         em.persist(parent3);
@@ -68,67 +69,30 @@ public class ScrapRepositoryTest {
     }
 
     @Nested
-    @DisplayName("findScrapsByUserWithScrapPosts")
-    class findScrapsByUserWithScrapPosts {
+    @DisplayName("findByScrapAndPost")
+    class findByScrapAndPost{
 
         @Test
-        public void scrapPost가있는경우() {
+        public void 요청이정상적인경우() {
             // given
             em.flush();
             em.clear();
             // when
-            List<Scrap> result = scrapRepository.findScrapsByUserWithScrapPosts(parent1.getId());
-            // then
-            assertThat(result.size()).isEqualTo(2);
-            assertThat(result.get(0).getUser().getId()).isEqualTo(parent1.getId());
-            for (Scrap scrap : result) {
-                if (!scrap.getScrapPosts().isEmpty()) {
-                    assertThat(scrap.getScrapPosts().size()).isEqualTo(2);
-                }
-            }
-        }
-
-        @Test
-        public void scrapPost가없는경우() {
-            // given
-            em.flush();
-            em.clear();
-            // when
-            List<Scrap> result = scrapRepository.findScrapsByUserWithScrapPosts(parent3.getId());
-            // then
-            assertThat(result.size()).isEqualTo(0);
-        }
-
-    }
-
-    @Nested
-    @DisplayName("findScrapByIdAndUserId")
-    class findScrapByIdAndUserId{
-        @Test
-        public void 결과가있을경우() {
-            // given
-            em.flush();
-            em.clear();
-            // when
-            Scrap result = scrapRepository.findScrapByIdAndUserId(scrap1.getId(), parent1.getId()).orElse(null);
+            ScrapPost result = scrapPostRepository.findByScrapAndPost(parent1.getId(), scrapPost1.getId()).orElse(null);
             // then
             assertThat(result).isNotNull();
-            assertThat(result.getId()).isEqualTo(scrap1.getId());
+            assertThat(result.getId()).isEqualTo(scrapPost1.getId());
         }
+
         @Test
-        public void 결과가없는경우() {
+        public void scrapPostId오류() {
             // given
             em.flush();
             em.clear();
             // when
-            Scrap result = scrapRepository.findScrapByIdAndUserId(-1L, parent1.getId()).orElse(null);
+            ScrapPost result = scrapPostRepository.findByScrapAndPost(parent1.getId(), scrapPost3.getId()).orElse(null);
             // then
             assertThat(result).isNull();
         }
     }
-
-
-
-
-
 }

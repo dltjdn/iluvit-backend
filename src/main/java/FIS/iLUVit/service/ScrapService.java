@@ -5,6 +5,7 @@ import FIS.iLUVit.domain.Post;
 import FIS.iLUVit.domain.Scrap;
 import FIS.iLUVit.domain.ScrapPost;
 import FIS.iLUVit.domain.User;
+import FIS.iLUVit.exception.ScrapErrorResult;
 import FIS.iLUVit.exception.ScrapException;
 import FIS.iLUVit.repository.PostRepository;
 import FIS.iLUVit.repository.ScrapPostRepository;
@@ -12,8 +13,6 @@ import FIS.iLUVit.repository.ScrapRepository;
 import FIS.iLUVit.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.dao.DataIntegrityViolationException;
-import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -38,7 +37,7 @@ public class ScrapService {
      * 작성내용: 스크랩 폴더 목록 가져오기
      */
     public ScrapListInfoResponse findScrapDirListInfo(Long id) {
-        List<Scrap> scraps = scrapRepository.findScrapsWithScrapPostsByUser(id);
+        List<Scrap> scraps = scrapRepository.findScrapsByUserWithScrapPosts(id);
         ScrapListInfoResponse response = new ScrapListInfoResponse();
 
         scraps.forEach(scrap -> {
@@ -66,14 +65,28 @@ public class ScrapService {
      * 작성내용: 스크랩 폴더 삭제하기
      */
     public ScrapListInfoResponse deleteScrapDir(Long userId, Long scrapId) {
-        try {
-            scrapRepository.deleteScrapById(scrapId);
-        } catch (EmptyResultDataAccessException e) {
-            throw new ScrapException("존재하지 않는 scrapId 입니다.");
-        } catch (DataIntegrityViolationException e) {
-            throw new ScrapException("존재하지 않는 postId 입니다.");
+
+        Scrap deletedScrap = scrapRepository.findScrapByIdAndUserId(scrapId, userId)
+                .orElseThrow(() -> new ScrapException(ScrapErrorResult.NOT_VALID_SCRAP));
+
+        if (deletedScrap.getIsDefault()) {
+            throw new ScrapException(ScrapErrorResult.CANT_DELETE_DEFAULT);
         }
+        scrapRepository.delete(deletedScrap);
+
         return findScrapDirListInfo(userId);
+    }
+
+    /**
+     * 작성날짜: 2022/06/22 10:24 AM
+     * 작성자: 이승범
+     * 작성내용: 스크랩 폴더 이름 바꾸기
+     */
+    public Scrap updateScrapDirName(Long id, UpdateScrapDirNameRequest request) {
+        Scrap findScrap = scrapRepository.findScrapByIdAndUserId(request.getScrapId(), id)
+                .orElseThrow(() -> new ScrapException(ScrapErrorResult.NOT_VALID_SCRAP));
+        findScrap.updateScrapDirName(request.getDirName());
+        return findScrap;
     }
 
     /**
@@ -81,9 +94,12 @@ public class ScrapService {
      * 작성자: 이승범
      * 작성내용: 게시물 스크랩하기
      */
-    public void scrapPost(Long userId, updateScrapByPostRequest request) {
+    public List<Scrap> scrapPost(Long userId, UpdateScrapByPostRequest request) {
         // 사용자의 스크랩폴더 목록을 가져온다.
-        List<Scrap> scraps = scrapRepository.findScrapsByUserAndPostWithScrapPost(userId);
+        List<Scrap> scraps = scrapRepository.findScrapsByUserWithScrapPosts(userId);
+        // 게시물 정보가져오기
+        Post post = postRepository.findById(request.getPostId())
+                .orElseThrow(() -> new ScrapException(ScrapErrorResult.NOT_VALID_POST));
 
         // request 스크랩 폴더 목록들을 사용자의 스크랩 폴더 목록과 비교
         request.getScrapList().forEach(requestScrap -> {
@@ -92,7 +108,6 @@ public class ScrapService {
                 // 사용자의 스크랩 폴더와 request의 스크랩 폴더를 매칭
                 if (Objects.equals(requestScrap.getScrapId(), s.getId())) {
                     isFindScrap = true;
-                    Post post = postRepository.getById(request.getPostId());
                     // 사용자의 스크랩 폴더에 해당 게시물이 존재하는지 검사
                     int scrapPostIndex = -1;
                     for (int i = 0; i < s.getScrapPosts().size(); i++) {
@@ -113,19 +128,9 @@ public class ScrapService {
             }
             // db에서 가져온 사용자 스크랩 정보와 request 스크랩 정보가 일치하지 않는경우 예외처리
             if (!isFindScrap)
-                throw new ScrapException("스크랩아이디가 존재하지 않거나 다른 사용자의 스크랩아이디입니다.");
+                throw new ScrapException(ScrapErrorResult.NOT_VALID_SCRAP);
         });
-    }
-
-    /**
-     * 작성날짜: 2022/06/22 10:24 AM
-     * 작성자: 이승범
-     * 작성내용: 스크랩 폴더 이름 바꾸기
-     */
-    public void updateScrapDirName(Long id, updateScrapDirNameRequest request) {
-        Scrap findScrap = scrapRepository.findScrapByIdAndUserId(request.getScrapId(), id)
-                .orElseThrow(() -> new ScrapException("userId 또는 scrapId가 잘못되었습니다."));
-        findScrap.updateScrapDirName(request.getDirName());
+        return scraps;
     }
 
     /**
@@ -134,8 +139,9 @@ public class ScrapService {
      * 작성내용: 스크랩한 게시물 스크랩 폴더에서 삭제
      */
     public void deleteScrapPost(Long userId, Long scrapPostId) {
+        // 스크랩폴더에 해당 게시물의 저장정보 조회
         ScrapPost scrapPost = scrapPostRepository.findByScrapAndPost(userId, scrapPostId)
-                .orElseThrow(() -> new ScrapException("유효하지 않은 scrapPostId 입니다."));
+                .orElseThrow(() -> new ScrapException(ScrapErrorResult.NOT_VALID_SCRAPPOST));
         scrapPostRepository.delete(scrapPost);
     }
 
@@ -145,7 +151,7 @@ public class ScrapService {
      * 작성내용: 해당 게시물에 대한 스크랩폴더 상태 목록 보여주기
      */
     public ScrapListByPostResponse findScrapListByPost(Long userId, Long postId) {
-        List<Scrap> scrapListByUser = scrapRepository.findScrapListByUser(userId);
+        List<Scrap> scrapListByUser = scrapRepository.findScrapsByUserWithScrapPosts(userId);
         return new ScrapListByPostResponse(scrapListByUser.stream()
                 .map(s -> new ScrapListByPostResponse.ScrapInfoByPost(s, postId))
                 .collect(Collectors.toList()));
