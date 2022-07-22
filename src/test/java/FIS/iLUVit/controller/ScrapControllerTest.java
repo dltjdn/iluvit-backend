@@ -12,7 +12,6 @@ import FIS.iLUVit.exception.ScrapException;
 import FIS.iLUVit.exception.exceptionHandler.ErrorResponse;
 import FIS.iLUVit.exception.exceptionHandler.controllerAdvice.GlobalControllerAdvice;
 import FIS.iLUVit.service.ScrapService;
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -21,17 +20,15 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.data.web.PageableHandlerMethodArgumentResolver;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
-import org.springframework.test.web.servlet.result.MockMvcResultHandlers;
-import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
-import java.util.ArrayList;
+
 import java.util.List;
 
 import static FIS.iLUVit.controller.dto.UpdateScrapByPostRequest.*;
@@ -55,7 +52,7 @@ public class ScrapControllerTest {
     public void init() {
         objectMapper = new ObjectMapper();
         mockMvc = MockMvcBuilders.standaloneSetup(target)
-                .setCustomArgumentResolvers(new LoginUserArgumentResolver())
+                .setCustomArgumentResolvers(new LoginUserArgumentResolver(), new PageableHandlerMethodArgumentResolver())
                 .setControllerAdvice(GlobalControllerAdvice.class)
                 .build();
         user = Creator.createParent(1L);
@@ -367,7 +364,7 @@ public class ScrapControllerTest {
     }
 
     @Test
-    public void 게시물에대한스크랩목록조회() throws Exception {
+    public void 게시물에대한스크랩목록조회_성공() throws Exception {
         // given
         String url = "/user/scrap/post";
         // when
@@ -375,6 +372,20 @@ public class ScrapControllerTest {
                 MockMvcRequestBuilders.get(url)
                         .header("Authorization", Creator.createJwtToken(user))
                         .param("postId", "123")
+        );
+        // then
+        result.andExpect(status().isOk());
+    }
+
+    @Test
+    public void 스크램게시물프리뷰_성공() throws Exception {
+        // given
+        String url = "/user/post/scrap?page=0&size=5";
+        // when
+        ResultActions result = mockMvc.perform(
+                MockMvcRequestBuilders.get(url)
+                        .header("Authorization", Creator.createJwtToken(user))
+                        .param("scrapId", "123")
         );
         // then
         result.andExpect(status().isOk());

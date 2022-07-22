@@ -13,10 +13,10 @@ public interface ScrapPostRepository extends JpaRepository<ScrapPost, Long> {
 
     @Query("select sp " +
             "from ScrapPost sp " +
+            "join fetch sp.scrap s " +
             "join fetch sp.post p " +
             "join fetch p.user u " +
             "join fetch p.board " +
-            "join fetch sp.scrap s " +
             "where s.id =:scrapId " +
             "and s.user.id =:userId")
     Slice<ScrapPost> findByScrapWithPost(@Param("userId") Long userId, @Param("scrapId") Long scrapId, Pageable pageable);

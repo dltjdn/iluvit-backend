@@ -13,6 +13,8 @@ import FIS.iLUVit.repository.ScrapRepository;
 import FIS.iLUVit.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Slice;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -155,5 +157,14 @@ public class ScrapService {
         return new ScrapListByPostResponse(scrapListByUser.stream()
                 .map(s -> new ScrapListByPostResponse.ScrapInfoByPost(s, postId))
                 .collect(Collectors.toList()));
+    }
+    /**
+     *   작성날짜: 2022/06/22 4:54 PM
+     *   작성자: 이승범
+     *   작성내용: 해당 스크랩 폴더의 게시물들 preview 보여주기
+     */
+    public Slice<GetScrapPostResponsePreview> searchByScrap(Long userId, Long scrapId, Pageable pageable) {
+        Slice<ScrapPost> scrapPosts = scrapPostRepository.findByScrapWithPost(userId, scrapId, pageable);
+        return scrapPosts.map(GetScrapPostResponsePreview::new);
     }
 }
