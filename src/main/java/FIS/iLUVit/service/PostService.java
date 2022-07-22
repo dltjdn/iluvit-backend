@@ -4,9 +4,7 @@ import FIS.iLUVit.controller.dto.*;
 import FIS.iLUVit.domain.*;
 import FIS.iLUVit.domain.enumtype.Auth;
 import FIS.iLUVit.domain.enumtype.BoardKind;
-import FIS.iLUVit.exception.BoardException;
-import FIS.iLUVit.exception.PostException;
-import FIS.iLUVit.exception.UserException;
+import FIS.iLUVit.exception.*;
 import FIS.iLUVit.repository.*;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -38,15 +36,21 @@ public class PostService {
     private final ChatRoomRepository chatRoomRepository;
     private final AlarmRepository alarmRepository;
 
-    public Long savePost(PostRegisterRequest request, List<MultipartFile> images, Long userId) {
+    private final Integer heartCriteria = 2; // HOT 게시판 좋아요 기준
 
-        User findUser = userRepository.getById(userId);
+    public Long savePost(PostRegisterRequest request, List<MultipartFile> images, Long userId) {
+        if (userId == null) {
+            throw new UserException(UserErrorResult.NOT_VALID_TOKEN);
+        }
+
+        User findUser = userRepository.findById(userId)
+                .orElseThrow(() -> new UserException(UserErrorResult.USER_NOT_EXIST));
         Board findBoard = boardRepository.findById(request.getBoard_id())
-                .orElseThrow(() -> new BoardException("존재하지 않는 게시판"));
+                .orElseThrow(() -> new BoardException(BoardErrorResult.BOARD_NOT_EXIST));
 
         if (findBoard.getBoardKind() == BoardKind.NOTICE) {
             if (findUser.getAuth() == Auth.PARENT) {
-                throw new PostException("공지 게시판은 교사만 글을 등록할 수 있습니다.");
+                throw new PostException(PostErrorResult.PARENT_NOT_ACCESS_NOTICE);
             }
         }
 
@@ -69,9 +73,9 @@ public class PostService {
     public Long deleteById(Long postId, Long userId) {
 
         User findUser = userRepository.findById(userId)
-                .orElseThrow(() -> new UserException("존재하지 않는 유저"));
+                .orElseThrow(() -> new UserException(UserErrorResult.USER_NOT_EXIST));
         Post findPost = postRepository.findById(postId)
-                .orElseThrow(() -> new PostException("존재하지 않는 게시글"));
+                .orElseThrow(() -> new PostException(PostErrorResult.POST_NOT_EXIST));
 
         // 게시글과 연관된 모든 채팅방의 post_id(fk) 를 null 값으로 만들어줘야함.
         chatRoomRepository.setPostIsNull(postId);
@@ -79,7 +83,7 @@ public class PostService {
         alarmRepository.setPostIsNull(postId);
 
         if (!Objects.equals(findPost.getUser().getId(), findUser.getId())) {
-            throw new UserException("삭제 권한이 없는 유저");
+            throw new PostException(PostErrorResult.UNAUTHORIZED_USER_ACCESS);
         }
         postRepository.delete(findPost);
         return postId;
@@ -94,8 +98,17 @@ public class PostService {
         return getPostResponseDto(findPost);
     }
 
-    public Slice<GetPostResponsePreview> searchByKeyword(String input, Auth auth, Long userId, Pageable pageable) {
+    // [모두의 이야기 + 유저가 속한 센터의 이야기] 에서 통합 검색
+    public Slice<GetPostResponsePreview> searchByKeyword(String input, Long userId, Pageable pageable) {
         log.info("input : " + input);
+
+        if (userId == null) {
+            throw new UserException(UserErrorResult.NOT_VALID_TOKEN);
+        }
+
+        User findUser = userRepository.findById(userId)
+                .orElseThrow(() -> new UserException(UserErrorResult.USER_NOT_EXIST));
+        Auth auth = findUser.getAuth();
 
         Set<Long> centerIds = new HashSet<>();
 
@@ -104,31 +117,44 @@ public class PostService {
             centerIds = userRepository.findChildren(userId)
                     .stream().filter(c -> c.getCenter() != null).map(c -> c.getCenter().getId())
                     .collect(Collectors.toSet());
-
-
         } else {
             // 교사 유저는 연관된 센터 가져옴
-            Center center = centerRepository.findCenterByTeacher(userId).get();
-            centerIds.add(center.getId());
+            Center center = ((Teacher)findUser).getCenter();
+            if (center != null)
+                centerIds.add(center.getId());
 
         }
 
         // 센터의 게시판 + 모두의 게시판(centerId == null) 키워드 검색
-        Slice<GetPostResponsePreview> posts = postRepository.findWithBoardAndCenter(centerIds, input, pageable);
+        Slice<GetPostResponsePreview> posts = postRepository.findInCenterByKeyword(centerIds, input, pageable);
         // 끌어온 게시글에 이미지 있으면 프리뷰용 이미지 넣어줌
         posts.forEach(g -> setPreviewImage(g));
         return posts;
     }
 
     public Slice<GetPostResponsePreview> searchByKeywordAndCenter(Long centerId, String input, Auth auth, Long userId, Pageable pageable) {
+        if (auth == Auth.PARENT) {
+            // 학부모 유저일 때 아이와 연관된 센터의 아이디를 모두 가져옴
+            Set<Long> centerIds = userRepository.findChildren(userId)
+                    .stream().filter(c -> c.getCenter() != null).map(c -> c.getCenter().getId())
+                    .collect(Collectors.toSet());
+            if (!centerIds.contains(centerId)) {
+                log.warn("Set {} 에 센터 아이디가 없음", centerIds);
+                throw new PostException(PostErrorResult.UNAUTHORIZED_USER_ACCESS);
+            }
+        } else {
+            userRepository.findTeacherById(userId)
+                    .orElseThrow(() -> new PostException(PostErrorResult.UNAUTHORIZED_USER_ACCESS));
+            // 교사 아이디로 조회한 결과가 없으면 Teacher의 Center가 null이므로 권한 X
+        }
         // 센터 아이디 null 인 경우 모두의 이야기 안에서 검색됨
-        Slice<GetPostResponsePreview> posts = postRepository.findWithCenter(centerId, input, auth, userId, pageable);
+        Slice<GetPostResponsePreview> posts = postRepository.findByCenterAndKeyword(centerId, input, pageable);
         posts.forEach(g -> setPreviewImage(g));
         return posts;
     }
 
     public Slice<GetPostResponsePreview> searchByKeywordAndBoard(Long boardId, String input, Pageable pageable) {
-        Slice<GetPostResponsePreview> posts = postRepository.findWithBoard(boardId, input, pageable);
+        Slice<GetPostResponsePreview> posts = postRepository.findByBoardAndKeyword(boardId, input, pageable);
         posts.forEach(g -> setPreviewImage(g));
         return posts;
     }
@@ -169,7 +195,7 @@ public class PostService {
         }
 
         // HOT 게시판 정보 추가
-        List<Post> hotPosts = postRepository.findByHeartCnt(2, PageRequest.of(0, 4));
+        List<Post> hotPosts = postRepository.findTop3ByHeartCnt(heartCriteria, PageRequest.of(0, 3));
         List<BoardPreview> results = new ArrayList<>();
 
         return getPreivewResult(hotPosts, results, boardPreviews);
@@ -211,7 +237,7 @@ public class PostService {
         getBoardPreviews(bookmarkList, boardPreviews);
 
         // HOT 게시판 정보 추가
-        List<Post> hotPosts = postRepository.findByHeartCntWithCenter(2, centerId, PageRequest.of(0, 4));
+        List<Post> hotPosts = postRepository.findTop3ByHeartCntWithCenter(heartCriteria, centerId, PageRequest.of(0, 3));
         List<BoardPreview> results = new ArrayList<>();
 
         return getPreivewResult(hotPosts, results, boardPreviews);
@@ -226,7 +252,7 @@ public class PostService {
     }
 
     private void addBoardPreviews(List<BoardPreview> boardPreviews, List<Long> boardIds) {
-        List<Post> top4 = postRepository.findTop4(boardIds);
+        List<Post> top4 = postRepository.findTop3(boardIds);
         Map<Board, List<Post>> boardPostMap = top4.stream()
                 .collect(Collectors.groupingBy(Post::getBoard));
 
@@ -271,7 +297,7 @@ public class PostService {
 
     public Slice<GetPostResponsePreview> findByHeartCnt(Long centerId, Pageable pageable) {
         // heartCnt 가 n 개 이상이면 HOT 게시판에 넣어줍니다.
-        return postRepository.findHotPosts(centerId, pageable);
+        return postRepository.findHotPosts(centerId, heartCriteria, pageable);
     }
 
     /**

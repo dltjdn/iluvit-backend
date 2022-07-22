@@ -35,7 +35,7 @@ public class CommentService {
 
         User findUser = userRepository.findById(userId)
                 .orElseThrow(() -> new UserException());
-        Post findPost = postRepository.findById(postId)
+        Post findPost = postRepository.findByIdWithBoard(postId)
                 .orElseThrow(() -> new PostException(PostErrorResult.POST_NOT_EXIST));
 
         Comment comment = new Comment(request.getAnonymous(), request.getContent(), findPost, findUser);

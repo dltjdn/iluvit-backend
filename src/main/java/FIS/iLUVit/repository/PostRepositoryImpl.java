@@ -9,6 +9,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
 import org.springframework.data.domain.SliceImpl;
 
+import java.util.Collection;
 import java.util.List;
 import java.util.Set;
 
@@ -22,7 +23,7 @@ public class PostRepositoryImpl extends PostQueryMethod implements PostRepositor
     private final JPAQueryFactory jpaQueryFactory;
 
     @Override
-    public Slice<GetPostResponsePreview> findWithBoardAndCenter(Set<Long> centerIds, String keyword, Pageable pageable) {
+    public Slice<GetPostResponsePreview> findInCenterByKeyword(Collection<Long> centerIds, String keyword, Pageable pageable) {
         List<GetPostResponsePreview> posts = jpaQueryFactory.select(new QGetPostResponsePreview(post))
                 .from(post)
                 .join(post.board, board).fetchJoin()
@@ -42,7 +43,7 @@ public class PostRepositoryImpl extends PostQueryMethod implements PostRepositor
     }
 
     @Override
-    public Slice<GetPostResponsePreview> findWithCenter(Long centerId, String keyword, Auth auth, Long userId, Pageable pageable) {
+    public Slice<GetPostResponsePreview> findByCenterAndKeyword(Long centerId, String keyword, Pageable pageable) {
         List<GetPostResponsePreview> posts = jpaQueryFactory.select(new QGetPostResponsePreview(post))
                 .from(post)
                 .join(post.board, board).fetchJoin()
@@ -63,7 +64,7 @@ public class PostRepositoryImpl extends PostQueryMethod implements PostRepositor
     }
 
     @Override
-    public Slice<GetPostResponsePreview> findWithBoard(Long boardId, String keyword, Pageable pageable) {
+    public Slice<GetPostResponsePreview> findByBoardAndKeyword(Long boardId, String keyword, Pageable pageable) {
         List<GetPostResponsePreview> posts = jpaQueryFactory.select(new QGetPostResponsePreview(post))
                 .from(post)
                 .join(post.board, board).fetchJoin()
@@ -83,12 +84,12 @@ public class PostRepositoryImpl extends PostQueryMethod implements PostRepositor
     }
 
     @Override
-    public Slice<GetPostResponsePreview> findHotPosts(Long centerId, Pageable pageable) {
+    public Slice<GetPostResponsePreview> findHotPosts(Long centerId, Integer heartCnt, Pageable pageable) {
         List<GetPostResponsePreview> posts = jpaQueryFactory.select(new QGetPostResponsePreview(post))
                 .from(post)
                 .join(post.board, board).fetchJoin()
                 .leftJoin(board.center, center).fetchJoin()
-                .where(centerIdEq(centerId), post.heartCnt.goe(2))
+                .where(centerIdEq(centerId), post.heartCnt.goe(heartCnt))
                 .orderBy(post.postCreateDate.desc())
                 .offset(pageable.getOffset())
                 .limit(pageable.getPageSize() + 1)

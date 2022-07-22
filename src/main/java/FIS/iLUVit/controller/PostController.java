@@ -61,9 +61,8 @@ public class PostController {
     @GetMapping("/post/all/search")
     public Slice<GetPostResponsePreview> searchPost(@Login Long userId,
                                                     @RequestParam("input") String input,
-                                                    @RequestParam("auth") Auth auth,
                                                     Pageable pageable) {
-        return postService.searchByKeyword(input, auth, userId, pageable);
+        return postService.searchByKeyword(input, userId, pageable);
     }
 
     /**
