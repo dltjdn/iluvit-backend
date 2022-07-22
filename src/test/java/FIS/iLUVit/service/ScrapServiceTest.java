@@ -2,13 +2,10 @@ package FIS.iLUVit.service;
 
 import FIS.iLUVit.Creator;
 import FIS.iLUVit.controller.dto.*;
-import FIS.iLUVit.domain.Parent;
-import FIS.iLUVit.domain.Post;
-import FIS.iLUVit.domain.Scrap;
-import FIS.iLUVit.domain.ScrapPost;
+import FIS.iLUVit.domain.*;
+import FIS.iLUVit.domain.enumtype.BoardKind;
 import FIS.iLUVit.exception.ScrapErrorResult;
 import FIS.iLUVit.exception.ScrapException;
-import FIS.iLUVit.exception.exceptionHandler.ErrorResponse;
 import FIS.iLUVit.repository.PostRepository;
 import FIS.iLUVit.repository.ScrapPostRepository;
 import FIS.iLUVit.repository.ScrapRepository;
@@ -18,6 +15,10 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Slice;
+import org.springframework.data.domain.SliceImpl;
 
 import java.util.Arrays;
 import java.util.List;
@@ -55,15 +56,25 @@ public class ScrapServiceTest {
     private Scrap scrap3;
     private ScrapPost scrapPost1;
     private ScrapPost scrapPost2;
+    private Board board1;
+    private Board board2;
+    private Board board3;
+    private Center center1;
+    private Center center2;
 
     @BeforeEach
     public void init() {
         parent1 = Creator.createParent(1L, "parent1", "parent1", "parent1");
         parent2 = Creator.createParent(2L, "parent2", "parent2", "parent2");
         parent3 = Creator.createParent(3L, "parent3", "parent3", "parent3");
-        post1 = Creator.createPost(4L, "post1", "post1", true, null, parent1);
-        post2 = Creator.createPost(5L, "post2", "post2", true, null, parent1);
-        post3 = Creator.createPost(6L, "post2", "post2", true, null, parent2);
+        center1 = Center.builder().name("center1").id(12L).build();
+        center2 = Center.builder().name("center2").id(13L).build();
+        board1 = Creator.createBoard(14L, "board1", null, true);
+        board2 = Creator.createBoard(15L, "board2", center1, true);
+        board3 = Creator.createBoard(16L, "board3", center2, false);
+        post1 = Creator.createPost(4L, "post1", "post1", true, board1, parent1);
+        post2 = Creator.createPost(5L, "post2", "post2", true, board2, parent1);
+        post3 = Creator.createPost(6L, "post2", "post2", true, board3, parent2);
         scrap1 = Creator.createDefaultScrap(7L, parent1, "scrap1");
         scrap2 = Creator.createScrap(8L, parent1, "scrap2");
         scrap3 = Creator.createScrap(11L, parent2, "scrap3");
@@ -337,6 +348,32 @@ public class ScrapServiceTest {
                 assertThat(scrapInfo.getHasPost()).isTrue();
             } else {
                 assertThat(scrapInfo.getHasPost()).isFalse();
+            }
+        });
+    }
+
+    @Test
+    public void 스크랩게시물_preview_성공() {
+        // given
+        Pageable pageable = PageRequest.of(0, 5);
+        doReturn(new SliceImpl<>(List.of(scrapPost1, scrapPost2), pageable, false))
+                .when(scrapPostRepository)
+                .findByScrapWithPost(parent1.getId(), scrap1.getId(), PageRequest.of(0, 5));
+
+        // when
+        Slice<GetScrapPostResponsePreview> result =
+                target.searchByScrap(parent1.getId(), scrap1.getId(), PageRequest.of(0, 5));
+        // then
+        assertThat(result.getContent().size()).isEqualTo(2);
+        result.getContent().forEach(sp -> {
+            if (Objects.equals(sp.getPost_id(), post1.getId())) {
+                assertThat(sp.getUser_id()).isEqualTo(parent1.getId());
+                assertThat(sp.getBoardName()).isEqualTo(board1.getName());
+                assertThat(sp.getCenter_id()).isNull();
+            } else if (Objects.equals(sp.getPost_id(), post3.getId())) {
+                assertThat(sp.getUser_id()).isEqualTo(parent2.getId());
+                assertThat(sp.getBoardName()).isEqualTo(board3.getName());
+                assertThat(sp.getCenter_id()).isEqualTo(center2.getId());
             }
         });
     }

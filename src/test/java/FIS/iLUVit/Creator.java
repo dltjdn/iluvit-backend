@@ -495,4 +495,13 @@ public class Creator {
                 .build();
     }
 
+    public static Board createBoard(Long id, String name, Center center, Boolean isDefault) {
+        return Board.builder()
+                .id(id)
+                .name(name)
+                .center(center)
+                .isDefault(isDefault)
+                .build();
+    }
+
 }

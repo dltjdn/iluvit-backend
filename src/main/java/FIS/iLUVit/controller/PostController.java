@@ -146,13 +146,5 @@ public class PostController {
         postService.updateDate(postId);
     }
 
-    /**
-    *   작성날짜: 2022/06/22 4:54 PM
-    *   작성자: 이승범
-    *   작성내용: 해당 스크랩 폴더의 게시물들 preview 보여주기
-    */
-    @GetMapping("/post/scrap")
-    public Slice<GetScrapPostResponsePreview> searchPostsByScrap(@Login Long userId, @RequestParam Long scrapId, Pageable pageable) {
-        return postService.searchByScrap(userId, scrapId, pageable);
-    }
+
 }

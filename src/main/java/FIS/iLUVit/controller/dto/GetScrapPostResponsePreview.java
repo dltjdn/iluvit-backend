@@ -29,6 +29,7 @@ public class GetScrapPostResponsePreview {
     private LocalTime time;
 
     private Long center_id;
+    private String center_name;
 
     private Long scrapPost_id;
 
@@ -38,7 +39,7 @@ public class GetScrapPostResponsePreview {
         this.title = sp.getPost().getTitle();
         this.content = sp.getPost().getContent();
         this.anonymous = sp.getPost().getAnonymous();
-        this.nickname = sp.getPost().getUser().getName();
+        this.nickname = sp.getPost().getUser().getNickName();
         this.user_id = sp.getPost().getUser().getId();
         this.commentCnt = sp.getPost().getCommentCnt();
         this.heartCnt = sp.getPost().getHeartCnt();
@@ -49,6 +50,7 @@ public class GetScrapPostResponsePreview {
 
         if (sp.getPost().getBoard().getCenter() != null) {
             this.center_id = sp.getPost().getBoard().getCenter().getId();
+            this.center_name = sp.getPost().getBoard().getCenter().getName();
         }
     }
 }
