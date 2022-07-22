@@ -30,6 +30,8 @@ public class BoardPreview {
         private Long post_id;
         private String title;
         private String content;
+        private String writerNickName;
+        private Boolean anonymous;
         private Integer heartCnt;
         private Integer commentCnt;
         private List<String> images;
@@ -38,6 +40,10 @@ public class BoardPreview {
             this.post_id = p.getId();
             this.title = p.getTitle();
             this.content = p.getContent();
+            if (p.getUser() != null) {
+                this.writerNickName = p.getUser().getNickName();
+            }
+            this.anonymous = p.getAnonymous();
             this.heartCnt = p.getHeartCnt();
             this.commentCnt = p.getCommentCnt();
         }

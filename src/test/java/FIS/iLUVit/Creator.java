@@ -144,6 +144,7 @@ public class Creator {
                 .videoCnt(0)
                 .board(board)
                 .user(user)
+                .postHearts(new ArrayList<>())
                 .build();
     }
 
