@@ -417,8 +417,9 @@ class CenterRepositoryTest {
             em.persist(center6);
             em.flush();
             em.clear();
+            String searchContent = "어린이집";
             //when
-            List<CenterMapPreview> result = centerRepository.findByFilterForMap(127.0147458, 37.5015178, 100);
+            List<CenterMapPreview> result = centerRepository.findByFilterForMap(127.0147458, 37.5015178, 1, searchContent);
 
             //then
             assertThat(result.size()).isEqualTo(6);

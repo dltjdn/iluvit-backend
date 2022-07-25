@@ -22,18 +22,23 @@ public class ReviewByParentDTO {
         private Long reviewId;
         private Long centerId;
         private String centerName;
-        private Integer centerScore;
+        private Integer score;
         private String content;
+
+        private LocalDate createDate;
         private LocalTime createTime;
+        private LocalDate updateDate;
         private LocalTime updateTime;
 
         public ReviewDto(Review review) {
             this.reviewId = review.getId();
             this.centerId = review.getCenter().getId();
             this.centerName = review.getCenter().getName();
-            this.centerScore = review.getCenter().getScore();
+            this.score = review.getScore();
             this.content = review.getContent();
+            this.createDate = review.getCreateDate();
             this.createTime = review.getCreateTime();
+            this.updateDate = review.getUpdateDate();
             this.updateTime = review.getUpdateTime();
         }
     }

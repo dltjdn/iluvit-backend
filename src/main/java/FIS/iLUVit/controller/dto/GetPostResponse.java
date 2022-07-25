@@ -21,6 +21,7 @@ public class GetPostResponse {
     private Long id;
     private Long writer_id;
     private String nickname;
+    private Boolean anonymous;
     private LocalDate date;
     private LocalTime time;
     private String title;
@@ -47,6 +48,7 @@ public class GetPostResponse {
             this.writer_id = post.getUser().getId();
             this.nickname = post.getUser().getNickName();
         }
+        this.anonymous = post.getAnonymous();
         this.date = post.getDate();
         this.time = post.getTime();
         this.title = post.getTitle();

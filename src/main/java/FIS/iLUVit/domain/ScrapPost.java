@@ -1,5 +1,6 @@
 package FIS.iLUVit.domain;
 
+import lombok.Builder;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -25,11 +26,17 @@ public class ScrapPost extends BaseEntity {
     @OnDelete(action = OnDeleteAction.CASCADE)
     private Scrap scrap;
 
+    @Builder
+    public ScrapPost(Long id, Post post, Scrap scrap) {
+        this.id = id;
+        this.post = post;
+        this.scrap = scrap;
+    }
+
     public static ScrapPost createScrapPost(Post post, Scrap scrap) {
         ScrapPost scrapPost = new ScrapPost();
         scrapPost.post = post;
         scrapPost.scrap = scrap;
-        scrap.getScrapPosts().add(scrapPost);
         return scrapPost;
     }
 }

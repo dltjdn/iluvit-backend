@@ -21,6 +21,7 @@ public class GetPostResponsePreview {
     private Boolean anonymous;
     private String nickname; // 작성자 닉네임
     private Long user_id; // 작성자 id
+    private String profileImage; // 작성자 프로필 이미지
     private int commentCnt;
     private int heartCnt;
     private int imgCnt;
@@ -43,6 +44,7 @@ public class GetPostResponsePreview {
         this.anonymous = post.getAnonymous();
         this.nickname = post.getUser().getName();
         this.user_id = post.getUser().getId();
+        this.profileImage = post.getUser().getProfileImagePath();
         this.commentCnt = post.getCommentCnt();
         this.heartCnt = post.getHeartCnt();
         this.imgCnt = post.getImgCnt();

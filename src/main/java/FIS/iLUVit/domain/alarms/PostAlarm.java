@@ -4,6 +4,8 @@ import FIS.iLUVit.controller.dto.AlarmDto;
 import FIS.iLUVit.domain.Comment;
 import FIS.iLUVit.domain.Post;
 import FIS.iLUVit.domain.User;
+import FIS.iLUVit.exception.BoardErrorResult;
+import FIS.iLUVit.exception.BoardException;
 import FIS.iLUVit.service.AlarmUtils;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -19,6 +21,8 @@ public class PostAlarm extends Alarm {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "postId")
     private Post post;
+    private String boardName;
+    private String centerName;
     private Boolean anonymous;
     private String commentUserProfileImage;
     private String commentUserNickname;
@@ -27,6 +31,12 @@ public class PostAlarm extends Alarm {
         super(postWriter);
         this.mode = AlarmUtils.POST_COMMENT;
         this.post = post;
+        if (post.getBoard() == null) {
+            throw new BoardException(BoardErrorResult.BOARD_NOT_EXIST);
+        }
+        if(post.getBoard().getCenter() != null)
+            this.centerName = post.getBoard().getCenter().getName();
+        this.boardName = post.getBoard().getName();
         this.anonymous = comment.getAnonymous();
         if(!this.anonymous){
             commentUserProfileImage = comment.getUser().getProfileImagePath();
@@ -39,22 +49,26 @@ public class PostAlarm extends Alarm {
 
     @Override
     public AlarmDto exportAlarm() {
-        return new PostAlarmDto(id, createdDate, message, dtype, post.getId(), anonymous, commentUserProfileImage, commentUserNickname);
+        return new PostAlarmDto(id, boardName, createdDate, message, dtype, post.getId(), anonymous, commentUserProfileImage, commentUserNickname, centerName);
     }
 
     @Getter
     public static class PostAlarmDto extends AlarmDto{
         protected Long postId;
+        private String boardName;
+        private String centerName;
         private Boolean anonymous;
         private String commentUserProfileImage;
         private String commentUserNickname;
 
-        public PostAlarmDto(Long id, LocalDateTime createdDate, String message, String type, Long postId, Boolean anonymous, String commentUserProfileImage, String commentUserNickname) {
+        public PostAlarmDto(Long id, String boardName, LocalDateTime createdDate, String message, String type, Long postId, Boolean anonymous, String commentUserProfileImage, String commentUserNickname, String centerName) {
             super(id, createdDate, message, type);
             this.postId = postId;
+            this.boardName = boardName;
             this.anonymous = anonymous;
             this.commentUserNickname = commentUserNickname;
             this.commentUserProfileImage = commentUserProfileImage;
+            this.centerName = centerName;
         }
     }
 }

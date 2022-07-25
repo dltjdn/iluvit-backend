@@ -159,7 +159,7 @@ public class CenterRepositoryImpl extends CenterQueryMethod implements CenterRep
     }
 
     @Override
-    public List<CenterMapPreview> findByFilterForMap(double longitude, double latitude, Integer distance) {
+    public List<CenterMapPreview> findByFilterForMap(double longitude, double latitude, Integer distance, String searchContent) {
 
         Expression<Double> latitudeEx = Expressions.constant(latitude);
         Expression<Double> longitudeEx = Expressions.constant(longitude);
@@ -170,13 +170,28 @@ public class CenterRepositoryImpl extends CenterQueryMethod implements CenterRep
                         .add(cos(radians(latitudeEx)).multiply(cos(radians(center.latitude)))
                                 .multiply(cos(radians(longitudeEx).subtract(radians(center.longitude)))))).multiply(param);
 
-        return jpaQueryFactory.select(new QCenterMapPreview(center.id, center.name, center.kindOf, center.longitude, center.latitude, center.profileImagePath))
+        List<CenterMapPreview> result = jpaQueryFactory.select(new QCenterMapPreview(center.id, center.name, center.longitude, center.latitude))
+                .from(center)
+                .leftJoin(center.reviews, review)
+                .groupBy(center)
+                .where(centerNameEq(searchContent))
+                .having(distanceEx.loe(distance))
+                .fetch();
+
+
+        while(result.size() <= 10 && searchContent != null && distance <= 1600){
+            distance = distance * 3;
+            result = jpaQueryFactory.select(new QCenterMapPreview(center.id, center.name, center.longitude, center.latitude))
                         .from(center)
                         .leftJoin(center.reviews, review)
                         .groupBy(center)
+                        .where(centerNameEq(searchContent))
                         .having(distanceEx.loe(distance))
                         .orderBy(center.score.desc(), center.id.asc())
                         .fetch();
+        }
+
+        return result;
     }
 
     @Override

@@ -18,6 +18,7 @@ public class GetCommentResponse {
     private Long id;
     private Long writer_id;
     private String nickname;
+    private String profileImage;
     private String content;
     private Integer heartCnt;
     private LocalDate date;
@@ -32,6 +33,7 @@ public class GetCommentResponse {
         if (writer != null) {
             this.writer_id = writer.getId();
             this.nickname = writer.getNickName();
+            this.profileImage = writer.getProfileImagePath();
             this.heartCnt = comment.getCommentHearts().size();
             this.anonymous = comment.getAnonymous();
         }
@@ -50,6 +52,7 @@ public class GetCommentResponse {
         private Long id;
         private Long writer_id;
         private String nickname;
+        private String profileImage;
         private String content;
         private Integer heartCnt;
         private LocalDate date;
@@ -62,6 +65,7 @@ public class GetCommentResponse {
             if (writer != null) {
                 this.writer_id = writer.getId();
                 this.nickname = writer.getNickName();
+                this.profileImage = writer.getProfileImagePath();
                 this.heartCnt = comment.getCommentHearts().size();
                 this.anonymous = comment.getAnonymous();
             }

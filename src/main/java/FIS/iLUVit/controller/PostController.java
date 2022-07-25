@@ -2,7 +2,6 @@ package FIS.iLUVit.controller;
 
 import FIS.iLUVit.config.argumentResolver.Login;
 import FIS.iLUVit.controller.dto.*;
-import FIS.iLUVit.domain.enumtype.Auth;
 import FIS.iLUVit.service.PostService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
@@ -61,9 +60,8 @@ public class PostController {
     @GetMapping("/post/all/search")
     public Slice<GetPostResponsePreview> searchPost(@Login Long userId,
                                                     @RequestParam("input") String input,
-                                                    @RequestParam("auth") Auth auth,
                                                     Pageable pageable) {
-        return postService.searchByKeyword(input, auth, userId, pageable);
+        return postService.searchByKeyword(input, userId, pageable);
     }
 
     /**
@@ -147,13 +145,5 @@ public class PostController {
         postService.updateDate(postId);
     }
 
-    /**
-    *   작성날짜: 2022/06/22 4:54 PM
-    *   작성자: 이승범
-    *   작성내용: 해당 스크랩 폴더의 게시물들 preview 보여주기
-    */
-    @GetMapping("/post/scrap")
-    public Slice<GetScrapPostResponsePreview> searchPostsByScrap(@Login Long userId, @RequestParam Long scrapId, Pageable pageable) {
-        return postService.searchByScrap(userId, scrapId, pageable);
-    }
+
 }

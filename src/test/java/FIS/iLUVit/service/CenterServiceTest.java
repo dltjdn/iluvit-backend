@@ -179,10 +179,10 @@ public class CenterServiceTest {
             Mockito.doReturn(dataSlice).when(centerRepository).findByFilterForMapList(1.2, 1.2, KindOf.ALL, centerIds, PageRequest.of(0, 10));
 
             //when
-            List<CenterAndDistancePreview> result = target.findByFilterForMapList(1.2, 1.2, centerIds, 1L, KindOf.ALL,PageRequest.of(0, 10)).getContent();
+            List<CenterAndDistancePreview> result = target.findByFilterForMapList(1.2, 1.2, centerIds, null, KindOf.ALL,PageRequest.of(0, 10)).getContent();
 
             //then
-            verify(centerRepository, times(1)).findByFilterForMapList(1.2, 1.2, KindOf.ALL, centerIds, PageRequest.of(0, 10));
+            verify(centerRepository, times(1)).findByFilterForMapList(1.2, 1.2,  KindOf.ALL, centerIds, PageRequest.of(0, 10));
             assertThat(result.size()).isEqualTo(6);
         }
 

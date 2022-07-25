@@ -24,7 +24,7 @@ public interface CenterRepositoryCustom {
 
     SliceImpl<CenterAndDistancePreview> findByFilterForMapList(double longitude, double latitude, KindOf kindOf, List<Long> centerIds, Pageable pageable);
 
-    List<CenterMapPreview> findByFilterForMap(double longitude, double latitude, Integer distance);
+    List<CenterMapPreview> findByFilterForMap(double longitude, double latitude, Integer distance, String searchContent);
 
     List<CenterRecommendDto> findRecommendCenter(Theme theme, Pageable pageable);
 

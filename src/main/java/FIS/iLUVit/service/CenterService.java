@@ -44,8 +44,8 @@ public class CenterService {
                 centerRepository.findByFilterForMapList(longitude, latitude, userId, kindOf, centerIds, pageable);
     }
 
-    public List<CenterMapPreview> findByFilterForMap(double longitude, double latitude, Integer distance){
-        return centerRepository.findByFilterForMap(longitude, latitude, distance);
+    public List<CenterMapPreview> findByFilterForMap(double longitude, double latitude, Integer distance, String searchContent){
+        return centerRepository.findByFilterForMap(longitude, latitude, distance, searchContent);
     }
 
 

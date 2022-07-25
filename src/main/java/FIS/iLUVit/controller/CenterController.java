@@ -40,7 +40,7 @@ public class CenterController {
 
     @GetMapping("/center/map/search/all")
     public List<CenterMapPreview> searchByFilterForMap(@ModelAttribute @Validated CenterSearchMapDto dto){
-        return centerService.findByFilterForMap(dto.getLongitude(), dto.getLatitude(), dto.getDistance());
+        return centerService.findByFilterForMap(dto.getLongitude(), dto.getLatitude(), dto.getDistance(), dto.getSearchContent());
     }
 
     /**

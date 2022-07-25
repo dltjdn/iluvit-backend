@@ -40,7 +40,7 @@ public class UserService {
     */
     public LoginResponse findUserInfo(Long id) {
         User findUser = userRepository.findById(id)
-                .orElseThrow(() -> new UserException("유효하지 않은 토큰으로의 사용자 접근입니다."));
+                .orElseThrow(() -> new UserException(UserErrorResult.NOT_VALID_TOKEN));
         return findUser.getUserInfo();
     }
 
@@ -49,18 +49,20 @@ public class UserService {
     *   작성자: 이승범
     *   작성내용: 비밀번호 변경
     */
-    public void updatePassword(Long id, UpdatePasswordRequest request) {
+    public User updatePassword(Long id, UpdatePasswordRequest request) {
 
         User findUser = userRepository.findById(id)
-                .orElseThrow(() -> new UserException("유효하지 않은 토큰으로의 사용자 접근입니다."));
+                .orElseThrow(() -> new UserException(UserErrorResult.NOT_VALID_TOKEN));
 
         if (!encoder.matches(request.getOriginPwd(), findUser.getPassword())) {
-            throw new InputException("비밀번호가 틀렸습니다.");
+            throw new SignupException(SignupErrorResult.NOT_MATCH_PWD);
         } else if (!request.getNewPwd().equals(request.getNewPwdCheck())) {
-            throw new InputException("새로운 비밀번호가 확인과 일치하지 않습니다.");
+            throw new SignupException(SignupErrorResult.NOT_MATCH_PWDCHECK);
         }
 
         findUser.changePassword(encoder.encode(request.getNewPwd()));
+
+        return findUser;
     }
 
     // 회원가입 학부모, 교사 공통 로직(유효성 검사 및 비밀번호 해싱)

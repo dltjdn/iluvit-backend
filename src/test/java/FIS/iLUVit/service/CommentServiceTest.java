@@ -113,7 +113,7 @@ class CommentServiceTest {
 
         Mockito.doReturn(Optional.empty())
                 .when(postRepository)
-                .findById(post1.getId());
+                .findByIdWithBoard(post1.getId());
         //when
         PostException result = assertThrows(PostException.class,
                 () -> commentService.registerComment(user1.getId(), post1.getId(), null, request));
@@ -136,7 +136,7 @@ class CommentServiceTest {
 
             Mockito.doReturn(Optional.of(post1))
                     .when(postRepository)
-                    .findById(post1.getId());
+                    .findByIdWithBoard(post1.getId());
 
             alarmUtils.when(() -> AlarmUtils.getMessage(any(String.class), any(Object[].class)))
                     .thenReturn("회원 {0}로 부터 새로운 채팅을 받았어요");
@@ -170,7 +170,7 @@ class CommentServiceTest {
 
             Mockito.doReturn(Optional.of(post1))
                     .when(postRepository)
-                    .findById(post1.getId());
+                    .findByIdWithBoard(post1.getId());
 
             alarmUtils.when(() -> AlarmUtils.getMessage(any(String.class), any(Object[].class)))
                     .thenReturn("회원 {0}로 부터 새로운 채팅을 받았어요");

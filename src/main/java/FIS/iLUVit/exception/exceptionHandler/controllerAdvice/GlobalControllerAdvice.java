@@ -1,7 +1,5 @@
 package FIS.iLUVit.exception.exceptionHandler.controllerAdvice;
 
-import FIS.iLUVit.exception.AuthNumberException;
-import FIS.iLUVit.exception.SignupException;
 import FIS.iLUVit.exception.*;
 import FIS.iLUVit.exception.exceptionHandler.ErrorResponse;
 import FIS.iLUVit.exception.exceptionHandler.ErrorResult;
@@ -68,6 +66,7 @@ public class GlobalControllerAdvice extends ResponseEntityExceptionHandler {
         return this.makeErrorResponseEntity("HttpMessageNotReadable error");
     }
 
+    // param(@ModelAttribute) validation exception
     @Override
     protected ResponseEntity<Object> handleBindException(BindException ex, HttpHeaders headers, HttpStatus status, WebRequest request) {
         final List<String> errorList = ex.getBindingResult()
@@ -175,6 +174,11 @@ public class GlobalControllerAdvice extends ResponseEntityExceptionHandler {
 
     @ExceptionHandler(CenterException.class)
     public ResponseEntity<ErrorResponse> centerException(CenterException e) {
+        return makeErrorResponseEntity(e.getErrorResult());
+    }
+
+    @ExceptionHandler(ScrapException.class)
+    public ResponseEntity<ErrorResponse> scrapException(ScrapException e) {
         return makeErrorResponseEntity(e.getErrorResult());
     }
 }
