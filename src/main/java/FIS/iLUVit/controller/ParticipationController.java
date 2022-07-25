@@ -41,7 +41,8 @@ public class ParticipationController {
      * 설명회 취소
      */
     @PatchMapping("/participation")
-    public Long cancel(@Login Long userId, @RequestBody ParticipationCancelRequestDto dto){
+    @ResponseStatus(HttpStatus.ACCEPTED)
+    public Long cancel(@Login Long userId, @RequestBody @Validated ParticipationCancelRequestDto dto){
         if(userId == null)
             throw new UserException(UserErrorResult.NOT_LOGIN);
         return participationService.cancel(userId, dto.getParticipationId());

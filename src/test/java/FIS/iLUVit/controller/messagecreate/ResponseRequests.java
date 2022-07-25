@@ -58,8 +58,6 @@ public class ResponseRequests {
         return CenterSearchMapFilterDTO.builder()
                 .longitude(longitude)
                 .latitude(latitude)
-                .theme(theme)
-                .interestedAge(5)
                 .kindOf(KindOf.ALL)
                 .distance(5)        //5km
                 .build();
@@ -72,7 +70,6 @@ public class ResponseRequests {
         return CenterAndDistancePreview.builder()
                 .id(3L)
                 .name("센터정보")
-                .owner("현승구")
                 .estType("공립")
                 .tel("test")
                 .startTime("9시 00분")
@@ -80,7 +77,6 @@ public class ResponseRequests {
                 .minAge(4)
                 .maxAge(5)
                 .address("가리봉동")
-                .area(new Area("서울특별시", "구로구"))
                 .longitude(32.1561)
                 .latitude(127.2312)
                 .theme(theme)

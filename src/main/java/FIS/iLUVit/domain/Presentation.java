@@ -70,15 +70,13 @@ public class Presentation extends BaseImageEntity {
         return this;
     }
 
-    public Presentation update(PresentationModifyRequestDto request, Integer imgCnt, Integer videoCnt) {
+    public Presentation update(PresentationModifyRequestDto request) {
         startDate = request.getStartDate();
         endDate = request.getEndDate();
         if(endDate.isBefore(startDate))
             throw new PresentationException("시작일자와 종료일자를 다시 확인해 주세요.");
         content = request.getContent();
         place = request.getPlace();
-        this.imgCnt = imgCnt;
-        this.videoCnt = videoCnt;
         return this;
     }
 

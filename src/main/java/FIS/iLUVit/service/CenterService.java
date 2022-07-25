@@ -3,7 +3,6 @@ package FIS.iLUVit.service;
 import FIS.iLUVit.controller.dto.*;
 import FIS.iLUVit.domain.Center;
 import FIS.iLUVit.domain.Parent;
-import FIS.iLUVit.domain.embeddable.Area;
 import FIS.iLUVit.domain.embeddable.Score;
 import FIS.iLUVit.domain.embeddable.Theme;
 import FIS.iLUVit.domain.enumtype.KindOf;
@@ -14,12 +13,10 @@ import FIS.iLUVit.repository.ParentRepository;
 import FIS.iLUVit.repository.UserRepository;
 import FIS.iLUVit.repository.dto.CenterAndDistancePreview;
 import FIS.iLUVit.repository.dto.CenterBannerDto;
+import FIS.iLUVit.repository.dto.CenterMapPreview;
 import FIS.iLUVit.repository.dto.CenterPreview;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Slice;
-import org.springframework.data.domain.Sort;
+import org.springframework.data.domain.*;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
@@ -36,17 +33,19 @@ public class CenterService {
     private final ParentRepository parentRepository;
     private final UserRepository userRepository;
 
-    public Slice<CenterPreview> findByFilter(List<Area> areas, Theme theme, Integer interestedAge, KindOf kindOf, Pageable pageable) {
-        return centerRepository.findByFilter(areas, theme, interestedAge, kindOf, pageable);
+    public List<CenterAndDistancePreview> findByFilterForMapList(double longitude, double latitude, Theme theme, Integer interestedAge, KindOf kindOf, Integer distance) {
+
+        return centerRepository.findByFilterForMapList(longitude, latitude, theme, interestedAge, kindOf, distance);
     }
 
-    public List<CenterAndDistancePreview> findByFilterAndMap(double longitude, double latitude, Theme theme, Integer interestedAge, KindOf kindOf, Integer distance) {
-
-        return centerRepository.findByMapFilter(longitude, latitude, theme, interestedAge, kindOf, distance);
+    public SliceImpl<CenterAndDistancePreview> findByFilterForMapList(double longitude, double latitude, List<Long> centerIds, Long userId, KindOf kindOf, Pageable pageable) {
+        return userId == null ?
+                centerRepository.findByFilterForMapList(longitude, latitude, kindOf, centerIds, pageable) :
+                centerRepository.findByFilterForMapList(longitude, latitude, userId, kindOf, centerIds, pageable);
     }
 
-    public List<CenterAndDistancePreview> findByFilterAndMap(double longitude, double latitude, Integer distance) {
-        return centerRepository.findByMapFilter(longitude, latitude, distance);
+    public List<CenterMapPreview> findByFilterForMap(double longitude, double latitude, Integer distance){
+        return centerRepository.findByFilterForMap(longitude, latitude, distance);
     }
 
 

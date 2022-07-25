@@ -1,6 +1,6 @@
 package FIS.iLUVit.domain;
 
-import FIS.iLUVit.domain.alarms.PresentationConvertedToParticipateAlarm;
+import FIS.iLUVit.domain.alarms.ConvertedToParticipateAlarm;
 import FIS.iLUVit.domain.enumtype.Status;
 import FIS.iLUVit.exception.PresentationException;
 import FIS.iLUVit.service.AlarmUtils;
@@ -88,7 +88,7 @@ public class Participation extends BaseEntity {
 
         // 연관 관계 등록 및 participationCnt + 1
         ptDate.acceptParticipation(participation);
-        AlarmUtils.publishAlarmEvent(new PresentationConvertedToParticipateAlarm(parent, presentation, presentation.getCenter()));
+        AlarmUtils.publishAlarmEvent(new ConvertedToParticipateAlarm(parent, presentation, presentation.getCenter()));
         return participation;
     }
 

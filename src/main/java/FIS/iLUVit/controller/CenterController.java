@@ -2,21 +2,19 @@ package FIS.iLUVit.controller;
 
 import FIS.iLUVit.config.argumentResolver.Login;
 import FIS.iLUVit.controller.dto.*;
-import FIS.iLUVit.domain.embeddable.Area;
-import FIS.iLUVit.domain.enumtype.KindOf;
 import FIS.iLUVit.repository.dto.CenterAndDistancePreview;
+import FIS.iLUVit.repository.dto.CenterMapPreview;
 import FIS.iLUVit.repository.dto.CenterPreview;
 import FIS.iLUVit.service.CenterService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
+import org.springframework.data.domain.SliceImpl;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.util.Collections;
 import java.util.List;
 
 @RestController
@@ -31,37 +29,18 @@ public class CenterController {
      */
 
     /**
-     * 시설 둘러보기 페이지
-     */
-    @GetMapping("/center/preview")
-    public List<CenterPreview> searchPreview(@ModelAttribute Area area){
-        Slice<CenterPreview> centerPreviews = centerService.findByFilter(Collections.singletonList(area),
-                null,
-                null,
-                KindOf.ALL,
-                PageRequest.of(0, 5));
-        return centerPreviews.getContent();
-    }
-
-    /**
-     * center 검색 정보 반환 front 검색인자 값 - 시도, 시군구 값(list) 그리고 offset 과 갯수 몇개 가져올건지 <P>
-     * 반환값으로 center Preview 정보와 startIndex와 endIndex 보내준다.
-     * QueryDsl 에서 또한 Paging 처리를 Pagable을 사용해서 할 수 있으므로 최적화 할 것.
-     * @return
-     */
-    @PostMapping("/center/search")
-    public Slice<CenterPreview> searchByFilter(@RequestBody @Validated CenterSearchFilterDTO dto, Pageable pageable){
-        return centerService.findByFilter(dto.getAreas(), dto.getTheme(), dto.getInterestedAge(), dto.getKindOf(), pageable);
-    }
-
-    /**
      * center 검색 정보 반환 front 검색인자 값 - 위도 경도 지도와 관련하여 api 던져준다
      */
-    @PostMapping("/center/map/search")
-    public List<CenterAndDistancePreview> searchByFilterAndMap(@RequestBody @Validated CenterSearchMapFilterDTO dto){
-        List<CenterAndDistancePreview> center = centerService.
-                findByFilterAndMap(dto.getLongitude(), dto.getLatitude() ,dto.getTheme(), dto.getInterestedAge(), dto.getKindOf(), dto.getDistance());
-        return center;
+    @PostMapping("/center/map/list")
+    public SliceImpl<CenterAndDistancePreview> searchByFilterForMapList(@RequestBody @Validated CenterSearchMapFilterDTO dto,
+                                                                        @Login Long userId,
+                                                                        Pageable pageable){
+        return centerService.findByFilterForMapList(dto.getLongitude(), dto.getLatitude(), dto.getCenterIds(), userId, dto.getKindOf(), pageable);
+    }
+
+    @GetMapping("/center/map/search/all")
+    public List<CenterMapPreview> searchByFilterForMap(@ModelAttribute @Validated CenterSearchMapDto dto){
+        return centerService.findByFilterForMap(dto.getLongitude(), dto.getLatitude(), dto.getDistance());
     }
 
     /**

@@ -7,10 +7,10 @@ import FIS.iLUVit.controller.dto.QCenterRecommendDto;
 import FIS.iLUVit.domain.embeddable.Area;
 import FIS.iLUVit.domain.embeddable.Theme;
 import FIS.iLUVit.domain.enumtype.KindOf;
-import FIS.iLUVit.repository.dto.CenterAndDistancePreview;
-import FIS.iLUVit.repository.dto.CenterPreview;
-import FIS.iLUVit.repository.dto.QCenterAndDistancePreview;
-import FIS.iLUVit.repository.dto.QCenterPreview;
+import FIS.iLUVit.repository.dto.*;
+import com.querydsl.core.types.Expression;
+import com.querydsl.core.types.dsl.Expressions;
+import com.querydsl.core.types.dsl.NumberExpression;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.AllArgsConstructor;
 import org.springframework.data.domain.Pageable;
@@ -23,6 +23,7 @@ import java.util.stream.Collectors;
 import static FIS.iLUVit.domain.QCenter.center;
 import static FIS.iLUVit.domain.QPrefer.prefer;
 import static FIS.iLUVit.domain.QReview.review;
+import static com.querydsl.core.types.dsl.MathExpressions.*;
 
 @AllArgsConstructor
 public class CenterRepositoryImpl extends CenterQueryMethod implements CenterRepositoryCustom {
@@ -53,13 +54,19 @@ public class CenterRepositoryImpl extends CenterQueryMethod implements CenterRep
     }
 
     @Override
-    public List<CenterAndDistancePreview> findByMapFilter(double longitude, double latitude, Theme theme, Integer interestedAge, KindOf kindOf, Integer distance) {
+    public List<CenterAndDistancePreview> findByFilterForMapList(double longitude, double latitude, Theme theme, Integer interestedAge, KindOf kindOf, Integer distance) {
         double latitude_l = latitude - 0.009 * distance;
         double latitude_h = latitude + 0.009 * distance;
         double longitude_l = longitude - 0.009 * distance;
         double longitude_h = longitude + 0.009 * distance;
+        Expression<Double> latitudeEx = Expressions.constant(latitude);
+        Expression<Double> longitudeEx = Expressions.constant(longitude);
+        Expression<Double> param = Expressions.constant(6371.0);
+        NumberExpression<Double> distanceEx = acos(cos(radians(latitudeEx)).multiply(cos(radians((center.latitude))))
+                .multiply(cos(radians(center.longitude).subtract(radians(longitudeEx))))
+                .add(sin(radians(longitudeEx)).multiply(sin(radians(center.longitude))))).multiply(param).as("distance");
 
-        List<CenterAndDistancePreview> result = jpaQueryFactory.select(new QCenterAndDistancePreview(center, review.score.avg()))
+        List<CenterAndDistancePreview> result = jpaQueryFactory.select(new QCenterAndDistancePreview(center, review.score.avg(), distanceEx))
                 .from(center)
                 .leftJoin(center.reviews, review)
                 .where(center.latitude.between(latitude_l, latitude_h)
@@ -77,32 +84,107 @@ public class CenterRepositoryImpl extends CenterQueryMethod implements CenterRep
     }
 
     @Override
-    public List<CenterAndDistancePreview> findByMapFilter(double longitude, double latitude, Integer distance) {
-        double latitude_l = latitude - 0.01 * distance;
-        double latitude_h = latitude + 0.01 * distance;
-        double longitude_l = longitude - 0.01 * distance;
-        double longitude_h = longitude + 0.01 * distance;
+    public SliceImpl<CenterAndDistancePreview> findByFilterForMapList(double longitude, double latitude, Long userId, KindOf kindOf, List<Long> centerIds, Pageable pageable) {
+        Expression<Double> latitudeEx = Expressions.constant(latitude);
+        Expression<Double> longitudeEx = Expressions.constant(longitude);
+        Expression<Double> param = Expressions.constant(6371.0);
 
-        List<CenterAndDistancePreview> result = jpaQueryFactory.select(new QCenterAndDistancePreview(center, review.score.avg()))
+        NumberExpression<Double> distanceEx = acos(
+                sin(radians(latitudeEx)).multiply(sin(radians(center.latitude)))
+                        .add(cos(radians(latitudeEx)).multiply(cos(radians(center.latitude)))
+                                .multiply(cos(radians(longitudeEx).subtract(radians(center.longitude)))))).multiply(param);
+
+        List<CenterAndDistancePreview> result =
+                jpaQueryFactory.select(
+                                new QCenterAndDistancePreview(
+                                        distanceEx,
+                                        center.id, center.name, center.kindOf, center.estType, center.tel, center.startTime, center.endTime, center.minAge, center.maxAge, center.address, center.longitude, center.latitude, center.theme,
+                                        review.score.avg(),
+                                        center.profileImagePath, prefer.parent.id
+                                ))
+                        .from(center)
+                        .leftJoin(center.reviews, review)
+                        .leftJoin(center.prefers, prefer).on(prefer.parent.id.eq(userId))
+                        .where(kindOfEq(kindOf), center.id.in(centerIds))
+                        .groupBy(center)
+                        .orderBy(center.score.desc(), center.id.asc())
+                        .offset(pageable.getOffset())
+                        .limit(pageable.getPageSize() + 1)
+                        .fetch();
+
+        boolean hasNext = false;
+        if (result.size() > pageable.getPageSize()) {
+            hasNext = true;
+            result.remove(pageable.getPageSize());
+        }
+        return new SliceImpl<>(result, pageable, hasNext);
+
+    }
+
+    @Override
+    public SliceImpl<CenterAndDistancePreview> findByFilterForMapList(double longitude, double latitude, KindOf kindOf, List<Long> centerIds, Pageable pageable) {
+
+        Expression<Double> latitudeEx = Expressions.constant(latitude);
+        Expression<Double> longitudeEx = Expressions.constant(longitude);
+        Expression<Double> param = Expressions.constant(6371.0);
+
+        NumberExpression<Double> distanceEx = acos(
+                sin(radians(latitudeEx)).multiply(sin(radians(center.latitude)))
+                .add(cos(radians(latitudeEx)).multiply(cos(radians(center.latitude)))
+                        .multiply(cos(radians(longitudeEx).subtract(radians(center.longitude)))))).multiply(param);
+
+        List<CenterAndDistancePreview> result =
+                jpaQueryFactory.select(
+                        new QCenterAndDistancePreview(
+                                distanceEx,
+                                center.id, center.name, center.kindOf, center.estType, center.tel, center.startTime, center.endTime, center.minAge, center.maxAge, center.address, center.longitude, center.latitude, center.theme,
+                                review.score.avg(),
+                                center.profileImagePath
+                        ))
                 .from(center)
                 .leftJoin(center.reviews, review)
-                .where(center.latitude.between(latitude_l, latitude_h)
-                        .and(center.longitude.between(longitude_l, longitude_h)))
+                .where(kindOfEq(kindOf), center.id.in(centerIds))
                 .groupBy(center)
+                .orderBy(center.score.desc(), center.id.asc())
+                .offset(pageable.getOffset())
+                .limit(pageable.getPageSize() + 1)
                 .fetch();
 
-        return result.stream()
-                .filter(centerAndDistancePreview ->
-                        centerAndDistancePreview.calculateDistance(longitude, latitude) < distance)
-                .collect(Collectors.toList());
+        boolean hasNext = false;
+        if (result.size() > pageable.getPageSize()) {
+            hasNext = true;
+            result.remove(pageable.getPageSize());
+        }
+        return new SliceImpl<>(result, pageable, hasNext);
+    }
+
+    @Override
+    public List<CenterMapPreview> findByFilterForMap(double longitude, double latitude, Integer distance) {
+
+        Expression<Double> latitudeEx = Expressions.constant(latitude);
+        Expression<Double> longitudeEx = Expressions.constant(longitude);
+        Expression<Double> param = Expressions.constant(6371.0);
+
+        NumberExpression<Double> distanceEx = acos(
+                sin(radians(latitudeEx)).multiply(sin(radians(center.latitude)))
+                        .add(cos(radians(latitudeEx)).multiply(cos(radians(center.latitude)))
+                                .multiply(cos(radians(longitudeEx).subtract(radians(center.longitude)))))).multiply(param);
+
+        return jpaQueryFactory.select(new QCenterMapPreview(center.id, center.name, center.kindOf, center.longitude, center.latitude, center.profileImagePath))
+                        .from(center)
+                        .leftJoin(center.reviews, review)
+                        .groupBy(center)
+                        .having(distanceEx.loe(distance))
+                        .orderBy(center.score.desc(), center.id.asc())
+                        .fetch();
     }
 
     @Override
     public List<CenterRecommendDto> findRecommendCenter(Theme theme, Pageable pageable) {
-        return jpaQueryFactory.select(new QCenterRecommendDto(center.id, center.profileImagePath))
+        return jpaQueryFactory.select(new QCenterRecommendDto(center.id, center.name, center.profileImagePath))
                 .from(center)
                 .where(themeEq(theme))
-                .orderBy(center.score.asc())
+                .orderBy(center.score.desc(), center.id.asc())
                 .offset(pageable.getOffset())
                 .limit(pageable.getPageSize())
                 .fetch();

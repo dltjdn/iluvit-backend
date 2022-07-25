@@ -82,7 +82,7 @@ public class ParticipationService {
     public Long cancel(Long userId, Long participationId) {
 
         Participation participation = participationRepository.findByIdAndStatusWithPtDate(participationId, userId)
-                .orElseThrow(() -> new ParticipationException(ParticipationErrorResult.PARTICIPATION_NO_RESULTS));
+                .orElseThrow(() -> new ParticipationException(ParticipationErrorResult.WRONG_PARTICIPATIONID_REQUEST));
         // ptDate cnt 값을 1줄여야 한다.
         participation.cancel();
         PtDate ptDate = participation.getPtDate();
@@ -94,21 +94,20 @@ public class ParticipationService {
 
     public Map<Status, List<MyParticipationsDto>> getMyParticipation(Long userId) {
         // 학부모 조회
-        Parent parent = parentRepository.findMyParticipation(userId)
-                .orElseThrow(() -> new UserException("해당 사용자가 존재하지 않습니다"));
+        Parent parent = parentRepository.findMyParticipation(userId);
         parentRepository.findMyWaiting(userId);
 
         List<MyParticipationsDto> myParticipationsDtos = parent.getParticipations().stream()
-                .map(participation -> MyParticipationsDto.createDto(participation))
+                .map(MyParticipationsDto::createDto)
                 .collect(Collectors.toList());
 
         myParticipationsDtos.addAll(
                 parent.getWaitings().stream()
-                .map(waiting -> MyParticipationsDto.createDto(waiting))
+                .map(MyParticipationsDto::createDto)
                 .collect(Collectors.toList())
         );
 
         return myParticipationsDtos.stream()
-                .collect(Collectors.groupingBy(myParticipationsDto -> myParticipationsDto.getStatus()));
+                .collect(Collectors.groupingBy(MyParticipationsDto::getStatus));
     }
 }

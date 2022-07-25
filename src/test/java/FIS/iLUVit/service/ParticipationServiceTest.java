@@ -304,8 +304,8 @@ class ParticipationServiceTest {
             });
 
             //then
-            assertThat(result.getParticipationErrorResult())
-                    .isEqualTo(ParticipationErrorResult.PARTICIPATION_NO_RESULTS);
+            assertThat(result.getErrorResult())
+                    .isEqualTo(ParticipationErrorResult.WRONG_PARTICIPATIONID_REQUEST);
         }
 
         @Test

@@ -6,9 +6,11 @@ import FIS.iLUVit.domain.embeddable.Area;
 import FIS.iLUVit.domain.embeddable.Theme;
 import FIS.iLUVit.domain.enumtype.KindOf;
 import FIS.iLUVit.repository.dto.CenterAndDistancePreview;
+import FIS.iLUVit.repository.dto.CenterMapPreview;
 import FIS.iLUVit.repository.dto.CenterPreview;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
+import org.springframework.data.domain.SliceImpl;
 
 import java.util.List;
 
@@ -16,9 +18,13 @@ public interface CenterRepositoryCustom {
 
     Slice<CenterPreview> findByFilter(List<Area> areas, Theme theme, Integer interestedAge, KindOf kindOf, Pageable pageable);
 
-    List<CenterAndDistancePreview> findByMapFilter(double longitude, double latitude, Theme theme, Integer interestedAge, KindOf kindOf, Integer distance);
+    List<CenterAndDistancePreview> findByFilterForMapList(double longitude, double latitude, Theme theme, Integer interestedAge, KindOf kindOf, Integer distance);
 
-    List<CenterAndDistancePreview> findByMapFilter(double longitude, double latitude, Integer distance);
+    SliceImpl<CenterAndDistancePreview> findByFilterForMapList(double longitude, double latitude, Long userId, KindOf kindOf, List<Long> centerIds, Pageable pageable);
+
+    SliceImpl<CenterAndDistancePreview> findByFilterForMapList(double longitude, double latitude, KindOf kindOf, List<Long> centerIds, Pageable pageable);
+
+    List<CenterMapPreview> findByFilterForMap(double longitude, double latitude, Integer distance);
 
     List<CenterRecommendDto> findRecommendCenter(Theme theme, Pageable pageable);
 

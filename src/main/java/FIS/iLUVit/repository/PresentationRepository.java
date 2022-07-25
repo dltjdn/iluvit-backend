@@ -3,6 +3,7 @@ package FIS.iLUVit.repository;
 import FIS.iLUVit.domain.Presentation;
 import FIS.iLUVit.repository.dto.PresentationPreviewForTeacher;
 import FIS.iLUVit.repository.dto.PresentationWithPtDatesDto;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -34,10 +35,10 @@ public interface PresentationRepository extends JpaRepository<Presentation, Long
             "and :date <= p.endDate")
     List<PresentationWithPtDatesDto> findByCenterAndDateWithPtDates(@Param("centerId") Long centerId, @Param("date") LocalDate date, @Param("userId") Long userId);
 
-    @Query("select new FIS.iLUVit.repository.dto.PresentationPreviewForTeacher(p.id, p.startDate, p.endDate, p.place, p.content) " +
+    @Query("select new FIS.iLUVit.repository.dto.PresentationPreviewForTeacher(p.id, p.startDate, p.endDate, p.place, p.content, p.infoImagePath) " +
             "from Presentation p " +
             "where p.center.id = :centerId")
-    List<PresentationPreviewForTeacher> findByCenterId(@Param("centerId") Long centerId);
+    List<PresentationPreviewForTeacher> findByCenterId(@Param("centerId") Long centerId, Pageable pageable);
 
     @Query("select distinct presentation from Presentation presentation " +
             "join fetch presentation.ptDates " +

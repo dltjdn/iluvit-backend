@@ -152,7 +152,13 @@ public class GlobalControllerAdvice extends ResponseEntityExceptionHandler {
     }
 
     @ExceptionHandler(WaitingException.class)
-    public ResponseEntity<ErrorResponse> postException(WaitingException e) {
+    public ResponseEntity<ErrorResponse> waitingException(WaitingException e) {
+        log.error("[WaitingExceptionHandler] {}", e.getMessage());
+        return makeErrorResponseEntity(e.getErrorResult());
+    }
+
+    @ExceptionHandler(ParticipationException.class)
+    public ResponseEntity<ErrorResponse> participantException(ParticipationException e) {
         log.error("[WaitingExceptionHandler] {}", e.getMessage());
         return makeErrorResponseEntity(e.getErrorResult());
     }

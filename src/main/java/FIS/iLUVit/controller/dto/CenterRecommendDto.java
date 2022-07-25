@@ -8,11 +8,13 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class CenterRecommendDto {
     private Long centerId;
+    private String centerName;
     private String profileImage;
 
     @QueryProjection
-    public CenterRecommendDto(Long centerId, String profileImage) {
+    public CenterRecommendDto(Long centerId, String centerName, String profileImage) {
         this.centerId = centerId;
+        this.centerName = centerName;
         this.profileImage = profileImage;
     }
 }

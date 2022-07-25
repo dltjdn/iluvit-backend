@@ -12,7 +12,7 @@ import java.time.LocalDateTime;
 @Entity
 @NoArgsConstructor
 @Getter
-public class PresentationConvertedToParticipateAlarm extends Alarm {
+public class ConvertedToParticipateAlarm extends Alarm {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "presentationId")
@@ -22,7 +22,7 @@ public class PresentationConvertedToParticipateAlarm extends Alarm {
     @JoinColumn(name = "centerId")
     private Center center;
 
-    public PresentationConvertedToParticipateAlarm(User waiter, Presentation presentation, Center center) {
+    public ConvertedToParticipateAlarm(User waiter, Presentation presentation, Center center) {
         super(waiter);
         String[] args = {center.getName()};
         this.presentation = presentation;
