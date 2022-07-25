@@ -39,7 +39,11 @@ public class CommentDTO {
         this.user_id = c.getUser().getId();
         this.board_id = c.getPost().getBoard().getId();
         this.board_name = c.getPost().getBoard().getName();
-        this.center_id = c.getPost().getBoard().getCenter().getId();
-        this.center_name = c.getPost().getBoard().getCenter().getName();
+        if (c.getPost().getBoard().getCenter() != null) {
+            this.center_id = c.getPost().getBoard().getCenter().getId();
+            this.center_name = c.getPost().getBoard().getCenter().getName();
+        } else {
+            this.center_name = "모두의 이야기";
+        }
     }
 }
