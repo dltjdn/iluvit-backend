@@ -119,6 +119,7 @@ public class Creator {
                 .board(board)
                 .user(user)
                 .comments(new ArrayList<>())
+                .postHearts(new ArrayList<>())
                 .build();
     }
 

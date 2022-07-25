@@ -23,6 +23,8 @@ public class CommentDTO {
     private Long user_id; // 댓글 작성자 아이디
     private Long board_id; // 게시판 아이디
     private String board_name; // 게시판 이름
+    private Long center_id; // 시설 아이디
+    private String center_name; // 시설명
 
     public CommentDTO(Comment c) {
         this.id = c.getId();
@@ -37,5 +39,7 @@ public class CommentDTO {
         this.user_id = c.getUser().getId();
         this.board_id = c.getPost().getBoard().getId();
         this.board_name = c.getPost().getBoard().getName();
+        this.center_id = c.getPost().getBoard().getCenter().getId();
+        this.center_name = c.getPost().getBoard().getCenter().getName();
     }
 }

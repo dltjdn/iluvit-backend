@@ -8,6 +8,6 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
 public interface CommentRepository extends JpaRepository<Comment, Long> {
-    @Query("select c from Comment c join fetch c.post p join fetch p.board b where c.user.id = :userId")
+    @Query("select c from Comment c join fetch c.post p join fetch p.board b join fetch b.center ct where c.user.id = :userId")
     Slice<Comment> findByUser(@Param("userId") Long userId, Pageable pageable);
 }
