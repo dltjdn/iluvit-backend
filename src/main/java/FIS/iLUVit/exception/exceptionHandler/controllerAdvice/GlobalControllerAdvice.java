@@ -5,6 +5,7 @@ import FIS.iLUVit.exception.exceptionHandler.ErrorResponse;
 import FIS.iLUVit.exception.exceptionHandler.ErrorResult;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.support.DefaultMessageSourceResolvable;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.dao.InvalidDataAccessApiUsageException;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -68,7 +69,10 @@ public class GlobalControllerAdvice extends ResponseEntityExceptionHandler {
 
     // param(@ModelAttribute) validation exception
     @Override
-    protected ResponseEntity<Object> handleBindException(BindException ex, HttpHeaders headers, HttpStatus status, WebRequest request) {
+    protected ResponseEntity<Object> handleBindException(BindException ex,
+                                                         HttpHeaders headers,
+                                                         HttpStatus status,
+                                                         WebRequest request) {
         final List<String> errorList = ex.getBindingResult()
                 .getAllErrors()
                 .stream()
@@ -85,12 +89,12 @@ public class GlobalControllerAdvice extends ResponseEntityExceptionHandler {
     }
 
 
-    //    @ResponseStatus(HttpStatus.BAD_REQUEST)
-//    @ExceptionHandler(RuntimeException.class)
-//    public ResponseEntity<Object> RuntimeException(RuntimeException e) {
-//        log.error("[exceptionHandler] ex", e);
-//        return makeErrorResponseEntity(e.getMessage());
-//    }
+        @ResponseStatus(HttpStatus.BAD_REQUEST)
+    @ExceptionHandler(DataIntegrityViolationException.class)
+    public ResponseEntity<Object> RuntimeException(DataIntegrityViolationException e) {
+        log.error("[DataIntegrityViolationException] 올바르지 않은 식별자값입니다.", e);
+        return makeErrorResponseEntity("올바르지 않은 식별자값입니다.");
+    }
 
     // repository에서 쿼리 날릴때 parameter가 null이면 생기는 예외(토큰이 유효하지 않아 @Login이 Null일 확률이 높음)
     @ResponseStatus(HttpStatus.FORBIDDEN)
