@@ -1,6 +1,7 @@
 package FIS.iLUVit.domain;
 
 import lombok.AccessLevel;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.OnDelete;
@@ -31,5 +32,10 @@ public class PostHeart extends BaseEntity {
         post.updatePostHeart(this);
     }
 
-
+    @Builder(toBuilder = true)
+    public PostHeart(Long id, User user, Post post) {
+        this.id = id;
+        this.user = user;
+        this.post = post;
+    }
 }

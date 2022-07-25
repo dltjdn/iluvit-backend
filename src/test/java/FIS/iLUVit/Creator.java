@@ -119,6 +119,7 @@ public class Creator {
                 .board(board)
                 .user(user)
                 .comments(new ArrayList<>())
+                .postHearts(new ArrayList<>())
                 .build();
     }
 
@@ -186,12 +187,26 @@ public class Creator {
                 .build();
     }
 
-    public static Teacher createTeacher(Long id, String name, Center center) {
+    public static Teacher createTeacher(Long id, String name, Center center, Auth auth, Approval approval) {
         return Teacher.builder()
                 .id(id)
                 .name(name)
+                .center(center)
+                .auth(auth)
+                .approval(approval)
                 .build();
     }
+
+    public static Teacher createTeacher(Long id, String name, Center center, Approval approval, Auth auth) {
+        return Teacher.builder()
+                .id(id)
+                .name(name)
+                .center(center)
+                .approval(approval)
+                .auth(auth)
+                .build();
+    }
+
     public static Theme englishAndCoding(){
         return Theme.builder()
                 .english(true)

@@ -105,4 +105,14 @@ public class Teacher extends User {
     public void beDirector() {
         this.auth = Auth.DIRECTOR;
     }
+
+    public void assignCenter(Center center) {
+        this.center = center;
+        this.approval = Approval.WAITING;
+    }
+
+    public void exitCenter() {
+        this.center = null;
+        this.auth = Auth.TEACHER;
+    }
 }

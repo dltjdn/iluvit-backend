@@ -20,7 +20,7 @@ public class TeacherController {
     /**
      * 작성날짜: 2022/05/20 4:43 PM
      * 작성자: 이승범
-     * 작성내용: 선생의 마이페이지 조회
+     * 작성내용: 선생의 프로필 조회
      */
     @GetMapping("/teacher/detail")
     public TeacherDetailResponse findTeacherDetail(@Login Long id) throws IOException {
@@ -30,7 +30,7 @@ public class TeacherController {
     /**
      * 작성날짜: 2022/05/20 4:43 PM
      * 작성자: 이승범
-     * 작성내용: 선생의 마이페이지에 정보 update
+     * 작성내용: 선생의 프로필 정보 update
      */
     @PostMapping("/teacher/detail")
     public TeacherDetailResponse updateTeacherDetail(@Login Long id, @Valid @ModelAttribute UpdateTeacherDetailRequest request) throws IOException {

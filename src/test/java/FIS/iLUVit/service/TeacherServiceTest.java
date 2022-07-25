@@ -7,16 +7,20 @@ import FIS.iLUVit.controller.dto.TeacherDetailResponse;
 import FIS.iLUVit.controller.dto.UpdateTeacherDetailRequest;
 import FIS.iLUVit.domain.*;
 import FIS.iLUVit.domain.alarms.CenterApprovalReceivedAlarm;
+import FIS.iLUVit.domain.enumtype.Approval;
+import FIS.iLUVit.domain.enumtype.Auth;
 import FIS.iLUVit.domain.enumtype.AuthKind;
 import FIS.iLUVit.domain.enumtype.BoardKind;
 import FIS.iLUVit.event.AlarmEvent;
 import FIS.iLUVit.exception.*;
+import FIS.iLUVit.exception.exceptionHandler.ErrorResponse;
 import FIS.iLUVit.exception.exceptionHandler.controllerAdvice.GlobalControllerAdvice;
 import FIS.iLUVit.repository.*;
 import FIS.iLUVit.service.createmethod.CreateTest;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -69,8 +73,6 @@ public class TeacherServiceTest {
     @Mock
     private ImageService imageService;
 
-    private ObjectMapper objectMapper;
-    private MockMvc mockMvc;
 
     private Center center1;
     private Center center2;
@@ -78,6 +80,7 @@ public class TeacherServiceTest {
     private Teacher teacher2;
     private Teacher teacher3;
     private Teacher teacher4;
+    private Teacher teacher5;
     private Board board1;
     private Board board2;
     private Board board3;
@@ -85,26 +88,22 @@ public class TeacherServiceTest {
     private MockMultipartFile multipartFile;
     @BeforeEach
     public void init() throws IOException {
-        objectMapper = new ObjectMapper();
-        mockMvc = MockMvcBuilders.standaloneSetup(target)
-                .setCustomArgumentResolvers(new LoginUserArgumentResolver())
-                .setControllerAdvice(GlobalControllerAdvice.class)
-                .build();
         center1 = CreateTest.createCenter(1L, "center1");
         center2 = CreateTest.createCenter(2L, "center2");
-        teacher1 = Creator.createTeacher(3L, "teacher1", center1);
-        teacher2 = Creator.createTeacher(4L, "teacher2", center1);
-        teacher3 = Creator.createTeacher(5L, "teacher1", center1);
-        teacher4 = Creator.createTeacher(6L, "teacher1", null);
-        board1 = createBoard(3L, "자유게시판", BoardKind.NORMAL, null, true);
-        board2 = createBoard(4L, "맛집게시판", BoardKind.NORMAL, null, true);
-        board3 = createBoard(5L, "공지게시판", BoardKind.NORMAL, center1, true);
-        board4 = createBoard(6L, "자유게시판", BoardKind.NORMAL, center1, true);
-        center1.getTeachers().add(teacher1);
-        center1.getTeachers().add(teacher2);
-        center1.getTeachers().add(teacher3);
-        center1.getBoards().add(board3);
-        center1.getBoards().add(board4);
+        teacher1 = Creator.createTeacher(3L, "teacher1", center1, Auth.DIRECTOR, Approval.ACCEPT);
+        teacher2 = Creator.createTeacher(4L, "teacher2", center1, Auth.TEACHER, Approval.ACCEPT);
+        teacher3 = Creator.createTeacher(5L, "teacher3", center1, Auth.TEACHER, Approval.WAITING);
+        teacher4 = Creator.createTeacher(6L, "teacher4", null, Auth.TEACHER, null);
+        teacher5 = Creator.createTeacher(7L, "teacher3", center1, Auth.TEACHER, Approval.REJECT);
+        board1 = createBoard(8L, "자유게시판", BoardKind.NORMAL, null, true);
+        board2 = createBoard(9L, "맛집게시판", BoardKind.NORMAL, null, true);
+        board3 = createBoard(10L, "공지게시판", BoardKind.NORMAL, center1, true);
+        board4 = createBoard(11L, "자유게시판", BoardKind.NORMAL, center1, true);
+//        center1.getTeachers().add(teacher1);
+//        center1.getTeachers().add(teacher2);
+//        center1.getTeachers().add(teacher3);
+//        center1.getBoards().add(board3);
+//        center1.getBoards().add(board4);
         String name = "162693895955046828.png";
         Path path = Paths.get(new File("").getAbsolutePath() + '/' + name);
         byte[] content = Files.readAllBytes(path);
@@ -115,6 +114,10 @@ public class TeacherServiceTest {
     @Test
     public void 교사회원가입_실패_없는시설로등록() {
         // given
+        center1.getTeachers().add(teacher1);
+        center1.getTeachers().add(teacher2);
+        center1.getTeachers().add(teacher3);
+        center1.getTeachers().add(teacher5);
         SignupTeacherRequest request = SignupTeacherRequest.builder()
                 .loginId("log")
                 .password("password")
@@ -138,9 +141,13 @@ public class TeacherServiceTest {
     }
 
     @Test
-    public void 교사회원가입_성공_시설선택한경우() {
-        // given
+    public void 교사회원가입_성공_시설선택O() {
         try (MockedStatic<AlarmUtils> alarmUtils = Mockito.mockStatic(AlarmUtils.class)) {
+            // given
+            center1.getTeachers().add(teacher1);
+            center1.getTeachers().add(teacher2);
+            center1.getTeachers().add(teacher3);
+            center1.getTeachers().add(teacher5);
             SignupTeacherRequest request = SignupTeacherRequest.builder()
                     .loginId("loginId")
                     .password("password")
@@ -183,6 +190,10 @@ public class TeacherServiceTest {
     @Test
     public void 교사회원가입_성공_시설선택X() {
         // given
+        center1.getTeachers().add(teacher1);
+        center1.getTeachers().add(teacher2);
+        center1.getTeachers().add(teacher3);
+        center1.getTeachers().add(teacher5);
         SignupTeacherRequest request = SignupTeacherRequest.builder()
                 .loginId("loginId")
                 .password("password")
@@ -243,10 +254,10 @@ public class TeacherServiceTest {
                 .when(teacherRepository)
                 .findByNickName("중복닉네임");
         // when
-        UserException result = assertThrows(UserException.class,
+        SignupException result = assertThrows(SignupException.class,
                 () -> target.updateDetail(teacher1.getId(), request));
         // then
-        assertThat(result.getErrorResult()).isEqualTo(UserErrorResult.DUPLICATED_NICKNAME);
+        assertThat(result.getErrorResult()).isEqualTo(SignupErrorResult.DUPLICATED_NICKNAME);
     }
 
     @Test
@@ -297,6 +308,77 @@ public class TeacherServiceTest {
         // then
         assertThat(response.getPhoneNumber()).isEqualTo("newPhoneNum");
     }
+
+    @Nested
+    @DisplayName("시설에 등록신청")
+    class AssignCenter{
+
+        @Test
+        @DisplayName("[error 이미 시설에 등록되있는경우]")
+        public void 등록된시설있음() {
+            // given
+            doReturn(Optional.empty())
+                    .when(teacherRepository)
+                    .findByIdAndNotAssign(teacher1.getId());
+            // when
+            SignupException result = assertThrows(SignupException.class,
+                    () -> target.assignCenter(teacher1.getId(), center2.getId()));
+            // then
+            assertThat(result.getErrorResult()).isEqualTo(SignupErrorResult.ALREADY_BELONG_CENTER);
+        }
+
+        @Test
+        @DisplayName("[success 시설로의 등록신청]")
+        public void 시설등록신청_성공() {
+            // given
+            doReturn(Optional.of(teacher4))
+                    .when(teacherRepository)
+                    .findByIdAndNotAssign(teacher4.getId());
+            doReturn(center2)
+                    .when(centerRepository)
+                    .getById(center2.getId());
+            // when
+            Teacher result = target.assignCenter(teacher4.getId(), center2.getId());
+            // then
+            assertThat(result.getCenter().getId()).isEqualTo(center2.getId());
+            assertThat(result.getApproval()).isEqualTo(Approval.WAITING);
+        }
+    }
+
+    @Nested
+    @DisplayName("시설 스스로 탈주하기")
+    class escapeCenter{
+        @Test
+        @DisplayName("[error 사용자가 해당시설에 속해있지않음]")
+        public void 해당시설에속해있지않음() {
+            // given
+            doReturn(Optional.empty())
+                    .when(teacherRepository)
+                    .findByIdWithCenterWithTeacher(any());
+            // when
+            SignupException result = assertThrows(SignupException.class,
+                    () -> target.escapeCenter(teacher2.getId()));
+
+            // then
+            assertThat(result.getErrorResult()).isEqualTo(SignupErrorResult.NOT_BELONG_CENTER);
+        }
+
+        @Test
+        @DisplayName("[error 일반교사가있는 시설에 마지막 원장의 탈주]")
+        public void 마지막원장탈주실패() {
+            // given
+            doReturn(Optional.of(teacher1))
+                    .when(teacherRepository)
+                    .findByIdWithCenterWithTeacher(any());
+            // when
+            SignupException result = assertThrows(SignupException.class,
+                    () -> target.escapeCenter(teacher1.getId()));
+            // then
+            assertThat(result.getErrorResult()).isEqualTo(SignupErrorResult.HAVE_TO_MANDATE);
+        }
+    }
+
+
 
 
 }

@@ -7,10 +7,7 @@ import FIS.iLUVit.domain.enumtype.Approval;
 import FIS.iLUVit.domain.enumtype.Auth;
 import FIS.iLUVit.domain.enumtype.AuthKind;
 import FIS.iLUVit.domain.enumtype.BoardKind;
-import FIS.iLUVit.exception.SignupErrorResult;
-import FIS.iLUVit.exception.SignupException;
-import FIS.iLUVit.exception.UserErrorResult;
-import FIS.iLUVit.exception.UserException;
+import FIS.iLUVit.exception.*;
 import FIS.iLUVit.repository.*;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -50,11 +47,6 @@ public class TeacherService {
 
         TeacherDetailResponse response = new TeacherDetailResponse(findTeacher);
 
-        // 현재 등록한 프로필 이미지가 있으면 보여주기
-//        if (findTeacher.getHasProfileImg()) {
-//            String imagePath = imageService.getUserProfileDir();
-//            response.setProfileImg(imageService.getEncodedProfileImage(imagePath, id));
-//        }
         response.setProfileImg(imageService.getProfileImage(findTeacher));
         return response;
     }
@@ -74,7 +66,7 @@ public class TeacherService {
         if (!Objects.equals(findTeacher.getNickName(), request.getNickname())) {
             teacherRepository.findByNickName(request.getNickname())
                     .ifPresent(teacher -> {
-                        throw new UserException(UserErrorResult.DUPLICATED_NICKNAME);
+                        throw new SignupException(SignupErrorResult.DUPLICATED_NICKNAME);
                     });
         }
 
@@ -92,12 +84,6 @@ public class TeacherService {
 
         TeacherDetailResponse response = new TeacherDetailResponse(findTeacher);
 
-        // 프로필 이미지 수정
-//        if (!request.getProfileImg().isEmpty()) {
-//            String imagePath = imageService.getUserProfileDir();
-//            imageService.saveProfileImage(request.getProfileImg(), imagePath + findTeacher.getId());
-//            response.setProfileImg(imageService.getEncodedProfileImage(imagePath, id));
-//        }
         imageService.saveProfileImage(request.getProfileImg(), findTeacher);
 
         return response;
@@ -153,22 +139,20 @@ public class TeacherService {
      * 작성자: 이승범
      * 작성내용: 시설에 등록신청
      */
-    public void assignCenter(Long userId, Long centerId) {
-        teacherRepository.findByIdAndNotAssign(userId)
-                .orElseThrow(() -> new UserException("현재 속해있는 시설이 있습니다."));
+    public Teacher assignCenter(Long userId, Long centerId) {
+        Teacher teacher = teacherRepository.findByIdAndNotAssign(userId)
+                .orElseThrow(() -> new SignupException(SignupErrorResult.ALREADY_BELONG_CENTER));
 
-        // centerId가 유효하지 않다면 예외처리
-        try {
-            teacherRepository.assignCenter(userId, centerId);
+        // 시설과의 연관관계맺기
+        Center center = centerRepository.getById(centerId);
+        teacher.assignCenter(center);
 
-            // 승인 요청 알람이 해당 시설의 원장들에게 감
-            List<Teacher> directors = teacherRepository.findDirectorByCenter(centerId);
-            directors.forEach(director -> {
-                AlarmUtils.publishAlarmEvent(new CenterApprovalReceivedAlarm(director));
-            });
-        } catch (DataIntegrityViolationException e) {
-            throw new UserException("존재하지 않는 시설입니다.");
-        }
+        // 승인 요청 알람이 해당 시설의 원장들에게 감
+        List<Teacher> directors = teacherRepository.findDirectorByCenter(centerId);
+        directors.forEach(director -> {
+            AlarmUtils.publishAlarmEvent(new CenterApprovalReceivedAlarm(director));
+        });
+        return teacher;
     }
 
     /**
@@ -179,27 +163,28 @@ public class TeacherService {
     public void escapeCenter(Long userId) {
 
         Teacher escapedTeacher = teacherRepository.findByIdWithCenterWithTeacher(userId)
-                .orElseThrow(() -> new UserException("현재 속해있는 시설이 없습니다."));
+                .orElseThrow(() -> new SignupException(SignupErrorResult.NOT_BELONG_CENTER));
 
         // 시설에 속한 일반 교사들
         List<Teacher> commons = escapedTeacher.getCenter().getTeachers().stream()
                 .filter(teacher -> teacher.getAuth() == Auth.TEACHER)
                 .collect(Collectors.toList());
+
         // 시설에 속한 원장들
         List<Teacher> directors = escapedTeacher.getCenter().getTeachers().stream()
                 .filter(teacher -> teacher.getAuth() == Auth.DIRECTOR)
                 .collect(Collectors.toList());
 
         // 일반 교사가 남아있을때 최후의 원장이 탈퇴하려면 남은 교사에게 원장 권한을 위임해야함
-        if (directors.size() == 1 && !commons.isEmpty()) {
-            throw new UserException("원장 권한을 다른 교사에게 넘겨주세요");
+        if (escapedTeacher.getAuth() == Auth.DIRECTOR && directors.size() == 1 && !commons.isEmpty()) {
+            throw new SignupException(SignupErrorResult.HAVE_TO_MANDATE);
         }
 
         // 속해있는 시설과 연관된 bookmark 모두 지우기
         deleteBookmarkByCenter(escapedTeacher);
 
         // 시설과의 연관관계 끊기
-        teacherRepository.exitCenter(userId);
+        escapedTeacher.exitCenter();
     }
 
     /**
@@ -220,12 +205,7 @@ public class TeacherService {
             if (!Objects.equals(teacher.getId(), userId)) {
                 TeacherApprovalListResponse.TeacherInfoForAdmin teacherInfoForAdmin =
                         new TeacherApprovalListResponse.TeacherInfoForAdmin(teacher.getId(), teacher.getName(), teacher.getApproval(), teacher.getAuth());
-                // 프로필 이미지 있는 교사들은 이미지 채우기
-//                if (teacher.getHasProfileImg()) {
-//                    String imagePath = imageService.getUserProfileDir();
-//                    String image = imageService.getEncodedProfileImage(imagePath, teacher.getId());
-//                    teacherInfoForAdmin.setProfileImg(image);
-//                }
+
                 teacherInfoForAdmin.setProfileImg(imageService.getProfileImage(teacher));
                 response.getData().add(teacherInfoForAdmin);
             }
@@ -268,19 +248,22 @@ public class TeacherService {
     public void fireTeacher(Long userId, Long teacherId) {
 
         // 로그인한 사용자가 원장인지 확인 및 원장으로 등록되어있는 시설에 모든 교사들 갖오기
-        Teacher director = teacherRepository.findDirectorByIdWithCenterWithTeacher(userId)
-                .orElseThrow(() -> new UserException("해당 정보를 열람할 권한이 없습니다."));
+        Teacher director = teacherRepository.findDirectorById(userId)
+                .orElseThrow(() -> new UserException("해당 요청에 대한 권한이 없습니다."));
+
+        Teacher firedTeacher = teacherRepository.findById(teacherId)
+                .orElseThrow(() -> new UserException(UserErrorResult.NOT_VALID_REQUEST));
 
         // 삭제하고자 하는 교사가 해당 시설에 소속되어 있는지 확인
-        Teacher firedTeacher = director.getCenter().getTeachers().stream()
-                .filter(teacher -> Objects.equals(teacher.getId(), teacherId))
-                .findFirst()
-                .orElseThrow(() -> new UserException("잘못된 teacher_id 입니다."));
-
+        if(!Objects.equals(director.getCenter().getId(), firedTeacher.getCenter().getId())){
+            throw new UserException(UserErrorResult.NOT_VALID_REQUEST);
+        }
 
         // 해당 시설과 연관된 bookmark 삭제
         deleteBookmarkByCenter(firedTeacher);
-        teacherRepository.exitCenter(teacherId);
+
+        // 시설과의 연관관계 끊기
+        firedTeacher.exitCenter();
     }
 
     /**
