@@ -22,6 +22,7 @@ public class PostAlarm extends Alarm {
     @JoinColumn(name = "postId")
     private Post post;
     private String boardName;
+    private String centerName;
     private Boolean anonymous;
     private String commentUserProfileImage;
     private String commentUserNickname;
@@ -33,6 +34,8 @@ public class PostAlarm extends Alarm {
         if (post.getBoard() == null) {
             throw new BoardException(BoardErrorResult.BOARD_NOT_EXIST);
         }
+        if(post.getBoard().getCenter() != null)
+            this.centerName = post.getBoard().getCenter().getName();
         this.boardName = post.getBoard().getName();
         this.anonymous = comment.getAnonymous();
         if(!this.anonymous){
@@ -46,24 +49,26 @@ public class PostAlarm extends Alarm {
 
     @Override
     public AlarmDto exportAlarm() {
-        return new PostAlarmDto(id, boardName, createdDate, message, dtype, post.getId(), anonymous, commentUserProfileImage, commentUserNickname);
+        return new PostAlarmDto(id, boardName, createdDate, message, dtype, post.getId(), anonymous, commentUserProfileImage, commentUserNickname, centerName);
     }
 
     @Getter
     public static class PostAlarmDto extends AlarmDto{
         protected Long postId;
         private String boardName;
+        private String centerName;
         private Boolean anonymous;
         private String commentUserProfileImage;
         private String commentUserNickname;
 
-        public PostAlarmDto(Long id, String boardName, LocalDateTime createdDate, String message, String type, Long postId, Boolean anonymous, String commentUserProfileImage, String commentUserNickname) {
+        public PostAlarmDto(Long id, String boardName, LocalDateTime createdDate, String message, String type, Long postId, Boolean anonymous, String commentUserProfileImage, String commentUserNickname, String centerName) {
             super(id, createdDate, message, type);
             this.postId = postId;
             this.boardName = boardName;
             this.anonymous = anonymous;
             this.commentUserNickname = commentUserNickname;
             this.commentUserProfileImage = commentUserProfileImage;
+            this.centerName = centerName;
         }
     }
 }

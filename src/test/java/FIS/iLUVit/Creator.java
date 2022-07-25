@@ -246,6 +246,36 @@ public class Creator {
         return center;
     }
 
+    public static Center createCenter(Long id, String name, Integer score, Double latitude, Double longitude) {
+        Center center = Center.builder()
+                .id(id)
+                .name(name)
+                .score(score)
+                .longitude(longitude)
+                .latitude(latitude)
+                .build();
+        return center;
+    }
+
+
+    public static Center createKindergarten(String name, Integer score, Double latitude, Double longitude) {
+        return Kindergarten.kBuilder()
+                .name(name)
+                .score(score)
+                .longitude(longitude)
+                .latitude(latitude)
+                .build();
+    }
+
+    public static Center createChildHouse(String name, Integer score, Double latitude, Double longitude) {
+        return ChildHouse.cBuilder()
+                .name(name)
+                .score(score)
+                .longitude(longitude)
+                .latitude(latitude)
+                .build();
+    }
+
     public static Center createCenter(String name, Boolean signed, Boolean recruit, Theme theme) {
         Center center = Center.builder()
                 .name(name)
@@ -485,6 +515,11 @@ public class Creator {
                 .build();
     }
 
+    public static Waiting createWaiting(Long id) {
+        return Waiting.builder()
+                .id(id)
+                .build();
+    }
     public static Scrap createScrap(Long id, User user, String name) {
         return Scrap.builder()
                 .id(id)

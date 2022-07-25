@@ -25,7 +25,7 @@ public interface ParentRepository extends JpaRepository<Parent, Long> {
             "left join fetch ptDate.presentation as presentation " +
             "left join fetch presentation.center as center " +
             "where parent.id = :userId")
-    Optional<Parent> findMyParticipation(@Param("userId") Long userId);
+    Parent findMyParticipation(@Param("userId") Long userId);
 
     @Query("select parent " +
             "from Parent parent " +
@@ -34,7 +34,7 @@ public interface ParentRepository extends JpaRepository<Parent, Long> {
             "left join fetch ptDate.presentation as presentation " +
             "left join fetch presentation.center as center " +
             "where parent.id = :userId")
-    Optional<Parent> findMyWaiting(@Param("userId") Long userId);
+    Parent findMyWaiting(@Param("userId") Long userId);
 
     @Query("select distinct p " +
             "from Parent p " +

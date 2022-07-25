@@ -82,7 +82,7 @@ public class WaitingService {
         waitingRepository.updateWaitingOrder(ptDate, waiting.getWaitingOrder());
         waitingRepository.delete(waiting);
 
-        return null;
+        return waitingId;
     }
 
 

@@ -2,7 +2,7 @@ package FIS.iLUVit.event.eventListener;
 
 import FIS.iLUVit.domain.*;
 import FIS.iLUVit.domain.alarms.Alarm;
-import FIS.iLUVit.domain.alarms.PresentationConvertedToParticipateAlarm;
+import FIS.iLUVit.domain.alarms.ConvertedToParticipateAlarm;
 import FIS.iLUVit.event.AlarmEvent;
 import FIS.iLUVit.event.ParticipationCancelEvent;
 import FIS.iLUVit.repository.ParticipationRepository;
@@ -81,7 +81,7 @@ class ParticipationCancelEventHandlerTest {
                 alarmUtils.when(() -> AlarmUtils.getMessage(any(String.class), any(Object[].class)))
                         .thenReturn("설명회 전환됨");
 
-                PresentationConvertedToParticipateAlarm alarm = new PresentationConvertedToParticipateAlarm(parent, presentation, center);
+                ConvertedToParticipateAlarm alarm = new ConvertedToParticipateAlarm(parent, presentation, center);
                 alarmUtils.when(() -> AlarmUtils.publishAlarmEvent(any(Alarm.class)))
                         .thenReturn(new AlarmEvent(alarm));
 

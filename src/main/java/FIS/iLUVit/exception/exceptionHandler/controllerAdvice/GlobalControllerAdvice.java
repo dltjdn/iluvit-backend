@@ -1,8 +1,5 @@
 package FIS.iLUVit.exception.exceptionHandler.controllerAdvice;
 
-import FIS.iLUVit.domain.Scrap;
-import FIS.iLUVit.exception.AuthNumberException;
-import FIS.iLUVit.exception.SignupException;
 import FIS.iLUVit.exception.*;
 import FIS.iLUVit.exception.exceptionHandler.ErrorResponse;
 import FIS.iLUVit.exception.exceptionHandler.ErrorResult;
@@ -158,7 +155,13 @@ public class GlobalControllerAdvice extends ResponseEntityExceptionHandler {
     }
 
     @ExceptionHandler(WaitingException.class)
-    public ResponseEntity<ErrorResponse> postException(WaitingException e) {
+    public ResponseEntity<ErrorResponse> waitingException(WaitingException e) {
+        log.error("[WaitingExceptionHandler] {}", e.getMessage());
+        return makeErrorResponseEntity(e.getErrorResult());
+    }
+
+    @ExceptionHandler(ParticipationException.class)
+    public ResponseEntity<ErrorResponse> participantException(ParticipationException e) {
         log.error("[WaitingExceptionHandler] {}", e.getMessage());
         return makeErrorResponseEntity(e.getErrorResult());
     }

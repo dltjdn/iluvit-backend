@@ -15,16 +15,16 @@ public class PresentationPreviewForTeacher {
     private LocalDate endDate;
     private String place;               // 설명회 장소
     private String content;             // 설명회 내용
+    private String presentationInfoImage;
     private boolean periodValid;
 
-    public PresentationPreviewForTeacher(Long presentationId, LocalDate startDate, LocalDate endDate, String place, String content) {
+    public PresentationPreviewForTeacher(Long presentationId, LocalDate startDate, LocalDate endDate, String place, String content, String presentationInfoImage) {
         this.presentationId = presentationId;
         this.startDate = startDate;
         this.endDate = endDate;
         this.place = place;
         this.content = content;
-        if(LocalDate.now().isAfter(endDate))
-            periodValid = false;
-        else periodValid = true;
+        this.presentationInfoImage = presentationInfoImage;
+        periodValid = !LocalDate.now().isAfter(endDate);
     }
 }

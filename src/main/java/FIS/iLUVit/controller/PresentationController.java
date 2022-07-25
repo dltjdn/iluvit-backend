@@ -2,7 +2,6 @@ package FIS.iLUVit.controller;
 
 import FIS.iLUVit.config.argumentResolver.Login;
 import FIS.iLUVit.controller.dto.*;
-import FIS.iLUVit.repository.dto.PresentationPreviewForTeacher;
 import FIS.iLUVit.repository.dto.PresentationPreviewForUsers;
 import FIS.iLUVit.service.PresentationService;
 import FIS.iLUVit.service.UserService;
@@ -66,11 +65,14 @@ public class PresentationController {
 
     /**
      * 원장의 시설 설명회 내역
+     *
      * @return
      */
     @GetMapping("/presentation/center/{centerId}/list")
-    public List<PresentationPreviewForTeacher> findMyCenterPresentationList(@Login Long userId, @PathVariable("centerId") Long centerId){
-        return presentationService.findPresentationListByCenterId(userId, centerId);
+    public List<PresentationPreviewAndImageForTeacher> findMyCenterPresentationList(@Login Long userId,
+                                                                                    @PathVariable("centerId") Long centerId,
+                                                                                    Pageable pageable){
+        return presentationService.findPresentationListByCenterId(userId, centerId, pageable);
     }
 
     /**

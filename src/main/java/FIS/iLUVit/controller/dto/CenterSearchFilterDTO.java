@@ -20,13 +20,15 @@ public class CenterSearchFilterDTO {
     private Theme theme;
     private Integer interestedAge;
     private KindOf kindOf;                  // 시설 종류
+    private String searchContent;
 
     @Builder
-    public CenterSearchFilterDTO(List<Area> areas, Theme theme, Integer interestedAge, KindOf kindOf) {
+    public CenterSearchFilterDTO(List<Area> areas, Theme theme, Integer interestedAge, KindOf kindOf, String searchContent) {
         this.areas = areas;
         this.theme = theme;
         this.interestedAge = interestedAge;
         this.kindOf = kindOf;
+        this.searchContent = searchContent;
     }
 
 }

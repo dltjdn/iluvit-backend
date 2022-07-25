@@ -3,9 +3,6 @@ package FIS.iLUVit.repository;
 import FIS.iLUVit.Creator;
 import FIS.iLUVit.config.argumentResolver.ForDB;
 import FIS.iLUVit.controller.dto.CenterInfoDto;
-import FIS.iLUVit.domain.Center;
-import FIS.iLUVit.domain.Kindergarten;
-import FIS.iLUVit.domain.Teacher;
 import FIS.iLUVit.domain.*;
 import FIS.iLUVit.domain.embeddable.Area;
 import FIS.iLUVit.domain.embeddable.BasicInfra;
@@ -13,6 +10,7 @@ import FIS.iLUVit.domain.embeddable.Theme;
 import FIS.iLUVit.domain.enumtype.KindOf;
 import FIS.iLUVit.repository.dto.CenterAndDistancePreview;
 import FIS.iLUVit.repository.dto.CenterBannerDto;
+import FIS.iLUVit.repository.dto.CenterMapPreview;
 import FIS.iLUVit.repository.dto.CenterPreview;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -22,6 +20,7 @@ import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Slice;
+import org.springframework.data.domain.SliceImpl;
 
 import javax.persistence.EntityManager;
 import java.time.LocalDate;
@@ -230,8 +229,179 @@ class CenterRepositoryTest {
     @DisplayName("지도 기반 센터 검색")
     class 지도기반센터검색{
         @Test
-        @DisplayName("[success] 지도 기반 검색하기")
+        @DisplayName("[success] 지도 리스트에 나올 정보")
         public void 지도기반검색하기() throws Exception {
+            //given
+            Parent parent1 = createParent();
+            Parent parent2 = createParent();
+
+            Center center1 = createCenter("이승범 어린이집", 3, 37.3912106, 127.0150178);
+            Center center2 = createCenter("현승구 어린이집", 3, 37.5686264, 127.0113184);
+            Center center3 = createCenter("이창윤 어린이집", 3, 37.5675523, 127.0147458);
+            Center center4 = createCenter("김유정 어린이집", 3, 37.5500494, 127.0097435);
+            Center center5 = createCenter("신은수 어린이집", 3, 37.5618861, 127.020072);
+            Center center6 = createCenter("한명수 어린이집", 3, 37.5105178, 127.0147458);
+
+            Prefer prefer1 = createPrefer(parent1, center1);
+            Prefer prefer2 = createPrefer(parent1, center2);
+            Prefer prefer3 = createPrefer(parent1, center3);
+            Prefer prefer4 = createPrefer(parent1, center4);
+            Prefer prefer5 = createPrefer(parent2, center1);
+            Prefer prefer6 = createPrefer(parent2, center3);
+            Prefer prefer7 = createPrefer(parent2, center4);
+            Prefer prefer8 = createPrefer(parent2, center5);
+
+
+            em.persist(parent1);
+            em.persist(parent2);
+            em.persist(center1);
+            em.persist(center2);
+            em.persist(center3);
+            em.persist(center4);
+            em.persist(center5);
+            em.persist(center6);
+            em.persist(prefer1);
+            em.persist(prefer2);
+            em.persist(prefer3);
+            em.persist(prefer4);
+            em.persist(prefer5);
+            em.persist(prefer6);
+            em.persist(prefer7);
+            em.persist(prefer8);
+            em.flush();
+            em.clear();
+            List<Long> idList = new ArrayList<>();
+            idList.add(center1.getId());
+            idList.add(center2.getId());
+            idList.add(center3.getId());
+            idList.add(center4.getId());
+
+
+            //when
+            SliceImpl<CenterAndDistancePreview> result = centerRepository.findByFilterForMapList(127.0147458, 37.5015178, KindOf.ALL, idList, PageRequest.of(0, 10));
+            //then
+            assertThat(result.getContent().size()).isEqualTo(4);
+            // 로그인 안 했으므로 항상 false
+            assertThat((int) result.stream().filter(CenterAndDistancePreview::getPrefer).count()).isEqualTo(0);
+            result.forEach(centerAndDistancePreview -> System.out.println("centerAndDistancePreview.getDistance() = " + centerAndDistancePreview.getDistance()));
+        }
+
+        @Test
+        @DisplayName("[success] 지도 리스트에 나올 정보")
+        public void 지도기반검색하기2() throws Exception {
+            //given
+            Parent parent1 = createParent();
+            Parent parent2 = createParent();
+
+            Center center1 = createCenter("이승범 어린이집", 3, 37.3912106, 127.0150178);
+            Center center2 = createCenter("현승구 어린이집", 3, 37.5686264, 127.0113184);
+            Center center3 = createCenter("이창윤 어린이집", 3, 37.5675523, 127.0147458);
+            Center center4 = createCenter("김유정 어린이집", 3, 37.5500494, 127.0097435);
+            Center center5 = createCenter("신은수 어린이집", 3, 37.5618861, 127.020072);
+            Center center6 = createCenter("한명수 어린이집", 3, 37.5105178, 127.0147458);
+
+            Prefer prefer1 = createPrefer(parent1, center1);
+            Prefer prefer2 = createPrefer(parent1, center2);
+            Prefer prefer3 = createPrefer(parent1, center3);
+            Prefer prefer4 = createPrefer(parent1, center4);
+            Prefer prefer5 = createPrefer(parent2, center1);
+            Prefer prefer6 = createPrefer(parent2, center3);
+            Prefer prefer7 = createPrefer(parent2, center4);
+            Prefer prefer8 = createPrefer(parent2, center5);
+
+            em.persist(parent1);
+            em.persist(parent2);
+            em.persist(center1);
+            em.persist(center2);
+            em.persist(center3);
+            em.persist(center4);
+            em.persist(center5);
+            em.persist(center6);
+            em.persist(prefer1);
+            em.persist(prefer2);
+            em.persist(prefer3);
+            em.persist(prefer4);
+            em.persist(prefer5);
+            em.persist(prefer6);
+            em.persist(prefer7);
+            em.persist(prefer8);
+            em.flush();
+            em.clear();
+
+            List<Long> idList = new ArrayList<>();
+            idList.add(center1.getId());
+            idList.add(center2.getId());
+            idList.add(center3.getId());
+
+            //when
+            SliceImpl<CenterAndDistancePreview> result = centerRepository.findByFilterForMapList(127.0147458, 37.5015178, parent1.getId(), KindOf.ALL, idList, PageRequest.of(0, 2));
+            //then
+            assertThat(result.getContent().size()).isEqualTo(2);
+            assertThat(result.hasNext()).isTrue();
+            assertThat((int) result.stream().filter(CenterAndDistancePreview::getPrefer).count()).isEqualTo(2);
+            result.forEach(centerAndDistancePreview -> System.out.println("centerAndDistancePreview.getDistance() = " + centerAndDistancePreview.getDistance()));
+        }
+
+        @Test
+        @DisplayName("[success] 지도 리스트에 나올 정보 어린이집/유치원으로 분리")
+        public void 지도기반검색하기3() throws Exception {
+            //given
+            Parent parent1 = createParent();
+            Parent parent2 = createParent();
+
+            Center center1 = createKindergarten("이승범 어린이집", 3, 37.3912106, 127.0150178);
+            Center center2 = createChildHouse("현승구 어린이집", 3, 37.5686264, 127.0113184);
+            Center center3 = createKindergarten("이창윤 어린이집", 3, 37.5675523, 127.0147458);
+            Center center4 = createChildHouse("김유정 어린이집", 3, 37.5500494, 127.0097435);
+            Center center5 = createKindergarten("신은수 어린이집", 3, 37.5618861, 127.020072);
+            Center center6 = createKindergarten("한명수 어린이집", 3, 37.5105178, 127.0147458);
+
+            Prefer prefer1 = createPrefer(parent1, center1);
+            Prefer prefer2 = createPrefer(parent1, center2);
+            Prefer prefer3 = createPrefer(parent1, center3);
+            Prefer prefer4 = createPrefer(parent1, center4);
+            Prefer prefer5 = createPrefer(parent2, center1);
+            Prefer prefer6 = createPrefer(parent2, center3);
+            Prefer prefer7 = createPrefer(parent2, center4);
+            Prefer prefer8 = createPrefer(parent2, center5);
+
+            em.persist(parent1);
+            em.persist(parent2);
+            em.persist(center1);
+            em.persist(center2);
+            em.persist(center3);
+            em.persist(center4);
+            em.persist(center5);
+            em.persist(center6);
+            em.persist(prefer1);
+            em.persist(prefer2);
+            em.persist(prefer3);
+            em.persist(prefer4);
+            em.persist(prefer5);
+            em.persist(prefer6);
+            em.persist(prefer7);
+            em.persist(prefer8);
+            em.flush();
+            em.clear();
+            List<Long> idList = new ArrayList<>();
+            idList.add(center1.getId());
+            idList.add(center2.getId());
+            idList.add(center3.getId());
+            idList.add(center4.getId());
+            idList.add(center5.getId());
+
+            //when
+            SliceImpl<CenterAndDistancePreview> result = centerRepository.findByFilterForMapList(127.0147458, 37.5015178,  parent1.getId(), KindOf.Kindergarten, idList, PageRequest.of(0, 5));
+            //then
+            assertThat(result.getContent().size()).isEqualTo(3);
+            assertThat(result.hasNext()).isFalse();
+            assertThat((int) result.stream().filter(CenterAndDistancePreview::getPrefer).count()).isEqualTo(2);
+            result.forEach(centerAndDistancePreview -> System.out.println("centerAndDistancePreview.getDistance() = " + centerAndDistancePreview.getDistance()));
+        }
+
+        @Test
+        @DisplayName("[success] 지도에 뿌려줄 센터 정보")
+        public void 지도에뿌려줄센터정보() throws Exception {
             //given
             Center center1 = createCenter("이승범 어린이집", 3, 37.3912106, 127.0150178);
             Center center2 = createCenter("현승구 어린이집", 3, 37.5686264, 127.0113184);
@@ -247,12 +417,12 @@ class CenterRepositoryTest {
             em.persist(center6);
             em.flush();
             em.clear();
-
+            String searchContent = "어린이집";
             //when
-            List<CenterAndDistancePreview> result = centerRepository.findByMapFilter(127.0147458, 37.5015178, 6);
+            List<CenterMapPreview> result = centerRepository.findByFilterForMap(127.0147458, 37.5015178, 1, searchContent);
+
             //then
-            assertThat(result.size()).isEqualTo(2);
-            result.forEach(centerAndDistancePreview -> System.out.println("centerAndDistancePreview.getDistance() = " + centerAndDistancePreview.getDistance()));
+            assertThat(result.size()).isEqualTo(6);
         }
     }
 
