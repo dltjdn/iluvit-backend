@@ -84,13 +84,8 @@ public class ParentService {
         } else { // 핸드폰 번호 변경은 변경하지 않는 경우
             findParent.updateDetail(request, theme);
         }
+
         ParentDetailResponse response = new ParentDetailResponse(findParent);
-//        // 요청에 프로필 이미지 있으면 덮어씌우기
-//        if (!request.getProfileImg().isEmpty()) {
-//            String imagePath = imageService.getUserProfileDir();
-//            imageService.saveProfileImage(request.getProfileImg(), imagePath + findParent.getId());
-//            response.setProfileImg(imageService.getEncodedProfileImage(imagePath, id));
-//        }
         imageService.saveProfileImage(request.getProfileImg(), findParent);
         response.setProfileImg(imageService.getProfileImage(findParent));
         return response;

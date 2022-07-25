@@ -4,6 +4,8 @@ import FIS.iLUVit.domain.*;
 import FIS.iLUVit.domain.embeddable.Area;
 import FIS.iLUVit.domain.embeddable.BasicInfra;
 import FIS.iLUVit.domain.embeddable.Theme;
+import FIS.iLUVit.domain.enumtype.Approval;
+import FIS.iLUVit.domain.enumtype.Auth;
 import FIS.iLUVit.domain.enumtype.AuthKind;
 import FIS.iLUVit.domain.enumtype.Status;
 import com.auth0.jwt.JWT;
@@ -184,12 +186,26 @@ public class Creator {
                 .build();
     }
 
-    public static Teacher createTeacher(Long id, String name, Center center) {
+    public static Teacher createTeacher(Long id, String name, Center center, Auth auth, Approval approval) {
         return Teacher.builder()
                 .id(id)
                 .name(name)
+                .center(center)
+                .auth(auth)
+                .approval(approval)
                 .build();
     }
+
+    public static Teacher createTeacher(Long id, String name, Center center, Approval approval, Auth auth) {
+        return Teacher.builder()
+                .id(id)
+                .name(name)
+                .center(center)
+                .approval(approval)
+                .auth(auth)
+                .build();
+    }
+
     public static Theme englishAndCoding(){
         return Theme.builder()
                 .english(true)

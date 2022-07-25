@@ -22,26 +22,12 @@ public interface TeacherRepository extends JpaRepository<Teacher, Long> {
             "and t.auth = 'DIRECTOR'")
     Optional<Teacher> findDirectorByIdWithCenterWithTeacher(@Param("userId") Long userId);
 
-
-    @Query("select t " +
-            "from Teacher t " +
-            "join fetch t.center c " +
-            "where c.id =:centerId " +
-            "and t.id <>:userId")
-    List<Teacher> findTeacherListByCenter(@Param("userId") Long userId, @Param("centerId") Long centerId);
-
     @Modifying
     @Query("update Teacher t " +
             "set t.approval = 'ACCEPT' " +
             "where t.id =:teacherId " +
             "and t.center.id =:centerId")
     void acceptTeacher(@Param("teacherId") Long teacherId, @Param("centerId") Long centerId);
-
-    @Modifying
-    @Query("update Teacher t " +
-            "set t.center.id = null, t.auth = 'TEACHER' " +
-            "where t.id =:teacherId")
-    void exitCenter(@Param("teacherId") Long teacherId);
 
     @Query("select distinct t " +
             "from Teacher t " +
@@ -52,24 +38,11 @@ public interface TeacherRepository extends JpaRepository<Teacher, Long> {
             "and t.approval = 'ACCEPT'")
     Optional<Teacher> findByIdWithCenterWithChildWithParent(@Param("userId") Long userId);
 
-    @Query("select distinct t " +
-            "from Teacher t " +
-            "join fetch t.center c " +
-            "left join fetch c.boards " +
-            "where t.id =:userId ")
-    Optional<Teacher> findByIdAndAssign(@Param("userId") Long userId);
-
     @Query("select t " +
             "from Teacher t " +
             "where t.id =:userId " +
             "and t.center is null")
     Optional<Teacher> findByIdAndNotAssign(@Param("userId") Long userId);
-
-    @Modifying
-    @Query("update Teacher t " +
-            "set t.center.id =:centerId, t.approval = 'WAITING' " +
-            "where t.id =:userId ")
-    void assignCenter(@Param("userId") Long userId, @Param("centerId") Long centerId);
 
     @Query("select t from Teacher t where t.center.id =:centerId")
     List<Center> findByCenter(@Param("centerId") Long centerId);
@@ -77,7 +50,7 @@ public interface TeacherRepository extends JpaRepository<Teacher, Long> {
     @Query("select distinct t " +
             "from Teacher t " +
             "join fetch t.center c " +
-            "join fetch c.teachers " +
+            "left join fetch c.teachers " +
             "where t.id =:userId")
     Optional<Teacher> findByIdWithCenterWithTeacher(@Param("userId") Long userId);
 
@@ -86,4 +59,10 @@ public interface TeacherRepository extends JpaRepository<Teacher, Long> {
             "where t.center.id =:centerId " +
             "and t.auth = 'DIRECTOR'")
     List<Teacher> findDirectorByCenter(@Param("centerId") Long centerId);
+
+    @Query("select t " +
+            "from Teacher t " +
+            "where t.id =:userId " +
+            "and t.auth = 'DIRECTOR'")
+    Optional<Teacher> findDirectorById(Long userId);
 }
