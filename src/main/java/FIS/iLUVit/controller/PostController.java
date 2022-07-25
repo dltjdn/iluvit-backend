@@ -141,8 +141,8 @@ public class PostController {
         내용: 장터글 끌어올리기
     */
     @PutMapping("/post/update/{post_id}")
-    public void pullUp(@PathVariable("post_id") Long postId) {
-        postService.updateDate(postId);
+    public void pullUp(@Login Long userId, @PathVariable("post_id") Long postId) {
+        postService.updateDate(userId, postId);
     }
 
 
