@@ -64,6 +64,4 @@ public class User extends BaseImageEntity {
     public LoginResponse getUserInfo() {
         return new LoginResponse(id, nickName, auth);
     }
-
-
 }

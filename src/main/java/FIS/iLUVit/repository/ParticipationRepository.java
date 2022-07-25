@@ -10,15 +10,6 @@ import java.util.Optional;
 
 public interface ParticipationRepository extends JpaRepository<Participation, Long> {
 
-    @Query("select distinct participation from Participation participation " +
-            "join fetch participation.parent " +
-            "join fetch participation.ptDate as ptDate " +
-            "join fetch ptDate.presentation " +
-            "join fetch ptDate.participations " +
-            "where participation.id = :participationId and " +
-            "participation.status = FIS.iLUVit.domain.enumtype.Status.JOINED")
-    Optional<Participation> findByIdAndJoinPresentation(@Param("participationId") Long participationId);
-
     @Query("select participation from Participation participation " +
             "where participation.status = FIS.iLUVit.domain.enumtype.Status.JOINED " +
             "and participation.ptDate.id = :ptDateId")

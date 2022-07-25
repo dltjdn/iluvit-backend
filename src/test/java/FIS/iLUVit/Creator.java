@@ -4,6 +4,8 @@ import FIS.iLUVit.domain.*;
 import FIS.iLUVit.domain.embeddable.Area;
 import FIS.iLUVit.domain.embeddable.BasicInfra;
 import FIS.iLUVit.domain.embeddable.Theme;
+import FIS.iLUVit.domain.enumtype.Approval;
+import FIS.iLUVit.domain.enumtype.Auth;
 import FIS.iLUVit.domain.enumtype.AuthKind;
 import FIS.iLUVit.domain.enumtype.Status;
 import com.auth0.jwt.JWT;
@@ -220,6 +222,15 @@ public class Creator {
         return center;
     }
 
+    public static Center createCenter(Long centerId, String name) {
+        Center center = Center.builder()
+                .id(centerId)
+                .name(name)
+                .area(new Area())
+                .build();
+        return center;
+    }
+
     public static Center createCenter(String name, Integer score, Double latitude, Double longitude) {
         Center center = Center.builder()
                 .name(name)
@@ -338,6 +349,15 @@ public class Creator {
 
     public static Teacher createTeacher() {
         return Teacher.builder()
+                .build();
+    }
+
+    public static Teacher createTeacher(Long id, Center center, Auth auth, Approval approval) {
+        return Teacher.builder()
+                .id(id)
+                .center(center)
+                .auth(auth)
+                .approval(approval)
                 .build();
     }
 

@@ -1,15 +1,22 @@
 package FIS.iLUVit.service;
 
 import FIS.iLUVit.controller.dto.CenterBannerResponseDto;
+import FIS.iLUVit.controller.dto.CenterModifyRequestDto;
 import FIS.iLUVit.domain.Center;
+import FIS.iLUVit.domain.Teacher;
 import FIS.iLUVit.domain.embeddable.Theme;
+import FIS.iLUVit.domain.enumtype.Approval;
+import FIS.iLUVit.domain.enumtype.Auth;
 import FIS.iLUVit.domain.enumtype.KindOf;
+import FIS.iLUVit.exception.CenterErrorResult;
+import FIS.iLUVit.exception.CenterException;
+import FIS.iLUVit.exception.UserErrorResult;
+import FIS.iLUVit.exception.UserException;
 import FIS.iLUVit.repository.CenterRepository;
+import FIS.iLUVit.repository.UserRepository;
 import FIS.iLUVit.repository.dto.CenterAndDistancePreview;
 import FIS.iLUVit.repository.dto.CenterBannerDto;
-import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Nested;
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.*;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
@@ -18,12 +25,20 @@ import org.mockito.Spy;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.SliceImpl;
+import org.springframework.data.util.Pair;
+import org.springframework.mock.web.MockMultipartFile;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
-import static FIS.iLUVit.Creator.createCenter;
-import static FIS.iLUVit.Creator.englishAndCoding;
+import static FIS.iLUVit.Creator.*;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
@@ -33,6 +48,12 @@ public class CenterServiceTest {
 
     @Mock
     CenterRepository centerRepository;
+
+    @Mock
+    UserRepository userRepository;
+
+    @Spy
+    MapService mapService;
 
     @InjectMocks
     CenterService target;
@@ -186,6 +207,94 @@ public class CenterServiceTest {
             assertThat(result.size()).isEqualTo(6);
         }
 
+    }
 
+    @Nested
+    @DisplayName("시설 수정하기")
+    class 시설수정하기{
+
+        MultipartFile multipartFile;
+        List<MultipartFile> multipartFileList = new ArrayList<>();
+        Center center;
+        Teacher waitingTeacher;
+        Teacher acceptTeacher;
+        @BeforeEach
+        public void init() throws IOException {
+            String name = "162693895955046828.png";
+            Path path1 = Paths.get(new File("").getAbsolutePath() + '/' + name);
+            byte[] content = Files.readAllBytes(path1);
+            multipartFile = new MockMultipartFile(name, name, "image", content);
+            multipartFileList.add(multipartFile);
+            multipartFileList.add(multipartFile);
+            center = createCenter(1L, "test");
+            waitingTeacher = createTeacher(1L, center, Auth.TEACHER, Approval.WAITING);
+            acceptTeacher = createTeacher(1L, center, Auth.TEACHER, Approval.ACCEPT);
+        }
+
+        @Test
+        @DisplayName("[error] 시설을 수정하려는 유저 정보없음")
+        public void 시설수정하는유저정보X() throws Exception {
+            //given
+            Mockito.doReturn(Optional.empty())
+                    .when(userRepository).findTeacherById(1L);
+            //when
+            UserException result = Assertions.assertThrows(UserException.class,
+                    () -> target.modifyCenter(1L, 1L, new CenterModifyRequestDto(), multipartFileList, multipartFile));
+
+            //then
+            assertThat(result.getErrorResult()).isEqualTo(UserErrorResult.USER_NOT_EXIST);
+
+        }
+
+        @Test
+        @DisplayName("[error] 시설을 수정하려는 권한 없음")
+        public void 시설수정권한없음() throws Exception {
+            //given
+            Mockito.doReturn(Optional.of(waitingTeacher))
+                    .when(userRepository).findTeacherById(1L);
+            //when
+            CenterException result = Assertions.assertThrows(CenterException.class,
+                    () -> target.modifyCenter(1L, 1L, new CenterModifyRequestDto(), multipartFileList, multipartFile));
+
+            //then
+            assertThat(result.getErrorResult()).isEqualTo(CenterErrorResult.AUTHENTICATION_FAILED);
+        }
+
+        @Test
+        @DisplayName("[error] 잘못된 주소 입력으로 인한 오류 발생")
+        public void 잘못된주소입력시오류발생() throws Exception {
+            //given
+            Mockito.doReturn(Optional.of(acceptTeacher))
+                    .when(userRepository).findTeacherById(1L);
+            CenterModifyRequestDto request = new CenterModifyRequestDto();
+            request.setAddress("잘못된 주소");
+            Mockito.doThrow(new CenterException(CenterErrorResult.CENTER_WRONG_ADDRESS))
+                    .when(mapService).convertAddressToLocation("잘못된 주소");
+
+            //when
+            CenterException result = Assertions.assertThrows(CenterException.class,
+                    () -> target.modifyCenter(1L, 1L, request, multipartFileList, multipartFile));
+            //then
+            assertThat(result.getErrorResult()).isEqualTo(CenterErrorResult.CENTER_WRONG_ADDRESS);
+        }
+
+        @Test
+        @DisplayName("[success] 센터 수정 성공")
+        public void 센터수정성공() throws Exception {
+            //given
+            Mockito.doReturn(Optional.of(acceptTeacher))
+                    .when(userRepository).findTeacherById(1L);
+            CenterModifyRequestDto request = new CenterModifyRequestDto();
+            request.setAddress("경기도 의정부시 호암로 256");
+            //when
+            Mockito.doReturn(Pair.of(126.8806602, 37.4778951))
+                    .when(mapService).convertAddressToLocation("서울특별시 금천구 가산디지털2로 108 뉴티캐슬");
+            target.modifyCenter(1L, 1L, request, multipartFileList, multipartFile);
+
+            //then
+            assertThat(center.getLongitude()).isEqualTo(127.0452449);
+            assertThat(center.getLatitude()).isEqualTo(37.4778951);
+            assertThat(center.getAddress()).isEqualTo("서울특별시 금천구 가산디지털2로 108 뉴티캐슬");
+        }
     }
 }

@@ -76,8 +76,8 @@ public class CenterController {
     public Long modifyCenter(@PathVariable("centerId") Long centerId,
                              @Login Long userId,
                              @RequestPart CenterModifyRequestDto requestDto,
-                             @RequestPart List<MultipartFile> infoImages,
-                             @RequestPart MultipartFile profileImage){
+                             @RequestPart(required = false) List<MultipartFile> infoImages,
+                             @RequestPart(required = false) MultipartFile profileImage){
         return centerService.modifyCenter(centerId, userId, requestDto, infoImages, profileImage);
     }
 

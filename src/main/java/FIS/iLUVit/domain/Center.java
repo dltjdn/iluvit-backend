@@ -37,6 +37,7 @@ public class Center extends BaseImageEntity {
     protected Integer minAge;                 // 시설이 관리하는 연령대
     protected Integer maxAge;                 //
     protected String address;                 // 주소
+    protected String addressDetail;
     protected String zipcode;                 // 우편번호
     @Embedded
     protected Area area;
@@ -87,7 +88,7 @@ public class Center extends BaseImageEntity {
     protected List<Prefer> prefers = new ArrayList<>();
 
     @Builder
-    public Center(Long id, String name, String owner, String director, String estType, String status, String estDate, String tel, String homepage, String startTime, String endTime, Integer minAge, Integer maxAge, String address, String zipcode, Area area, Double longitude, Double latitude, String offerService, Integer maxChildCnt, Integer curChildCnt, LocalDate updateDate, Boolean signed, Boolean recruit, Integer waitingNum, String introText, Integer imgCnt, Integer videoCnt, Integer score, String addInfo, String program, KindOf kindOf, ClassInfo classInfo, TeacherInfo teacherInfo, CostInfo costInfo, BasicInfra basicInfra, Theme theme, OtherInfo otherInfo, String infoImagePath, String profileImagePath) {
+    public Center(Long id, String name, String owner, String director, String estType, String status, String estDate, String tel, String homepage, String startTime, String endTime, Integer minAge, Integer maxAge, String address, String addressDetail, String zipcode, Area area, Double longitude, Double latitude, String offerService, Integer maxChildCnt, Integer curChildCnt, LocalDate updateDate, Boolean signed, Boolean recruit, Integer waitingNum, String introText, Integer imgCnt, Integer videoCnt, Integer score, String addInfo, String program, KindOf kindOf, ClassInfo classInfo, TeacherInfo teacherInfo, CostInfo costInfo, BasicInfra basicInfra, Theme theme, OtherInfo otherInfo, String infoImagePath, String profileImagePath) {
         this.id = id;
         this.name = name;
         this.owner = owner;
@@ -102,6 +103,7 @@ public class Center extends BaseImageEntity {
         this.minAge = minAge;
         this.maxAge = maxAge;
         this.address = address;
+        this.addressDetail = addressDetail;
         this.zipcode = zipcode;
         this.area = area;
         this.longitude = longitude;
@@ -130,7 +132,7 @@ public class Center extends BaseImageEntity {
         this.infoImagePath = infoImagePath;
     }
 
-    public void update(CenterModifyRequestDto requestDto) {
+    public void update(CenterModifyRequestDto requestDto, Double longitude, Double latitude) {
         this.name = requestDto.getName();
         this.owner = requestDto.getOwner();
         this.director = requestDto.getDirector();
@@ -143,6 +145,7 @@ public class Center extends BaseImageEntity {
         this.minAge = requestDto.getMinAge();
         this.maxAge = requestDto.getMaxAge();
         this.address = requestDto.getAddress();
+        this.addressDetail = requestDto.getAddressDetail();
         this.zipcode = requestDto.getZipcode();
         this.area.setSido(requestDto.getSido());
         this.area.setSigungu(requestDto.getSigungu());
@@ -158,6 +161,8 @@ public class Center extends BaseImageEntity {
         this.theme = requestDto.getTheme();
         this.addInfo = Center.encodeStringList(requestDto.getAddInfos());
         this.program = Center.encodeStringList(requestDto.getPrograms());
+        this.longitude = longitude;
+        this.latitude = latitude;
     }
 
     public void addScore(Score mode){

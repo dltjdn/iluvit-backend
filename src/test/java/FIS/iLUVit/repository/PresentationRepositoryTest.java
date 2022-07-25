@@ -83,5 +83,20 @@ public class PresentationRepositoryTest {
         }
     }
 
+    @Nested
+    @DisplayName("시설 상세보기에서 설명회 버튼 눌렀을 때 조회 될 내용")
+    class 설명회버튼조회내용{
+
+        @Test
+        @DisplayName("[success] 학부모의 시설 설명회 상세보기")
+        public void 학부모의시설설명회상세보기() throws Exception {
+            //given
+
+            //when
+
+            //then
+        }
+    }
+
 
 }

@@ -68,6 +68,9 @@ dependencies {
 	implementation 'io.awspring.cloud:spring-cloud-starter-aws:2.3.1'
 	// yml customizing 를 하기위해 resolver 만들기 위한 의존성 추갇
 	annotationProcessor "org.springframework.boot:spring-boot-configuration-processor"
+
+	// naver map 의 geoLocation 사용 위한 json 파서기
+	implementation 'com.googlecode.json-simple:json-simple:1.1.1'
 }
 
 test {
