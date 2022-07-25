@@ -4,7 +4,8 @@ import FIS.iLUVit.controller.dto.LoginTeacherResponse;
 import FIS.iLUVit.controller.dto.UpdateTeacherDetailRequest;
 import FIS.iLUVit.domain.enumtype.Approval;
 import FIS.iLUVit.domain.enumtype.Auth;
-import FIS.iLUVit.exception.PresentationException;
+import FIS.iLUVit.exception.CenterErrorResult;
+import FIS.iLUVit.exception.CenterException;
 import FIS.iLUVit.filter.LoginResponse;
 import lombok.AccessLevel;
 import lombok.Builder;
@@ -84,14 +85,16 @@ public class Teacher extends User {
         this.phoneNumber = request.getPhoneNum();
     }
 
-    public void canWrite(Long centerId) {
+    public Teacher canWrite(Long centerId) {
         if(approval != Approval.ACCEPT || centerId != center.getId())
-            throw new PresentationException("시설에 대해 작성 권한이 없습니다.");
+            throw new CenterException(CenterErrorResult.AUTHENTICATION_FAILED);
+        return this;
     }
 
-    public void canRead(Long centerId){
+    public Teacher canRead(Long centerId){
         if(approval != Approval.ACCEPT || centerId != center.getId())
-            throw new PresentationException("시설 읽을 권한이 없습니다.");
+            throw new CenterException(CenterErrorResult.AUTHENTICATION_FAILED);
+        return this;
     }
 
     @Override

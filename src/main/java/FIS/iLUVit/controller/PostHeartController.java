@@ -4,6 +4,7 @@ import FIS.iLUVit.config.argumentResolver.Login;
 import FIS.iLUVit.domain.Post;
 import FIS.iLUVit.domain.PostHeart;
 import FIS.iLUVit.domain.User;
+import FIS.iLUVit.exception.PostErrorResult;
 import FIS.iLUVit.exception.PostException;
 import FIS.iLUVit.repository.PostHeartRepository;
 import FIS.iLUVit.repository.PostRepository;
@@ -28,8 +29,8 @@ public class PostHeartController {
         내용: 게시글 좋아요
     */
     @PostMapping("/postHeart/post/{post_id}")
-    public void like(@Login Long userId, @PathVariable("post_id") Long postId) {
-        postService.savePostHeart(userId, postId);
+    public Long like(@Login Long userId, @PathVariable("post_id") Long postId) {
+        return postService.savePostHeart(userId, postId);
     }
     
     /**
@@ -40,7 +41,7 @@ public class PostHeartController {
     @DeleteMapping("/postHeart/post/{post_id}")
     public void cancel(@Login Long userId, @PathVariable("post_id") Long postId) {
         PostHeart postHeart = postHeartRepository.findByPostAndUser(userId, postId)
-                .orElseThrow(() -> new PostException("존재하지 않는 좋아요"));
+                .orElseThrow(() -> new PostException(PostErrorResult.POST_NOT_EXIST));
         postHeartRepository.delete(postHeart);
     }
 }

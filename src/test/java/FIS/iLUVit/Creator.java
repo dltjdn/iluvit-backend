@@ -119,6 +119,7 @@ public class Creator {
                 .board(board)
                 .user(user)
                 .comments(new ArrayList<>())
+                .postHearts(new ArrayList<>())
                 .build();
     }
 
@@ -232,6 +233,15 @@ public class Creator {
                 .signed(signed)
                 .recruit(recruit)
                 .theme(theme)
+                .build();
+        return center;
+    }
+
+    public static Center createCenter(Long centerId, String name) {
+        Center center = Center.builder()
+                .id(centerId)
+                .name(name)
+                .area(new Area())
                 .build();
         return center;
     }
@@ -354,6 +364,15 @@ public class Creator {
 
     public static Teacher createTeacher() {
         return Teacher.builder()
+                .build();
+    }
+
+    public static Teacher createTeacher(Long id, Center center, Auth auth, Approval approval) {
+        return Teacher.builder()
+                .id(id)
+                .center(center)
+                .auth(auth)
+                .approval(approval)
                 .build();
     }
 

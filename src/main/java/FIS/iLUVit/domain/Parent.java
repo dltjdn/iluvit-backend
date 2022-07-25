@@ -96,4 +96,5 @@ public class Parent extends User {
     public LoginResponse getUserInfo() {
         return new LoginParentResponse(id, nickName, auth);
     }
+
 }

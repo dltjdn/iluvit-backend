@@ -1,14 +1,10 @@
 package FIS.iLUVit.controller.dto;
 
-import FIS.iLUVit.domain.AddInfo;
-import FIS.iLUVit.domain.Program;
 import FIS.iLUVit.domain.embeddable.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import javax.persistence.*;
-import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -28,6 +24,7 @@ public class CenterModifyRequestDto {
     private Integer minAge;                 // 시설이 관리하는 연령대
     private Integer maxAge;                 //
     private String address;                 // 주소
+    private String addressDetail;
     private String sido;
     private String sigungu;
     private String zipcode;                 // 우편번호

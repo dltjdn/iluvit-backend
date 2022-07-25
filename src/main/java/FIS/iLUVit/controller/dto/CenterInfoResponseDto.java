@@ -24,6 +24,7 @@ public class CenterInfoResponseDto {
     private Integer minAge;                 // 시설이 관리하는 연령대
     private Integer maxAge;                 //
     private String address;                 // 주소
+    private String addressDetail;
     private Area area;
     private Double longitude;               // 경도
     private Double latitude;                // 위도
@@ -59,6 +60,7 @@ public class CenterInfoResponseDto {
         this.minAge = center.getMinAge();
         this.maxAge = center.getMaxAge();
         this.address = center.getAddress();
+        this.addressDetail = center.getAddressDetail();
         this.area = center.getArea();
         this.longitude = center.getLongitude();
         this.latitude = center.getLatitude();

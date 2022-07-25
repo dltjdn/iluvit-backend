@@ -21,6 +21,7 @@ public class CenterAndDistancePreview {
     private Integer minAge;                 // 시설이 관리하는 연령대
     private Integer maxAge;                 //
     private String address;                 // 주소
+    private String addressDetail;
     private Double longitude;               // 경도
     private Double latitude;                // 위도
     private Theme theme;
@@ -40,6 +41,7 @@ public class CenterAndDistancePreview {
         this.minAge = center.getMinAge();
         this.maxAge = center.getMaxAge();
         this.address = center.getAddress();
+        this.addressDetail = center.getAddressDetail();
         this.longitude = center.getLongitude();
         this.latitude = center.getLatitude();
         this.starAverage = starAverage;
@@ -50,7 +52,7 @@ public class CenterAndDistancePreview {
 
     @Builder
     @QueryProjection
-    public CenterAndDistancePreview(Double distance, Long id, String name, KindOf kindOf, String estType, String tel, String startTime, String endTime, Integer minAge, Integer maxAge, String address, Double longitude, Double latitude, Theme theme, Double starAverage, String profileImage, Long prefer) {
+    public CenterAndDistancePreview(Double distance, Long id, String name, KindOf kindOf, String estType, String tel, String startTime, String endTime, Integer minAge, Integer maxAge, String address, String addressDetail, Double longitude, Double latitude, Theme theme, Double starAverage, String profileImage, Long prefer) {
         this.id = id;
         this.name = name;
         this.kindOf = kindOf;
@@ -61,6 +63,7 @@ public class CenterAndDistancePreview {
         this.minAge = minAge;
         this.maxAge = maxAge;
         this.address = address;
+        this.addressDetail = addressDetail;
         this.longitude = longitude;
         this.latitude = latitude;
         this.theme = theme;
@@ -71,7 +74,7 @@ public class CenterAndDistancePreview {
     }
 
     @QueryProjection
-    public CenterAndDistancePreview(Double distance, Long id, String name, KindOf kindOf, String estType, String tel, String startTime, String endTime, Integer minAge, Integer maxAge, String address, Double longitude, Double latitude, Theme theme, Double starAverage, String profileImage) {
+    public CenterAndDistancePreview(Double distance, Long id, String name, KindOf kindOf, String estType, String tel, String startTime, String endTime, Integer minAge, Integer maxAge, String address, String addressDetail, Double longitude, Double latitude, Theme theme, Double starAverage, String profileImage) {
         this.id = id;
         this.name = name;
         this.kindOf = kindOf;
@@ -82,6 +85,7 @@ public class CenterAndDistancePreview {
         this.minAge = minAge;
         this.maxAge = maxAge;
         this.address = address;
+        this.addressDetail = addressDetail;
         this.longitude = longitude;
         this.latitude = latitude;
         this.theme = theme;
@@ -102,6 +106,7 @@ public class CenterAndDistancePreview {
         this.minAge = center.getMinAge();
         this.maxAge = center.getMaxAge();
         this.address = center.getAddress();
+        this.addressDetail = center.getAddressDetail();
         this.longitude = center.getLongitude();
         this.latitude = center.getLatitude();
         this.starAverage = starAverage;

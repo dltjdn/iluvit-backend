@@ -30,6 +30,7 @@ public class MyParticipationsDto {
     private String centerName;
     private String tel;                     // 전화번호
     private String address;                 // 주소
+    private String addressDetail;
     private Integer ablePersonNum;
     private Integer participantCnt;
     private Status status;
@@ -52,6 +53,7 @@ public class MyParticipationsDto {
                 .centerName(center.getName())
                 .tel(center.getTel())
                 .address(center.getAddress())
+                .addressDetail(center.getAddressDetail())
                 .centerInfoImage(center.getInfoImagePath())
                 .ablePersonNum(ptDate.getAblePersonNum())
                 .participantCnt(ptDate.getParticipantCnt())
@@ -78,6 +80,7 @@ public class MyParticipationsDto {
                 .centerInfoImage(center.getInfoImagePath())
                 .tel(center.getTel())
                 .address(center.getAddress())
+                .addressDetail(center.getAddressDetail())
                 .ablePersonNum(ptDate.getAblePersonNum())
                 .participantCnt(ptDate.getParticipantCnt())
                 .status(Status.WAITING)

@@ -20,6 +20,7 @@ public class CenterPreview {
     private Integer minAge;                 // 시설이 관리하는 연령대
     private Integer maxAge;                 //
     private String address;                 // 주소
+    private String addressDetail;
     private Area area;
     private Double longitude;               // 경도
     private Double latitude;                // 위도
@@ -40,6 +41,7 @@ public class CenterPreview {
         this.minAge = center.getMinAge();
         this.maxAge = center.getMaxAge();
         this.address = center.getAddress();
+        this.addressDetail = center.getAddressDetail();
         this.area = center.getArea();
         this.longitude = center.getLongitude();
         this.latitude = center.getLatitude();
@@ -49,7 +51,7 @@ public class CenterPreview {
     }
 
     @Builder
-    public CenterPreview(Long id, String name, String owner, String director, String estType, String tel, String startTime, String endTime, Integer minAge, Integer maxAge, String address, Area area, Double longitude, Double latitude, Theme theme, String profileImage, Double starAverage) {
+    public CenterPreview(Long id, String name, String owner, String director, String estType, String tel, String startTime, String endTime, Integer minAge, Integer maxAge, String address, String AddressDetail, Area area, Double longitude, Double latitude, Theme theme, String profileImage, Double starAverage) {
         this.id = id;
         this.name = name;
         this.owner = owner;
@@ -61,6 +63,7 @@ public class CenterPreview {
         this.minAge = minAge;
         this.maxAge = maxAge;
         this.address = address;
+        this.addressDetail = addressDetail;
         this.area = area;
         this.longitude = longitude;
         this.latitude = latitude;

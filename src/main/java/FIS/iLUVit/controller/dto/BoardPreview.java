@@ -5,6 +5,7 @@ import FIS.iLUVit.domain.enumtype.BoardKind;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Data
@@ -34,7 +35,7 @@ public class BoardPreview {
         private Boolean anonymous;
         private Integer heartCnt;
         private Integer commentCnt;
-        private List<String> images;
+        private List<String> images = new ArrayList<>();
 
         public PostInfo(Post p) {
             this.post_id = p.getId();

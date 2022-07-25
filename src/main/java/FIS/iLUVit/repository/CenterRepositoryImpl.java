@@ -98,7 +98,7 @@ public class CenterRepositoryImpl extends CenterQueryMethod implements CenterRep
                 jpaQueryFactory.select(
                                 new QCenterAndDistancePreview(
                                         distanceEx,
-                                        center.id, center.name, center.kindOf, center.estType, center.tel, center.startTime, center.endTime, center.minAge, center.maxAge, center.address, center.longitude, center.latitude, center.theme,
+                                        center.id, center.name, center.kindOf, center.estType, center.tel, center.startTime, center.endTime, center.minAge, center.maxAge, center.address, center.addressDetail, center.longitude, center.latitude, center.theme,
                                         review.score.avg(),
                                         center.profileImagePath, prefer.parent.id
                                 ))
@@ -137,7 +137,7 @@ public class CenterRepositoryImpl extends CenterQueryMethod implements CenterRep
                 jpaQueryFactory.select(
                         new QCenterAndDistancePreview(
                                 distanceEx,
-                                center.id, center.name, center.kindOf, center.estType, center.tel, center.startTime, center.endTime, center.minAge, center.maxAge, center.address, center.longitude, center.latitude, center.theme,
+                                center.id, center.name, center.kindOf, center.estType, center.tel, center.startTime, center.endTime, center.minAge, center.maxAge, center.address, center.addressDetail, center.longitude, center.latitude, center.theme,
                                 review.score.avg(),
                                 center.profileImagePath
                         ))
