@@ -40,6 +40,7 @@ public class GetPostResponse {
     private List<GetCommentResponse> comments;
     private Integer commentCnt;
 
+    private Long boardId;
     private Long centerId;
 
     public GetPostResponse(Post post, List<String> encodedImages, String encodedProfileImage) {
@@ -60,9 +61,8 @@ public class GetPostResponse {
         this.imgCnt = encodedImages.size();
         this.heartCnt = post.getHeartCnt();
 
-        if (post.getBoard() == null) {
-            this.boardName = "모두의 게시판";
-        } else {
+        if (post.getBoard() != null) {
+            this.boardId = post.getBoard().getId();
             this.boardName = post.getBoard().getName();
             if (post.getBoard().getCenter() != null) {
                 this.centerId = post.getBoard().getCenter().getId();

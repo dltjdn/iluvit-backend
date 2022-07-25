@@ -13,6 +13,7 @@ public enum PostErrorResult implements ErrorResult {
     POST_NOT_EXIST(HttpStatus.BAD_REQUEST, "해당 아이디를 가진 게시글이 존재하지 않습니다."),
     PARENT_NOT_ACCESS_NOTICE(HttpStatus.BAD_REQUEST, "학부모 회원은 공지 게시판에 글을 작성할 수 없습니다"),
     UNAUTHORIZED_USER_ACCESS(HttpStatus.BAD_REQUEST, "권한 없는 유저입니다."),
+    ALREADY_EXIST_HEART(HttpStatus.BAD_REQUEST, "이미 좋아요한 게시글입니다."),
 
 
     ;

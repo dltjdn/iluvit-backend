@@ -57,6 +57,8 @@ public class GetPostResponsePreview {
         if (post.getBoard().getCenter() != null) {
             this.center_id = post.getBoard().getCenter().getId();
             this.centerName = post.getBoard().getCenter().getName();
+        } else {
+            this.centerName = "모두의 이야기";
         }
     }
 

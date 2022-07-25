@@ -182,8 +182,8 @@ public class PostService {
 
     public List<BoardPreview> searchMainPreview(Long userId) {
         List<BoardPreview> boardPreviews = new ArrayList<>();
-        List<Bookmark> bookmarkList = bookmarkRepository.findBoardByUser(userId);
 
+        // 비회원일 때 기본 게시판들의 id를 북마크처럼 디폴트로 제공, 회원일 땐 북마크를 통해서 제공
         if (userId == null) {
             List<Long> boardIds = boardRepository.findDefaultByModu()
                     .stream().map(Board::getId)
@@ -191,6 +191,7 @@ public class PostService {
 
             addBoardPreviews(boardPreviews, boardIds);
         } else {
+            List<Bookmark> bookmarkList = bookmarkRepository.findBoardByUser(userId);
             getBoardPreviews(bookmarkList, boardPreviews);
         }
 
@@ -203,9 +204,12 @@ public class PostService {
 
 
     public List<BoardPreview> searchCenterMainPreview(Long userId, Long centerId) {
+        if (userId == null) {
+            throw new UserException(UserErrorResult.NOT_VALID_TOKEN);
+        }
 
         User findUser = userRepository.findById(userId)
-                .orElseThrow(() -> new UserException("존재하지 않는 유저"));
+                .orElseThrow(() -> new UserException(UserErrorResult.USER_NOT_EXIST));
         // 학부모 유저일 경우 아이를 통해 센터 정보를 가져옴
         // 교사 유저일 경우 바로 센터 정보 가져옴
         if (findUser.getAuth() == Auth.PARENT) {
@@ -216,19 +220,19 @@ public class PostService {
                     .map(c -> c.getCenter().getId())
                     .collect(Collectors.toList());
             for (Long id : centerIds) {
-                if (id == centerId) {
+                if (Objects.equals(id, centerId)) {
                     flag = true;
                     break;
                 }
             }
             if (!flag) {
-                throw new UserException("해당 센터에 권한 없는 학부모 유저");
+                throw new PostException(PostErrorResult.UNAUTHORIZED_USER_ACCESS);
             }
 
         } else {
             Center center = ((Teacher) findUser).getCenter();
-            if (center.getId() != centerId) {
-                throw new UserException("해당 센터에 권한 없는 교사 유저");
+            if (center == null || !Objects.equals(center.getId(), centerId)) {
+                throw new PostException(PostErrorResult.UNAUTHORIZED_USER_ACCESS);
             }
         }
 
@@ -277,7 +281,11 @@ public class PostService {
     @NotNull
     private List<BoardPreview> getPreivewResult(List<Post> hotPosts, List<BoardPreview> results, List<BoardPreview> boardPreviews) {
         List<BoardPreview.PostInfo> postInfoList = hotPosts.stream()
-                .map(BoardPreview.PostInfo::new)
+                .map((Post p) -> {
+                    BoardPreview.PostInfo postInfo = new BoardPreview.PostInfo(p);
+                    postInfo.setImages(imageService.getInfoImages(p));
+                    return postInfo;
+                })
                 .collect(Collectors.toList());
 
         results.add(new BoardPreview(null, "HOT 게시판", postInfoList, BoardKind.NORMAL));
@@ -289,9 +297,15 @@ public class PostService {
         return results;
     }
 
-    public void updateDate(Long postId) {
+    public void updateDate(Long userId, Long postId) {
+        if (userId == null) {
+            throw new UserException(UserErrorResult.NOT_VALID_TOKEN);
+        }
         Post findPost = postRepository.findById(postId)
-                .orElseThrow(() -> new PostException("존재하지 않는 게시글"));
+                .orElseThrow(() -> new PostException(PostErrorResult.POST_NOT_EXIST));
+        if (!Objects.equals(findPost.getUser().getId(), userId)) {
+            throw new PostException(PostErrorResult.UNAUTHORIZED_USER_ACCESS);
+        }
         findPost.updateTime(LocalDateTime.now());
     }
 
@@ -305,17 +319,22 @@ public class PostService {
         작성시간: 2022/06/27 1:40 PM
         내용: 게시글에 이미 좋아요 눌렀는지 검증 후 저장
     */
-    public void savePostHeart(Long userId, Long postId) {
+    public Long savePostHeart(Long userId, Long postId) {
+        if (userId == null) {
+            throw new UserException(UserErrorResult.NOT_VALID_TOKEN);
+        }
+
         Post findPost = postRepository.findById(postId)
-                .orElseThrow(() -> new PostException("존재하지 않는 게시글"));
+                .orElseThrow(() -> new PostException(PostErrorResult.POST_NOT_EXIST));
+
+        postHeartRepository.findByPostAndUser(userId, postId)
+                .ifPresent((ph) -> {
+                    throw new PostException(PostErrorResult.ALREADY_EXIST_HEART);
+                });
+
         User findUser = userRepository.getById(userId);
-        findPost.getPostHearts().forEach(ph -> {
-            if (Objects.equals(ph.getUser().getId(), userId)) {
-                throw new PostException("이미 좋아요 누른 게시글");
-            }
-        });
         PostHeart postHeart = new PostHeart(findUser, findPost);
-        postHeartRepository.save(postHeart);
+        return postHeartRepository.save(postHeart).getId();
     }
 
     /**
