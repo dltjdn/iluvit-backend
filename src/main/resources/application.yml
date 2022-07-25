@@ -19,6 +19,7 @@ spring:
         default_batch_fetch_size: 100
         create_empty_composites:
           enabled: true
+    open-in-view: false
   config:
     import: application-database.yml, application-img.yml
   profiles:

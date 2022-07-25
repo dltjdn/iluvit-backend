@@ -18,6 +18,7 @@ public class ParentDetailResponse {
     private String address;
     private String detailAddress;
     private String profileImg;
+    private String name;
 
     public ParentDetailResponse(Parent parent) {
         this.nickname = parent.getNickName();
@@ -27,5 +28,6 @@ public class ParentDetailResponse {
         this.theme = parent.getTheme();
         this.address = parent.getAddress();
         this.detailAddress = parent.getDetailAddress();
+        this.name = parent.getName();
     }
 }

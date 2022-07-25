@@ -4,10 +4,8 @@ import FIS.iLUVit.domain.embeddable.Area;
 import FIS.iLUVit.domain.embeddable.Theme;
 import FIS.iLUVit.domain.enumtype.KindOf;
 import FIS.iLUVit.exception.CenterException;
-import com.querydsl.core.types.Predicate;
 import com.querydsl.core.types.dsl.*;
 
-import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.List;
@@ -79,6 +77,10 @@ public class CenterQueryMethod {
 
     protected BooleanExpression centerNameEq(String centerName) {
         return centerName == null ? null : center.name.contains(centerName);
+    }
+
+    protected BooleanExpression userIdEq(NumberPath<Long> pathBase, Long userId) {
+        return userId == null ? null : pathBase.eq(userId);
     }
 
 }

@@ -14,13 +14,6 @@ import java.util.Optional;
 
 public interface WaitingRepository extends JpaRepository<Waiting, Long> {
 
-    @Modifying
-    @Query("update Waiting waiting " +
-            "set waiting.waitingOrder = waiting.waitingOrder - 1 " +
-            "where waiting.waitingOrder > :waitingOrder and waiting.ptDate = :ptDate")
-    void updateWaitingOrderForWaitCancel(@Param("waitingOrder") Integer waitingOrder, @Param("ptDate") PtDate ptDate);
-
-
 //    @Lock(LockModeType.PESSIMISTIC_WRITE)
     @Query("select waiting from Waiting waiting " +
             "join fetch waiting.parent " +

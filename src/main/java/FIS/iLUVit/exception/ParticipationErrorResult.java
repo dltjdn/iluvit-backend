@@ -1,12 +1,15 @@
 package FIS.iLUVit.exception;
 
+import FIS.iLUVit.exception.exceptionHandler.ErrorResult;
 import lombok.AllArgsConstructor;
+import lombok.Getter;
 import org.springframework.http.HttpStatus;
 
 @AllArgsConstructor
-public enum ParticipationErrorResult {
+@Getter
+public enum ParticipationErrorResult implements ErrorResult {
 
-    PARTICIPATION_NO_RESULTS(HttpStatus.BAD_REQUEST, "올바르지 않은 접근입니다"),
+    WRONG_PARTICIPATIONID_REQUEST(HttpStatus.BAD_REQUEST, "올바르지 않은 접근입니다"),
     ;
 
     private final HttpStatus httpStatus;

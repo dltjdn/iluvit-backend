@@ -1,8 +1,8 @@
 package FIS.iLUVit.repository.dto;
 
 import FIS.iLUVit.domain.Center;
-import FIS.iLUVit.domain.embeddable.Area;
 import FIS.iLUVit.domain.embeddable.Theme;
+import FIS.iLUVit.domain.enumtype.KindOf;
 import com.querydsl.core.annotations.QueryProjection;
 import lombok.Builder;
 import lombok.Data;
@@ -12,8 +12,8 @@ import lombok.Data;
 public class CenterAndDistancePreview {
     private Long id;
     private String name;                    // 시설명
-    private String owner;                   // 대표자명
-    private String director;                // 원장명
+    private KindOf kindOf;
+
     private String estType;                 // 설립유형
     private String tel;                     // 전화번호
     private String startTime;               // 운영시작시간
@@ -21,20 +21,18 @@ public class CenterAndDistancePreview {
     private Integer minAge;                 // 시설이 관리하는 연령대
     private Integer maxAge;                 //
     private String address;                 // 주소
-    private Area area;
     private Double longitude;               // 경도
     private Double latitude;                // 위도
     private Theme theme;
     private Double distance;
     private Double starAverage;
     private String profileImage;
+    private Boolean prefer;
 
     @QueryProjection
-    public CenterAndDistancePreview(Center center, Double starAverage){
+    public CenterAndDistancePreview(Center center, Double starAverage, Long prefer){
         this.id = center.getId();
         this.name = center.getName();
-        this.owner = center.getOwner();
-        this.director = center.getDirector();
         this.estType = center.getEstType();
         this.tel = center.getTel();
         this.startTime = center.getStartTime();
@@ -42,20 +40,20 @@ public class CenterAndDistancePreview {
         this.minAge = center.getMinAge();
         this.maxAge = center.getMaxAge();
         this.address = center.getAddress();
-        this.area = center.getArea();
         this.longitude = center.getLongitude();
         this.latitude = center.getLatitude();
         this.starAverage = starAverage;
         this.theme = center.getTheme();
         this.profileImage = center.getProfileImagePath();
+        this.prefer = prefer != null;
     }
 
     @Builder
-    public CenterAndDistancePreview(Long id, String name, String owner, String director, String estType, String tel, String startTime, String endTime, Integer minAge, Integer maxAge, String address, Area area, Double longitude, Double latitude, Theme theme, Double distance, Double starAverage, String profileImage) {
+    @QueryProjection
+    public CenterAndDistancePreview(Double distance, Long id, String name, KindOf kindOf, String estType, String tel, String startTime, String endTime, Integer minAge, Integer maxAge, String address, Double longitude, Double latitude, Theme theme, Double starAverage, String profileImage, Long prefer) {
         this.id = id;
         this.name = name;
-        this.owner = owner;
-        this.director = director;
+        this.kindOf = kindOf;
         this.estType = estType;
         this.tel = tel;
         this.startTime = startTime;
@@ -63,13 +61,54 @@ public class CenterAndDistancePreview {
         this.minAge = minAge;
         this.maxAge = maxAge;
         this.address = address;
-        this.area = area;
         this.longitude = longitude;
         this.latitude = latitude;
         this.theme = theme;
         this.distance = distance;
         this.starAverage = starAverage;
         this.profileImage = profileImage;
+        this.prefer = prefer != null;
+    }
+
+    @QueryProjection
+    public CenterAndDistancePreview(Double distance, Long id, String name, KindOf kindOf, String estType, String tel, String startTime, String endTime, Integer minAge, Integer maxAge, String address, Double longitude, Double latitude, Theme theme, Double starAverage, String profileImage) {
+        this.id = id;
+        this.name = name;
+        this.kindOf = kindOf;
+        this.estType = estType;
+        this.tel = tel;
+        this.startTime = startTime;
+        this.endTime = endTime;
+        this.minAge = minAge;
+        this.maxAge = maxAge;
+        this.address = address;
+        this.longitude = longitude;
+        this.latitude = latitude;
+        this.theme = theme;
+        this.distance = distance;
+        this.starAverage = starAverage;
+        this.profileImage = profileImage;
+        this.prefer = false;
+    }
+
+    @QueryProjection
+    public CenterAndDistancePreview(Center center, Double starAverage, Double distance){
+        this.id = center.getId();
+        this.name = center.getName();
+        this.estType = center.getEstType();
+        this.tel = center.getTel();
+        this.startTime = center.getStartTime();
+        this.endTime = center.getEndTime();
+        this.minAge = center.getMinAge();
+        this.maxAge = center.getMaxAge();
+        this.address = center.getAddress();
+        this.longitude = center.getLongitude();
+        this.latitude = center.getLatitude();
+        this.starAverage = starAverage;
+        this.theme = center.getTheme();
+        this.profileImage = center.getProfileImagePath();
+        this.distance = distance;
+        this.prefer = false;
     }
 
     public Double calculateDistance(double longitude, double latitude){

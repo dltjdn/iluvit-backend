@@ -31,7 +31,6 @@ public class PostService {
     private final BoardRepository boardRepository;
     private final CenterRepository centerRepository;
     private final BookmarkRepository bookmarkRepository;
-    private final ScrapPostRepository scrapPostRepository;
     private final PostHeartRepository postHeartRepository;
     private final ChatRoomRepository chatRoomRepository;
     private final AlarmRepository alarmRepository;
@@ -337,13 +336,4 @@ public class PostService {
         return postHeartRepository.save(postHeart).getId();
     }
 
-    /**
-     *   작성날짜: 2022/06/22 4:54 PM
-     *   작성자: 이승범
-     *   작성내용: 해당 스크랩 폴더의 게시물들 preview 보여주기
-     */
-    public Slice<GetScrapPostResponsePreview> searchByScrap(Long userId, Long scrapId, Pageable pageable) {
-        Slice<ScrapPost> scrapPosts = scrapPostRepository.findByScrapWithPost(userId, scrapId, pageable);
-        return scrapPosts.map(GetScrapPostResponsePreview::new);
-    }
 }

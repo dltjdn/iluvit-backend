@@ -151,11 +151,7 @@ public class ChildService {
 
         ChildInfoDetailResponse response = new ChildInfoDetailResponse(updatedChild);
 
-//            String imagePath = imageService.getChildProfileDir();
-//            imageService.saveProfileImage(request.getProfileImg(), imagePath + updatedChild.getId());
-//            String image = imageService.getEncodedProfileImage(imagePath, updatedChild.getId());
         imageService.saveProfileImage(request.getProfileImg(), updatedChild);
-//            response.setProfileImage(image);
         response.setProfileImage(imageService.getProfileImage(updatedChild));
 
 

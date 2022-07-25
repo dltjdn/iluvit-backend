@@ -1,12 +1,17 @@
 package FIS.iLUVit.controller;
 
+import FIS.iLUVit.Creator;
 import FIS.iLUVit.config.argumentResolver.LoginUserArgumentResolver;
+import FIS.iLUVit.controller.dto.WaitingCancelDto;
 import FIS.iLUVit.controller.dto.WaitingRegisterDto;
 import FIS.iLUVit.domain.Parent;
 import FIS.iLUVit.domain.User;
+import FIS.iLUVit.domain.Waiting;
 import FIS.iLUVit.domain.enumtype.Auth;
 import FIS.iLUVit.exception.PresentationErrorResult;
 import FIS.iLUVit.exception.PresentationException;
+import FIS.iLUVit.exception.WaitingErrorResult;
+import FIS.iLUVit.exception.WaitingException;
 import FIS.iLUVit.exception.exceptionHandler.ErrorResponse;
 import FIS.iLUVit.exception.exceptionHandler.controllerAdvice.GlobalControllerAdvice;
 import FIS.iLUVit.service.WaitingService;
@@ -184,7 +189,7 @@ class WaitingControllerTest {
             //given
             final String url = "/waiting";
             String jwtToken = createJwtToken();
-            Mockito.doThrow(new PresentationException(PresentationErrorResult.PARTICIPATION_PERIOD_PASSED))
+            Mockito.doThrow(new PresentationException(PresentationErrorResult.ALREADY_WAITED_IN))
                     .when(waitingService).register(1L, 1L);
 
             //when
@@ -200,9 +205,189 @@ class WaitingControllerTest {
                     .andExpect(status().isBadRequest())
                     .andExpect(content().json(objectMapper.writeValueAsString(
                             new ErrorResponse(HttpStatus.BAD_REQUEST
-                                    , "설명회 신청기간이 종료되었습니다")
+                                    , "이미 설명회 대기를 하셨습니다")
                     )));
             verify(waitingService, times(1)).register(1L, 1L);
+        }
+
+        @Test
+        @DisplayName("[error] 설명회 인원이 가득 차지 않았을 경우")
+        public void 설명회인원이가득차지않았을경우() throws Exception {
+            //given
+            final String url = "/waiting";
+            String jwtToken = createJwtToken();
+            Mockito.doThrow(new PresentationException(PresentationErrorResult.PRESENTATION_NOT_OVERCAPACITY))
+                    .when(waitingService).register(1L, 1L);
+
+            //when
+            ResultActions resultActions = mockMvc.perform(
+                    MockMvcRequestBuilders.post(url)
+                            .content(objectMapper.writeValueAsString(new WaitingRegisterDto(1L)))
+                            .header(HttpHeaders.AUTHORIZATION, jwtToken)
+                            .contentType(MediaType.APPLICATION_JSON)
+            );
+
+            //then
+            resultActions.andDo(print())
+                    .andExpect(status().isBadRequest())
+                    .andExpect(content().json(objectMapper.writeValueAsString(
+                            new ErrorResponse(HttpStatus.BAD_REQUEST
+                                    , "아직 설명회 신청이 가득 차지 않아 대기 요청 할 수 없습니다")
+                    )));
+            verify(waitingService, times(1)).register(1L, 1L);
+        }
+
+        @Test
+        @DisplayName("[error] 이미 설명회 신청자가 대기 신청")
+        public void 이미설명회신청자대기선청() throws Exception {
+            //given
+            final String url = "/waiting";
+            String jwtToken = createJwtToken();
+            Mockito.doThrow(new PresentationException(PresentationErrorResult.ALREADY_PARTICIPATED_IN))
+                    .when(waitingService).register(1L, 1L);
+
+            //when
+            ResultActions resultActions = mockMvc.perform(
+                    MockMvcRequestBuilders.post(url)
+                            .content(objectMapper.writeValueAsString(new WaitingRegisterDto(1L)))
+                            .header(HttpHeaders.AUTHORIZATION, jwtToken)
+                            .contentType(MediaType.APPLICATION_JSON)
+            );
+
+            //then
+            resultActions.andDo(print())
+                    .andExpect(status().isBadRequest())
+                    .andExpect(content().json(objectMapper.writeValueAsString(
+                            new ErrorResponse(HttpStatus.BAD_REQUEST
+                                    , "이미 설명회를 신청하셨습니다")
+                    )));
+            verify(waitingService, times(1)).register(1L, 1L);
+        }
+
+        @Test
+        @DisplayName("[success] 대기 등록 성공")
+        public void 대기등록성공() throws Exception {
+            //given
+            final String url = "/waiting";
+            String jwtToken = createJwtToken();
+            Waiting waiting = Creator.createWaiting(1L);
+            Mockito.doReturn(waiting)
+                    .when(waitingService).register(1L, 1L);
+
+            //when
+            ResultActions resultActions = mockMvc.perform(
+                    MockMvcRequestBuilders.post(url)
+                            .content(objectMapper.writeValueAsString(new WaitingRegisterDto(1L)))
+                            .header(HttpHeaders.AUTHORIZATION, jwtToken)
+                            .contentType(MediaType.APPLICATION_JSON)
+            );
+
+            //then
+            resultActions.andDo(print())
+                    .andExpect(status().isCreated())
+                    .andExpect(content().json(objectMapper.writeValueAsString(
+                            1L
+                    )));
+            verify(waitingService, times(1)).register(1L, 1L);
+        }
+    }
+
+    @Nested
+    @DisplayName("설명회 대기 취소")
+    class 설명회대기취소{
+        @Test
+        @DisplayName("[error] 로그인 안했음")
+        public void 로그인안했음() throws Exception {
+            //given
+            final String url = "/waiting";
+            //when
+            ResultActions resultActions = mockMvc.perform(
+                    MockMvcRequestBuilders.delete(url)
+                            .content(objectMapper.writeValueAsString(new WaitingRegisterDto(1L)))
+                            .contentType(MediaType.APPLICATION_JSON)
+            );
+
+            //then
+            resultActions.andDo(print())
+                    .andExpect(status().isForbidden())
+                    .andExpect(content().json(objectMapper.writeValueAsString(
+                            new ErrorResponse(HttpStatus.FORBIDDEN
+                                    , "인증된 사용자가 아닙니다")
+                    )));
+        }
+
+        @Test
+        @DisplayName("[error] 잘못 요청시 오류 발생")
+        public void 잘못된ptDateId요청() throws Exception {
+            //given
+            final String url = "/waiting";
+            String jwtToken = createJwtToken();
+            //when
+            ResultActions resultActions = mockMvc.perform(
+                    MockMvcRequestBuilders.delete(url)
+                            .content(objectMapper.writeValueAsString(new WaitingCancelDto(-1L)))
+                            .header(HttpHeaders.AUTHORIZATION, jwtToken)
+                            .contentType(MediaType.APPLICATION_JSON)
+            );
+
+            //then
+            resultActions.andDo(print())
+                    .andExpect(status().isBadRequest())
+                    .andExpect(content().json(objectMapper.writeValueAsString(
+                            new ErrorResponse(HttpStatus.BAD_REQUEST
+                                    , "[올바르지 않은 waitingId 입니다]")
+                    )));
+        }
+
+        @Test
+        @DisplayName("[error] 잘못된 대기 요청 취소 service 에서 발생")
+        public void 잘못된대기요청취소() throws Exception {
+            //given
+            final String url = "/waiting";
+            String jwtToken = createJwtToken();
+            Mockito.doThrow(new WaitingException(WaitingErrorResult.NO_RESULT))
+                    .when(waitingService).cancel(1L, 1L);
+
+            //when
+            ResultActions resultActions = mockMvc.perform(
+                    MockMvcRequestBuilders.delete(url)
+                            .content(objectMapper.writeValueAsString(new WaitingCancelDto(1L)))
+                            .header(HttpHeaders.AUTHORIZATION, jwtToken)
+                            .contentType(MediaType.APPLICATION_JSON)
+            );
+
+            //then
+            resultActions.andDo(print())
+                    .andExpect(status().isBadRequest())
+                    .andExpect(content().json(objectMapper.writeValueAsString(
+                            new ErrorResponse(HttpStatus.BAD_REQUEST
+                                    , "잘못된 요청입니다")
+                    )));
+        }
+
+        @Test
+        @DisplayName("[success] 설명회 취소 성공")
+        public void 설명회취소성공() throws Exception {
+            //given
+            final String url = "/waiting";
+            String jwtToken = createJwtToken();
+            Mockito.doReturn(1L)
+                    .when(waitingService).cancel(1L, 1L);
+
+            //when
+            ResultActions resultActions = mockMvc.perform(
+                    MockMvcRequestBuilders.delete(url)
+                            .content(objectMapper.writeValueAsString(new WaitingCancelDto(1L)))
+                            .header(HttpHeaders.AUTHORIZATION, jwtToken)
+                            .contentType(MediaType.APPLICATION_JSON)
+            );
+
+            //then
+            resultActions.andDo(print())
+                    .andExpect(status().isAccepted())
+                    .andExpect(content().json(objectMapper.writeValueAsString(
+                            1L
+                    )));
         }
     }
 

@@ -4,6 +4,8 @@ import FIS.iLUVit.domain.*;
 import FIS.iLUVit.domain.embeddable.Area;
 import FIS.iLUVit.domain.embeddable.BasicInfra;
 import FIS.iLUVit.domain.embeddable.Theme;
+import FIS.iLUVit.domain.enumtype.Approval;
+import FIS.iLUVit.domain.enumtype.Auth;
 import FIS.iLUVit.domain.enumtype.AuthKind;
 import FIS.iLUVit.domain.enumtype.Status;
 import com.auth0.jwt.JWT;
@@ -185,12 +187,26 @@ public class Creator {
                 .build();
     }
 
-    public static Teacher createTeacher(Long id, String name, Center center) {
+    public static Teacher createTeacher(Long id, String name, Center center, Auth auth, Approval approval) {
         return Teacher.builder()
                 .id(id)
                 .name(name)
+                .center(center)
+                .auth(auth)
+                .approval(approval)
                 .build();
     }
+
+    public static Teacher createTeacher(Long id, String name, Center center, Approval approval, Auth auth) {
+        return Teacher.builder()
+                .id(id)
+                .name(name)
+                .center(center)
+                .approval(approval)
+                .auth(auth)
+                .build();
+    }
+
     public static Theme englishAndCoding(){
         return Theme.builder()
                 .english(true)
@@ -229,6 +245,36 @@ public class Creator {
                 .latitude(latitude)
                 .build();
         return center;
+    }
+
+    public static Center createCenter(Long id, String name, Integer score, Double latitude, Double longitude) {
+        Center center = Center.builder()
+                .id(id)
+                .name(name)
+                .score(score)
+                .longitude(longitude)
+                .latitude(latitude)
+                .build();
+        return center;
+    }
+
+
+    public static Center createKindergarten(String name, Integer score, Double latitude, Double longitude) {
+        return Kindergarten.kBuilder()
+                .name(name)
+                .score(score)
+                .longitude(longitude)
+                .latitude(latitude)
+                .build();
+    }
+
+    public static Center createChildHouse(String name, Integer score, Double latitude, Double longitude) {
+        return ChildHouse.cBuilder()
+                .name(name)
+                .score(score)
+                .longitude(longitude)
+                .latitude(latitude)
+                .build();
     }
 
     public static Center createCenter(String name, Boolean signed, Boolean recruit, Theme theme) {
@@ -470,6 +516,11 @@ public class Creator {
                 .build();
     }
 
+    public static Waiting createWaiting(Long id) {
+        return Waiting.builder()
+                .id(id)
+                .build();
+    }
     public static Scrap createScrap(Long id, User user, String name) {
         return Scrap.builder()
                 .id(id)
@@ -493,6 +544,15 @@ public class Creator {
                 .id(id)
                 .post(post)
                 .scrap(scrap)
+                .build();
+    }
+
+    public static Board createBoard(Long id, String name, Center center, Boolean isDefault) {
+        return Board.builder()
+                .id(id)
+                .name(name)
+                .center(center)
+                .isDefault(isDefault)
                 .build();
     }
 

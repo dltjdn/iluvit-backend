@@ -24,11 +24,14 @@ public class MyParticipationsDto {
     @DateTimeFormat(pattern = "yyyy-MM-dd", iso = DateTimeFormat.ISO.DATE)
     private LocalDate presentationDate;
     private String time;            // 설명회 날짜 시간
+    private String centerInfoImage;
     private String place;               // 설명회 장소
     private String content;             // 설명회 내용
     private String centerName;
     private String tel;                     // 전화번호
     private String address;                 // 주소
+    private Integer ablePersonNum;
+    private Integer participantCnt;
     private Status status;
 
     public static MyParticipationsDto createDto(Participation participation) {
@@ -49,6 +52,9 @@ public class MyParticipationsDto {
                 .centerName(center.getName())
                 .tel(center.getTel())
                 .address(center.getAddress())
+                .centerInfoImage(center.getInfoImagePath())
+                .ablePersonNum(ptDate.getAblePersonNum())
+                .participantCnt(ptDate.getParticipantCnt())
                 .status(participation.getStatus())
                 .build();
     }
@@ -69,8 +75,11 @@ public class MyParticipationsDto {
                 .place(presentation.getPlace())
                 .content(presentation.getContent())
                 .centerName(center.getName())
+                .centerInfoImage(center.getInfoImagePath())
                 .tel(center.getTel())
                 .address(center.getAddress())
+                .ablePersonNum(ptDate.getAblePersonNum())
+                .participantCnt(ptDate.getParticipantCnt())
                 .status(Status.WAITING)
                 .build();
     }

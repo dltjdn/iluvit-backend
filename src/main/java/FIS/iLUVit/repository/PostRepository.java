@@ -54,6 +54,7 @@ public interface PostRepository extends JpaRepository<Post, Long>, PostRepositor
     @Query("select p " +
             "from Post p " +
             "join fetch p.board b " +
+            "left join fetch b.center " +
             "where p.id = :postId")
     Optional<Post> findByIdWithBoard(@Param("postId") Long postId);
 }
