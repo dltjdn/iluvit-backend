@@ -14,6 +14,8 @@ import FIS.iLUVit.exception.exceptionHandler.controllerAdvice.GlobalControllerAd
 import FIS.iLUVit.service.TeacherService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -274,6 +276,67 @@ public class TeacherControllerTest {
         );
         // then
         result.andExpect(status().isOk());
+    }
+
+    @Nested
+    @DisplayName("시설 스스로 탈주하기")
+    class escapeCenter{
+
+        @Test
+        @DisplayName("[error] 속해있는시설이없는경우")
+        public void 속해있는시설이없는경우() throws Exception {
+            // given
+            String url = "/teacher/center/escape";
+            SignupErrorResult error = SignupErrorResult.NOT_BELONG_CENTER;
+            doThrow(new SignupException(error))
+                    .when(teacherService)
+                    .escapeCenter(any());
+            // when
+            ResultActions result = mockMvc.perform(
+                    MockMvcRequestBuilders.patch(url)
+                            .header("Authorization", createJwtToken(teacher))
+            );
+            // then
+            result.andExpect(status().isBadRequest())
+                    .andExpect(content().json(
+                            objectMapper.writeValueAsString(new ErrorResponse(error.getHttpStatus(), error.getMessage()))
+                    ));
+        }
+
+        @Test
+        @DisplayName("[error] 마지막원장의탈주실패")
+        public void 마지막원장의탈주실패() throws Exception {
+            // given
+            String url = "/teacher/center/escape";
+            SignupErrorResult error = SignupErrorResult.HAVE_TO_MANDATE;
+            doThrow(new SignupException(error))
+                    .when(teacherService)
+                    .escapeCenter(any());
+            // when
+            ResultActions result = mockMvc.perform(
+                    MockMvcRequestBuilders.patch(url)
+                            .header("Authorization", createJwtToken(teacher))
+            );
+            // then
+            result.andExpect(status().isBadRequest())
+                    .andExpect(content().json(
+                            objectMapper.writeValueAsString(new ErrorResponse(error.getHttpStatus(), error.getMessage()))
+                    ));
+        }
+
+        @Test
+        @DisplayName("[success] 시설탤주성공")
+        public void 시설탈주성공() throws Exception {
+            // given
+            String url = "/teacher/center/escape";
+            // when
+            ResultActions result = mockMvc.perform(
+                    MockMvcRequestBuilders.patch(url)
+                            .header("Authorization", createJwtToken(teacher))
+            );
+            // then
+            result.andExpect(status().isOk());
+        }
     }
 
 }

@@ -1,7 +1,6 @@
 package FIS.iLUVit.service;
 
 import FIS.iLUVit.Creator;
-import FIS.iLUVit.config.argumentResolver.LoginUserArgumentResolver;
 import FIS.iLUVit.controller.dto.SignupTeacherRequest;
 import FIS.iLUVit.controller.dto.TeacherDetailResponse;
 import FIS.iLUVit.controller.dto.UpdateTeacherDetailRequest;
@@ -13,11 +12,8 @@ import FIS.iLUVit.domain.enumtype.AuthKind;
 import FIS.iLUVit.domain.enumtype.BoardKind;
 import FIS.iLUVit.event.AlarmEvent;
 import FIS.iLUVit.exception.*;
-import FIS.iLUVit.exception.exceptionHandler.ErrorResponse;
-import FIS.iLUVit.exception.exceptionHandler.controllerAdvice.GlobalControllerAdvice;
 import FIS.iLUVit.repository.*;
 import FIS.iLUVit.service.createmethod.CreateTest;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -28,12 +24,8 @@ import org.mockito.Mock;
 import org.mockito.MockedStatic;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.mock.web.MockMultipartFile;
-import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
-import javax.swing.plaf.basic.BasicDesktopIconUI;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
@@ -41,6 +33,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 import java.util.Optional;
 
 import static FIS.iLUVit.service.createmethod.CreateTest.createBoard;
@@ -99,11 +92,6 @@ public class TeacherServiceTest {
         board2 = createBoard(9L, "맛집게시판", BoardKind.NORMAL, null, true);
         board3 = createBoard(10L, "공지게시판", BoardKind.NORMAL, center1, true);
         board4 = createBoard(11L, "자유게시판", BoardKind.NORMAL, center1, true);
-//        center1.getTeachers().add(teacher1);
-//        center1.getTeachers().add(teacher2);
-//        center1.getTeachers().add(teacher3);
-//        center1.getBoards().add(board3);
-//        center1.getBoards().add(board4);
         String name = "162693895955046828.png";
         Path path = Paths.get(new File("").getAbsolutePath() + '/' + name);
         byte[] content = Files.readAllBytes(path);
@@ -314,7 +302,7 @@ public class TeacherServiceTest {
     class AssignCenter{
 
         @Test
-        @DisplayName("[error 이미 시설에 등록되있는경우]")
+        @DisplayName("[error] 이미 시설에 등록되있는경우")
         public void 등록된시설있음() {
             // given
             doReturn(Optional.empty())
@@ -328,7 +316,7 @@ public class TeacherServiceTest {
         }
 
         @Test
-        @DisplayName("[success 시설로의 등록신청]")
+        @DisplayName("[success] 시설로의 등록신청")
         public void 시설등록신청_성공() {
             // given
             doReturn(Optional.of(teacher4))
@@ -349,7 +337,7 @@ public class TeacherServiceTest {
     @DisplayName("시설 스스로 탈주하기")
     class escapeCenter{
         @Test
-        @DisplayName("[error 사용자가 해당시설에 속해있지않음]")
+        @DisplayName("[error] 사용자가 해당시설에 속해있지않음")
         public void 해당시설에속해있지않음() {
             // given
             doReturn(Optional.empty())
@@ -364,9 +352,13 @@ public class TeacherServiceTest {
         }
 
         @Test
-        @DisplayName("[error 일반교사가있는 시설에 마지막 원장의 탈주]")
+        @DisplayName("[error] 일반교사가있는 시설에 마지막 원장의 탈주")
         public void 마지막원장탈주실패() {
             // given
+            center1.getTeachers().add(teacher1);
+            center1.getTeachers().add(teacher2);
+            center1.getTeachers().add(teacher3);
+            center1.getTeachers().add(teacher5);
             doReturn(Optional.of(teacher1))
                     .when(teacherRepository)
                     .findByIdWithCenterWithTeacher(any());
@@ -376,8 +368,29 @@ public class TeacherServiceTest {
             // then
             assertThat(result.getErrorResult()).isEqualTo(SignupErrorResult.HAVE_TO_MANDATE);
         }
-    }
 
+        @Test
+        @DisplayName("[success] 시설탈주 성공")
+        public void 시설탈주성공() {
+            // given
+            center1.getTeachers().add(teacher1);
+            center1.getTeachers().add(teacher2);
+            center1.getTeachers().add(teacher3);
+            center1.getTeachers().add(teacher5);
+            doReturn(Optional.of(teacher2))
+                    .when(teacherRepository)
+                    .findByIdWithCenterWithTeacher(any());
+            doReturn(List.of())
+                    .when(boardRepository)
+                    .findByCenter(teacher2.getCenter().getId());
+            // when
+            Teacher result = target.escapeCenter(teacher2.getId());
+            // then
+            assertThat(result.getId()).isEqualTo(teacher2.getId());
+            assertThat(result.getCenter()).isNull();
+            assertThat(result.getAuth()).isEqualTo(Auth.TEACHER);
+        }
+    }
 
 
 

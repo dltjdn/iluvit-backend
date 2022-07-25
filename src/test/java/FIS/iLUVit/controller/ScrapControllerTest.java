@@ -127,7 +127,7 @@ public class ScrapControllerTest {
     class deleteScrapDir{
 
         @Test
-        @DisplayName("[error 잘못된스크랩아이디]")
+        @DisplayName("[error] 잘못된스크랩아이디")
         public void 잘못된스크랩아이디() throws Exception {
             // given
             String url = "/user/scrap/dir";
@@ -150,7 +150,7 @@ public class ScrapControllerTest {
         }
 
         @Test
-        @DisplayName("[success 스크랩폴더삭제성공]")
+        @DisplayName("[success] 스크랩폴더삭제성공")
         public void 스크랩폴더삭제성공() throws Exception {
             // given
             String url = "/user/scrap/dir";
@@ -173,7 +173,7 @@ public class ScrapControllerTest {
     @DisplayName("스크랩폴더이름바꾸기")
     class changeScrapName{
         @Test
-        @DisplayName("[error 불완전한요청]")
+        @DisplayName("[error] 불완전한요청")
         public void 불완전한요청() throws Exception {
             // given
             String url = "/user/scrap/dir/name";
@@ -190,7 +190,7 @@ public class ScrapControllerTest {
                     .andExpect(status().isBadRequest());
         }
         @Test
-        @DisplayName("[error 잘못된스크랩아이디]")
+        @DisplayName("[error] 잘못된스크랩아이디")
         public void 잘못된스크랩아이디() throws Exception {
             // given
             String url = "/user/scrap/dir/name";
@@ -214,7 +214,7 @@ public class ScrapControllerTest {
         }
 
         @Test
-        @DisplayName("[success 이름바꾸기성공]")
+        @DisplayName("[success] 이름바꾸기성공")
         public void 이름바꾸기성공() throws Exception {
             // given
             String url = "/user/scrap/dir/name";
@@ -235,7 +235,7 @@ public class ScrapControllerTest {
     @DisplayName("게시물 스크랩하기")
     class scrapPost{
         @Test
-        @DisplayName("[error 불완전한요청]")
+        @DisplayName("[error] 불완전한요청")
         public void 블완전한요청() throws Exception {
             // given
             String url = "/user/scrap/post";
@@ -254,7 +254,7 @@ public class ScrapControllerTest {
         }
 
         @Test
-        @DisplayName("[error 게시물아이디 오류]")
+        @DisplayName("[error] 게시물아이디 오류")
        public void 게시물아이디오류() throws Exception {
             // given
             String url = "/user/scrap/post";
@@ -279,7 +279,7 @@ public class ScrapControllerTest {
         }
 
         @Test
-        @DisplayName("[error 스크랩아이디 오류]")
+        @DisplayName("[error] 스크랩아이디 오류")
         public void 스크랩아이디오류() throws Exception {
             // given
             String url = "/user/scrap/post";
@@ -304,7 +304,7 @@ public class ScrapControllerTest {
         }
 
         @Test
-        @DisplayName("[success 게시물스크랩성공]")
+        @DisplayName("[success] 게시물스크랩성공")
         public void 게시물스크랩성공() throws Exception {
             // given
             String url = "/user/scrap/post";
@@ -326,7 +326,7 @@ public class ScrapControllerTest {
     @DisplayName("스크랩취소")
     class deleteScrapPost{
         @Test
-        @DisplayName("[error 잘못된 scrapPost]")
+        @DisplayName("[error] 잘못된 scrapPost")
         public void 잘못된scrapPost() throws Exception {
             // given
             String url = "/user/scrap/post";
@@ -348,7 +348,7 @@ public class ScrapControllerTest {
         }
 
         @Test
-        @DisplayName("[success 스크랩취소성공]")
+        @DisplayName("[success] 스크랩취소성공")
         public void 스크랩취소성공() throws Exception {
             // given
             String url = "/user/scrap/post";

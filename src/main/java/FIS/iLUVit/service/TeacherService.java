@@ -160,7 +160,7 @@ public class TeacherService {
      * 작성자: 이승범
      * 작성내용: 시설 스스로 탈주하기
      */
-    public void escapeCenter(Long userId) {
+    public Teacher escapeCenter(Long userId) {
 
         Teacher escapedTeacher = teacherRepository.findByIdWithCenterWithTeacher(userId)
                 .orElseThrow(() -> new SignupException(SignupErrorResult.NOT_BELONG_CENTER));
@@ -185,6 +185,7 @@ public class TeacherService {
 
         // 시설과의 연관관계 끊기
         escapedTeacher.exitCenter();
+        return escapedTeacher;
     }
 
     /**
