@@ -10,20 +10,28 @@ import javax.persistence.*;
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Entity
+@Table(
+        uniqueConstraints = {
+                @UniqueConstraint(
+                        columnNames = {"parent_id", "center_id"}
+                )
+        }
+)
 public class Prefer extends BaseEntity {
 
-    @Id @GeneratedValue
+    @Id
+    @GeneratedValue
     private Long id;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name="parent_id")
+    @JoinColumn(name = "parent_id")
     private Parent parent;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "center_id")
     private Center center;
 
-    public static Prefer createPrefer(Parent parent, Center center){
+    public static Prefer createPrefer(Parent parent, Center center) {
         Prefer prefer = new Prefer();
         prefer.center = center;
         prefer.parent = parent;

@@ -3,12 +3,17 @@ package FIS.iLUVit.controller;
 import FIS.iLUVit.Creator;
 import FIS.iLUVit.config.argumentResolver.LoginUserArgumentResolver;
 import FIS.iLUVit.controller.dto.SignupTeacherRequest;
+import FIS.iLUVit.controller.dto.TeacherApprovalListResponse;
 import FIS.iLUVit.controller.dto.TeacherDetailResponse;
 import FIS.iLUVit.controller.dto.UpdateTeacherDetailRequest;
+import FIS.iLUVit.domain.Center;
 import FIS.iLUVit.domain.Teacher;
+import FIS.iLUVit.domain.enumtype.Approval;
 import FIS.iLUVit.domain.enumtype.Auth;
 import FIS.iLUVit.exception.SignupErrorResult;
 import FIS.iLUVit.exception.SignupException;
+import FIS.iLUVit.exception.UserErrorResult;
+import FIS.iLUVit.exception.UserException;
 import FIS.iLUVit.exception.exceptionHandler.ErrorResponse;
 import FIS.iLUVit.exception.exceptionHandler.controllerAdvice.GlobalControllerAdvice;
 import FIS.iLUVit.service.TeacherService;
@@ -32,8 +37,11 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.List;
+import java.util.Optional;
 
 import static FIS.iLUVit.Creator.createJwtToken;
+import static FIS.iLUVit.Creator.createTeacher;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
@@ -52,6 +60,7 @@ public class TeacherControllerTest {
     private ObjectMapper objectMapper;
     private MockMvc mockMvc;
     private Teacher teacher;
+    private Teacher director;
     private MockMultipartFile multipartFile;
 
     @BeforeEach
@@ -62,6 +71,7 @@ public class TeacherControllerTest {
                 .setControllerAdvice(GlobalControllerAdvice.class)
                 .build();
         teacher = Creator.createTeacher(1L, "teacher", null, Auth.TEACHER, null);
+        director = createTeacher(2L, "director", Center.builder().build(), Auth.DIRECTOR, Approval.ACCEPT);
         String name = "162693895955046828.png";
         Path path = Paths.get(new File("").getAbsolutePath() + '/' + name);
         byte[] content = Files.readAllBytes(path);
@@ -333,6 +343,49 @@ public class TeacherControllerTest {
             ResultActions result = mockMvc.perform(
                     MockMvcRequestBuilders.patch(url)
                             .header("Authorization", createJwtToken(teacher))
+            );
+            // then
+            result.andExpect(status().isOk());
+        }
+    }
+
+    @Nested
+    @DisplayName("교사 관리페이지")
+    class teacherApprovalList{
+
+        @Test
+        @DisplayName("[error] 사용자가 원장이 아닌 경우")
+        public void 사용자가원장이아닌경우() throws Exception {
+            // given
+            String url = "/director/teacher/approval";
+            UserErrorResult error = UserErrorResult.HAVE_NOT_AUTHORIZATION;
+            doThrow(new UserException(error))
+                    .when(teacherService)
+                    .findTeacherApprovalList(teacher.getId());
+            // when
+            ResultActions result = mockMvc.perform(
+                    MockMvcRequestBuilders.get(url)
+                            .header("Authorization", createJwtToken(teacher))
+            );
+            // then
+            result.andExpect(status().isBadRequest())
+                    .andExpect(content().json(
+                            objectMapper.writeValueAsString(new ErrorResponse(error.getHttpStatus(), error.getMessage()))
+                    ));
+        }
+
+        @Test
+        @DisplayName("[success] 정상적인 요청")
+        public void 정상적인요청() throws Exception {
+            // given
+            String url = "/director/teacher/approval";
+            doReturn(new TeacherApprovalListResponse())
+                    .when(teacherService)
+                    .findTeacherApprovalList(director.getId());
+            // when
+            ResultActions result = mockMvc.perform(
+                    MockMvcRequestBuilders.get(url)
+                            .header("Authorization", createJwtToken(director))
             );
             // then
             result.andExpect(status().isOk());

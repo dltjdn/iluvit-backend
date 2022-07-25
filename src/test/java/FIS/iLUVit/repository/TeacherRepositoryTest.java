@@ -133,5 +133,39 @@ public class TeacherRepositoryTest {
         assertThat(result.getCenter().getTeachers().size()).isEqualTo(3);
     }
 
+    @Nested
+    @DisplayName("findDirectorByIdWithCenterWithTeacher")
+    class findDirectorByIdWithCenterWithTeacher{
+        @Test
+        public void 정상적인요청() {
+            // given
+            center1.getTeachers().add(teacher1);
+            center1.getTeachers().add(teacher2);
+            center1.getTeachers().add(teacher3);
+            em.flush();
+            em.clear();
+            // when
+            Teacher result = teacherRepository.findDirectorByIdWithCenterWithTeacher(teacher1.getId()).orElse(null);
+            // then
+            assertThat(result).isNotNull();
+            assertThat(result.getId()).isEqualTo(teacher1.getId());
+            assertThat(result.getCenter().getTeachers().size()).isEqualTo(3);
+        }
+
+        @Test
+        public void 원장이아닌사용자의요청() {
+            // given
+            center1.getTeachers().add(teacher1);
+            center1.getTeachers().add(teacher2);
+            center1.getTeachers().add(teacher3);
+            em.flush();
+            em.clear();
+            // when
+            Teacher result = teacherRepository.findDirectorByIdWithCenterWithTeacher(teacher2.getId()).orElse(null);
+            // then
+            assertThat(result).isNull();
+        }
+    }
+
 
 }

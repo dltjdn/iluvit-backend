@@ -26,6 +26,7 @@ import javax.persistence.EntityManager;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 import static FIS.iLUVit.Creator.*;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -558,4 +559,53 @@ class CenterRepositoryTest {
             assertThat(result3).isNotNull();
         }
     }
+
+    @Test
+    public void findByPrefer() {
+        // given
+        Parent parent = Creator.createParent();
+        Center center1 = createCenter("center1", true, true, createTheme());
+        Center center2 = createCenter("center2", true, true, createTheme());
+        Center center3 = createCenter("center3", true, true, createTheme());
+        Prefer prefer1 = createPrefer(parent, center1);
+        Prefer prefer2 = createPrefer(parent, center2);
+        Review review1 = createReview(center1, 1);
+        Review review2 = createReview(center1, 2);
+        Review review3 = createReview(center1, 3);
+        Review review4 = createReview(center1, 4);
+        Review review5 = createReview(center2, 4);
+        Review review6 = createReview(center2, 5);
+        Review review7 = createReview(center2, 2);
+        Review review8 = createReview(center2, 1);
+        em.persist(parent);
+        em.persist(center1);
+        em.persist(center2);
+        em.persist(center3);
+        em.persist(prefer1);
+        em.persist(prefer2);
+        em.persist(review1);
+        em.persist(review2);
+        em.persist(review3);
+        em.persist(review4);
+        em.persist(review5);
+        em.persist(review6);
+        em.persist(review7);
+        em.persist(review8);
+        em.flush();
+        em.clear();
+        // when
+        Slice<CenterPreview> result = centerRepository.findByPrefer(parent.getId(), PageRequest.of(0, 10));
+        // then
+        assertThat(result.getContent().size()).isEqualTo(2);
+        for (CenterPreview centerPreview : result) {
+            if (Objects.equals(centerPreview.getId(), center1.getId())) {
+                assertThat(centerPreview.getStarAverage()).isEqualTo(2.5);
+            } else if (Objects.equals(centerPreview.getId(), center2.getId())) {
+                assertThat(centerPreview.getStarAverage()).isEqualTo(3);
+            } else {
+                throw new RuntimeException();
+            }
+        }
+    }
+
 }

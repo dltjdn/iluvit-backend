@@ -19,6 +19,8 @@ import java.io.IOException;
 import java.util.*;
 import java.util.stream.Collectors;
 
+import static FIS.iLUVit.controller.dto.TeacherApprovalListResponse.*;
+
 @Slf4j
 @Service
 @RequiredArgsConstructor
@@ -197,15 +199,15 @@ public class TeacherService {
 
         // 로그인한 사용자가 원장인지 확인 및 원장으로 등록되어있는 시설에 모든 교사들 갖오기
         Teacher director = teacherRepository.findDirectorByIdWithCenterWithTeacher(userId)
-                .orElseThrow(() -> new UserException("해당 정보를 열람할 권한이 없습니다."));
+                .orElseThrow(() -> new UserException(UserErrorResult.HAVE_NOT_AUTHORIZATION));
 
         TeacherApprovalListResponse response = new TeacherApprovalListResponse();
 
         director.getCenter().getTeachers().forEach(teacher -> {
             // 요청한 원장은 빼고 시설에 연관된 교사들 보여주기
             if (!Objects.equals(teacher.getId(), userId)) {
-                TeacherApprovalListResponse.TeacherInfoForAdmin teacherInfoForAdmin =
-                        new TeacherApprovalListResponse.TeacherInfoForAdmin(teacher.getId(), teacher.getName(), teacher.getApproval(), teacher.getAuth());
+                TeacherInfoForAdmin teacherInfoForAdmin =
+                        new TeacherInfoForAdmin(teacher.getId(), teacher.getName(), teacher.getApproval(), teacher.getAuth());
 
                 teacherInfoForAdmin.setProfileImg(imageService.getProfileImage(teacher));
                 response.getData().add(teacherInfoForAdmin);

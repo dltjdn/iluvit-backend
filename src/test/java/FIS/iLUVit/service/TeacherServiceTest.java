@@ -2,6 +2,7 @@ package FIS.iLUVit.service;
 
 import FIS.iLUVit.Creator;
 import FIS.iLUVit.controller.dto.SignupTeacherRequest;
+import FIS.iLUVit.controller.dto.TeacherApprovalListResponse;
 import FIS.iLUVit.controller.dto.TeacherDetailResponse;
 import FIS.iLUVit.controller.dto.UpdateTeacherDetailRequest;
 import FIS.iLUVit.domain.*;
@@ -391,6 +392,45 @@ public class TeacherServiceTest {
             assertThat(result.getAuth()).isEqualTo(Auth.TEACHER);
         }
     }
+
+    @Nested
+    @DisplayName("교사관리 페이지에 필요한 교사들 정보 조회")
+    class findTeacherApprovalList{
+        @Test
+        @DisplayName("[error] 사용자가 원장이 아닌경우")
+        public void 사용자가원장이아닌경우() {
+            // given
+            doReturn(Optional.empty())
+                    .when(teacherRepository)
+                    .findDirectorByIdWithCenterWithTeacher(any());
+            // when
+            UserException result = assertThrows(UserException.class,
+                    () -> target.findTeacherApprovalList(teacher2.getId()));
+            // then
+            assertThat(result.getErrorResult()).isEqualTo(UserErrorResult.HAVE_NOT_AUTHORIZATION);
+        }
+
+        @Test
+        @DisplayName("[success] 정상적인요청")
+        public void 정상적인요청() {
+            // given
+            center1.getTeachers().add(teacher1);
+            center1.getTeachers().add(teacher2);
+            center1.getTeachers().add(teacher3);
+            center1.getTeachers().add(teacher5);
+            doReturn(Optional.of(teacher1))
+                    .when(teacherRepository)
+                    .findDirectorByIdWithCenterWithTeacher(teacher1.getId());
+            // when
+            TeacherApprovalListResponse result = target.findTeacherApprovalList(teacher1.getId());
+            // then
+            assertThat(result).isNotNull();
+            assertThat(result.getData().size()).isEqualTo(3);
+        }
+
+    }
+
+
 
 
 

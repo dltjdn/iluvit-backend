@@ -70,7 +70,7 @@ public class TeacherController {
     /**
      * 작성날짜: 2022/06/29 11:31 AM
      * 작성자: 이승범
-     * 작성내용: 교사 관리 페이지 정보
+     * 작성내용: 교사 관리 페이지
      */
     @GetMapping("/director/teacher/approval")
     public TeacherApprovalListResponse teacherApprovalList(@Login Long userId) {
