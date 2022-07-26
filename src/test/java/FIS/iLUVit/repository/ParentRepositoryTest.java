@@ -1,10 +1,7 @@
 package FIS.iLUVit.repository;
 
-import FIS.iLUVit.Creator;
 import FIS.iLUVit.config.argumentResolver.ForDB;
-import FIS.iLUVit.domain.Kindergarten;
-import FIS.iLUVit.domain.Parent;
-import FIS.iLUVit.domain.Waiting;
+import FIS.iLUVit.domain.*;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -26,11 +23,11 @@ class ParentRepositoryTest {
             //given
             Kindergarten center = createKindergarten("test");
             Parent parent = createParent();
-            createInvalidPresentation(center);
-//            createInvalidPresentation(center);
-//            createCanRegisterPtDate();
-//            createCanNotRegisterPtDate();
-//            Waiting waiting1 = createWaiting();
+            Presentation invalidPresentation = createInvalidPresentation(center);
+            Presentation validPresentation = createValidPresentation(center);
+            PtDate canRegisterPtDate = createCanRegisterPtDate(validPresentation);
+            PtDate canNotRegisterPtDate = createCanNotRegisterPtDate(invalidPresentation);
+            Waiting waiting1 = createWaiting(canRegisterPtDate, parent, 1);
 //            createCancelParticipation();
 //            createJoinParticipation();
             //when
