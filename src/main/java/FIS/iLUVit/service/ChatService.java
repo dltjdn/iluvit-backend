@@ -49,24 +49,21 @@ public class ChatService {
         Post findPost = postRepository.findById(post_id)
                 .orElseThrow(() -> new ChatException(ChatErrorResult.POST_NOT_EXIST));
 
+        Boolean anonymousInfo;
         if (request.getComment_id() != null) {
             Comment findComment = commentRepository.findById(comment_id)
                     .orElseThrow(() -> new CommentException(CommentErrorResult.NO_EXIST_COMMENT));
-            if (findComment.getAnonymous() != request.getAnonymous()) {
-                throw new CommentException(CommentErrorResult.NO_MATCH_ANONYMOUS_INFO);
-            }
+            anonymousInfo = findComment.getAnonymous();
         } else {
-            if (findPost.getAnonymous() != request.getAnonymous()) {
-                throw new PostException(PostErrorResult.NO_MATCH_ANONYMOUS_INFO);
-            }
+            anonymousInfo = findPost.getAnonymous();
         }
 
 
         Chat chat1 = new Chat(request.getMessage(), receiveUser, sendUser);
         Chat chat2 = new Chat(request.getMessage(), receiveUser, sendUser);
 
-        ChatRoom chatRoom1 = validateChatRoom(sendUser, receiveUser, comment_id, findPost, chat1, request.getAnonymous());
-        ChatRoom chatRoom2 = validateChatRoom(receiveUser, sendUser, comment_id, findPost, chat2, request.getAnonymous());
+        ChatRoom chatRoom1 = validateChatRoom(sendUser, receiveUser, comment_id, findPost, chat1, anonymousInfo);
+        ChatRoom chatRoom2 = validateChatRoom(receiveUser, sendUser, comment_id, findPost, chat2, anonymousInfo);
         chatRoom1.updatePartnerId(chatRoom2.getId());
         chatRoom2.updatePartnerId(chatRoom1.getId());
 

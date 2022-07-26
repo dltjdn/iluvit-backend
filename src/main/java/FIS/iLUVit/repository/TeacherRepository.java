@@ -64,5 +64,5 @@ public interface TeacherRepository extends JpaRepository<Teacher, Long> {
             "from Teacher t " +
             "where t.id =:userId " +
             "and t.auth = 'DIRECTOR'")
-    Optional<Teacher> findDirectorById(Long userId);
+    Optional<Teacher> findDirectorById(@Param("userId") Long userId);
 }

@@ -177,7 +177,6 @@ class ChatServiceTest {
         request.setPost_id(post1.getId());
         request.setReceiver_id(sender.getId());
         request.setComment_id(comment1.getId());
-        request.setAnonymous(true);
 
         Mockito.doReturn(Optional.of(receiver))
                 .when(userRepository)
@@ -233,69 +232,6 @@ class ChatServiceTest {
     }
 
     @Test
-    public void 쪽지_작성_댓글_익명인데_실명으로_보냄() throws Exception {
-        //given
-        request.setMessage("안녕");
-        request.setPost_id(post1.getId());
-        request.setReceiver_id(sender.getId());
-        request.setComment_id(comment1.getId());
-        request.setAnonymous(false);
-
-        Mockito.doReturn(Optional.of(receiver))
-                .when(userRepository)
-                .findById(receiver.getId());
-
-        Mockito.doReturn(Optional.of(sender))
-                .when(userRepository)
-                .findById(sender.getId());
-
-        Mockito.doReturn(Optional.of(post1))
-                .when(postRepository)
-                .findById(post1.getId());
-
-        Mockito.doReturn(Optional.of(comment1))
-                .when(commentRepository)
-                .findById(comment1.getId());
-
-        //when
-        CommentException result = assertThrows(CommentException.class,
-                () -> chatService.saveChat(receiver.getId(), request));
-
-        //then
-        assertThat(result.getErrorResult())
-                .isEqualTo(CommentErrorResult.NO_MATCH_ANONYMOUS_INFO);
-    }
-
-    @Test
-    public void 쪽지_작성_게시글_익명인데_실명으로_보냄() throws Exception {
-        //given
-        request.setMessage("안녕");
-        request.setPost_id(post1.getId());
-        request.setReceiver_id(sender.getId());
-        request.setAnonymous(false);
-
-        Mockito.doReturn(Optional.of(receiver))
-                .when(userRepository)
-                .findById(receiver.getId());
-
-        Mockito.doReturn(Optional.of(sender))
-                .when(userRepository)
-                .findById(sender.getId());
-
-        Mockito.doReturn(Optional.of(post1))
-                .when(postRepository)
-                .findById(post1.getId());
-
-        //when
-        PostException result = assertThrows(PostException.class,
-                () -> chatService.saveChat(receiver.getId(), request));
-
-        //then
-        assertThat(result.getErrorResult())
-                .isEqualTo(PostErrorResult.NO_MATCH_ANONYMOUS_INFO);
-    }
-
-    @Test
     public void 쪽지_작성_성공() throws Exception {
         //given
         try (MockedStatic<AlarmUtils> alarmUtils = Mockito.mockStatic(AlarmUtils.class)) {
@@ -303,7 +239,6 @@ class ChatServiceTest {
             request.setMessage("안녕");
             request.setPost_id(post1.getId());
             request.setReceiver_id(sender.getId());
-            request.setAnonymous(true);
 
             Mockito.doReturn(Optional.of(receiver))
                     .when(userRepository)
