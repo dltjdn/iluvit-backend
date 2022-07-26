@@ -48,20 +48,23 @@ public class S3ImageService implements ImageService {
      */
     protected Long abstractEntityId(BaseImageEntity entity) {
         try {
-            Class<? extends BaseImageEntity> clazz = entity.getClass();
+            Class<?> clazz = entity.getClass();
             Field[] declaredFields = clazz.getDeclaredFields();
-            for (Field field : declaredFields) {
-                Annotation annotation = field.getAnnotation(Id.class);
-                if (annotation != null) {
-                    field.setAccessible(true);
-                    Long entityId = (Long) field.get(entity);
-                    return entityId;
+            while(true) {
+                for (Field field : declaredFields) {
+                    Annotation annotation = field.getAnnotation(Id.class);
+                    if (annotation != null) {
+                        field.setAccessible(true);
+                        Long entityId = (Long) field.get(entity);
+                        return entityId;
+                    }
                 }
+                clazz = clazz.getSuperclass();
+                declaredFields = clazz.getDeclaredFields();
             }
         } catch (IllegalAccessException exception) {
             throw new ImageException(ImageErrorResult.IMAGE_ANALYZE_FAILED);
         }
-        return null;
     }
 
     /**
@@ -172,7 +175,7 @@ public class S3ImageService implements ImageService {
         entity.updateProfileImagePath(prefix + destPath);
     }
 
-    public void saveImage(MultipartFile image, String destPath) {
+    private void saveImage(MultipartFile image, String destPath) {
         ObjectMetadata objectMetadata = new ObjectMetadata();
         objectMetadata.setContentLength(image.getSize());
         objectMetadata.setContentType(image.getContentType());

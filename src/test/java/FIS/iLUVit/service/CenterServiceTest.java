@@ -58,8 +58,8 @@ public class CenterServiceTest {
     @InjectMocks
     CenterService target;
 
-    @Mock
-    ImageService imageService;
+    @Spy
+    ImageServiceStubAmazon imageService;
 
     @Nested
     @DisplayName("센터_베너_서비스")
@@ -296,6 +296,8 @@ public class CenterServiceTest {
             assertThat(center.getLongitude()).isEqualTo(126.8806602);
             assertThat(center.getLatitude()).isEqualTo(37.4778951);
             assertThat(center.getAddress()).isEqualTo("서울특별시 금천구 가산디지털2로 108 뉴티캐슬");
+            verify(imageService, times(1)).saveInfoImages(multipartFileList, center);
+            verify(imageService, times(1)).saveProfileImage(multipartFile, center);
             System.out.println("center.getProfileImagePath() = " + center.getProfileImagePath());
             System.out.println("center = " + center.getInfoImagePath());
         }
