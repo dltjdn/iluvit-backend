@@ -124,7 +124,7 @@ public class ScrapServiceTest {
     @DisplayName("스크랩 폴더 삭제하기")
     class deleteScrapDir {
         @Test
-        @DisplayName("[error 잘못된 scrapId]")
+        @DisplayName("[error] 잘못된 scrapId")
         public void 잘못된scrapId() {
             // given
             doReturn(Optional.empty())
@@ -137,7 +137,7 @@ public class ScrapServiceTest {
             assertThat(result.getErrorResult()).isEqualTo(ScrapErrorResult.NOT_VALID_SCRAP);
         }
         @Test
-        @DisplayName("[error default 스크랩폴더 삭제시도]")
+        @DisplayName("[error] default 스크랩폴더 삭제시도")
         public void 스크랩폴더삭제() {
             // given
             doReturn(Optional.of(scrap1))
@@ -151,7 +151,7 @@ public class ScrapServiceTest {
         }
 
         @Test
-        @DisplayName("[success 스크랩폴더삭제성공]")
+        @DisplayName("[success] 스크랩폴더삭제성공")
         public void 스크랩폴더삭제성공() {
             // given
             doReturn(Optional.of(scrap2))
@@ -189,7 +189,7 @@ public class ScrapServiceTest {
     class scrapPost{
 
         @Test
-        @DisplayName("[error db와 요청이 일치하지않음]")
+        @DisplayName("[error] db와 요청이 일치하지않음")
         public void db와요청다름() {
             // given
             ScrapInfoForUpdate info1 = new ScrapInfoForUpdate(scrap1.getId(), true);
@@ -211,7 +211,7 @@ public class ScrapServiceTest {
         }
 
         @Test
-        @DisplayName("[error 잘못된 postId]")
+        @DisplayName("[error] 잘못된 postId")
         public void 잘못된게시물아이디() {
             // given
             ScrapInfoForUpdate info1 = new ScrapInfoForUpdate(scrap1.getId(), true);
@@ -233,7 +233,7 @@ public class ScrapServiceTest {
         }
 
         @Test
-        @DisplayName("[success 새로 스크랩을 해야되는경우]")
+        @DisplayName("[success] 새로 스크랩을 해야되는경우")
         public void 새로운스크랩() {
             // given
             ScrapInfoForUpdate info1 = new ScrapInfoForUpdate(scrap1.getId(), true);
@@ -255,7 +255,7 @@ public class ScrapServiceTest {
         }
 
         @Test
-        @DisplayName("[success 기존스크랩을 취소하는경우]")
+        @DisplayName("[success] 기존스크랩을 취소하는경우")
         public void 기존스크랩취소() {
             // given
             ScrapInfoForUpdate info1 = new ScrapInfoForUpdate(scrap1.getId(), false);
@@ -277,7 +277,7 @@ public class ScrapServiceTest {
         }
 
         @Test
-        @DisplayName("[success 스크랩 등록과 취소를 동시에]")
+        @DisplayName("[success] 스크랩 등록과 취소를 동시에")
         public void 취소및스크랩동시발생() {
             // given
             ScrapInfoForUpdate info1 = new ScrapInfoForUpdate(scrap1.getId(), false);
@@ -304,7 +304,7 @@ public class ScrapServiceTest {
     class 스크랩폴더에서스크랩삭제{
 
         @Test
-        @DisplayName("[error 유호하지않은 scrapPostId]")
+        @DisplayName("[error] 유호하지않은 scrapPostId")
         public void 유효하지않은스크랩포스트아이디() {
             // given
             doReturn(Optional.empty())
@@ -318,7 +318,7 @@ public class ScrapServiceTest {
         }
 
         @Test
-        @DisplayName("[success 정상적인 스크랩포스트제거]")
+        @DisplayName("[success] 정상적인 스크랩포스트제거")
         public void 스크랩포스트삭제() {
             // given
             doReturn(Optional.of(scrapPost1))

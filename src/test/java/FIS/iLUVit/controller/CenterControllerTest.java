@@ -1,5 +1,6 @@
 package FIS.iLUVit.controller;
 
+import FIS.iLUVit.Creator;
 import FIS.iLUVit.config.argumentResolver.LoginUserArgumentResolver;
 import FIS.iLUVit.controller.dto.CenterBannerResponseDto;
 import FIS.iLUVit.controller.dto.CenterInfoDto;
@@ -167,6 +168,20 @@ class CenterControllerTest extends ResponseRequests {
                     .andExpect(content().json(objectMapper.writeValueAsString(response)));
         }
 
+    }
+
+    @Test
+    public void 찜한시설리스트() throws Exception {
+        // given
+        String url = "/parent/prefer";
+        Parent parent = Creator.createParent();
+        // when
+        ResultActions result = mockMvc.perform(
+                MockMvcRequestBuilders.get(url)
+                        .header("Authorization", createJwtToken(parent))
+        );
+        // then
+        result.andExpect(status().isOk());
     }
 
     @Nested

@@ -21,10 +21,14 @@ import java.util.Date;
 
 // /login 요청시 username, pwd 전송하면 스프링 시큐리티의 UsernamePasswordAuthenticationFilter 동작
 // but formLogin.disable() 때문에 동작X => securityConfig addFilter(JwtAuthenticationFilter)
-@RequiredArgsConstructor
 public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilter {
 
     private final AuthenticationManager authenticationManager;
+
+    public JwtAuthenticationFilter(AuthenticationManager authenticationManager) {
+        super(authenticationManager);
+        this.authenticationManager = authenticationManager;
+    }
 
     // /login 요청시 로그인을 시도하기 위해 실행되는 함수
     @Override
@@ -43,8 +47,6 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
             // authenticationManager로 로그인 시도를 하면 PrincipalDetailsService 호출되고 loadByUsername 함수 자동 실행
             // db 정보와 일치한다면 authentication 객체 리턴됨
             Authentication authentication = authenticationManager.authenticate(authenticationToken);
-
-            PrincipalDetails principalDetails = (PrincipalDetails) authentication.getPrincipal();
 
             return authentication;
 

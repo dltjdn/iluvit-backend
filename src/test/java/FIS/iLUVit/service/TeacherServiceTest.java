@@ -1,8 +1,8 @@
 package FIS.iLUVit.service;
 
 import FIS.iLUVit.Creator;
-import FIS.iLUVit.config.argumentResolver.LoginUserArgumentResolver;
 import FIS.iLUVit.controller.dto.SignupTeacherRequest;
+import FIS.iLUVit.controller.dto.TeacherApprovalListResponse;
 import FIS.iLUVit.controller.dto.TeacherDetailResponse;
 import FIS.iLUVit.controller.dto.UpdateTeacherDetailRequest;
 import FIS.iLUVit.domain.*;
@@ -13,11 +13,8 @@ import FIS.iLUVit.domain.enumtype.AuthKind;
 import FIS.iLUVit.domain.enumtype.BoardKind;
 import FIS.iLUVit.event.AlarmEvent;
 import FIS.iLUVit.exception.*;
-import FIS.iLUVit.exception.exceptionHandler.ErrorResponse;
-import FIS.iLUVit.exception.exceptionHandler.controllerAdvice.GlobalControllerAdvice;
 import FIS.iLUVit.repository.*;
 import FIS.iLUVit.service.createmethod.CreateTest;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -28,12 +25,8 @@ import org.mockito.Mock;
 import org.mockito.MockedStatic;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.mock.web.MockMultipartFile;
-import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
-import javax.swing.plaf.basic.BasicDesktopIconUI;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
@@ -41,6 +34,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 import java.util.Optional;
 
 import static FIS.iLUVit.service.createmethod.CreateTest.createBoard;
@@ -94,16 +88,11 @@ public class TeacherServiceTest {
         teacher2 = Creator.createTeacher(4L, "teacher2", center1, Auth.TEACHER, Approval.ACCEPT);
         teacher3 = Creator.createTeacher(5L, "teacher3", center1, Auth.TEACHER, Approval.WAITING);
         teacher4 = Creator.createTeacher(6L, "teacher4", null, Auth.TEACHER, null);
-        teacher5 = Creator.createTeacher(7L, "teacher3", center1, Auth.TEACHER, Approval.REJECT);
+        teacher5 = Creator.createTeacher(7L, "teacher3", center1, Auth.TEACHER, Approval.WAITING);
         board1 = createBoard(8L, "자유게시판", BoardKind.NORMAL, null, true);
         board2 = createBoard(9L, "맛집게시판", BoardKind.NORMAL, null, true);
         board3 = createBoard(10L, "공지게시판", BoardKind.NORMAL, center1, true);
         board4 = createBoard(11L, "자유게시판", BoardKind.NORMAL, center1, true);
-//        center1.getTeachers().add(teacher1);
-//        center1.getTeachers().add(teacher2);
-//        center1.getTeachers().add(teacher3);
-//        center1.getBoards().add(board3);
-//        center1.getBoards().add(board4);
         String name = "162693895955046828.png";
         Path path = Paths.get(new File("").getAbsolutePath() + '/' + name);
         byte[] content = Files.readAllBytes(path);
@@ -314,7 +303,7 @@ public class TeacherServiceTest {
     class AssignCenter{
 
         @Test
-        @DisplayName("[error 이미 시설에 등록되있는경우]")
+        @DisplayName("[error] 이미 시설에 등록되있는경우")
         public void 등록된시설있음() {
             // given
             doReturn(Optional.empty())
@@ -328,7 +317,7 @@ public class TeacherServiceTest {
         }
 
         @Test
-        @DisplayName("[success 시설로의 등록신청]")
+        @DisplayName("[success] 시설로의 등록신청")
         public void 시설등록신청_성공() {
             // given
             doReturn(Optional.of(teacher4))
@@ -349,7 +338,7 @@ public class TeacherServiceTest {
     @DisplayName("시설 스스로 탈주하기")
     class escapeCenter{
         @Test
-        @DisplayName("[error 사용자가 해당시설에 속해있지않음]")
+        @DisplayName("[error] 사용자가 해당시설에 속해있지않음")
         public void 해당시설에속해있지않음() {
             // given
             doReturn(Optional.empty())
@@ -364,9 +353,13 @@ public class TeacherServiceTest {
         }
 
         @Test
-        @DisplayName("[error 일반교사가있는 시설에 마지막 원장의 탈주]")
+        @DisplayName("[error] 일반교사가있는 시설에 마지막 원장의 탈주")
         public void 마지막원장탈주실패() {
             // given
+            center1.getTeachers().add(teacher1);
+            center1.getTeachers().add(teacher2);
+            center1.getTeachers().add(teacher3);
+            center1.getTeachers().add(teacher5);
             doReturn(Optional.of(teacher1))
                     .when(teacherRepository)
                     .findByIdWithCenterWithTeacher(any());
@@ -376,9 +369,159 @@ public class TeacherServiceTest {
             // then
             assertThat(result.getErrorResult()).isEqualTo(SignupErrorResult.HAVE_TO_MANDATE);
         }
+
+        @Test
+        @DisplayName("[success] 시설탈주 성공")
+        public void 시설탈주성공() {
+            // given
+            center1.getTeachers().add(teacher1);
+            center1.getTeachers().add(teacher2);
+            center1.getTeachers().add(teacher3);
+            center1.getTeachers().add(teacher5);
+            doReturn(Optional.of(teacher2))
+                    .when(teacherRepository)
+                    .findByIdWithCenterWithTeacher(any());
+            doReturn(List.of())
+                    .when(boardRepository)
+                    .findByCenter(teacher2.getCenter().getId());
+            // when
+            Teacher result = target.escapeCenter(teacher2.getId());
+            // then
+            assertThat(result.getId()).isEqualTo(teacher2.getId());
+            assertThat(result.getCenter()).isNull();
+            assertThat(result.getAuth()).isEqualTo(Auth.TEACHER);
+        }
+    }
+
+    @Nested
+    @DisplayName("교사관리 페이지에 필요한 교사들 정보 조회")
+    class findTeacherApprovalList{
+        @Test
+        @DisplayName("[error] 사용자가 원장이 아닌경우")
+        public void 사용자가원장이아닌경우() {
+            // given
+            doReturn(Optional.empty())
+                    .when(teacherRepository)
+                    .findDirectorByIdWithCenterWithTeacher(any());
+            // when
+            UserException result = assertThrows(UserException.class,
+                    () -> target.findTeacherApprovalList(teacher2.getId()));
+            // then
+            assertThat(result.getErrorResult()).isEqualTo(UserErrorResult.HAVE_NOT_AUTHORIZATION);
+        }
+
+        @Test
+        @DisplayName("[success] 정상적인요청")
+        public void 정상적인요청() {
+            // given
+            center1.getTeachers().add(teacher1);
+            center1.getTeachers().add(teacher2);
+            center1.getTeachers().add(teacher3);
+            center1.getTeachers().add(teacher5);
+            doReturn(Optional.of(teacher1))
+                    .when(teacherRepository)
+                    .findDirectorByIdWithCenterWithTeacher(teacher1.getId());
+            // when
+            TeacherApprovalListResponse result = target.findTeacherApprovalList(teacher1.getId());
+            // then
+            assertThat(result).isNotNull();
+            assertThat(result.getData().size()).isEqualTo(3);
+        }
+
     }
 
 
+    @Nested
+    @DisplayName("교사승인")
+    class acceptTeacher{
+        @Test
+        @DisplayName("[error] 원장이 아닌 사용자의 요청")
+        public void 원장이아닌사용자의요청() {
+            // given
+            doReturn(Optional.empty())
+                    .when(teacherRepository)
+                    .findDirectorByIdWithCenterWithTeacher(teacher2.getId());
+            // when
+            UserException result = assertThrows(UserException.class,
+                    () -> target.acceptTeacher(teacher2.getId(), teacher3.getId()));
+            // then
+            assertThat(result.getErrorResult()).isEqualTo(UserErrorResult.HAVE_NOT_AUTHORIZATION);
+        }
 
+        @Test
+        @DisplayName("[error] 올바르지 않은 교사의 승인")
+        public void 요청하지않은교사의승인() {
+            // given
+            center1.getTeachers().add(teacher1);
+            center1.getTeachers().add(teacher2);
+            center1.getTeachers().add(teacher3);
+            center1.getTeachers().add(teacher5);
+            doReturn(Optional.of(teacher1))
+                    .when(teacherRepository)
+                    .findDirectorByIdWithCenterWithTeacher(teacher1.getId());
+            // when
+            UserException result = assertThrows(UserException.class,
+                    () -> target.acceptTeacher(teacher1.getId(), teacher4.getId()));
+            // then
+            assertThat(result.getErrorResult()).isEqualTo(UserErrorResult.NOT_VALID_REQUEST);
+        }
+
+        @Test
+        @DisplayName("[success] 정상적인 요청")
+        public void 정상적인요청() {
+            // given
+            center1.getTeachers().add(teacher1);
+            center1.getTeachers().add(teacher2);
+            center1.getTeachers().add(teacher3);
+            center1.getTeachers().add(teacher5);
+            doReturn(Optional.of(teacher1))
+                    .when(teacherRepository)
+                    .findDirectorByIdWithCenterWithTeacher(teacher1.getId());
+            doReturn(List.of(board3, board4))
+                    .when(boardRepository)
+                    .findDefaultByCenter(teacher1.getCenter().getId());
+            // when
+            Teacher result = target.acceptTeacher(teacher1.getId(), teacher3.getId());
+            // then
+            assertThat(result.getId()).isEqualTo(teacher3.getId());
+            assertThat(result.getApproval()).isEqualTo(Approval.ACCEPT);
+            verify(boardRepository, times(1)).findDefaultByCenter(teacher1.getCenter().getId());
+            verify(bookmarkRepository, times(2)).save(any());
+        }
+    }
+
+    @Nested
+    @DisplayName("교사 승인신청 삭제/거절")
+    class fireTeacher{
+        @Test
+        @DisplayName("[error] 원장이 아닌 사용자의 요청")
+        public void 원장이아닌사용자의요청() {
+            // given
+            doReturn(Optional.empty())
+                    .when(teacherRepository)
+                    .findDirectorById(any());
+            // when
+            UserException result = assertThrows(UserException.class,
+                    () -> target.fireTeacher(teacher1.getId(), teacher2.getId()));
+            // then
+            assertThat(result.getErrorResult()).isEqualTo(UserErrorResult.HAVE_NOT_AUTHORIZATION);
+        }
+//        @Test
+//        @DisplayName("[error] 올바르지않은 교사 삭제")
+//        public void 올바르지않은교사() {
+//            // given
+//            center1.getTeachers().add(teacher1);
+//            center1.getTeachers().add(teacher2);
+//            center1.getTeachers().add(teacher3);
+//            center1.getTeachers().add(teacher5);
+//            doReturn(Optional.of(teacher1))
+//                    .when(teacherRepository)
+//                    .findDirectorById(teacher1.getId());
+//            // when
+//
+//            // then
+//
+//        }
+    }
 
 }

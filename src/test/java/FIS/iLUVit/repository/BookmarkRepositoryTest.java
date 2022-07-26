@@ -214,6 +214,6 @@ class BookmarkRepositoryTest {
 
         assertThat(bookmarkList.size()).isEqualTo(4);
         assertThat(postDelete).isEmpty();
-
     }
+
 }
