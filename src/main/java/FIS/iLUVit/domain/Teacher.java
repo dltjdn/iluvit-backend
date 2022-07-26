@@ -115,4 +115,8 @@ public class Teacher extends User {
         this.center = null;
         this.auth = Auth.TEACHER;
     }
+
+    public void acceptTeacher() {
+        this.approval = Approval.ACCEPT;
+    }
 }

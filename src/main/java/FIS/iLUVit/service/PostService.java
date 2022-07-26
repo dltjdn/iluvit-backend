@@ -70,6 +70,9 @@ public class PostService {
     }
 
     public Long deleteById(Long postId, Long userId) {
+        if (userId == null) {
+            throw new UserException(UserErrorResult.NOT_VALID_TOKEN);
+        }
 
         User findUser = userRepository.findById(userId)
                 .orElseThrow(() -> new UserException(UserErrorResult.USER_NOT_EXIST));
@@ -92,7 +95,7 @@ public class PostService {
     public GetPostResponse findById(Long postId) {
         // 게시글과 연관된 유저, 게시판, 시설 한 번에 끌고옴
         Post findPost = postRepository.findByIdWithUserAndBoardAndCenter(postId)
-                .orElseThrow(() -> new PostException("존재하지 않는 게시글"));
+                .orElseThrow(() -> new PostException(PostErrorResult.POST_NOT_EXIST));
         // 첨부된 이미지 파일, 게시글에 달린 댓글 지연 로딩으로 가져와 DTO 생성
         return getPostResponseDto(findPost);
     }
@@ -142,9 +145,12 @@ public class PostService {
                 throw new PostException(PostErrorResult.UNAUTHORIZED_USER_ACCESS);
             }
         } else {
-            userRepository.findTeacherById(userId)
+            Teacher teacher = userRepository.findTeacherById(userId)
                     .orElseThrow(() -> new PostException(PostErrorResult.UNAUTHORIZED_USER_ACCESS));
-            // 교사 아이디로 조회한 결과가 없으면 Teacher의 Center가 null이므로 권한 X
+            // 교사 아이디 + center로 join fetch 조회한 결과가 없으면 Teacher의 Center가 null이므로 권한 X
+            if (!Objects.equals(teacher.getCenter().getId(), centerId)) {
+                throw new PostException(PostErrorResult.UNAUTHORIZED_USER_ACCESS);
+            }
         }
         // 센터 아이디 null 인 경우 모두의 이야기 안에서 검색됨
         Slice<GetPostResponsePreview> posts = postRepository.findByCenterAndKeyword(centerId, input, pageable);
