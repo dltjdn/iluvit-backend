@@ -18,6 +18,7 @@ public class CenterInfoResponseDto {
     private String estType;                 // 설립유형
     private String estDate;                 // 개원일
     private String tel;                     // 전화번호
+    private String director;
     private String homepage;                // 홈페이지 주소
     private String startTime;               // 운영시작시간
     private String endTime;                 // 운영종료시간
@@ -54,6 +55,7 @@ public class CenterInfoResponseDto {
         this.estType = center.getEstType();
         this.estDate = center.getEstDate();
         this.tel = center.getTel();
+        this.director = center.getDirector();
         this.homepage = center.getHomepage();
         this.startTime = center.getStartTime();
         this.endTime = center.getEndTime();
