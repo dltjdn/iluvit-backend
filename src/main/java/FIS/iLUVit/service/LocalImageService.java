@@ -153,7 +153,7 @@ public class LocalImageService implements ImageService {
         entity.updateProfileImagePath(prefix + temp);
     }
 
-    private void saveImage(MultipartFile image, String destPath) {
+    public void saveImage(MultipartFile image, String destPath) {
         try {
             image.transferTo(Paths.get(destPath));
         } catch (IOException e) {

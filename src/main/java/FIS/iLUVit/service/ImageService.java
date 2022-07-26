@@ -19,4 +19,6 @@ public interface ImageService {
     public String getProfileImage(String profileImagePath);
 
     public List<String> getInfoImages(String infoImagePath);
+
+    public void saveImage(MultipartFile image, String destPath);
 }
