@@ -58,7 +58,8 @@ public class CenterServiceTest {
     @InjectMocks
     CenterService target;
 
-    ImageServiceStubAmazon imageService = new ImageServiceStubAmazon();
+    @Mock
+    ImageService imageService;
 
     @Nested
     @DisplayName("센터_베너_서비스")
@@ -288,8 +289,6 @@ public class CenterServiceTest {
             //when
             Mockito.doReturn(Pair.of(126.8806602, 37.4778951))
                     .when(mapService).convertAddressToLocation("서울특별시 금천구 가산디지털2로 108 뉴티캐슬");
-            Mockito.doNothing()
-                    .when(imageService).saveImage(any(MultipartFile.class), any(String.class));
 
             target.modifyCenter(1L, 1L, request, multipartFileList, multipartFile);
 
