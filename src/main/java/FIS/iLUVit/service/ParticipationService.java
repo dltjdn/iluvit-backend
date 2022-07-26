@@ -35,6 +35,7 @@ public class ParticipationService {
     private final ParentRepository parentRepository;
     private final UserRepository userRepository;
     private final ApplicationEventPublisher publisher;
+    private final ImageService imageService;
 
     public Long register(Long userId, Long ptDateId) {
 

@@ -9,6 +9,8 @@ import lombok.NoArgsConstructor;
 import org.springframework.format.annotation.DateTimeFormat;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.List;
 
 @Data
 @NoArgsConstructor
@@ -24,7 +26,7 @@ public class MyParticipationsDto {
     @DateTimeFormat(pattern = "yyyy-MM-dd", iso = DateTimeFormat.ISO.DATE)
     private LocalDate presentationDate;
     private String time;            // 설명회 날짜 시간
-    private String centerInfoImage;
+    private List<String> centerInfoImage;
     private String place;               // 설명회 장소
     private String content;             // 설명회 내용
     private String centerName;
@@ -40,6 +42,13 @@ public class MyParticipationsDto {
         Parent parent = participation.getParent();
         Presentation presentation = ptDate.getPresentation();
         Center center = presentation.getCenter();
+        String infoImagePath = center.getInfoImagePath();
+        List<String> infoImages;
+        if(infoImagePath == null || infoImagePath.equals(""))
+            infoImages = new ArrayList<>();
+        else
+            infoImages = List.of(infoImagePath.split(","));
+
         return MyParticipationsDto.builder()
                 .parentId(parent.getId())
                 .participantId(participation.getId())
@@ -54,7 +63,7 @@ public class MyParticipationsDto {
                 .tel(center.getTel())
                 .address(center.getAddress())
                 .addressDetail(center.getAddressDetail())
-                .centerInfoImage(center.getInfoImagePath())
+                .centerInfoImage(infoImages)
                 .ablePersonNum(ptDate.getAblePersonNum())
                 .participantCnt(ptDate.getParticipantCnt())
                 .status(participation.getStatus())
@@ -66,6 +75,14 @@ public class MyParticipationsDto {
         Parent parent = waiting.getParent();
         Presentation presentation = ptDate.getPresentation();
         Center center = presentation.getCenter();
+        String infoImagePath = center.getInfoImagePath();
+        List<String> infoImages;
+        if(infoImagePath == null || infoImagePath.equals(""))
+            infoImages = new ArrayList<>();
+        else
+            infoImages = List.of(infoImagePath.split(","));
+
+
         return MyParticipationsDto.builder()
                 .parentId(parent.getId())
                 .participantId(waiting.getId())
@@ -77,7 +94,7 @@ public class MyParticipationsDto {
                 .place(presentation.getPlace())
                 .content(presentation.getContent())
                 .centerName(center.getName())
-                .centerInfoImage(center.getInfoImagePath())
+                .centerInfoImage(infoImages)
                 .tel(center.getTel())
                 .address(center.getAddress())
                 .addressDetail(center.getAddressDetail())
