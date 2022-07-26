@@ -6,7 +6,6 @@ import FIS.iLUVit.domain.embeddable.Theme;
 import FIS.iLUVit.domain.enumtype.KindOf;
 import FIS.iLUVit.repository.dto.PresentationPreviewForUsers;
 import FIS.iLUVit.repository.dto.QPresentationPreviewForUsers;
-import FIS.iLUVit.service.ImageService;
 import com.querydsl.core.types.OrderSpecifier;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.AllArgsConstructor;
@@ -14,6 +13,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.SliceImpl;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
@@ -26,7 +26,6 @@ import static FIS.iLUVit.repository.PresentationQueryMethod.presentationSort;
 public class PresentationRepositoryCustomImpl extends CenterQueryMethod implements PresentationRepositoryCustom {
 
     private final JPAQueryFactory jpaQueryFactory;
-    private final ImageService imageService;
 
     @Override
     public SliceImpl<PresentationPreviewForUsersResponse> findByFilter(List<Area> areas, Theme theme, Integer interestedAge, KindOf kindOf, Pageable pageable) {
@@ -55,7 +54,13 @@ public class PresentationRepositoryCustomImpl extends CenterQueryMethod implemen
 
         List<PresentationPreviewForUsersResponse> collect = content.stream().map(c -> {
             PresentationPreviewForUsersResponse temp = new PresentationPreviewForUsersResponse(c);
-            temp.setInfoImages(imageService.getInfoImages(c.getInfoImages()));
+            String infoImagePath = c.getInfoImages();
+            List<String> infoImages;
+            if(infoImagePath == null || infoImagePath.equals(""))
+                infoImages = new ArrayList<>();
+            else
+                infoImages = List.of(infoImagePath.split(","));
+            temp.setInfoImages(infoImages);
             return temp;
         }).collect(Collectors.toList());
 

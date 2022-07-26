@@ -159,7 +159,7 @@ public class CenterRepositoryImpl extends CenterQueryMethod implements CenterRep
     }
 
     @Override
-    public List<CenterMapPreview> findByFilterForMap(double longitude, double latitude, Integer distance, String searchContent) {
+    public List<CenterMapPreview> findByFilterForMap(double longitude, double latitude, Double distance, String searchContent) {
 
         Expression<Double> latitudeEx = Expressions.constant(latitude);
         Expression<Double> longitudeEx = Expressions.constant(longitude);

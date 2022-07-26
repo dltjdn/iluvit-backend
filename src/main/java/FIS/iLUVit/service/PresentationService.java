@@ -10,6 +10,7 @@ import FIS.iLUVit.domain.enumtype.Status;
 import FIS.iLUVit.exception.PresentationException;
 import FIS.iLUVit.exception.UserException;
 import FIS.iLUVit.repository.*;
+import FIS.iLUVit.repository.dto.PresentationPreviewForUsers;
 import FIS.iLUVit.repository.dto.PresentationWithPtDatesDto;
 import FIS.iLUVit.service.dto.ParentInfoForDirectorDto;
 import FIS.iLUVit.service.dto.PresentationQuryDto;
@@ -23,10 +24,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.time.LocalDate;
-import java.util.Collection;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 
 import static java.util.stream.Collectors.*;
