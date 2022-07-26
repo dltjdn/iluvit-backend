@@ -27,6 +27,7 @@ public class ChatListDTO {
 
     private Boolean anonymous;
     private Long opponent_id;
+    private String opponent_nickname;
     private String opponent_image;
 
     private Long receiver_id;
@@ -55,6 +56,7 @@ public class ChatListDTO {
         this.anonymous = chatRoom.getAnonymous();
         if (chatRoom.getSender() != null) {
             this.opponent_id = chatRoom.getSender().getId();
+            this.opponent_nickname = chatRoom.getSender().getNickName();
         }
         this.receiver_id = chatRoom.getReceiver().getId();
         if (chatRoom.getComment() != null) {
