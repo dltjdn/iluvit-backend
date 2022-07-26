@@ -9,10 +9,12 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.config.http.SessionCreationPolicy;
+import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
 import org.springframework.security.web.authentication.logout.LogoutFilter;
 import org.springframework.web.cors.CorsUtils;
@@ -21,13 +23,14 @@ import org.springframework.web.filter.CorsFilter;
 @Configuration
 @EnableWebSecurity
 @RequiredArgsConstructor
-public class SecurityConfig extends WebSecurityConfigurerAdapter {
+public class SecurityConfig {
 
     private final UserRepository userRepository;
     private final CorsConfig corsConfig;
+    private final AuthenticationConfiguration authenticationConfiguration;
 
-    @Override
-    protected void configure(HttpSecurity http) throws Exception {
+    @Bean
+    public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http.csrf().disable();
         // JWT를 사용할거기 때문에 STATELESS 즉, 세션을 사용하지 않겠다.
         http.addFilter(corsConfig.corsFilter())
@@ -35,9 +38,9 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .and()
                 .formLogin().disable()  // springSecurity가 제공하는 formLogin 기능 사용X
                 .httpBasic().disable()  // 매 요청마다 id, pwd 보내는 방식으로 인증하는 httpBasic 사용X
-                .addFilterBefore(new ExceptionHandlerFilter(), LogoutFilter.class)
                 .addFilter(jwtAuthenticationFilter())
                 .addFilter(jwtAuthorizationFilter())
+                .addFilterBefore(exceptionHandlerFilter(), LogoutFilter.class)
                 .authorizeRequests()
                 .requestMatchers(CorsUtils::isPreFlightRequest).permitAll()
                 .antMatchers("/user/**")
@@ -45,12 +48,16 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .antMatchers("/parent/**")
                 .access("hasRole('PARENT')")
                 .anyRequest().permitAll();
+        return http.build();
+    }
+
+    @Bean ExceptionHandlerFilter exceptionHandlerFilter() {
+        return new ExceptionHandlerFilter();
     }
 
     @Bean
-    @Override
     public AuthenticationManager authenticationManagerBean() throws Exception {
-        return super.authenticationManagerBean();
+        return authenticationConfiguration.getAuthenticationManager();
     }
 
     @Bean

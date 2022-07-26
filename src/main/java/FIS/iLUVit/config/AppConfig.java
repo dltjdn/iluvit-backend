@@ -37,7 +37,9 @@ public class AppConfig {
     }
 
     @Bean
-    public DefaultMessageService defaultMessageService(@Value("${coolsms.api_key}") String api_key, @Value("${coolsms.api_secret}") String api_secret, @Value("${coolsms.domain}") String domain) {
+    public DefaultMessageService defaultMessageService(@Value("${coolsms.api_key}") String api_key,
+                                                       @Value("${coolsms.api_secret}") String api_secret,
+                                                       @Value("${coolsms.domain}") String domain) {
         return NurigoApp.INSTANCE.initialize(api_key, api_secret, domain);
     }
 
