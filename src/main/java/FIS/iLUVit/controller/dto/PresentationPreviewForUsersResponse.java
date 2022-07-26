@@ -25,13 +25,13 @@ public class PresentationPreviewForUsersResponse {
     private List<String> infoImages = new ArrayList<>();
 
     public PresentationPreviewForUsersResponse(PresentationPreviewForUsers dto){
-        this.centerId = centerId;
-        this.centerName = centerName;
-        this.presentationId = presentationId;
-        this.startDate = startDate;
-        this.endDate = endDate;
-        this.place = place;
-        this.content = content;
-        this.theme = theme;
+        this.centerId = dto.getCenterId();
+        this.centerName = dto.getCenterName();
+        this.presentationId = dto.getPresentationId();
+        this.startDate = dto.getStartDate();
+        this.endDate = dto.getEndDate();
+        this.place = dto.getPlace();
+        this.content = dto.getContent();
+        this.theme = dto.getTheme();
     }
 }
