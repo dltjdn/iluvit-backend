@@ -92,6 +92,12 @@ public class Creator {
                 .build();
     }
 
+    public static Kindergarten createKindergarten(String name){
+        return Kindergarten.kBuilder()
+                .name(name)
+                .build();
+    }
+
     public static Area createArea(String sido, String sigungu){
         return new Area(sido, sigungu);
     }

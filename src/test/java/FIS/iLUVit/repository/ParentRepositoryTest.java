@@ -1,10 +1,17 @@
 package FIS.iLUVit.repository;
 
+import FIS.iLUVit.Creator;
 import FIS.iLUVit.config.argumentResolver.ForDB;
+import FIS.iLUVit.domain.Kindergarten;
+import FIS.iLUVit.domain.Parent;
+import FIS.iLUVit.domain.Waiting;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
+import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.context.annotation.ComponentScan;
+
+import static FIS.iLUVit.Creator.*;
 
 @DataJpaTest(includeFilters = @ComponentScan.Filter(ForDB.class))
 class ParentRepositoryTest {
@@ -13,5 +20,22 @@ class ParentRepositoryTest {
     @DisplayName("자신이 신청 - 취소 - 대기한 설명회 목록 가져오기 ")
     class 자신이신청취소대기한설명회목록{
 
+        @Test
+        @DisplayName("[success] 자신이 신청한 설명회 가져오기")
+        public void 학부모가신청한설명회() throws Exception {
+            //given
+            Kindergarten center = createKindergarten("test");
+            Parent parent = createParent();
+            createInvalidPresentation(center);
+//            createInvalidPresentation(center);
+//            createCanRegisterPtDate();
+//            createCanNotRegisterPtDate();
+//            Waiting waiting1 = createWaiting();
+//            createCancelParticipation();
+//            createJoinParticipation();
+            //when
+
+            //then
+        }
     }
 }

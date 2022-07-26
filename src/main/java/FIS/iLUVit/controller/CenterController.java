@@ -13,6 +13,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
 import org.springframework.data.domain.SliceImpl;
+import org.springframework.http.HttpStatus;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -75,6 +76,7 @@ public class CenterController {
      * 시설 정보 수정
      */
     @PatchMapping("/center/{centerId}")
+    @ResponseStatus(HttpStatus.ACCEPTED)
     public Long modifyCenter(@PathVariable("centerId") Long centerId,
                              @Login Long userId,
                              @RequestPart @Validated CenterModifyRequestDto requestDto,

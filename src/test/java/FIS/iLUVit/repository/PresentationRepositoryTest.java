@@ -1,12 +1,12 @@
 package FIS.iLUVit.repository;
 
 import FIS.iLUVit.config.argumentResolver.ForDB;
+import FIS.iLUVit.controller.dto.PresentationPreviewForUsersResponse;
 import FIS.iLUVit.domain.Center;
 import FIS.iLUVit.domain.Presentation;
 import FIS.iLUVit.domain.embeddable.Area;
 import FIS.iLUVit.domain.embeddable.Theme;
 import FIS.iLUVit.domain.enumtype.KindOf;
-import FIS.iLUVit.repository.dto.PresentationPreviewForUsers;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -67,7 +67,7 @@ public class PresentationRepositoryTest {
             em.flush();
 
             //when
-            SliceImpl<PresentationPreviewForUsers> results = target.findByFilter(areas, coding(), 3, KindOf.ALL, PageRequest.of(0, 4));
+            SliceImpl<PresentationPreviewForUsersResponse> results = target.findByFilter(areas, coding(), 3, KindOf.ALL, PageRequest.of(0, 4));
 
             //then
             assertThat(results.getContent().size())
@@ -75,7 +75,7 @@ public class PresentationRepositoryTest {
             assertThat(results.hasNext())
                     .isFalse();
             int i = 0;
-            for (PresentationPreviewForUsers result : results) {
+            for (PresentationPreviewForUsersResponse result : results) {
                 assertThat(result.getEndDate()).isEqualTo(presentations.get(i).getEndDate());
                 i++;
             }

@@ -1,9 +1,6 @@
 package FIS.iLUVit.service;
 
-import FIS.iLUVit.controller.dto.PresentationModifyRequestDto;
-import FIS.iLUVit.controller.dto.PresentationPreviewAndImageForTeacher;
-import FIS.iLUVit.controller.dto.PresentationRequestRequestFormDto;
-import FIS.iLUVit.controller.dto.PresentationResponseDto;
+import FIS.iLUVit.controller.dto.*;
 import FIS.iLUVit.domain.*;
 import FIS.iLUVit.domain.alarms.PresentationCreatedAlarm;
 import FIS.iLUVit.domain.embeddable.Area;
@@ -13,7 +10,6 @@ import FIS.iLUVit.domain.enumtype.Status;
 import FIS.iLUVit.exception.PresentationException;
 import FIS.iLUVit.exception.UserException;
 import FIS.iLUVit.repository.*;
-import FIS.iLUVit.repository.dto.PresentationPreviewForUsers;
 import FIS.iLUVit.repository.dto.PresentationWithPtDatesDto;
 import FIS.iLUVit.service.dto.ParentInfoForDirectorDto;
 import FIS.iLUVit.service.dto.PresentationQuryDto;
@@ -27,7 +23,10 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.time.LocalDate;
-import java.util.*;
+import java.util.Collection;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 import static java.util.stream.Collectors.*;
@@ -200,7 +199,7 @@ public class PresentationService {
                 .collect(Collectors.toList());
     }
 
-    public SliceImpl<PresentationPreviewForUsers> findByFilter(List<Area> areas, Theme theme, Integer interestedAge, KindOf kindOf, Pageable pageable) {
+    public SliceImpl<PresentationPreviewForUsersResponse> findByFilter(List<Area> areas, Theme theme, Integer interestedAge, KindOf kindOf, Pageable pageable) {
         return presentationRepository.findByFilter(areas, theme, interestedAge, kindOf, pageable);
     }
 }

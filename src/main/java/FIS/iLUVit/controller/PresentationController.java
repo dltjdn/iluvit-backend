@@ -2,7 +2,6 @@ package FIS.iLUVit.controller;
 
 import FIS.iLUVit.config.argumentResolver.Login;
 import FIS.iLUVit.controller.dto.*;
-import FIS.iLUVit.repository.dto.PresentationPreviewForUsers;
 import FIS.iLUVit.service.PresentationService;
 import FIS.iLUVit.service.UserService;
 import FIS.iLUVit.service.dto.ParentInfoForDirectorDto;
@@ -95,7 +94,7 @@ public class PresentationController {
      * 필터 기반으로 presentation 검색
      */
     @PostMapping("/presentation/search")
-    public SliceImpl<PresentationPreviewForUsers> searchByFilterAndMap(@RequestBody PresentationSearchFilterDTO dto, Pageable pageable){
+    public SliceImpl<PresentationPreviewForUsersResponse> searchByFilterAndMap(@RequestBody PresentationSearchFilterDTO dto, Pageable pageable){
         return presentationService.findByFilter(dto.getAreas(), dto.getTheme(), dto.getInterestedAge(), dto.getKindOf(), pageable);
     }
 }

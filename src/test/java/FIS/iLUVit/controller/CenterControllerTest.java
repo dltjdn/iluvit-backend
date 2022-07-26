@@ -400,7 +400,80 @@ class CenterControllerTest extends ResponseRequests {
                     )));
         }
 
+        @Test
+        @DisplayName("[error] 시설 주소가 잘못된 경우")
+        public void 시설주소가잘못된경우() throws Exception {
+            MockMultipartHttpServletRequestBuilder builder = MockMvcRequestBuilders.multipart("/center/1");
+            builder.with(new RequestPostProcessor() {
+                @Override
+                public MockHttpServletRequest postProcessRequest(MockHttpServletRequest request) {
+                    request.setMethod(HttpMethod.PATCH.toString());
+                    return request;
+                }
+            });
 
+            Mockito.doThrow(new CenterException(CenterErrorResult.CENTER_WRONG_ADDRESS))
+                    .when(centerService).modifyCenter(any(Long.class), any(Long.class), any(CenterModifyRequestDto.class), anyList(), any(MultipartFile.class));
+
+            MockMultipartFile requestDto = new MockMultipartFile("requestDto", null,
+                    "application/json", objectMapper.writeValueAsString(rightRequest).getBytes());
+
+
+
+            //when
+            ResultActions result = mockMvc.perform(
+                    builder.file("infoImages", multipartFile.getBytes())
+                            .file("profileImage", multipartFile.getBytes())
+                            .file(requestDto)
+                            .header(HttpHeaders.AUTHORIZATION, createJwtToken(createParent(1L)))
+                            .contentType(MediaType.APPLICATION_FORM_URLENCODED)
+            );
+
+            //then
+            result.andDo(print())
+                    .andExpect(status().isBadRequest())
+                    .andExpect(content().json(objectMapper.writeValueAsString(
+                            new ErrorResponse(HttpStatus.BAD_REQUEST
+                                    , CenterErrorResult.CENTER_WRONG_ADDRESS.getMessage())
+                    )));
+        }
+
+        @Test
+        @DisplayName("[success] 시설 수정 성공")
+        public void 시설수정성공() throws Exception {
+            MockMultipartHttpServletRequestBuilder builder = MockMvcRequestBuilders.multipart("/center/1");
+            builder.with(new RequestPostProcessor() {
+                @Override
+                public MockHttpServletRequest postProcessRequest(MockHttpServletRequest request) {
+                    request.setMethod(HttpMethod.PATCH.toString());
+                    return request;
+                }
+            });
+
+            Mockito.doReturn(1L)
+                    .when(centerService).modifyCenter(any(Long.class), any(Long.class), any(CenterModifyRequestDto.class), anyList(), any(MultipartFile.class));
+
+            MockMultipartFile requestDto = new MockMultipartFile("requestDto", null,
+                    "application/json", objectMapper.writeValueAsString(rightRequest).getBytes());
+
+
+
+            //when
+            ResultActions result = mockMvc.perform(
+                    builder.file("infoImages", multipartFile.getBytes())
+                            .file("profileImage", multipartFile.getBytes())
+                            .file(requestDto)
+                            .header(HttpHeaders.AUTHORIZATION, createJwtToken(createParent(1L)))
+                            .contentType(MediaType.APPLICATION_FORM_URLENCODED)
+            );
+
+            //then
+            result.andDo(print())
+                    .andExpect(status().isAccepted())
+                    .andExpect(content().json(objectMapper.writeValueAsString(
+                            1L
+                    )));
+        }
     }
 
 }
