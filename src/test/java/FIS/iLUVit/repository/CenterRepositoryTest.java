@@ -13,7 +13,6 @@ import FIS.iLUVit.repository.dto.CenterAndDistancePreview;
 import FIS.iLUVit.repository.dto.CenterBannerDto;
 import FIS.iLUVit.repository.dto.CenterMapPreview;
 import FIS.iLUVit.repository.dto.CenterPreview;
-import FIS.iLUVit.service.ImageService;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -23,7 +22,6 @@ import org.springframework.context.annotation.ComponentScan;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Slice;
 import org.springframework.data.domain.SliceImpl;
-import org.springframework.stereotype.Service;
 
 import javax.persistence.EntityManager;
 import java.time.LocalDate;
@@ -34,14 +32,11 @@ import java.util.Objects;
 import static FIS.iLUVit.Creator.*;
 import static org.assertj.core.api.Assertions.assertThat;
 
-@DataJpaTest(includeFilters = {@ComponentScan.Filter(ForDB.class), @ComponentScan.Filter(Service.class)})
+@DataJpaTest(includeFilters = @ComponentScan.Filter(ForDB.class))
 class CenterRepositoryTest {
 
     @Autowired
     CenterRepository centerRepository;
-
-    @Autowired
-    ImageService imageService;
 
     @Autowired
     EntityManager em;
