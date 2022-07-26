@@ -392,4 +392,65 @@ public class TeacherControllerTest {
         }
     }
 
+    @Nested
+    @DisplayName("교사 승인")
+    class acceptTeacher{
+
+        @Test
+        @DisplayName("[error] 원장이 아닌 사용자의 요청")
+        public void 원장아닌요청() throws Exception {
+            // given
+            String url = "/director/teacher/accept/{teacherId}";
+            UserErrorResult error = UserErrorResult.HAVE_NOT_AUTHORIZATION;
+            doThrow(new UserException(error))
+                    .when(teacherService)
+                    .acceptTeacher(any(), any());
+            // when
+            ResultActions result = mockMvc.perform(
+                    MockMvcRequestBuilders.patch(url, teacher.getId())
+                            .header("Authorization", createJwtToken(teacher))
+            );
+            // then
+            result.andExpect(status().isBadRequest())
+                    .andExpect(content().json(
+                            objectMapper.writeValueAsString(new ErrorResponse(error.getHttpStatus(), error.getMessage()))
+                    ));
+        }
+
+        @Test
+        @DisplayName("[error] 올바르지 않은 교사 승인")
+        public void 승인교사에러() throws Exception {
+            // given
+            String url = "/director/teacher/accept/{teacherId}";
+            UserErrorResult error = UserErrorResult.NOT_VALID_REQUEST;
+            doThrow(new UserException(error))
+                    .when(teacherService)
+                    .acceptTeacher(any(), any());
+            // when
+            ResultActions result = mockMvc.perform(
+                    MockMvcRequestBuilders.patch(url, director.getId())
+                            .header("Authorization", director.getId())
+            );
+            // then
+            result.andExpect(status().isBadRequest())
+                    .andExpect(content().json(
+                            objectMapper.writeValueAsString(new ErrorResponse(error.getHttpStatus(), error.getMessage()))
+                    ));
+        }
+
+        @Test
+        @DisplayName("[success] 교사승인 성공")
+        public void 교사승인성공() throws Exception {
+            // given
+            String url = "/director/teacher/accept/{teacherId}";
+            // when
+            ResultActions result = mockMvc.perform(
+                    MockMvcRequestBuilders.patch(url, teacher.getId())
+                            .header("Authorization", director.getId())
+            );
+            // then
+            result.andExpect(status().isOk());
+        }
+    }
+
 }

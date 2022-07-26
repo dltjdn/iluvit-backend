@@ -88,7 +88,7 @@ public class TeacherServiceTest {
         teacher2 = Creator.createTeacher(4L, "teacher2", center1, Auth.TEACHER, Approval.ACCEPT);
         teacher3 = Creator.createTeacher(5L, "teacher3", center1, Auth.TEACHER, Approval.WAITING);
         teacher4 = Creator.createTeacher(6L, "teacher4", null, Auth.TEACHER, null);
-        teacher5 = Creator.createTeacher(7L, "teacher3", center1, Auth.TEACHER, Approval.REJECT);
+        teacher5 = Creator.createTeacher(7L, "teacher3", center1, Auth.TEACHER, Approval.WAITING);
         board1 = createBoard(8L, "자유게시판", BoardKind.NORMAL, null, true);
         board2 = createBoard(9L, "맛집게시판", BoardKind.NORMAL, null, true);
         board3 = createBoard(10L, "공지게시판", BoardKind.NORMAL, center1, true);
@@ -431,7 +431,97 @@ public class TeacherServiceTest {
     }
 
 
+    @Nested
+    @DisplayName("교사승인")
+    class acceptTeacher{
+        @Test
+        @DisplayName("[error] 원장이 아닌 사용자의 요청")
+        public void 원장이아닌사용자의요청() {
+            // given
+            doReturn(Optional.empty())
+                    .when(teacherRepository)
+                    .findDirectorByIdWithCenterWithTeacher(teacher2.getId());
+            // when
+            UserException result = assertThrows(UserException.class,
+                    () -> target.acceptTeacher(teacher2.getId(), teacher3.getId()));
+            // then
+            assertThat(result.getErrorResult()).isEqualTo(UserErrorResult.HAVE_NOT_AUTHORIZATION);
+        }
 
+        @Test
+        @DisplayName("[error] 올바르지 않은 교사의 승인")
+        public void 요청하지않은교사의승인() {
+            // given
+            center1.getTeachers().add(teacher1);
+            center1.getTeachers().add(teacher2);
+            center1.getTeachers().add(teacher3);
+            center1.getTeachers().add(teacher5);
+            doReturn(Optional.of(teacher1))
+                    .when(teacherRepository)
+                    .findDirectorByIdWithCenterWithTeacher(teacher1.getId());
+            // when
+            UserException result = assertThrows(UserException.class,
+                    () -> target.acceptTeacher(teacher1.getId(), teacher4.getId()));
+            // then
+            assertThat(result.getErrorResult()).isEqualTo(UserErrorResult.NOT_VALID_REQUEST);
+        }
 
+        @Test
+        @DisplayName("[success] 정상적인 요청")
+        public void 정상적인요청() {
+            // given
+            center1.getTeachers().add(teacher1);
+            center1.getTeachers().add(teacher2);
+            center1.getTeachers().add(teacher3);
+            center1.getTeachers().add(teacher5);
+            doReturn(Optional.of(teacher1))
+                    .when(teacherRepository)
+                    .findDirectorByIdWithCenterWithTeacher(teacher1.getId());
+            doReturn(List.of(board3, board4))
+                    .when(boardRepository)
+                    .findDefaultByCenter(teacher1.getCenter().getId());
+            // when
+            Teacher result = target.acceptTeacher(teacher1.getId(), teacher3.getId());
+            // then
+            assertThat(result.getId()).isEqualTo(teacher3.getId());
+            assertThat(result.getApproval()).isEqualTo(Approval.ACCEPT);
+            verify(boardRepository, times(1)).findDefaultByCenter(teacher1.getCenter().getId());
+            verify(bookmarkRepository, times(2)).save(any());
+        }
+    }
+
+    @Nested
+    @DisplayName("교사 승인신청 삭제/거절")
+    class fireTeacher{
+        @Test
+        @DisplayName("[error] 원장이 아닌 사용자의 요청")
+        public void 원장이아닌사용자의요청() {
+            // given
+            doReturn(Optional.empty())
+                    .when(teacherRepository)
+                    .findDirectorById(any());
+            // when
+            UserException result = assertThrows(UserException.class,
+                    () -> target.fireTeacher(teacher1.getId(), teacher2.getId()));
+            // then
+            assertThat(result.getErrorResult()).isEqualTo(UserErrorResult.HAVE_NOT_AUTHORIZATION);
+        }
+//        @Test
+//        @DisplayName("[error] 올바르지않은 교사 삭제")
+//        public void 올바르지않은교사() {
+//            // given
+//            center1.getTeachers().add(teacher1);
+//            center1.getTeachers().add(teacher2);
+//            center1.getTeachers().add(teacher3);
+//            center1.getTeachers().add(teacher5);
+//            doReturn(Optional.of(teacher1))
+//                    .when(teacherRepository)
+//                    .findDirectorById(teacher1.getId());
+//            // when
+//
+//            // then
+//
+//        }
+    }
 
 }
