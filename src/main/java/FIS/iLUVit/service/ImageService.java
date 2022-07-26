@@ -20,5 +20,4 @@ public interface ImageService {
 
     public List<String> getInfoImages(String infoImagePath);
 
-    public void saveImage(MultipartFile image, String destPath);
 }

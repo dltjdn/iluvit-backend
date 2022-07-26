@@ -2,6 +2,8 @@ package FIS.iLUVit.controller;
 
 import FIS.iLUVit.config.argumentResolver.Login;
 import FIS.iLUVit.controller.dto.*;
+import FIS.iLUVit.exception.UserErrorResult;
+import FIS.iLUVit.exception.UserException;
 import FIS.iLUVit.repository.dto.CenterAndDistancePreview;
 import FIS.iLUVit.repository.dto.CenterMapPreview;
 import FIS.iLUVit.repository.dto.CenterPreview;
@@ -75,9 +77,11 @@ public class CenterController {
     @PatchMapping("/center/{centerId}")
     public Long modifyCenter(@PathVariable("centerId") Long centerId,
                              @Login Long userId,
-                             @RequestPart CenterModifyRequestDto requestDto,
+                             @RequestPart @Validated CenterModifyRequestDto requestDto,
                              @RequestPart(required = false) List<MultipartFile> infoImages,
                              @RequestPart(required = false) MultipartFile profileImage){
+        if(userId == null)
+            throw new UserException(UserErrorResult.NOT_LOGIN);
         return centerService.modifyCenter(centerId, userId, requestDto, infoImages, profileImage);
     }
 

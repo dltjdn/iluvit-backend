@@ -16,7 +16,7 @@ import java.util.Set;
 /**
  * s3 testStub
  */
-public class ImageServiceStubAmazon {
+public class ImageServiceStubAmazon implements ImageService {
     String prefix = "https://iluvit.s3.ap-northeast-2.amazonaws.com/";
 
     /**
@@ -24,20 +24,23 @@ public class ImageServiceStubAmazon {
      */
     protected Long abstractEntityId(BaseImageEntity entity) {
         try {
-            Class<? extends BaseImageEntity> clazz = entity.getClass();
+            Class<?> clazz = entity.getClass();
             Field[] declaredFields = clazz.getDeclaredFields();
-            for (Field field : declaredFields) {
-                Annotation annotation = field.getAnnotation(Id.class);
-                if (annotation != null) {
-                    field.setAccessible(true);
-                    Long entityId = (Long) field.get(entity);
-                    return entityId;
+            while(true) {
+                for (Field field : declaredFields) {
+                    Annotation annotation = field.getAnnotation(Id.class);
+                    if (annotation != null) {
+                        field.setAccessible(true);
+                        Long entityId = (Long) field.get(entity);
+                        return entityId;
+                    }
                 }
+                clazz = clazz.getSuperclass();
+                declaredFields = clazz.getDeclaredFields();
             }
         } catch (IllegalAccessException exception) {
             throw new ImageException(ImageErrorResult.IMAGE_ANALYZE_FAILED);
         }
-        return null;
     }
 
     /**
