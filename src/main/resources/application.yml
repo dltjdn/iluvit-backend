@@ -27,7 +27,7 @@ spring:
       - secret
       - s3
       - map
-    active: release
+    active: develop
     group:
       develop: iluvit-develop, h2, local-image
       release: iluvit-release, mysql, server-image
