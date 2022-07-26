@@ -184,6 +184,20 @@ class CenterControllerTest extends ResponseRequests {
         result.andExpect(status().isOk());
     }
 
+    @Nested
+    @DisplayName("시설 수정")
+    class 시설수정{
+        @Test
+        @DisplayName("[error] 시설 요청 오류")
+        public void 시설요청오류() throws Exception {
+            //given
+
+            //when
+
+            //then
+        }
+    }
+
 }
 
 

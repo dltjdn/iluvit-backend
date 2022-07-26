@@ -172,7 +172,7 @@ public class S3ImageService implements ImageService {
         entity.updateProfileImagePath(prefix + destPath);
     }
 
-    private void saveImage(MultipartFile image, String destPath) {
+    public void saveImage(MultipartFile image, String destPath) {
         ObjectMetadata objectMetadata = new ObjectMetadata();
         objectMetadata.setContentLength(image.getSize());
         objectMetadata.setContentType(image.getContentType());

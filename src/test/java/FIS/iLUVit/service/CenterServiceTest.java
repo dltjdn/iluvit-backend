@@ -58,7 +58,7 @@ public class CenterServiceTest {
     @InjectMocks
     CenterService target;
 
-    @Spy
+    @Mock
     ImageService imageService;
 
     @Nested
@@ -285,16 +285,19 @@ public class CenterServiceTest {
             Mockito.doReturn(Optional.of(acceptTeacher))
                     .when(userRepository).findTeacherById(1L);
             CenterModifyRequestDto request = new CenterModifyRequestDto();
-            request.setAddress("경기도 의정부시 호암로 256");
+            request.setAddress("서울특별시 금천구 가산디지털2로 108 뉴티캐슬");
             //when
             Mockito.doReturn(Pair.of(126.8806602, 37.4778951))
                     .when(mapService).convertAddressToLocation("서울특별시 금천구 가산디지털2로 108 뉴티캐슬");
+
             target.modifyCenter(1L, 1L, request, multipartFileList, multipartFile);
 
             //then
-            assertThat(center.getLongitude()).isEqualTo(127.0452449);
+            assertThat(center.getLongitude()).isEqualTo(126.8806602);
             assertThat(center.getLatitude()).isEqualTo(37.4778951);
             assertThat(center.getAddress()).isEqualTo("서울특별시 금천구 가산디지털2로 108 뉴티캐슬");
+            System.out.println("center.getProfileImagePath() = " + center.getProfileImagePath());
+            System.out.println("center = " + center.getInfoImagePath());
         }
     }
 }
