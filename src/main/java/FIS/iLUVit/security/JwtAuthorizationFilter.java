@@ -62,7 +62,7 @@ public class JwtAuthorizationFilter extends BasicAuthenticationFilter {
 
             // signature, jwt 만료등 유효성 검사에 실패할 경우 -> 예외처리 해야됨
         } catch (JWTVerificationException e) {
-            throw new JWTVerificationException("유효하지 않은 토큰입니다.");
+//            throw new JWTVerificationException("유효하지 않은 토큰입니다.");
         }
         // 다음 필터로 진행
         chain.doFilter(request, response);

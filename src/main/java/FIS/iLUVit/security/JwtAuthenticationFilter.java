@@ -8,7 +8,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 import javax.servlet.FilterChain;
@@ -63,8 +62,8 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
         // HMAC512 방식의 Hash 암호화
         String jwtToken = JWT.create()
                 .withSubject("ILuvIt")
-//                .withExpiresAt(new Date(System.currentTimeMillis() + (60000 * 60 * 3))) // JWT 만료시간 밀리세컨단위
-                .withExpiresAt(new Date(System.currentTimeMillis() + (60))) // JWT 만료시간 밀리세컨단위
+                .withExpiresAt(new Date(System.currentTimeMillis() + (60000 * 60 * 3))) // JWT 만료시간 밀리세컨단위
+//                .withExpiresAt(new Date(System.currentTimeMillis() + (60))) // JWT 만료시간 밀리세컨단위
                 .withClaim("id", principalDetails.getUser().getId())
                 .sign(Algorithm.HMAC512("symmetricKey"));   // 대칭키 들어가 자리(노출 금지)
         response.addHeader("Authorization", "Bearer " + jwtToken);

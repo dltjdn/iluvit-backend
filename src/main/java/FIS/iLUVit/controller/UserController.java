@@ -60,4 +60,12 @@ public class UserController {
         return userService.deleteUserAlarm(userId, request.getAlarmId());
     }
 
+    @PostMapping("/login")
+    public LoginResponse login(@Valid @RequestBody LoginRequest request) {
+        Authentication authentication = authenticationManager.authenticate(
+                new UsernamePasswordAuthenticationToken(request.getLoginId(), request.getPassword()));
+        SecurityContextHolder.getContext().setAuthentication(authentication);
+        String jwt = jwtUtils.createAccessToken(authentication);
+        return null;
+    }
 }
