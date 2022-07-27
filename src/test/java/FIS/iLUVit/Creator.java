@@ -252,6 +252,13 @@ public class Creator {
         return center;
     }
 
+    public static Center createCenter(String name) {
+        Center center = Center.builder()
+                .name(name)
+                .build();
+        return center;
+    }
+
     public static Center createCenter(String name, Integer score, Double latitude, Double longitude) {
         Center center = Center.builder()
                 .name(name)

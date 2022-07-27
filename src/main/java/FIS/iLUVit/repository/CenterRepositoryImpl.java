@@ -179,7 +179,7 @@ public class CenterRepositoryImpl extends CenterQueryMethod implements CenterRep
                 .fetch();
 
 
-        while(result.size() <= 10 && searchContent != null && distance <= 1600){
+        while(result.size() <= 10 && searchContent != null && !searchContent.equals("") && distance <= 1600){
             distance = distance * 3;
             result = jpaQueryFactory.select(new QCenterMapPreview(center.id, center.name, center.longitude, center.latitude))
                         .from(center)
