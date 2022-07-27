@@ -22,7 +22,7 @@ public interface ChatRoomRepository extends JpaRepository<ChatRoom, Long> {
             "left join fetch cr.post p " +
             "left join fetch p.board b " +
             "left join fetch b.center c " +
-            "where cr.receiver.id = :userId order by cr.createdDate desc ")
+            "where cr.receiver.id = :userId order by cr.updatedDate desc ")
     Slice<ChatRoom> findByUser(@Param("userId") Long userId, @Param("userId") Pageable pageable);
 
     @Modifying(clearAutomatically = true)

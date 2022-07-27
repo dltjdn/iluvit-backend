@@ -1,9 +1,6 @@
 package FIS.iLUVit.service;
 
-import FIS.iLUVit.controller.dto.PresentationModifyRequestDto;
-import FIS.iLUVit.controller.dto.PresentationPreviewAndImageForTeacher;
-import FIS.iLUVit.controller.dto.PresentationRequestRequestFormDto;
-import FIS.iLUVit.controller.dto.PresentationResponseDto;
+import FIS.iLUVit.controller.dto.*;
 import FIS.iLUVit.domain.*;
 import FIS.iLUVit.domain.alarms.PresentationCreatedAlarm;
 import FIS.iLUVit.domain.embeddable.Area;
@@ -200,7 +197,7 @@ public class PresentationService {
                 .collect(Collectors.toList());
     }
 
-    public SliceImpl<PresentationPreviewForUsers> findByFilter(List<Area> areas, Theme theme, Integer interestedAge, KindOf kindOf, Pageable pageable) {
+    public SliceImpl<PresentationPreviewForUsersResponse> findByFilter(List<Area> areas, Theme theme, Integer interestedAge, KindOf kindOf, Pageable pageable) {
         return presentationRepository.findByFilter(areas, theme, interestedAge, kindOf, pageable);
     }
 }

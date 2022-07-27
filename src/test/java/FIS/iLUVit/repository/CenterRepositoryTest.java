@@ -38,7 +38,6 @@ class CenterRepositoryTest {
     @Autowired
     CenterRepository centerRepository;
 
-
     @Autowired
     EntityManager em;
 
@@ -421,7 +420,7 @@ class CenterRepositoryTest {
             em.clear();
             String searchContent = "어린이집";
             //when
-            List<CenterMapPreview> result = centerRepository.findByFilterForMap(127.0147458, 37.5015178, 1, searchContent);
+            List<CenterMapPreview> result = centerRepository.findByFilterForMap(127.0147458, 37.5015178, 1.0, searchContent);
 
             //then
             assertThat(result.size()).isEqualTo(6);

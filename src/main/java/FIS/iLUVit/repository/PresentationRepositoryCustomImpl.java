@@ -1,5 +1,6 @@
 package FIS.iLUVit.repository;
 
+import FIS.iLUVit.controller.dto.PresentationPreviewForUsersResponse;
 import FIS.iLUVit.domain.embeddable.Area;
 import FIS.iLUVit.domain.embeddable.Theme;
 import FIS.iLUVit.domain.enumtype.KindOf;
@@ -12,8 +13,10 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.SliceImpl;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+import java.util.stream.Collectors;
 
 import static FIS.iLUVit.domain.QCenter.center;
 import static FIS.iLUVit.domain.QPresentation.presentation;
@@ -25,7 +28,7 @@ public class PresentationRepositoryCustomImpl extends CenterQueryMethod implemen
     private final JPAQueryFactory jpaQueryFactory;
 
     @Override
-    public SliceImpl<PresentationPreviewForUsers> findByFilter(List<Area> areas, Theme theme, Integer interestedAge, KindOf kindOf, Pageable pageable) {
+    public SliceImpl<PresentationPreviewForUsersResponse> findByFilter(List<Area> areas, Theme theme, Integer interestedAge, KindOf kindOf, Pageable pageable) {
 
         LocalDate now = LocalDate.now();
 
@@ -48,7 +51,20 @@ public class PresentationRepositoryCustomImpl extends CenterQueryMethod implemen
             content.remove(pageable.getPageSize());
             hasNext = true;
         }
-        return new SliceImpl<>(content, pageable, hasNext);
+
+        List<PresentationPreviewForUsersResponse> collect = content.stream().map(c -> {
+            PresentationPreviewForUsersResponse temp = new PresentationPreviewForUsersResponse(c);
+            String infoImagePath = c.getInfoImages();
+            List<String> infoImages;
+            if(infoImagePath == null || infoImagePath.equals(""))
+                infoImages = new ArrayList<>();
+            else
+                infoImages = List.of(infoImagePath.split(","));
+            temp.setInfoImages(infoImages);
+            return temp;
+        }).collect(Collectors.toList());
+
+        return new SliceImpl<>(collect, pageable, hasNext);
 
     }
 

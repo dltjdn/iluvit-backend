@@ -14,12 +14,12 @@ public class CenterSearchMapDto {
     @NotNull
     private double latitude;
     @NotNull
-    private Integer distance;
+    private Double distance;
 
     private String searchContent;
 
     @Builder
-    public CenterSearchMapDto(double longitude, double latitude, Integer distance) {
+    public CenterSearchMapDto(double longitude, double latitude, Double distance) {
         this.longitude = longitude;
         this.latitude = latitude;
         this.distance = distance;

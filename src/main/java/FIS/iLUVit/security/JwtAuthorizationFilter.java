@@ -44,31 +44,26 @@ public class JwtAuthorizationFilter extends BasicAuthenticationFilter {
             return;
         }
 
-        // 토큰을 검증해서 정상적인 사용자인지 확인
-        String jwtToken = request.getHeader("Authorization").replace("Bearer ", "");
-
-        Long id;
         try {
+            // 토큰을 검증해서 정상적인 사용자인지 확인
+            String jwtToken = request.getHeader("Authorization").replace("Bearer ", "");
             DecodedJWT decodedJWT = JWT.require(Algorithm.HMAC512("symmetricKey")).build().verify(jwtToken);
-            id = decodedJWT.getClaim("id").asLong();
+            Long id = decodedJWT.getClaim("id").asLong();
+            User user = userRepository.findById(id).
+                    orElseThrow(()->new JWTVerificationException("유효하지 않은 토큰입니다."));
+
+            // Jwt 토큰 서명을 통해서 서명이 정상이면 Authentication 객체를 만들어준다.
+            PrincipalDetails principalDetails = new PrincipalDetails(user);
+            Authentication authentication = new UsernamePasswordAuthenticationToken(
+                    principalDetails, null, principalDetails.getAuthorities());
+
+            // 권한 구분을 위해 강제로 시큐리티의 세션에 접근하여 Authentication 객체를 저장 - 일회성으로 사용하기 때문에 세션에 저장해도 됨
+            SecurityContextHolder.getContext().setAuthentication(authentication);
+
+            // signature, jwt 만료등 유효성 검사에 실패할 경우 -> 예외처리 해야됨
         } catch (JWTVerificationException e) {
-            // jwt 만료등 유효성 검사에 실패할 경우 -> 예외처리 해야됨
-            throw new TokenExpiredException("유효하지않은 토큰입니다.");
+            throw new JWTVerificationException("유효하지 않은 토큰입니다.");
         }
-
-        // 서명이 정상적인지 확인
-        User user = userRepository.findById(id).orElse(null);
-        if (user == null) {
-            throw new TokenExpiredException("존재하지 않는 사용자입니다.");
-        }
-
-        // Jwt 토큰 서명을 통해서 서명이 정상이면 Authentication 객체를 만들어준다.
-        PrincipalDetails principalDetails = new PrincipalDetails(user);
-        Authentication authentication = new UsernamePasswordAuthenticationToken(principalDetails, null, principalDetails.getAuthorities());
-
-        // 권한 구분을 위해 강제로 시큐리티의 세션에 접근하여 Authentication 객체를 저장 - 일회성으로 사용하기 때문에 세션에 저장해도 됨
-        SecurityContextHolder.getContext().setAuthentication(authentication);
-
         // 다음 필터로 진행
         chain.doFilter(request, response);
     }

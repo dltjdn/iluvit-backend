@@ -2,6 +2,8 @@ package FIS.iLUVit.controller;
 
 import FIS.iLUVit.config.argumentResolver.Login;
 import FIS.iLUVit.controller.dto.*;
+import FIS.iLUVit.exception.UserErrorResult;
+import FIS.iLUVit.exception.UserException;
 import FIS.iLUVit.repository.dto.CenterAndDistancePreview;
 import FIS.iLUVit.repository.dto.CenterMapPreview;
 import FIS.iLUVit.repository.dto.CenterPreview;
@@ -11,6 +13,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
 import org.springframework.data.domain.SliceImpl;
+import org.springframework.http.HttpStatus;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -73,11 +76,14 @@ public class CenterController {
      * 시설 정보 수정
      */
     @PatchMapping("/center/{centerId}")
+    @ResponseStatus(HttpStatus.ACCEPTED)
     public Long modifyCenter(@PathVariable("centerId") Long centerId,
                              @Login Long userId,
-                             @RequestPart CenterModifyRequestDto requestDto,
+                             @RequestPart @Validated CenterModifyRequestDto requestDto,
                              @RequestPart(required = false) List<MultipartFile> infoImages,
                              @RequestPart(required = false) MultipartFile profileImage){
+        if(userId == null)
+            throw new UserException(UserErrorResult.NOT_LOGIN);
         return centerService.modifyCenter(centerId, userId, requestDto, infoImages, profileImage);
     }
 
