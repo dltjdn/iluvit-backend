@@ -1,28 +1,24 @@
-package FIS.iLUVit.filter;
+package FIS.iLUVit.security;
 
 import FIS.iLUVit.domain.User;
 import FIS.iLUVit.repository.UserRepository;
-import FIS.iLUVit.uesrdetails.PrincipalDetails;
+import FIS.iLUVit.security.uesrdetails.PrincipalDetails;
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.algorithms.Algorithm;
 import com.auth0.jwt.exceptions.JWTVerificationException;
 import com.auth0.jwt.exceptions.TokenExpiredException;
 import com.auth0.jwt.interfaces.DecodedJWT;
-import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.web.authentication.www.BasicAuthenticationFilter;
-import org.springframework.stereotype.Component;
 
 import javax.servlet.FilterChain;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
-import java.util.Date;
 
 // 인증이나 권한이 필요한 주소요청이 있을 때 해당 필터(BasicAuthenticationFilter) 동작
 // 권한이나 인증이 필요한 주소가 아니라면 해당 필터는 지나친다.
@@ -57,8 +53,7 @@ public class JwtAuthorizationFilter extends BasicAuthenticationFilter {
             id = decodedJWT.getClaim("id").asLong();
         } catch (JWTVerificationException e) {
             // jwt 만료등 유효성 검사에 실패할 경우 -> 예외처리 해야됨
-            chain.doFilter(request, response);
-            return ;
+            throw new TokenExpiredException("유효하지않은 토큰입니다.");
         }
 
         // 서명이 정상적인지 확인

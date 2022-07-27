@@ -1,9 +1,8 @@
 package FIS.iLUVit.config;
 
-import FIS.iLUVit.filter.CustomAuthenticationSuccessHandler;
-import FIS.iLUVit.filter.ExceptionHandlerFilter;
-import FIS.iLUVit.filter.JwtAuthenticationFilter;
-import FIS.iLUVit.filter.JwtAuthorizationFilter;
+import FIS.iLUVit.security.CustomAuthenticationSuccessHandler;
+import FIS.iLUVit.security.ExceptionHandlerFilter;
+import FIS.iLUVit.security.JwtAuthorizationFilter;
 import FIS.iLUVit.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
@@ -16,7 +15,6 @@ import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
 import org.springframework.security.web.authentication.logout.LogoutFilter;
 import org.springframework.web.cors.CorsUtils;
-import org.springframework.web.filter.CorsFilter;
 
 @Configuration
 @EnableWebSecurity
@@ -36,7 +34,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .formLogin().disable()  // springSecurity가 제공하는 formLogin 기능 사용X
                 .httpBasic().disable()  // 매 요청마다 id, pwd 보내는 방식으로 인증하는 httpBasic 사용X
                 .addFilterBefore(new ExceptionHandlerFilter(), LogoutFilter.class)
-                .addFilter(jwtAuthenticationFilter())
+//                .addFilter(jwtAuthenticationFilter())
                 .addFilter(jwtAuthorizationFilter())
                 .authorizeRequests()
                 .requestMatchers(CorsUtils::isPreFlightRequest).permitAll()
@@ -58,12 +56,12 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         return new CustomAuthenticationSuccessHandler();
     }
 
-    @Bean
-    public JwtAuthenticationFilter jwtAuthenticationFilter() throws Exception {
-        JwtAuthenticationFilter jwtAuthenticationFilter = new JwtAuthenticationFilter(authenticationManagerBean());
-        jwtAuthenticationFilter.setAuthenticationSuccessHandler(authenticationSuccessHandler());
-        return jwtAuthenticationFilter;
-    }
+//    @Bean
+//    public JwtAuthenticationFilter jwtAuthenticationFilter() throws Exception {
+//        JwtAuthenticationFilter jwtAuthenticationFilter = new JwtAuthenticationFilter(authenticationManagerBean());
+//        jwtAuthenticationFilter.setAuthenticationSuccessHandler(authenticationSuccessHandler());
+//        return jwtAuthenticationFilter;
+//    }
 
     @Bean
     public JwtAuthorizationFilter jwtAuthorizationFilter() throws Exception {

@@ -10,7 +10,7 @@ import FIS.iLUVit.exception.AuthNumberErrorResult;
 import FIS.iLUVit.exception.AuthNumberException;
 import FIS.iLUVit.exception.SignupErrorResult;
 import FIS.iLUVit.exception.SignupException;
-import FIS.iLUVit.filter.LoginResponse;
+import FIS.iLUVit.security.LoginResponse;
 import FIS.iLUVit.repository.AlarmRepository;
 import FIS.iLUVit.repository.AuthNumberRepository;
 import FIS.iLUVit.repository.UserRepository;

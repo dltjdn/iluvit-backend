@@ -1,4 +1,4 @@
-package FIS.iLUVit.filter;
+package FIS.iLUVit.security;
 
 import FIS.iLUVit.exception.exceptionHandler.ErrorResponse;
 import com.auth0.jwt.exceptions.JWTVerificationException;

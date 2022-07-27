@@ -4,7 +4,7 @@ import FIS.iLUVit.config.argumentResolver.Login;
 import FIS.iLUVit.controller.dto.AlarmDeleteDto;
 import FIS.iLUVit.controller.dto.AlarmDto;
 import FIS.iLUVit.controller.dto.UpdatePasswordRequest;
-import FIS.iLUVit.filter.LoginResponse;
+import FIS.iLUVit.security.LoginResponse;
 import FIS.iLUVit.service.UserService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -41,12 +41,17 @@ public class UserController {
     }
 
     @GetMapping("/alarm")
-    public Slice<AlarmDto> getAlarm(@Login Long userId, Pageable pageable){
+    public Slice<AlarmDto> getAlarm(@Login Long userId, Pageable pageable) {
         return userService.findUserAlarm(userId, pageable);
     }
 
     @DeleteMapping("/alarm")
-    public Integer deleteAlarm(@Login Long userId, @RequestBody AlarmDeleteDto request){
+    public Integer deleteAlarm(@Login Long userId, @RequestBody AlarmDeleteDto request) {
         return userService.deleteUserAlarm(userId, request.getAlarmId());
+    }
+
+    @PostMapping("/login")
+    public void login() {
+
     }
 }

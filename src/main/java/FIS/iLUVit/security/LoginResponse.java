@@ -1,4 +1,4 @@
-package FIS.iLUVit.filter;
+package FIS.iLUVit.security;
 
 import FIS.iLUVit.domain.User;
 import FIS.iLUVit.domain.enumtype.Auth;

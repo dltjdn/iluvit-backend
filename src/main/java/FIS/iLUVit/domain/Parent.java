@@ -4,7 +4,7 @@ import FIS.iLUVit.controller.dto.LoginParentResponse;
 import FIS.iLUVit.controller.dto.ParentDetailRequest;
 import FIS.iLUVit.domain.embeddable.Theme;
 import FIS.iLUVit.domain.enumtype.Auth;
-import FIS.iLUVit.filter.LoginResponse;
+import FIS.iLUVit.security.LoginResponse;
 import lombok.*;
 import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;

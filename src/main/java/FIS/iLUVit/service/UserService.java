@@ -7,7 +7,7 @@ import FIS.iLUVit.domain.User;
 import FIS.iLUVit.domain.alarms.Alarm;
 import FIS.iLUVit.domain.enumtype.AuthKind;
 import FIS.iLUVit.exception.*;
-import FIS.iLUVit.filter.LoginResponse;
+import FIS.iLUVit.security.LoginResponse;
 import FIS.iLUVit.repository.AlarmRepository;
 import FIS.iLUVit.repository.AuthNumberRepository;
 import FIS.iLUVit.repository.UserRepository;

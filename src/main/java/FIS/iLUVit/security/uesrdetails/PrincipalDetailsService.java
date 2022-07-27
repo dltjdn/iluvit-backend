@@ -1,4 +1,4 @@
-package FIS.iLUVit.uesrdetails;
+package FIS.iLUVit.security.uesrdetails;
 
 import FIS.iLUVit.domain.User;
 import FIS.iLUVit.exception.UserException;
