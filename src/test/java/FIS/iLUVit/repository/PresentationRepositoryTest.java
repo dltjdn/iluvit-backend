@@ -2,11 +2,11 @@ package FIS.iLUVit.repository;
 
 import FIS.iLUVit.config.argumentResolver.ForDB;
 import FIS.iLUVit.controller.dto.PresentationPreviewForUsersResponse;
-import FIS.iLUVit.domain.Center;
-import FIS.iLUVit.domain.Presentation;
+import FIS.iLUVit.domain.*;
 import FIS.iLUVit.domain.embeddable.Area;
 import FIS.iLUVit.domain.embeddable.Theme;
 import FIS.iLUVit.domain.enumtype.KindOf;
+import FIS.iLUVit.repository.dto.PresentationWithPtDatesDto;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -17,6 +17,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.SliceImpl;
 
 import javax.persistence.EntityManager;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -88,13 +89,64 @@ public class PresentationRepositoryTest {
     class 설명회버튼조회내용{
 
         @Test
-        @DisplayName("[success] 학부모의 시설 설명회 상세보기")
-        public void 학부모의시설설명회상세보기() throws Exception {
+        @DisplayName("[success] 시설 설명회 상세보기 로그인 X")
+        public void 학부모의시설설명회상세보기로그인X() throws Exception {
             //given
+            Center center = createCenter("test");
+            Presentation presentation1 = createInvalidPresentation(center, 1, 3);
+            Presentation presentation2 = createValidPresentation(center, 1, 3);
+            PtDate ptDate1 = createCanRegisterPtDate(presentation1);
+            PtDate ptDate3 = createCanRegisterPtDate(presentation2);
+            PtDate ptDate2 = createCanRegisterPtDate(presentation2);
+            em.persist(center);
+            em.persist(presentation1);
+            em.persist(presentation2);
+            em.persist(ptDate1);
+            em.persist(ptDate2);
+            em.persist(ptDate3);
+            em.flush();
+            em.clear();
 
             //when
+            List<PresentationWithPtDatesDto> result = target.findByCenterAndDateWithPtDates(center.getId(), LocalDate.now());
 
             //then
+            assertThat(result.size()).isEqualTo(2);
+            assertThat(result.get(0).getPtDateId()).isEqualTo(ptDate2.getId());
+            assertThat(result.get(0).getWaitingId()).isNull();
+        }
+
+        @Test
+        @DisplayName("[success] 학부모 시설 상세보기 로그인 O")
+        public void 학부모시설상세보기로그인O() throws Exception {
+            //given
+            Center center = createCenter("test");
+            Parent parent = createParent();
+            Presentation presentation1 = createInvalidPresentation(center, 1, 3);
+            Presentation presentation2 = createValidPresentation(center, 1, 3);
+            PtDate ptDate1 = createCanRegisterPtDate(presentation1);
+            PtDate ptDate3 = createCanRegisterPtDate(presentation2);
+            PtDate ptDate2 = createCanRegisterPtDate(presentation2);
+            Participation joinParticipation = createJoinParticipation(ptDate3, parent);
+            Waiting waiting = createWaiting(ptDate3, parent, 1);
+            em.persist(center);
+            em.persist(presentation1);
+            em.persist(presentation2);
+            em.persist(ptDate1);
+            em.persist(ptDate2);
+            em.persist(ptDate3);
+            em.persist(parent);
+            em.persist(waiting);
+            em.persist(joinParticipation);
+            em.flush();
+            em.clear();
+            //when
+            List<PresentationWithPtDatesDto> result = target.findByCenterAndDateWithPtDates(center.getId(), LocalDate.now(), parent.getId());
+            //then
+            assertThat(result.size()).isEqualTo(2);
+            assertThat(result.get(0).getPtDateId()).isEqualTo(ptDate2.getId());
+            assertThat(result.get(0).getWaitingId()).isNull();
+
         }
     }
 
