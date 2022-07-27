@@ -11,7 +11,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
-public class CustomAuthenticationSuccessHandler implements AuthenticationSuccessHandler {
+public class AuthenticationSuccessHandlerCustom implements AuthenticationSuccessHandler {
 
     @Override
     public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response, Authentication authentication) throws IOException, ServletException {
@@ -19,7 +19,6 @@ public class CustomAuthenticationSuccessHandler implements AuthenticationSuccess
         LoginResponse loginResponse = principalDetails.getUser().getUserInfo();
         response.setContentType("application/json");
         response.getWriter().write(convertObjectToJson(loginResponse));
-
     }
 
     public String convertObjectToJson(Object object) throws JsonProcessingException {

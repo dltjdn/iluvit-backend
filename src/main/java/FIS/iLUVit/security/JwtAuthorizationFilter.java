@@ -8,6 +8,7 @@ import com.auth0.jwt.algorithms.Algorithm;
 import com.auth0.jwt.exceptions.JWTVerificationException;
 import com.auth0.jwt.exceptions.TokenExpiredException;
 import com.auth0.jwt.interfaces.DecodedJWT;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -22,6 +23,7 @@ import java.io.IOException;
 
 // 인증이나 권한이 필요한 주소요청이 있을 때 해당 필터(BasicAuthenticationFilter) 동작
 // 권한이나 인증이 필요한 주소가 아니라면 해당 필터는 지나친다.
+@Slf4j
 public class JwtAuthorizationFilter extends BasicAuthenticationFilter {
 
     private final UserRepository userRepository;
@@ -62,7 +64,7 @@ public class JwtAuthorizationFilter extends BasicAuthenticationFilter {
 
             // signature, jwt 만료등 유효성 검사에 실패할 경우 -> 예외처리 해야됨
         } catch (JWTVerificationException e) {
-//            throw new JWTVerificationException("유효하지 않은 토큰입니다.");
+            log.warn("[JwtAuthorizationFilter] token 파싱 실패 : {}", e.getMessage());
         }
         // 다음 필터로 진행
         chain.doFilter(request, response);

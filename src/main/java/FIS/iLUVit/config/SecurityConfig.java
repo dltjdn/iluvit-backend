@@ -38,8 +38,7 @@ public class SecurityConfig {
                 .and()
                 .formLogin().disable()  // springSecurity가 제공하는 formLogin 기능 사용X
                 .httpBasic().disable()  // 매 요청마다 id, pwd 보내는 방식으로 인증하는 httpBasic 사용X
-                .addFilterBefore(new ExceptionHandlerFilter(), LogoutFilter.class)
-//                .addFilter(jwtAuthenticationFilter())
+                .addFilter(jwtAuthenticationFilter())
                 .addFilter(jwtAuthorizationFilter())
                 .addFilterBefore(exceptionHandlerFilter(), LogoutFilter.class)
                 .exceptionHandling()
@@ -67,12 +66,12 @@ public class SecurityConfig {
 
     @Bean
     public AuthenticationSuccessHandler authenticationSuccessHandler() {
-        return new CustomAuthenticationSuccessHandler();
+        return new AuthenticationSuccessHandlerCustom();
     }
 
     @Bean
     public AuthenticationFailureHandler authenticationFailureHandler() {
-        return new CustomAuthenticationFailureHandler();
+        return new AuthenticationFailureHandlerCustom();
     }
 
     @Bean

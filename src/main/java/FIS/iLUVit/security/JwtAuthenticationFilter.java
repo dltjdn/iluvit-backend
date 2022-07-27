@@ -35,11 +35,11 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
         try {
             // username, password 받아서
             ObjectMapper om = new ObjectMapper();
-            LoginRequest loginInfo = om.readValue(request.getInputStream(), LoginRequest.class);
+            LoginRequest loginRequest = om.readValue(request.getInputStream(), LoginRequest.class);
 
             // 로그인 정보를 token화 시키고
             UsernamePasswordAuthenticationToken authenticationToken =
-                    new UsernamePasswordAuthenticationToken(loginInfo.getLoginId(), loginInfo.getPassword());
+                    new UsernamePasswordAuthenticationToken(loginRequest.getLoginId(), loginRequest.getPassword());
 
             // 로그인 시도를 해본다
             // authenticationManager로 로그인 시도를 하면 PrincipalDetailsService 호출되고 loadByUsername 함수 자동 실행
