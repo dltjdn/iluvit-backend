@@ -53,6 +53,7 @@ public class PresentationController {
      * 원장, 선생의 설명회 수정
      */
     @PatchMapping(value = "/presentation")
+    @ResponseStatus(HttpStatus.ACCEPTED)
     public PresentationModifyResponseDto modifyPresentation(@RequestPart @Validated PresentationModifyRequestDto request,
                                                             @RequestPart(required = false) List<MultipartFile> images,
                                                             @Login Long userId){

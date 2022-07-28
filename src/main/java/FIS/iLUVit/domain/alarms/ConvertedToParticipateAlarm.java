@@ -22,7 +22,7 @@ public class ConvertedToParticipateAlarm extends Alarm {
     @JoinColumn(name = "centerId")
     private Center center;
 
-    public ConvertedToParticipateAlarm(User waiter, Presentation preesentation, Center center) {
+    public ConvertedToParticipateAlarm(User waiter, Presentation presentation, Center center) {
         super(waiter);
         String[] args = {center.getName()};
         this.presentation = presentation;
