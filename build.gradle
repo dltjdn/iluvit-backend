@@ -71,6 +71,10 @@ dependencies {
 
 	// naver map 의 geoLocation 사용 위한 json 파서기
 	implementation 'com.googlecode.json-simple:json-simple:1.1.1'
+
+	// localdate 직렬화 문제 해결
+	implementation 'com.fasterxml.jackson.datatype:jackson-datatype-jsr310'
+	implementation 'com.fasterxml.jackson.core:jackson-databind'
 }
 
 test {
