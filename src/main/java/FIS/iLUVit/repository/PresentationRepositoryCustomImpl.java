@@ -28,7 +28,7 @@ public class PresentationRepositoryCustomImpl extends CenterQueryMethod implemen
     private final JPAQueryFactory jpaQueryFactory;
 
     @Override
-    public SliceImpl<PresentationPreviewForUsersResponse> findByFilter(List<Area> areas, Theme theme, Integer interestedAge, KindOf kindOf, Pageable pageable) {
+    public SliceImpl<PresentationPreviewForUsersResponse> findByFilter(List<Area> areas, Theme theme, Integer interestedAge, KindOf kindOf, String searchContent, Pageable pageable) {
 
         LocalDate now = LocalDate.now();
 
@@ -40,6 +40,7 @@ public class PresentationRepositoryCustomImpl extends CenterQueryMethod implemen
                         .and(interestedAgeEq(interestedAge))
                         .and(kindOfEq(kindOf))
                         .and(presentation.endDate.goe(now))
+                        .and(centerNameEq(searchContent))
                 )
                 .orderBy(Objects.requireNonNull(presentationSort(pageable)).toArray(OrderSpecifier[]::new))
                 .offset(pageable.getOffset())
