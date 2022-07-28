@@ -47,7 +47,7 @@ public class UserController {
 
     @GetMapping("/alarm-presentation")
     public Slice<AlarmDto> getPresentationAlarm(@Login Long userId, Pageable pageable){
-        return userService.findUserActiveAlarm(userId, pageable);
+        return userService.findPresentationActiveAlarm(userId, pageable);
     }
 
     @DeleteMapping("/alarm")
