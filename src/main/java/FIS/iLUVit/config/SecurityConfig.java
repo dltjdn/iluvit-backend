@@ -3,6 +3,7 @@ package FIS.iLUVit.config;
 import FIS.iLUVit.security.*;
 import FIS.iLUVit.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -28,6 +29,10 @@ public class SecurityConfig {
     private final AuthenticationConfiguration authenticationConfiguration;
     private final AccessDeniedHandler accessDeniedHandler;
     private final AuthenticationEntryPoint authenticationEntryPoint;
+    private final JwtUtils jwtUtils;
+
+    @Value("${security.secretKey}")
+    private String secretKey;
 
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
@@ -38,7 +43,7 @@ public class SecurityConfig {
                 .and()
                 .formLogin().disable()  // springSecurity가 제공하는 formLogin 기능 사용X
                 .httpBasic().disable()  // 매 요청마다 id, pwd 보내는 방식으로 인증하는 httpBasic 사용X
-                .addFilter(jwtAuthenticationFilter())
+//                .addFilter(jwtAuthenticationFilter())
                 .addFilter(jwtAuthorizationFilter())
                 .addFilterBefore(exceptionHandlerFilter(), LogoutFilter.class)
                 .exceptionHandling()
@@ -74,16 +79,16 @@ public class SecurityConfig {
         return new AuthenticationFailureHandlerCustom();
     }
 
-    @Bean
-    public JwtAuthenticationFilter jwtAuthenticationFilter() throws Exception {
-        JwtAuthenticationFilter jwtAuthenticationFilter = new JwtAuthenticationFilter(authenticationManagerBean());
-        jwtAuthenticationFilter.setAuthenticationSuccessHandler(authenticationSuccessHandler());
-        jwtAuthenticationFilter.setAuthenticationFailureHandler(authenticationFailureHandler());
-        return jwtAuthenticationFilter;
-    }
+//    @Bean
+//    public JwtAuthenticationFilter jwtAuthenticationFilter() throws Exception {
+//        JwtAuthenticationFilter jwtAuthenticationFilter = new JwtAuthenticationFilter(authenticationManagerBean());
+//        jwtAuthenticationFilter.setAuthenticationSuccessHandler(authenticationSuccessHandler());
+//        jwtAuthenticationFilter.setAuthenticationFailureHandler(authenticationFailureHandler());
+//        return jwtAuthenticationFilter;
+//    }
 
     @Bean
     public JwtAuthorizationFilter jwtAuthorizationFilter() throws Exception {
-        return new JwtAuthorizationFilter(authenticationManagerBean(), userRepository);
+        return new JwtAuthorizationFilter(authenticationManagerBean(), userRepository, secretKey, jwtUtils);
     }
 }

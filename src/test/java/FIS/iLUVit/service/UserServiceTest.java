@@ -2,6 +2,7 @@ package FIS.iLUVit.service;
 
 import FIS.iLUVit.Creator;
 import FIS.iLUVit.controller.dto.UpdatePasswordRequest;
+import FIS.iLUVit.controller.dto.UserInfoResponse;
 import FIS.iLUVit.domain.AuthNumber;
 import FIS.iLUVit.domain.Parent;
 import FIS.iLUVit.domain.User;
@@ -52,7 +53,7 @@ public class UserServiceTest {
                 .when(userRepository)
                 .findById(parent.getId());
         // when
-        LoginResponse result = target.findUserInfo(parent.getId());
+        UserInfoResponse result = target.findUserInfo(parent.getId());
         // then
         assertThat(result.getId()).isEqualTo(parent.getId());
     }

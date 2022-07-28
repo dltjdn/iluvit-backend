@@ -3,6 +3,7 @@ package FIS.iLUVit.exception.exceptionHandler.controllerAdvice;
 import FIS.iLUVit.exception.*;
 import FIS.iLUVit.exception.exceptionHandler.ErrorResponse;
 import FIS.iLUVit.exception.exceptionHandler.ErrorResult;
+import com.auth0.jwt.exceptions.JWTVerificationException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.support.DefaultMessageSourceResolvable;
 import org.springframework.dao.DataIntegrityViolationException;
@@ -89,7 +90,7 @@ public class GlobalControllerAdvice extends ResponseEntityExceptionHandler {
     }
 
 
-        @ResponseStatus(HttpStatus.BAD_REQUEST)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
     @ExceptionHandler(DataIntegrityViolationException.class)
     public ResponseEntity<Object> RuntimeException(DataIntegrityViolationException e) {
         log.error("[DataIntegrityViolationException] 올바르지 않은 식별자값입니다.", e);
@@ -185,4 +186,10 @@ public class GlobalControllerAdvice extends ResponseEntityExceptionHandler {
     public ResponseEntity<ErrorResponse> scrapException(ScrapException e) {
         return makeErrorResponseEntity(e.getErrorResult());
     }
+
+//    @ExceptionHandler(JWTVerificationException.class)
+//    public ResponseEntity<ErrorResponse> jwtVerificationException(JWTVerificationException e) {
+//        return new ErrorResponse(HttpStatus.UNAUTHORIZED, "유효하지 않은 토큰입니다.");
+//    }
+
 }

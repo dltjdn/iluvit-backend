@@ -1,7 +1,9 @@
 package FIS.iLUVit.domain;
 
 import FIS.iLUVit.controller.dto.LoginTeacherResponse;
+import FIS.iLUVit.controller.dto.TeacherInfoResponse;
 import FIS.iLUVit.controller.dto.UpdateTeacherDetailRequest;
+import FIS.iLUVit.controller.dto.UserInfoResponse;
 import FIS.iLUVit.domain.enumtype.Approval;
 import FIS.iLUVit.domain.enumtype.Auth;
 import FIS.iLUVit.exception.CenterErrorResult;
@@ -98,8 +100,13 @@ public class Teacher extends User {
     }
 
     @Override
-    public LoginResponse getUserInfo() {
+    public LoginResponse getLoginInfo() {
         return new LoginTeacherResponse(id, nickName, auth, center);
+    }
+
+    @Override
+    public UserInfoResponse getUserInfo() {
+        return new TeacherInfoResponse(id, nickName, auth, center);
     }
 
     public void beDirector() {

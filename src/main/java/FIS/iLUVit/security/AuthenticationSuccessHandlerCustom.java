@@ -16,7 +16,7 @@ public class AuthenticationSuccessHandlerCustom implements AuthenticationSuccess
     @Override
     public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response, Authentication authentication) throws IOException, ServletException {
         PrincipalDetails principalDetails = (PrincipalDetails) authentication.getPrincipal();
-        LoginResponse loginResponse = principalDetails.getUser().getUserInfo();
+        LoginResponse loginResponse = principalDetails.getUser().getLoginInfo();
         response.setContentType("application/json");
         response.getWriter().write(convertObjectToJson(loginResponse));
     }

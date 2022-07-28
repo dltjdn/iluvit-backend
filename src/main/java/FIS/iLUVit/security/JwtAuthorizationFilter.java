@@ -3,6 +3,7 @@ package FIS.iLUVit.security;
 import FIS.iLUVit.domain.User;
 import FIS.iLUVit.repository.UserRepository;
 import FIS.iLUVit.security.uesrdetails.PrincipalDetails;
+import FIS.iLUVit.security.uesrdetails.PrincipalDetailsService;
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.algorithms.Algorithm;
 import com.auth0.jwt.exceptions.JWTVerificationException;
@@ -14,6 +15,7 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.web.authentication.www.BasicAuthenticationFilter;
+import org.springframework.stereotype.Component;
 
 import javax.servlet.FilterChain;
 import javax.servlet.ServletException;
@@ -26,12 +28,15 @@ import java.io.IOException;
 @Slf4j
 public class JwtAuthorizationFilter extends BasicAuthenticationFilter {
 
-    private final UserRepository userRepository;
     private AuthenticationManager authenticationManager;
+    private final UserRepository userRepository;
+    private final JwtUtils jwtUtils;
 
-    public JwtAuthorizationFilter(AuthenticationManager authenticationManager, UserRepository userRepository) {
+
+    public JwtAuthorizationFilter(AuthenticationManager authenticationManager, UserRepository userRepository, String secretKey, JwtUtils jwtUtils) {
         super(authenticationManager);
         this.userRepository = userRepository;
+        this.jwtUtils = jwtUtils;
     }
 
     @Override
@@ -49,10 +54,10 @@ public class JwtAuthorizationFilter extends BasicAuthenticationFilter {
         try {
             // 토큰을 검증해서 정상적인 사용자인지 확인
             String jwtToken = request.getHeader("Authorization").replace("Bearer ", "");
-            DecodedJWT decodedJWT = JWT.require(Algorithm.HMAC512("symmetricKey")).build().verify(jwtToken);
-            Long id = decodedJWT.getClaim("id").asLong();
+            Long id = jwtUtils.getUserIdFromToken(jwtToken);
+
             User user = userRepository.findById(id).
-                    orElseThrow(()->new JWTVerificationException("유효하지 않은 토큰입니다."));
+                    orElseThrow(() -> new JWTVerificationException("유효하지 않은 토큰입니다."));
 
             // Jwt 토큰 서명을 통해서 서명이 정상이면 Authentication 객체를 만들어준다.
             PrincipalDetails principalDetails = new PrincipalDetails(user);

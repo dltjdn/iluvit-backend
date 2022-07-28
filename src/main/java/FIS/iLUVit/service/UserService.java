@@ -2,19 +2,28 @@ package FIS.iLUVit.service;
 
 import FIS.iLUVit.controller.dto.AlarmDto;
 import FIS.iLUVit.controller.dto.UpdatePasswordRequest;
+import FIS.iLUVit.controller.dto.UserInfoResponse;
 import FIS.iLUVit.domain.AuthNumber;
+import FIS.iLUVit.domain.RefreshToken;
 import FIS.iLUVit.domain.User;
 import FIS.iLUVit.domain.alarms.Alarm;
 import FIS.iLUVit.domain.enumtype.AuthKind;
 import FIS.iLUVit.exception.*;
+import FIS.iLUVit.repository.RefreshTokenRepository;
+import FIS.iLUVit.security.JwtUtils;
+import FIS.iLUVit.security.LoginRequest;
 import FIS.iLUVit.security.LoginResponse;
 import FIS.iLUVit.repository.AlarmRepository;
 import FIS.iLUVit.repository.AuthNumberRepository;
 import FIS.iLUVit.repository.UserRepository;
+import FIS.iLUVit.security.uesrdetails.PrincipalDetails;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
 import org.springframework.data.domain.SliceImpl;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -32,13 +41,16 @@ public class UserService {
     private final BCryptPasswordEncoder encoder;
     private final AuthNumberRepository authNumberRepository;
     private final AlarmRepository alarmRepository;
+    private final AuthenticationManager authenticationManager;
+    private final JwtUtils jwtUtils;
+    private final RefreshTokenRepository refreshTokenRepository;
 
     /**
     *   작성날짜: 2022/05/16 11:57 AM
     *   작성자: 이승범
     *   작성내용: 사용자 기본정보(id, nickname, auth) 반환
     */
-    public LoginResponse findUserInfo(Long id) {
+    public UserInfoResponse findUserInfo(Long id) {
         User findUser = userRepository.findById(id)
                 .orElseThrow(() -> new UserException(UserErrorResult.NOT_VALID_TOKEN));
         return findUser.getUserInfo();
@@ -101,5 +113,30 @@ public class UserService {
 
     public Integer deleteUserAlarm(Long userId, Long alarmId) {
         return alarmRepository.deleteById(userId, alarmId);
+    }
+
+    public LoginResponse login(LoginRequest request) {
+        // authenticationManager 이용한 아이디 및 비밀번호 확인
+        Authentication authentication = authenticationManager.authenticate(
+                new UsernamePasswordAuthenticationToken(request.getLoginId(), request.getPassword()));
+
+        // 인증된 객체 생성
+        PrincipalDetails principal = (PrincipalDetails) authentication.getPrincipal();
+
+        String jwt = jwtUtils.createAccessToken(authentication);
+        String refresh = jwtUtils.createRefreshToken(authentication);
+        RefreshToken refreshToken = RefreshToken.createRefreshToken(refresh, principal.getUser());
+
+        // 기존 토큰이 있으면 수정, 없으면 생성
+        refreshTokenRepository.findByUserId(principal.getUser().getId())
+                .ifPresentOrElse(
+                        (findToken) -> findToken.updateToken(refresh),
+                        () -> refreshTokenRepository.save(refreshToken)
+                );
+
+        LoginResponse response = principal.getUser().getLoginInfo();
+        response.setJwt(jwt);
+        response.setRefresh(refresh);
+        return response;
     }
 }
