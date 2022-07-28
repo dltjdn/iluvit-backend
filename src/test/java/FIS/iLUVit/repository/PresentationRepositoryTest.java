@@ -68,7 +68,7 @@ public class PresentationRepositoryTest {
             em.flush();
 
             //when
-            SliceImpl<PresentationPreviewForUsersResponse> results = target.findByFilter(areas, coding(), 3, KindOf.ALL, PageRequest.of(0, 4));
+            SliceImpl<PresentationPreviewForUsersResponse> results = target.findByFilter(areas, coding(), 3, KindOf.ALL, "",PageRequest.of(0, 4));
 
             //then
             assertThat(results.getContent().size())
@@ -81,6 +81,54 @@ public class PresentationRepositoryTest {
                 i++;
             }
 
+
+
+
+        }
+
+        @Test
+        public void 설명회_검색_결과_없음2() throws Exception {
+            //given
+            Theme theme = englishAndCoding();
+            Area area1 = new Area("서울특별시", "금천구");
+            Area area2 = new Area("서울특별시", "영등포구");
+            List<Area> areas = new ArrayList<>();
+            areas.add(area1);
+            areas.add(area2);
+            Integer minAge = 1;
+            Integer maxAge = 3;
+
+            Center center1 = createCenter("test", area1, theme, maxAge, minAge);
+            Center center2 = createCenter("test", area1, theme, maxAge, minAge);
+            Center center3 = createCenter("test", area1, theme, maxAge, minAge);
+            Presentation presentation1 = createValidPresentation(center1, 1, 3);
+            Presentation presentation2 = createValidPresentation(center2, 2, 3);
+            Presentation presentation3 = createValidPresentation(center3, 1, 1);
+            List<Presentation> presentations = new ArrayList<>();
+            presentations.add(presentation3);
+            presentations.add(presentation1);
+            presentations.add(presentation2);
+            em.persist(center1);
+            em.persist(center2);
+            em.persist(center3);
+            em.persist(presentation1);
+            em.persist(presentation2);
+            em.persist(presentation3);
+            em.flush();
+
+            //when
+            SliceImpl<PresentationPreviewForUsersResponse> results = target.findByFilter(areas, coding(), 3, KindOf.ALL, "te", PageRequest.of(0, 4));
+
+            //then
+            assertThat(results.getContent().size())
+                    .isEqualTo(3L);
+            assertThat(results.hasNext())
+                    .isFalse();
+            int i = 0;
+            for (PresentationPreviewForUsersResponse result : results) {
+                assertThat(result.getEndDate()).isEqualTo(presentations.get(i).getEndDate());
+                i++;
+            }
         }
     }
 

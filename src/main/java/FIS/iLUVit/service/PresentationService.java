@@ -201,7 +201,7 @@ public class PresentationService {
                 .collect(Collectors.toList());
     }
 
-    public SliceImpl<PresentationPreviewForUsersResponse> findByFilter(List<Area> areas, Theme theme, Integer interestedAge, KindOf kindOf, Pageable pageable) {
-        return presentationRepository.findByFilter(areas, theme, interestedAge, kindOf, pageable);
+    public SliceImpl<PresentationPreviewForUsersResponse> findByFilter(List<Area> areas, Theme theme, Integer interestedAge, KindOf kindOf, String searchContent, Pageable pageable) {
+        return presentationRepository.findByFilter(areas, theme, interestedAge, kindOf, searchContent, pageable);
     }
 }
