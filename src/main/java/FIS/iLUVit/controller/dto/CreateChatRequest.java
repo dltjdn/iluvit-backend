@@ -17,6 +17,4 @@ public class CreateChatRequest {
 
     private Long comment_id; // 댓글 작성자한테 쪽지 보낸 경우 comment_id도 필요
 
-    @NotBlank(message = "받는 사람 id 필요")
-    private Long receiver_id;
 }

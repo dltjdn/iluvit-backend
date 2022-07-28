@@ -135,7 +135,6 @@ class ChatControllerTest {
         //given
         request.setMessage("안녕");
         request.setPost_id(post1.getId());
-        request.setReceiver_id(receiver.getId());
         final String url = "/chat";
         final ChatErrorResult error = ChatErrorResult.UNAUTHORIZED_USER_ACCESS;
 
@@ -162,7 +161,6 @@ class ChatControllerTest {
         //given
         request.setMessage("안녕");
         request.setPost_id(post1.getId());
-        request.setReceiver_id(receiver.getId());
 
         final String url = "/chat";
         final ChatErrorResult error = ChatErrorResult.NO_SEND_TO_SELF;
@@ -193,7 +191,6 @@ class ChatControllerTest {
         //given
         request.setMessage("안녕");
         request.setPost_id(post1.getId());
-        request.setReceiver_id(receiver.getId());
         final String url = "/chat";
         final ChatErrorResult error = ChatErrorResult.USER_NOT_EXIST;
 
@@ -221,7 +218,6 @@ class ChatControllerTest {
         //given
         request.setMessage("안녕");
         request.setPost_id(post1.getId());
-        request.setReceiver_id(receiver.getId());
         final String url = "/chat";
         final ChatErrorResult error = ChatErrorResult.POST_NOT_EXIST;
 
@@ -249,7 +245,6 @@ class ChatControllerTest {
         //given
         request.setMessage("안녕");
         request.setPost_id(post1.getId());
-        request.setReceiver_id(receiver.getId());
         final String url = "/chat";
 
         Mockito.doReturn(chat2.getId())
