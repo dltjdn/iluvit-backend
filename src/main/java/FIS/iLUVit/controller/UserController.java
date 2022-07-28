@@ -40,9 +40,14 @@ public class UserController {
         userService.updatePassword(id, request);
     }
 
-    @GetMapping("/alarm")
-    public Slice<AlarmDto> getAlarm(@Login Long userId, Pageable pageable){
-        return userService.findUserAlarm(userId, pageable);
+    @GetMapping("/alarm-active")
+    public Slice<AlarmDto> getActiveAlarm(@Login Long userId, Pageable pageable){
+        return userService.findUserActiveAlarm(userId, pageable);
+    }
+
+    @GetMapping("presentation")
+    public Slice<AlarmDto> getPresentationAlarm(@Login Long userId, Pageable pageable){
+        return userService.findUserActiveAlarm(userId, pageable);
     }
 
     @DeleteMapping("/alarm")

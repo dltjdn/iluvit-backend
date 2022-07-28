@@ -10,8 +10,15 @@ import org.springframework.data.repository.query.Param;
 
 public interface AlarmRepository extends JpaRepository<Alarm, Long> {
 
-    @Query("select alarm from Alarm alarm where alarm.user.id =:userId")
-    Slice<Alarm> findByUser(@Param("userId") Long userId, Pageable pageable);
+    @Query("select alarm from Alarm alarm " +
+            "where alarm.user.id =:userId and " +
+            "alarm.dtype <> 'PresentationFullAlarm' and alarm.dtype <> 'ConvertedToParticipateAlarm' ")
+    Slice<Alarm> findActiveByUser(@Param("userId") Long userId, Pageable pageable);
+
+    @Query("select alarm from Alarm alarm " +
+            "where alarm.user.id =:userId and " +
+            "alarm.dtype = 'PresentationFullAlarm' and alarm.dtype = 'ConvertedToParticipateAlarm' ")
+    Slice<Alarm> findPresentationByUser(@Param("userId") Long userId, Pageable pageable);
 
     @Modifying
     @Query("delete from Alarm alarm where alarm.id= :alarmId and alarm.user.id = :userId")

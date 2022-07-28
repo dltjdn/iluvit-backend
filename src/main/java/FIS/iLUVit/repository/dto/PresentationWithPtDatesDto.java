@@ -1,12 +1,14 @@
 package FIS.iLUVit.repository.dto;
 
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 
 import java.time.LocalDate;
 
 @Data
 @AllArgsConstructor
+@Builder
 public class PresentationWithPtDatesDto {
     private Long presentationId;
     private LocalDate startDate;          // 설명회 신청 기간

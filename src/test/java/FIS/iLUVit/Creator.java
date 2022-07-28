@@ -412,6 +412,15 @@ public class Creator {
                 .build();
     }
 
+    public static Presentation createValidPresentation() {
+        return Presentation.builder()
+                .id(1L)
+                .content("test 설명회 입니다")
+                .startDate(LocalDate.now().minusDays(1))
+                .endDate(LocalDate.now().plusDays(2))
+                .build();
+    }
+
     public static Presentation createValidPresentation(Center center, long minusDaysForStartDay, long plusDaysForEndDay) {
         return Presentation.builder()
                 .center(center)
@@ -450,6 +459,38 @@ public class Creator {
                 .build();
     }
 
+    public static PtDate createCanRegisterPtDate(Long id ,Presentation presentation) {
+        return PtDate.builder()
+                .id(id)
+                .date(LocalDate.now())
+                .time("오후 9시")
+                .ablePersonNum(3)
+                .participantCnt(1)
+                .waitingCnt(0)
+                .presentation(presentation)
+                .build();
+    }
+
+    public static PtDate createNoParticipantsPtDate(Long id ,Presentation presentation) {
+        return PtDate.builder()
+                .id(id)
+                .date(LocalDate.now())
+                .time("오후 9시")
+                .ablePersonNum(3)
+                .participantCnt(0)
+                .waitingCnt(0)
+                .presentation(presentation)
+                .build();
+    }
+
+
+
+    public static PtDate createPtDate(Long id){
+        return PtDate.builder()
+                .id(id)
+                .build();
+    }
+
     public static PtDate createCanNotRegisterPtDate(Presentation presentation) {
         return PtDate.builder()
                 .date(LocalDate.now())
@@ -460,6 +501,19 @@ public class Creator {
                 .presentation(presentation)
                 .build();
     }
+
+    public static PtDate createCanNotRegisterPtDate(Long id, Presentation presentation) {
+        return PtDate.builder()
+                .id(id)
+                .date(LocalDate.now())
+                .time("오후 9시")
+                .ablePersonNum(3)
+                .participantCnt(3)
+                .waitingCnt(1)
+                .presentation(presentation)
+                .build();
+    }
+
 
     public static Participation createJoinParticipation(PtDate ptDate, Parent parent) {
         return Participation.builder()
@@ -515,6 +569,15 @@ public class Creator {
 
     public static Waiting createWaiting(PtDate ptDate, Parent parent, Integer waitingOrder) {
         return Waiting.builder()
+                .ptDate(ptDate)
+                .parent(parent)
+                .waitingOrder(waitingOrder)
+                .build();
+    }
+
+    public static Waiting createWaiting(Long id, PtDate ptDate, Parent parent, Integer waitingOrder) {
+        return Waiting.builder()
+                .id(id)
                 .ptDate(ptDate)
                 .parent(parent)
                 .waitingOrder(waitingOrder)
