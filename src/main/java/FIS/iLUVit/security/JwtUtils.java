@@ -4,6 +4,7 @@ import FIS.iLUVit.security.uesrdetails.PrincipalDetails;
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.algorithms.Algorithm;
 import com.auth0.jwt.exceptions.JWTVerificationException;
+import com.auth0.jwt.exceptions.TokenExpiredException;
 import com.auth0.jwt.interfaces.DecodedJWT;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -31,10 +32,10 @@ public class JwtUtils {
         PrincipalDetails userDetails = (PrincipalDetails) authentication.getPrincipal();
         String token = JWT.create()
                 .withSubject("ILuvIt_AccessToken")
-                .withExpiresAt(new Date(System.currentTimeMillis() + jwtExpirationInMs * 1000L))
+                .withExpiresAt(new Date(System.currentTimeMillis() + jwtExpirationInMs))
                 .withClaim("id", userDetails.getUser().getId())
                 .sign(Algorithm.HMAC512(secretKey));
-        return "Bearer " + token;
+        return token;
     }
 
     public String createRefreshToken(Authentication authentication) {
@@ -44,7 +45,7 @@ public class JwtUtils {
                 .withExpiresAt(new Date(System.currentTimeMillis() + refreshExpirationDateInMs * 1000L))
                 .withClaim("id", userDetails.getUser().getId())
                 .sign(Algorithm.HMAC512(secretKey));
-        return "Bearer " + token;
+        return token;
     }
 
     public Long getUserIdFromToken(String token) {
@@ -56,11 +57,17 @@ public class JwtUtils {
         try {
             JWT.require(Algorithm.HMAC512(secretKey)).build().verify(token);
             return true;
+        } catch (TokenExpiredException e) {
+            log.warn("[JwtVerificationException] token 기간 만료 : {}", e.getMessage());
+            throw e;
         } catch (JWTVerificationException e) {
-            log.warn("[JwtAuthorizationFilter] token 파싱 실패 : {}", e.getMessage());
+            log.warn("[JWTVerificationException] token 파싱 실패 : {}", e.getMessage());
             throw e;
         }
     }
 
 
+    public String addPrefix(String token) {
+        return "Bearer " + token;
+    }
 }
