@@ -1,16 +1,17 @@
 package FIS.iLUVit.domain.alarms;
 
 import FIS.iLUVit.controller.dto.AlarmDto;
-import FIS.iLUVit.domain.Comment;
-import FIS.iLUVit.domain.Post;
-import FIS.iLUVit.domain.User;
+import FIS.iLUVit.domain.*;
 import FIS.iLUVit.exception.BoardErrorResult;
 import FIS.iLUVit.exception.BoardException;
 import FIS.iLUVit.service.AlarmUtils;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
-import javax.persistence.*;
+import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import java.time.LocalDateTime;
 
 @Entity
@@ -21,6 +22,12 @@ public class PostAlarm extends Alarm {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "postId")
     private Post post;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "boardId")
+    private Board board;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "centerId")
+    private Center center;
     private String boardName;
     private String centerName;
     private Boolean anonymous;
@@ -31,6 +38,8 @@ public class PostAlarm extends Alarm {
         super(postWriter);
         this.mode = AlarmUtils.POST_COMMENT;
         this.post = post;
+        this.board = post.getBoard();
+        this.center = post.getBoard().getCenter();
         if (post.getBoard() == null) {
             throw new BoardException(BoardErrorResult.BOARD_NOT_EXIST);
         }
@@ -49,19 +58,21 @@ public class PostAlarm extends Alarm {
 
     @Override
     public AlarmDto exportAlarm() {
-        return new PostAlarmDto(id, boardName, createdDate, message, dtype, post.getId(), anonymous, commentUserProfileImage, commentUserNickname, centerName);
+        return new PostAlarmDto(id, boardName, createdDate, message, dtype, post.getId(), anonymous, commentUserProfileImage, commentUserNickname, centerName, board.getId(), center.getId());
     }
 
     @Getter
     public static class PostAlarmDto extends AlarmDto{
         protected Long postId;
+        private Long centerId;
+        private Long boardId;
         private String boardName;
         private String centerName;
         private Boolean anonymous;
         private String commentUserProfileImage;
         private String commentUserNickname;
 
-        public PostAlarmDto(Long id, String boardName, LocalDateTime createdDate, String message, String type, Long postId, Boolean anonymous, String commentUserProfileImage, String commentUserNickname, String centerName) {
+        public PostAlarmDto(Long id, String boardName, LocalDateTime createdDate, String message, String type, Long postId, Boolean anonymous, String commentUserProfileImage, String commentUserNickname, String centerName, Long boardId, Long centerId) {
             super(id, createdDate, message, type);
             this.postId = postId;
             this.boardName = boardName;
@@ -69,6 +80,8 @@ public class PostAlarm extends Alarm {
             this.commentUserNickname = commentUserNickname;
             this.commentUserProfileImage = commentUserProfileImage;
             this.centerName = centerName;
+            this.centerId = centerId;
+            this.boardId = boardId;
         }
     }
 }
