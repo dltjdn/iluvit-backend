@@ -47,11 +47,21 @@ public class UserController {
         return userService.findUserInfo(id);
     }
 
+    /**
+    *   작성날짜: 2022/07/29 5:04 PM
+    *   작성자: 이승범
+    *   작성내용: 로그인 중복 확인
+    */
     @GetMapping("/loginid")
     public void checkLoginId(@Valid @ModelAttribute CheckLoginIdRequest request) {
         userService.checkLoginId(request.getLoginId());
     }
 
+    /**
+    *   작성날짜: 2022/07/29 5:04 PM
+    *   작성자: 이승범
+    *   작성내용: 닉네임 중복 확인
+    */
     @GetMapping("/nickname")
     public void checkNickname(@RequestParam String nickname) {
         userService.checkNickname(nickname);

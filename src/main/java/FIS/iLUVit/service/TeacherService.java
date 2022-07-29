@@ -276,7 +276,7 @@ public class TeacherService {
     /**
      * 작성날짜: 2022/07/01 3:09 PM
      * 작성자: 이승범
-     * 작성내용: 원장권한 위임
+     * 작성내용: 원장권한 부여
      */
     public void mandateTeacher(Long userId, Long teacherId) {
 
@@ -289,6 +289,24 @@ public class TeacherService {
                 .orElseThrow(() -> new UserException("잘못된 teacherId 입니다."));
 
         mandatedTeacher.beDirector();
+    }
+
+    /**
+    *   작성날짜: 2022/07/29 5:07 PM
+    *   작성자: 이승범
+    *   작성내용: 원장권한 박탈
+    */
+    public void demoteTeacher(Long userId, Long teacherId) {
+
+        Teacher director = teacherRepository.findDirectorByIdWithCenterWithTeacher(userId)
+                .orElseThrow(() -> new UserException(UserErrorResult.USER_NOT_EXIST));
+
+        Teacher demotedTeacher = director.getCenter().getTeachers().stream()
+                .filter(teacher -> Objects.equals(teacher.getId(), teacherId))
+                .findFirst()
+                .orElseThrow(() -> new UserException(UserErrorResult.NOT_VALID_REQUEST));
+
+        demotedTeacher.beTeacher();
     }
 
     // 해당 시설과 연관된 bookmark 삭제
