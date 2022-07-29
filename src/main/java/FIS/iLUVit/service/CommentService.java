@@ -38,7 +38,7 @@ public class CommentService {
         Post findPost = postRepository.findByIdWithBoard(postId)
                 .orElseThrow(() -> new PostException(PostErrorResult.POST_NOT_EXIST));
 
-        Comment findComment = commentRepository.findByPostAndUser(findPost, findUser)
+        Comment findComment = commentRepository.findFirstByPostAndUser(findPost, findUser)
                 .orElse(null);
 
         Integer anonymousOrder = null;
