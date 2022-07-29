@@ -127,4 +127,8 @@ public class Teacher extends User {
     public void acceptTeacher() {
         this.approval = Approval.ACCEPT;
     }
+
+    public void beTeacher() {
+        this.auth = Auth.TEACHER;
+    }
 }
