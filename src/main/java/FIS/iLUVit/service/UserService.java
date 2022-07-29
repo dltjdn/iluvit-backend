@@ -213,6 +213,11 @@ public class UserService {
                 });
     }
 
+    /**
+    *   작성날짜: 2022/07/29 5:05 PM
+    *   작성자: 이승범
+    *   작성내용: 닉네임 중복 확인
+    */
     public void checkNickname(String nickname) {
         userRepository.findByNickName(nickname)
                 .ifPresent((user)->{
