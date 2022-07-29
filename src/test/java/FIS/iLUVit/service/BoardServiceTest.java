@@ -3,11 +3,14 @@ package FIS.iLUVit.service;
 import FIS.iLUVit.Creator;
 import FIS.iLUVit.controller.dto.BoardListDTO;
 import FIS.iLUVit.controller.dto.CreateBoardRequest;
+import FIS.iLUVit.controller.dto.StoryHomeDTO;
 import FIS.iLUVit.domain.*;
 import FIS.iLUVit.domain.enumtype.Auth;
 import FIS.iLUVit.domain.enumtype.BoardKind;
 import FIS.iLUVit.exception.*;
 import FIS.iLUVit.repository.*;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -17,6 +20,7 @@ import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.test.util.ReflectionTestUtils;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
@@ -50,6 +54,8 @@ class BoardServiceTest {
     @InjectMocks
     private BoardService boardService;
 
+    ObjectMapper objectMapper;
+
     Board board1;
     Board board2;
     Board board3;
@@ -71,9 +77,12 @@ class BoardServiceTest {
     Teacher director2;
 
     Child child1;
+    Child child2;
 
     @BeforeEach
     public void init() {
+        objectMapper = new ObjectMapper().registerModule(new JavaTimeModule());
+
         parent1 = Parent.builder()
                 .id(0L)
                 .auth(Auth.PARENT)
@@ -83,6 +92,7 @@ class BoardServiceTest {
         center2 = createCenter(2L, "팡팡어린이집");
 
         teacher1 = Teacher.builder()
+                .id(50L)
                 .auth(Auth.TEACHER)
                 .center(center1)
                 .build();
@@ -99,6 +109,12 @@ class BoardServiceTest {
 
         child1 = Child.builder()
                 .name("어린이")
+                .center(center1)
+                .build();
+
+        child2 = Child.builder()
+                .name("어린이2")
+                .center(center2)
                 .build();
 
         board1 = createBoard(3L, "자유게시판", BoardKind.NORMAL, null, true);
@@ -502,5 +518,89 @@ class BoardServiceTest {
         Long removedId = boardService.remove(0L, board7.getId());
         //then
         assertThat(removedId).isEqualTo(12L);
+    }
+
+    @Test
+    public void 이야기_홈에서_센터의_게시판_띄워주기_비회원() throws Exception {
+        //given
+        StoryHomeDTO storyHomeDTO = new StoryHomeDTO(List.of(new StoryHomeDTO.CenterStoryDTO(null)));
+        //when
+        StoryHomeDTO centerStory = boardService.findCenterStory(null);
+        //then
+
+        assertThat(objectMapper.writeValueAsString(centerStory))
+                .isEqualTo(objectMapper.writeValueAsString(storyHomeDTO));
+
+    }
+
+    @Test
+    public void 이야기_홈에서_센터의_게시판_띄워주기_유저X() throws Exception {
+        //given
+        List<StoryHomeDTO.CenterStoryDTO> centerStoryList = Arrays.asList(
+                new StoryHomeDTO.CenterStoryDTO(null),
+                new StoryHomeDTO.CenterStoryDTO(center1),
+                new StoryHomeDTO.CenterStoryDTO(center2));
+        StoryHomeDTO storyHomeDTO = new StoryHomeDTO(centerStoryList);
+
+        Mockito.doReturn(Optional.empty())
+                .when(userRepository)
+                .findById(parent1.getId());
+        //when
+        UserException result = assertThrows(UserException.class,
+                () -> boardService.findCenterStory(parent1.getId()));
+
+
+        //then
+
+        System.out.println("storyHomeDTO = " + objectMapper.writeValueAsString(storyHomeDTO));
+        assertThat(result.getErrorResult())
+                .isEqualTo(UserErrorResult.USER_NOT_EXIST);
+    }
+
+    @Test
+    public void 이야기_홈에서_센터의_게시판_띄워주기_학부모() throws Exception {
+        //given
+        List<StoryHomeDTO.CenterStoryDTO> centerStoryList = Arrays.asList(
+                new StoryHomeDTO.CenterStoryDTO(null),
+                new StoryHomeDTO.CenterStoryDTO(center1),
+                new StoryHomeDTO.CenterStoryDTO(center2));
+        StoryHomeDTO storyHomeDTO = new StoryHomeDTO(centerStoryList);
+
+        Mockito.doReturn(Optional.of(parent1))
+                .when(userRepository)
+                .findById(parent1.getId());
+
+        Mockito.doReturn(Arrays.asList(child1, child2))
+                .when(userRepository)
+                .findChildrenWithCenter(parent1.getId());
+        //when
+        StoryHomeDTO result = boardService.findCenterStory(parent1.getId());
+
+        //then
+
+        System.out.println("storyHomeDTO = " + objectMapper.writeValueAsString(storyHomeDTO));
+        System.out.println("result = " + objectMapper.writeValueAsString(result));
+        assertThat(objectMapper.writeValueAsString(result))
+                .isEqualTo(objectMapper.writeValueAsString(storyHomeDTO));
+    }
+
+    @Test
+    public void 이야기_홈에서_센터의_게시판_띄워주기_교사() throws Exception {
+        //given
+        List<StoryHomeDTO.CenterStoryDTO> centerStoryList = Arrays.asList(
+                new StoryHomeDTO.CenterStoryDTO(null),
+                new StoryHomeDTO.CenterStoryDTO(center1));
+        StoryHomeDTO storyHomeDTO = new StoryHomeDTO(centerStoryList);
+
+        Mockito.doReturn(Optional.of(teacher1))
+                .when(userRepository)
+                .findById(teacher1.getId());
+        //when
+        StoryHomeDTO result = boardService.findCenterStory(teacher1.getId());
+
+        //then
+
+        assertThat(objectMapper.writeValueAsString(result))
+                .isEqualTo(objectMapper.writeValueAsString(storyHomeDTO));
     }
 }
