@@ -106,8 +106,16 @@ public class UserService {
         return encoder.encode(password);
     }
 
-    public Slice<AlarmDto> findUserAlarm(Long userId, Pageable pageable) {
-        Slice<Alarm> alarmSlice = alarmRepository.findByUser(userId, pageable);
+    public Slice<AlarmDto> findUserActiveAlarm(Long userId, Pageable pageable) {
+        Slice<Alarm> alarmSlice = alarmRepository.findActiveByUser(userId, pageable);
+        return new SliceImpl<>(alarmSlice.stream()
+                .map(Alarm::exportAlarm)
+                .collect(Collectors.toList()),
+                pageable, alarmSlice.hasNext());
+    }
+
+    public Slice<AlarmDto> findPresentationActiveAlarm(Long userId, Pageable pageable) {
+        Slice<Alarm> alarmSlice = alarmRepository.findPresentationByUser(userId, pageable);
         return new SliceImpl<>(alarmSlice.stream()
                 .map(Alarm::exportAlarm)
                 .collect(Collectors.toList()),

@@ -8,7 +8,10 @@ import FIS.iLUVit.domain.PtDate;
 import FIS.iLUVit.domain.alarms.PresentationFullAlarm;
 import FIS.iLUVit.domain.enumtype.Status;
 import FIS.iLUVit.event.ParticipationCancelEvent;
-import FIS.iLUVit.exception.*;
+import FIS.iLUVit.exception.ParticipationErrorResult;
+import FIS.iLUVit.exception.ParticipationException;
+import FIS.iLUVit.exception.PresentationErrorResult;
+import FIS.iLUVit.exception.PresentationException;
 import FIS.iLUVit.repository.ParentRepository;
 import FIS.iLUVit.repository.ParticipationRepository;
 import FIS.iLUVit.repository.PtDateRepository;
@@ -16,6 +19,8 @@ import FIS.iLUVit.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.ApplicationEventPublisher;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Slice;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -111,4 +116,17 @@ public class ParticipationService {
         return myParticipationsDtos.stream()
                 .collect(Collectors.groupingBy(MyParticipationsDto::getStatus));
     }
+
+    public Slice<MyParticipationsDto> getMyJoinParticipation(Long userId, Pageable pageable){
+        return parentRepository.findMyJoinParticipation(userId, pageable);
+    }
+
+    public Slice<MyParticipationsDto> getMyCancelParticipation(Long userId, Pageable pageable){
+        return parentRepository.findMyCancelParticipation(userId, pageable);
+    }
+
+    public Slice<MyParticipationsDto> getMyWaiting(Long userId, Pageable pageable){
+        return parentRepository.findMyWaiting(userId, pageable);
+    }
+
 }

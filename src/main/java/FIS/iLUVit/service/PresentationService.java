@@ -7,10 +7,11 @@ import FIS.iLUVit.domain.embeddable.Area;
 import FIS.iLUVit.domain.embeddable.Theme;
 import FIS.iLUVit.domain.enumtype.KindOf;
 import FIS.iLUVit.domain.enumtype.Status;
+import FIS.iLUVit.exception.PresentationErrorResult;
 import FIS.iLUVit.exception.PresentationException;
+import FIS.iLUVit.exception.UserErrorResult;
 import FIS.iLUVit.exception.UserException;
 import FIS.iLUVit.repository.*;
-import FIS.iLUVit.repository.dto.PresentationPreviewForUsers;
 import FIS.iLUVit.repository.dto.PresentationWithPtDatesDto;
 import FIS.iLUVit.service.dto.ParentInfoForDirectorDto;
 import FIS.iLUVit.service.dto.PresentationQuryDto;
@@ -24,7 +25,10 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.time.LocalDate;
-import java.util.*;
+import java.util.Collection;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 import static java.util.stream.Collectors.*;
@@ -65,10 +69,10 @@ public class PresentationService {
     public Presentation saveWithPtDate(PresentationRequestRequestFormDto request, List<MultipartFile> images, Long userId) {
         // 리펙터링 필요 findById 를 통해서 그냥 canWrite 와 canRead 를 override 하기
         userRepository.findTeacherById(userId)
-                .orElseThrow(() -> new UserException("존재하지 않는 유저입니다"))
+                .orElseThrow(() -> new UserException(UserErrorResult.USER_NOT_EXIST))
                 .canWrite(request.getCenterId());
         if (presentationRepository.findByCenterIdAndDate(request.getCenterId(), LocalDate.now()) != null)
-            throw new PresentationException("아직 유효한 설명회가 있습니다");
+            throw new PresentationException(PresentationErrorResult.ALREADY_PRESENTATION_EXIST);
         Center center = centerRepository.getById(request.getCenterId());
         Presentation presentation = PresentationRequestRequestFormDto.toPresentation(request).updateCenter(center);
 
@@ -113,9 +117,9 @@ public class PresentationService {
     public Presentation modifyWithPtDate(PresentationModifyRequestDto request, List<MultipartFile> images, Long userId) {
         //
         Presentation presentation = presentationRepository.findByIdAndJoinPtDate(request.getPresentationId())
-                .orElseThrow(() -> new PresentationException("존재하지 않는 설명회 입니다."));
+                .orElseThrow(() -> new PresentationException(PresentationErrorResult.NO_RESULT));
         userRepository.findTeacherById(userId)
-                .orElseThrow(() -> new UserException("존재하지 않는 유저입니다"))
+                .orElseThrow(() -> new UserException(UserErrorResult.USER_NOT_EXIST))
                 .canWrite(presentation.getCenter().getId());
 
         // 데이터 베이스에 저장되어있는 ptDate 목록
@@ -136,7 +140,7 @@ public class PresentationService {
             else {
                 PtDate ptDate = ptDateMap.get(ptDateModifyDto.getPtDateId());
                 if(ptDate == null)
-                    throw new PresentationException("잘못된 접근입니다");
+                    throw new PresentationException(PresentationErrorResult.WRONG_PTDATE_ID_REQUEST);
                 if(ptDateModifyDto.getAblePersonNum() > ptDate.getAblePersonNum() && ptDate.hasWaiting()){
                     // 추가 수용 가능 인원 숫자 체크
                     Integer changeNum = ptDateModifyDto.getAblePersonNum() - ptDate.getAblePersonNum();
@@ -148,7 +152,7 @@ public class PresentationService {
                     waitingRepository.deleteAllByIdInBatch(waitingIds);
                     // 수용 외의 인원들 order 감소
                     waitingRepository.updateWaitingOrderForPtDateChange(changeNum, ptDate);
-                    ptDate.updateWaitingCntForPtDateChange(changeNum);
+                    ptDate.updateWaitingCntForPtDateChange(waitingIds.size());
                     waitings.forEach(waiting -> {
                         Participation.createAndRegisterForWaitings(waiting.getParent(), presentation, ptDate, ptDate.getParticipations());
                     });
@@ -197,7 +201,7 @@ public class PresentationService {
                 .collect(Collectors.toList());
     }
 
-    public SliceImpl<PresentationPreviewForUsersResponse> findByFilter(List<Area> areas, Theme theme, Integer interestedAge, KindOf kindOf, Pageable pageable) {
-        return presentationRepository.findByFilter(areas, theme, interestedAge, kindOf, pageable);
+    public SliceImpl<PresentationPreviewForUsersResponse> findByFilter(List<Area> areas, Theme theme, Integer interestedAge, KindOf kindOf, String searchContent, Pageable pageable) {
+        return presentationRepository.findByFilter(areas, theme, interestedAge, kindOf, searchContent, pageable);
     }
 }

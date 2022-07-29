@@ -1,6 +1,7 @@
 package FIS.iLUVit.domain;
 
 import FIS.iLUVit.controller.dto.PtDateModifyDto;
+import FIS.iLUVit.exception.PresentationErrorResult;
 import FIS.iLUVit.exception.PresentationException;
 import lombok.Builder;
 import lombok.Getter;
@@ -116,7 +117,7 @@ public class PtDate extends BaseEntity {
 
     public PtDate update(PtDateModifyDto ptDateModifyDto) {
         if(participantCnt > ptDateModifyDto.getAblePersonNum())
-            throw new PresentationException("이미 신청한 인원들보다 신청가능 인원들 작게 설정할 수 없습니다.");
+            throw new PresentationException(PresentationErrorResult.UPDATE_ERROR_ABLE_PERSON_NUM);
         date = ptDateModifyDto.getDate();
         time = ptDateModifyDto.getTime();
         ablePersonNum = ptDateModifyDto.getAblePersonNum();
@@ -125,7 +126,7 @@ public class PtDate extends BaseEntity {
 
     public void canDelete() {
         if(participantCnt > 0)
-            throw new PresentationException("설명회를 신청한 사용자가 있어 설명회 회차를 삭제할 수 없습니다");
+            throw new PresentationException(PresentationErrorResult.DELETE_FAIL_HAS_PARTICIPANT);
     }
 
     @Override
@@ -133,6 +134,7 @@ public class PtDate extends BaseEntity {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         PtDate ptDate = (PtDate) o;
+        if (id == null) return false;
         return id.equals(ptDate.id);
     }
 

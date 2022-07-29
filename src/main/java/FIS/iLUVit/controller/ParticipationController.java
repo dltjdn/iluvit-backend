@@ -10,6 +10,8 @@ import FIS.iLUVit.exception.UserException;
 import FIS.iLUVit.service.ParticipationService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Slice;
 import org.springframework.http.HttpStatus;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
@@ -49,9 +51,35 @@ public class ParticipationController {
     }
 
     @GetMapping("/participation/parent")
+    @ResponseStatus(HttpStatus.ACCEPTED)
     public Map<Status, List<MyParticipationsDto>> getMyParticipation(@Login Long userId){
         if(userId == null)
             throw new UserException(UserErrorResult.NOT_LOGIN);
         return participationService.getMyParticipation(userId);
     }
+
+    @GetMapping("/joinParticipation/parent")
+    @ResponseStatus(HttpStatus.ACCEPTED)
+    public Slice<MyParticipationsDto> getMyJoinParticipation(@Login Long userId, Pageable pageable){
+        if(userId == null)
+            throw new UserException(UserErrorResult.NOT_LOGIN);
+        return participationService.getMyJoinParticipation(userId, pageable);
+    }
+
+    @GetMapping("/cancelParticipation/parent")
+    @ResponseStatus(HttpStatus.ACCEPTED)
+    public Slice<MyParticipationsDto> getMyCancelParticipation(@Login Long userId, Pageable pageable){
+        if(userId == null)
+            throw new UserException(UserErrorResult.NOT_LOGIN);
+        return participationService.getMyCancelParticipation(userId, pageable);
+    }
+
+    @GetMapping("/waiting/parent")
+    @ResponseStatus(HttpStatus.ACCEPTED)
+    public Slice<MyParticipationsDto> getMyWaiting(@Login Long userId, Pageable pageable){
+        if(userId == null)
+            throw new UserException(UserErrorResult.NOT_LOGIN);
+        return participationService.getMyWaiting(userId, pageable);
+    }
+
 }

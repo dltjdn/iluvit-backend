@@ -17,5 +17,6 @@ public class PresentationSearchFilterDTO {
     private List<Area> areas = new ArrayList<>();
     private Theme theme;
     private Integer interestedAge;
+    private String searchContent;
     private KindOf kindOf;
 }

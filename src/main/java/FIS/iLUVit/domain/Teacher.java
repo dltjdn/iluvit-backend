@@ -17,6 +17,7 @@ import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
 
 import javax.persistence.*;
+import java.util.Objects;
 
 @Entity
 @Getter
@@ -88,13 +89,13 @@ public class Teacher extends User {
     }
 
     public Teacher canWrite(Long centerId) {
-        if(approval != Approval.ACCEPT || centerId != center.getId())
+        if(approval != Approval.ACCEPT || !Objects.equals(centerId, center.getId()))
             throw new CenterException(CenterErrorResult.AUTHENTICATION_FAILED);
         return this;
     }
 
     public Teacher canRead(Long centerId){
-        if(approval != Approval.ACCEPT || centerId != center.getId())
+        if(approval != Approval.ACCEPT || !Objects.equals(centerId, center.getId()))
             throw new CenterException(CenterErrorResult.AUTHENTICATION_FAILED);
         return this;
     }

@@ -2,13 +2,15 @@ package FIS.iLUVit.controller;
 
 import FIS.iLUVit.config.argumentResolver.Login;
 import FIS.iLUVit.controller.dto.*;
+import FIS.iLUVit.exception.UserErrorResult;
+import FIS.iLUVit.exception.UserException;
 import FIS.iLUVit.service.PresentationService;
 import FIS.iLUVit.service.UserService;
 import FIS.iLUVit.service.dto.ParentInfoForDirectorDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.SliceImpl;
-import org.springframework.http.MediaType;
+import org.springframework.http.HttpStatus;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -28,6 +30,7 @@ public class PresentationController {
      * 내용 - 신청기간, 내용, 사진, 동영상, 신청할 수 있는 설명회 목록?
      */
     @GetMapping("/presentation/center/{center_id}")
+    @ResponseStatus(HttpStatus.ACCEPTED)
     public List<PresentationResponseDto> findPresentationByCenterId(@PathVariable("center_id") Long centerId, @Login Long userId){
         return presentationService.findPresentationByCenterIdAndDate(centerId, userId);
     }
@@ -36,17 +39,21 @@ public class PresentationController {
      * 원장/ 선생의 presentation 등록 PtDate 설정하기
      * @return
      */
-    @PostMapping(value = "/presentation", consumes = {MediaType.APPLICATION_JSON_VALUE, MediaType.MULTIPART_FORM_DATA_VALUE})
-    public PresentationSaveResponseDto registerPresentation(@RequestPart PresentationRequestRequestFormDto request,
+    @PostMapping(value = "/presentation")
+    @ResponseStatus(HttpStatus.CREATED)
+    public PresentationSaveResponseDto registerPresentation(@RequestPart @Validated PresentationRequestRequestFormDto request,
                                                             @RequestPart(required = false) List<MultipartFile> images,
                                                             @Login Long userId){
+        if(userId == null)
+            throw new UserException(UserErrorResult.NOT_LOGIN);
         return new PresentationSaveResponseDto(presentationService.saveWithPtDate(request, images, userId));
     }
 
     /**
      * 원장, 선생의 설명회 수정
      */
-    @PatchMapping(value = "/presentation", consumes = {MediaType.APPLICATION_JSON_VALUE, MediaType.MULTIPART_FORM_DATA_VALUE})
+    @PatchMapping(value = "/presentation")
+    @ResponseStatus(HttpStatus.ACCEPTED)
     public PresentationModifyResponseDto modifyPresentation(@RequestPart @Validated PresentationModifyRequestDto request,
                                                             @RequestPart(required = false) List<MultipartFile> images,
                                                             @Login Long userId){
@@ -95,6 +102,6 @@ public class PresentationController {
      */
     @PostMapping("/presentation/search")
     public SliceImpl<PresentationPreviewForUsersResponse> searchByFilterAndMap(@RequestBody PresentationSearchFilterDTO dto, Pageable pageable){
-        return presentationService.findByFilter(dto.getAreas(), dto.getTheme(), dto.getInterestedAge(), dto.getKindOf(), pageable);
+        return presentationService.findByFilter(dto.getAreas(), dto.getTheme(), dto.getInterestedAge(), dto.getKindOf(), dto.getSearchContent(), pageable);
     }
 }

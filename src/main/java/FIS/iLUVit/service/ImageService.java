@@ -16,8 +16,8 @@ public interface ImageService {
 
     List<String> getInfoImages(BaseImageEntity entity);
 
-    public String getProfileImage(String profileImagePath);
+    String getProfileImage(String profileImagePath);
 
-    public List<String> getInfoImages(String infoImagePath);
+    List<String> getInfoImages(String infoImagePath);
 
 }
