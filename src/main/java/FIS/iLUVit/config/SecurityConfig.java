@@ -14,8 +14,6 @@ import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.web.AuthenticationEntryPoint;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.access.AccessDeniedHandler;
-import org.springframework.security.web.authentication.AuthenticationFailureHandler;
-import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
 import org.springframework.security.web.authentication.logout.LogoutFilter;
 import org.springframework.web.cors.CorsUtils;
 
@@ -43,9 +41,7 @@ public class SecurityConfig {
                 .and()
                 .formLogin().disable()  // springSecurity가 제공하는 formLogin 기능 사용X
                 .httpBasic().disable()  // 매 요청마다 id, pwd 보내는 방식으로 인증하는 httpBasic 사용X
-//                .addFilter(jwtAuthenticationFilter())
                 .addFilter(jwtAuthorizationFilter())
-                .addFilterBefore(exceptionHandlerFilter(), LogoutFilter.class)
                 .exceptionHandling()
                 .accessDeniedHandler(accessDeniedHandler)
                 .authenticationEntryPoint(authenticationEntryPoint)
@@ -56,36 +52,18 @@ public class SecurityConfig {
                 .access("hasRole('PARENT') or hasRole('TEACHER') or hasRole('DIRECTOR')")
                 .antMatchers("/parent/**")
                 .access("hasRole('PARENT')")
+                .antMatchers("/teacher/**")
+                .access("hasRole('TEACHER') or hasRole('DIRECTOR')")
+                .antMatchers("/director/**")
+                .access("hasRole('DIRECTOR')")
                 .anyRequest().permitAll();
         return http.build();
-    }
-
-    @Bean ExceptionHandlerFilter exceptionHandlerFilter() {
-        return new ExceptionHandlerFilter();
     }
 
     @Bean
     public AuthenticationManager authenticationManagerBean() throws Exception {
         return authenticationConfiguration.getAuthenticationManager();
     }
-
-    @Bean
-    public AuthenticationSuccessHandler authenticationSuccessHandler() {
-        return new AuthenticationSuccessHandlerCustom();
-    }
-
-    @Bean
-    public AuthenticationFailureHandler authenticationFailureHandler() {
-        return new AuthenticationFailureHandlerCustom();
-    }
-
-//    @Bean
-//    public JwtAuthenticationFilter jwtAuthenticationFilter() throws Exception {
-//        JwtAuthenticationFilter jwtAuthenticationFilter = new JwtAuthenticationFilter(authenticationManagerBean());
-//        jwtAuthenticationFilter.setAuthenticationSuccessHandler(authenticationSuccessHandler());
-//        jwtAuthenticationFilter.setAuthenticationFailureHandler(authenticationFailureHandler());
-//        return jwtAuthenticationFilter;
-//    }
 
     @Bean
     public JwtAuthorizationFilter jwtAuthorizationFilter() throws Exception {

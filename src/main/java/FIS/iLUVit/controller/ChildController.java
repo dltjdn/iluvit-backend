@@ -8,6 +8,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Pageable;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
 import java.io.IOException;
 
 @Slf4j
@@ -33,7 +34,7 @@ public class ChildController {
      * 작성내용: 아이 추가
      */
     @PostMapping("/parent/child")
-    public void saveChild(@Login Long userId, @ModelAttribute SaveChildRequest request) throws IOException {
+    public void saveChild(@Login Long userId, @Valid @ModelAttribute SaveChildRequest request) throws IOException {
         childService.saveChild(userId, request);
     }
 
