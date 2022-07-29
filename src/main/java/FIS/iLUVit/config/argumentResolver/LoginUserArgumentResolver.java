@@ -17,11 +17,13 @@ import org.springframework.web.method.support.ModelAndViewContainer;
 
 @Slf4j
 @Component
-@RequiredArgsConstructor
 public class LoginUserArgumentResolver implements HandlerMethodArgumentResolver {
 
-    @Value("${security.secretKey}")
-    private String secretKey;
+    private final String secretKey;
+
+    public LoginUserArgumentResolver(@Value("${security.secretKey}") String secretKey) {
+        this.secretKey = secretKey;
+    }
 
     @Override
     public boolean supportsParameter(MethodParameter parameter) {
@@ -37,7 +39,6 @@ public class LoginUserArgumentResolver implements HandlerMethodArgumentResolver 
 
         if (authorizationHeader == null) {
             return null;
-//            throw new TokenStreamException("Access Token이 존재하지 않습니다.");
         }
 
         String jwtToken = authorizationHeader.replace("Bearer ", "");

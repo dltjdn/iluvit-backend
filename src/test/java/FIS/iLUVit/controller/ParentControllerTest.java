@@ -61,7 +61,7 @@ public class ParentControllerTest {
     public void init() throws IOException {
         objectMapper = new ObjectMapper();
         mockMvc = MockMvcBuilders.standaloneSetup(target)
-                .setCustomArgumentResolvers(new LoginUserArgumentResolver())
+                .setCustomArgumentResolvers(new LoginUserArgumentResolver("secretKey"))
                 .setControllerAdvice(GlobalControllerAdvice.class)
                 .build();
         String name = "162693895955046828.png";

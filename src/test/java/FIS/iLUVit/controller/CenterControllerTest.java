@@ -78,7 +78,7 @@ class CenterControllerTest extends ResponseRequests {
     @BeforeEach
     private void init(){
         mockMvc = MockMvcBuilders.standaloneSetup(target)
-                .setCustomArgumentResolvers(new PageableHandlerMethodArgumentResolver(), new LoginUserArgumentResolver())
+                .setCustomArgumentResolvers(new PageableHandlerMethodArgumentResolver(), new LoginUserArgumentResolver("secretKey"))
                 .setControllerAdvice(GlobalControllerAdvice.class)
                 .build();
         objectMapper = new ObjectMapper();
@@ -89,7 +89,7 @@ class CenterControllerTest extends ResponseRequests {
                 .withSubject("JWT")
                 .withExpiresAt(new Date(System.currentTimeMillis() + (60000 * 60 * 3))) // JWT 만료시간 밀리세컨단위
                 .withClaim("id", user.getId())
-                .sign(Algorithm.HMAC512("symmetricKey"));
+                .sign(Algorithm.HMAC512("secretKey"));
     }
 
 
