@@ -3,6 +3,7 @@ package FIS.iLUVit.controller;
 import FIS.iLUVit.Creator;
 import FIS.iLUVit.config.argumentResolver.LoginUserArgumentResolver;
 import FIS.iLUVit.controller.dto.UpdatePasswordRequest;
+import FIS.iLUVit.controller.dto.UserInfoResponse;
 import FIS.iLUVit.domain.Parent;
 import FIS.iLUVit.exception.SignupErrorResult;
 import FIS.iLUVit.exception.SignupException;
@@ -54,7 +55,7 @@ public class UserControllerTest {
     public void 사용자기본정보_성공() throws Exception {
         // given
         String url = "/user/info";
-        doReturn(new LoginResponse())
+        doReturn(new UserInfoResponse())
                 .when(userService)
                 .findUserInfo(any());
         // when
@@ -65,7 +66,7 @@ public class UserControllerTest {
         // then
         result.andExpect(status().isOk())
                 .andExpect(content().json(
-                        objectMapper.writeValueAsString(new LoginResponse())
+                        objectMapper.writeValueAsString(new UserInfoResponse())
                 ));
     }
 

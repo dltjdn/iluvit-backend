@@ -176,8 +176,8 @@ public class UserService {
             throw new JWTVerificationException("유효하지 않은 시도입니다.");
 
         } catch (TokenExpiredException e) {
-            // refreshToken 유효하고, AccessToken 정상적으로 Expired 상태일때
 
+            // refreshToken 유효하고, AccessToken 정상적으로 Expired 상태일때
             PrincipalDetails principal = new PrincipalDetails(findTokenPair.getUser());
             Authentication authentication = new UsernamePasswordAuthenticationToken(principal, null, principal.getAuthorities());
 

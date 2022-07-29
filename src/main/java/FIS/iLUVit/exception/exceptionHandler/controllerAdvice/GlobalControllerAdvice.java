@@ -105,6 +105,15 @@ public class GlobalControllerAdvice extends ResponseEntityExceptionHandler {
         return new ErrorResponse(HttpStatus.FORBIDDEN, "쿼리파라미터가 null 입니다. 토큰이 유효한지 확인해보세요");
     }
 
+    @ResponseStatus(HttpStatus.UNAUTHORIZED)
+    @ExceptionHandler(JWTVerificationException.class)
+    public ErrorResponse jwtVerificationException(JWTVerificationException e) {
+        log.warn("[JWTVerificationException Handler] {}", e.getMessage());
+        return new ErrorResponse(HttpStatus.UNAUTHORIZED, e.getMessage());
+    }
+
+
+
     private ResponseEntity<ErrorResponse> makeErrorResponseEntity(ErrorResult errorResult) {
         return ResponseEntity.status(errorResult.getHttpStatus())
                 .body(new ErrorResponse(errorResult.getHttpStatus(), errorResult.getMessage()));
@@ -187,9 +196,6 @@ public class GlobalControllerAdvice extends ResponseEntityExceptionHandler {
         return makeErrorResponseEntity(e.getErrorResult());
     }
 
-//    @ExceptionHandler(JWTVerificationException.class)
-//    public ResponseEntity<ErrorResponse> jwtVerificationException(JWTVerificationException e) {
-//        return new ErrorResponse(HttpStatus.UNAUTHORIZED, "유효하지 않은 토큰입니다.");
-//    }
+
 
 }
