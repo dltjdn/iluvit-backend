@@ -87,6 +87,7 @@ public class TeacherService {
         TeacherDetailResponse response = new TeacherDetailResponse(findTeacher);
 
         imageService.saveProfileImage(request.getProfileImg(), findTeacher);
+        response.setProfileImg(imageService.getProfileImage(findTeacher));
 
         return response;
     }
