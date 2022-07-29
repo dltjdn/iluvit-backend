@@ -28,6 +28,7 @@ public class Post extends BaseImageEntity {
     private LocalDate date;                 // 게시글 작성 날짜
     private LocalTime time;                 // 게시글 작성 시간
     private Integer commentCnt;             // 댓글 수
+    private Integer anonymousOrder;           // 몇 번째 익명인지 기록을 위한 필드
     private Integer heartCnt;               // 좋아요 수
     private Integer videoCnt;               // 게시글 동영상 개수 최대 _개
 
@@ -77,13 +78,14 @@ public class Post extends BaseImageEntity {
         this.scrapPosts = scrapPosts;
     }
 
-    public Post(String title, String content, Boolean anonymous, Integer commentCnt, Integer heartCnt, Integer imgCnt, Integer videoCnt, Board board, User user) {
+    public Post(String title, String content, Boolean anonymous, Integer commentCnt, Integer anonymousOrder, Integer heartCnt, Integer imgCnt, Integer videoCnt, Board board, User user) {
         this.title = title;
         this.content = content;
         this.anonymous = anonymous;
         this.date = LocalDate.now();
         this.time = LocalTime.now();
         this.commentCnt = commentCnt;
+        this.anonymousOrder = anonymousOrder;
         this.heartCnt = heartCnt;
         this.imgCnt = imgCnt;
         this.videoCnt = videoCnt;
@@ -107,5 +109,11 @@ public class Post extends BaseImageEntity {
         this.postUpdateDate = time;
     }
 
+    public void reduceCommentCnt() {
+        this.commentCnt -= 1;
+    }
 
+    public void plusAnonymousOrder() {
+        this.anonymousOrder += 1;
+    }
 }

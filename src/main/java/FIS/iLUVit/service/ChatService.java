@@ -34,14 +34,10 @@ public class ChatService {
             throw new ChatException(ChatErrorResult.UNAUTHORIZED_USER_ACCESS);
         }
 
-        if (Objects.equals(userId, request.getReceiver_id())) {
-            throw new ChatException(ChatErrorResult.NO_SEND_TO_SELF);
-        }
-
         User sendUser = userRepository.findById(userId)
                 .orElseThrow(() -> new ChatException(ChatErrorResult.USER_NOT_EXIST));
-        User receiveUser = userRepository.findById(request.getReceiver_id())
-                .orElseThrow(() -> new ChatException(ChatErrorResult.USER_NOT_EXIST));
+
+        User receiveUser;
 
         Long post_id = request.getPost_id();
         Long comment_id = request.getComment_id();
@@ -50,14 +46,20 @@ public class ChatService {
                 .orElseThrow(() -> new ChatException(ChatErrorResult.POST_NOT_EXIST));
 
         Boolean anonymousInfo;
+
         if (request.getComment_id() != null) {
             Comment findComment = commentRepository.findById(comment_id)
                     .orElseThrow(() -> new CommentException(CommentErrorResult.NO_EXIST_COMMENT));
             anonymousInfo = findComment.getAnonymous();
+            receiveUser = findComment.getUser();
         } else {
             anonymousInfo = findPost.getAnonymous();
+            receiveUser = findPost.getUser();
         }
 
+        if (Objects.equals(userId, receiveUser.getId())) {
+            throw new ChatException(ChatErrorResult.NO_SEND_TO_SELF);
+        }
 
         Chat chat1 = new Chat(request.getMessage(), receiveUser, sendUser);
         Chat chat2 = new Chat(request.getMessage(), receiveUser, sendUser);
