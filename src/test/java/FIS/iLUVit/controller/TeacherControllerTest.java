@@ -67,7 +67,7 @@ public class TeacherControllerTest {
     public void init() throws IOException {
         objectMapper = new ObjectMapper();
         mockMvc = MockMvcBuilders.standaloneSetup(target)
-                .setCustomArgumentResolvers(new LoginUserArgumentResolver())
+                .setCustomArgumentResolvers(new LoginUserArgumentResolver("secretKey"))
                 .setControllerAdvice(GlobalControllerAdvice.class)
                 .build();
         teacher = Creator.createTeacher(1L, "teacher", null, Auth.TEACHER, null);

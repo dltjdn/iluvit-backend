@@ -1,7 +1,6 @@
-package FIS.iLUVit.uesrdetails;
+package FIS.iLUVit.security.uesrdetails;
 
 import FIS.iLUVit.domain.User;
-import FIS.iLUVit.exception.UserException;
 import FIS.iLUVit.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -20,7 +19,7 @@ public class PrincipalDetailsService implements UserDetailsService {
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
         // username이 loginId이다.
         User user = userRepository.findByLoginId(username)
-                .orElseThrow(()->new UserException("존재하지 않는 아이디입니다."));
+                .orElseThrow(()->new UsernameNotFoundException("존재하지 않는 아이디입니다."));
         return new PrincipalDetails(user);
     }
 }

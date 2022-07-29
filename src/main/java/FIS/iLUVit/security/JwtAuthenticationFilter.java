@@ -1,15 +1,13 @@
-package FIS.iLUVit.filter;
+package FIS.iLUVit.security;
 
 
-import FIS.iLUVit.uesrdetails.PrincipalDetails;
+import FIS.iLUVit.security.uesrdetails.PrincipalDetails;
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.algorithms.Algorithm;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 import javax.servlet.FilterChain;
@@ -32,23 +30,21 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
 
     // /login 요청시 로그인을 시도하기 위해 실행되는 함수
     @Override
-    public Authentication attemptAuthentication(HttpServletRequest request, HttpServletResponse response) throws AuthenticationException {
+    public Authentication attemptAuthentication(HttpServletRequest request, HttpServletResponse response) {
 
         try {
             // username, password 받아서
             ObjectMapper om = new ObjectMapper();
-            LoginRequest loginInfo = om.readValue(request.getInputStream(), LoginRequest.class);
+            LoginRequest loginRequest = om.readValue(request.getInputStream(), LoginRequest.class);
 
             // 로그인 정보를 token화 시키고
             UsernamePasswordAuthenticationToken authenticationToken =
-                    new UsernamePasswordAuthenticationToken(loginInfo.getLoginId(), loginInfo.getPassword());
+                    new UsernamePasswordAuthenticationToken(loginRequest.getLoginId(), loginRequest.getPassword());
 
             // 로그인 시도를 해본다
             // authenticationManager로 로그인 시도를 하면 PrincipalDetailsService 호출되고 loadByUsername 함수 자동 실행
             // db 정보와 일치한다면 authentication 객체 리턴됨
-            Authentication authentication = authenticationManager.authenticate(authenticationToken);
-
-            return authentication;
+            return authenticationManager.authenticate(authenticationToken);
 
         } catch (IOException e) {
              e.printStackTrace();
@@ -65,10 +61,11 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
 
         // HMAC512 방식의 Hash 암호화
         String jwtToken = JWT.create()
-                .withSubject("JWT")
+                .withSubject("ILuvIt")
                 .withExpiresAt(new Date(System.currentTimeMillis() + (60000 * 60 * 3))) // JWT 만료시간 밀리세컨단위
+//                .withExpiresAt(new Date(System.currentTimeMillis() + (60))) // JWT 만료시간 밀리세컨단위
                 .withClaim("id", principalDetails.getUser().getId())
-                .sign(Algorithm.HMAC512("symmetricKey"));   // 대칭키 들어가 자리(노출 금지)
+                .sign(Algorithm.HMAC512("secretKey"));   // 대칭키 들어가 자리(노출 금지)
         response.addHeader("Authorization", "Bearer " + jwtToken);
         this.getSuccessHandler().onAuthenticationSuccess(request, response, authResult);
     }

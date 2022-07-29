@@ -1,4 +1,4 @@
-package FIS.iLUVit.filter;
+package FIS.iLUVit.security;
 
 import FIS.iLUVit.domain.User;
 import FIS.iLUVit.domain.enumtype.Auth;
@@ -13,10 +13,12 @@ public class LoginResponse {
     private Long id;
     private String nickname;
     private Auth auth;
+    private String jwt;
+    private String refresh;
 
-    public LoginResponse(User user) {
-        this.id = user.getId();
-        this.nickname = user.getNickName();
-        this.auth = user.getAuth();
+    public LoginResponse(Long id, String nickname, Auth auth) {
+        this.id = id;
+        this.nickname = nickname;
+        this.auth = auth;
     }
 }

@@ -4,8 +4,10 @@ import antlr.TokenStreamException;
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.algorithms.Algorithm;
 import com.auth0.jwt.exceptions.JWTVerificationException;
+import lombok.NoArgsConstructor;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.MethodParameter;
 import org.springframework.stereotype.Component;
 import org.springframework.web.bind.support.WebDataBinderFactory;
@@ -15,8 +17,14 @@ import org.springframework.web.method.support.ModelAndViewContainer;
 
 @Slf4j
 @Component
-@RequiredArgsConstructor
 public class LoginUserArgumentResolver implements HandlerMethodArgumentResolver {
+
+    private final String secretKey;
+
+    public LoginUserArgumentResolver(@Value("${security.secretKey}") String secretKey) {
+        this.secretKey = secretKey;
+    }
+
     @Override
     public boolean supportsParameter(MethodParameter parameter) {
         boolean hasLoginAnnotation = parameter.hasParameterAnnotation(Login.class);
@@ -31,13 +39,12 @@ public class LoginUserArgumentResolver implements HandlerMethodArgumentResolver 
 
         if (authorizationHeader == null) {
             return null;
-//            throw new TokenStreamException("Access Token이 존재하지 않습니다.");
         }
 
         String jwtToken = authorizationHeader.replace("Bearer ", "");
 
         try {
-            return JWT.require(Algorithm.HMAC512("symmetricKey")).build().verify(jwtToken).getClaim("id").asLong();
+            return JWT.require(Algorithm.HMAC512(secretKey)).build().verify(jwtToken).getClaim("id").asLong();
         } catch (JWTVerificationException e) {
             return null;
         }

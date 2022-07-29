@@ -1,7 +1,8 @@
 package FIS.iLUVit.domain;
 
+import FIS.iLUVit.controller.dto.UserInfoResponse;
 import FIS.iLUVit.domain.enumtype.Auth;
-import FIS.iLUVit.filter.LoginResponse;
+import FIS.iLUVit.security.LoginResponse;
 import lombok.*;
 
 import javax.persistence.*;
@@ -61,7 +62,11 @@ public class User extends BaseImageEntity {
         return Objects.hash(id);
     }
 
-    public LoginResponse getUserInfo() {
+    public LoginResponse getLoginInfo() {
         return new LoginResponse(id, nickName, auth);
+    }
+
+    public UserInfoResponse getUserInfo() {
+        return new UserInfoResponse(id, nickName, auth);
     }
 }
