@@ -152,8 +152,8 @@ public class UserService {
                 );
 
         LoginResponse response = principal.getUser().getLoginInfo();
-        response.setJwt(jwtUtils.addPrefix(jwt));
-        response.setRefresh(jwtUtils.addPrefix(refresh));
+        response.setAccessToken(jwtUtils.addPrefix(jwt));
+        response.setRefreshToken(jwtUtils.addPrefix(refresh));
         return response;
     }
 
@@ -194,8 +194,8 @@ public class UserService {
             findTokenPair.updateToken(jwt, refresh);
 
             LoginResponse response = principal.getUser().getLoginInfo();
-            response.setJwt(jwtUtils.addPrefix(jwt));
-            response.setRefresh(jwtUtils.addPrefix(refresh));
+            response.setAccessToken(jwtUtils.addPrefix(jwt));
+            response.setRefreshToken(jwtUtils.addPrefix(refresh));
             return response;
         }
     }

@@ -13,8 +13,8 @@ public class LoginResponse {
     private Long id;
     private String nickname;
     private Auth auth;
-    private String jwt;
-    private String refresh;
+    private String accessToken;
+    private String refreshToken;
 
     public LoginResponse(Long id, String nickname, Auth auth) {
         this.id = id;
