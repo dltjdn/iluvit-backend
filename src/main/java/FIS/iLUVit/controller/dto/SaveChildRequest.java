@@ -11,6 +11,7 @@ import lombok.NoArgsConstructor;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.web.multipart.MultipartFile;
 
+import javax.validation.constraints.NotBlank;
 import java.time.LocalDate;
 
 @Data
@@ -18,6 +19,7 @@ import java.time.LocalDate;
 @NoArgsConstructor
 public class SaveChildRequest {
     private Long center_id;
+    @NotBlank(message = "이름을 입력해주세요")
     private String name;
     @DateTimeFormat(pattern = "yyyy-MM-dd")
     private LocalDate birthDate;

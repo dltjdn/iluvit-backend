@@ -163,28 +163,24 @@ public class UserService {
      *   작성내용: refreshToken으로 accessToken를 재발급
      */
     public LoginResponse refresh(TokenRefreshRequest request) {
+
         String requestRefreshTokenToken = request.getRefreshToken().replace("Bearer ", "");
 
+        // 요청으로 받은 refreshToken 유효한지 확인
         jwtUtils.validateToken(requestRefreshTokenToken);
 
+        // 이전에 받았던 refreshToken과 일치하는지 확인(tokenPair 유저당 하나로 유지)
         Long userId = jwtUtils.getUserIdFromToken(requestRefreshTokenToken);
-
         TokenPair findTokenPair = tokenPairRepository.findByUserIdWithUser(userId)
                 .orElseThrow(() -> new JWTVerificationException("유효하지 않은 토큰입니다."));
 
         if (!requestRefreshTokenToken.equals(findTokenPair.getRefreshToken())) {
             throw new JWTVerificationException("유효하지 않은 토큰입니다.");
         }
-        try {
-            // 이전에 발급했던 AccessToken 만료되지 않았다면 refreshToken 탈취로 판단
-            // TokenPair 삭제 -> 다시 로그인 해야됨
-            String oldAccessToken = findTokenPair.getAccessToken();
-            jwtUtils.validateToken(oldAccessToken);
-            tokenPairRepository.delete(findTokenPair);
-            throw new JWTVerificationException("유효하지 않은 시도입니다.");
 
-        } catch (TokenExpiredException e) {
-
+        // 이전에 발급했던 AccessToken 만료되지 않았다면 refreshToken 탈취로 판단
+        // TokenPair 삭제 -> 다시 로그인 해야됨
+        if (jwtUtils.isExpired(findTokenPair.getAccessToken())) {
             // refreshToken 유효하고, AccessToken 정상적으로 Expired 상태일때
             PrincipalDetails principal = new PrincipalDetails(findTokenPair.getUser());
             Authentication authentication = new UsernamePasswordAuthenticationToken(principal, null, principal.getAuthorities());
@@ -197,6 +193,30 @@ public class UserService {
             response.setAccessToken(jwtUtils.addPrefix(jwt));
             response.setRefreshToken(jwtUtils.addPrefix(refresh));
             return response;
+
+        } else {
+            // accessToken이 아직 만료되지 않은 상태 -> 토큰 탈취로 판단 -> delete tokenPair
+            tokenPairRepository.delete(findTokenPair);
+            return null;
         }
+    }
+
+    /**
+    *   작성날짜: 2022/07/29 1:50 PM
+    *   작성자: 이승범
+    *   작성내용: 로그인아이디 중복 확인
+    */
+    public void checkLoginId(String loginId) {
+        userRepository.findByLoginId(loginId)
+                .ifPresent((user)->{
+                    throw new UserException(UserErrorResult.ALREADY_LOGINID_EXIST);
+                });
+    }
+
+    public void checkNickname(String nickname) {
+        userRepository.findByNickName(nickname)
+                .ifPresent((user)->{
+                    throw new UserException(UserErrorResult.ALREADY_NICKNAME_EXIST);
+                });
     }
 }
