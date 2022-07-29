@@ -19,5 +19,5 @@ public interface CommentRepository extends JpaRepository<Comment, Long> {
             "where c.user.id = :userId")
     Slice<Comment> findByUser(@Param("userId") Long userId, Pageable pageable);
 
-    Optional<Comment> findFirstByPostAndUser(Post post, User user);
+    Optional<Comment> findFirstByPostAndUserAndAnonymous(Post post, User user, Boolean anonymous);
 }

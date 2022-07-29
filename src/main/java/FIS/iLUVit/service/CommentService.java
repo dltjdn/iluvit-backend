@@ -38,9 +38,8 @@ public class CommentService {
         Post findPost = postRepository.findByIdWithBoard(postId)
                 .orElseThrow(() -> new PostException(PostErrorResult.POST_NOT_EXIST));
 
-        Comment findComment = commentRepository.findFirstByPostAndUser(findPost, findUser)
-                .orElse(null);
 
+        // anonymous false 일 때 null
         Integer anonymousOrder = null;
 
         // 익명 작성일 때
@@ -49,7 +48,9 @@ public class CommentService {
             if (Objects.equals(findPost.getUser().getId(), userId)) {
                 anonymousOrder = -1;
             } else {
-                // 게시글 내 이미 작성한 댓글이 있으면 댓글에서 익명 순서 가져옴
+                Comment findComment = commentRepository.findFirstByPostAndUserAndAnonymous(findPost, findUser, request.getAnonymous())
+                    .orElse(null);
+                // 게시글 내 이미 익명으로 작성한 댓글이 있으면 댓글에서 익명 순서 가져옴
                 if (findComment != null) {
                     anonymousOrder = findComment.getAnonymousOrder();
                 } else { // 없으면 게시글 order +1 후 익명 순서 새로 가져옴
