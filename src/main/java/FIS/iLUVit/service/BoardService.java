@@ -2,18 +2,22 @@ package FIS.iLUVit.service;
 
 import FIS.iLUVit.controller.dto.BoardListDTO;
 import FIS.iLUVit.controller.dto.CreateBoardRequest;
+import FIS.iLUVit.controller.dto.StoryHomeDTO;
 import FIS.iLUVit.domain.*;
 import FIS.iLUVit.domain.enumtype.Auth;
 import FIS.iLUVit.exception.*;
 import FIS.iLUVit.repository.*;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 @Transactional
@@ -156,5 +160,32 @@ public class BoardService {
 
         boardRepository.delete(findBoard);
         return boardId;
+    }
+
+    public StoryHomeDTO findCenterStory(Long userId) {
+        List<StoryHomeDTO.CenterStoryDTO> result = new ArrayList<>();
+        result.add(new StoryHomeDTO.CenterStoryDTO(null));
+        if (userId == null) {
+            return new StoryHomeDTO(result);
+        }
+        User findUser = userRepository.findById(userId)
+                .orElseThrow(() -> new UserException(UserErrorResult.USER_NOT_EXIST));
+        log.info("findUser = {}", findUser.getAuth());
+        if (findUser.getAuth() == Auth.PARENT) {
+            List<Child> children = userRepository.findChildrenWithCenter(userId);
+            List<StoryHomeDTO.CenterStoryDTO> centerStoryDTOList = children.stream()
+                    .filter(c -> c.getCenter() != null)
+                    .map(c -> new StoryHomeDTO.CenterStoryDTO(c.getCenter()))
+                    .collect(Collectors.toList());
+            result.addAll(centerStoryDTOList);
+        } else {
+            Center findCenter = ((Teacher) findUser).getCenter();
+            if (findCenter != null) {
+                StoryHomeDTO.CenterStoryDTO centerStoryDTO = new StoryHomeDTO
+                        .CenterStoryDTO(findCenter);
+                result.add(centerStoryDTO);
+            }
+        }
+        return new StoryHomeDTO(result);
     }
 }
