@@ -18,7 +18,7 @@ import java.util.stream.Collectors;
 @AllArgsConstructor
 public class GetPostResponse {
 
-    private Long id;
+    private Long id; // 게시글 아이디
     private Long writer_id;
     private String nickname;
     private Boolean anonymous;
@@ -46,8 +46,12 @@ public class GetPostResponse {
     public GetPostResponse(Post post, List<String> encodedImages, String encodedProfileImage) {
         this.id = post.getId();
         if (post.getUser() != null) {
-            this.writer_id = post.getUser().getId();
-            this.nickname = post.getUser().getNickName();
+            if (post.getAnonymous()) {
+                this.nickname = "익명";
+            } else {
+                this.writer_id = post.getUser().getId();
+                this.nickname = post.getUser().getNickName();
+            }
         }
         this.anonymous = post.getAnonymous();
         this.date = post.getDate();

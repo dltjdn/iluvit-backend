@@ -31,12 +31,20 @@ public class GetCommentResponse {
         this.id = comment.getId();
         User writer = comment.getUser();
         if (writer != null) {
-            this.writer_id = writer.getId();
-            this.nickname = writer.getNickName();
             this.profileImage = writer.getProfileImagePath();
-            this.heartCnt = comment.getCommentHearts().size();
-            this.anonymous = comment.getAnonymous();
+            if (comment.getAnonymous()) {
+                if (comment.getAnonymousOrder().equals(-1)) {
+                    this.nickname = "익명(작성자)";
+                } else {
+                    this.nickname = "익명" + comment.getAnonymousOrder().toString();
+                }
+            } else {
+                this.writer_id = writer.getId();
+                this.nickname = writer.getNickName();
+            }
         }
+        this.heartCnt = comment.getHeartCnt();
+        this.anonymous = comment.getAnonymous();
         this.content = comment.getContent();
         this.date = comment.getDate();
         this.time = comment.getTime();
@@ -63,12 +71,20 @@ public class GetCommentResponse {
             this.id = comment.getId();
             User writer = comment.getUser();
             if (writer != null) {
-                this.writer_id = writer.getId();
-                this.nickname = writer.getNickName();
                 this.profileImage = writer.getProfileImagePath();
-                this.heartCnt = comment.getCommentHearts().size();
-                this.anonymous = comment.getAnonymous();
+                if (comment.getAnonymous()) {
+                    if (comment.getAnonymousOrder().equals(-1)) {
+                        this.nickname = "익명(작성자)";
+                    } else {
+                        this.nickname = "익명" + comment.getAnonymousOrder().toString();
+                    }
+                } else {
+                    this.writer_id = writer.getId();
+                    this.nickname = writer.getNickName();
+                }
             }
+            this.heartCnt = comment.getHeartCnt();
+            this.anonymous = comment.getAnonymous();
             this.content = comment.getContent();
             this.date = comment.getDate();
             this.time = comment.getTime();
