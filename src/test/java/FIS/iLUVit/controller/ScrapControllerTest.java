@@ -52,7 +52,7 @@ public class ScrapControllerTest {
     public void init() {
         objectMapper = new ObjectMapper();
         mockMvc = MockMvcBuilders.standaloneSetup(target)
-                .setCustomArgumentResolvers(new LoginUserArgumentResolver(), new PageableHandlerMethodArgumentResolver())
+                .setCustomArgumentResolvers(new LoginUserArgumentResolver("secretKey"), new PageableHandlerMethodArgumentResolver())
                 .setControllerAdvice(GlobalControllerAdvice.class)
                 .build();
         user = Creator.createParent(1L);

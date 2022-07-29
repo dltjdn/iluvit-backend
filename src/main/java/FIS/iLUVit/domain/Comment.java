@@ -25,7 +25,8 @@ public class Comment extends BaseEntity {
     private LocalTime time;          // 게시글 작성 시간
     private Boolean anonymous;       // 익명 댓글 여부
     private String content;
-
+    private Integer anonymousOrder;  // 댓글 작성 순서 ex) 익명1, 익명2, .... // anonymous false 일 때는 null
+    private Integer heartCnt;        // 좋아요 수
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "post_id")
@@ -47,7 +48,7 @@ public class Comment extends BaseEntity {
     @OnDelete(action = OnDeleteAction.CASCADE)
     private Comment parentComment;
 
-    public Comment(Boolean anonymous, String content, Post post, User user) {
+    public Comment(Boolean anonymous, String content, Post post, User user, Integer anonymousOrder) {
         this.anonymous = anonymous;
         this.content = content;
         this.post = post;
@@ -55,6 +56,8 @@ public class Comment extends BaseEntity {
         this.user = user;
         this.date = LocalDate.now();
         this.time = LocalTime.now();
+        this.anonymousOrder = anonymousOrder;
+        this.heartCnt = 0;
     }
 
     public void updateParentComment(Comment parentComment) {
@@ -71,16 +74,34 @@ public class Comment extends BaseEntity {
     }
 
     @Builder(toBuilder = true)
-    public Comment(Long id, LocalDate date, LocalTime time, Boolean anonymous, String content, Post post, User user, List<CommentHeart> commentHearts, List<Comment> subComments, Comment parentComment) {
+    public Comment(Long id, LocalDate date, LocalTime time, Boolean anonymous, String content, Integer anonymousOrder, Integer heartCnt, Post post, User user, List<CommentHeart> commentHearts, List<Comment> subComments, Comment parentComment) {
         this.id = id;
         this.date = date;
         this.time = time;
         this.anonymous = anonymous;
         this.content = content;
+        this.anonymousOrder = anonymousOrder;
+        this.heartCnt = heartCnt;
         this.post = post;
         this.user = user;
         this.commentHearts = commentHearts;
         this.subComments = subComments;
         this.parentComment = parentComment;
+    }
+
+
+
+    public void deleteComment() {
+        this.content = "삭제된 댓글입니다.";
+        this.user = null;
+        this.getPost().reduceCommentCnt();
+    }
+
+    public void plusHeartCnt() {
+        this.heartCnt += 1;
+    }
+
+    public void minusHeartCnt() {
+        this.heartCnt -= 1;
     }
 }

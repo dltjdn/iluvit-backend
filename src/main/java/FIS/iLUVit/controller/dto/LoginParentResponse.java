@@ -1,7 +1,7 @@
 package FIS.iLUVit.controller.dto;
 
 import FIS.iLUVit.domain.enumtype.Auth;
-import FIS.iLUVit.filter.LoginResponse;
+import FIS.iLUVit.security.LoginResponse;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 

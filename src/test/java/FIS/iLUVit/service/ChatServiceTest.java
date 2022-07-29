@@ -65,7 +65,9 @@ class ChatServiceTest {
     Board board1;
 
     Post post1;
+    Post post2;
     Comment comment1;
+    Comment comment2;
 
     ChatRoom chatRoom1;
     ChatRoom chatRoom2;
@@ -101,7 +103,9 @@ class ChatServiceTest {
         board1 = CreateTest.createBoard(3L, "자유게시판", BoardKind.NORMAL, null, true);
 
         post1 = Creator.createPost(4L, "제목", "내용", true, board1, receiver);
+        post2 = Creator.createPost(40L, "제목22", "내용22", true, board1, sender);
         comment1 = Creator.createComment(13L, true, "asdf", post1, receiver);
+        comment2 = Creator.createComment(130L, true, "asdf22", post1, sender);
 
         chatRoom1 = Creator.createChatRoom(5L, receiver, sender, post1);
         chatRoom2 = Creator.createChatRoom(6L, sender, receiver, post1);
@@ -116,52 +120,14 @@ class ChatServiceTest {
     }
 
     @Test
-    public void 쪽지_작성_자신에게_보냄() throws Exception {
-        //given
-        request.setMessage("안녕");
-        request.setPost_id(post1.getId());
-        request.setReceiver_id(receiver.getId());
-
-        //when
-        ChatException result = assertThrows(ChatException.class,
-                () -> chatService.saveChat(receiver.getId(), request));
-        //then
-        assertThat(result.getErrorResult())
-                .isEqualTo(ChatErrorResult.NO_SEND_TO_SELF);
-    }
-
-    @Test
     public void 쪽지_작성_발신자X() throws Exception {
         //given
         request.setMessage("안녕");
         request.setPost_id(post1.getId());
-        request.setReceiver_id(sender.getId());
 
         Mockito.doReturn(Optional.empty())
                 .when(userRepository)
                 .findById(receiver.getId());
-        //when
-        ChatException result = assertThrows(ChatException.class,
-                () -> chatService.saveChat(receiver.getId(), request));
-        //then
-        assertThat(result.getErrorResult())
-                .isEqualTo(ChatErrorResult.USER_NOT_EXIST);
-    }
-
-    @Test
-    public void 쪽지_작성_수신자X() throws Exception {
-        //given
-        request.setMessage("안녕");
-        request.setPost_id(post1.getId());
-        request.setReceiver_id(sender.getId());
-
-        Mockito.doReturn(Optional.of(receiver))
-                .when(userRepository)
-                .findById(receiver.getId());
-
-        Mockito.doReturn(Optional.empty())
-                .when(userRepository)
-                .findById(sender.getId());
         //when
         ChatException result = assertThrows(ChatException.class,
                 () -> chatService.saveChat(receiver.getId(), request));
@@ -175,16 +141,11 @@ class ChatServiceTest {
         //given
         request.setMessage("안녕");
         request.setPost_id(post1.getId());
-        request.setReceiver_id(sender.getId());
         request.setComment_id(comment1.getId());
 
         Mockito.doReturn(Optional.of(receiver))
                 .when(userRepository)
                 .findById(receiver.getId());
-
-        Mockito.doReturn(Optional.of(sender))
-                .when(userRepository)
-                .findById(sender.getId());
 
         Mockito.doReturn(Optional.empty())
                 .when(postRepository)
@@ -203,16 +164,11 @@ class ChatServiceTest {
         //given
         request.setMessage("안녕");
         request.setPost_id(post1.getId());
-        request.setReceiver_id(sender.getId());
         request.setComment_id(comment1.getId());
 
         Mockito.doReturn(Optional.of(receiver))
                 .when(userRepository)
                 .findById(receiver.getId());
-
-        Mockito.doReturn(Optional.of(sender))
-                .when(userRepository)
-                .findById(sender.getId());
 
         Mockito.doReturn(Optional.of(post1))
                 .when(postRepository)
@@ -232,25 +188,108 @@ class ChatServiceTest {
     }
 
     @Test
-    public void 쪽지_작성_성공() throws Exception {
+    public void 쪽지_작성_댓글O_자신에게_보냄() throws Exception {
+        //given
+        request.setMessage("안녕");
+        request.setPost_id(post1.getId());
+        request.setComment_id(comment1.getId());
+
+        Mockito.doReturn(Optional.of(receiver))
+                .when(userRepository)
+                .findById(receiver.getId());
+
+        Mockito.doReturn(Optional.of(post1))
+                .when(postRepository)
+                .findById(post1.getId());
+
+        Mockito.doReturn(Optional.of(comment1))
+                .when(commentRepository)
+                .findById(comment1.getId());
+
+        //when
+        ChatException result = assertThrows(ChatException.class,
+                () -> chatService.saveChat(receiver.getId(), request));
+        //then
+        assertThat(result.getErrorResult())
+                .isEqualTo(ChatErrorResult.NO_SEND_TO_SELF);
+    }
+
+    @Test
+    public void 쪽지_작성_댓글X_자신에게_보냄() throws Exception {
+        //given
+        request.setMessage("안녕");
+        request.setPost_id(post1.getId());
+
+        Mockito.doReturn(Optional.of(receiver))
+                .when(userRepository)
+                .findById(receiver.getId());
+
+        Mockito.doReturn(Optional.of(post1))
+                .when(postRepository)
+                .findById(post1.getId());
+
+        //when
+        ChatException result = assertThrows(ChatException.class,
+                () -> chatService.saveChat(receiver.getId(), request));
+        //then
+        assertThat(result.getErrorResult())
+                .isEqualTo(ChatErrorResult.NO_SEND_TO_SELF);
+    }
+
+    @Test
+    public void 쪽지_작성_댓글X_성공() throws Exception {
         //given
         try (MockedStatic<AlarmUtils> alarmUtils = Mockito.mockStatic(AlarmUtils.class)) {
 
             request.setMessage("안녕");
-            request.setPost_id(post1.getId());
-            request.setReceiver_id(sender.getId());
+            request.setPost_id(post2.getId());
 
             Mockito.doReturn(Optional.of(receiver))
                     .when(userRepository)
                     .findById(receiver.getId());
 
-            Mockito.doReturn(Optional.of(sender))
-                    .when(userRepository)
-                    .findById(sender.getId());
-
-            Mockito.doReturn(Optional.of(post1))
+            Mockito.doReturn(Optional.of(post2))
                     .when(postRepository)
-                    .findById(post1.getId());
+                    .findById(post2.getId());
+
+            Mockito.doReturn(chat2)
+                    .when(chatRepository)
+                    .save(any());
+
+            alarmUtils.when(() -> AlarmUtils.getMessage(any(String.class), any(Object[].class)))
+                    .thenReturn("회원 {0}로 부터 새로운 채팅을 받았어요");
+
+            AlarmEvent alarmEvent = new AlarmEvent(new ChatAlarm(receiver, sender, false));
+            alarmUtils.when(() -> AlarmUtils.publishAlarmEvent(any(Alarm.class)))
+                    .thenReturn(alarmEvent);
+
+            //when
+            Long returnedId = chatService.saveChat(receiver.getId(), request);
+            //then
+            assertThat(returnedId).isEqualTo(chat2.getId());
+        }
+    }
+
+    @Test
+    public void 쪽지_작성_댓글O_성공() throws Exception {
+        //given
+        try (MockedStatic<AlarmUtils> alarmUtils = Mockito.mockStatic(AlarmUtils.class)) {
+
+            request.setMessage("안녕");
+            request.setPost_id(post2.getId());
+            request.setComment_id(comment2.getId());
+
+            Mockito.doReturn(Optional.of(receiver))
+                    .when(userRepository)
+                    .findById(receiver.getId());
+
+            Mockito.doReturn(Optional.of(post2))
+                    .when(postRepository)
+                    .findById(post2.getId());
+
+            Mockito.doReturn(Optional.of(comment2))
+                    .when(commentRepository)
+                    .findById(comment2.getId());
 
             Mockito.doReturn(chat2)
                     .when(chatRepository)

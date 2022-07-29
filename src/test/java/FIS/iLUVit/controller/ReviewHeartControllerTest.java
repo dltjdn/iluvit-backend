@@ -76,7 +76,7 @@ class ReviewHeartControllerTest {
     @BeforeEach
     public void init() {
         mockMvc = MockMvcBuilders.standaloneSetup(reviewHeartController)
-                .setCustomArgumentResolvers(new LoginUserArgumentResolver(),
+                .setCustomArgumentResolvers(new LoginUserArgumentResolver("secretKey"),
                         new PageableHandlerMethodArgumentResolver())
                 .setControllerAdvice(GlobalControllerAdvice.class)
                 .build();
@@ -139,7 +139,7 @@ class ReviewHeartControllerTest {
                 .withSubject("JWT")
                 .withExpiresAt(new Date(System.currentTimeMillis() + (60000 * 60 * 3))) // JWT 만료시간 밀리세컨단위
                 .withClaim("id", user.getId())
-                .sign(Algorithm.HMAC512("symmetricKey"));
+                .sign(Algorithm.HMAC512("secretKey"));
     }
 
     @Test

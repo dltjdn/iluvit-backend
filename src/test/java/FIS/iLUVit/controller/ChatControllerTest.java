@@ -85,7 +85,7 @@ class ChatControllerTest {
     @BeforeEach
     public void init() {
         mockMvc = MockMvcBuilders.standaloneSetup(chatController)
-                .setCustomArgumentResolvers(new LoginUserArgumentResolver(),
+                .setCustomArgumentResolvers(new LoginUserArgumentResolver("secretKey"),
                         new PageableHandlerMethodArgumentResolver())
                 .setControllerAdvice(GlobalControllerAdvice.class)
                 .build();
@@ -127,7 +127,7 @@ class ChatControllerTest {
                 .withSubject("JWT")
                 .withExpiresAt(new Date(System.currentTimeMillis() + (60000 * 60 * 3))) // JWT 만료시간 밀리세컨단위
                 .withClaim("id", receiver.getId())
-                .sign(Algorithm.HMAC512("symmetricKey"));
+                .sign(Algorithm.HMAC512("secretKey"));
     }
 
     @Test
@@ -135,7 +135,6 @@ class ChatControllerTest {
         //given
         request.setMessage("안녕");
         request.setPost_id(post1.getId());
-        request.setReceiver_id(receiver.getId());
         final String url = "/chat";
         final ChatErrorResult error = ChatErrorResult.UNAUTHORIZED_USER_ACCESS;
 
@@ -162,7 +161,6 @@ class ChatControllerTest {
         //given
         request.setMessage("안녕");
         request.setPost_id(post1.getId());
-        request.setReceiver_id(receiver.getId());
 
         final String url = "/chat";
         final ChatErrorResult error = ChatErrorResult.NO_SEND_TO_SELF;
@@ -193,7 +191,6 @@ class ChatControllerTest {
         //given
         request.setMessage("안녕");
         request.setPost_id(post1.getId());
-        request.setReceiver_id(receiver.getId());
         final String url = "/chat";
         final ChatErrorResult error = ChatErrorResult.USER_NOT_EXIST;
 
@@ -221,7 +218,6 @@ class ChatControllerTest {
         //given
         request.setMessage("안녕");
         request.setPost_id(post1.getId());
-        request.setReceiver_id(receiver.getId());
         final String url = "/chat";
         final ChatErrorResult error = ChatErrorResult.POST_NOT_EXIST;
 
@@ -249,7 +245,6 @@ class ChatControllerTest {
         //given
         request.setMessage("안녕");
         request.setPost_id(post1.getId());
-        request.setReceiver_id(receiver.getId());
         final String url = "/chat";
 
         Mockito.doReturn(chat2.getId())

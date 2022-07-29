@@ -130,7 +130,7 @@ public class Creator {
     }
 
     public static Post createPost(String title, String content, Boolean anonymous, Integer commentCnt, Integer heartCnt, Integer imgCnt, Integer videoCnt, Board board, User user) {
-        return new Post(title, content, anonymous, commentCnt, heartCnt, imgCnt, videoCnt, board, user);
+        return new Post(title, content, anonymous, commentCnt, 0, heartCnt, imgCnt, videoCnt, board, user);
     }
 
     public static AuthNumber createAuthNumber(String phoneNum, String authNum, AuthKind authKind, LocalDateTime time) {
@@ -400,7 +400,7 @@ public class Creator {
                 .withSubject("JWT")
                 .withExpiresAt(new Date(System.currentTimeMillis() + (60000 * 60 * 3))) // JWT 만료시간 밀리세컨단위
                 .withClaim("id", user.getId())
-                .sign(Algorithm.HMAC512("symmetricKey"));
+                .sign(Algorithm.HMAC512("secretKey"));
     }
 
     public static Presentation createValidPresentation(Center center) {
@@ -541,6 +541,7 @@ public class Creator {
                 .parentComment(null)
                 .subComments(new ArrayList<>())
                 .commentHearts(new ArrayList<>())
+                .heartCnt(0)
                 .build();
     }
 

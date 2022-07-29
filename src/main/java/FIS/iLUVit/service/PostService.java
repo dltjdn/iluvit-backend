@@ -56,7 +56,7 @@ public class PostService {
 
         //Integer imgSize = (images == null ? 0 : images.size());
         Post post = new Post(request.getTitle(), request.getContent(), request.getAnonymous(),
-                0, 0, 0, 0, findBoard, findUser);
+                0, 0, 0, 0, 0, findBoard, findUser);
         imageService.saveInfoImages(images, post);
         Post savedPost = postRepository.save(post); // 게시글 저장 -> Id 생김
 

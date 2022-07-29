@@ -1,6 +1,6 @@
-package FIS.iLUVit.filter;
+package FIS.iLUVit.security;
 
-import FIS.iLUVit.uesrdetails.PrincipalDetails;
+import FIS.iLUVit.security.uesrdetails.PrincipalDetails;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.security.core.Authentication;
@@ -11,16 +11,14 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
-public class CustomAuthenticationSuccessHandler implements AuthenticationSuccessHandler {
+public class AuthenticationSuccessHandlerCustom implements AuthenticationSuccessHandler {
 
     @Override
     public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response, Authentication authentication) throws IOException, ServletException {
         PrincipalDetails principalDetails = (PrincipalDetails) authentication.getPrincipal();
-//        LoginResponse loginResponse = new LoginResponse(principalDetails.getUser());
-        LoginResponse loginResponse = principalDetails.getUser().getUserInfo();
+        LoginResponse loginResponse = principalDetails.getUser().getLoginInfo();
         response.setContentType("application/json");
         response.getWriter().write(convertObjectToJson(loginResponse));
-
     }
 
     public String convertObjectToJson(Object object) throws JsonProcessingException {

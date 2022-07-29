@@ -85,11 +85,31 @@ class CommentHeartServiceTest {
     }
 
     @Test
+    public void 좋아요_등록_댓글X() throws Exception {
+        //given
+
+        Mockito.doReturn(Optional.empty())
+                .when(commentRepository)
+                .findById(comment1.getId());
+        //when
+        CommentException result = assertThrows(CommentException.class,
+                () -> commentHeartService.save(user1.getId(), comment1.getId()));
+
+        //then
+        assertThat(result.getErrorResult())
+                .isEqualTo(CommentErrorResult.NO_EXIST_COMMENT);
+    }
+
+    @Test
     public void 좋아요_등록_이미_존재() throws Exception {
         //given
         Mockito.doReturn(Optional.of(commentHeart1))
                 .when(commentHeartRepository)
                 .findByUserAndComment(user1.getId(), comment1.getId());
+
+        Mockito.doReturn(Optional.of(comment1))
+                .when(commentRepository)
+                .findById(comment1.getId());
         //when
         CommentException result = assertThrows(CommentException.class,
                 () -> commentHeartService.save(user1.getId(), comment1.getId()));
@@ -110,9 +130,9 @@ class CommentHeartServiceTest {
                 .when(userRepository)
                 .getById(any());
 
-        Mockito.doReturn(comment1)
+        Mockito.doReturn(Optional.of(comment1))
                 .when(commentRepository)
-                .getById(any());
+                .findById(comment1.getId());
 
         Mockito.doReturn(commentHeart1)
                 .when(commentHeartRepository)

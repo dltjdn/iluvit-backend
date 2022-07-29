@@ -46,4 +46,5 @@ src/main/resources/application-s3.yml
 src/main/resources/application-img.yml
 src/main/resources/application-map.yml
 src/main/resources/application.properties
+src/main/resources/application-security.yml
 src/test/resources
