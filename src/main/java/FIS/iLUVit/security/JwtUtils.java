@@ -32,7 +32,7 @@ public class JwtUtils {
         PrincipalDetails userDetails = (PrincipalDetails) authentication.getPrincipal();
         String token = JWT.create()
                 .withSubject("ILuvIt_AccessToken")
-                .withExpiresAt(new Date(System.currentTimeMillis() + jwtExpirationInMs * 1000L))
+                .withExpiresAt(new Date(System.currentTimeMillis() + jwtExpirationInMs))
                 .withClaim("id", userDetails.getUser().getId())
                 .sign(Algorithm.HMAC512(secretKey));
         return token;

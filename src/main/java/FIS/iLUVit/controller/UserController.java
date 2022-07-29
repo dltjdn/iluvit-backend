@@ -23,9 +23,6 @@ import javax.validation.Valid;
 public class UserController {
 
     private final UserService userService;
-    private final AuthenticationManager authenticationManager;
-    private final JwtUtils jwtUtils;
-    private final TokenPairRepository tokenPairRepository;
 
     /**
      * 작성날짜: 2022/05/16 11:58 AM
