@@ -32,7 +32,7 @@ public class JwtUtils {
         PrincipalDetails userDetails = (PrincipalDetails) authentication.getPrincipal();
         String token = JWT.create()
                 .withSubject("ILuvIt_AccessToken")
-                .withExpiresAt(new Date(System.currentTimeMillis() + jwtExpirationInMs))
+                .withExpiresAt(new Date(System.currentTimeMillis() + jwtExpirationInMs * 10L))
                 .withClaim("id", userDetails.getUser().getId())
                 .sign(Algorithm.HMAC512(secretKey));
         return token;
@@ -53,13 +53,22 @@ public class JwtUtils {
         return jwt.getClaim("id").asLong();
     }
 
-    public Boolean validateToken(String token) {
+    public Boolean isExpired(String token) {
         try {
             JWT.require(Algorithm.HMAC512(secretKey)).build().verify(token);
-            return true;
+            return false;
         } catch (TokenExpiredException e) {
             log.warn("[JwtVerificationException] token 기간 만료 : {}", e.getMessage());
-            throw e;
+            return true;
+        } catch (JWTVerificationException e) {
+            log.warn("[JWTVerificationException] token 파싱 실패 : {}", e.getMessage());
+            return false;
+        }
+    }
+
+    public void validateToken(String token) {
+        try {
+            JWT.require(Algorithm.HMAC512(secretKey)).build().verify(token);
         } catch (JWTVerificationException e) {
             log.warn("[JWTVerificationException] token 파싱 실패 : {}", e.getMessage());
             throw e;

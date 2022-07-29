@@ -2,19 +2,32 @@ package FIS.iLUVit.controller;
 
 import FIS.iLUVit.config.argumentResolver.Login;
 import FIS.iLUVit.controller.dto.*;
+import FIS.iLUVit.exception.exceptionHandler.ErrorResponse;
 import FIS.iLUVit.repository.TokenPairRepository;
 import FIS.iLUVit.security.JwtUtils;
 import FIS.iLUVit.security.LoginRequest;
 import FIS.iLUVit.security.LoginResponse;
 import FIS.iLUVit.service.UserService;
+import com.auth0.jwt.exceptions.JWTVerificationException;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.hibernate.validator.constraints.Length;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
+import javax.validation.constraints.Min;
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
+import java.io.IOException;
 
 
 @Slf4j
@@ -32,6 +45,16 @@ public class UserController {
     @GetMapping("/user/info")
     public UserInfoResponse findUserInfo(@Login Long id) {
         return userService.findUserInfo(id);
+    }
+
+    @GetMapping("/loginid")
+    public void checkLoginId(@Valid @ModelAttribute CheckLoginIdRequest request) {
+        userService.checkLoginId(request.getLoginId());
+    }
+
+    @GetMapping("/nickname")
+    public void checkNickname(@RequestParam String nickname) {
+        userService.checkNickname(nickname);
     }
 
     /**
@@ -75,7 +98,12 @@ public class UserController {
      *   작성내용: refreshToken으로 AccessToken발급
      */
     @PostMapping("/refresh")
-    public LoginResponse refresh(@Valid @RequestBody TokenRefreshRequest request) {
-        return userService.refresh(request);
+    public LoginResponse refresh(@Valid @RequestBody TokenRefreshRequest request) throws IOException {
+        LoginResponse response = userService.refresh(request);
+        if (response != null) {
+            return response;
+        } else {
+            throw new JWTVerificationException("유효하지 않은 시도입니다.");
+        }
     }
 }

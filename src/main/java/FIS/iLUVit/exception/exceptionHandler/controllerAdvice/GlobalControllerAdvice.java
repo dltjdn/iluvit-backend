@@ -20,6 +20,7 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 
+import javax.naming.AuthenticationException;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -110,6 +111,13 @@ public class GlobalControllerAdvice extends ResponseEntityExceptionHandler {
     public ErrorResponse jwtVerificationException(JWTVerificationException e) {
         log.warn("[JWTVerificationException Handler] {}", e.getMessage());
         return new ErrorResponse(HttpStatus.UNAUTHORIZED, e.getMessage());
+    }
+
+    @ResponseStatus(HttpStatus.UNAUTHORIZED)
+    @ExceptionHandler(AuthenticationException.class)
+    public ErrorResponse authenticationException(AuthenticationException e) {
+        log.warn("[AuthenticationException Handler] {}", e.getMessage());
+        return new ErrorResponse(HttpStatus.UNAUTHORIZED, "아이디 또는 비밀번호가 잘못되었습니다.");
     }
 
 
