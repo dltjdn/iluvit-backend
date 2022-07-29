@@ -130,7 +130,7 @@ public class Creator {
     }
 
     public static Post createPost(String title, String content, Boolean anonymous, Integer commentCnt, Integer heartCnt, Integer imgCnt, Integer videoCnt, Board board, User user) {
-        return new Post(title, content, anonymous, commentCnt, heartCnt, imgCnt, videoCnt, board, user);
+        return new Post(title, content, anonymous, commentCnt, 0, heartCnt, imgCnt, videoCnt, board, user);
     }
 
     public static AuthNumber createAuthNumber(String phoneNum, String authNum, AuthKind authKind, LocalDateTime time) {
@@ -480,6 +480,7 @@ public class Creator {
                 .parentComment(null)
                 .subComments(new ArrayList<>())
                 .commentHearts(new ArrayList<>())
+                .heartCnt(0)
                 .build();
     }
 

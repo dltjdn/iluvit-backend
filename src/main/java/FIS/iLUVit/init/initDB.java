@@ -157,21 +157,21 @@ public class initDB {
             em.persist(bookmark6);
 
 
-            Post post1 = new Post("제목이다", "내용이다", false, 0, 0, 0, 0, board2, teacher1);
-            Post post2 = new Post("안녕", "먹칠하잖아", false, 0, 0, 0, 0, board2, parent1);
-            Post post3 = new Post("게시글제목", "계속먹칠하잖아", false, 0, 0, 0, 0, board2, teacher2);
-            Post post4 = new Post("타이틀", "abcdefg", false, 0, 0, 0, 0, board2, parent2);
-            Post post5 = new Post("다와가", "때려밟았지마티즈엑셀", false, 0, 0, 0, 0, board2, teacher3);
-            Post post6 = new Post("집에가고 싶다", "집에가자 좀", false, 0, 0, 0, 0, board6, parent1);
-            Post post7 = new Post("a sdffg", "ff 좀", false, 0, 0, 0, 0, board2, parent1);
-            Post post8 = new Post("ba sdffg", "a", false, 0, 0, 0, 0, board2, parent1);
-            Post post9 = new Post("b sdffg", "b", false, 0, 0, 0, 0, board7, parent1);
-            Post post10 = new Post("c sdffg", "c", false, 0, 0, 0, 0, board3, parent1);
-            Post post11 = new Post("d sdffg", "d 좀", false, 0, 0, 0, 0, board3, parent1);
-            Post post12 = new Post("e sdffg", "e 좀", false, 0, 0, 0, 0, board4, parent1);
-            Post post13 = new Post("f sdffg", "f 좀", false, 0, 0, 0, 0, board4, parent1);
-            Post post14 = new Post("g sdffg", "g 좀", false, 0, 0, 0, 0, board4, parent1);
-            Post post15 = new Post("h sdffg", "h 좀", false, 0, 0, 0, 0, board5, parent1);
+            Post post1 = new Post("제목이다", "내용이다", false, 0, 0, 0, 0, 0, board2, teacher1);
+            Post post2 = new Post("안녕", "먹칠하잖아", false, 0, 0, 0, 0, 0, board2, parent1);
+            Post post3 = new Post("게시글제목", "계속먹칠하잖아", false, 0, 0, 0, 0, 0, board2, teacher2);
+            Post post4 = new Post("타이틀", "abcdefg", false, 0, 0, 0, 0, 0, board2, parent2);
+            Post post5 = new Post("다와가", "때려밟았지마티즈엑셀", false, 0, 0, 0, 0, 0, board2, teacher3);
+            Post post6 = new Post("집에가고 싶다", "집에가자 좀", false, 0, 0, 0, 0, 0, board6, parent1);
+            Post post7 = new Post("a sdffg", "ff 좀", false, 0, 0, 0, 0, 0, board2, parent1);
+            Post post8 = new Post("ba sdffg", "a", false, 0, 0, 0, 0, 0, board2, parent1);
+            Post post9 = new Post("b sdffg", "b", false, 0, 0, 0, 0, 0, board7, parent1);
+            Post post10 = new Post("c sdffg", "c", false, 0, 0, 0, 0, 0, board3, parent1);
+            Post post11 = new Post("d sdffg", "d 좀", false, 0, 0, 0, 0, 0, board3, parent1);
+            Post post12 = new Post("e sdffg", "e 좀", false, 0, 0, 0, 0, 0, board4, parent1);
+            Post post13 = new Post("f sdffg", "f 좀", false, 0, 0, 0, 0, 0, board4, parent1);
+            Post post14 = new Post("g sdffg", "g 좀", false, 0, 0, 0, 0, 0, board4, parent1);
+            Post post15 = new Post("h sdffg", "h 좀", false, 0, 0, 0, 0, 0, board5, parent1);
             em.persist(post1);
             em.persist(post2);
             em.persist(post3);
@@ -197,14 +197,14 @@ public class initDB {
             em.persist(postHeart3);
             em.persist(postHeart4);
 
-            Comment comment1 = new Comment(false, "댓글이다", post1, parent1);
-            Comment comment2 = new Comment(false, "댓글이다2", post1, parent2);
-            Comment comment3 = new Comment(false, "댓글이다3", post1, parent3);
+            Comment comment1 = new Comment(false, "댓글이다", post1, parent1, 1);
+            Comment comment2 = new Comment(false, "댓글이다2", post1, parent2, 1);
+            Comment comment3 = new Comment(false, "댓글이다3", post1, parent3, 1);
             comment2.updateParentComment(comment1);
             comment3.updateParentComment(comment1);
-            Comment comment4 = new Comment(false, "안녕하세요", post2, teacher1);
-            Comment comment5 = new Comment(false, "댓글내용", post3, teacher2);
-            Comment comment6 = new Comment(false, "adsasdfasfd", post4, teacher4);
+            Comment comment4 = new Comment(false, "안녕하세요", post2, teacher1, 1);
+            Comment comment5 = new Comment(false, "댓글내용", post3, teacher2, 1);
+            Comment comment6 = new Comment(false, "adsasdfasfd", post4, teacher4, 1);
             em.persist(comment1);
             em.persist(comment2);
             em.persist(comment3);
