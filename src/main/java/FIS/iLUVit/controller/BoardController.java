@@ -28,7 +28,7 @@ public class BoardController {
     /**
         작성자: 이창윤
         작성시간: 2022/06/24 2:48 PM
-        내용: 시설(유치원) 내 게시판 목록 조회
+        내용: 시설(유치원) 내 게시판 목록 조회.
     */
     @GetMapping("/board/inCenter/{center_id}")
     public BoardListDTO searchAllInCenter(@Login Long userId, @PathVariable("center_id") Long centerId) {
