@@ -11,10 +11,13 @@ import FIS.iLUVit.exception.AuthNumberErrorResult;
 import FIS.iLUVit.exception.AuthNumberException;
 import FIS.iLUVit.exception.SignupErrorResult;
 import FIS.iLUVit.exception.SignupException;
+import FIS.iLUVit.security.JwtUtils;
 import FIS.iLUVit.security.LoginResponse;
 import FIS.iLUVit.repository.AlarmRepository;
 import FIS.iLUVit.repository.AuthNumberRepository;
 import FIS.iLUVit.repository.UserRepository;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -44,6 +47,8 @@ public class UserServiceTest {
     private AlarmRepository alarmRepository;
     @Spy
     private BCryptPasswordEncoder encoder;
+    @Spy
+    private JwtUtils jwtUtils;
 
     @Test
     public void 사용자기본정보_성공() {
@@ -180,5 +185,5 @@ public class UserServiceTest {
         User result = target.updatePassword(parent.getId(), request);
         // then
         assertThat(encoder.matches("newPwd", result.getPassword())).isTrue();
-    } 
+    }
 }
