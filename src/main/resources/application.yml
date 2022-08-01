@@ -29,8 +29,8 @@ spring:
       - security
     active: release
     group:
-      develop: iluvit-develop, h2, local-image
-      release: iluvit-release, mysql, server-image
+      develop: iluvit-develop, h2, local-image, http
+      release: iluvit-release, mysql, server-image, ssl
 
 ---
 spring:
