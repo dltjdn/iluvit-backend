@@ -506,22 +506,27 @@ public class TeacherServiceTest {
             // then
             assertThat(result.getErrorResult()).isEqualTo(UserErrorResult.HAVE_NOT_AUTHORIZATION);
         }
-//        @Test
-//        @DisplayName("[error] 올바르지않은 교사 삭제")
-//        public void 올바르지않은교사() {
-//            // given
-//            center1.getTeachers().add(teacher1);
-//            center1.getTeachers().add(teacher2);
-//            center1.getTeachers().add(teacher3);
-//            center1.getTeachers().add(teacher5);
-//            doReturn(Optional.of(teacher1))
-//                    .when(teacherRepository)
-//                    .findDirectorById(teacher1.getId());
-//            // when
-//
-//            // then
-//
-//        }
+
+        @Test
+        @DisplayName("[error] 올바르지않은 교사 삭제")
+        public void 올바르지않은교사() {
+            // given
+            center1.getTeachers().add(teacher1);
+            center1.getTeachers().add(teacher2);
+            center1.getTeachers().add(teacher3);
+            center1.getTeachers().add(teacher5);
+            doReturn(Optional.of(teacher1))
+                    .when(teacherRepository)
+                    .findDirectorById(teacher1.getId());
+            doReturn(Optional.of(teacher4))
+                    .when(teacherRepository)
+                    .findById(teacher4.getId());
+            // when
+            assertThrows(UserException.class,
+                    () -> target.fireTeacher(teacher1.getId(), teacher4.getId()));
+            // then
+
+        }
     }
 
 }
