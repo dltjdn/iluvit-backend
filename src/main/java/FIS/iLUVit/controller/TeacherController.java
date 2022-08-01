@@ -106,4 +106,14 @@ public class TeacherController {
     public void mandateTeacher(@Login Long userId, @PathVariable("teacherId") Long teacherId) {
         teacherService.mandateTeacher(userId, teacherId);
     }
+
+    /**
+     * 작성날짜: 2022/07/29 5:05 PM
+     * 작성자: 이승범
+     * 작성내용: 원장권한 박탈
+     */
+    @PatchMapping("/director/teacher/demote/{teacherId}")
+    public void demoteTeacher(@Login Long userId, @PathVariable("teacherId") Long teacherId) {
+        teacherService.demoteTeacher(userId, teacherId);
+    }
 }
