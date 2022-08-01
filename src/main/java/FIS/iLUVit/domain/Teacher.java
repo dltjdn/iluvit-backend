@@ -107,7 +107,7 @@ public class Teacher extends User {
 
     @Override
     public UserInfoResponse getUserInfo() {
-        return new TeacherInfoResponse(id, nickName, auth, center);
+        return new TeacherInfoResponse(id, nickName, auth, center, approval);
     }
 
     public void beDirector() {
