@@ -522,10 +522,64 @@ public class TeacherServiceTest {
                     .when(teacherRepository)
                     .findById(teacher4.getId());
             // when
-            assertThrows(UserException.class,
+            UserException result = assertThrows(UserException.class,
                     () -> target.fireTeacher(teacher1.getId(), teacher4.getId()));
             // then
+            assertThat(result.getErrorResult()).isEqualTo(UserErrorResult.NOT_VALID_REQUEST);
+        }
 
+        @Test
+        @DisplayName("[error] 존재하지않는 교사 아이디")
+        public void 존재하지않는교사아이디() {
+            // given
+            center1.getTeachers().add(teacher1);
+            center1.getTeachers().add(teacher2);
+            center1.getTeachers().add(teacher3);
+            center1.getTeachers().add(teacher5);
+            doReturn(Optional.of(teacher1))
+                    .when(teacherRepository)
+                    .findDirectorById(teacher1.getId());
+            doReturn(Optional.empty())
+                    .when(teacherRepository)
+                    .findById(teacher4.getId());
+            // when
+            UserException result = assertThrows(UserException.class,
+                    () -> target.fireTeacher(teacher1.getId(), teacher4.getId()));
+            // then
+            assertThat(result.getErrorResult()).isEqualTo(UserErrorResult.NOT_VALID_REQUEST);
+        }
+
+        @Test
+        @DisplayName("[success] 교사 삭제 성공")
+        public void 교사삭제성공() {
+            // given
+            Bookmark bookmark1 = Bookmark.builder()
+                    .board(board3)
+                    .user(teacher2)
+                    .build();
+            Bookmark bookmark2 = Bookmark.builder()
+                    .board(board4)
+                    .user(teacher2)
+                    .build();
+            center1.getTeachers().add(teacher1);
+            center1.getTeachers().add(teacher2);
+            center1.getTeachers().add(teacher3);
+            center1.getTeachers().add(teacher5);
+            doReturn(Optional.of(teacher1))
+                    .when(teacherRepository)
+                    .findDirectorById(teacher1.getId());
+            doReturn(Optional.of(teacher2))
+                    .when(teacherRepository)
+                    .findById(teacher4.getId());
+            doReturn(List.of(board3, board4))
+                    .when(boardRepository)
+                    .findByCenter(any());
+            // when
+            Teacher result = target.fireTeacher(teacher1.getId(), teacher2.getId());
+            // then
+            assertThat(result.getCenter()).isNull();
+            verify(boardRepository, times(1)).findByCenter(teacher2.getCenter().getId());
+            verify(bookmarkRepository, times(1)).deleteAllByBoardAndUser(any(), any());
         }
     }
 
