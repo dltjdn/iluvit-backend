@@ -11,10 +11,7 @@ import FIS.iLUVit.repository.*;
 import FIS.iLUVit.service.createmethod.CreateTest;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
-import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -32,7 +29,6 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.*;
 
@@ -382,14 +378,14 @@ class PostServiceTest {
     @Test
     public void 게시글_1개_조회() throws Exception {
         //given
-        GetPostResponse getPostResponse = new GetPostResponse(post1, new ArrayList<>(), null);
+        GetPostResponse getPostResponse = new GetPostResponse(post1, new ArrayList<>(), null, null);
 
         Mockito.doReturn(Optional.of(post1))
                 .when(postRepository)
                 .findByIdWithUserAndBoardAndCenter(post1.getId());
 
         //when
-        GetPostResponse resultDTO = postService.findById(post1.getId());
+        GetPostResponse resultDTO = postService.findById(null, post1.getId());
 
         //then
         assertThat(objectMapper.writeValueAsString(resultDTO))
