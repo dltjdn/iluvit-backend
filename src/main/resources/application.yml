@@ -1,5 +1,4 @@
 server:
-  port: 8081
   servlet:
     context-path: /
     encoding:
@@ -28,10 +27,10 @@ spring:
       - s3
       - map
       - security
-    active: develop
+    active: release
     group:
-      develop: iluvit-develop, h2, local-image
-      release: iluvit-release, mysql, server-image
+      develop: iluvit-develop, h2, local-image, http
+      release: iluvit-release, mysql, server-image, ssl
 
 ---
 spring:
@@ -48,4 +47,3 @@ spring:
 logging:
   level:
     org.hibernate.SQL: info
-

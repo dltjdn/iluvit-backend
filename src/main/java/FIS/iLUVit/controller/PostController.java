@@ -46,8 +46,8 @@ public class PostController {
         내용: 게시글 1개 조회(게시글 자세히 보기)
     */
     @GetMapping("/post/{post_id}")
-    public GetPostResponse getPost(@PathVariable("post_id") Long postId) {
-        return postService.findById(postId);
+    public GetPostResponse getPost(@Login Long userId, @PathVariable("post_id") Long postId) {
+        return postService.findById(userId, postId);
     }
 
     /**
