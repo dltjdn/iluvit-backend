@@ -98,7 +98,7 @@ public class UserController {
      *   작성내용: login기능 security filter에서 옮김
      */
     @PostMapping("/login")
-    public LoginResponse login(@Valid @RequestBody LoginRequest request) {
+    public LoginResponse login(@RequestBody LoginRequest request) {
         return userService.login(request);
     }
 
