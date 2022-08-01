@@ -47,4 +47,5 @@ src/main/resources/application-img.yml
 src/main/resources/application-map.yml
 src/main/resources/application.properties
 src/main/resources/application-security.yml
+src/main/resources/ssl/keystore.p12
 src/test/resources
