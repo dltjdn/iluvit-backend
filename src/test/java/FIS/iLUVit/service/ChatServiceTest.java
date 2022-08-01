@@ -131,7 +131,7 @@ class ChatServiceTest {
         //when
         ChatException result = assertThrows(ChatException.class,
                 () -> chatService.saveChat(receiver.getId(), request));
-        //then
+        //thenn
         assertThat(result.getErrorResult())
                 .isEqualTo(ChatErrorResult.USER_NOT_EXIST);
     }

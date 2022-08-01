@@ -27,7 +27,6 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Slice;
 import org.springframework.data.domain.SliceImpl;
 import org.springframework.data.web.PageableHandlerMethodArgumentResolver;
-import org.springframework.http.MediaType;
 import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
@@ -45,7 +44,6 @@ import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 
-import static org.junit.jupiter.api.Assertions.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -514,7 +512,7 @@ class PostControllerTest {
 
         Mockito.doThrow(new PostException(error))
                 .when(postService)
-                .findById(post1.getId());
+                .findById(null, post1.getId());
 
         //when
         ResultActions resultActions = mockMvc.perform(
@@ -532,13 +530,13 @@ class PostControllerTest {
     @Test
     public void 게시글_1개_조회_성공() throws Exception {
         //given
-        GetPostResponse response = new GetPostResponse(post1, new ArrayList<>(), null);
+        GetPostResponse response = new GetPostResponse(post1, new ArrayList<>(), null, null);
 
         String url = "/post/{post_id}";
 
         Mockito.doReturn(response)
                 .when(postService)
-                .findById(post1.getId());
+                .findById(null, post1.getId());
 
         //when
         ResultActions resultActions = mockMvc.perform(
