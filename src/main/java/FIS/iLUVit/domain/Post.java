@@ -58,7 +58,7 @@ public class Post extends BaseImageEntity {
     private List<ScrapPost> scrapPosts = new ArrayList<>();
 
     @Builder(toBuilder = true)
-    public Post(Long id, String title, String content, Boolean anonymous, LocalDate date, LocalTime time, Integer commentCnt, Integer heartCnt, Integer imgCnt, Integer videoCnt, LocalDateTime postCreateDate, LocalDateTime postUpdateDate, Board board, User user, List<PostHeart> postHearts, List<Comment> comments, List<ScrapPost> scrapPosts) {
+    public Post(Long id, String title, String content, Boolean anonymous, LocalDate date, LocalTime time, Integer commentCnt, Integer heartCnt, Integer imgCnt, Integer videoCnt, LocalDateTime postCreateDate, LocalDateTime postUpdateDate, Board board, User user, List<PostHeart> postHearts, List<Comment> comments, List<ScrapPost> scrapPosts, Integer anonymousOrder) {
         this.id = id;
         this.title = title;
         this.content = content;
@@ -76,6 +76,7 @@ public class Post extends BaseImageEntity {
         this.postHearts = postHearts;
         this.comments = comments;
         this.scrapPosts = scrapPosts;
+        this.anonymousOrder = anonymousOrder;
     }
 
     public Post(String title, String content, Boolean anonymous, Integer commentCnt, Integer anonymousOrder, Integer heartCnt, Integer imgCnt, Integer videoCnt, Board board, User user) {

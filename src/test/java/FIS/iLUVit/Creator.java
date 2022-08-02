@@ -126,6 +126,7 @@ public class Creator {
                 .user(user)
                 .comments(new ArrayList<>())
                 .postHearts(new ArrayList<>())
+                .anonymousOrder(3)
                 .build();
     }
 
@@ -542,6 +543,7 @@ public class Creator {
                 .subComments(new ArrayList<>())
                 .commentHearts(new ArrayList<>())
                 .heartCnt(0)
+                .anonymousOrder(1)
                 .build();
     }
 
