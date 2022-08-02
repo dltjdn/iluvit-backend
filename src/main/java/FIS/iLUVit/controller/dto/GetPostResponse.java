@@ -1,7 +1,6 @@
 package FIS.iLUVit.controller.dto;
 
 import FIS.iLUVit.domain.Post;
-import com.querydsl.core.annotations.QueryProjection;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -9,8 +8,8 @@ import lombok.NoArgsConstructor;
 import javax.persistence.Lob;
 import java.time.LocalDate;
 import java.time.LocalTime;
-import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 @Data
@@ -43,9 +42,16 @@ public class GetPostResponse {
     private Long boardId;
     private Long centerId;
 
-    public GetPostResponse(Post post, List<String> encodedImages, String encodedProfileImage) {
+    private Boolean canDelete;
+
+    public GetPostResponse(Post post, List<String> encodedImages, String encodedProfileImage, Long userId) {
         this.id = post.getId();
         if (post.getUser() != null) {
+            if (Objects.equals(post.getUser().getId(), userId)) {
+                this.canDelete = true;
+            } else {
+                this.canDelete = false;
+            }
             if (post.getAnonymous()) {
                 this.nickname = "익명";
             } else {
@@ -76,7 +82,7 @@ public class GetPostResponse {
 
         this.comments = post.getComments().stream()
                 .filter(c -> c.getParentComment() == null)
-                .map(c -> new GetCommentResponse(c)).collect(Collectors.toList());
+                .map(c -> new GetCommentResponse(c, userId)).collect(Collectors.toList());
         this.commentCnt = post.getCommentCnt();
 
     }

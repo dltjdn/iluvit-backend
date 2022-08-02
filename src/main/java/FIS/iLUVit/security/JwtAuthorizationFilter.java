@@ -70,6 +70,7 @@ public class JwtAuthorizationFilter extends BasicAuthenticationFilter {
             // signature, jwt 만료등 유효성 검사에 실패할 경우 -> 예외처리 해야됨
         } catch (JWTVerificationException e) {
             log.warn("[JwtAuthorizationFilter] token 파싱 실패 : {}", e.getMessage());
+            throw e;
         }
         // 다음 필터로 진행
         chain.doFilter(request, response);

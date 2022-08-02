@@ -120,6 +120,19 @@ class ChatServiceTest {
     }
 
     @Test
+    public void 쪽지_작성_비회원() throws Exception {
+        //given
+        request.setMessage("안녕");
+        request.setPost_id(post1.getId());
+        //when
+        ChatException result = assertThrows(ChatException.class,
+                () -> chatService.saveChat(null, request));
+        //then
+        assertThat(result.getErrorResult())
+                .isEqualTo(ChatErrorResult.UNAUTHORIZED_USER_ACCESS);
+    }
+
+    @Test
     public void 쪽지_작성_발신자X() throws Exception {
         //given
         request.setMessage("안녕");

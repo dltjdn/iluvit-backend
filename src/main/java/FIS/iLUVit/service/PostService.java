@@ -92,12 +92,13 @@ public class PostService {
     }
 
 
-    public GetPostResponse findById(Long postId) {
+    public GetPostResponse findById(Long userId, Long postId) {
         // 게시글과 연관된 유저, 게시판, 시설 한 번에 끌고옴
         Post findPost = postRepository.findByIdWithUserAndBoardAndCenter(postId)
                 .orElseThrow(() -> new PostException(PostErrorResult.POST_NOT_EXIST));
+
         // 첨부된 이미지 파일, 게시글에 달린 댓글 지연 로딩으로 가져와 DTO 생성
-        return getPostResponseDto(findPost);
+        return getPostResponseDto(findPost, userId);
     }
 
     // [모두의 이야기 + 유저가 속한 센터의 이야기] 에서 통합 검색
@@ -164,12 +165,12 @@ public class PostService {
         return posts;
     }
 
-    public GetPostResponse getPostResponseDto(Post post) {
+    public GetPostResponse getPostResponseDto(Post post, Long userId) {
 //        String postDir = imageService.getPostDir(post.getId());
 //        List<String> encodedInfoImage = imageService.getEncodedInfoImage(postDir, post.getImgCnt());
 //        String userProfileDir = imageService.getUserProfileDir();
 //        String encodedProfileImage = imageService.getEncodedProfileImage(userProfileDir, post.getUser().getId());
-        return new GetPostResponse(post, imageService.getInfoImages(post), imageService.getProfileImage(post.getUser()));
+        return new GetPostResponse(post, imageService.getInfoImages(post), imageService.getProfileImage(post.getUser()), userId);
     }
 
     public void setPreviewImage(GetPostResponsePreview preview) {
