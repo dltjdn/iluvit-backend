@@ -1,14 +1,5 @@
 node('ILUVIT_BACK') {
     def SCM_VARS
-//    stage('Git Clone') {
-//        echo "===================== Cloning from Git ======================="
-//        SCM_VARS =
-//                git(
-//                        branch: 'release',
-//                        credentialsId: 'e7fe12eb-4666-4cd0-af62-5d18b1c55756',
-//                        url: 'git@github.com:FISOLUTION/ILUVIT_BACK.git'
-//                )
-//    }
 
     stage('has Changed?') {
         def CHANGE
