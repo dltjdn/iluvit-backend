@@ -1,5 +1,14 @@
 node('ILUVIT_BACK') {
     def SCM_VARS
+    stage('Git Clone') {
+        echo "===================== Cloning from Git ======================="
+        SCM_VARS =
+                git(
+                        branch: 'release',
+                        credentialsId: 'ILUVIT_BACK_DEPLOY_KEY',
+                        url: 'git@github.com:FISOLUTION/ILUVIT_BACK.git'
+                )
+    }
 
     stage('has Changed?') {
         def CHANGE
@@ -13,8 +22,6 @@ node('ILUVIT_BACK') {
         }
         echo CHANGE
     }
-
-
 
     stage('kill ex-Application'){
         BUILD_JAR = sh(encoding: 'UTF-8', returnStdout: true, script: "ls ./build/libs/*.jar")
