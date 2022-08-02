@@ -14,6 +14,8 @@ node('ILUVIT_BACK') {
         echo CHANGE
     }
 
+
+
     stage('kill ex-Application'){
         BUILD_JAR = sh(encoding: 'UTF-8', returnStdout: true, script: "ls ./build/libs/*.jar")
         JAR_NAME = sh(encoding: 'UTF-8', returnStdout: true, script: "basename $BUILD_JAR")
