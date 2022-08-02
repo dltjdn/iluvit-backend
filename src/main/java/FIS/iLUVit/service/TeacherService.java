@@ -53,7 +53,6 @@ public class TeacherService {
         return response;
     }
 
-
     /**
      * 작성날짜: 2022/05/20 4:43 PM
      * 작성자: 이승범
@@ -261,7 +260,7 @@ public class TeacherService {
                 .orElseThrow(() -> new UserException(UserErrorResult.NOT_VALID_REQUEST));
 
         // 삭제하고자 하는 교사가 해당 시설에 소속되어 있는지 확인
-        if(!Objects.equals(director.getCenter().getId(), firedTeacher.getCenter().getId())){
+        if (firedTeacher.getCenter() == null || !Objects.equals(director.getCenter().getId(), firedTeacher.getCenter().getId())) {
             throw new UserException(UserErrorResult.NOT_VALID_REQUEST);
         }
 
@@ -292,10 +291,10 @@ public class TeacherService {
     }
 
     /**
-    *   작성날짜: 2022/07/29 5:07 PM
-    *   작성자: 이승범
-    *   작성내용: 원장권한 박탈
-    */
+     * 작성날짜: 2022/07/29 5:07 PM
+     * 작성자: 이승범
+     * 작성내용: 원장권한 박탈
+     */
     public void demoteTeacher(Long userId, Long teacherId) {
 
         Teacher director = teacherRepository.findDirectorByIdWithCenterWithTeacher(userId)
