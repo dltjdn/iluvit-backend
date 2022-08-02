@@ -570,7 +570,7 @@ public class TeacherServiceTest {
                     .findDirectorById(teacher1.getId());
             doReturn(Optional.of(teacher2))
                     .when(teacherRepository)
-                    .findById(teacher4.getId());
+                    .findById(teacher2.getId());
             doReturn(List.of(board3, board4))
                     .when(boardRepository)
                     .findByCenter(any());
@@ -578,7 +578,7 @@ public class TeacherServiceTest {
             Teacher result = target.fireTeacher(teacher1.getId(), teacher2.getId());
             // then
             assertThat(result.getCenter()).isNull();
-            verify(boardRepository, times(1)).findByCenter(teacher2.getCenter().getId());
+            verify(boardRepository, times(1)).findByCenter(teacher1.getCenter().getId());
             verify(bookmarkRepository, times(1)).deleteAllByBoardAndUser(any(), any());
         }
     }
