@@ -280,10 +280,11 @@ public class TeacherService {
     public void mandateTeacher(Long userId, Long teacherId) {
 
         Teacher director = teacherRepository.findDirectorByIdWithCenterWithTeacher(userId)
-                .orElseThrow(() -> new UserException("올바르지 않은 접근입니다."));
+                .orElseThrow(() -> new UserException(UserErrorResult.HAVE_NOT_AUTHORIZATION));
 
         Teacher mandatedTeacher = director.getCenter().getTeachers().stream()
                 .filter(teacher -> Objects.equals(teacher.getId(), teacherId))
+                .filter(teacher -> teacher.getApproval() == Approval.ACCEPT)
                 .findFirst()
                 .orElseThrow(() -> new UserException("잘못된 teacherId 입니다."));
 

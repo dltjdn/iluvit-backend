@@ -58,7 +58,9 @@ public class PostAlarm extends Alarm {
 
     @Override
     public AlarmDto exportAlarm() {
-        return new PostAlarmDto(id, boardName, createdDate, message, dtype, post.getId(), anonymous, commentUserProfileImage, commentUserNickname, centerName, board.getId(), center.getId());
+        return center == null ?
+                new PostAlarmDto(id, boardName, createdDate, message, dtype, post.getId(), anonymous, commentUserProfileImage, commentUserNickname, centerName, board.getId(), null) :
+                new PostAlarmDto(id, boardName, createdDate, message, dtype, post.getId(), anonymous, commentUserProfileImage, commentUserNickname, centerName, board.getId(), center.getId());
     }
 
     @Getter
