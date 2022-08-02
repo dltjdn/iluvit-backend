@@ -30,6 +30,7 @@ node('ILUVIT_BACK') {
         JAR_NAME = sh(encoding: 'UTF-8', returnStdout: true, script: "basename $BUILD_JAR")
         echo "$JAR_NAME"
         script {
+
             try{
                 pid = sh(encoding: 'UTF-8', returnStdout: true,script: "pgrep -f $JAR_NAME")
                 echo "$pid"
