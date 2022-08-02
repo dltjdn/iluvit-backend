@@ -583,4 +583,28 @@ public class TeacherServiceTest {
         }
     }
 
+    @Nested
+    @DisplayName("원장권한부여")
+    class mandateTeacher{
+
+        @Test
+        @DisplayName("[error] 원장이 아닌 경우")
+        public void 원장아님() {
+            // given
+            center1.getTeachers().add(teacher1);
+            center1.getTeachers().add(teacher2);
+            center1.getTeachers().add(teacher3);
+            center1.getTeachers().add(teacher5);
+            doReturn(Optional.empty())
+                    .when(teacherRepository)
+                    .findDirectorByIdWithCenterWithTeacher(any());
+            // when
+            UserException result = assertThrows(UserException.class,
+                    () -> target.mandateTeacher(teacher2.getId(), teacher3.getId()));
+            // then
+            assertThat(result.getErrorResult()).isEqualTo(UserErrorResult.HAVE_NOT_AUTHORIZATION);
+
+        }
+    }
+
 }
