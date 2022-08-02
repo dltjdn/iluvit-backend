@@ -28,20 +28,29 @@ public class CommentService {
     private final PostRepository postRepository;
     private final UserRepository userRepository;
 
-    public Long registerComment(Long userId, Long postId, Long commentId, RegisterCommentRequest request) {
+    public Long registerComment(Long userId, Long postId, Long p_commentId, RegisterCommentRequest request) {
         if (userId == null) {
             throw new CommentException(CommentErrorResult.UNAUTHORIZED_USER_ACCESS);
         }
-//
+
         User findUser = userRepository.findById(userId)
                 .orElseThrow(() -> new UserException(UserErrorResult.USER_NOT_EXIST));
         Post findPost = postRepository.findByIdWithBoard(postId)
                 .orElseThrow(() -> new PostException(PostErrorResult.POST_NOT_EXIST));
 
 
-        // anonymous false 일 때 null
+        // anonymous false 일 때 order = null
+        // anonymous true 일 때 order = n
         Integer anonymousOrder = null;
 
+        /**
+            작성자: 이창윤
+            작성시간: 2022/08/02 11:13 AM
+            내용: 익명3이 댓글을 또 달면 3을 가져와야됨.
+                새로운 유저가 익명으로 댓글을 달면 익명4로 등록함.
+                작성자가 익명으로 작성하면 익명(작성자)로 표시됨.
+                닉네임 공개로 작성할 경우 order = null
+        */
         // 익명 작성일 때
         if (request.getAnonymous()) {
             // 게시글 작성자 == 댓글 작성자이면 -1
@@ -60,9 +69,10 @@ public class CommentService {
             }
         }
 
+        log.info("anonymousOrder = {}", anonymousOrder);
         Comment comment = new Comment(request.getAnonymous(), request.getContent(), findPost, findUser, anonymousOrder);
-        if (commentId != null) {
-            Comment parentComment = commentRepository.getById(commentId);
+        if (p_commentId != null) {
+            Comment parentComment = commentRepository.getById(p_commentId);
             comment.updateParentComment(parentComment);
         }
 
