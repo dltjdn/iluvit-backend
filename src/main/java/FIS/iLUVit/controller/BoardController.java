@@ -30,7 +30,7 @@ public class BoardController {
         작성시간: 2022/06/24 2:48 PM
         내용: 시설(유치원) 내 게시판 목록 조회
     */
-    @GetMapping("/board/inCenter/{center_id}")
+    @GetMapping("/user/board/inCenter/{center_id}")
     public BoardListDTO searchAllInCenter(@Login Long userId, @PathVariable("center_id") Long centerId) {
         return boardService.findAllWithBookmarkInCenter(userId, centerId);
     }
@@ -40,7 +40,7 @@ public class BoardController {
      * 작성시간: 2022/06/24 2:51 PM
      * 내용: 게시판 생성 - center_id 값 유무에 따라 모두/시설 이야기 내 게시판 생성
      */
-    @PostMapping("/board")
+    @PostMapping("/user/board")
     public Long createBoard(@Login Long userId,
                             @RequestParam(value = "center_id", required = false) Long center_id,
                             @RequestBody CreateBoardRequest request) {
@@ -52,7 +52,7 @@ public class BoardController {
         작성시간: 2022/06/24 4:53 PM
         내용: 게시판 삭제
     */
-    @DeleteMapping("/board/{board_id}")
+    @DeleteMapping("/user/board/{board_id}")
     public Long deleteBoard(@Login Long userId, @PathVariable("board_id") Long boardId) {
         return boardService.remove(userId, boardId);
     }
