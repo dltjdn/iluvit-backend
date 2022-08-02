@@ -3,7 +3,6 @@ package FIS.iLUVit.repository;
 import FIS.iLUVit.domain.Center;
 import FIS.iLUVit.domain.Teacher;
 import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
@@ -21,13 +20,6 @@ public interface TeacherRepository extends JpaRepository<Teacher, Long> {
             "where t.id =:userId " +
             "and t.auth = 'DIRECTOR'")
     Optional<Teacher> findDirectorByIdWithCenterWithTeacher(@Param("userId") Long userId);
-
-    @Modifying
-    @Query("update Teacher t " +
-            "set t.approval = 'ACCEPT' " +
-            "where t.id =:teacherId " +
-            "and t.center.id =:centerId")
-    void acceptTeacher(@Param("teacherId") Long teacherId, @Param("centerId") Long centerId);
 
     @Query("select distinct t " +
             "from Teacher t " +
