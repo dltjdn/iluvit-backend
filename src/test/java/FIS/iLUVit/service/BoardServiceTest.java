@@ -603,4 +603,6 @@ class BoardServiceTest {
         assertThat(objectMapper.writeValueAsString(result))
                 .isEqualTo(objectMapper.writeValueAsString(storyHomeDTO));
     }
+
+
 }

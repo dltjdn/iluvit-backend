@@ -70,4 +70,25 @@ class CommentRepositoryTest {
         assertThat(content).extracting("content")
                 .contains("안녕", "하세", "요", "ㅋㅋ");
     }
+
+    @Test
+    public void 게시글_유저_익명정보로_댓글1개_찾기() throws Exception {
+        //given
+        em.persist(board1);
+        em.persist(post1);
+        em.persist(user1);
+        em.persist(comment1);
+        em.persist(comment2);
+        em.persist(comment3);
+        em.persist(comment4);
+        //when
+        Comment findComment = commentRepository
+                .findFirstByPostAndUserAndAnonymous(post1, user1, true)
+                .orElse(null);
+
+        //then
+
+        assertThat(findComment).isNotNull();
+
+    }
 }

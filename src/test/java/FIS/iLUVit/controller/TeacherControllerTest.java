@@ -15,6 +15,7 @@ import FIS.iLUVit.exception.SignupException;
 import FIS.iLUVit.exception.UserErrorResult;
 import FIS.iLUVit.exception.UserException;
 import FIS.iLUVit.exception.exceptionHandler.ErrorResponse;
+import FIS.iLUVit.exception.exceptionHandler.ErrorResult;
 import FIS.iLUVit.exception.exceptionHandler.controllerAdvice.GlobalControllerAdvice;
 import FIS.iLUVit.service.TeacherService;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -40,8 +41,7 @@ import java.nio.file.Paths;
 import java.util.List;
 import java.util.Optional;
 
-import static FIS.iLUVit.Creator.createJwtToken;
-import static FIS.iLUVit.Creator.createTeacher;
+import static FIS.iLUVit.Creator.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
@@ -429,7 +429,7 @@ public class TeacherControllerTest {
             // when
             ResultActions result = mockMvc.perform(
                     MockMvcRequestBuilders.patch(url, director.getId())
-                            .header("Authorization", director.getId())
+                            .header("Authorization", createJwtToken(director))
             );
             // then
             result.andExpect(status().isBadRequest())
@@ -446,7 +446,88 @@ public class TeacherControllerTest {
             // when
             ResultActions result = mockMvc.perform(
                     MockMvcRequestBuilders.patch(url, teacher.getId())
-                            .header("Authorization", director.getId())
+                            .header("Authorization", createJwtToken(director))
+            );
+            // then
+            result.andExpect(status().isOk());
+        }
+    }
+
+    @Nested
+    @DisplayName("교사 삭제/거절")
+    class fireTeacher{
+        @Test
+        @DisplayName("[error] 원장아님")
+        public void 원장아님() throws Exception {
+            // given
+            String url = "/director/teacher/fire/{teacherId}";
+            UserErrorResult error = UserErrorResult.HAVE_NOT_AUTHORIZATION;
+            doThrow(new UserException(error))
+                    .when(teacherService)
+                    .fireTeacher(any(), any());
+            // when
+            ResultActions result = mockMvc.perform(
+                    MockMvcRequestBuilders.patch(url, teacher.getId())
+                            .header("Authorization", createJwtToken(teacher))
+            );
+            // then
+            result.andExpect(status().isBadRequest())
+                    .andExpect(content().json(
+                            objectMapper.writeValueAsString(new ErrorResponse(error.getHttpStatus(), error.getMessage()))
+                    ));
+        }
+
+        @Test
+        @DisplayName("[error] 잘못된교사아이디")
+        public void 잘못된교사아이디() throws Exception {
+            // given
+            String url = "/director/teacher/fire/{teacherId}";
+            UserErrorResult error = UserErrorResult.NOT_VALID_REQUEST;
+            doThrow(new UserException(error))
+                    .when(teacherService)
+                    .fireTeacher(any(), any());
+            // when
+            ResultActions result = mockMvc.perform(
+                    MockMvcRequestBuilders.patch(url, director.getId())
+                            .header("Authorization", createJwtToken(director))
+            );
+            // then
+            result.andExpect(status().isBadRequest())
+                    .andExpect(content().json(
+                            objectMapper.writeValueAsString(new ErrorResponse(error.getHttpStatus(), error.getMessage()))
+                    ));
+        }
+
+        @Test
+        @DisplayName("[error] 해당시설에속해있지않은교사")
+        public void 속해있지않은교사() throws Exception {
+            // given
+            String url = "/director/teacher/fire/{teacherId}";
+            UserErrorResult error = UserErrorResult.NOT_VALID_REQUEST;
+            doThrow(new UserException(error))
+                    .when(teacherService)
+                    .fireTeacher(any(), any());
+            // when
+            ResultActions result = mockMvc.perform(
+                    MockMvcRequestBuilders.patch(url, director.getId())
+                            .header("Authorization", createJwtToken(director))
+            );
+            // then
+            result.andExpect(status().isBadRequest())
+                    .andExpect(content().json(
+                            objectMapper.writeValueAsString(new ErrorResponse(error.getHttpStatus(), error.getMessage()))
+                    ));
+        }
+
+        @Test
+        @DisplayName("[success] 교사 삭제/거절 성공")
+        public void 교사삭제성공() throws Exception {
+            // given
+            String url = "/director/teacher/fire/{teacherId}";
+            // when
+            ResultActions result = mockMvc.perform(
+                    MockMvcRequestBuilders.patch(url, director.getId())
+                            .header("Authorization", createJwtToken(director))
             );
             // then
             result.andExpect(status().isOk());
