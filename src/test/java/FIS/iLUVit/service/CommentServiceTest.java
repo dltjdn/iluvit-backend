@@ -50,6 +50,7 @@ class CommentServiceTest {
     Board board1;
     Post post1;
     User user1;
+    User user2;
     Comment comment1;
     Comment comment2;
     Comment comment3;
@@ -63,12 +64,17 @@ class CommentServiceTest {
                 .name("나")
                 .auth(Auth.PARENT)
                 .build();
+        user2 = Parent.builder()
+                .id(11L)
+                .name("you")
+                .auth(Auth.PARENT)
+                .build();
         board1 = CreateTest.createBoard(2L, "자유게시판", BoardKind.NORMAL, null, true);
         post1 = Creator.createPost(3L,"제목", "내용", true, board1, user1);
         comment1 = Creator.createComment(4L,true, "안녕", post1, user1);
         comment2 = Creator.createComment(5L,true, "하세", post1, user1);
-        comment3 = Creator.createComment(6L,true, "요", post1, user1);
-        comment4 = Creator.createComment(7L,true, "ㅋㅋ", post1, user1);
+        comment3 = Creator.createComment(6L,true, "요", post1, user2);
+        comment4 = Creator.createComment(7L,false, "ㅋㅋ", post1, user1);
     }
 
     @Test
@@ -123,7 +129,41 @@ class CommentServiceTest {
     }
 
     @Test
-    public void 댓글_등록_성공() throws Exception {
+    public void 댓글_등록_실명_성공() throws Exception {
+        //given
+        try (MockedStatic<AlarmUtils> alarmUtils = Mockito.mockStatic(AlarmUtils.class)) {
+
+            request.setAnonymous(false);
+            request.setContent("하이");
+
+            Mockito.doReturn(Optional.of(user1))
+                    .when(userRepository)
+                    .findById(user1.getId());
+
+            Mockito.doReturn(Optional.of(post1))
+                    .when(postRepository)
+                    .findByIdWithBoard(post1.getId());
+
+            alarmUtils.when(() -> AlarmUtils.getMessage(any(String.class), any(Object[].class)))
+                    .thenReturn("회원 {0}로 부터 새로운 채팅을 받았어요");
+
+            AlarmEvent alarmEvent = new AlarmEvent(new PostAlarm(user1, post1, comment4));
+            alarmUtils.when(() -> AlarmUtils.publishAlarmEvent(any(Alarm.class)))
+                    .thenReturn(alarmEvent);
+
+            Mockito.doReturn(comment4)
+                    .when(commentRepository)
+                    .save(any(Comment.class));
+            //when
+            Long savedId = commentService.registerComment(user1.getId(), post1.getId(), null, request);
+            //then
+            assertThat(savedId).isEqualTo(comment4.getId());
+
+        }
+    }
+
+    @Test
+    public void 댓글_등록_익명_작성자_성공() throws Exception {
         //given
         try (MockedStatic<AlarmUtils> alarmUtils = Mockito.mockStatic(AlarmUtils.class)) {
 
@@ -150,6 +190,82 @@ class CommentServiceTest {
                     .save(any(Comment.class));
             //when
             Long savedId = commentService.registerComment(user1.getId(), post1.getId(), null, request);
+            //then
+            assertThat(savedId).isEqualTo(comment2.getId());
+
+        }
+    }
+
+    @Test
+    public void 댓글_등록_익명_이미_작성한_이력이_있음() throws Exception {
+        //given
+        try (MockedStatic<AlarmUtils> alarmUtils = Mockito.mockStatic(AlarmUtils.class)) {
+
+            request.setAnonymous(true);
+            request.setContent("하이");
+
+            Mockito.doReturn(Optional.of(user2))
+                    .when(userRepository)
+                    .findById(user2.getId());
+
+            Mockito.doReturn(Optional.of(post1))
+                    .when(postRepository)
+                    .findByIdWithBoard(post1.getId());
+
+            Mockito.doReturn(Optional.of(comment3))
+                    .when(commentRepository)
+                    .findFirstByPostAndUserAndAnonymous(post1, user2, true);
+
+            alarmUtils.when(() -> AlarmUtils.getMessage(any(String.class), any(Object[].class)))
+                    .thenReturn("회원 {0}로 부터 새로운 채팅을 받았어요");
+
+            AlarmEvent alarmEvent = new AlarmEvent(new PostAlarm(user2, post1, comment2));
+            alarmUtils.when(() -> AlarmUtils.publishAlarmEvent(any(Alarm.class)))
+                    .thenReturn(alarmEvent);
+
+            Mockito.doReturn(comment2)
+                    .when(commentRepository)
+                    .save(any(Comment.class));
+            //when
+            Long savedId = commentService.registerComment(user2.getId(), post1.getId(), null, request);
+            //then
+            assertThat(savedId).isEqualTo(comment2.getId());
+
+        }
+    }
+
+    @Test
+    public void 댓글_등록_익명_새로_작성() throws Exception {
+        //given
+        try (MockedStatic<AlarmUtils> alarmUtils = Mockito.mockStatic(AlarmUtils.class)) {
+
+            request.setAnonymous(true);
+            request.setContent("하이");
+
+            Mockito.doReturn(Optional.of(user2))
+                    .when(userRepository)
+                    .findById(user2.getId());
+
+            Mockito.doReturn(Optional.of(post1))
+                    .when(postRepository)
+                    .findByIdWithBoard(post1.getId());
+
+            Mockito.doReturn(Optional.empty())
+                    .when(commentRepository)
+                    .findFirstByPostAndUserAndAnonymous(post1, user2, true);
+
+            alarmUtils.when(() -> AlarmUtils.getMessage(any(String.class), any(Object[].class)))
+                    .thenReturn("회원 {0}로 부터 새로운 채팅을 받았어요");
+
+            AlarmEvent alarmEvent = new AlarmEvent(new PostAlarm(user2, post1, comment2));
+            alarmUtils.when(() -> AlarmUtils.publishAlarmEvent(any(Alarm.class)))
+                    .thenReturn(alarmEvent);
+
+            Mockito.doReturn(comment2)
+                    .when(commentRepository)
+                    .save(any(Comment.class));
+            //when
+            Long savedId = commentService.registerComment(user2.getId(), post1.getId(), null, request);
             //then
             assertThat(savedId).isEqualTo(comment2.getId());
 

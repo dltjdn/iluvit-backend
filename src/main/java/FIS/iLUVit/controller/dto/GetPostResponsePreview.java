@@ -67,7 +67,7 @@ public class GetPostResponsePreview {
         this.title = post.getTitle();
         this.content = post.getContent();
         this.anonymous = post.getAnonymous();
-        this.nickname = post.getUser().getName();
+        this.nickname = post.getUser().getNickName();
         this.user_id = post.getUser().getId();
         this.commentCnt = post.getCommentCnt();
         this.heartCnt = post.getHeartCnt();
