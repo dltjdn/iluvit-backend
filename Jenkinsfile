@@ -1,4 +1,4 @@
-node('I_LOVE_IT') {
+node('ILUVIT_BACK') {
     def SCM_VARS
     stage('Git Clone') {
         echo "===================== Cloning from Git ======================="
