@@ -23,7 +23,7 @@ public class PostController {
         작성시간: 2022/06/27 11:31 AM
         내용: multipart/form-data 형식으로 변환된 request, 이미지 파일 리스트 images 파라미터로 게시글 저장
     */
-    @PostMapping(value = "/post", consumes = {MediaType.APPLICATION_JSON_VALUE, MediaType.MULTIPART_FORM_DATA_VALUE})
+    @PostMapping(value = "/user/post", consumes = {MediaType.APPLICATION_JSON_VALUE, MediaType.MULTIPART_FORM_DATA_VALUE})
     public Long registerPost(@Login Long userId,
                              @RequestPart PostRegisterRequest request,
                              @RequestPart(required = false) List<MultipartFile> images) {
@@ -35,7 +35,7 @@ public class PostController {
         작성시간: 2022/06/27 1:14 PM
         내용: 게시글 삭제
     */
-    @DeleteMapping("/post/{post_id}")
+    @DeleteMapping("/user/post/{post_id}")
     public Long deletePost(@Login Long userId, @PathVariable("post_id") Long postId) {
         return postService.deleteById(postId, userId);
     }
@@ -57,7 +57,7 @@ public class PostController {
             input -> 제목 + 내용 검색 키워드
             auth -> 유저 권한
     */
-    @GetMapping("/post/all/search")
+    @GetMapping("/user/post/all/search")
     public Slice<GetPostResponsePreview> searchPost(@Login Long userId,
                                                     @RequestParam("input") String input,
                                                     Pageable pageable) {
@@ -108,7 +108,7 @@ public class PostController {
         작성시간: 2022/06/27 1:32 PM
         내용: 내가 쓴 글 리스트
     */
-    @GetMapping("/post/mypage")
+    @GetMapping("/user/post/mypage")
     public PostList searchPostByUser(@Login Long userId,
                                      Pageable pageable) {
         return postService.searchByUser(userId, pageable);
@@ -130,7 +130,7 @@ public class PostController {
         작성시간: 2022/06/27 1:33 PM
         내용: 유치원별 이야기 글 리스트 불러오기
     */
-    @GetMapping("/post/center-main")
+    @GetMapping("/user/post/center-main")
     public List<BoardPreview> searchCenterMainPreview(@Login Long userId, @RequestParam("center_id") Long centerId) {
         return postService.searchCenterMainPreview(userId, centerId);
     }
