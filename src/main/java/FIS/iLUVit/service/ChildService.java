@@ -81,11 +81,6 @@ public class ChildService {
             }
         });
 
-        // 프로필 이미지 설정
-//        if (!request.getProfileImg().isEmpty()) {
-//            String imagePath = imageService.getChildProfileDir();
-//            imageService.saveProfileImage(request.getProfileImg(), imagePath + newChild.getId());
-//        }
         imageService.saveProfileImage(request.getProfileImg(), newChild);
 
         return newChild;
@@ -99,7 +94,7 @@ public class ChildService {
     public ChildInfoDetailResponse findChildInfoDetail(Long userId, Long childId, Pageable pageable) {
         // 프로필 수정하고자 하는 아이 가져오기
         Child child = childRepository.findByIdWithParentAndCenter(userId, childId)
-                .orElseThrow(() -> new UserException("잘못된 child_id 입니다."));
+                .orElseThrow(() -> new UserException(UserErrorResult.NOT_VALID_REQUEST));
 
         ChildInfoDetailResponse response = new ChildInfoDetailResponse(child);
 

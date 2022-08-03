@@ -1,9 +1,7 @@
 package FIS.iLUVit.service;
 
 import FIS.iLUVit.Creator;
-import FIS.iLUVit.controller.dto.ChildApprovalListResponse;
-import FIS.iLUVit.controller.dto.ChildInfoDTO;
-import FIS.iLUVit.controller.dto.SaveChildRequest;
+import FIS.iLUVit.controller.dto.*;
 import FIS.iLUVit.domain.*;
 import FIS.iLUVit.domain.alarms.CenterApprovalAcceptedAlarm;
 import FIS.iLUVit.domain.enumtype.Approval;
@@ -19,6 +17,9 @@ import org.mockito.Mock;
 import org.mockito.MockedStatic;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.SliceImpl;
 import org.springframework.mock.web.MockMultipartFile;
 
 import java.io.File;
@@ -360,22 +361,63 @@ public class ChildServiceTest {
         @Test
         @DisplayName("[success] 아이추가 성공")
         public void 아이추가성공() throws IOException {
-            // given
-            center1.getTeachers().add(director);
-            center1.getTeachers().add(teacher1);
-            center1.getTeachers().add(teacher2);
-            SaveChildRequest request = new SaveChildRequest(center1.getId(), "name", LocalDate.now(), multipartFile);
-            doReturn(parent1)
-                    .when(parentRepository)
-                    .getById(any());
-            doReturn(center1)
-                    .when(centerRepository)
-                    .findByIdAndSignedWithTeacher(request.getCenter_id());
-            // when
-            Child result = target.saveChild(parent1.getId(), request);
-            // then
-            assertThat(result).isNotNull();
-            assertThat(result.)
+            try (MockedStatic<AlarmUtils> alarmUtils = Mockito.mockStatic(AlarmUtils.class)) {
+                // given
+                center1.getTeachers().add(director);
+                center1.getTeachers().add(teacher1);
+                center1.getTeachers().add(teacher2);
+                SaveChildRequest request = new SaveChildRequest(center1.getId(), "name", LocalDate.now(), multipartFile);
+                doReturn(parent1)
+                        .when(parentRepository)
+                        .getById(any());
+                doReturn(Optional.of(center1))
+                        .when(centerRepository)
+                        .findByIdAndSignedWithTeacher(request.getCenter_id());
+                // when
+                Child result = target.saveChild(parent1.getId(), request);
+                // then
+                assertThat(result).isNotNull();
+                assertThat(result.getName()).isEqualTo("name");
+                assertThat(result.getParent().getId()).isEqualTo(parent1.getId());
+                assertThat(result.getCenter().getId()).isEqualTo(center1.getId());
+            }
         }
     }
+    @Nested
+    @DisplayName("아이 프로필 조회")
+    class findChildInfoDetail{
+        @Test
+        public void 잘못된아이아이디() throws Exception {
+            //given
+            doReturn(Optional.empty())
+                    .when(childRepository)
+                    .findByIdWithParentAndCenter(any(), any());
+            //when
+            UserException result = assertThrows(UserException.class,
+                    () -> target.findChildInfoDetail(parent1.getId(), child4.getId(), PageRequest.of(0, 10)));
+            //then
+            assertThat(result.getErrorResult()).isEqualTo(UserErrorResult.NOT_VALID_REQUEST);
+        }
+        @Test
+        public void 조회성공() throws Exception {
+            //given
+            doReturn(Optional.of(child1))
+                    .when(childRepository)
+                    .findByIdWithParentAndCenter(any(), any());
+            doReturn("imagePath")
+                    .when(imageService)
+                    .getProfileImage(any(Child.class));
+            List<CenterInfoDto> content = List.of(CenterInfoDto.builder().build());
+            SliceImpl<CenterInfoDto> slice = new SliceImpl<>(content, PageRequest.of(0, 10), false);
+            doReturn(slice)
+                    .when(centerRepository)
+                    .findCenterForAddChild(any(), any(), any(), any());
+            //when
+            ChildInfoDetailResponse result = target.findChildInfoDetail(parent1.getId(), child1.getId(), PageRequest.of(0, 10));
+            //then
+            assertThat(result.getChild_id()).isEqualTo(child1.getId());
+            assertThat(result.getCenter_name()).isEqualTo(center1.getName());
+        }
+    }
+    
 }
