@@ -33,9 +33,9 @@ public class ReviewService {
 
     public ReviewByParentDTO findByParent(Long userId, Pageable pageable) {
         Slice<Review> reviews = reviewRepository.findByParent(userId, pageable);
-        ReviewByParentDTO reviewDtoList = new ReviewByParentDTO();
 
-        Slice<ReviewByParentDTO.ReviewDto> reviewDtoSlice = reviews.map(ReviewByParentDTO.ReviewDto::new);
+        Slice<ReviewByParentDTO.ReviewDto> reviewDtoSlice = reviews
+                .map(review -> new ReviewByParentDTO.ReviewDto(review));
 
         return new ReviewByParentDTO(reviewDtoSlice);
     }

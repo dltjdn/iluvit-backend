@@ -160,6 +160,8 @@ class ReviewControllerTest {
         ResultActions resultActions = mockMvc.perform(
                 MockMvcRequestBuilders.get(url)
                         .header("Authorization", createJwtToken(parent1))
+                        .param("page", "0")
+                        .param("size", "10")
         );
 
         //then
