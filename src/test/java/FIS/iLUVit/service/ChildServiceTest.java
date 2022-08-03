@@ -3,6 +3,7 @@ package FIS.iLUVit.service;
 import FIS.iLUVit.Creator;
 import FIS.iLUVit.controller.dto.ChildApprovalListResponse;
 import FIS.iLUVit.controller.dto.ChildInfoDTO;
+import FIS.iLUVit.controller.dto.SaveChildRequest;
 import FIS.iLUVit.domain.*;
 import FIS.iLUVit.domain.alarms.CenterApprovalAcceptedAlarm;
 import FIS.iLUVit.domain.enumtype.Approval;
@@ -18,7 +19,14 @@ import org.mockito.Mock;
 import org.mockito.MockedStatic;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.mock.web.MockMultipartFile;
 
+import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 
@@ -63,9 +71,10 @@ public class ChildServiceTest {
     private Board board2;
     private Board board3;
     private Bookmark bookmark;
+    private MockMultipartFile multipartFile;
 
     @BeforeEach
-    public void init() {
+    public void init() throws IOException {
         parent1 = Creator.createParent(1L);
         parent2 = Creator.createParent(2L);
         center1 = Creator.createCenter(3L, "center1");
@@ -82,6 +91,10 @@ public class ChildServiceTest {
         board2 = Creator.createBoard(12L, "board2", center1, true);
         board3 = Creator.createBoard(13L, "board3", center1, false);
         bookmark = Creator.createBookmark(16L, board1, parent1);
+        String name = "162693895955046828.png";
+        Path path = Paths.get(new File("").getAbsolutePath() + '/' + name);
+        byte[] content = Files.readAllBytes(path);
+        multipartFile = new MockMultipartFile(name, name, "image", content);
     }
 
     @Nested
@@ -319,6 +332,50 @@ public class ChildServiceTest {
             assertThat(child1.getApproval()).isEqualTo(Approval.REJECT);
             verify(boardRepository, times(0)).findByCenter(any());
             verify(bookmarkRepository, times(0)).deleteAllByBoardAndUser(any(), any());
+        }
+    }
+
+
+    @Nested
+    @DisplayName("아이 추가")
+    class saveChild{
+        @Test
+        @DisplayName("[error] 시설정보 잘못됨")
+        public void 시설정보에러() {
+            // given
+            SaveChildRequest request = new SaveChildRequest(321L, "name", LocalDate.now(), multipartFile);
+            doReturn(parent1)
+                    .when(parentRepository)
+                    .getById(any());
+            doReturn(Optional.empty())
+                    .when(centerRepository)
+                    .findByIdAndSignedWithTeacher(any());
+            // when
+            UserException result = assertThrows(UserException.class,
+                    () -> target.saveChild(parent1.getId(), request));
+            // then
+            assertThat(result.getErrorResult()).isEqualTo(UserErrorResult.NOT_VALID_REQUEST);
+        }
+
+        @Test
+        @DisplayName("[success] 아이추가 성공")
+        public void 아이추가성공() throws IOException {
+            // given
+            center1.getTeachers().add(director);
+            center1.getTeachers().add(teacher1);
+            center1.getTeachers().add(teacher2);
+            SaveChildRequest request = new SaveChildRequest(center1.getId(), "name", LocalDate.now(), multipartFile);
+            doReturn(parent1)
+                    .when(parentRepository)
+                    .getById(any());
+            doReturn(center1)
+                    .when(centerRepository)
+                    .findByIdAndSignedWithTeacher(request.getCenter_id());
+            // when
+            Child result = target.saveChild(parent1.getId(), request);
+            // then
+            assertThat(result).isNotNull();
+            assertThat(result.)
         }
     }
 }
