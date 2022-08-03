@@ -36,6 +36,7 @@ node('ILUVIT_BACK') {
                 echo "$pid"
             } catch (Exception exception) {
                 pid = ""
+
             }
 
             if (!pid.equals("")) {
