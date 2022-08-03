@@ -108,7 +108,7 @@ class CommentControllerTest {
         request.setAnonymous(true);
         request.setContent("하이");
 
-        final String url = "/comment";
+        final String url = "/user/comment";
         final CommentErrorResult error = CommentErrorResult.UNAUTHORIZED_USER_ACCESS;
 
         Mockito.doThrow(new CommentException(error))
@@ -146,7 +146,7 @@ class CommentControllerTest {
         request.setAnonymous(true);
         request.setContent("하이");
 
-        final String url = "/comment";
+        final String url = "/user/comment";
         final PostErrorResult error = PostErrorResult.POST_NOT_EXIST;
 
         Mockito.doThrow(new PostException(error))
@@ -176,7 +176,7 @@ class CommentControllerTest {
         request.setAnonymous(true);
         request.setContent("안녕");
 
-        final String url = "/comment";
+        final String url = "/user/comment";
 
         Mockito.doReturn(comment1.getId())
                 .when(commentService)
@@ -205,7 +205,7 @@ class CommentControllerTest {
         request.setAnonymous(true);
         request.setContent("안녕");
 
-        final String url = "/comment";
+        final String url = "/user/comment";
 
         Mockito.doReturn(comment1.getId())
                 .when(commentService)
@@ -232,7 +232,7 @@ class CommentControllerTest {
     public void 댓글_삭제_비회원_혹은_접근_권한_제한() throws Exception {
         //given
 
-        final String url = "/comment";
+        final String url = "/user/comment";
         final CommentErrorResult error = CommentErrorResult.UNAUTHORIZED_USER_ACCESS;
 
         Mockito.doThrow(new CommentException(error))
@@ -259,7 +259,7 @@ class CommentControllerTest {
     public void 댓글_삭제_댓글X() throws Exception {
         //given
 
-        final String url = "/comment";
+        final String url = "/user/comment";
         final CommentErrorResult error = CommentErrorResult.NO_EXIST_COMMENT;
 
         Mockito.doThrow(new CommentException(error))
@@ -287,7 +287,7 @@ class CommentControllerTest {
     public void 댓글_삭제_성공() throws Exception {
         //given
 
-        final String url = "/comment";
+        final String url = "/user/comment";
 
         Mockito.doReturn(comment1.getId())
                 .when(commentService)
@@ -313,7 +313,7 @@ class CommentControllerTest {
     @Test
     public void 댓글_좋아요_비회원() throws Exception {
         //given
-        final String url = "/commentHeart/comment/{comment_id}";
+        final String url = "/user/commentHeart/comment/{comment_id}";
         final CommentErrorResult error = CommentErrorResult.UNAUTHORIZED_USER_ACCESS_HEART;
 
         Mockito.doThrow(new CommentException(error))
@@ -337,7 +337,7 @@ class CommentControllerTest {
     @Test
     public void 댓글_좋아요_이미_존재() throws Exception {
         //given
-        final String url = "/commentHeart/comment/{comment_id}";
+        final String url = "/user/commentHeart/comment/{comment_id}";
         final CommentErrorResult error = CommentErrorResult.ALREADY_EXIST_HEART;
 
         Mockito.doThrow(new CommentException(error))
@@ -362,7 +362,7 @@ class CommentControllerTest {
     @Test
     public void 댓글_좋아요_성공() throws Exception {
         //given
-        final String url = "/commentHeart/comment/{comment_id}";
+        final String url = "/user/commentHeart/comment/{comment_id}";
 
         Mockito.doReturn(commentHeart1.getId())
                 .when(commentHeartService)
@@ -386,7 +386,7 @@ class CommentControllerTest {
     @Test
     public void 댓글_좋아요_취소_비회원_혹은_권한X() throws Exception {
         //given
-        final String url = "/commentHeart/comment/{comment_id}";
+        final String url = "/user/commentHeart/comment/{comment_id}";
 
 
         CommentErrorResult error = CommentErrorResult.UNAUTHORIZED_USER_ACCESS_HEART;
@@ -412,7 +412,7 @@ class CommentControllerTest {
     @Test
     public void 댓글_좋아요_취소_좋아요X() throws Exception {
         //given
-        final String url = "/commentHeart/comment/{comment_id}";
+        final String url = "/user/commentHeart/comment/{comment_id}";
 
 
         CommentErrorResult error = CommentErrorResult.NO_EXIST_COMMENT_HEART;
@@ -438,7 +438,7 @@ class CommentControllerTest {
     @Test
     public void 댓글_좋아요_취소_성공() throws Exception {
         //given
-        final String url = "/commentHeart/comment/{comment_id}";
+        final String url = "/user/commentHeart/comment/{comment_id}";
 
         Mockito.doReturn(commentHeart1.getId())
                 .when(commentHeartService)
@@ -462,7 +462,7 @@ class CommentControllerTest {
     @Test
     public void 댓글_단_리스트_조회() throws Exception {
         //given
-        final String url = "/comment/mypage";
+        final String url = "/user/comment/mypage";
 
         CommentDTO commentDTO1 = new CommentDTO(comment1);
         CommentDTO commentDTO2 = new CommentDTO(comment2);
