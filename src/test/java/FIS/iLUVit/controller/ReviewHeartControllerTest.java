@@ -145,7 +145,7 @@ class ReviewHeartControllerTest {
     @Test
     public void 리뷰_좋아요_비회원() throws Exception {
         //given
-        String url = "/reviewHeart/review/{review_id}";
+        String url = "/user/reviewHeart/review/{review_id}";
         ReviewErrorResult error = ReviewErrorResult.UNAUTHORIZED_USER_ACCESS;
         Mockito.doThrow(new ReviewException(error))
                 .when(reviewHeartService)
@@ -166,7 +166,7 @@ class ReviewHeartControllerTest {
     @Test
     public void 리뷰_좋아요_중복_등록() throws Exception {
         //given
-        String url = "/reviewHeart/review/{review_id}";
+        String url = "/user/reviewHeart/review/{review_id}";
         ReviewErrorResult error = ReviewErrorResult.NO_MORE_THAN_ONE_REVIEW_HEART;
         Mockito.doThrow(new ReviewException(error))
                 .when(reviewHeartService)
@@ -188,7 +188,7 @@ class ReviewHeartControllerTest {
     @Test
     public void 리뷰_좋아요_리뷰X() throws Exception {
         //given
-        String url = "/reviewHeart/review/{review_id}";
+        String url = "/user/reviewHeart/review/{review_id}";
         ReviewErrorResult error = ReviewErrorResult.REVIEW_NOT_EXIST;
         Mockito.doThrow(new ReviewException(error))
                 .when(reviewHeartService)
@@ -210,7 +210,7 @@ class ReviewHeartControllerTest {
     @Test
     public void 리뷰_좋아요_유저X() throws Exception {
         //given
-        String url = "/reviewHeart/review/{review_id}";
+        String url = "/user/reviewHeart/review/{review_id}";
         UserErrorResult error = UserErrorResult.USER_NOT_EXIST;
         Mockito.doThrow(new UserException(error))
                 .when(reviewHeartService)
@@ -232,7 +232,7 @@ class ReviewHeartControllerTest {
     @Test
     public void 리뷰_좋아요_성공() throws Exception {
         //given
-        String url = "/reviewHeart/review/{review_id}";
+        String url = "/user/reviewHeart/review/{review_id}";
         Mockito.doReturn(reviewHeart1.getId())
                 .when(reviewHeartService)
                 .saveReviewHeart(review1.getId(), parent1.getId());
@@ -253,7 +253,7 @@ class ReviewHeartControllerTest {
     @Test
     public void 리뷰_삭제_좋아요X() throws Exception {
         //given
-        String url = "/reviewHeart/review/{review_id}";
+        String url = "/user/reviewHeart/review/{review_id}";
         ReviewErrorResult error = ReviewErrorResult.REVIEW_HEART_NOT_EXIST;
         Mockito.doThrow(new ReviewException(error))
                 .when(reviewHeartService)
@@ -275,7 +275,7 @@ class ReviewHeartControllerTest {
     @Test
     public void 리뷰_삭제_성공() throws Exception {
         //given
-        String url = "/reviewHeart/review/{review_id}";
+        String url = "/user/reviewHeart/review/{review_id}";
         Mockito.doNothing()
                 .when(reviewHeartService)
                 .deleteReviewHeart(review1.getId(), parent1.getId());

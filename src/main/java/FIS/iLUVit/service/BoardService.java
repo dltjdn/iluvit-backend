@@ -175,7 +175,7 @@ public class BoardService {
         if (findUser.getAuth() == Auth.PARENT) {
             List<Child> children = userRepository.findChildrenWithCenter(userId);
             List<StoryHomeDTO.CenterStoryDTO> centerStoryDTOList = children.stream()
-                    .filter(c -> c.getCenter() != null)
+                    .filter(c -> c.getCenter() != null && c.getApproval() == Approval.ACCEPT)
                     .map(c -> new StoryHomeDTO.CenterStoryDTO(c.getCenter()))
                     .collect(Collectors.toList());
             result.addAll(centerStoryDTOList);
