@@ -4,6 +4,7 @@ import FIS.iLUVit.controller.dto.BoardListDTO;
 import FIS.iLUVit.controller.dto.CreateBoardRequest;
 import FIS.iLUVit.controller.dto.StoryHomeDTO;
 import FIS.iLUVit.domain.*;
+import FIS.iLUVit.domain.enumtype.Approval;
 import FIS.iLUVit.domain.enumtype.Auth;
 import FIS.iLUVit.exception.*;
 import FIS.iLUVit.repository.*;
@@ -174,13 +175,14 @@ public class BoardService {
         if (findUser.getAuth() == Auth.PARENT) {
             List<Child> children = userRepository.findChildrenWithCenter(userId);
             List<StoryHomeDTO.CenterStoryDTO> centerStoryDTOList = children.stream()
-                    .filter(c -> c.getCenter() != null)
+                    .filter(c -> c.getCenter() != null && c.getApproval() == Approval.ACCEPT)
                     .map(c -> new StoryHomeDTO.CenterStoryDTO(c.getCenter()))
                     .collect(Collectors.toList());
             result.addAll(centerStoryDTOList);
         } else {
             Center findCenter = ((Teacher) findUser).getCenter();
-            if (findCenter != null) {
+            Approval approval = ((Teacher) findUser).getApproval();
+            if (findCenter != null && approval == Approval.ACCEPT) {
                 StoryHomeDTO.CenterStoryDTO centerStoryDTO = new StoryHomeDTO
                         .CenterStoryDTO(findCenter);
                 result.add(centerStoryDTO);

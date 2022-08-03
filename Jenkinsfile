@@ -1,4 +1,4 @@
-node('I_LOVE_IT') {
+node('ILUVIT_BACK') {
     def SCM_VARS
     stage('Git Clone') {
         echo "===================== Cloning from Git ======================="
@@ -52,7 +52,7 @@ node('I_LOVE_IT') {
         JAR_NAME = sh(encoding: 'UTF-8', returnStdout: true, script: "basename $BUILD_JAR")
         dir("./build/libs") {
             PATH = sh(encoding: 'UTF-8', returnStdout: true, script: "pwd")
-            sh 'JENKINS_NODE_COOKIE=dontKillMe nohup java -jar ./iLUVit-0.0.1-SNAPSHOT.jar >> ./nohup.out 2>&1 &'   
+            sh 'JENKINS_NODE_COOKIE=dontKillMe nohup sudo java -jar ./iLUVit-0.0.1-SNAPSHOT.jar >> ./nohup.out 2>&1 &'
         }
     }
 }

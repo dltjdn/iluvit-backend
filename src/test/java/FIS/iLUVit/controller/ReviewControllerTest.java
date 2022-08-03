@@ -154,7 +154,7 @@ class ReviewControllerTest {
                 .when(reviewService)
                 .findByParent(parent1.getId());
 
-        final String url = "/review";
+        final String url = "/parent/review";
         //when
         ResultActions resultActions = mockMvc.perform(
                 MockMvcRequestBuilders.get(url)
@@ -176,7 +176,7 @@ class ReviewControllerTest {
         reviewCreateDTO.setContent("위생에 철저해요");
         reviewCreateDTO.setScore(5);
 
-        final String url = "/review";
+        final String url = "/parent/review";
 
         UserErrorResult error = UserErrorResult.NOT_VALID_TOKEN;
         Mockito.doThrow(new UserException(error))
@@ -206,7 +206,7 @@ class ReviewControllerTest {
         reviewCreateDTO.setContent("위생에 철저해요");
         reviewCreateDTO.setScore(5);
 
-        final String url = "/review";
+        final String url = "/parent/review";
 
         UserErrorResult error = UserErrorResult.USER_NOT_EXIST;
         Mockito.doThrow(new UserException(error))
@@ -235,7 +235,7 @@ class ReviewControllerTest {
         reviewCreateDTO.setContent("위생에 철저해요");
         reviewCreateDTO.setScore(5);
 
-        final String url = "/review";
+        final String url = "/parent/review";
 
         ReviewErrorResult error = ReviewErrorResult.UNAUTHORIZED_USER_ACCESS;
         Mockito.doThrow(new ReviewException(error))
@@ -264,7 +264,7 @@ class ReviewControllerTest {
         reviewCreateDTO.setContent("위생에 철저해요");
         reviewCreateDTO.setScore(5);
 
-        final String url = "/review";
+        final String url = "/parent/review";
 
         CenterErrorResult error = CenterErrorResult.CENTER_NOT_EXIST;
         Mockito.doThrow(new CenterException(error))
@@ -293,7 +293,7 @@ class ReviewControllerTest {
         reviewCreateDTO.setContent("위생에 철저해요");
         reviewCreateDTO.setScore(5);
 
-        final String url = "/review";
+        final String url = "/parent/review";
 
         ReviewErrorResult error = ReviewErrorResult.NO_MORE_THAN_ONE_REVIEW;
         Mockito.doThrow(new ReviewException(error))
@@ -322,7 +322,7 @@ class ReviewControllerTest {
         reviewCreateDTO.setContent("위생에 철저해요");
         reviewCreateDTO.setScore(5);
 
-        final String url = "/review";
+        final String url = "/parent/review";
 
         Mockito.doReturn(review1.getId())
                 .when(reviewService)
@@ -345,7 +345,7 @@ class ReviewControllerTest {
     @Test
     public void 리뷰_수정_리뷰X() throws Exception {
         //given
-        final String url = "/review/{review_id}";
+        final String url = "/parent/review/{review_id}";
         ReviewErrorResult error = ReviewErrorResult.REVIEW_NOT_EXIST;
         Mockito.doThrow(new ReviewException(error))
                 .when(reviewService)
@@ -370,7 +370,7 @@ class ReviewControllerTest {
     @Test
     public void 리뷰_수정_권한X() throws Exception {
         //given
-        final String url = "/review/{review_id}";
+        final String url = "/parent/review/{review_id}";
         ReviewErrorResult error = ReviewErrorResult.UNAUTHORIZED_USER_ACCESS;
         Mockito.doThrow(new ReviewException(error))
                 .when(reviewService)
@@ -395,7 +395,7 @@ class ReviewControllerTest {
     @Test
     public void 리뷰_수정_성공() throws Exception {
         //given
-        final String url = "/review/{review_id}";
+        final String url = "/parent/review/{review_id}";
         ReviewErrorResult error = ReviewErrorResult.UNAUTHORIZED_USER_ACCESS;
         Mockito.doNothing()
                 .when(reviewService)
@@ -417,7 +417,7 @@ class ReviewControllerTest {
     @Test
     public void 리뷰_삭제_리뷰X() throws Exception {
         //given
-        final String url = "/review/{review_id}";
+        final String url = "/parent/review/{review_id}";
         ReviewErrorResult error = ReviewErrorResult.REVIEW_NOT_EXIST;
         Mockito.doThrow(new ReviewException(error))
                 .when(reviewService)
@@ -442,7 +442,7 @@ class ReviewControllerTest {
     @Test
     public void 리뷰_삭제_권한X() throws Exception {
         //given
-        final String url = "/review/{review_id}";
+        final String url = "/parent/review/{review_id}";
         ReviewErrorResult error = ReviewErrorResult.UNAUTHORIZED_USER_ACCESS;
         Mockito.doThrow(new ReviewException(error))
                 .when(reviewService)
@@ -467,7 +467,7 @@ class ReviewControllerTest {
     @Test
     public void 리뷰_삭제_성공() throws Exception {
         //given
-        final String url = "/review/{review_id}";
+        final String url = "/parent/review/{review_id}";
         ReviewErrorResult error = ReviewErrorResult.REVIEW_NOT_EXIST;
         Mockito.doNothing()
                 .when(reviewService)
@@ -532,7 +532,7 @@ class ReviewControllerTest {
         //given
         reviewCommentDTO.setComment("리뷰를 남겨주셔서 감사해요");
 
-        final String url = "/review/{review_id}/comment";
+        final String url = "/teacher/review/{review_id}/comment";
         ReviewErrorResult error = ReviewErrorResult.REVIEW_NOT_EXIST;
 
         Mockito.doThrow(new ReviewException(error))
@@ -561,7 +561,7 @@ class ReviewControllerTest {
         //given
         reviewCommentDTO.setComment("리뷰를 남겨주셔서 감사해요");
 
-        final String url = "/review/{review_id}/comment";
+        final String url = "/teacher/review/{review_id}/comment";
         UserErrorResult error = UserErrorResult.USER_NOT_EXIST;
 
         Mockito.doThrow(new UserException(error))
@@ -590,7 +590,7 @@ class ReviewControllerTest {
         //given
         reviewCommentDTO.setComment("리뷰를 남겨주셔서 감사해요");
 
-        final String url = "/review/{review_id}/comment";
+        final String url = "/teacher/review/{review_id}/comment";
         ReviewErrorResult error = ReviewErrorResult.APPROVAL_INCOMPLETE;
 
         Mockito.doThrow(new ReviewException(error))
@@ -619,7 +619,7 @@ class ReviewControllerTest {
         //given
         reviewCommentDTO.setComment("리뷰를 남겨주셔서 감사해요");
 
-        final String url = "/review/{review_id}/comment";
+        final String url = "/teacher/review/{review_id}/comment";
         ReviewErrorResult error = ReviewErrorResult.UNAUTHORIZED_USER_ACCESS;
 
         Mockito.doThrow(new ReviewException(error))
@@ -648,7 +648,7 @@ class ReviewControllerTest {
         //given
         reviewCommentDTO.setComment("리뷰를 남겨주셔서 감사해요");
 
-        final String url = "/review/{review_id}/comment";
+        final String url = "/teacher/review/{review_id}/comment";
 
         Mockito.doReturn(review1.getId())
                 .when(reviewService)
@@ -676,7 +676,7 @@ class ReviewControllerTest {
         //given
         reviewCommentDTO.setComment("리뷰를 남겨주셔서 감사해요");
 
-        final String url = "/review/{review_id}/comment";
+        final String url = "/teacher/review/{review_id}/comment";
 
         ReviewErrorResult error = ReviewErrorResult.REVIEW_NOT_EXIST;
         Mockito.doThrow(new ReviewException(error))
@@ -704,7 +704,7 @@ class ReviewControllerTest {
         //given
         reviewCommentDTO.setComment("리뷰를 남겨주셔서 감사해요");
 
-        final String url = "/review/{review_id}/comment";
+        final String url = "/teacher/review/{review_id}/comment";
 
         ReviewErrorResult error = ReviewErrorResult.UNAUTHORIZED_USER_ACCESS;
         Mockito.doThrow(new ReviewException(error))
@@ -732,7 +732,7 @@ class ReviewControllerTest {
         //given
         reviewCommentDTO.setComment("리뷰를 남겨주셔서 감사해요");
 
-        final String url = "/review/{review_id}/comment";
+        final String url = "/teacher/review/{review_id}/comment";
 
         Mockito.doNothing()
                 .when(reviewService)

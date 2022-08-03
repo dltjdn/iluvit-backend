@@ -131,4 +131,24 @@ class ChatRoomRepositoryTest {
             assertThat(cr.getPost()).isNull();
         });
     }
+
+    @Test
+    public void 내정보_상대방정보_게시글_익명정보로_채팅방찾기() throws Exception {
+        //given
+
+        //when
+        ChatRoom findRoom1 = chatRoomRepository
+                .findByReceiverAndSenderAndPostAndAnonymous(receiver, sender, post1, true)
+                .orElse(null);
+
+        ChatRoom findRoom2 = chatRoomRepository
+                .findByReceiverAndSenderAndPostAndAnonymous(receiver, sender, post1, false)
+                .orElse(null);
+        //then
+        assertThat(findRoom1.getId())
+                .isEqualTo(chatRoom1.getId());
+
+        assertThat(findRoom2).isNull();
+    }
+
 }
