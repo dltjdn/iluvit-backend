@@ -31,14 +31,13 @@ public class ReviewService {
     private final CenterRepository centerRepository;
     private final ImageService imageService;
 
-    public ReviewByParentDTO findByParent(Long userId) {
-        List<Review> reviews = reviewRepository.findByParent(userId);
+    public ReviewByParentDTO findByParent(Long userId, Pageable pageable) {
+        Slice<Review> reviews = reviewRepository.findByParent(userId, pageable);
         ReviewByParentDTO reviewDtoList = new ReviewByParentDTO();
 
-        reviews.forEach((review) -> {
-            reviewDtoList.getReviews().add(new ReviewByParentDTO.ReviewDto(review));
-        });
-        return reviewDtoList;
+        Slice<ReviewByParentDTO.ReviewDto> reviewDtoSlice = reviews.map(ReviewByParentDTO.ReviewDto::new);
+
+        return new ReviewByParentDTO(reviewDtoSlice);
     }
 
     public Long saveReview(Long userId, ReviewCreateDTO reviewCreateDTO) {

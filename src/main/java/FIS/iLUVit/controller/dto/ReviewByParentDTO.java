@@ -4,16 +4,16 @@ import FIS.iLUVit.domain.Review;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.springframework.data.domain.Slice;
 
 import java.time.LocalDate;
 import java.time.LocalTime;
-import java.util.ArrayList;
-import java.util.List;
 
 @Data
 @NoArgsConstructor
+@AllArgsConstructor
 public class ReviewByParentDTO {
-    private List<ReviewDto> reviews = new ArrayList<>();
+    private Slice<ReviewDto> reviews;
 
     @Data
     @AllArgsConstructor
