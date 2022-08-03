@@ -148,11 +148,12 @@ class ReviewControllerTest {
         ReviewByParentDTO.ReviewDto reviewDto = new ReviewByParentDTO.ReviewDto(review1);
         System.out.println("reviewDto = " + reviewDto);
         List<ReviewByParentDTO.ReviewDto> reviewDtos = List.of(reviewDto);
-        expected.setReviews(reviewDtos);
+        SliceImpl<ReviewByParentDTO.ReviewDto> reviewDtoSlice = new SliceImpl<>(reviewDtos, PageRequest.of(0, 10), false);
+        expected.setReviews(reviewDtoSlice);
 
         Mockito.doReturn(expected)
                 .when(reviewService)
-                .findByParent(parent1.getId());
+                .findByParent(parent1.getId(), PageRequest.of(0, 10));
 
         final String url = "/parent/review";
         //when

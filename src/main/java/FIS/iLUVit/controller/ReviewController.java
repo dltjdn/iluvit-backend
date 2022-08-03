@@ -19,8 +19,8 @@ public class ReviewController {
         내용: 학부모가 작성한 리뷰 조회
     */
     @GetMapping("/parent/review")
-    public ReviewByParentDTO searchByParent(@Login Long userId) { // @Login 어노테이션 달아야됨.
-        return reviewService.findByParent(userId);
+    public ReviewByParentDTO searchByParent(@Login Long userId, Pageable pageable) { // @Login 어노테이션 달아야됨.
+        return reviewService.findByParent(userId, pageable);
     }
 
     /**
