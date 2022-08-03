@@ -5,6 +5,7 @@ import FIS.iLUVit.controller.dto.BoardListDTO;
 import FIS.iLUVit.controller.dto.CreateBoardRequest;
 import FIS.iLUVit.controller.dto.StoryHomeDTO;
 import FIS.iLUVit.domain.*;
+import FIS.iLUVit.domain.enumtype.Approval;
 import FIS.iLUVit.domain.enumtype.Auth;
 import FIS.iLUVit.domain.enumtype.BoardKind;
 import FIS.iLUVit.exception.*;
@@ -95,6 +96,7 @@ class BoardServiceTest {
                 .id(50L)
                 .auth(Auth.TEACHER)
                 .center(center1)
+                .approval(Approval.ACCEPT)
                 .build();
 
         director1 = Teacher.builder()
@@ -110,11 +112,13 @@ class BoardServiceTest {
         child1 = Child.builder()
                 .name("어린이")
                 .center(center1)
+                .approval(Approval.ACCEPT)
                 .build();
 
         child2 = Child.builder()
                 .name("어린이2")
                 .center(center2)
+                .approval(Approval.ACCEPT)
                 .build();
 
         board1 = createBoard(3L, "자유게시판", BoardKind.NORMAL, null, true);
