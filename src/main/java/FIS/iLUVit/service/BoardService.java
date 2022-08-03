@@ -4,6 +4,7 @@ import FIS.iLUVit.controller.dto.BoardListDTO;
 import FIS.iLUVit.controller.dto.CreateBoardRequest;
 import FIS.iLUVit.controller.dto.StoryHomeDTO;
 import FIS.iLUVit.domain.*;
+import FIS.iLUVit.domain.enumtype.Approval;
 import FIS.iLUVit.domain.enumtype.Auth;
 import FIS.iLUVit.exception.*;
 import FIS.iLUVit.repository.*;
@@ -180,7 +181,8 @@ public class BoardService {
             result.addAll(centerStoryDTOList);
         } else {
             Center findCenter = ((Teacher) findUser).getCenter();
-            if (findCenter != null) {
+            Approval approval = ((Teacher) findUser).getApproval();
+            if (findCenter != null && approval == Approval.ACCEPT) {
                 StoryHomeDTO.CenterStoryDTO centerStoryDTO = new StoryHomeDTO
                         .CenterStoryDTO(findCenter);
                 result.add(centerStoryDTO);
