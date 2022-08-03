@@ -5,7 +5,7 @@ node('ILUVIT_BACK') {
         SCM_VARS =
                 git(
                         branch: 'release',
-                        credentialsId: 'e7fe12eb-4666-4cd0-af62-5d18b1c55756',
+                        credentialsId: 'ILUVIT_BACK_DEPLOY_KEY',
                         url: 'git@github.com:FISOLUTION/ILUVIT_BACK.git'
                 )
     }
@@ -20,7 +20,10 @@ node('ILUVIT_BACK') {
                 sh "exit 1"
             }
         }
+
+
         echo CHANGE
+
     }
 
     stage('kill ex-Application'){
@@ -28,20 +31,19 @@ node('ILUVIT_BACK') {
         JAR_NAME = sh(encoding: 'UTF-8', returnStdout: true, script: "basename $BUILD_JAR")
         echo "$JAR_NAME"
         script {
+
             try{
                 pid = sh(encoding: 'UTF-8', returnStdout: true,script: "pgrep -f $JAR_NAME")
                 echo "$pid"
             } catch (Exception exception) {
                 pid = ""
             }
-
             if (!pid.equals("")) {
                 echo "===================== Killing Process ====================="
                 echo "$pid"
                 sh "sudo kill -15 $pid"
             } else {
                 echo "===================== Nothing To Kill ====================="
-
             }
         }
     }
