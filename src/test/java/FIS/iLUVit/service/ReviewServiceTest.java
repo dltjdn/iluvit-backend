@@ -136,7 +136,8 @@ public class ReviewServiceTest {
         expected.setReviews(reviewDtoSlice);
 
         List<Review> reviewList = List.of(review1);
-        Mockito.doReturn(reviewList)
+        SliceImpl<Review> reviewSlice = new SliceImpl<>(reviewList, PageRequest.of(0, 10), false);
+        Mockito.doReturn(reviewSlice)
                 .when(reviewRepository)
                 .findByParent(parent1.getId(), PageRequest.of(0, 10));
         //when
