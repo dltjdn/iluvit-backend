@@ -45,7 +45,6 @@ node('ILUVIT_BACK') {
                 sh "sudo kill -15 $pid"
             } else {
                 echo "===================== Nothing To Kill ====================="
-
             }
         }
     }
