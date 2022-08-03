@@ -216,4 +216,32 @@ class BookmarkRepositoryTest {
         assertThat(postDelete).isEmpty();
     }
 
+    @Test
+    public void deleteAllByBoardAndUser() {
+        // given
+        em.persist(center1);
+        em.persist(parent1);
+        em.persist(board1);
+        em.persist(board2);
+        em.persist(board3);
+        em.persist(board4);
+        em.persist(bookmark1);
+        em.persist(bookmark2);
+        em.persist(bookmark3);
+        em.persist(bookmark4);
+        em.flush();
+        em.clear();
+        List<Long> boardIds = List.of(board3.getId(), board4.getId());
+        // when
+        bookmarkRepository.deleteAllByBoardAndUser(parent1.getId(), boardIds);
+        em.flush();
+        em.clear();
+        // then
+        List<Bookmark> result = bookmarkRepository.findByUser(parent1);
+        assertThat(result.size()).isEqualTo(2);
+        result.forEach(bookmark -> {
+            assertThat(bookmark.getBoard().getCenter()).isNull();
+        });
+    }
+
 }

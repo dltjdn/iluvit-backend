@@ -4,6 +4,7 @@ import FIS.iLUVit.controller.dto.*;
 import FIS.iLUVit.domain.*;
 import FIS.iLUVit.domain.embeddable.Theme;
 import FIS.iLUVit.domain.enumtype.AuthKind;
+import FIS.iLUVit.exception.UserErrorResult;
 import FIS.iLUVit.exception.UserException;
 import FIS.iLUVit.repository.*;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -59,7 +60,7 @@ public class ParentService {
     public ParentDetailResponse updateDetail(Long id, ParentDetailRequest request) throws IOException {
 
         Parent findParent = parentRepository.findById(id)
-                .orElseThrow(() -> new UserException("유효하지 않은 토큰으로의 사용자 접근입니다."));
+                .orElseThrow(() -> new UserException(UserErrorResult.NOT_VALID_TOKEN));
 
         // 관심사를 스트링에서 객체로 바꾸기
         ObjectMapper objectMapper = new ObjectMapper();
@@ -69,7 +70,7 @@ public class ParentService {
         if(!Objects.equals(findParent.getNickName(), request.getNickname())){
             parentRepository.findByNickName(request.getNickname())
                     .ifPresent(parent -> {
-                        throw new UserException("이미 존재하는 닉네임입니다.");
+                        throw new UserException(UserErrorResult.ALREADY_NICKNAME_EXIST);
                     });
         }
 
@@ -86,8 +87,10 @@ public class ParentService {
         }
 
         ParentDetailResponse response = new ParentDetailResponse(findParent);
+
         imageService.saveProfileImage(request.getProfileImg(), findParent);
         response.setProfileImg(imageService.getProfileImage(findParent));
+
         return response;
     }
 

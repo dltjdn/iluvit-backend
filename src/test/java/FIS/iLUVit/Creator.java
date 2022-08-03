@@ -26,7 +26,6 @@ public class Creator {
                 .loginId("loginId")
                 .password("pwd")
                 .phoneNumber(phoneNum)
-                .hasProfileImg(false)
                 .emailAddress("asd@asd")
                 .name("name")
                 .address("address")
@@ -41,11 +40,17 @@ public class Creator {
                 .loginId("loginId")
                 .password("pwd")
                 .phoneNumber("dfdsf")
-                .hasProfileImg(false)
                 .emailAddress("asd@asd")
                 .name("name")
                 .address("address")
                 .detailAddress("detailAddress")
+                .build();
+    }
+
+    public static Parent createParent(String name, String phoneNum){
+        return Parent.builder()
+                .phoneNumber(phoneNum)
+                .name(name)
                 .build();
     }
 
@@ -56,7 +61,6 @@ public class Creator {
                 .loginId(loginId)
                 .password("pwd")
                 .phoneNumber(phoneNum)
-                .hasProfileImg(false)
                 .emailAddress("asd@asd")
                 .name("name")
                 .address("address")
@@ -650,6 +654,32 @@ public class Creator {
                 .name(name)
                 .center(center)
                 .isDefault(isDefault)
+                .build();
+    }
+
+    public static Child createChild(Long id, String name, Parent parent, Center center, Approval approval) {
+        return Child.builder()
+                .id(id)
+                .name(name)
+                .parent(parent)
+                .center(center)
+                .approval(approval)
+                .build();
+    }
+    public static Child createChild(String name, Parent parent, Center center, Approval approval) {
+        return Child.builder()
+                .name(name)
+                .parent(parent)
+                .center(center)
+                .approval(approval)
+                .build();
+    }
+
+    public static Bookmark createBookmark(Long id, Board board, User user) {
+        return Bookmark.builder()
+                .id(id)
+                .board(board)
+                .user(user)
                 .build();
     }
 

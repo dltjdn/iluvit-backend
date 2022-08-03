@@ -21,13 +21,13 @@ public class User extends BaseImageEntity {
 
     @GeneratedValue @Id
     protected Long id;
+    @Column(unique = true)
     protected String nickName;            // 닉네임
     @Column(unique = true)
     protected String loginId;             // 로그인 할때 입력할 아이디
     protected String password;            // 비밀번호
     @Column(unique = true)
     protected String phoneNumber;         // 핸드폰 번호
-    protected Boolean hasProfileImg;      // 프사 있니?
     protected String emailAddress;        // 이메일
     protected String name;                // 잔짜 이름
     protected String address;             // 주소

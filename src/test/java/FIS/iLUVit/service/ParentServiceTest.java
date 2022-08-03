@@ -7,11 +7,17 @@ import FIS.iLUVit.controller.dto.SignupParentRequest;
 import FIS.iLUVit.domain.Board;
 import FIS.iLUVit.domain.Parent;
 import FIS.iLUVit.domain.enumtype.BoardKind;
+import FIS.iLUVit.exception.UserErrorResult;
+import FIS.iLUVit.exception.UserException;
+import FIS.iLUVit.exception.exceptionHandler.ErrorResponse;
 import FIS.iLUVit.repository.*;
 import FIS.iLUVit.service.createmethod.CreateTest;
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -26,6 +32,7 @@ import java.util.Optional;
 
 import static FIS.iLUVit.service.createmethod.CreateTest.createBoard;
 import static org.assertj.core.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
@@ -94,30 +101,64 @@ public class ParentServiceTest {
         assertThat(result.getProfileImg()).isEqualTo("imagePath");
     }
 
-    @Test
-    public void 부모프로필정보수정_성공() throws IOException {
-        // given
-        doReturn(Optional.of(parent))
-                .when(parentRepository)
-                .findById(parent.getId());
-        ParentDetailRequest request = ParentDetailRequest
-                .builder()
-                .name("name")
-                .nickname("nickName")
-                .changePhoneNum(true)
-                .phoneNum("newPhoneNum")
-                .address("address")
-                .detailAddress("detailAddress")
-                .emailAddress("emailAddress")
-                .interestAge(3)
-                .theme(objectMapper.writeValueAsString(Creator.createTheme()))
-                .build();
-        // when
-        ParentDetailResponse result = target.updateDetail(parent.getId(), request);
-        // then
-        assertThat(result).isNotNull();
-        assertThat(result.getNickname()).isEqualTo("nickName");
-        assertThat(result.getPhoneNumber()).isEqualTo("newPhoneNum");
+    @Nested
+    @DisplayName("부모 프로필 수정")
+    class updateDetail{
+
+        @Test
+        @DisplayName("[error] 닉네임 중복")
+        public void 닉네임중복() throws JsonProcessingException {
+            // given
+            ParentDetailRequest request = ParentDetailRequest
+                    .builder()
+                    .name("name")
+                    .nickname("중복닉네임")
+                    .changePhoneNum(true)
+                    .phoneNum("newPhoneNum")
+                    .address("address")
+                    .detailAddress("detailAddress")
+                    .emailAddress("emailAddress")
+                    .interestAge(3)
+                    .theme(objectMapper.writeValueAsString(Creator.createTheme()))
+                    .build();
+            doReturn(Optional.of(parent))
+                    .when(parentRepository)
+                    .findById(any());
+            doReturn(Optional.of(Parent.builder().build()))
+                    .when(parentRepository)
+                    .findByNickName(any());
+            // when
+            UserException result = assertThrows(UserException.class,
+                    () -> target.updateDetail(parent.getId(), request));
+            // then
+            assertThat(result.getErrorResult()).isEqualTo(UserErrorResult.ALREADY_NICKNAME_EXIST);
+        }
+        @Test
+        public void 부모프로필정보수정_성공() throws IOException {
+            // given
+            doReturn(Optional.of(parent))
+                    .when(parentRepository)
+                    .findById(parent.getId());
+            ParentDetailRequest request = ParentDetailRequest
+                    .builder()
+                    .name("name")
+                    .nickname("nickName")
+                    .changePhoneNum(true)
+                    .phoneNum("newPhoneNum")
+                    .address("address")
+                    .detailAddress("detailAddress")
+                    .emailAddress("emailAddress")
+                    .interestAge(3)
+                    .theme(objectMapper.writeValueAsString(Creator.createTheme()))
+                    .build();
+            // when
+            ParentDetailResponse result = target.updateDetail(parent.getId(), request);
+            // then
+            assertThat(result).isNotNull();
+            assertThat(result.getNickname()).isEqualTo("nickName");
+            assertThat(result.getPhoneNumber()).isEqualTo("newPhoneNum");
+        }
+
     }
 
 }

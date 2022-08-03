@@ -93,7 +93,7 @@ public class GlobalControllerAdvice extends ResponseEntityExceptionHandler {
 
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     @ExceptionHandler(DataIntegrityViolationException.class)
-    public ResponseEntity<Object> RuntimeException(DataIntegrityViolationException e) {
+    public ResponseEntity<Object> DataIntegrityViolationExHandler(DataIntegrityViolationException e) {
         log.error("[DataIntegrityViolationException] 올바르지 않은 식별자값입니다.", e);
         return makeErrorResponseEntity("올바르지 않은 식별자값입니다.");
     }

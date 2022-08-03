@@ -18,7 +18,6 @@ public class Child extends BaseImageEntity {
     private Long id;
     private String name;
     private LocalDate birthDate;
-    private Boolean hasProfileImg;              // 프사 있나?
     @Enumerated(EnumType.STRING)
     private Approval approval;                  // 승인 여부 상태
 
@@ -31,10 +30,10 @@ public class Child extends BaseImageEntity {
     private Center center;
 
     @Builder
-    public Child(String name, LocalDate birthDate, Boolean hasProfileImg, Approval approval, Parent parent, Center center) {
+    public Child(Long id, String name, LocalDate birthDate, Approval approval, Parent parent, Center center) {
+        this.id = id;
         this.name = name;
         this.birthDate = birthDate;
-        this.hasProfileImg = hasProfileImg;
         this.approval = approval;
         this.parent = parent;
         this.center = center;
@@ -65,6 +64,13 @@ public class Child extends BaseImageEntity {
         }
         this.name = name;
         this.birthDate = birthDate;
-        this.hasProfileImg = !image.isEmpty();
+    }
+
+    public void accepted() {
+        this.approval = Approval.ACCEPT;
+    }
+
+    public void fired() {
+        this.approval = Approval.REJECT;
     }
 }

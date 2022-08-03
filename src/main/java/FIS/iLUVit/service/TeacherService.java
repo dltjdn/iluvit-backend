@@ -45,7 +45,7 @@ public class TeacherService {
     public TeacherDetailResponse findDetail(Long id) throws IOException {
 
         Teacher findTeacher = teacherRepository.findById(id)
-                .orElseThrow(() -> new UserException("유효하지 않은 토큰으로의 사용자 접근입니다."));
+                .orElseThrow(() -> new UserException(UserErrorResult.NOT_VALID_TOKEN));
 
         TeacherDetailResponse response = new TeacherDetailResponse(findTeacher);
 
@@ -277,7 +277,7 @@ public class TeacherService {
      * 작성자: 이승범
      * 작성내용: 원장권한 부여
      */
-    public void mandateTeacher(Long userId, Long teacherId) {
+    public Teacher mandateTeacher(Long userId, Long teacherId) {
 
         Teacher director = teacherRepository.findDirectorByIdWithCenterWithTeacher(userId)
                 .orElseThrow(() -> new UserException(UserErrorResult.HAVE_NOT_AUTHORIZATION));
@@ -286,9 +286,10 @@ public class TeacherService {
                 .filter(teacher -> Objects.equals(teacher.getId(), teacherId))
                 .filter(teacher -> teacher.getApproval() == Approval.ACCEPT)
                 .findFirst()
-                .orElseThrow(() -> new UserException("잘못된 teacherId 입니다."));
+                .orElseThrow(() -> new UserException(UserErrorResult.NOT_VALID_REQUEST));
 
         mandatedTeacher.beDirector();
+        return mandatedTeacher;
     }
 
     /**
@@ -296,10 +297,10 @@ public class TeacherService {
      * 작성자: 이승범
      * 작성내용: 원장권한 박탈
      */
-    public void demoteTeacher(Long userId, Long teacherId) {
+    public Teacher demoteTeacher(Long userId, Long teacherId) {
 
         Teacher director = teacherRepository.findDirectorByIdWithCenterWithTeacher(userId)
-                .orElseThrow(() -> new UserException(UserErrorResult.USER_NOT_EXIST));
+                .orElseThrow(() -> new UserException(UserErrorResult.HAVE_NOT_AUTHORIZATION));
 
         Teacher demotedTeacher = director.getCenter().getTeachers().stream()
                 .filter(teacher -> Objects.equals(teacher.getId(), teacherId))
@@ -307,6 +308,7 @@ public class TeacherService {
                 .orElseThrow(() -> new UserException(UserErrorResult.NOT_VALID_REQUEST));
 
         demotedTeacher.beTeacher();
+        return demotedTeacher;
     }
 
     // 해당 시설과 연관된 bookmark 삭제

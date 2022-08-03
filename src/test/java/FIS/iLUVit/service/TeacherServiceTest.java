@@ -605,6 +605,119 @@ public class TeacherServiceTest {
             assertThat(result.getErrorResult()).isEqualTo(UserErrorResult.HAVE_NOT_AUTHORIZATION);
 
         }
+        @Test
+        @DisplayName("[error] 시설에 속해있지 않은 교사")
+        public void 시설에속해있지않은교사() {
+            // given
+            center1.getTeachers().add(teacher1);
+            center1.getTeachers().add(teacher2);
+            center1.getTeachers().add(teacher3);
+            center1.getTeachers().add(teacher5);
+            doReturn(Optional.of(teacher1))
+                    .when(teacherRepository)
+                    .findDirectorByIdWithCenterWithTeacher(any());
+            // when
+            UserException result = assertThrows(UserException.class,
+                    () -> target.mandateTeacher(teacher1.getId(), teacher4.getId()));
+            // then
+
+        }
+
+        @Test
+        @DisplayName("[error] 승인받지 않은 교사")
+        public void 승인받지않은교사() {
+            // given
+            center1.getTeachers().add(teacher1);
+            center1.getTeachers().add(teacher2);
+            center1.getTeachers().add(teacher3);
+            center1.getTeachers().add(teacher5);
+            doReturn(Optional.of(teacher1))
+                    .when(teacherRepository)
+                    .findDirectorByIdWithCenterWithTeacher(any());
+            // when
+            UserException result = assertThrows(UserException.class,
+                    () -> target.mandateTeacher(teacher1.getId(), teacher3.getId()));
+            // then
+            assertThat(result.getErrorResult()).isEqualTo(UserErrorResult.NOT_VALID_REQUEST);
+        }
+
+        @Test
+        @DisplayName("[success] 원장권한 부여 성공")
+        public void 권한부여성공() {
+            // given
+            center1.getTeachers().add(teacher1);
+            center1.getTeachers().add(teacher2);
+            center1.getTeachers().add(teacher3);
+            center1.getTeachers().add(teacher5);
+            doReturn(Optional.of(teacher1))
+                    .when(teacherRepository)
+                    .findDirectorByIdWithCenterWithTeacher(any());
+            // when
+            Teacher result = target.mandateTeacher(teacher1.getId(), teacher2.getId());
+            // then
+            assertThat(result.getAuth()).isEqualTo(Auth.DIRECTOR);
+        }
+    }
+    
+    @Nested
+    @DisplayName("원장권한 박탈")
+    class demoteTeacher{
+        @Test
+        @DisplayName("[error] 원장이 아닌 경우")
+        public void 원장아님() {
+            // given
+            Teacher localTeacher = Creator.createTeacher(3L, "localTeacher", center1, Auth.DIRECTOR, Approval.ACCEPT);
+            center1.getTeachers().add(teacher1);
+            center1.getTeachers().add(teacher2);
+            center1.getTeachers().add(teacher3);
+            center1.getTeachers().add(teacher5);
+            center1.getTeachers().add(localTeacher);
+            doReturn(Optional.empty())
+                    .when(teacherRepository)
+                    .findDirectorByIdWithCenterWithTeacher(any());
+            // when
+            UserException result = assertThrows(UserException.class,
+                    () -> target.demoteTeacher(teacher2.getId(), teacher3.getId()));
+            // then
+            assertThat(result.getErrorResult()).isEqualTo(UserErrorResult.HAVE_NOT_AUTHORIZATION);
+        }
+        @Test
+        @DisplayName("[error] 해당시설에 속해있지 않은 교사")
+        public void 속해있지않은교사() {
+            // given
+            Teacher localTeacher = Creator.createTeacher(3L, "localTeacher", center1, Auth.DIRECTOR, Approval.ACCEPT);
+            center1.getTeachers().add(teacher1);
+            center1.getTeachers().add(teacher2);
+            center1.getTeachers().add(teacher3);
+            center1.getTeachers().add(teacher5);
+            center1.getTeachers().add(localTeacher);
+            doReturn(Optional.of(teacher1))
+                    .when(teacherRepository)
+                    .findDirectorByIdWithCenterWithTeacher(teacher1.getId());
+            // when
+            UserException result = assertThrows(UserException.class,
+                    () -> target.demoteTeacher(teacher1.getId(), teacher4.getId()));
+            // then
+            assertThat(result.getErrorResult()).isEqualTo(UserErrorResult.NOT_VALID_REQUEST);
+        }
+        @Test
+        @DisplayName("[success] 원장권한 박탈 성공")
+        public void 박탈성공() {
+            // given
+            Teacher localTeacher = Creator.createTeacher(3L, "localTeacher", center1, Auth.DIRECTOR, Approval.ACCEPT);
+            center1.getTeachers().add(teacher1);
+            center1.getTeachers().add(teacher2);
+            center1.getTeachers().add(teacher3);
+            center1.getTeachers().add(teacher5);
+            center1.getTeachers().add(localTeacher);
+            doReturn(Optional.of(teacher1))
+                    .when(teacherRepository)
+                    .findDirectorByIdWithCenterWithTeacher(teacher1.getId());
+            // when
+            Teacher result = target.demoteTeacher(teacher1.getId(), localTeacher.getId());
+            // then
+            assertThat(result.getAuth()).isEqualTo(Auth.TEACHER);
+        }
     }
 
 }
