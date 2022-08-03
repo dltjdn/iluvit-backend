@@ -40,13 +40,12 @@ public class Parent extends User {
 
 
     @Builder
-    public Parent(Long id, String nickName, String loginId, String password, String phoneNumber, Boolean hasProfileImg, String emailAddress, String name, Theme theme, Integer interestAge, Auth auth, String address, String detailAddress) {
+    public Parent(Long id, String nickName, String loginId, String password, String phoneNumber, String emailAddress, String name, Theme theme, Integer interestAge, Auth auth, String address, String detailAddress) {
         this.id = id;
         this.nickName = nickName;
         this.loginId = loginId;
         this.password = password;
         this.phoneNumber = phoneNumber;
-        this.hasProfileImg = hasProfileImg;
         this.emailAddress = emailAddress;
         this.name = name;
         this.address = address;
@@ -56,13 +55,12 @@ public class Parent extends User {
         this.interestAge = interestAge;
     }
 
-    public static Parent createParent(String nickName, String loginId, String password, String phoneNumber, Boolean hasProfileImg, String emailAddress, String name, Theme theme, Integer interestAge, Auth auth, String address, String detailAddress) {
+    public static Parent createParent(String nickName, String loginId, String password, String phoneNumber, String emailAddress, String name, Theme theme, Integer interestAge, Auth auth, String address, String detailAddress) {
         return Parent.builder()
                 .nickName(nickName)
                 .loginId(loginId)
                 .password(password)
                 .phoneNumber(phoneNumber)
-                .hasProfileImg(hasProfileImg)
                 .emailAddress(emailAddress)
                 .name(name)
                 .theme(theme)

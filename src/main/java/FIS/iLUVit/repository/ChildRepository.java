@@ -32,16 +32,4 @@ public interface ChildRepository extends JpaRepository<Child, Long> {
             "where c.parent.id =:userId")
     List<Child> findByUserWithCenter(@Param("userId") Long userId);
 
-    @Modifying
-    @Query("update Child c " +
-            "set c.approval = 'ACCEPT' " +
-            "where c.id =:childId " +
-            "and c.center.id =:centerId")
-    void acceptChild(@Param("childId") Long childId,@Param("centerId") Long centerId);
-
-    @Modifying(clearAutomatically = true)
-    @Query("update Child c " +
-            "set c.approval = 'REJECT' " +
-            "where c.id =:childId")
-    void fireChild(@Param("childId") Long childId);
 }

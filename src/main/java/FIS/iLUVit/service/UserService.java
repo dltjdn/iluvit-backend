@@ -19,7 +19,6 @@ import FIS.iLUVit.repository.AuthNumberRepository;
 import FIS.iLUVit.repository.UserRepository;
 import FIS.iLUVit.security.uesrdetails.PrincipalDetails;
 import com.auth0.jwt.exceptions.JWTVerificationException;
-import com.auth0.jwt.exceptions.TokenExpiredException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
@@ -175,7 +174,7 @@ public class UserService {
                 .orElseThrow(() -> new JWTVerificationException("유효하지 않은 토큰입니다."));
 
         if (!requestRefreshTokenToken.equals(findTokenPair.getRefreshToken())) {
-            throw new JWTVerificationException("유효하지 않은 토큰입니다.");
+            throw new JWTVerificationException("중복 로그인 되었습니다.");
         }
 
         // 이전에 발급했던 AccessToken 만료되지 않았다면 refreshToken 탈취로 판단

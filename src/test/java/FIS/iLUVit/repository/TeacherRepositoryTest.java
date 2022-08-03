@@ -3,6 +3,8 @@ package FIS.iLUVit.repository;
 import FIS.iLUVit.Creator;
 import FIS.iLUVit.config.argumentResolver.ForDB;
 import FIS.iLUVit.domain.Center;
+import FIS.iLUVit.domain.Child;
+import FIS.iLUVit.domain.Parent;
 import FIS.iLUVit.domain.Teacher;
 import FIS.iLUVit.domain.enumtype.Approval;
 import FIS.iLUVit.domain.enumtype.Auth;
@@ -40,6 +42,10 @@ public class TeacherRepositoryTest {
     private Teacher teacher4;
     private Teacher teacher5;
     private Teacher teacher6;
+    private Parent parent1;
+    private Child child1;
+    private Child child2;
+    private Child child3;
 
     @BeforeEach
     public void init() {
@@ -52,6 +58,10 @@ public class TeacherRepositoryTest {
         teacher4 = Creator.createTeacher(null, "teacher4", center2, Approval.ACCEPT, Auth.DIRECTOR);
         teacher5 = Creator.createTeacher(null, "teacher5", null, null, Auth.TEACHER);
         teacher6 = Creator.createTeacher(null, "teacher6", center2, Approval.ACCEPT, Auth.DIRECTOR);
+        parent1 = Creator.createParent("parent1", "phone1");
+        child1 = Creator.createChild("child1", parent1, center1, Approval.ACCEPT);
+        child2 = Creator.createChild("child2", parent1, center1, Approval.WAITING);
+        child3 = Creator.createChild("child3", parent1, center1, Approval.REJECT);
         em.persist(center1);
         em.persist(center2);
         em.persist(center3);
@@ -61,6 +71,10 @@ public class TeacherRepositoryTest {
         em.persist(teacher4);
         em.persist(teacher5);
         em.persist(teacher6);
+        em.persist(parent1);
+        em.persist(child1);
+        em.persist(child2);
+        em.persist(child3);
     }
 
     @Nested
@@ -164,6 +178,40 @@ public class TeacherRepositoryTest {
             Teacher result = teacherRepository.findDirectorByIdWithCenterWithTeacher(teacher2.getId()).orElse(null);
             // then
             assertThat(result).isNull();
+        }
+    }
+
+    @Nested
+    @DisplayName("findByIdWithCenterWithChildWithParent")
+    class findByIdWithCenterWithChildWithParent{
+        @Test
+        public void 승인받지않은교사의요청() {
+            // given
+            center1.getChildren().add(child1);
+            center1.getChildren().add(child2);
+            center1.getChildren().add(child3);
+            em.flush();
+            em.clear();
+            // when
+            Teacher result = teacherRepository.findByIdWithCenterWithChildWithParent(teacher3.getId()).orElse(null);
+            // then
+            assertThat(result).isNull();
+        }
+
+        @Test
+        public void 원장의정상요청() {
+            // given
+            center1.getChildren().add(child1);
+            center1.getChildren().add(child2);
+            center1.getChildren().add(child3);
+            em.flush();
+            em.clear();
+            // when
+            Teacher result = teacherRepository.findByIdWithCenterWithChildWithParent(teacher1.getId()).orElse(null);
+            // then
+            assertThat(result).isNotNull();
+            assertThat(result.getCenter().getChildren().size()).isEqualTo(3);
+            assertThat(result.getCenter().getChildren().get(0).getParent().getId()).isEqualTo(parent1.getId());
         }
     }
 

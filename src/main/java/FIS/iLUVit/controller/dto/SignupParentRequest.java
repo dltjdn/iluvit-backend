@@ -46,7 +46,6 @@ public class SignupParentRequest {
                 .emailAddress(emailAddress)
                 .address(address)
                 .detailAddress(detailAddress)
-                .hasProfileImg(false)
                 .theme(theme)
                 .interestAge(interestAge)
                 .auth(Auth.PARENT)

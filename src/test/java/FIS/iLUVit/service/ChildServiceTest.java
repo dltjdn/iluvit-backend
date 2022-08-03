@@ -1,0 +1,324 @@
+package FIS.iLUVit.service;
+
+import FIS.iLUVit.Creator;
+import FIS.iLUVit.controller.dto.ChildApprovalListResponse;
+import FIS.iLUVit.controller.dto.ChildInfoDTO;
+import FIS.iLUVit.domain.*;
+import FIS.iLUVit.domain.alarms.CenterApprovalAcceptedAlarm;
+import FIS.iLUVit.domain.enumtype.Approval;
+import FIS.iLUVit.domain.enumtype.Auth;
+import FIS.iLUVit.event.AlarmEvent;
+import FIS.iLUVit.exception.UserErrorResult;
+import FIS.iLUVit.exception.UserException;
+import FIS.iLUVit.repository.*;
+import org.junit.jupiter.api.*;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.MockedStatic;
+import org.mockito.Mockito;
+import org.mockito.junit.jupiter.MockitoExtension;
+
+import java.util.List;
+import java.util.Optional;
+
+import static org.assertj.core.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.Mockito.*;
+
+@ExtendWith(MockitoExtension.class)
+public class ChildServiceTest {
+    @InjectMocks
+    private ChildService target;
+    @Mock
+    private BookmarkService bookmarkService;
+    @Mock
+    private ImageService imageService;
+    @Mock
+    private ChildRepository childRepository;
+    @Mock
+    private ParentRepository parentRepository;
+    @Mock
+    private CenterRepository centerRepository;
+    @Mock
+    private TeacherRepository teacherRepository;
+    @Mock
+    private BoardRepository boardRepository;
+    @Mock
+    private BookmarkRepository bookmarkRepository;
+
+    private Parent parent1;
+    private Parent parent2;
+    private Center center1;
+    private Center center2;
+    private Child child1;
+    private Child child2;
+    private Child child3;
+    private Child child4;
+    private Child child5;
+    private Teacher director;
+    private Teacher teacher1;
+    private Teacher teacher2;
+    private Board board1;
+    private Board board2;
+    private Board board3;
+    private Bookmark bookmark;
+
+    @BeforeEach
+    public void init() {
+        parent1 = Creator.createParent(1L);
+        parent2 = Creator.createParent(2L);
+        center1 = Creator.createCenter(3L, "center1");
+        center2 = Creator.createCenter(14L, "center2");
+        child1 = Creator.createChild(4L, "child1", parent1, center1, Approval.ACCEPT);
+        child2 = Creator.createChild(5L, "child2", parent1, center1, Approval.WAITING);
+        child3 = Creator.createChild(9L, "child3", parent1, center1, Approval.REJECT);
+        child4 = Creator.createChild(10L, "child4", parent2, center1, Approval.WAITING);
+        child5 = Creator.createChild(15L, "child5", parent2, center2, Approval.WAITING);
+        director = Creator.createTeacher(7L, "director", center1, Auth.DIRECTOR, Approval.ACCEPT);
+        teacher1 = Creator.createTeacher(6L, "teacher1", center1, Auth.TEACHER, Approval.ACCEPT);
+        teacher2 = Creator.createTeacher(8L, "teacher2", center1, Auth.TEACHER, Approval.WAITING);
+        board1 = Creator.createBoard(11L, "board1", center1, true);
+        board2 = Creator.createBoard(12L, "board2", center1, true);
+        board3 = Creator.createBoard(13L, "board3", center1, false);
+        bookmark = Creator.createBookmark(16L, board1, parent1);
+    }
+
+    @Nested
+    @DisplayName("부모 메인페이지 아이들정보")
+    class 아이들정보{
+        @Test
+        public void 아이여러명() {
+            // given
+            parent1.getChildren().add(child1);
+            parent1.getChildren().add(child2);
+            doReturn(Optional.of(parent1))
+                    .when(parentRepository)
+                    .findWithChildren(parent1.getId());
+            doReturn("imagePath")
+                    .when(imageService)
+                    .getProfileImage(any(Child.class));
+            // when
+            ChildInfoDTO result = target.childrenInfo(parent1.getId());
+            // then
+            assertThat(result.getData().size()).isEqualTo(2);
+        }
+        @Test
+        public void 아이없음() {
+            // given
+            doReturn(Optional.of(parent2))
+                    .when(parentRepository)
+                    .findWithChildren(any());
+            ChildInfoDTO result = target.childrenInfo(parent2.getId());
+            // then
+            assertThat(result.getData().size()).isEqualTo(0);
+        }
+    }
+
+    @Test
+    public void 학부모관리페이지조회() {
+        // given
+        center1.getChildren().add(child1);
+        center1.getChildren().add(child2);
+        center1.getChildren().add(child3);
+        center1.getChildren().add(child4);
+        doReturn(Optional.of(director))
+                .when(teacherRepository)
+                .findByIdWithCenterWithChildWithParent(director.getId());
+        doReturn("imagePath")
+                .when(imageService)
+                .getProfileImage(any(Child.class));
+        // when
+        ChildApprovalListResponse result = target.findChildApprovalInfoList(director.getId());
+        // then
+        assertThat(result.getData().size()).isEqualTo(3);
+    }
+
+    @Nested
+    @DisplayName("아이/학부모 승인")
+    class acceptChild {
+        @Test
+        @DisplayName("[error] 승인받지않은교사의요청")
+        public void 승인받지않은교사의요청() {
+            // given
+            center1.getChildren().add(child1);
+            center1.getChildren().add(child2);
+            center1.getChildren().add(child3);
+            center1.getChildren().add(child4);
+            doReturn(Optional.empty())
+                    .when(teacherRepository)
+                    .findByIdWithCenterWithChildWithParent(any());
+            // when
+            UserException result = assertThrows(UserException.class,
+                    () -> target.acceptChild(teacher2.getId(), child2.getId()));
+            // then
+            assertThat(result.getErrorResult()).isEqualTo(UserErrorResult.HAVE_NOT_AUTHORIZATION);
+        }
+
+        @Test
+        @DisplayName("[error] 아이 아이디 잘못됨")
+        public void 아이아이디잘못됨() {
+            // given
+            center1.getChildren().add(child1);
+            center1.getChildren().add(child2);
+            center1.getChildren().add(child3);
+            center1.getChildren().add(child4);
+            doReturn(Optional.of(teacher1))
+                    .when(teacherRepository)
+                    .findByIdWithCenterWithChildWithParent(any());
+            // when
+            UserException result = assertThrows(UserException.class,
+                    () -> target.acceptChild(teacher1.getId(), child1.getId()));
+            // then
+            assertThat(result.getErrorResult()).isEqualTo(UserErrorResult.NOT_VALID_REQUEST);
+        }
+
+        @Test
+        @DisplayName("[success] 부모의아이 최초승인")
+        public void 최초승인() {
+            try (MockedStatic<AlarmUtils> alarmUtils = Mockito.mockStatic(AlarmUtils.class)) {
+                // given
+                center1.getChildren().add(child1);
+                center1.getChildren().add(child2);
+                center1.getChildren().add(child3);
+                center1.getChildren().add(child4);
+                center1.getBoards().add(board1);
+                center1.getBoards().add(board2);
+                center1.getBoards().add(board3);
+                doReturn(Optional.of(teacher1))
+                        .when(teacherRepository)
+                        .findByIdWithCenterWithChildWithParent(any());
+                parent2.getChildren().add(child4);
+                doReturn(Optional.of(parent2))
+                        .when(parentRepository)
+                        .findByIdWithChild(any());
+                alarmUtils.when(() -> AlarmUtils.getMessage(any(String.class), any(Object[].class)))
+                        .thenReturn("설명회가 가득 찼습니다");
+                AlarmEvent alarmEvent = new AlarmEvent(new CenterApprovalAcceptedAlarm(Parent.builder().build(), Center.builder().build()));
+                alarmUtils.when(() -> AlarmUtils.publishAlarmEvent(new CenterApprovalAcceptedAlarm(parent2, teacher1.getCenter())))
+                        .thenReturn(alarmEvent);
+                // when
+                Child result = target.acceptChild(director.getId(), child4.getId());
+                // then
+                assertThat(result.getId()).isEqualTo(child4.getId());
+                assertThat(result.getApproval()).isEqualTo(Approval.ACCEPT);
+                verify(bookmarkService, times(2)).create(any(), any());
+            }
+        }
+
+        @Test
+        @DisplayName("[success] 같은시설 중복승인")
+        public void 중복승인() {
+            try (MockedStatic<AlarmUtils> alarmUtils = Mockito.mockStatic(AlarmUtils.class)) {
+                // given
+                center1.getChildren().add(child1);
+                center1.getChildren().add(child2);
+                center1.getChildren().add(child3);
+                center1.getChildren().add(child4);
+                center1.getBoards().add(board1);
+                center1.getBoards().add(board2);
+                center1.getBoards().add(board3);
+                doReturn(Optional.of(teacher1))
+                        .when(teacherRepository)
+                        .findByIdWithCenterWithChildWithParent(any());
+                parent1.getChildren().add(child1);
+                parent1.getChildren().add(child2);
+                parent1.getChildren().add(child3);
+                doReturn(Optional.of(parent1))
+                        .when(parentRepository)
+                        .findByIdWithChild(any());
+                alarmUtils.when(() -> AlarmUtils.getMessage(any(String.class), any(Object[].class)))
+                        .thenReturn("설명회가 가득 찼습니다");
+                AlarmEvent alarmEvent = new AlarmEvent(new CenterApprovalAcceptedAlarm(Parent.builder().build(), Center.builder().build()));
+                alarmUtils.when(() -> AlarmUtils.publishAlarmEvent(new CenterApprovalAcceptedAlarm(parent1, teacher1.getCenter())))
+                        .thenReturn(alarmEvent);
+                // when
+                Child result = target.acceptChild(director.getId(), child2.getId());
+                // then
+                assertThat(result.getId()).isEqualTo(child2.getId());
+                assertThat(result.getApproval()).isEqualTo(Approval.ACCEPT);
+                verify(bookmarkService, times(0)).create(any(), any());
+            }
+        }
+    }
+    @Nested
+    @DisplayName("아이/학부모 삭제/거절")
+    class fireChild{
+        @Test
+        @DisplayName("[error] 승인받지않은 교사")
+        public void 승인받지않은교사() {
+            // given
+            doReturn(Optional.empty())
+                    .when(teacherRepository)
+                    .findByIdWithCenterWithChildWithParent(any());
+            // when
+            UserException result = assertThrows(UserException.class,
+                    () -> target.fireChild(teacher2.getId(), child1.getId()));
+            // then
+            assertThat(result.getErrorResult()).isEqualTo(UserErrorResult.HAVE_NOT_AUTHORIZATION);
+        }
+
+        @Test
+        @DisplayName("[error] 아이 아이디 에러")
+        public void 아이아이디에러() {
+            // given
+            center1.getChildren().add(child1);
+            center1.getChildren().add(child2);
+            center1.getChildren().add(child3);
+            center1.getChildren().add(child4);
+            doReturn(Optional.of(teacher1))
+                    .when(teacherRepository)
+                    .findByIdWithCenterWithChildWithParent(any());
+            // when
+            UserException result = assertThrows(UserException.class,
+                    () -> target.fireChild(teacher1.getId(), child5.getId()));
+            // then
+            assertThat(result.getErrorResult()).isEqualTo(UserErrorResult.NOT_VALID_REQUEST);
+        }
+
+        @Test
+        @DisplayName("[success] 마지막 아이 삭제 성공")
+        public void 마지막아이삭제성공() {
+            // given
+            center1.getChildren().add(child1);
+            center1.getChildren().add(child2);
+            center1.getChildren().add(child3);
+            center1.getChildren().add(child4);
+            doReturn(Optional.of(teacher1))
+                    .when(teacherRepository)
+                    .findByIdWithCenterWithChildWithParent(any());
+            doReturn(List.of(child1, child2, child3))
+                    .when(childRepository)
+                    .findByUserWithCenter(any());
+            // when
+            target.fireChild(teacher1.getId(), child1.getId());
+            // then
+            assertThat(child1.getApproval()).isEqualTo(Approval.REJECT);
+            verify(boardRepository, times(1)).findByCenter(any());
+            verify(bookmarkRepository, times(1)).deleteAllByBoardAndUser(any(), any());
+        }
+
+        @Test
+        @DisplayName("[success] 아이 삭제 성공 아직 더 있음")
+        public void 아이삭제성공아직더있음() {
+            // given
+            child2.accepted();
+            center1.getChildren().add(child1);
+            center1.getChildren().add(child2);
+            center1.getChildren().add(child3);
+            center1.getChildren().add(child4);
+            doReturn(Optional.of(teacher1))
+                    .when(teacherRepository)
+                    .findByIdWithCenterWithChildWithParent(any());
+            doReturn(List.of(child1, child2, child3))
+                    .when(childRepository)
+                    .findByUserWithCenter(any());
+            // when
+            target.fireChild(teacher1.getId(), child1.getId());
+            // then
+            assertThat(child1.getApproval()).isEqualTo(Approval.REJECT);
+            verify(boardRepository, times(0)).findByCenter(any());
+            verify(bookmarkRepository, times(0)).deleteAllByBoardAndUser(any(), any());
+        }
+    }
+}

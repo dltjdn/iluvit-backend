@@ -188,6 +188,7 @@ public class LoginTest {
         }
 
         @Test
+        @Transactional
         @DisplayName("[success] 토큰 갱신 성공")
         public void 토큰갱신성공() {
             // given
@@ -200,7 +201,7 @@ public class LoginTest {
             // when
             LoginResponse result = userService.refresh(request);
             // then
-            TokenPair tokenPair = tokenPairRepository.findByUserId(parent.getId()).get();
+            TokenPair tokenPair = tokenPairRepository.findByUserId(parent.getId()).orElse(null);
             String dbAccessToken = tokenPair.getAccessToken();
             String dbRefreshToken = tokenPair.getRefreshToken();
             assertThat(result.getAccessToken()).isEqualTo(jwtUtils.addPrefix(dbAccessToken));
@@ -211,7 +212,7 @@ public class LoginTest {
     public String createMockAccessToken(User user) {
         String token = JWT.create()
                 .withSubject("ILuvIt_AccessToken")
-                .withExpiresAt(new Date(System.currentTimeMillis()))
+                .withExpiresAt(new Date(System.currentTimeMillis()-1))
                 .withClaim("id", user.getId())
                 .sign(Algorithm.HMAC512(secretKey));
         return token;

@@ -368,7 +368,7 @@ public class TeacherControllerTest {
                             .header("Authorization", createJwtToken(teacher))
             );
             // then
-            result.andExpect(status().isBadRequest())
+            result.andExpect(status().isForbidden())
                     .andExpect(content().json(
                             objectMapper.writeValueAsString(new ErrorResponse(error.getHttpStatus(), error.getMessage()))
                     ));
@@ -411,7 +411,7 @@ public class TeacherControllerTest {
                             .header("Authorization", createJwtToken(teacher))
             );
             // then
-            result.andExpect(status().isBadRequest())
+            result.andExpect(status().isForbidden())
                     .andExpect(content().json(
                             objectMapper.writeValueAsString(new ErrorResponse(error.getHttpStatus(), error.getMessage()))
                     ));
@@ -471,7 +471,7 @@ public class TeacherControllerTest {
                             .header("Authorization", createJwtToken(teacher))
             );
             // then
-            result.andExpect(status().isBadRequest())
+            result.andExpect(status().isForbidden())
                     .andExpect(content().json(
                             objectMapper.writeValueAsString(new ErrorResponse(error.getHttpStatus(), error.getMessage()))
                     ));

@@ -45,7 +45,7 @@ public class TeacherService {
     public TeacherDetailResponse findDetail(Long id) throws IOException {
 
         Teacher findTeacher = teacherRepository.findById(id)
-                .orElseThrow(() -> new UserException("유효하지 않은 토큰으로의 사용자 접근입니다."));
+                .orElseThrow(() -> new UserException(UserErrorResult.NOT_VALID_TOKEN));
 
         TeacherDetailResponse response = new TeacherDetailResponse(findTeacher);
 

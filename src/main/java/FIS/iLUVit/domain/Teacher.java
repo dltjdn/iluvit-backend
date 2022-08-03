@@ -34,13 +34,12 @@ public class Teacher extends User {
     private Center center;
 
     @Builder
-    public Teacher(Long id, String nickName, String loginId, String password, String phoneNumber, Boolean hasProfileImg, String emailAddress, String name, Auth auth, Approval approval, Center center, String address, String detailAddress) {
+    public Teacher(Long id, String nickName, String loginId, String password, String phoneNumber, String emailAddress, String name, Auth auth, Approval approval, Center center, String address, String detailAddress) {
         this.id = id;
         this.nickName = nickName;
         this.loginId = loginId;
         this.password = password;
         this.phoneNumber = phoneNumber;
-        this.hasProfileImg = hasProfileImg;
         this.emailAddress = emailAddress;
         this.name = name;
         this.address = address;
@@ -50,13 +49,12 @@ public class Teacher extends User {
         this.center = center;
     }
 
-    public static Teacher createTeacher(String nickName, String loginId, String password, String phoneNumber, Boolean hasProfileImg, String emailAddress, String name, Auth auth, Approval approval, Center center, String address, String detailAddress) {
+    public static Teacher createTeacher(String nickName, String loginId, String password, String phoneNumber, String emailAddress, String name, Auth auth, Approval approval, Center center, String address, String detailAddress) {
         return Teacher.builder()
                 .nickName(nickName)
                 .loginId(loginId)
                 .password(password)
                 .phoneNumber(phoneNumber)
-                .hasProfileImg(hasProfileImg)
                 .emailAddress(emailAddress)
                 .name(name)
                 .approval(approval)

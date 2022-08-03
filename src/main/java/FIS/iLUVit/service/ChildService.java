@@ -6,6 +6,7 @@ import FIS.iLUVit.domain.alarms.CenterApprovalAcceptedAlarm;
 import FIS.iLUVit.domain.alarms.CenterApprovalReceivedAlarm;
 import FIS.iLUVit.domain.enumtype.Approval;
 import FIS.iLUVit.exception.CenterException;
+import FIS.iLUVit.exception.UserErrorResult;
 import FIS.iLUVit.exception.UserException;
 import FIS.iLUVit.repository.*;
 import lombok.RequiredArgsConstructor;
@@ -43,18 +44,11 @@ public class ChildService {
      */
     public ChildInfoDTO childrenInfo(Long id) {
         Parent findParent = parentRepository.findWithChildren(id)
-                .orElseThrow(() -> new UserException("존재하지 않는 사용자입니다."));
+                .orElseThrow(() -> new UserException(UserErrorResult.NOT_VALID_TOKEN));
 
         ChildInfoDTO childInfoDTO = new ChildInfoDTO();
 
         findParent.getChildren().forEach(child -> {
-//            if (child.getHasProfileImg()) {
-//                String imagePath = imageService.getChildProfileDir();
-//                String encodedImage = imageService.getEncodedProfileImage(imagePath, child.getId());
-//                childInfoDTO.getData().add(new ChildInfoDTO.ChildInfo(child, encodedImage));
-//            } else {
-//                childInfoDTO.getData().add(new ChildInfoDTO.ChildInfo(child, null));
-//            }
             childInfoDTO.getData().add(
                     new ChildInfoDTO.ChildInfo(child, imageService.getProfileImage(child))
             );
@@ -71,7 +65,7 @@ public class ChildService {
     public void saveChild(Long userId, SaveChildRequest request) throws IOException {
 
         // 부모를 기존에 등록되어 있는 아이와 엮어서 가져오기
-        Parent parent = parentRepository.findByIdWithChild(userId);
+        Parent parent = parentRepository.getById(userId);
 
         // 새로 등록할 시설에 정보를 게시판 정보와 엮어서 가져오기
         Center center = centerRepository.findByIdAndSignedWithTeacher(request.getCenter_id())
@@ -193,22 +187,18 @@ public class ChildService {
      * 작성내용: 아이 승인 페이지를 위한 시설에 등록된 아이들 정보 조회
      */
     public ChildApprovalListResponse findChildApprovalInfoList(Long userId) {
-
+        // 사용자가 속한 시설의 아이들 끌어오기
         Teacher teacher = teacherRepository.findByIdWithCenterWithChildWithParent(userId)
-                .orElseThrow(() -> new UserException("해당 요청에 대한 권한이 없습니다."));
+                .orElseThrow(() -> new UserException(UserErrorResult.HAVE_NOT_AUTHORIZATION));
 
         ChildApprovalListResponse response = new ChildApprovalListResponse();
-
 
         teacher.getCenter().getChildren().forEach(child -> {
             // 해당시설에 대해 거절/삭제 당하지 않은 아이들만 보여주기
             if (child.getApproval() != Approval.REJECT) {
+
                 ChildApprovalListResponse.ChildInfoForAdmin childInfo =
                         new ChildApprovalListResponse.ChildInfoForAdmin(child);
-
-//                    String imagePath = imageService.getChildProfileDir();
-//                    String image = imageService.getEncodedProfileImage(imagePath, child.getId());
-//                    childInfo.setChild_profileImg(image);
                 childInfo.setChild_profileImg(imageService.getProfileImage(child));
 
                 response.getData().add(childInfo);
@@ -223,23 +213,24 @@ public class ChildService {
      * 작성자: 이승범
      * 작성내용: 아이 승인
      */
-    public void acceptChild(Long userId, Long childId) {
+    public Child acceptChild(Long userId, Long childId) {
 
         // 사용자가 등록된 시설과 연관된 아이들 목록 가져오기
         Teacher teacher = teacherRepository.findByIdWithCenterWithChildWithParent(userId)
-                .orElseThrow(() -> new UserException("해당 요청에 대한 권한이 없습니다."));
+                .orElseThrow(() -> new UserException(UserErrorResult.HAVE_NOT_AUTHORIZATION));
 
         // childId에 해당하는 아이가 시설에 승인 대기중인지 확인
         Child acceptedChild = teacher.getCenter().getChildren().stream()
                 .filter(child -> Objects.equals(child.getId(), childId) && child.getApproval() == Approval.WAITING)
                 .findFirst()
-                .orElseThrow(() -> new UserException("잘못된 childId 입니다."));
+                .orElseThrow(() -> new UserException(UserErrorResult.NOT_VALID_REQUEST));
 
         // 승인
-        childRepository.acceptChild(childId, teacher.getCenter().getId());
+        acceptedChild.accepted();
 
         // 승인하고자 하는 아이의 부모와 그 부모에 속한 모든 아이들 가져오기
-        Parent acceptedParent = parentRepository.findByIdWithChild(acceptedChild.getParent().getId());
+        Parent acceptedParent = parentRepository.findByIdWithChild(acceptedChild.getParent().getId())
+                .orElseThrow(() -> new UserException(UserErrorResult.NOT_VALID_REQUEST));
 
         // 승인 완료 알람이 학부모에게로 감
         AlarmUtils.publishAlarmEvent(new CenterApprovalAcceptedAlarm(acceptedParent, teacher.getCenter()));
@@ -249,6 +240,7 @@ public class ChildService {
         Optional<Child> alreadySignedChild = acceptedParent.getChildren().stream()
                 .filter(child -> Objects.equals(child.getCenter().getId(), teacher.getCenter().getId()))
                 .filter(child -> child.getApproval() == Approval.ACCEPT)
+                .filter(child -> !Objects.equals(child.getId(), acceptedChild.getId()))
                 .findFirst();
 
         // 새로운 시설에 아이가 승인될 경우 해당 시설에 default board 북마크에 추가
@@ -261,6 +253,7 @@ public class ChildService {
             });
         }
 
+        return acceptedChild;
     }
 
     /**
@@ -272,16 +265,16 @@ public class ChildService {
 
         // 사용자가 등록된 시설과 연관된 아이들 목록 가져오기
         Teacher teacher = teacherRepository.findByIdWithCenterWithChildWithParent(userId)
-                .orElseThrow(() -> new UserException("해당 요청에 대한 권한이 없습니다."));
+                .orElseThrow(() -> new UserException(UserErrorResult.HAVE_NOT_AUTHORIZATION));
 
         // childId 검증
         Child firedChild = teacher.getCenter().getChildren().stream()
                 .filter(child -> Objects.equals(child.getId(), childId))
                 .findFirst()
-                .orElseThrow(() -> new UserException("잘못된 childId 입니다."));
+                .orElseThrow(() -> new UserException(UserErrorResult.NOT_VALID_REQUEST));
 
         // 시설과의 연관관계 끊기
-        childRepository.fireChild(childId);
+        firedChild.fired();
 
         // 식제하고자 하는 아이의 부모와 그 부모에 속한 모든 아이들 가져오기
         List<Child> childrenByUser = childRepository.findByUserWithCenter(userId);

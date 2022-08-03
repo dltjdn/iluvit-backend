@@ -76,7 +76,7 @@ public interface ParentRepository extends JpaRepository<Parent, Long> {
             "from Parent p " +
             "left join fetch p.children " +
             "where p.id =:userId")
-    Parent findByIdWithChild(@Param("userId") Long userId);
+    Optional<Parent> findByIdWithChild(@Param("userId") Long userId);
 
     @Query("select distinct p " +
             "from Parent p " +
