@@ -38,7 +38,6 @@ node('ILUVIT_BACK') {
             } catch (Exception exception) {
                 pid = ""
             }
-
             if (!pid.equals("")) {
                 echo "===================== Killing Process ====================="
                 echo "$pid"
