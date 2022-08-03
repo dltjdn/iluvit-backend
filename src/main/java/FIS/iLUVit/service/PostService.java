@@ -6,6 +6,7 @@ import FIS.iLUVit.domain.enumtype.Auth;
 import FIS.iLUVit.domain.enumtype.BoardKind;
 import FIS.iLUVit.exception.*;
 import FIS.iLUVit.repository.*;
+import FIS.iLUVit.service.constant.Criteria;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.jetbrains.annotations.NotNull;
@@ -35,7 +36,7 @@ public class PostService {
     private final ChatRoomRepository chatRoomRepository;
     private final AlarmRepository alarmRepository;
 
-    private final Integer heartCriteria = 2; // HOT 게시판 좋아요 기준
+//    private final Integer heartCriteria = 2; // HOT 게시판 좋아요 기준
 
     public Long savePost(PostRegisterRequest request, List<MultipartFile> images, Long userId) {
         if (userId == null) {
@@ -202,7 +203,7 @@ public class PostService {
         }
 
         // HOT 게시판 정보 추가
-        List<Post> hotPosts = postRepository.findTop3ByHeartCnt(heartCriteria, PageRequest.of(0, 3));
+        List<Post> hotPosts = postRepository.findTop3ByHeartCnt(Criteria.HOT_POST_HEART_CNT, PageRequest.of(0, 3));
         List<BoardPreview> results = new ArrayList<>();
 
         return getPreivewResult(hotPosts, results, boardPreviews);
@@ -247,7 +248,7 @@ public class PostService {
         getBoardPreviews(bookmarkList, boardPreviews);
 
         // HOT 게시판 정보 추가
-        List<Post> hotPosts = postRepository.findTop3ByHeartCntWithCenter(heartCriteria, centerId, PageRequest.of(0, 3));
+        List<Post> hotPosts = postRepository.findTop3ByHeartCntWithCenter(Criteria.HOT_POST_HEART_CNT, centerId, PageRequest.of(0, 3));
         List<BoardPreview> results = new ArrayList<>();
 
         return getPreivewResult(hotPosts, results, boardPreviews);
@@ -317,7 +318,7 @@ public class PostService {
 
     public Slice<GetPostResponsePreview> findByHeartCnt(Long centerId, Pageable pageable) {
         // heartCnt 가 n 개 이상이면 HOT 게시판에 넣어줍니다.
-        return postRepository.findHotPosts(centerId, heartCriteria, pageable);
+        return postRepository.findHotPosts(centerId, Criteria.HOT_POST_HEART_CNT, pageable);
     }
 
     /**
