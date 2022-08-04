@@ -98,8 +98,6 @@ public class ChildService {
 
         ChildInfoDetailResponse response = new ChildInfoDetailResponse(child);
 
-//            String imagePath = imageService.getChildProfileDir();
-//            String image = imageService.getEncodedProfileImage(imagePath, child.getId());
         response.setProfileImage(imageService.getProfileImage(child));
 
 
