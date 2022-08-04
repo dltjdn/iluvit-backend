@@ -764,6 +764,8 @@ class CenterRepositoryTest {
         em.persist(teacher3);
         em.persist(teacher4);
         em.persist(teacher5);
+        em.flush();
+        em.clear();
         // when
         Center result = centerRepository.findByIdAndSignedWithTeacher(center1.getId()).orElse(null);
         // then
