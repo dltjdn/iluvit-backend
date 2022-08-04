@@ -84,7 +84,7 @@ class ReviewRepositoryTest {
         //given
 
         //when
-        List<Review> reviewList = reviewRepository.findByParent(parent1.getId());
+        Slice<Review> reviewList = reviewRepository.findByParent(parent1.getId(), PageRequest.of(0, 10));
         //then
         assertThat(reviewList)
                 .extracting("score", "teacher", "content")

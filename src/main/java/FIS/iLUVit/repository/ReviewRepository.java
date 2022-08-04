@@ -12,7 +12,7 @@ import java.util.Optional;
 
 public interface ReviewRepository extends JpaRepository<Review, Long>{
     @Query("select r from Review r join fetch r.center c join fetch r.parent p where p.id = :parentId")
-    List<Review> findByParent(@Param("parentId") Long parentId); // 학부모가 작성한 리뷰 찾기
+    Slice<Review> findByParent(@Param("parentId") Long parentId, Pageable pageable); // 학부모가 작성한 리뷰 찾기
 
     @Query(value = "select r from Review r join fetch r.center c join fetch r.parent p where c.id = :centerId",
             countQuery = "select count(r) from Review r where r.center.id = :centerId order by r.createdDate desc ")

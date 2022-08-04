@@ -41,6 +41,7 @@ public class PostAlarm extends Alarm {
         this.board = post.getBoard();
         this.center = post.getBoard().getCenter();
         if (post.getBoard() == null) {
+
             throw new BoardException(BoardErrorResult.BOARD_NOT_EXIST);
         }
         if(post.getBoard().getCenter() != null)

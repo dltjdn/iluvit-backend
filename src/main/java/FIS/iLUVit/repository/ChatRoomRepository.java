@@ -10,6 +10,7 @@ import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
+import java.util.Collection;
 import java.util.Optional;
 
 public interface ChatRoomRepository extends JpaRepository<ChatRoom, Long> {
@@ -26,6 +27,6 @@ public interface ChatRoomRepository extends JpaRepository<ChatRoom, Long> {
     Slice<ChatRoom> findByUser(@Param("userId") Long userId, @Param("userId") Pageable pageable);
 
     @Modifying(clearAutomatically = true)
-    @Query("update ChatRoom cr set cr.post.id = null, cr.comment.id = null where cr.post.id = :postId")
-    Integer setPostIsNull(@Param("postId") Long postId);
+    @Query("update ChatRoom cr set cr.post.id = null, cr.comment.id = null where cr.post.id in :postIds ")
+    Integer setPostIsNull(@Param("postIds") Collection<Long> postIds);
 }
