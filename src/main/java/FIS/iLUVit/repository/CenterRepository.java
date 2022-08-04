@@ -38,7 +38,7 @@ public interface CenterRepository extends JpaRepository<Center, Long>, CenterRep
             "where c.id =:centerId")
     Optional<Center> findByIdWithTeacher(@Param("centerId") Long centerId);
 
-    @Query("select c " +
+    @Query("select distinct c " +
             "from Center c " +
             "join fetch c.teachers " +
             "where c.id =:centerId " +

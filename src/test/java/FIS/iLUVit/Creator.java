@@ -683,4 +683,19 @@ public class Creator {
                 .build();
     }
 
+    public static Center createCenter(String name, boolean signed, Area area) {
+        return Center.builder()
+                .name(name)
+                .signed(signed)
+                .area(area)
+                .build();
+    }
+
+    public static Teacher createTeacher(String name, Center center, Approval approval) {
+        return Teacher.builder()
+                .name(name)
+                .center(center)
+                .approval(approval)
+                .build();
+    }
 }

@@ -62,30 +62,28 @@ public class ChildService {
      * 작성자: 이승범
      * 작성내용: 아이 추가
      */
-    public void saveChild(Long userId, SaveChildRequest request) throws IOException {
+    public Child saveChild(Long userId, SaveChildRequest request) throws IOException {
 
-        // 부모를 기존에 등록되어 있는 아이와 엮어서 가져오기
         Parent parent = parentRepository.getById(userId);
 
-        // 새로 등록할 시설에 정보를 게시판 정보와 엮어서 가져오기
+        // 새로 등록할 시설에 교사들 엮어서 가져오기
         Center center = centerRepository.findByIdAndSignedWithTeacher(request.getCenter_id())
-                .orElseThrow(() -> new CenterException("잘못된 centerId 입니다."));
+                .orElseThrow(() -> new UserException(UserErrorResult.NOT_VALID_REQUEST));
 
         // 아이 등록
         Child newChild = request.createChild(center, parent);
         childRepository.save(newChild);
 
-        // 아이 승인 요청 알람이 해당 시설의 모든 교사에게 감
+        // 아이 승인 요청 알람이 해당 시설에 승인된 교사들에게 감
         center.getTeachers().forEach(teacher -> {
-            AlarmUtils.publishAlarmEvent(new CenterApprovalReceivedAlarm(teacher));
+            if (teacher.getApproval() == Approval.ACCEPT) {
+                AlarmUtils.publishAlarmEvent(new CenterApprovalReceivedAlarm(teacher));
+            }
         });
 
-        // 프로필 이미지 설정
-//        if (!request.getProfileImg().isEmpty()) {
-//            String imagePath = imageService.getChildProfileDir();
-//            imageService.saveProfileImage(request.getProfileImg(), imagePath + newChild.getId());
-//        }
         imageService.saveProfileImage(request.getProfileImg(), newChild);
+
+        return newChild;
     }
 
     /**
@@ -96,7 +94,7 @@ public class ChildService {
     public ChildInfoDetailResponse findChildInfoDetail(Long userId, Long childId, Pageable pageable) {
         // 프로필 수정하고자 하는 아이 가져오기
         Child child = childRepository.findByIdWithParentAndCenter(userId, childId)
-                .orElseThrow(() -> new UserException("잘못된 child_id 입니다."));
+                .orElseThrow(() -> new UserException(UserErrorResult.NOT_VALID_REQUEST));
 
         ChildInfoDetailResponse response = new ChildInfoDetailResponse(child);
 

@@ -1,8 +1,7 @@
 package FIS.iLUVit.service;
 
 import FIS.iLUVit.Creator;
-import FIS.iLUVit.controller.dto.ChildApprovalListResponse;
-import FIS.iLUVit.controller.dto.ChildInfoDTO;
+import FIS.iLUVit.controller.dto.*;
 import FIS.iLUVit.domain.*;
 import FIS.iLUVit.domain.alarms.CenterApprovalAcceptedAlarm;
 import FIS.iLUVit.domain.enumtype.Approval;
@@ -18,7 +17,17 @@ import org.mockito.Mock;
 import org.mockito.MockedStatic;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.SliceImpl;
+import org.springframework.mock.web.MockMultipartFile;
 
+import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 
@@ -63,9 +72,10 @@ public class ChildServiceTest {
     private Board board2;
     private Board board3;
     private Bookmark bookmark;
+    private MockMultipartFile multipartFile;
 
     @BeforeEach
-    public void init() {
+    public void init() throws IOException {
         parent1 = Creator.createParent(1L);
         parent2 = Creator.createParent(2L);
         center1 = Creator.createCenter(3L, "center1");
@@ -82,6 +92,10 @@ public class ChildServiceTest {
         board2 = Creator.createBoard(12L, "board2", center1, true);
         board3 = Creator.createBoard(13L, "board3", center1, false);
         bookmark = Creator.createBookmark(16L, board1, parent1);
+        String name = "162693895955046828.png";
+        Path path = Paths.get(new File("").getAbsolutePath() + '/' + name);
+        byte[] content = Files.readAllBytes(path);
+        multipartFile = new MockMultipartFile(name, name, "image", content);
     }
 
     @Nested
@@ -321,4 +335,89 @@ public class ChildServiceTest {
             verify(bookmarkRepository, times(0)).deleteAllByBoardAndUser(any(), any());
         }
     }
+
+
+    @Nested
+    @DisplayName("아이 추가")
+    class saveChild{
+        @Test
+        @DisplayName("[error] 시설정보 잘못됨")
+        public void 시설정보에러() {
+            // given
+            SaveChildRequest request = new SaveChildRequest(321L, "name", LocalDate.now(), multipartFile);
+            doReturn(parent1)
+                    .when(parentRepository)
+                    .getById(any());
+            doReturn(Optional.empty())
+                    .when(centerRepository)
+                    .findByIdAndSignedWithTeacher(any());
+            // when
+            UserException result = assertThrows(UserException.class,
+                    () -> target.saveChild(parent1.getId(), request));
+            // then
+            assertThat(result.getErrorResult()).isEqualTo(UserErrorResult.NOT_VALID_REQUEST);
+        }
+
+        @Test
+        @DisplayName("[success] 아이추가 성공")
+        public void 아이추가성공() throws IOException {
+            try (MockedStatic<AlarmUtils> alarmUtils = Mockito.mockStatic(AlarmUtils.class)) {
+                // given
+                center1.getTeachers().add(director);
+                center1.getTeachers().add(teacher1);
+                center1.getTeachers().add(teacher2);
+                SaveChildRequest request = new SaveChildRequest(center1.getId(), "name", LocalDate.now(), multipartFile);
+                doReturn(parent1)
+                        .when(parentRepository)
+                        .getById(any());
+                doReturn(Optional.of(center1))
+                        .when(centerRepository)
+                        .findByIdAndSignedWithTeacher(request.getCenter_id());
+                // when
+                Child result = target.saveChild(parent1.getId(), request);
+                // then
+                assertThat(result).isNotNull();
+                assertThat(result.getName()).isEqualTo("name");
+                assertThat(result.getParent().getId()).isEqualTo(parent1.getId());
+                assertThat(result.getCenter().getId()).isEqualTo(center1.getId());
+            }
+        }
+    }
+    @Nested
+    @DisplayName("아이 프로필 조회")
+    class findChildInfoDetail{
+        @Test
+        public void 잘못된아이아이디() throws Exception {
+            //given
+            doReturn(Optional.empty())
+                    .when(childRepository)
+                    .findByIdWithParentAndCenter(any(), any());
+            //when
+            UserException result = assertThrows(UserException.class,
+                    () -> target.findChildInfoDetail(parent1.getId(), child4.getId(), PageRequest.of(0, 10)));
+            //then
+            assertThat(result.getErrorResult()).isEqualTo(UserErrorResult.NOT_VALID_REQUEST);
+        }
+        @Test
+        public void 조회성공() throws Exception {
+            //given
+            doReturn(Optional.of(child1))
+                    .when(childRepository)
+                    .findByIdWithParentAndCenter(any(), any());
+            doReturn("imagePath")
+                    .when(imageService)
+                    .getProfileImage(any(Child.class));
+            List<CenterInfoDto> content = List.of(CenterInfoDto.builder().build());
+            SliceImpl<CenterInfoDto> slice = new SliceImpl<>(content, PageRequest.of(0, 10), false);
+            doReturn(slice)
+                    .when(centerRepository)
+                    .findCenterForAddChild(any(), any(), any(), any());
+            //when
+            ChildInfoDetailResponse result = target.findChildInfoDetail(parent1.getId(), child1.getId(), PageRequest.of(0, 10));
+            //then
+            assertThat(result.getChild_id()).isEqualTo(child1.getId());
+            assertThat(result.getCenter_name()).isEqualTo(center1.getName());
+        }
+    }
+    
 }

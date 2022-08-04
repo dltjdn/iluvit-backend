@@ -302,4 +302,5 @@ public class CenterServiceTest {
             System.out.println("center = " + center.getInfoImagePath());
         }
     }
+
 }

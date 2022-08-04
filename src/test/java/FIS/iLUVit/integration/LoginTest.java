@@ -188,7 +188,6 @@ public class LoginTest {
         }
 
         @Test
-        @Transactional
         @DisplayName("[success] 토큰 갱신 성공")
         public void 토큰갱신성공() {
             // given
