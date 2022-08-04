@@ -80,8 +80,9 @@ public class PostService {
         Post findPost = postRepository.findById(postId)
                 .orElseThrow(() -> new PostException(PostErrorResult.POST_NOT_EXIST));
 
+        List<Long> postIds = List.of(postId);
         // 게시글과 연관된 모든 채팅방의 post_id(fk) 를 null 값으로 만들어줘야함.
-        chatRoomRepository.setPostIsNull(postId);
+        chatRoomRepository.setPostIsNull(postIds);
         // 게시글과 연관된 모든 알람의 post_id(fk) 를 null 값으로 만들어줘야함.
         alarmRepository.setPostIsNull(postId);
 

@@ -123,9 +123,11 @@ class ChatRoomRepositoryTest {
         //given
 
         //when
-        Integer value = chatRoomRepository.setPostIsNull(post1.getId());
+        List<Long> postIds = List.of(post1.getId());
+        Integer value = chatRoomRepository.setPostIsNull(postIds);
         List<ChatRoom> all = chatRoomRepository.findAll();
         //then
+
         assertThat(value).isEqualTo(2);
         all.forEach(cr -> {
             assertThat(cr.getPost()).isNull();
