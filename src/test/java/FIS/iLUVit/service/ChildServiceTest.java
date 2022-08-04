@@ -419,5 +419,79 @@ public class ChildServiceTest {
             assertThat(result.getCenter_name()).isEqualTo(center1.getName());
         }
     }
-    
+
+    @Nested
+    @DisplayName("아이 프로필 수정")
+    class updateChild{
+        @Test
+        @DisplayName("존재하지 않는 아이")
+        public void 존재하지않는아이() throws Exception {
+            //given
+            doReturn(List.of(child1, child2, child3))
+                    .when(childRepository)
+                    .findByUserWithCenter(any());
+            UpdateChildRequest request = new UpdateChildRequest(center1.getId(), multipartFile, "name", LocalDate.now());
+            //when
+            UserException result = assertThrows(UserException.class,
+                    () -> target.updateChild(parent1.getId(), child4.getId(), request, PageRequest.of(0, 10)));
+            //then
+            assertThat(result.getErrorResult()).isEqualTo(UserErrorResult.NOT_VALID_REQUEST);
+        }
+
+        @Test
+        @DisplayName("원장이 없는 시설로 승인요청")
+        public void 등록되지않은시설로의접근() throws Exception {
+            //given
+            doReturn(List.of(child1, child2, child3))
+                    .when(childRepository)
+                    .findByUserWithCenter(any());
+            doReturn(Optional.empty())
+                    .when(centerRepository)
+                    .findByIdAndSignedWithTeacher(any());
+            UpdateChildRequest request = new UpdateChildRequest(center2.getId(), multipartFile, "name", LocalDate.now());
+            //when
+            UserException result = assertThrows(UserException.class,
+                    () -> target.updateChild(parent1.getId(), child1.getId(), request, PageRequest.of(0, 10)));
+            //then
+            assertThat(result.getErrorResult()).isEqualTo(UserErrorResult.NOT_VALID_REQUEST);
+        }
+        @Test
+        public void 시설을변경하는경우() throws Exception {
+            //given
+
+            //when
+
+            //then
+
+        }
+    }
+
+    @Nested
+    @DisplayName("시설에 다니는 아이없으면 북마크 삭제")
+    class deleteBookmarkByCenter{
+        @Test
+        public void 아직남은경우() throws Exception {
+            //given
+            List<Child> childrenByUser = List.of(child1, child2, child3);
+            //when
+            target.deleteBookmarkByCenter(parent1.getId(), childrenByUser, child2);
+            //then
+            verify(boardRepository, times(0)).findByCenter(any());
+            verify(bookmarkRepository, times(0)).deleteAllByBoardAndUser(any(), anyList());
+        }
+
+        @Test
+        public void 마지막삭제경우() throws Exception {
+            //given
+            List<Child> childrenByUser = List.of(child1, child2, child3);
+            doReturn(List.of(board1, board2, board3))
+                    .when(boardRepository)
+                    .findByCenter(any());
+            //when
+            target.deleteBookmarkByCenter(parent1.getId(), childrenByUser, child1);
+            //then
+            verify(bookmarkRepository, times(1)).deleteAllByBoardAndUser(any(), anyList());
+        }
+    }
+
 }
