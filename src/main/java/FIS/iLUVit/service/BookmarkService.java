@@ -44,6 +44,12 @@ public class BookmarkService {
                 .collect(Collectors.groupingBy(p -> p.getBoard().getCenter() == null ?
                         tmp : p.getBoard().getCenter()));
 
+        for (Center center : centerBoardMap.keySet()) {
+            if (!centerPostMap.containsKey(center)) {
+                centerPostMap.put(center, new ArrayList<>());
+            }
+        }
+
         // ~의 이야기 DTO의 리스트
         List<BookmarkMainDTO.StoryDTO> storyDTOS = new ArrayList<>();
 
@@ -136,8 +142,10 @@ public class BookmarkService {
                     b.getId(), b.getName(), postTitle, postId);
             boardDTOS.add(boardDTO);
         });
-
-        storyDTO.setBoardDTOList(boardDTOS);
+        List<BookmarkMainDTO.BoardDTO> boardDTOasc = boardDTOS.stream()
+                .sorted(Comparator.comparing(b -> b.getBoard_id()))
+                .collect(Collectors.toList());
+        storyDTO.setBoardDTOList(boardDTOasc);
         dto.getStories().add(storyDTO);
         return dto;
     }
