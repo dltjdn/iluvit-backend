@@ -233,7 +233,7 @@ public class PostService {
                 }
             }
             if (!flag) {
-                throw new PostException(PostErrorResult.UNAUTHORIZED_USER_ACCESS);
+                throw new PostException(PostErrorResult.WAITING_OR_REJECT_CANNOT_ACCESS);
             }
 
         } else {
