@@ -17,6 +17,9 @@ import org.springframework.context.annotation.ComponentScan;
 import javax.persistence.EntityManager;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import java.util.List;
+
+import static org.assertj.core.api.Assertions.*;
 
 @DataJpaTest(includeFilters = @ComponentScan.Filter(ForDB.class))
 public class ChildRepositoryTest {
@@ -46,6 +49,14 @@ public class ChildRepositoryTest {
         child2 = Creator.createChild("child2", parent1, center1, Approval.WAITING);
         child3 = Creator.createChild("child3", parent1, center2, Approval.WAITING);
         child4 = Creator.createChild("child4", parent2, null, Approval.WAITING);
+        em.persist(center1);
+        em.persist(center2);
+        em.persist(parent1);
+        em.persist(parent2);
+        em.persist(child1);
+        em.persist(child2);
+        em.persist(child3);
+        em.persist(child4);
     }
     
     @Nested
@@ -54,14 +65,6 @@ public class ChildRepositoryTest {
         @Test
         public void 정상요청() {
             // given
-            em.persist(center1);
-            em.persist(center2);
-            em.persist(parent1);
-            em.persist(parent2);
-            em.persist(child1);
-            em.persist(child2);
-            em.persist(child3);
-            em.persist(child4);
             em.flush();
             em.clear();
             // when
@@ -75,20 +78,26 @@ public class ChildRepositoryTest {
         @Test
         public void 잘못된요청() {
             // given
-            em.persist(center1);
-            em.persist(center2);
-            em.persist(parent1);
-            em.persist(parent2);
-            em.persist(child1);
-            em.persist(child2);
-            em.persist(child3);
-            em.persist(child4);
             em.flush();
             em.clear();
             // when
             Child result = childRepository.findByIdWithParentAndCenter(parent1.getId(), child4.getId()).orElse(null);
             // then
             assertThat(result).isNull();
+        }
+    }
+
+    @Test
+    public void findByUserWithCenter() {
+        // given
+        em.flush();
+        em.clear();
+        // when
+        List<Child> result = childRepository.findByUserWithCenter(parent1.getId());
+        // then
+        assertThat(result.size()).isEqualTo(3);
+        for (Child child : result) {
+            assertThat(child.getParent().getId()).isEqualTo(parent1.getId());
         }
     }
 }
