@@ -123,7 +123,7 @@ public class ChildService {
                 .orElseThrow(() -> new UserException(UserErrorResult.NOT_VALID_REQUEST));
 
         // 시설을 변경하는 경우
-        if (updatedChild.getCenter() == null || !Objects.equals(updatedChild.getCenter().getId(), request.getCenter_id())) {
+        if (updatedChild.getApproval() == Approval.REJECT || !Objects.equals(updatedChild.getCenter().getId(), request.getCenter_id())) {
 
             // 요청 시설이 서비스에 등록된 시설인지 검사
             Center center = centerRepository.findByIdAndSignedWithTeacher(request.getCenter_id())
@@ -284,7 +284,7 @@ public class ChildService {
     }
 
     // 삭제되는 아이와 같은 시설에 다니는 또 다른 아이가 없을경우 해당 시설과 관련된 bookmark 모두 삭제
-    public void deleteBookmarkByCenter(Long userId, List<Child> childrenByUser, Child deletedChild) {
+    public void deleteBookmarkByCenter(Long parentId, List<Child> childrenByUser, Child deletedChild) {
         Optional<Child> sameCenterChildren = childrenByUser.stream()
                 .filter(child -> Objects.equals(child.getCenter().getId(), deletedChild.getCenter().getId()))
                 .filter(child -> !Objects.equals(child.getId(), deletedChild.getId()))
@@ -297,7 +297,7 @@ public class ChildService {
             List<Long> boardIds = boards.stream()
                     .map(Board::getId)
                     .collect(Collectors.toList());
-            bookmarkRepository.deleteAllByBoardAndUser(userId, boardIds);
+            bookmarkRepository.deleteAllByBoardAndUser(parentId, boardIds);
         }
     }
 }
