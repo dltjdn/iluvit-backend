@@ -4,7 +4,6 @@ import FIS.iLUVit.domain.enumtype.Approval;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import org.springframework.web.multipart.MultipartFile;
 
 import javax.persistence.*;
 import java.time.LocalDate;
@@ -57,11 +56,9 @@ public class Child extends BaseImageEntity {
         this.center = center;
     }
 
-    public void update(Center center, String name, LocalDate birthDate, MultipartFile image) {
-        if (!center.getId().equals(this.getCenter().getId()) || this.approval == Approval.REJECT) {
-            this.center = center;
-            this.approval = Approval.WAITING;
-        }
+    public void updateWithCenter(Center center, String name, LocalDate birthDate) {
+        this.center = center;
+        this.approval = Approval.WAITING;
         this.name = name;
         this.birthDate = birthDate;
     }
@@ -72,5 +69,10 @@ public class Child extends BaseImageEntity {
 
     public void fired() {
         this.approval = Approval.REJECT;
+    }
+
+    public void updateWithoutCenter(String name, LocalDate birthDate) {
+        this.name = name;
+        this.birthDate = birthDate;
     }
 }

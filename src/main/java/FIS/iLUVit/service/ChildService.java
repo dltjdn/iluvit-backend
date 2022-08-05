@@ -5,7 +5,6 @@ import FIS.iLUVit.domain.*;
 import FIS.iLUVit.domain.alarms.CenterApprovalAcceptedAlarm;
 import FIS.iLUVit.domain.alarms.CenterApprovalReceivedAlarm;
 import FIS.iLUVit.domain.enumtype.Approval;
-import FIS.iLUVit.exception.CenterException;
 import FIS.iLUVit.exception.UserErrorResult;
 import FIS.iLUVit.exception.UserException;
 import FIS.iLUVit.repository.*;
@@ -76,9 +75,7 @@ public class ChildService {
 
         // 아이 승인 요청 알람이 해당 시설에 승인된 교사들에게 감
         center.getTeachers().forEach(teacher -> {
-            if (teacher.getApproval() == Approval.ACCEPT) {
-                AlarmUtils.publishAlarmEvent(new CenterApprovalReceivedAlarm(teacher));
-            }
+            AlarmUtils.publishAlarmEvent(new CenterApprovalReceivedAlarm(teacher));
         });
 
         imageService.saveProfileImage(request.getProfileImg(), newChild);
@@ -125,27 +122,33 @@ public class ChildService {
                 .findFirst()
                 .orElseThrow(() -> new UserException(UserErrorResult.NOT_VALID_REQUEST));
 
-        // 요청 시설이 서비스에 등록된 시설인지 검사
-        Center center = centerRepository.findByIdAndSignedWithTeacher(request.getCenter_id())
-                .orElseThrow(() -> new UserException(UserErrorResult.NOT_VALID_REQUEST));
+        // 시설을 변경하는 경우
+        if (updatedChild.getCenter() == null || !Objects.equals(updatedChild.getCenter().getId(), request.getCenter_id())) {
 
-        // 시설을 변경하는 경우 bookmark 처리
-        if (!Objects.equals(center.getId(), request.getCenter_id())) {
-            deleteBookmarkByCenter(userId, childrenByUser, updatedChild);
+            // 요청 시설이 서비스에 등록된 시설인지 검사
+            Center center = centerRepository.findByIdAndSignedWithTeacher(request.getCenter_id())
+                    .orElseThrow(() -> new UserException(UserErrorResult.NOT_VALID_REQUEST));
+
+            // 기존에 등록되있었던 시설과 연관된 bookmark 처리
+            if (updatedChild.getCenter() != null) {
+                deleteBookmarkByCenter(userId, childrenByUser, updatedChild);
+            }
+
+            // update 진행
+            updatedChild.updateWithCenter(center, request.getName(), request.getBirthDate());
+
             // 아이 승인 요청 알람이 해당 시설의 모든 교사에게 감
             center.getTeachers().forEach(teacher -> {
                 AlarmUtils.publishAlarmEvent(new CenterApprovalReceivedAlarm(teacher));
             });
+        }else{
+            updatedChild.updateWithoutCenter(request.getName(), request.getBirthDate());
         }
-
-        // update 진행
-        updatedChild.update(center, request.getName(), request.getBirthDate(), request.getProfileImg());
 
         ChildInfoDetailResponse response = new ChildInfoDetailResponse(updatedChild);
 
         imageService.saveProfileImage(request.getProfileImg(), updatedChild);
         response.setProfileImage(imageService.getProfileImage(updatedChild));
-
 
         // 프로필 수정에 필요한 시설정보들 가져오기
         Slice<CenterInfoDto> centerInfos = centerRepository.findCenterForAddChild(updatedChild.getCenter().getArea().getSido(),
@@ -169,13 +172,12 @@ public class ChildService {
         Child deletedChild = childrenByUser.stream()
                 .filter(child -> Objects.equals(child.getId(), childId))
                 .findFirst()
-                .orElseThrow(() -> new UserException("잘못된 childId 입니다."));
+                .orElseThrow(() -> new UserException(UserErrorResult.NOT_VALID_REQUEST));
 
         // 삭제하고자 하는 아이와 같은 시설에 다니는 또 다른 자녀가 있는지 확인해서 없으면 해당 시설과 관련된 bookmark 모두 삭제
         deleteBookmarkByCenter(userId, childrenByUser, deletedChild);
 
         childRepository.delete(deletedChild);
-
         return childrenInfo(userId);
     }
 
@@ -278,7 +280,7 @@ public class ChildService {
         List<Child> childrenByUser = childRepository.findByUserWithCenter(userId);
 
         // bookmark 처리
-        deleteBookmarkByCenter(userId, childrenByUser, firedChild);
+        deleteBookmarkByCenter(firedChild.getParent().getId(), childrenByUser, firedChild);
     }
 
     // 삭제되는 아이와 같은 시설에 다니는 또 다른 아이가 없을경우 해당 시설과 관련된 bookmark 모두 삭제
