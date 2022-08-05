@@ -309,7 +309,7 @@ public class ChildServiceTest {
             // then
             assertThat(child1.getApproval()).isEqualTo(Approval.REJECT);
             verify(boardRepository, times(1)).findByCenter(any());
-            verify(bookmarkRepository, times(1)).deleteAllByBoardAndUser(any(), any());
+//            verify(bookmarkRepository, times(1)).deleteAllByBoardAndUser(child1.getParent().getId(), anyList());
         }
 
         @Test
@@ -456,12 +456,76 @@ public class ChildServiceTest {
             assertThat(result.getErrorResult()).isEqualTo(UserErrorResult.NOT_VALID_REQUEST);
         }
         @Test
-        public void 시설을변경하는경우() throws Exception {
-            //given
+        @DisplayName("[success] 시설을 변경하는 경우")
+        public void 시설변경O() throws IOException {
+            // given
+            UpdateChildRequest request = new UpdateChildRequest(center2.getId(), multipartFile, "name", LocalDate.now());
+            doReturn(List.of(child1, child2, child3))
+                    .when(childRepository)
+                    .findByUserWithCenter(any());
+            doReturn(Optional.of(center2))
+                    .when(centerRepository)
+                    .findByIdAndSignedWithTeacher(any());
+            // when
+            ChildInfoDetailResponse result = target.updateChild(parent1.getId(), child1.getId(), request, PageRequest.of(0, 10));
+            // then
+            assertThat(result.getChild_id()).isEqualTo(child1.getId());
+            assertThat(result.getCenter_name()).isEqualTo(center2.getName());
+            assertThat(result.getApproval()).isEqualTo(Approval.WAITING);
+            assertThat(result.getChild_name()).isEqualTo("name");
+            verify(boardRepository, times(1)).findByCenter(any());
+            verify(imageService, times(1)).saveProfileImage(any(), any());
+        }
 
-            //when
+        @Test
+        @DisplayName("[success] 시설은 변경하지 않은 경우")
+        public void 시설변경X() throws IOException {
+            // given
+            UpdateChildRequest request = new UpdateChildRequest(center1.getId(), multipartFile, "name", LocalDate.now());
+            doReturn(List.of(child1, child2, child3))
+                    .when(childRepository)
+                    .findByUserWithCenter(any());
+            // when
+            ChildInfoDetailResponse result = target.updateChild(parent1.getId(), child1.getId(), request, PageRequest.of(0, 10));
+            // then
+            assertThat(result.getChild_id()).isEqualTo(child1.getId());
+            assertThat(result.getCenter_name()).isEqualTo(child1.getCenter().getName());
+            verify(boardRepository, times(0)).findByCenter(any());
+            verify(imageService, times(1)).saveProfileImage(any(), any());
+        }
+    }
 
-            //then
+    @Nested
+    @DisplayName("아이 삭제")
+    class deleteChild{
+        @Test
+        @DisplayName("[error] 잘못된 childId")
+        public void childIdError() {
+            // given
+            doReturn(List.of(child1, child2, child3))
+                    .when(childRepository)
+                    .findByUserWithCenter(any());
+            // when
+            UserException result = assertThrows(UserException.class,
+                    () -> target.deleteChild(parent1.getId(), child4.getId()));
+            // then
+            assertThat(result.getErrorResult()).isEqualTo(UserErrorResult.NOT_VALID_REQUEST);
+        }
+        @Test
+        @DisplayName("[success] 해당시설의 마지막아이")
+        public void 부모의아이들중해당시설의마지막아이() {
+            // given
+            doReturn(List.of(child1, child2, child3))
+                    .when(childRepository)
+                    .findByUserWithCenter(any());
+            parent1.getChildren().add(child2);
+            parent1.getChildren().add(child3);
+            doReturn(Optional.of(parent1))
+                    .when(parentRepository)
+                    .findWithChildren(any());
+            // when
+            ChildInfoDTO result = target.deleteChild(parent1.getId(), child1.getId());
+            // then
 
         }
     }
