@@ -754,7 +754,7 @@ class CenterRepositoryTest {
         Center center2 = Creator.createCenter("center2", true, new Area("서울시", "구로구"));
         Teacher teacher1 = Creator.createTeacher("teacher1", center1, Approval.ACCEPT);
         Teacher teacher2 = Creator.createTeacher("teacher2", center1, Approval.ACCEPT);
-        Teacher teacher3 = Creator.createTeacher("teacher3", center1, Approval.REJECT);
+        Teacher teacher3 = Creator.createTeacher("teacher3", null, Approval.REJECT);
         Teacher teacher4 = Creator.createTeacher("teacher4", center2, Approval.ACCEPT);
         Teacher teacher5 = Creator.createTeacher("teacher5", center1, Approval.WAITING);
         em.persist(center1);

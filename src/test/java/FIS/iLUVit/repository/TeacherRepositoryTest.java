@@ -62,19 +62,6 @@ public class TeacherRepositoryTest {
         child1 = Creator.createChild("child1", parent1, center1, Approval.ACCEPT);
         child2 = Creator.createChild("child2", parent1, center1, Approval.WAITING);
         child3 = Creator.createChild("child3", parent1, center1, Approval.REJECT);
-        em.persist(center1);
-        em.persist(center2);
-        em.persist(center3);
-        em.persist(teacher1);
-        em.persist(teacher2);
-        em.persist(teacher3);
-        em.persist(teacher4);
-        em.persist(teacher5);
-        em.persist(teacher6);
-        em.persist(parent1);
-        em.persist(child1);
-        em.persist(child2);
-        em.persist(child3);
     }
 
     @Nested
@@ -84,6 +71,19 @@ public class TeacherRepositoryTest {
         @Test
         public void 해당교사가속해있는시설이있는경우() {
             // given
+            em.persist(center1);
+            em.persist(center2);
+            em.persist(center3);
+            em.persist(teacher1);
+            em.persist(teacher2);
+            em.persist(teacher3);
+            em.persist(teacher4);
+            em.persist(teacher5);
+            em.persist(teacher6);
+            em.persist(parent1);
+            em.persist(child1);
+            em.persist(child2);
+            em.persist(child3);
             em.flush();
             em.clear();
             // when
@@ -95,6 +95,19 @@ public class TeacherRepositoryTest {
         @Test
         public void 해당교사가속해있는시설이없는경우() {
             // given
+            em.persist(center1);
+            em.persist(center2);
+            em.persist(center3);
+            em.persist(teacher1);
+            em.persist(teacher2);
+            em.persist(teacher3);
+            em.persist(teacher4);
+            em.persist(teacher5);
+            em.persist(teacher6);
+            em.persist(parent1);
+            em.persist(child1);
+            em.persist(child2);
+            em.persist(child3);
             em.flush();
             em.clear();
             // when
@@ -108,6 +121,19 @@ public class TeacherRepositoryTest {
     @Test
     public void findDirectorByCenter() {
         // given
+        em.persist(center1);
+        em.persist(center2);
+        em.persist(center3);
+        em.persist(teacher1);
+        em.persist(teacher2);
+        em.persist(teacher3);
+        em.persist(teacher4);
+        em.persist(teacher5);
+        em.persist(teacher6);
+        em.persist(parent1);
+        em.persist(child1);
+        em.persist(child2);
+        em.persist(child3);
         em.flush();
         em.clear();
         // when
@@ -123,6 +149,19 @@ public class TeacherRepositoryTest {
     @Test
     public void findDirectorById() {
         // given
+        em.persist(center1);
+        em.persist(center2);
+        em.persist(center3);
+        em.persist(teacher1);
+        em.persist(teacher2);
+        em.persist(teacher3);
+        em.persist(teacher4);
+        em.persist(teacher5);
+        em.persist(teacher6);
+        em.persist(parent1);
+        em.persist(child1);
+        em.persist(child2);
+        em.persist(child3);
         em.flush();
         em.clear();
         // when
@@ -136,6 +175,19 @@ public class TeacherRepositoryTest {
     @Test
     public void findByIdWithCenterWithTeacher() {
         // given
+        em.persist(center1);
+        em.persist(center2);
+        em.persist(center3);
+        em.persist(teacher1);
+        em.persist(teacher2);
+        em.persist(teacher3);
+        em.persist(teacher4);
+        em.persist(teacher5);
+        em.persist(teacher6);
+        em.persist(parent1);
+        em.persist(child1);
+        em.persist(child2);
+        em.persist(child3);
         em.flush();
         em.clear();
         // when
@@ -153,6 +205,19 @@ public class TeacherRepositoryTest {
         @Test
         public void 정상적인요청() {
             // given
+            em.persist(center1);
+            em.persist(center2);
+            em.persist(center3);
+            em.persist(teacher1);
+            em.persist(teacher2);
+            em.persist(teacher3);
+            em.persist(teacher4);
+            em.persist(teacher5);
+            em.persist(teacher6);
+            em.persist(parent1);
+            em.persist(child1);
+            em.persist(child2);
+            em.persist(child3);
             center1.getTeachers().add(teacher1);
             center1.getTeachers().add(teacher2);
             center1.getTeachers().add(teacher3);
@@ -169,6 +234,19 @@ public class TeacherRepositoryTest {
         @Test
         public void 원장이아닌사용자의요청() {
             // given
+            em.persist(center1);
+            em.persist(center2);
+            em.persist(center3);
+            em.persist(teacher1);
+            em.persist(teacher2);
+            em.persist(teacher3);
+            em.persist(teacher4);
+            em.persist(teacher5);
+            em.persist(teacher6);
+            em.persist(parent1);
+            em.persist(child1);
+            em.persist(child2);
+            em.persist(child3);
             center1.getTeachers().add(teacher1);
             center1.getTeachers().add(teacher2);
             center1.getTeachers().add(teacher3);
@@ -187,6 +265,19 @@ public class TeacherRepositoryTest {
         @Test
         public void 승인받지않은교사의요청() {
             // given
+            em.persist(center1);
+            em.persist(center2);
+            em.persist(center3);
+            em.persist(teacher1);
+            em.persist(teacher2);
+            em.persist(teacher3);
+            em.persist(teacher4);
+            em.persist(teacher5);
+            em.persist(teacher6);
+            em.persist(parent1);
+            em.persist(child1);
+            em.persist(child2);
+            em.persist(child3);
             center1.getChildren().add(child1);
             center1.getChildren().add(child2);
             center1.getChildren().add(child3);
@@ -201,6 +292,19 @@ public class TeacherRepositoryTest {
         @Test
         public void 원장의정상요청() {
             // given
+            em.persist(center1);
+            em.persist(center2);
+            em.persist(center3);
+            em.persist(teacher1);
+            em.persist(teacher2);
+            em.persist(teacher3);
+            em.persist(teacher4);
+            em.persist(teacher5);
+            em.persist(teacher6);
+            em.persist(parent1);
+            em.persist(child1);
+            em.persist(child2);
+            em.persist(child3);
             center1.getChildren().add(child1);
             center1.getChildren().add(child2);
             center1.getChildren().add(child3);
@@ -212,6 +316,28 @@ public class TeacherRepositoryTest {
             assertThat(result).isNotNull();
             assertThat(result.getCenter().getChildren().size()).isEqualTo(3);
             assertThat(result.getCenter().getChildren().get(0).getParent().getId()).isEqualTo(parent1.getId());
+        }
+
+        @Test
+        public void 아이가없는경우() {
+            // given
+            em.persist(center1);
+            em.persist(center2);
+            em.persist(center3);
+            em.persist(teacher1);
+            em.persist(teacher2);
+            em.persist(teacher3);
+            em.persist(teacher4);
+            em.persist(teacher5);
+            em.persist(teacher6);
+            em.persist(parent1);
+            em.flush();
+            em.clear();
+            // when
+            Teacher result = teacherRepository.findByIdWithCenterWithChildWithParent(teacher1.getId()).orElse(null);
+            // then
+            assertThat(result).isNotNull();
+            assertThat(result.getCenter().getChildren().size()).isEqualTo(0);
         }
     }
 
