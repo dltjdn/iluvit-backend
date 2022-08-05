@@ -32,7 +32,8 @@ public class BookmarkService {
                 .stream()
                 .map(bookmark -> bookmark.getBoard())
                 .collect(Collectors.toList())
-                .stream().collect(Collectors.groupingBy(b -> b.getCenter() == null ?
+                .stream()
+                .collect(Collectors.groupingBy(b -> b.getCenter() == null ?
                         tmp : b.getCenter()));
 
         // 유저의 즐찾 게시판에서 최신 글 하나씩 뽑아옴.
@@ -81,7 +82,10 @@ public class BookmarkService {
 //                    .collect(Collectors.toList());
 
             // ~의 이야기에 (게시판+최신글) DTO 리스트 넣어줌.
-            storyDTO.setBoardDTOList(boardDTOS);
+            List<BookmarkMainDTO.BoardDTO> boardDTOasc = boardDTOS.stream()
+                    .sorted(Comparator.comparing(b -> b.getBoard_id()))
+                    .collect(Collectors.toList());
+            storyDTO.setBoardDTOList(boardDTOasc);
             // 센터 아이디 널이면 모두, 아니면 시설 이야기
             if (c.getId() == null) {
                 storyDTO.setCenter_id(null);
