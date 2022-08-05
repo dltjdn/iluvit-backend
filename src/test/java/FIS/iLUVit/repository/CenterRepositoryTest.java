@@ -657,4 +657,48 @@ class CenterRepositoryTest {
             //then
         }
     }
+
+    @Test
+    @DisplayName("[success] 성공")
+    public void 성공() throws Exception {
+        //given
+        List areas = new ArrayList<Area>();
+        Area gumchon = createArea("서울특별시", "금천구");
+        areas.add(gumchon);
+        Theme theme1 = Theme.builder()
+                .english(true)
+                .art(true)
+                .build();
+        Theme theme2 = Theme.builder()
+                .art(true)
+                .build();
+        BasicInfra basicInfra = BasicInfra.builder()
+                .hasCCTV(true)
+                .cctvCnt(3)
+                .build();
+        Center center1 = createKindergarten(gumchon, "test1", theme1, 2, 4, "test", "test", basicInfra, 1);
+        Center center2 = createKindergarten(gumchon, "test2", theme1, 3, 5, "test", "test", basicInfra, 6);
+        Center center3 = createKindergarten(gumchon, "test3", theme1, 2, 3, "test", "test", basicInfra, 1);
+        Center center4 = createKindergarten(gumchon, "test4", theme2, 2, 4, "test", "test", basicInfra, 5);
+        Center center5 = createKindergarten(gumchon, "test5", theme2, 3, 5, "test", "test", basicInfra, 3);
+        Center center6 = createKindergarten(gumchon, "test6", theme2, 2, 3, "test", "test", basicInfra, 1);
+
+        em.persist(center1);
+        em.persist(center2);
+        em.persist(center3);
+        em.persist(center4);
+        em.persist(center5);
+        em.persist(center6);
+        em.flush();
+        em.clear();
+        //when
+        System.out.println(" ====================================== ");
+        Center c = em.find(Center.class, center1.getId());
+        System.out.println(" ====================================== ");
+        List<Center> all = centerRepository.findAll();
+        System.out.println(" ====================================== ");
+        List<Center> select_center_from_center_center = em.createQuery("select center from Center center", Center.class).getResultList();
+        System.out.println("--");
+        //then
+    }
 }

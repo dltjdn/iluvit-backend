@@ -17,7 +17,7 @@ public interface AlarmRepository extends JpaRepository<Alarm, Long> {
 
     @Query("select alarm from Alarm alarm " +
             "where alarm.user.id =:userId and " +
-            "alarm.dtype = 'PresentationFullAlarm' or alarm.dtype = 'ConvertedToParticipateAlarm' or alarm.dtype = 'PresentationCreatedAlarm' or alarm.dtype = 'PresentationPeriodClosedAlarm'")
+            "(alarm.dtype = 'PresentationFullAlarm' or alarm.dtype = 'ConvertedToParticipateAlarm' or alarm.dtype = 'PresentationCreatedAlarm' or alarm.dtype = 'PresentationPeriodClosedAlarm')")
     Slice<Alarm> findPresentationByUser(@Param("userId") Long userId, Pageable pageable);
 
     @Modifying
