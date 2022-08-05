@@ -98,8 +98,6 @@ public class ChildService {
 
         ChildInfoDetailResponse response = new ChildInfoDetailResponse(child);
 
-//            String imagePath = imageService.getChildProfileDir();
-//            String image = imageService.getEncodedProfileImage(imagePath, child.getId());
         response.setProfileImage(imageService.getProfileImage(child));
 
 
@@ -121,13 +119,15 @@ public class ChildService {
         // 요청 사용자가 등록한 모든 아이 가져오기
         List<Child> childrenByUser = childRepository.findByUserWithCenter(userId);
 
+        // 사용자의 아이중에 childId를 가진 아이가 있는지 검사
         Child updatedChild = childrenByUser.stream()
                 .filter(child -> Objects.equals(child.getId(), childId))
                 .findFirst()
-                .orElseThrow(() -> new UserException("잘못된 childId 입니다."));
+                .orElseThrow(() -> new UserException(UserErrorResult.NOT_VALID_REQUEST));
 
+        // 요청 시설이 서비스에 등록된 시설인지 검사
         Center center = centerRepository.findByIdAndSignedWithTeacher(request.getCenter_id())
-                .orElseThrow(() -> new CenterException("올바르지 않은 centerId 입니다."));
+                .orElseThrow(() -> new UserException(UserErrorResult.NOT_VALID_REQUEST));
 
         // 시설을 변경하는 경우 bookmark 처리
         if (!Objects.equals(center.getId(), request.getCenter_id())) {
@@ -282,7 +282,7 @@ public class ChildService {
     }
 
     // 삭제되는 아이와 같은 시설에 다니는 또 다른 아이가 없을경우 해당 시설과 관련된 bookmark 모두 삭제
-    private void deleteBookmarkByCenter(Long userId, List<Child> childrenByUser, Child deletedChild) {
+    public void deleteBookmarkByCenter(Long userId, List<Child> childrenByUser, Child deletedChild) {
         Optional<Child> sameCenterChildren = childrenByUser.stream()
                 .filter(child -> Objects.equals(child.getCenter().getId(), deletedChild.getCenter().getId()))
                 .filter(child -> !Objects.equals(child.getId(), deletedChild.getId()))
