@@ -2,6 +2,7 @@ package FIS.iLUVit.service;
 
 import FIS.iLUVit.controller.dto.*;
 import FIS.iLUVit.domain.*;
+import FIS.iLUVit.domain.enumtype.Approval;
 import FIS.iLUVit.domain.enumtype.Auth;
 import FIS.iLUVit.domain.enumtype.BoardKind;
 import FIS.iLUVit.exception.*;
@@ -222,7 +223,7 @@ public class PostService {
             boolean flag = false;
             List<Long> centerIds = ((Parent) findUser).getChildren()
                     .stream()
-                    .filter(c -> c.getCenter() != null)
+                    .filter(c -> c.getCenter() != null || c.getApproval() == Approval.ACCEPT)
                     .map(c -> c.getCenter().getId())
                     .collect(Collectors.toList());
             for (Long id : centerIds) {

@@ -9,7 +9,6 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
 import java.util.List;
-import java.util.Optional;
 
 public interface BookmarkRepository extends JpaRepository<Bookmark, Long> {
     @Query("select b from Bookmark b join fetch b.user u join fetch b.board bd left join fetch bd.center c " +
@@ -43,6 +42,7 @@ public interface BookmarkRepository extends JpaRepository<Bookmark, Long> {
 
     @Query("select bm from Bookmark bm " +
             "join fetch bm.board b " +
+            "left join fetch b.center c " +
             "where bm.user.id = :userId")
-    List<Bookmark> findByUserWithBoard(@Param("userId") Long userId);
+    List<Bookmark> findByUserWithBoardAndCenter(@Param("userId") Long userId);
 }

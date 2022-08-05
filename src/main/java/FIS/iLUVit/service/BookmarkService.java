@@ -4,7 +4,6 @@ import FIS.iLUVit.controller.dto.BookmarkMainDTO;
 import FIS.iLUVit.domain.*;
 import FIS.iLUVit.exception.BookmarkErrorResult;
 import FIS.iLUVit.exception.BookmarkException;
-import FIS.iLUVit.exception.UserException;
 import FIS.iLUVit.repository.*;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -26,9 +25,11 @@ public class BookmarkService {
 
     public BookmarkMainDTO search(Long userId) {
         BookmarkMainDTO dto = new BookmarkMainDTO();
-        // stream groupingBy가 null 키 값을 허용하지 않아서 임시 값으로 생성한 센터
+        // stream groupingBy가 null 키 값을 허용하지 않아서 임시 값으로 생성한 센터 -> tmp = 모두의 이야기 센터
         Center tmp = new Center();
-        Map<Center, List<Board>> centerBoardMap = bookmarkRepository.findByUserWithBoard(userId)
+
+        // bookmark에서 즐겨찾는 게시판을 가져온 후 센터와 매핑
+        Map<Center, List<Board>> centerBoardMap = bookmarkRepository.findByUserWithBoardAndCenter(userId)
                 .stream()
                 .map(bookmark -> bookmark.getBoard())
                 .collect(Collectors.toList())
@@ -44,6 +45,7 @@ public class BookmarkService {
                 .collect(Collectors.groupingBy(p -> p.getBoard().getCenter() == null ?
                         tmp : p.getBoard().getCenter()));
 
+        // 센터-게시글 맵의 키에서 북마크의 센터(센터-게시판 맵)가 없으면 빈 배열과 함께 넣어줌.
         for (Center center : centerBoardMap.keySet()) {
             if (!centerPostMap.containsKey(center)) {
                 centerPostMap.put(center, new ArrayList<>());
@@ -59,6 +61,8 @@ public class BookmarkService {
             // (~의 이야기안의 게시판 + 최신글 1개씩) DTO를 모아 리스트로 만듬.
             Map<Board, List<Post>> boardPostMap = pl.stream()
                     .collect(Collectors.groupingBy(post -> post.getBoard()));
+
+            // 센터-게시판 맵의
             List<Board> boardList = centerBoardMap.get(c);
             if (boardList == null) {
                 boardList = new ArrayList<>();
