@@ -26,6 +26,10 @@ public class BookmarkService {
 
     public BookmarkMainDTO search(Long userId) {
         BookmarkMainDTO dto = new BookmarkMainDTO();
+        List<Board> boardList = bookmarkRepository.findByUserWithBoard(userId)
+                .stream()
+                .map(bookmark -> bookmark.getBoard())
+                .collect(Collectors.toList());
 
         // 유저의 즐찾 게시판에서 최신 글 하나씩 뽑아옴.
         List<Post> posts = bookmarkRepository.findPostByBoard(userId);
@@ -44,10 +48,32 @@ public class BookmarkService {
         centerPostMap.forEach((c, pl) -> {
             BookmarkMainDTO.StoryDTO storyDTO = new BookmarkMainDTO.StoryDTO();
             // (~의 이야기안의 게시판 + 최신글 1개씩) DTO를 모아 리스트로 만듬.
-            List<BookmarkMainDTO.BoardDTO> boardDTOS = pl.stream()
-                    .map(p -> new BookmarkMainDTO.BoardDTO(
-                            p.getBoard().getId(), p.getBoard().getName(), p.getTitle(), p.getId()))
-                    .collect(Collectors.toList());
+            Map<Board, List<Post>> boardPostMap = pl.stream()
+                    .collect(Collectors.groupingBy(post -> post.getBoard()));
+            for (Board board : boardList) {
+                if (!boardPostMap.containsKey(board)) {
+                    boardPostMap.put(board, new ArrayList<>());
+                }
+            }
+            List<BookmarkMainDTO.BoardDTO> boardDTOS = new ArrayList<>();
+            boardPostMap.forEach((b, p) -> {
+                String postTitle = null;
+                Long postId = null;
+                if (!p.isEmpty()) {
+                    Post gp = p.get(0);
+                    postTitle = gp.getTitle();
+                    postId = gp.getId();
+                }
+                BookmarkMainDTO.BoardDTO boardDTO = new BookmarkMainDTO.BoardDTO(
+                        b.getId(), b.getName(), postTitle, postId);
+                boardDTOS.add(boardDTO);
+            });
+
+//            List<BookmarkMainDTO.BoardDTO> boardDTOS = pl.stream()
+//                    .map(p -> new BookmarkMainDTO.BoardDTO(
+//                            p.getBoard().getId(), p.getBoard().getName(), p.getTitle(), p.getId()))
+//                    .collect(Collectors.toList());
+
             // ~의 이야기에 (게시판+최신글) DTO 리스트 넣어줌.
             storyDTO.setBoardDTOList(boardDTOS);
             // 센터 아이디 널이면 모두, 아니면 시설 이야기
@@ -75,12 +101,32 @@ public class BookmarkService {
 
     public BookmarkMainDTO searchByDefault() {
         BookmarkMainDTO dto = new BookmarkMainDTO();
+        List<Board> defaultBoards = boardRepository.findDefaultByModu();
+
         BookmarkMainDTO.StoryDTO storyDTO = new BookmarkMainDTO.StoryDTO(null, "모두의 이야기");
-        List<Post> posts = boardRepository.findPostByDefault();
-        List<BookmarkMainDTO.BoardDTO> boardDTOS = posts.stream()
-                .map(p -> new BookmarkMainDTO.BoardDTO(
-                        p.getBoard().getId(), p.getBoard().getName(), p.getTitle(), p.getId()))
-                .collect(Collectors.toList());
+        Map<Board, List<Post>> boardPostMap = boardRepository.findPostByDefault()
+                .stream()
+                .collect(Collectors.groupingBy(p -> p.getBoard()));
+        for (Board board : defaultBoards) {
+            if (!boardPostMap.containsKey(board)) {
+                boardPostMap.put(board, new ArrayList<>());
+            }
+        }
+
+        List<BookmarkMainDTO.BoardDTO> boardDTOS = new ArrayList<>();
+        boardPostMap.forEach((b, p) -> {
+            String postTitle = null;
+            Long postId = null;
+            if (!p.isEmpty()) {
+                Post gp = p.get(0);
+                postTitle = gp.getTitle();
+                postId = gp.getId();
+            }
+            BookmarkMainDTO.BoardDTO boardDTO = new BookmarkMainDTO.BoardDTO(
+                    b.getId(), b.getName(), postTitle, postId);
+            boardDTOS.add(boardDTO);
+        });
+
         storyDTO.setBoardDTOList(boardDTOS);
         dto.getStories().add(storyDTO);
         return dto;
