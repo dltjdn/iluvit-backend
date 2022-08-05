@@ -223,7 +223,7 @@ public class PostService {
             boolean flag = false;
             List<Long> centerIds = ((Parent) findUser).getChildren()
                     .stream()
-                    .filter(c -> c.getCenter() != null || c.getApproval() == Approval.ACCEPT)
+                    .filter(c -> c.getCenter() != null && c.getApproval() == Approval.ACCEPT)
                     .map(c -> c.getCenter().getId())
                     .collect(Collectors.toList());
             for (Long id : centerIds) {
