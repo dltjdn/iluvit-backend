@@ -203,7 +203,7 @@ class PostControllerTest {
         MockMultipartFile jsonFile = new MockMultipartFile("request", "", "application/json", request);
         List<MultipartFile> fileList = Arrays.asList(multipartFile1, multipartFile2);
 
-        String url = "/post";
+        String url = "/user/post";
         UserErrorResult error = UserErrorResult.NOT_VALID_TOKEN;
 
         Mockito.doThrow(new UserException(error))
@@ -243,7 +243,7 @@ class PostControllerTest {
         MockMultipartFile jsonFile = new MockMultipartFile("request", "", "application/json", request);
         List<MultipartFile> fileList = Arrays.asList(multipartFile1, multipartFile2);
 
-        String url = "/post";
+        String url = "/user/post";
         UserErrorResult error = UserErrorResult.USER_NOT_EXIST;
 
         Mockito.doThrow(new UserException(error))
@@ -283,7 +283,7 @@ class PostControllerTest {
 
         List<MultipartFile> fileList = Arrays.asList(multipartFile1, multipartFile2);
 
-        String url = "/post";
+        String url = "/user/post";
         BoardErrorResult error = BoardErrorResult.BOARD_NOT_EXIST;
 
         Mockito.doThrow(new BoardException(error))
@@ -323,7 +323,7 @@ class PostControllerTest {
 
         List<MultipartFile> fileList = Arrays.asList(multipartFile1, multipartFile2);
 
-        String url = "/post";
+        String url = "/user/post";
         PostErrorResult error = PostErrorResult.PARENT_NOT_ACCESS_NOTICE;
 
         Mockito.doThrow(new PostException(error))
@@ -363,7 +363,7 @@ class PostControllerTest {
 
         List<MultipartFile> fileList = Arrays.asList(multipartFile1, multipartFile2);
 
-        String url = "/post";
+        String url = "/user/post";
 
         Mockito.doReturn(post1.getId())
                 .when(postService)
@@ -392,7 +392,7 @@ class PostControllerTest {
     public void 게시글_삭제_비회원() throws Exception {
         //given
 
-        String url = "/post/{post_id}";
+        String url = "/user/post/{post_id}";
         UserErrorResult error = UserErrorResult.NOT_VALID_TOKEN;
 
         Mockito.doThrow(new UserException(error))
@@ -415,7 +415,7 @@ class PostControllerTest {
     public void 게시글_삭제_유저X() throws Exception {
         //given
 
-        String url = "/post/{post_id}";
+        String url = "/user/post/{post_id}";
         UserErrorResult error = UserErrorResult.USER_NOT_EXIST;
 
         Mockito.doThrow(new UserException(error))
@@ -439,7 +439,7 @@ class PostControllerTest {
     public void 게시글_삭제_게시글X() throws Exception {
         //given
 
-        String url = "/post/{post_id}";
+        String url = "/user/post/{post_id}";
         PostErrorResult error = PostErrorResult.POST_NOT_EXIST;
 
         Mockito.doThrow(new PostException(error))
@@ -463,7 +463,7 @@ class PostControllerTest {
     public void 게시글_삭제_권한X() throws Exception {
         //given
 
-        String url = "/post/{post_id}";
+        String url = "/user/post/{post_id}";
         PostErrorResult error = PostErrorResult.UNAUTHORIZED_USER_ACCESS;
 
         Mockito.doThrow(new PostException(error))
@@ -486,7 +486,7 @@ class PostControllerTest {
     @Test
     public void 게시글_삭제_성공() throws Exception {
         //given
-        String url = "/post/{post_id}";
+        String url = "/user/post/{post_id}";
         Mockito.doReturn(post1.getId())
                 .when(postService)
                 .deleteById(post1.getId(), parent1.getId());
@@ -554,7 +554,7 @@ class PostControllerTest {
     @Test
     public void 게시글_제목_내용_검색_비회원() throws Exception {
         //given
-        String url = "/post/all/search";
+        String url = "/user/post/all/search";
 
         UserErrorResult error = UserErrorResult.NOT_VALID_TOKEN;
         Mockito.doThrow(new UserException(error))
@@ -580,7 +580,7 @@ class PostControllerTest {
     @Test
     public void 게시글_제목_내용_검색_유저X() throws Exception {
         //given
-        String url = "/post/all/search";
+        String url = "/user/post/all/search";
 
         UserErrorResult error = UserErrorResult.USER_NOT_EXIST;
         Mockito.doThrow(new UserException(error))
@@ -607,7 +607,7 @@ class PostControllerTest {
     @Test
     public void 게시글_제목_내용_검색_성공() throws Exception {
         //given
-        String url = "/post/all/search";
+        String url = "/user/post/all/search";
 
         List<GetPostResponsePreview> previewList = Arrays.asList(
                 new GetPostResponsePreview(post1),
@@ -745,7 +745,7 @@ class PostControllerTest {
     @Test
     public void 내가_쓴_글_리스트() throws Exception {
         //given
-        String url = "/post/mypage";
+        String url = "/user/post/mypage";
 
         List<GetPostResponsePreview> previewList = Arrays.asList(
                 new GetPostResponsePreview(post1),
@@ -886,7 +886,7 @@ class PostControllerTest {
     @Test
     public void 유치원별_이야기_글_리스트_불러오기_비회원() throws Exception {
         //given
-        String url = "/post/center-main";
+        String url = "/user/post/center-main";
         UserErrorResult error = UserErrorResult.NOT_VALID_TOKEN;
 
         Mockito.doThrow(new UserException(error))
@@ -911,7 +911,7 @@ class PostControllerTest {
     @Test
     public void 유치원별_이야기_글_리스트_불러오기_유저X() throws Exception {
         //given
-        String url = "/post/center-main";
+        String url = "/user/post/center-main";
         UserErrorResult error = UserErrorResult.USER_NOT_EXIST;
 
         Mockito.doThrow(new UserException(error))
@@ -936,7 +936,7 @@ class PostControllerTest {
     @Test
     public void 유치원별_이야기_글_리스트_불러오기_권한X() throws Exception {
         //given
-        String url = "/post/center-main";
+        String url = "/user/post/center-main";
         PostErrorResult error = PostErrorResult.UNAUTHORIZED_USER_ACCESS;
 
         Mockito.doThrow(new PostException(error))
@@ -961,7 +961,7 @@ class PostControllerTest {
     @Test
     public void 유치원별_이야기_글_리스트_불러오기_성공() throws Exception {
         //given
-        String url = "/post/center-main";
+        String url = "/user/post/center-main";
 
         List<BoardPreview.PostInfo> postInfoList1 = Arrays.asList(
                 new BoardPreview.PostInfo(post1),

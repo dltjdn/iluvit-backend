@@ -5,6 +5,8 @@ import FIS.iLUVit.exception.exceptionHandler.ErrorResponse;
 import FIS.iLUVit.exception.exceptionHandler.ErrorResult;
 import com.auth0.jwt.exceptions.JWTVerificationException;
 import lombok.extern.slf4j.Slf4j;
+import net.nurigo.sdk.message.exception.NurigoBadRequestException;
+import net.nurigo.sdk.message.exception.NurigoException;
 import org.springframework.context.support.DefaultMessageSourceResolvable;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.dao.InvalidDataAccessApiUsageException;
@@ -93,7 +95,7 @@ public class GlobalControllerAdvice extends ResponseEntityExceptionHandler {
 
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     @ExceptionHandler(DataIntegrityViolationException.class)
-    public ResponseEntity<Object> RuntimeException(DataIntegrityViolationException e) {
+    public ResponseEntity<Object> DataIntegrityViolationExHandler(DataIntegrityViolationException e) {
         log.error("[DataIntegrityViolationException] 올바르지 않은 식별자값입니다.", e);
         return makeErrorResponseEntity("올바르지 않은 식별자값입니다.");
     }
@@ -202,6 +204,11 @@ public class GlobalControllerAdvice extends ResponseEntityExceptionHandler {
     @ExceptionHandler(ScrapException.class)
     public ResponseEntity<ErrorResponse> scrapException(ScrapException e) {
         return makeErrorResponseEntity(e.getErrorResult());
+    }
+
+    @ExceptionHandler(NurigoBadRequestException.class)
+    public ResponseEntity<Object> nurigoException(NurigoBadRequestException e) {
+        return makeErrorResponseEntity("핸드폰번호를 확인해주세요");
     }
 
 

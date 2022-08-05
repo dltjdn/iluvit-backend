@@ -6,6 +6,7 @@ import FIS.iLUVit.domain.enumtype.Auth;
 import FIS.iLUVit.domain.enumtype.BoardKind;
 import FIS.iLUVit.exception.*;
 import FIS.iLUVit.repository.*;
+import FIS.iLUVit.service.constant.Criteria;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.jetbrains.annotations.NotNull;
@@ -35,7 +36,7 @@ public class PostService {
     private final ChatRoomRepository chatRoomRepository;
     private final AlarmRepository alarmRepository;
 
-    private final Integer heartCriteria = 2; // HOT 게시판 좋아요 기준
+//    private final Integer heartCriteria = 2; // HOT 게시판 좋아요 기준
 
     public Long savePost(PostRegisterRequest request, List<MultipartFile> images, Long userId) {
         if (userId == null) {
@@ -79,8 +80,9 @@ public class PostService {
         Post findPost = postRepository.findById(postId)
                 .orElseThrow(() -> new PostException(PostErrorResult.POST_NOT_EXIST));
 
+        List<Long> postIds = List.of(postId);
         // 게시글과 연관된 모든 채팅방의 post_id(fk) 를 null 값으로 만들어줘야함.
-        chatRoomRepository.setPostIsNull(postId);
+        chatRoomRepository.setPostIsNull(postIds);
         // 게시글과 연관된 모든 알람의 post_id(fk) 를 null 값으로 만들어줘야함.
         alarmRepository.setPostIsNull(postId);
 
@@ -191,18 +193,16 @@ public class PostService {
 
         // 비회원일 때 기본 게시판들의 id를 북마크처럼 디폴트로 제공, 회원일 땐 북마크를 통해서 제공
         if (userId == null) {
-            List<Long> boardIds = boardRepository.findDefaultByModu()
-                    .stream().map(Board::getId)
-                    .collect(Collectors.toList());
+            List<Board> boardList = boardRepository.findDefaultByModu();
 
-            addBoardPreviews(boardPreviews, boardIds);
+            addBoardPreviews(boardPreviews, boardList);
         } else {
             List<Bookmark> bookmarkList = bookmarkRepository.findBoardByUser(userId);
             getBoardPreviews(bookmarkList, boardPreviews);
         }
 
         // HOT 게시판 정보 추가
-        List<Post> hotPosts = postRepository.findTop3ByHeartCnt(heartCriteria, PageRequest.of(0, 3));
+        List<Post> hotPosts = postRepository.findTop3ByHeartCnt(Criteria.HOT_POST_HEART_CNT, PageRequest.of(0, 3));
         List<BoardPreview> results = new ArrayList<>();
 
         return getPreivewResult(hotPosts, results, boardPreviews);
@@ -247,28 +247,36 @@ public class PostService {
         getBoardPreviews(bookmarkList, boardPreviews);
 
         // HOT 게시판 정보 추가
-        List<Post> hotPosts = postRepository.findTop3ByHeartCntWithCenter(heartCriteria, centerId, PageRequest.of(0, 3));
+        List<Post> hotPosts = postRepository.findTop3ByHeartCntWithCenter(Criteria.HOT_POST_HEART_CNT, centerId, PageRequest.of(0, 3));
         List<BoardPreview> results = new ArrayList<>();
 
         return getPreivewResult(hotPosts, results, boardPreviews);
     }
 
     private void getBoardPreviews(List<Bookmark> bookmarkList, List<BoardPreview> boardPreviews) {
-        List<Long> boardIds = bookmarkList.stream()
-                .map(bm -> bm.getBoard().getId())
+        List<Board> boardList = bookmarkList.stream()
+                .map(bookmark -> bookmark.getBoard())
                 .collect(Collectors.toList());
 
-        addBoardPreviews(boardPreviews, boardIds);
+        addBoardPreviews(boardPreviews, boardList);
     }
 
-    private void addBoardPreviews(List<BoardPreview> boardPreviews, List<Long> boardIds) {
+    private void addBoardPreviews(List<BoardPreview> boardPreviews, List<Board> boardList) {
+        List<Long> boardIds = boardList
+                .stream().map(Board::getId)
+                .collect(Collectors.toList());
+
         List<Post> top4 = postRepository.findTop3(boardIds);
         Map<Board, List<Post>> boardPostMap = top4.stream()
-                .collect(Collectors.groupingBy(Post::getBoard));
+                .collect(Collectors.groupingBy(post -> post.getBoard()));
 
+        for (Board board : boardList) {
+            if (!boardPostMap.containsKey(board)) {
+                boardPostMap.put(board, new ArrayList<>());
+            }
+        }
 
         boardPostMap.forEach((k, v) -> {
-
             List<BoardPreview.PostInfo> postInfos = v.stream()
                     .map(p -> {
                         BoardPreview.PostInfo postInfo = new BoardPreview.PostInfo(p);
@@ -317,7 +325,7 @@ public class PostService {
 
     public Slice<GetPostResponsePreview> findByHeartCnt(Long centerId, Pageable pageable) {
         // heartCnt 가 n 개 이상이면 HOT 게시판에 넣어줍니다.
-        return postRepository.findHotPosts(centerId, heartCriteria, pageable);
+        return postRepository.findHotPosts(centerId, Criteria.HOT_POST_HEART_CNT, pageable);
     }
 
     /**

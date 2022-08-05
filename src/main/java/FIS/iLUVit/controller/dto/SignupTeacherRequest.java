@@ -47,7 +47,7 @@ public class SignupTeacherRequest {
                 .emailAddress(emailAddress)
                 .address(address)
                 .detailAddress(detailAddress)
-                .hasProfileImg(false)
+
                 .center(center)
                 .approval(Approval.WAITING)
                 .auth(Auth.TEACHER)

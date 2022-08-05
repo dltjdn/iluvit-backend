@@ -42,7 +42,11 @@ public class BoardPreview {
             this.title = p.getTitle();
             this.content = p.getContent();
             if (p.getUser() != null) {
-                this.writerNickName = p.getUser().getNickName();
+                if (p.getAnonymous()) {
+                    this.writerNickName = "익명";
+                } else {
+                    this.writerNickName = p.getUser().getNickName();
+                }
             }
             this.anonymous = p.getAnonymous();
             this.heartCnt = p.getHeartCnt();

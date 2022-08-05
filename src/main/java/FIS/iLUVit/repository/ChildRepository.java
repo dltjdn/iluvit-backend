@@ -21,27 +21,15 @@ public interface ChildRepository extends JpaRepository<Child, Long> {
 
     @Query("select c " +
             "from Child c " +
-            "join fetch c.center " +
+            "left join fetch c.center " +
             "where c.id =:childId " +
             "and c.parent.id =:userId")
     Optional<Child> findByIdWithParentAndCenter(@Param("userId") Long userId, @Param("childId") Long childId);
 
     @Query("select c " +
             "from Child c " +
-            "join fetch c.center " +
+            "left join fetch c.center " +
             "where c.parent.id =:userId")
     List<Child> findByUserWithCenter(@Param("userId") Long userId);
 
-    @Modifying
-    @Query("update Child c " +
-            "set c.approval = 'ACCEPT' " +
-            "where c.id =:childId " +
-            "and c.center.id =:centerId")
-    void acceptChild(@Param("childId") Long childId,@Param("centerId") Long centerId);
-
-    @Modifying(clearAutomatically = true)
-    @Query("update Child c " +
-            "set c.approval = 'REJECT' " +
-            "where c.id =:childId")
-    void fireChild(@Param("childId") Long childId);
 }

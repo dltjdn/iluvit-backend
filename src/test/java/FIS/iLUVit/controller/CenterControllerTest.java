@@ -22,6 +22,7 @@ import FIS.iLUVit.exception.exceptionHandler.controllerAdvice.GlobalControllerAd
 import FIS.iLUVit.service.CenterService;
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.algorithms.Algorithm;
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -33,6 +34,7 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.SliceImpl;
 import org.springframework.data.web.PageableHandlerMethodArgumentResolver;
 import org.springframework.http.HttpHeaders;
@@ -474,6 +476,30 @@ class CenterControllerTest extends ResponseRequests {
                             1L
                     )));
         }
+    }
+
+    @Test
+    public void 아이추가센터정보조회() throws Exception {
+        // given
+        String url = "/center/child/add?page=0&size=10";
+        List<CenterInfoDto> content = List.of(CenterInfoDto.builder().build());
+        CenterInfoRequest request = CenterInfoRequest.builder().build();
+        Pageable pageable = PageRequest.of(0, 10);
+        SliceImpl<CenterInfoDto> response = new SliceImpl<>(content, pageable, false);
+        doReturn(response)
+                .when(centerService)
+                .findCenterForAddChild(any(), any());
+        // when
+        ResultActions result = mockMvc.perform(
+                MockMvcRequestBuilders.get(url)
+                        .content(objectMapper.writeValueAsString(request))
+                        .contentType(MediaType.APPLICATION_JSON)
+        );
+        // then
+        result.andExpect(status().isOk())
+                .andExpect(content().json(
+                        objectMapper.writeValueAsString(response)
+                ));
     }
 
 }
