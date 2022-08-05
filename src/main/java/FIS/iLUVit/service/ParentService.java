@@ -4,6 +4,8 @@ import FIS.iLUVit.controller.dto.*;
 import FIS.iLUVit.domain.*;
 import FIS.iLUVit.domain.embeddable.Theme;
 import FIS.iLUVit.domain.enumtype.AuthKind;
+import FIS.iLUVit.exception.PreferErrorResult;
+import FIS.iLUVit.exception.PreferException;
 import FIS.iLUVit.exception.UserErrorResult;
 import FIS.iLUVit.exception.UserException;
 import FIS.iLUVit.repository.*;
@@ -127,23 +129,24 @@ public class ParentService {
      *   작성자: 이승범
      *   작성내용: 시설 찜하기
      */
-    public void savePrefer(Long userId, Long centerId) {
+    public Prefer savePrefer(Long userId, Long centerId) {
         Parent parent = parentRepository.findByIdWithPreferWithCenter(userId)
-                .orElseThrow(() -> new UserException("존재하지 않는 사용자입니다."));
+                .orElseThrow(() -> new UserException(UserErrorResult.NOT_VALID_REQUEST));
 
         parent.getPrefers().stream()
                 .filter(prefer -> Objects.equals(prefer.getCenter().getId(), centerId))
                 .findFirst()
                 .ifPresent(prefer -> {
-                    throw new UserException("이미 찜한 시설입니다.");
+                    throw new PreferException(PreferErrorResult.ALREADY_PREFER);
                 });
 
         try {
             Center center = centerRepository.getById(centerId);
             Prefer newPrefer = Prefer.createPrefer(parent, center);
             preferRepository.saveAndFlush(newPrefer);
+            return newPrefer;
         } catch (DataIntegrityViolationException e) {
-            throw new UserException("잘못된 시설 입니다.");
+            throw new PreferException(PreferErrorResult.NOT_VALID_CENTER);
         }
     }
 

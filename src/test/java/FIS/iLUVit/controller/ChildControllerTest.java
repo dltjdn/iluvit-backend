@@ -15,10 +15,7 @@ import FIS.iLUVit.exception.exceptionHandler.ErrorResponse;
 import FIS.iLUVit.exception.exceptionHandler.controllerAdvice.GlobalControllerAdvice;
 import FIS.iLUVit.service.ChildService;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Nested;
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.*;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
@@ -286,6 +283,44 @@ public class ChildControllerTest {
                     .param("center_id", "1")
                     .param("name", "name")
                     .param("birthDate", "2022-01-01"));
+            // then
+            result.andExpect(status().isOk());
+        }
+    }
+
+    @Nested
+    @DisplayName("아이삭제")
+    class deleteChild{
+        @Test
+        @DisplayName("[error] 잘못된 childId")
+        public void childIdError() throws Exception {
+            // given
+            String url = "/parent/child/{childId}";
+            UserErrorResult error = UserErrorResult.NOT_VALID_REQUEST;
+            doThrow(new UserException(error))
+                    .when(childService)
+                    .deleteChild(any(), any());
+            // when
+            ResultActions result = mockMvc.perform(
+                    MockMvcRequestBuilders.delete(url, child.getId())
+                            .header("Authorization", Creator.createJwtToken(parent))
+            );
+            // then
+            result.andExpect(status().isBadRequest())
+                    .andExpect(content().json(
+                            objectMapper.writeValueAsString(new ErrorResponse(error.getHttpStatus(), error.getMessage()))
+                    ));
+        }
+        @Test
+        @DisplayName("[success] 아이 삭제 성공")
+        public void 아이삭제성공() throws Exception {
+            // given
+            String url = "/parent/child/{childId}";
+            // when
+            ResultActions result = mockMvc.perform(
+                    MockMvcRequestBuilders.delete(url, child.getId())
+                            .header("Authorization", Creator.createJwtToken(parent))
+            );
             // then
             result.andExpect(status().isOk());
         }

@@ -45,6 +45,8 @@ class ParentRepositoryTest {
     private Child child2;
     private Child child3;
     private Child child4;
+    private Prefer prefer1;
+    private Prefer prefer2;
     @BeforeEach
     public void init() throws IOException {
         parent1 = Creator.createParent();
@@ -56,6 +58,8 @@ class ParentRepositoryTest {
         child2 = Creator.createChild("child2", parent1, center1, Approval.ACCEPT);
         child3 = Creator.createChild("child3", parent1, center2, Approval.WAITING);
         child4 = Creator.createChild("child4", parent2, null, Approval.WAITING);
+        prefer1 = Creator.createPrefer(parent1, center1);
+        prefer2 = Creator.createPrefer(parent2, center2);
     }
 
     @Nested
@@ -227,5 +231,52 @@ class ParentRepositoryTest {
             assertThat(result.getContent().size()).isEqualTo(1);
             assertThat(result.hasNext()).isFalse();
         }
+    }
+
+    @Test
+    public void findByIdWithChild() {
+        // given
+        em.persist(parent2);
+        em.persist(parent3);
+        em.persist(center1);
+        em.persist(center2);
+        em.persist(child1);
+        em.persist(child2);
+        em.persist(child3);
+        em.persist(child4);
+        em.flush();
+        em.clear();
+        // when
+        Parent result = parentRepository.findByIdWithChild(parent1.getId()).orElse(null);
+        // then
+        assertThat(result).isNotNull();
+        assertThat(result.getChildren().size()).isEqualTo(3);
+        for (Child child : result.getChildren()) {
+            assertThat(child.getParent().getId()).isEqualTo(parent1.getId());
+        }
+    }
+
+    @Test
+    public void findByIdWithPreferWithCenter() {
+        // given
+        em.persist(parent1);
+        em.persist(parent2);
+        em.persist(parent3);
+        em.persist(center1);
+        em.persist(center2);
+        em.persist(child1);
+        em.persist(child2);
+        em.persist(child3);
+        em.persist(child4);
+        em.persist(prefer1);
+        em.persist(prefer2);
+        em.flush();
+        em.clear();
+        // when
+        Parent result = parentRepository.findByIdWithPreferWithCenter(parent1.getId()).orElse(null);
+        // then
+        assertThat(result).isNotNull();
+        assertThat(result.getPrefers().size()).isEqualTo(1);
+        assertThat(result.getPrefers().get(0).getCenter().getId()).isEqualTo(center1.getId());
     }
 }

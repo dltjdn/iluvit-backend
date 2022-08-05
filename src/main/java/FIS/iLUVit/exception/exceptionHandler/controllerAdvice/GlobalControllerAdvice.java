@@ -211,5 +211,9 @@ public class GlobalControllerAdvice extends ResponseEntityExceptionHandler {
         return makeErrorResponseEntity("핸드폰번호를 확인해주세요");
     }
 
+    @ExceptionHandler(PreferException.class)
+    public ResponseEntity<ErrorResponse> preferException(PreferException e) {
+        return makeErrorResponseEntity(e.getErrorResult());
+    }
 
 }
