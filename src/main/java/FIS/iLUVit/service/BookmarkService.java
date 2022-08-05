@@ -26,15 +26,17 @@ public class BookmarkService {
 
     public BookmarkMainDTO search(Long userId) {
         BookmarkMainDTO dto = new BookmarkMainDTO();
-        List<Board> boardList = bookmarkRepository.findByUserWithBoard(userId)
+        // stream groupingBy가 null 키 값을 허용하지 않아서 임시 값으로 생성한 센터
+        Center tmp = new Center();
+        Map<Center, List<Board>> centerBoardMap = bookmarkRepository.findByUserWithBoard(userId)
                 .stream()
                 .map(bookmark -> bookmark.getBoard())
-                .collect(Collectors.toList());
+                .collect(Collectors.toList())
+                .stream().collect(Collectors.groupingBy(b -> b.getCenter() == null ?
+                        tmp : b.getCenter()));
 
         // 유저의 즐찾 게시판에서 최신 글 하나씩 뽑아옴.
         List<Post> posts = bookmarkRepository.findPostByBoard(userId);
-        // stream groupingBy가 null 키 값을 허용하지 않아서 임시 값으로 생성한 센터
-        Center tmp = new Center();
 
         // 최신 글 리스트를 센터로 그루핑함.
         Map<Center, List<Post>> centerPostMap = posts.stream()
@@ -50,6 +52,10 @@ public class BookmarkService {
             // (~의 이야기안의 게시판 + 최신글 1개씩) DTO를 모아 리스트로 만듬.
             Map<Board, List<Post>> boardPostMap = pl.stream()
                     .collect(Collectors.groupingBy(post -> post.getBoard()));
+            List<Board> boardList = centerBoardMap.get(c);
+            if (boardList == null) {
+                boardList = new ArrayList<>();
+            }
             for (Board board : boardList) {
                 if (!boardPostMap.containsKey(board)) {
                     boardPostMap.put(board, new ArrayList<>());
