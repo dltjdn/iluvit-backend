@@ -6,7 +6,6 @@ import FIS.iLUVit.domain.Center;
 import FIS.iLUVit.domain.Child;
 import FIS.iLUVit.domain.Parent;
 import FIS.iLUVit.domain.enumtype.Approval;
-import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -17,6 +16,7 @@ import org.springframework.context.annotation.ComponentScan;
 
 import javax.persistence.EntityManager;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.*;

@@ -193,11 +193,9 @@ public class PostService {
 
         // 비회원일 때 기본 게시판들의 id를 북마크처럼 디폴트로 제공, 회원일 땐 북마크를 통해서 제공
         if (userId == null) {
-            List<Long> boardIds = boardRepository.findDefaultByModu()
-                    .stream().map(Board::getId)
-                    .collect(Collectors.toList());
+            List<Board> boardList = boardRepository.findDefaultByModu();
 
-            addBoardPreviews(boardPreviews, boardIds);
+            addBoardPreviews(boardPreviews, boardList);
         } else {
             List<Bookmark> bookmarkList = bookmarkRepository.findBoardByUser(userId);
             getBoardPreviews(bookmarkList, boardPreviews);
@@ -256,21 +254,29 @@ public class PostService {
     }
 
     private void getBoardPreviews(List<Bookmark> bookmarkList, List<BoardPreview> boardPreviews) {
-        List<Long> boardIds = bookmarkList.stream()
-                .map(bm -> bm.getBoard().getId())
+        List<Board> boardList = bookmarkList.stream()
+                .map(bookmark -> bookmark.getBoard())
                 .collect(Collectors.toList());
 
-        addBoardPreviews(boardPreviews, boardIds);
+        addBoardPreviews(boardPreviews, boardList);
     }
 
-    private void addBoardPreviews(List<BoardPreview> boardPreviews, List<Long> boardIds) {
+    private void addBoardPreviews(List<BoardPreview> boardPreviews, List<Board> boardList) {
+        List<Long> boardIds = boardList
+                .stream().map(Board::getId)
+                .collect(Collectors.toList());
+
         List<Post> top4 = postRepository.findTop3(boardIds);
         Map<Board, List<Post>> boardPostMap = top4.stream()
-                .collect(Collectors.groupingBy(Post::getBoard));
+                .collect(Collectors.groupingBy(post -> post.getBoard()));
 
+        for (Board board : boardList) {
+            if (!boardPostMap.containsKey(board)) {
+                boardPostMap.put(board, new ArrayList<>());
+            }
+        }
 
         boardPostMap.forEach((k, v) -> {
-
             List<BoardPreview.PostInfo> postInfos = v.stream()
                     .map(p -> {
                         BoardPreview.PostInfo postInfo = new BoardPreview.PostInfo(p);

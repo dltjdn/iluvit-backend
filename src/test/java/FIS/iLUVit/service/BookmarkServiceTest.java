@@ -130,6 +130,10 @@ class BookmarkServiceTest {
     @Test
     public void 북마크_목록_한번에() throws Exception {
         //given
+        Mockito.doReturn(Arrays.asList(bookmark1, bookmark2, bookmark3))
+                .when(bookmarkRepository)
+                .findByUserWithBoard(parent1.getId());
+
         Mockito.doReturn(Arrays.asList(post3, post4, post5, post6))
                 .when(bookmarkRepository)
                 .findPostByBoard(parent1.getId());
