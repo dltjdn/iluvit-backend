@@ -14,7 +14,10 @@ import FIS.iLUVit.repository.ParentRepository;
 import FIS.iLUVit.repository.ParticipationRepository;
 import FIS.iLUVit.repository.PtDateRepository;
 import FIS.iLUVit.repository.UserRepository;
-import org.junit.jupiter.api.*;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Nested;
+import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.*;
 import org.mockito.junit.jupiter.MockitoExtension;
@@ -273,9 +276,9 @@ class ParticipationServiceTest {
 
                 alarmUtils.when(() -> AlarmUtils.getMessage(any(String.class), any(Object[].class)))
                         .thenReturn("설명회가 가득 찼습니다");
-
+                PresentationFullAlarm presentationFullAlarm = new PresentationFullAlarm(parent, presentation1, center);
                 alarmUtils.when(() -> AlarmUtils.publishAlarmEvent(any(Alarm.class)))
-                        .thenReturn(new AlarmEvent(new PresentationFullAlarm(parent, presentation1, center)));
+                        .thenReturn(new AlarmEvent(presentationFullAlarm));
 
                 //when
                 Long result = target.register(parent.getId(), ptDate3.getId());

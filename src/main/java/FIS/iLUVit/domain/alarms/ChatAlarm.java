@@ -6,10 +6,8 @@ import FIS.iLUVit.service.AlarmUtils;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
+import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.FetchType;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
 import java.time.LocalDateTime;
 
 @Entity
@@ -17,16 +15,15 @@ import java.time.LocalDateTime;
 @Getter
 public class ChatAlarm extends Alarm{
 
-    @JoinColumn(name = "senderId")
-    @ManyToOne(fetch = FetchType.LAZY)
-    private User sender;
+    @Column(name = "senderId")
+    private Long senderId;
     private Boolean anonymous;
     private String profileImage;
 
     public ChatAlarm(User user, User sender, Boolean anonymous) {
         super(user);
         this.mode = AlarmUtils.CHAT_RECEIVED;
-        this.sender = sender;
+        this.senderId = sender.getId();
         this.anonymous = anonymous;
         this.profileImage = anonymous ? null : sender.getProfileImagePath();
         String[] args = anonymous ? new String[]{"익명"} : new String[]{sender.getNickName()};
@@ -36,7 +33,7 @@ public class ChatAlarm extends Alarm{
     @Override
     public AlarmDto exportAlarm() {
         return anonymous ? new ChatAlarmDto(id, createdDate, message, dtype, null, true, profileImage)
-        : new ChatAlarmDto(id, createdDate, message, dtype, sender.getId(), false, profileImage);
+        : new ChatAlarmDto(id, createdDate, message, dtype, senderId, false, profileImage);
     }
 
     @Getter

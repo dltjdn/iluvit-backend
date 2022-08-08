@@ -27,26 +27,24 @@ public class PresentationCreatedAlarm extends Alarm {
 
     // 누구를 대상으로 한 알람?
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "presentationId")
-    private Presentation presentation;
+    @Column(name = "presentationId")
+    private Long presentationId;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "centerId")
-    private Center center;
+    @Column(name = "centerId")
+    private Long centerId;
 
     public PresentationCreatedAlarm(User user, Presentation presentation, Center center) {
         super(user);
         this.mode = AlarmUtils.PRESENTATION_CREATED_LIKED_CENTER;
-        this.center = center;
-        this.presentation = presentation;
+        this.centerId = center.getId();
+        this.presentationId = presentation.getId();
         String args[] = {center.getName()};
         message = AlarmUtils.getMessage(mode, args);
     }
 
     @Override
     public AlarmDto exportAlarm() {
-        return new PresentationCreatedAlarmDto(id, createdDate, message, dtype, center.getId(), presentation.getId());
+        return new PresentationCreatedAlarmDto(id, createdDate, message, dtype, centerId, presentationId);
     }
 
     @Getter

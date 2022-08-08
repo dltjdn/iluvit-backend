@@ -16,9 +16,8 @@ import java.time.LocalDateTime;
 @Getter
 public class PresentationFullAlarm extends Alarm{
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "presentationId")
-    private Presentation presentation;
+    @Column(name = "presentationId")
+    private Long presentationId;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "centerId")
@@ -27,14 +26,14 @@ public class PresentationFullAlarm extends Alarm{
     public PresentationFullAlarm(User user, Presentation presentation, Center center) {
         super(user);
         this.mode = AlarmUtils.PRESENTATION_APPLICANTS_FULL;
-        this.presentation = presentation;
+        this.presentationId = presentation.getId();
         this.center = center;
-//        message = AlarmUtils.getMessage(mode, null);
+        message = AlarmUtils.getMessage(mode, null);
     }
 
     @Override
     public AlarmDto exportAlarm() {
-        return new PresentationFullAlarmDto(id, createdDate, message, dtype, presentation.getId(), center.getId());
+        return new PresentationFullAlarmDto(id, createdDate, message, dtype, presentationId, center.getId());
     }
 
     @Getter

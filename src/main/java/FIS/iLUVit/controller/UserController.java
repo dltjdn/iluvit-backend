@@ -2,31 +2,19 @@ package FIS.iLUVit.controller;
 
 import FIS.iLUVit.config.argumentResolver.Login;
 import FIS.iLUVit.controller.dto.*;
-import FIS.iLUVit.exception.exceptionHandler.ErrorResponse;
-import FIS.iLUVit.repository.TokenPairRepository;
-import FIS.iLUVit.security.JwtUtils;
+import FIS.iLUVit.exception.UserErrorResult;
+import FIS.iLUVit.exception.UserException;
 import FIS.iLUVit.security.LoginRequest;
 import FIS.iLUVit.security.LoginResponse;
 import FIS.iLUVit.service.UserService;
 import com.auth0.jwt.exceptions.JWTVerificationException;
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.hibernate.validator.constraints.Length;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
-import org.springframework.http.HttpStatus;
-import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
-import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
-import javax.validation.constraints.Min;
-import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Size;
 import java.io.IOException;
 
 
@@ -89,7 +77,9 @@ public class UserController {
 
     @DeleteMapping("/alarm")
     public Integer deleteAlarm(@Login Long userId, @RequestBody AlarmDeleteDto request) {
-        return userService.deleteUserAlarm(userId, request.getAlarmId());
+        if(userId == null)
+            throw new UserException(UserErrorResult.NOT_LOGIN);
+        return userService.deleteUserAlarm(userId, request.getAlarmIds());
     }
 
     /**
