@@ -16,6 +16,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 @Slf4j
@@ -103,7 +104,7 @@ public class BoardService {
                     .orElseThrow(() -> new BoardException(BoardErrorResult.UNAUTHORIZED_USER_ACCESS));
         } else {
             Teacher teacher = (Teacher) findUser;
-            if (teacher.getCenter() == null || teacher.getCenter().getId() != center_id) {
+            if (teacher.getCenter() == null || !Objects.equals(teacher.getCenter().getId(), center_id)) {
                 throw new BoardException(BoardErrorResult.UNAUTHORIZED_USER_ACCESS);
             }
         }
