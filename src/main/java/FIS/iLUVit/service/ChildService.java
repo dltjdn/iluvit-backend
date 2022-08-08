@@ -5,6 +5,7 @@ import FIS.iLUVit.domain.*;
 import FIS.iLUVit.domain.alarms.CenterApprovalAcceptedAlarm;
 import FIS.iLUVit.domain.alarms.CenterApprovalReceivedAlarm;
 import FIS.iLUVit.domain.enumtype.Approval;
+import FIS.iLUVit.domain.enumtype.Auth;
 import FIS.iLUVit.exception.UserErrorResult;
 import FIS.iLUVit.exception.UserException;
 import FIS.iLUVit.repository.*;
@@ -75,7 +76,7 @@ public class ChildService {
 
         // 아이 승인 요청 알람이 해당 시설에 승인된 교사들에게 감
         center.getTeachers().forEach(teacher -> {
-            AlarmUtils.publishAlarmEvent(new CenterApprovalReceivedAlarm(teacher));
+            AlarmUtils.publishAlarmEvent(new CenterApprovalReceivedAlarm(teacher, Auth.PARENT));
         });
 
         imageService.saveProfileImage(request.getProfileImg(), newChild);
@@ -139,7 +140,7 @@ public class ChildService {
 
             // 아이 승인 요청 알람이 해당 시설의 모든 교사에게 감
             center.getTeachers().forEach(teacher -> {
-                AlarmUtils.publishAlarmEvent(new CenterApprovalReceivedAlarm(teacher));
+                AlarmUtils.publishAlarmEvent(new CenterApprovalReceivedAlarm(teacher, Auth.PARENT));
             });
         }else{
             updatedChild.updateWithoutCenter(request.getName(), request.getBirthDate());

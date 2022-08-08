@@ -151,8 +151,8 @@ public class TeacherServiceTest {
                     .build();
             alarmUtils.when(() -> AlarmUtils.getMessage(any(String.class), any(Object[].class)))
                     .thenReturn("설명회가 가득 찼습니다");
-            AlarmEvent alarmEvent = new AlarmEvent(new CenterApprovalReceivedAlarm(Teacher.builder().build()));
-            alarmUtils.when(() -> AlarmUtils.publishAlarmEvent(new CenterApprovalReceivedAlarm(Teacher.builder().build())))
+            AlarmEvent alarmEvent = new AlarmEvent(new CenterApprovalReceivedAlarm(Teacher.builder().build(), Auth.TEACHER));
+            alarmUtils.when(() -> AlarmUtils.publishAlarmEvent(new CenterApprovalReceivedAlarm(Teacher.builder().build(), Auth.TEACHER)))
                     .thenReturn(alarmEvent);
             doReturn("hashedPwd")
                     .when(userService)
