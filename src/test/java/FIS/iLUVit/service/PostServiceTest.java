@@ -113,7 +113,7 @@ class PostServiceTest {
         center2 = Creator.createCenter(2L, "가산유치원", true, true, null);
         center3 = Creator.createCenter(3L,"디지털유치원", true, true, null);
 
-        child1 = Child.createChild("childA", null, null, parent1);
+        child1 = Child.createChild("childA", null, Approval.ACCEPT, parent1);
         child2 = Child.createChild("childB", null, null, parent1);
         child3 = Child.createChild("childC", null, null, parent1);
         child1.mappingCenter(center1);
@@ -746,7 +746,7 @@ class PostServiceTest {
                 () -> postService.searchCenterMainPreview(parent2.getId(), center1.getId()));
         //then
         assertThat(result.getErrorResult())
-                .isEqualTo(PostErrorResult.UNAUTHORIZED_USER_ACCESS);
+                .isEqualTo(PostErrorResult.WAITING_OR_REJECT_CANNOT_ACCESS);
     }
 
     @Test
