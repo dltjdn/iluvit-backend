@@ -85,7 +85,8 @@ public class CenterService {
         imageService.saveInfoImages(infoImages, center);
         imageService.saveProfileImage(profileImage, center);
         Pair<Double, Double> location = mapService.convertAddressToLocation(requestDto.getAddress());
-        center.update(requestDto, location.getFirst(), location.getSecond());
+        Pair<String, String> area = mapService.getSidoSigunguByLocation(location.getFirst(), location.getSecond());
+        center.update(requestDto, location.getFirst(), location.getSecond(), area.getFirst(), area.getSecond());
         return center.getId();
     }
 

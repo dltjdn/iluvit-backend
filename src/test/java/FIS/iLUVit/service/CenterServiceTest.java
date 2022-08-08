@@ -25,7 +25,6 @@ import org.mockito.Spy;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.SliceImpl;
-import org.springframework.data.util.Pair;
 import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -287,8 +286,8 @@ public class CenterServiceTest {
             CenterModifyRequestDto request = new CenterModifyRequestDto();
             request.setAddress("서울특별시 금천구 가산디지털2로 108 뉴티캐슬");
             //when
-            Mockito.doReturn(Pair.of(126.8806602, 37.4778951))
-                    .when(mapService).convertAddressToLocation("서울특별시 금천구 가산디지털2로 108 뉴티캐슬");
+//            Mockito.doReturn(Pair.of(126.8806602, 37.4778951))
+//                    .when(mapService).convertAddressToLocation("서울특별시 금천구 가산디지털2로 108 뉴티캐슬");
 
             target.modifyCenter(1L, 1L, request, multipartFileList, multipartFile);
 
