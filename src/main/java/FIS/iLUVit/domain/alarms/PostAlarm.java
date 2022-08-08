@@ -38,12 +38,13 @@ public class PostAlarm extends Alarm {
         this.mode = AlarmUtils.POST_COMMENT;
         this.postId = post.getId();
         this.boardId = post.getBoard().getId();
-        this.centerId = post.getBoard().getCenter().getId();
         if (post.getBoard() == null) {
             throw new BoardException(BoardErrorResult.BOARD_NOT_EXIST);
         }
-        if(post.getBoard().getCenter() != null)
+        if(post.getBoard().getCenter() != null) {
             this.centerName = post.getBoard().getCenter().getName();
+            this.centerId = post.getBoard().getCenter().getId();
+        }
         this.boardName = post.getBoard().getName();
         this.anonymous = comment.getAnonymous();
         if(!this.anonymous){

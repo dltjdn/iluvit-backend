@@ -8,7 +8,8 @@ import FIS.iLUVit.service.AlarmUtils;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
-import javax.persistence.*;
+import javax.persistence.Column;
+import javax.persistence.Entity;
 import java.time.LocalDateTime;
 
 @Entity
@@ -19,21 +20,20 @@ public class PresentationFullAlarm extends Alarm{
     @Column(name = "presentationId")
     private Long presentationId;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "centerId")
-    private Center center;
+    @Column(name = "centerId")
+    private Long centerId;
 
     public PresentationFullAlarm(User user, Presentation presentation, Center center) {
         super(user);
         this.mode = AlarmUtils.PRESENTATION_APPLICANTS_FULL;
         this.presentationId = presentation.getId();
-        this.center = center;
+        this.centerId = center.getId();
         message = AlarmUtils.getMessage(mode, null);
     }
 
     @Override
     public AlarmDto exportAlarm() {
-        return new PresentationFullAlarmDto(id, createdDate, message, dtype, presentationId, center.getId());
+        return new PresentationFullAlarmDto(id, createdDate, message, dtype, presentationId, centerId);
     }
 
     @Getter
