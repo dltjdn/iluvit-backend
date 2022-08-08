@@ -1,8 +1,7 @@
 package FIS.iLUVit.service;
 
 import FIS.iLUVit.Creator;
-import FIS.iLUVit.controller.dto.ChildApprovalListResponse;
-import FIS.iLUVit.controller.dto.ChildInfoDTO;
+import FIS.iLUVit.controller.dto.*;
 import FIS.iLUVit.domain.*;
 import FIS.iLUVit.domain.alarms.CenterApprovalAcceptedAlarm;
 import FIS.iLUVit.domain.enumtype.Approval;
@@ -18,7 +17,17 @@ import org.mockito.Mock;
 import org.mockito.MockedStatic;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.SliceImpl;
+import org.springframework.mock.web.MockMultipartFile;
 
+import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 
@@ -63,9 +72,10 @@ public class ChildServiceTest {
     private Board board2;
     private Board board3;
     private Bookmark bookmark;
+    private MockMultipartFile multipartFile;
 
     @BeforeEach
-    public void init() {
+    public void init() throws IOException {
         parent1 = Creator.createParent(1L);
         parent2 = Creator.createParent(2L);
         center1 = Creator.createCenter(3L, "center1");
@@ -82,6 +92,10 @@ public class ChildServiceTest {
         board2 = Creator.createBoard(12L, "board2", center1, true);
         board3 = Creator.createBoard(13L, "board3", center1, false);
         bookmark = Creator.createBookmark(16L, board1, parent1);
+        String name = "162693895955046828.png";
+        Path path = Paths.get(new File("").getAbsolutePath() + '/' + name);
+        byte[] content = Files.readAllBytes(path);
+        multipartFile = new MockMultipartFile(name, name, "image", content);
     }
 
     @Nested
@@ -295,7 +309,7 @@ public class ChildServiceTest {
             // then
             assertThat(child1.getApproval()).isEqualTo(Approval.REJECT);
             verify(boardRepository, times(1)).findByCenter(any());
-            verify(bookmarkRepository, times(1)).deleteAllByBoardAndUser(any(), any());
+//            verify(bookmarkRepository, times(1)).deleteAllByBoardAndUser(child1.getParent().getId(), anyList());
         }
 
         @Test
@@ -321,4 +335,227 @@ public class ChildServiceTest {
             verify(bookmarkRepository, times(0)).deleteAllByBoardAndUser(any(), any());
         }
     }
+
+
+    @Nested
+    @DisplayName("아이 추가")
+    class saveChild{
+        @Test
+        @DisplayName("[error] 시설정보 잘못됨")
+        public void 시설정보에러() {
+            // given
+            SaveChildRequest request = new SaveChildRequest(321L, "name", LocalDate.now(), multipartFile);
+            doReturn(parent1)
+                    .when(parentRepository)
+                    .getById(any());
+            doReturn(Optional.empty())
+                    .when(centerRepository)
+                    .findByIdAndSignedWithTeacher(any());
+            // when
+            UserException result = assertThrows(UserException.class,
+                    () -> target.saveChild(parent1.getId(), request));
+            // then
+            assertThat(result.getErrorResult()).isEqualTo(UserErrorResult.NOT_VALID_REQUEST);
+        }
+
+        @Test
+        @DisplayName("[success] 아이추가 성공")
+        public void 아이추가성공() throws IOException {
+            try (MockedStatic<AlarmUtils> alarmUtils = Mockito.mockStatic(AlarmUtils.class)) {
+                // given
+                center1.getTeachers().add(director);
+                center1.getTeachers().add(teacher1);
+                center1.getTeachers().add(teacher2);
+                SaveChildRequest request = new SaveChildRequest(center1.getId(), "name", LocalDate.now(), multipartFile);
+                doReturn(parent1)
+                        .when(parentRepository)
+                        .getById(any());
+                doReturn(Optional.of(center1))
+                        .when(centerRepository)
+                        .findByIdAndSignedWithTeacher(request.getCenter_id());
+                // when
+                Child result = target.saveChild(parent1.getId(), request);
+                // then
+                assertThat(result).isNotNull();
+                assertThat(result.getName()).isEqualTo("name");
+                assertThat(result.getParent().getId()).isEqualTo(parent1.getId());
+                assertThat(result.getCenter().getId()).isEqualTo(center1.getId());
+            }
+        }
+    }
+    @Nested
+    @DisplayName("아이 프로필 조회")
+    class findChildInfoDetail{
+        @Test
+        public void 잘못된아이아이디() throws Exception {
+            //given
+            doReturn(Optional.empty())
+                    .when(childRepository)
+                    .findByIdWithParentAndCenter(any(), any());
+            //when
+            UserException result = assertThrows(UserException.class,
+                    () -> target.findChildInfoDetail(parent1.getId(), child4.getId(), PageRequest.of(0, 10)));
+            //then
+            assertThat(result.getErrorResult()).isEqualTo(UserErrorResult.NOT_VALID_REQUEST);
+        }
+        @Test
+        public void 조회성공() throws Exception {
+            //given
+            doReturn(Optional.of(child1))
+                    .when(childRepository)
+                    .findByIdWithParentAndCenter(any(), any());
+            doReturn("imagePath")
+                    .when(imageService)
+                    .getProfileImage(any(Child.class));
+            List<CenterInfoDto> content = List.of(CenterInfoDto.builder().build());
+            SliceImpl<CenterInfoDto> slice = new SliceImpl<>(content, PageRequest.of(0, 10), false);
+            doReturn(slice)
+                    .when(centerRepository)
+                    .findCenterForAddChild(any(), any(), any(), any());
+            //when
+            ChildInfoDetailResponse result = target.findChildInfoDetail(parent1.getId(), child1.getId(), PageRequest.of(0, 10));
+            //then
+            assertThat(result.getChild_id()).isEqualTo(child1.getId());
+            assertThat(result.getCenter_name()).isEqualTo(center1.getName());
+        }
+    }
+
+    @Nested
+    @DisplayName("아이 프로필 수정")
+    class updateChild{
+        @Test
+        @DisplayName("존재하지 않는 아이")
+        public void 존재하지않는아이() throws Exception {
+            //given
+            doReturn(List.of(child1, child2, child3))
+                    .when(childRepository)
+                    .findByUserWithCenter(any());
+            UpdateChildRequest request = new UpdateChildRequest(center1.getId(), multipartFile, "name", LocalDate.now());
+            //when
+            UserException result = assertThrows(UserException.class,
+                    () -> target.updateChild(parent1.getId(), child4.getId(), request, PageRequest.of(0, 10)));
+            //then
+            assertThat(result.getErrorResult()).isEqualTo(UserErrorResult.NOT_VALID_REQUEST);
+        }
+
+        @Test
+        @DisplayName("원장이 없는 시설로 승인요청")
+        public void 등록되지않은시설로의접근() throws Exception {
+            //given
+            doReturn(List.of(child1, child2, child3))
+                    .when(childRepository)
+                    .findByUserWithCenter(any());
+            doReturn(Optional.empty())
+                    .when(centerRepository)
+                    .findByIdAndSignedWithTeacher(any());
+            UpdateChildRequest request = new UpdateChildRequest(center2.getId(), multipartFile, "name", LocalDate.now());
+            //when
+            UserException result = assertThrows(UserException.class,
+                    () -> target.updateChild(parent1.getId(), child1.getId(), request, PageRequest.of(0, 10)));
+            //then
+            assertThat(result.getErrorResult()).isEqualTo(UserErrorResult.NOT_VALID_REQUEST);
+        }
+        @Test
+        @DisplayName("[success] 시설을 변경하는 경우")
+        public void 시설변경O() throws IOException {
+            // given
+            UpdateChildRequest request = new UpdateChildRequest(center2.getId(), multipartFile, "name", LocalDate.now());
+            doReturn(List.of(child1, child2, child3))
+                    .when(childRepository)
+                    .findByUserWithCenter(any());
+            doReturn(Optional.of(center2))
+                    .when(centerRepository)
+                    .findByIdAndSignedWithTeacher(any());
+            // when
+            ChildInfoDetailResponse result = target.updateChild(parent1.getId(), child1.getId(), request, PageRequest.of(0, 10));
+            // then
+            assertThat(result.getChild_id()).isEqualTo(child1.getId());
+            assertThat(result.getCenter_name()).isEqualTo(center2.getName());
+            assertThat(result.getApproval()).isEqualTo(Approval.WAITING);
+            assertThat(result.getChild_name()).isEqualTo("name");
+            verify(boardRepository, times(1)).findByCenter(any());
+            verify(imageService, times(1)).saveProfileImage(any(), any());
+        }
+
+        @Test
+        @DisplayName("[success] 시설은 변경하지 않은 경우")
+        public void 시설변경X() throws IOException {
+            // given
+            UpdateChildRequest request = new UpdateChildRequest(center1.getId(), multipartFile, "name", LocalDate.now());
+            doReturn(List.of(child1, child2, child3))
+                    .when(childRepository)
+                    .findByUserWithCenter(any());
+            // when
+            ChildInfoDetailResponse result = target.updateChild(parent1.getId(), child1.getId(), request, PageRequest.of(0, 10));
+            // then
+            assertThat(result.getChild_id()).isEqualTo(child1.getId());
+            assertThat(result.getCenter_name()).isEqualTo(child1.getCenter().getName());
+            verify(boardRepository, times(0)).findByCenter(any());
+            verify(imageService, times(1)).saveProfileImage(any(), any());
+        }
+    }
+
+    @Nested
+    @DisplayName("아이 삭제")
+    class deleteChild{
+        @Test
+        @DisplayName("[error] 잘못된 childId")
+        public void childIdError() {
+            // given
+            doReturn(List.of(child1, child2, child3))
+                    .when(childRepository)
+                    .findByUserWithCenter(any());
+            // when
+            UserException result = assertThrows(UserException.class,
+                    () -> target.deleteChild(parent1.getId(), child4.getId()));
+            // then
+            assertThat(result.getErrorResult()).isEqualTo(UserErrorResult.NOT_VALID_REQUEST);
+        }
+        @Test
+        @DisplayName("[success] 해당시설의 마지막아이")
+        public void 부모의아이들중해당시설의마지막아이() {
+            // given
+            doReturn(List.of(child1, child2, child3))
+                    .when(childRepository)
+                    .findByUserWithCenter(any());
+            parent1.getChildren().add(child2);
+            parent1.getChildren().add(child3);
+            doReturn(Optional.of(parent1))
+                    .when(parentRepository)
+                    .findWithChildren(any());
+            // when
+            ChildInfoDTO result = target.deleteChild(parent1.getId(), child1.getId());
+            // then
+
+        }
+    }
+
+    @Nested
+    @DisplayName("시설에 다니는 아이없으면 북마크 삭제")
+    class deleteBookmarkByCenter{
+        @Test
+        public void 아직남은경우() throws Exception {
+            //given
+            List<Child> childrenByUser = List.of(child1, child2, child3);
+            //when
+            target.deleteBookmarkByCenter(parent1.getId(), childrenByUser, child2);
+            //then
+            verify(boardRepository, times(0)).findByCenter(any());
+            verify(bookmarkRepository, times(0)).deleteAllByBoardAndUser(any(), anyList());
+        }
+
+        @Test
+        public void 마지막삭제경우() throws Exception {
+            //given
+            List<Child> childrenByUser = List.of(child1, child2, child3);
+            doReturn(List.of(board1, board2, board3))
+                    .when(boardRepository)
+                    .findByCenter(any());
+            //when
+            target.deleteBookmarkByCenter(parent1.getId(), childrenByUser, child1);
+            //then
+            verify(bookmarkRepository, times(1)).deleteAllByBoardAndUser(any(), anyList());
+        }
+    }
+
 }

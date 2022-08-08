@@ -5,6 +5,8 @@ import FIS.iLUVit.exception.exceptionHandler.ErrorResponse;
 import FIS.iLUVit.exception.exceptionHandler.ErrorResult;
 import com.auth0.jwt.exceptions.JWTVerificationException;
 import lombok.extern.slf4j.Slf4j;
+import net.nurigo.sdk.message.exception.NurigoBadRequestException;
+import net.nurigo.sdk.message.exception.NurigoException;
 import org.springframework.context.support.DefaultMessageSourceResolvable;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.dao.InvalidDataAccessApiUsageException;
@@ -71,17 +73,18 @@ public class GlobalControllerAdvice extends ResponseEntityExceptionHandler {
 
     // param(@ModelAttribute) validation exception
     @Override
-    protected ResponseEntity<Object> handleBindException(BindException ex,
-                                                         HttpHeaders headers,
-                                                         HttpStatus status,
-                                                         WebRequest request) {
+    protected ResponseEntity<Object> handleBindException(
+            BindException ex,
+            HttpHeaders headers,
+            HttpStatus status,
+            WebRequest request) {
         final List<String> errorList = ex.getBindingResult()
                 .getAllErrors()
                 .stream()
                 .map(DefaultMessageSourceResolvable::getDefaultMessage)
                 .collect(Collectors.toList());
 
-        log.warn("Invalid DTO Parameter errors : {}", errorList);
+        log.warn("request type mapping errors : {}", errorList);
         return this.makeErrorResponseEntity(errorList.get(0));
     }
 
@@ -119,7 +122,6 @@ public class GlobalControllerAdvice extends ResponseEntityExceptionHandler {
         log.warn("[AuthenticationException Handler] {}", e.getMessage());
         return new ErrorResponse(HttpStatus.UNAUTHORIZED, "아이디 또는 비밀번호가 잘못되었습니다.");
     }
-
 
 
     private ResponseEntity<ErrorResponse> makeErrorResponseEntity(ErrorResult errorResult) {
@@ -204,6 +206,10 @@ public class GlobalControllerAdvice extends ResponseEntityExceptionHandler {
         return makeErrorResponseEntity(e.getErrorResult());
     }
 
+    @ExceptionHandler(NurigoBadRequestException.class)
+    public ResponseEntity<Object> nurigoException(NurigoBadRequestException e) {
+        return makeErrorResponseEntity("핸드폰번호를 확인해주세요");
+    }
 
 
 }

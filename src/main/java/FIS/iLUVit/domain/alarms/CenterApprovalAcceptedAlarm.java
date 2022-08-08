@@ -7,31 +7,28 @@ import FIS.iLUVit.service.AlarmUtils;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
+import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.FetchType;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
 import java.time.LocalDateTime;
 
 @Entity
 @NoArgsConstructor
 public class CenterApprovalAcceptedAlarm extends Alarm{
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "centerId")
-    private Center center;
+    @Column(name = "centerId")
+    private Long centerId;
 
     public CenterApprovalAcceptedAlarm(User user, Center center) {
         super(user);
         this.mode = AlarmUtils.CENTER_APPROVAL_ACCEPTED;
-        this.center = center;
+        this.centerId = center.getId();
         String args[] = {center.getName()};
         message = AlarmUtils.getMessage(mode, args);
     }
 
     @Override
     public AlarmDto exportAlarm() {
-        return new CenterApprovalAcceptedAlarmDto(id, createdDate, message, dtype, center.getId());
+        return new CenterApprovalAcceptedAlarmDto(id, createdDate, message, dtype, centerId);
     }
 
     @Getter

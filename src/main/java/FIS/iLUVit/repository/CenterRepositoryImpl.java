@@ -176,6 +176,8 @@ public class CenterRepositoryImpl extends CenterQueryMethod implements CenterRep
                 .groupBy(center)
                 .where(centerNameEq(searchContent))
                 .having(distanceEx.loe(distance))
+                .orderBy(center.score.desc())
+                .limit(100)
                 .fetch();
 
 
@@ -187,7 +189,8 @@ public class CenterRepositoryImpl extends CenterQueryMethod implements CenterRep
                         .groupBy(center)
                         .where(centerNameEq(searchContent))
                         .having(distanceEx.loe(distance))
-                        .orderBy(center.score.desc(), center.id.asc())
+                        .orderBy(center.score.desc())
+                        .limit(100)
                         .fetch();
         }
 

@@ -45,7 +45,6 @@ class ParentRepositoryTest {
     private Child child2;
     private Child child3;
     private Child child4;
-    private MockMultipartFile multipartFile;
     @BeforeEach
     public void init() throws IOException {
         parent1 = Creator.createParent();
@@ -57,10 +56,6 @@ class ParentRepositoryTest {
         child2 = Creator.createChild("child2", parent1, center1, Approval.ACCEPT);
         child3 = Creator.createChild("child3", parent1, center2, Approval.WAITING);
         child4 = Creator.createChild("child4", parent2, null, Approval.WAITING);
-        String name = "162693895955046828.png";
-        Path path = Paths.get(new File("").getAbsolutePath() + '/' + name);
-        byte[] content = Files.readAllBytes(path);
-        multipartFile = new MockMultipartFile(name, name, "image", content);
     }
 
     @Nested

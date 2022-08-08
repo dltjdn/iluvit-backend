@@ -14,26 +14,24 @@ import java.time.LocalDateTime;
 @Getter
 public class ConvertedToParticipateAlarm extends Alarm {
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "presentationId")
-    private Presentation presentation;
+    @Column(name = "presentationId")
+    private Long presentationId;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "centerId")
-    private Center center;
+    @Column(name = "centerId")
+    private Long centerId;
 
     public ConvertedToParticipateAlarm(User waiter, Presentation presentation, Center center) {
         super(waiter);
         String[] args = {center.getName()};
-        this.presentation = presentation;
-        this.center = center;
+        this.presentationId = presentation.getId();
+        this.centerId = center.getId();
         this.mode = AlarmUtils.PRESENTATION_WAITING_TO_PARTICIPATE;
         this.message = AlarmUtils.getMessage(mode, args);
     }
 
     @Override
     public AlarmDto exportAlarm() {
-        return new PresentationConvertedToParticipateAlarmDto(id, createdDate, message, dtype, center.getId(), presentation.getId());
+        return new PresentationConvertedToParticipateAlarmDto(id, createdDate, message, dtype, centerId, presentationId);
     }
 
     @Getter

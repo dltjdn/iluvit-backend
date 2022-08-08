@@ -8,6 +8,7 @@ import FIS.iLUVit.domain.*;
 import FIS.iLUVit.domain.embeddable.Area;
 import FIS.iLUVit.domain.embeddable.BasicInfra;
 import FIS.iLUVit.domain.embeddable.Theme;
+import FIS.iLUVit.domain.enumtype.Approval;
 import FIS.iLUVit.domain.enumtype.KindOf;
 import FIS.iLUVit.repository.dto.CenterAndDistancePreview;
 import FIS.iLUVit.repository.dto.CenterBannerDto;
@@ -26,6 +27,7 @@ import org.springframework.data.domain.SliceImpl;
 import javax.persistence.EntityManager;
 import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.EnumSet;
 import java.util.List;
 import java.util.Objects;
 
@@ -657,4 +659,162 @@ class CenterRepositoryTest {
             //then
         }
     }
+
+
+    @DisplayName("[success] 성공")
+    public void 성공() throws Exception {
+        //given
+        List areas = new ArrayList<Area>();
+        Area gumchon = createArea("서울특별시", "금천구");
+        areas.add(gumchon);
+        Theme theme1 = Theme.builder()
+                .english(true)
+                .art(true)
+                .build();
+        Theme theme2 = Theme.builder()
+                .art(true)
+                .build();
+        BasicInfra basicInfra = BasicInfra.builder()
+                .hasCCTV(true)
+                .cctvCnt(3)
+                .build();
+        Center center1 = createKindergarten(gumchon, "test1", theme1, 2, 4, "test", "test", basicInfra, 1);
+        Center center2 = createKindergarten(gumchon, "test2", theme1, 3, 5, "test", "test", basicInfra, 6);
+        Center center3 = createKindergarten(gumchon, "test3", theme1, 2, 3, "test", "test", basicInfra, 1);
+        Center center4 = createKindergarten(gumchon, "test4", theme2, 2, 4, "test", "test", basicInfra, 5);
+        Center center5 = createKindergarten(gumchon, "test5", theme2, 3, 5, "test", "test", basicInfra, 3);
+        Center center6 = createKindergarten(gumchon, "test6", theme2, 2, 3, "test", "test", basicInfra, 1);
+
+        em.persist(center1);
+        em.persist(center2);
+        em.persist(center3);
+        em.persist(center4);
+        em.persist(center5);
+        em.persist(center6);
+        em.flush();
+        em.clear();
+        //when
+        System.out.println(" ====================================== ");
+        Center c = em.find(Center.class, center1.getId());
+        System.out.println(" ====================================== ");
+        List<Center> all = centerRepository.findAll();
+        System.out.println(" ====================================== ");
+        List<Center> select_center_from_center_center = em.createQuery("select center from Center center", Center.class).getResultList();
+        System.out.println("--");
+        //then
+
+        @Nested
+        @DisplayName("아이추가 시설 정보 검색")
+        class findCenterForAddChild {
+            @Test
+            public void 전체검색() {
+                // given
+                Center center1 = Creator.createCenter("center1", true, new Area("서울시", "구로구"));
+                Center center2 = Creator.createCenter("center2", true, new Area("서울시", "구로구"));
+                Center center3 = Creator.createCenter("center3", true, new Area("서울시", "금천구"));
+                Center center4 = Creator.createCenter("center4", true, new Area("경기도", "안양시"));
+                Center center5 = Creator.createCenter("center5", true, new Area("경기도", "안양시"));
+                Center center6 = Creator.createCenter("center6", false, new Area("경기도", "안양시"));
+                em.persist(center1);
+                em.persist(center2);
+                em.persist(center3);
+                em.persist(center4);
+                em.persist(center5);
+                // when
+                Slice<CenterInfoDto> result = centerRepository.findCenterForAddChild(null, "", "", PageRequest.of(0, 10));
+                // then
+                assertThat(result.getContent().size()).isEqualTo(5);
+            }
+
+            @Test
+            public void area로만검색() {
+                // given
+                Center center1 = Creator.createCenter("center1", true, new Area("서울시", "구로구"));
+                Center center2 = Creator.createCenter("center2", true, new Area("서울시", "구로구"));
+                Center center3 = Creator.createCenter("center3", true, new Area("서울시", "금천구"));
+                Center center4 = Creator.createCenter("center4", true, new Area("경기도", "안양시"));
+                Center center5 = Creator.createCenter("center5", true, new Area("경기도", "안양시"));
+                Center center6 = Creator.createCenter("center6", false, new Area("경기도", "안양시"));
+                em.persist(center1);
+                em.persist(center2);
+                em.persist(center3);
+                em.persist(center4);
+                em.persist(center5);
+                em.persist(center6);
+                // when
+                Slice<CenterInfoDto> result = centerRepository.findCenterForAddChild("서울시", "구로구", "", PageRequest.of(0, 10));
+                // then
+                assertThat(result.getContent().size()).isEqualTo(2);
+            }
+
+            @Test
+            public void 이름으로만검색() {
+                // given
+                Center center1 = Creator.createCenter("center1", true, new Area("서울시", "구로구"));
+                Center center2 = Creator.createCenter("center2", true, new Area("서울시", "구로구"));
+                Center center3 = Creator.createCenter("center3", true, new Area("서울시", "금천구"));
+                Center center4 = Creator.createCenter("center4", true, new Area("경기도", "안양시"));
+                Center center5 = Creator.createCenter("center5", true, new Area("경기도", "안양시"));
+                Center center6 = Creator.createCenter("center6", false, new Area("경기도", "안양시"));
+                em.persist(center1);
+                em.persist(center2);
+                em.persist(center3);
+                em.persist(center4);
+                em.persist(center5);
+                em.persist(center6);
+                // when
+                Slice<CenterInfoDto> result = centerRepository.findCenterForAddChild("", null, "center3", PageRequest.of(0, 10));
+                // then
+                assertThat(result.getContent().size()).isEqualTo(1);
+            }
+
+            @Test
+            public void paging검사() {
+                // given
+                Center center1 = Creator.createCenter("center1", true, new Area("서울시", "구로구"));
+                Center center2 = Creator.createCenter("center2", true, new Area("서울시", "구로구"));
+                Center center3 = Creator.createCenter("center3", true, new Area("서울시", "금천구"));
+                Center center4 = Creator.createCenter("center4", true, new Area("경기도", "안양시"));
+                Center center5 = Creator.createCenter("center5", true, new Area("경기도", "안양시"));
+                Center center6 = Creator.createCenter("center6", false, new Area("경기도", "안양시"));
+                em.persist(center1);
+                em.persist(center2);
+                em.persist(center3);
+                em.persist(center4);
+                em.persist(center5);
+                em.persist(center6);
+                // when
+                Slice<CenterInfoDto> result = centerRepository.findCenterForAddChild("", null, "", PageRequest.of(0, 3));
+                // then
+                assertThat(result.getContent().size()).isEqualTo(3);
+            }
+        }
+    }
+
+    @Test
+    public void findByIdAndSignedWithTeacher () {
+        // given
+        Center center1 = Creator.createCenter("center1", true, new Area("서울시", "구로구"));
+        Center center2 = Creator.createCenter("center2", true, new Area("서울시", "구로구"));
+        Teacher teacher1 = Creator.createTeacher("teacher1", center1, Approval.ACCEPT);
+        Teacher teacher2 = Creator.createTeacher("teacher2", center1, Approval.ACCEPT);
+        Teacher teacher3 = Creator.createTeacher("teacher3", center1, Approval.REJECT);
+        Teacher teacher4 = Creator.createTeacher("teacher4", center2, Approval.ACCEPT);
+        Teacher teacher5 = Creator.createTeacher("teacher5", center1, Approval.WAITING);
+        em.persist(center1);
+        em.persist(center2);
+        em.persist(teacher1);
+        em.persist(teacher2);
+        em.persist(teacher3);
+        em.persist(teacher4);
+        em.persist(teacher5);
+        em.flush();
+        em.clear();
+        // when
+        Center result = centerRepository.findByIdAndSignedWithTeacher(center1.getId()).orElse(null);
+        // then
+        assertThat(result).isNotNull();
+        assertThat(result.getTeachers().size()).isEqualTo(2);
+    }
+
 }

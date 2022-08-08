@@ -23,10 +23,13 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.data.web.PageableHandlerMethodArgumentResolver;
 import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
+import org.springframework.test.web.servlet.request.MockMultipartHttpServletRequestBuilder;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
+import org.springframework.test.web.servlet.result.MockMvcResultHandlers;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
 import java.io.File;
@@ -36,6 +39,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 
 import static org.mockito.Mockito.*;
+import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @ExtendWith(MockitoExtension.class)
@@ -60,13 +64,13 @@ public class ChildControllerTest {
     public void init() throws IOException {
         objectMapper = new ObjectMapper();
         mockMvc = MockMvcBuilders.standaloneSetup(target)
-                .setCustomArgumentResolvers(new LoginUserArgumentResolver("secretKey"))
+                .setCustomArgumentResolvers(new PageableHandlerMethodArgumentResolver(), new LoginUserArgumentResolver("secretKey"))
                 .setControllerAdvice(GlobalControllerAdvice.class)
                 .build();
         String name = "162693895955046828.png";
         Path path = Paths.get(new File("").getAbsolutePath() + '/' + name);
         byte[] content = Files.readAllBytes(path);
-        multipartFile = new MockMultipartFile(name, name, "image", content);
+        multipartFile = new MockMultipartFile("profileImg", name, "image", content);
         parent = Creator.createParent(1L);
         center = Creator.createCenter(3L, "center");
         child = Creator.createChild(2L, "child", parent, center, Approval.ACCEPT);
@@ -153,7 +157,7 @@ public class ChildControllerTest {
 
     @Nested
     @DisplayName("아이삭제")
-    class fireChild{
+    class fireChild {
 
         @Test
         @DisplayName("[error] 승인받지 않은 교사")
@@ -207,6 +211,81 @@ public class ChildControllerTest {
                     MockMvcRequestBuilders.patch(url, child.getId())
                             .header("Authorization", teacher.getId())
             );
+            // then
+            result.andExpect(status().isOk());
+        }
+    }
+
+    @Nested
+    @DisplayName("아이 프로필 수정")
+    class updateChild {
+
+        @Test
+        @DisplayName("[error] 식별자값 에러")
+        public void 식별자에러() throws Exception {
+            // given
+            MockMultipartHttpServletRequestBuilder builder =
+                    MockMvcRequestBuilders.multipart("/parent/child/{childId}?page=0&size=10", child.getId());
+            builder.with(request -> {
+                request.setMethod("PUT");
+                return request;
+            });
+            UserErrorResult error = UserErrorResult.NOT_VALID_REQUEST;
+            doThrow(new UserException(error))
+                    .when(childService)
+                    .updateChild(any(), any(), any(), any());
+            // when
+            ResultActions result = mockMvc.perform(builder
+                    .file(multipartFile)
+                    .header("Authorization", Creator.createJwtToken(parent))
+                    .param("center_id", "1")
+                    .param("name", "name")
+                    .param("birthDate", "2022-01-01"));
+            // then
+            result.andExpect(status().isBadRequest())
+                    .andExpect(content().json(
+                            objectMapper.writeValueAsString(new ErrorResponse(error.getHttpStatus(), error.getMessage()))
+                    ));
+        }
+
+        @Test
+        @DisplayName("[error] 요청 validation error")
+        public void validationError() throws Exception {
+            // given
+            MockMultipartHttpServletRequestBuilder builder =
+                    MockMvcRequestBuilders.multipart("/parent/child/{childId}?page=0&size=10", child.getId());
+            builder.with(request -> {
+                request.setMethod("PUT");
+                return request;
+            });
+            // when
+            ResultActions result = mockMvc.perform(builder
+                    .file(multipartFile)
+                    .header("Authorization", Creator.createJwtToken(parent))
+                    .param("center_id", "1")
+                    .param("name", "name")
+                    .param("birthDate", "missMatch"));
+            // then
+            result.andExpect(status().isBadRequest());
+        }
+
+        @Test
+        @DisplayName("[success] 수정성공")
+        public void 수정성공() throws Exception {
+            // given
+            MockMultipartHttpServletRequestBuilder builder =
+                    MockMvcRequestBuilders.multipart("/parent/child/{childId}?page=0&size=10", child.getId());
+            builder.with(request -> {
+                request.setMethod("PUT");
+                return request;
+            });
+            // when
+            ResultActions result = mockMvc.perform(builder
+                    .file(multipartFile)
+                    .header("Authorization", Creator.createJwtToken(parent))
+                    .param("center_id", "1")
+                    .param("name", "name")
+                    .param("birthDate", "2022-01-01"));
             // then
             result.andExpect(status().isOk());
         }

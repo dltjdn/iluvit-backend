@@ -35,7 +35,9 @@ spring:
 ---
 spring:
   config.activate.on-profile: iluvit-develop
-
+  jpa:
+    hibernate:
+      ddl-auto: update
 logging:
   level:
     org.hibernate.SQL: debug
@@ -43,7 +45,9 @@ logging:
 ---
 spring:
   config.activate.on-profile: iluvit-release
-
+  jpa:
+    hibernate:
+      ddl-auto: none
 logging:
   level:
     org.hibernate.SQL: info

@@ -132,7 +132,7 @@ public class Center extends BaseImageEntity {
         this.infoImagePath = infoImagePath;
     }
 
-    public void update(CenterModifyRequestDto requestDto, Double longitude, Double latitude) {
+    public void update(CenterModifyRequestDto requestDto, Double longitude, Double latitude, String sido, String sigungu) {
         this.name = requestDto.getName();
         this.owner = requestDto.getOwner();
         this.director = requestDto.getDirector();
@@ -147,8 +147,8 @@ public class Center extends BaseImageEntity {
         this.address = requestDto.getAddress();
         this.addressDetail = requestDto.getAddressDetail();
         this.zipcode = requestDto.getZipcode();
-        this.area.setSido(requestDto.getSido());
-        this.area.setSigungu(requestDto.getSigungu());
+        this.area.setSido(sido);
+        this.area.setSigungu(sigungu);
         this.offerService = requestDto.getOfferService();
         this.maxChildCnt = requestDto.getMaxChildCnt();
         this.curChildCnt = requestDto.getCurChildCnt();
