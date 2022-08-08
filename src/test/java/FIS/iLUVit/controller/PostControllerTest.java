@@ -382,7 +382,7 @@ class PostControllerTest {
 
         //then
         resultActions.andDo(print())
-                .andExpect(status().isOk())
+                .andExpect(status().isAccepted())
                 .andExpect(content().json(objectMapper.writeValueAsString(
                         post1.getId()
                 )));
