@@ -230,7 +230,7 @@ public class ChildControllerTest {
             UserErrorResult error = UserErrorResult.NOT_VALID_REQUEST;
             doThrow(new UserException(error))
                     .when(childService)
-                    .updateChild(any(), any(), any(), any());
+                    .updateChild(any(), any(), any());
             // when
             ResultActions result = mockMvc.perform(builder
                     .file(multipartFile)

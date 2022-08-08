@@ -211,7 +211,7 @@ public class LoginTest {
     public String createMockAccessToken(User user) {
         String token = JWT.create()
                 .withSubject("ILuvIt_AccessToken")
-                .withExpiresAt(new Date(System.currentTimeMillis()-1))
+                .withExpiresAt(new Date(System.currentTimeMillis()-1000))
                 .withClaim("id", user.getId())
                 .sign(Algorithm.HMAC512(secretKey));
         return token;

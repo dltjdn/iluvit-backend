@@ -60,7 +60,7 @@ public class ChildRepositoryTest {
     }
     
     @Nested
-    @DisplayName("findByIdWithParentAndCenter")
+    @DisplayName("findByIdAndParentWithCenter")
     class findByWithParentAndCenter{
         @Test
         public void 정상요청() {
@@ -68,7 +68,7 @@ public class ChildRepositoryTest {
             em.flush();
             em.clear();
             // when
-            Child result = childRepository.findByIdWithParentAndCenter(parent1.getId(), child1.getId()).orElse(null);
+            Child result = childRepository.findByIdAndParentWithCenter(parent1.getId(), child1.getId()).orElse(null);
             // then
             assertThat(result).isNotNull();
             assertThat(result.getId()).isEqualTo(child1.getId());
@@ -81,7 +81,7 @@ public class ChildRepositoryTest {
             em.flush();
             em.clear();
             // when
-            Child result = childRepository.findByIdWithParentAndCenter(parent1.getId(), child4.getId()).orElse(null);
+            Child result = childRepository.findByIdAndParentWithCenter(parent1.getId(), child4.getId()).orElse(null);
             // then
             assertThat(result).isNull();
         }

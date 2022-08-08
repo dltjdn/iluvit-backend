@@ -39,6 +39,17 @@ public interface BookmarkRepository extends JpaRepository<Bookmark, Long> {
             "and b.board.id in :boardIds")
     void deleteAllByBoardAndUser(@Param("userId") Long userId, @Param("boardIds") List<Long> boardIds);
 
+    @Modifying
+    @Query("delete " +
+            "from Bookmark b " +
+            "where b.user.id =:userId " +
+            "and b.id in " +
+            "(select b.id " +
+            "from Bookmark b " +
+            "join b.board bb " +
+            "where bb.center.id =:centerId)")
+    void deleteAllByCenterAndUser(@Param("userId") Long userId, @Param("centerId") Long centerId);
+
     List<Bookmark> findByUser(User user);
 
     @Query("select bm from Bookmark bm " +

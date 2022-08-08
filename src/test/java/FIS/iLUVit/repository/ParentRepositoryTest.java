@@ -236,6 +236,7 @@ class ParentRepositoryTest {
     @Test
     public void findByIdWithChild() {
         // given
+        em.persist(parent1);
         em.persist(parent2);
         em.persist(parent3);
         em.persist(center1);

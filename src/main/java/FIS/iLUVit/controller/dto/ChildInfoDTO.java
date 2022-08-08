@@ -28,8 +28,10 @@ public class ChildInfoDTO {
         public ChildInfo(Child child, String image) {
             this.id = child.getId();
             this.name = child.getName();
-            this.center_id = child.getCenter().getId();
-            this.center_name = child.getCenter().getName();
+            if (child.getCenter() != null) {
+                this.center_id = child.getCenter().getId();
+                this.center_name = child.getCenter().getName();
+            }
             this.profileImage = image;
             this.approval = child.getApproval();
         }

@@ -75,4 +75,14 @@ public class Child extends BaseImageEntity {
         this.name = name;
         this.birthDate = birthDate;
     }
+
+    public void update(String name, LocalDate birthDate) {
+        this.name = name;
+        this.birthDate = birthDate;
+    }
+
+    public void exitCenter() {
+        this.center = null;
+        this.approval = Approval.REJECT;
+    }
 }

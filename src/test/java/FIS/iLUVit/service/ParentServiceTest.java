@@ -199,7 +199,7 @@ public class ParentServiceTest {
         
         @Test
         @DisplayName("[error] 잘못된 시설을 찜")
-        public void centerIdError() {
+        public void 잘못된시설() {
             // given
             parent1.getPrefers().add(prefer1);
             doReturn(Optional.of(parent1))
@@ -234,6 +234,21 @@ public class ParentServiceTest {
             // then
             assertThat(result.getParent().getId()).isEqualTo(parent1.getId());
             assertThat(result.getCenter().getId()).isEqualTo(center2.getId());
+        }
+    }
+
+    @Nested
+    @DisplayName("시설 찜 해제하기")
+    class deletePrefer{
+        @Test
+        @DisplayName("[error] 찜하지 않은 시설")
+        public void 찜하지않은시설() {
+            // given
+
+            // when
+
+            // then
+
         }
     }
 
