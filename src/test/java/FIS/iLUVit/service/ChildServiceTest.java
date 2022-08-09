@@ -330,6 +330,7 @@ public class ChildServiceTest {
             target.fireChild(teacher1.getId(), child1.getId());
             // then
             assertThat(child1.getApproval()).isEqualTo(Approval.REJECT);
+            assertThat(child1.getCenter()).isNull();
             verify(bookmarkRepository, times(1)).deleteAllByCenterAndUser(any(), any());
         }
 
@@ -347,11 +348,11 @@ public class ChildServiceTest {
             doReturn(List.of(child1, child2, child3))
                     .when(childRepository)
                     .findByUserWithCenter(any());
-            List<Child> test = List.of(child1, child2);
             // when
             target.fireChild(teacher1.getId(), child1.getId());
             // then
             assertThat(child1.getApproval()).isEqualTo(Approval.REJECT);
+            assertThat(child1.getCenter()).isNull();
             verify(boardRepository, times(0)).findByCenter(any());
             verify(bookmarkRepository, times(0)).deleteAllByBoardAndUser(any(), any());
         }
