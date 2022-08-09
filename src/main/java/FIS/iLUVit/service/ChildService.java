@@ -287,17 +287,18 @@ public class ChildService {
                 .findFirst()
                 .orElseThrow(() -> new UserException(UserErrorResult.NOT_VALID_REQUEST));
 
-        // 시설과의 연관관계 끊기
-        firedChild.exitCenter();
 
         // 식제하고자 하는 아이의 부모와 그 부모에 속한 모든 아이들 가져오기
         List<Child> childrenByUser = childRepository.findByUserWithCenter(userId);
 
         // bookmark 처리
         deleteBookmarkByCenter(firedChild.getParent().getId(), childrenByUser, firedChild);
-    }
-    // 삭제되는 아이와 같은 시설에 다니는 또 다른 아이가 없을경우 해당 시설과 관련된 bookmark 모두 삭제
 
+        // 시설과의 연관관계 끊기
+        firedChild.exitCenter();
+    }
+
+    // 삭제되는 아이와 같은 시설에 다니는 또 다른 아이가 없을경우 해당 시설과 관련된 bookmark 모두 삭제
     public void deleteBookmarkByCenter(Long parentId, List<Child> childrenByUser, Child deletedChild) {
         Optional<Child> sameCenterChildren = childrenByUser.stream()
                 .filter(child -> child.getCenter() != null)
