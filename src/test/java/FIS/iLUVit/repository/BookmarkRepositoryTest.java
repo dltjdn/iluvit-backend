@@ -5,9 +5,7 @@ import FIS.iLUVit.config.argumentResolver.ForDB;
 import FIS.iLUVit.domain.*;
 import FIS.iLUVit.domain.enumtype.Auth;
 import FIS.iLUVit.domain.enumtype.BoardKind;
-import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.boot.test.autoconfigure.orm.jpa.TestEntityManager;
@@ -46,6 +44,8 @@ class BookmarkRepositoryTest {
     Bookmark bookmark2;
     Bookmark bookmark3;
     Bookmark bookmark4;
+    Bookmark bookmark5;
+    Bookmark bookmark6;
 
     Parent parent1;
     Teacher teacher1;
@@ -98,6 +98,9 @@ class BookmarkRepositoryTest {
         bookmark2 = createBookmark(board2, parent1);
         bookmark3 = createBookmark(board3, parent1);
         bookmark4 = createBookmark(board4, parent1);
+        bookmark5 = createBookmark(board1, teacher1);
+        bookmark6 = createBookmark(board3, teacher1);
+
 
         post1 = Creator.createPost("제목1", "내용1", true, 0, 0, 0, 0, board1, parent1);
         post2 = Creator.createPost("제목2", "내용2", true, 0, 0, 0, 0, board2, parent1);
@@ -242,6 +245,65 @@ class BookmarkRepositoryTest {
         result.forEach(bookmark -> {
             assertThat(bookmark.getBoard().getCenter()).isNull();
         });
+    }
+
+    @Test
+    public void findByUserWithBoard() {
+        // given
+        em.persist(center1);
+        em.persist(center2);
+        em.persist(parent1);
+        em.persist(teacher1);
+        em.persist(board1);
+        em.persist(board2);
+        em.persist(board3);
+        em.persist(board4);
+        em.persist(bookmark1);
+        em.persist(bookmark2);
+        em.persist(bookmark3);
+        em.persist(bookmark4);
+        em.persist(bookmark5);
+        em.persist(bookmark6);
+        em.flush();
+        em.clear();
+        // when
+        List<Bookmark> result = bookmarkRepository.findByUser(parent1);
+        // then
+        assertThat(result.size()).isEqualTo(4);
+        for (Bookmark bookmark : result) {
+            assertThat(bookmark.getUser().getId()).isEqualTo(parent1.getId());
+        }
+    }
+
+    @Test
+    public void deleteAllByCenterAndUser() {
+        // given
+        em.persist(center1);
+        em.persist(center2);
+        em.persist(parent1);
+        em.persist(teacher1);
+        em.persist(board1);
+        em.persist(board2);
+        em.persist(board3);
+        em.persist(board4);
+        em.persist(bookmark1);
+        em.persist(bookmark2);
+        em.persist(bookmark3);
+        em.persist(bookmark4);
+        em.persist(bookmark5);
+        em.persist(bookmark6);
+        em.flush();
+        em.clear();
+        // when
+        bookmarkRepository.deleteAllByCenterAndUser(parent1.getId(), center1.getId());
+        // then
+        List<Bookmark> result = bookmarkRepository.findByUserWithBoard(parent1.getId());
+        assertThat(result.size()).isEqualTo(2);
+        for (Bookmark bookmark : result) {
+            if (bookmark.getBoard().getCenter() != null) {
+                assertThat(bookmark.getBoard().getCenter().getId()).isNotEqualTo(center1.getId());
+            }
+        }
     }
 
 }

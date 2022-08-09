@@ -5,9 +5,13 @@ import FIS.iLUVit.domain.*;
 import FIS.iLUVit.domain.alarms.CenterApprovalAcceptedAlarm;
 import FIS.iLUVit.domain.alarms.CenterApprovalReceivedAlarm;
 import FIS.iLUVit.domain.enumtype.Approval;
+<<<<<<< HEAD
+import FIS.iLUVit.exception.*;
+=======
 import FIS.iLUVit.domain.enumtype.Auth;
 import FIS.iLUVit.exception.UserErrorResult;
 import FIS.iLUVit.exception.UserException;
+>>>>>>> e25daceb30bab15bcb8052179b30adffc2555674
 import FIS.iLUVit.repository.*;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -89,74 +93,90 @@ public class ChildService {
      * 작성자: 이승범
      * 작성내용: 아이 프로필 조회
      */
-    public ChildInfoDetailResponse findChildInfoDetail(Long userId, Long childId, Pageable pageable) {
+    public ChildInfoDetailResponse findChildInfoDetail(Long userId, Long childId) {
         // 프로필 수정하고자 하는 아이 가져오기
-        Child child = childRepository.findByIdWithParentAndCenter(userId, childId)
+        Child child = childRepository.findByIdAndParentWithCenter(userId, childId)
                 .orElseThrow(() -> new UserException(UserErrorResult.NOT_VALID_REQUEST));
 
         ChildInfoDetailResponse response = new ChildInfoDetailResponse(child);
 
         response.setProfileImage(imageService.getProfileImage(child));
 
+        return response;
+    }
 
-        // 프로필 수정에 필요한 시설정보들 가져오기
-        Slice<CenterInfoDto> centerInfos = centerRepository.findCenterForAddChild(child.getCenter().getArea().getSido(),
-                child.getCenter().getArea().getSigungu(), child.getCenter().getName(), pageable);
-        response.setCenterInfoDtoSlice(centerInfos);
+    /**
+    *   작성날짜: 2022/08/08 3:41 PM
+    *   작성자: 이승범
+    *   작성내용: 아이 프로필 수정
+    */
+    public ChildInfoDetailResponse updateChild(Long userId, Long childId, UpdateChildRequest request) {
+        // 수정하고자 하는 아이
+        Child updatedChild = childRepository.findByIdAndParentWithCenter(userId, childId)
+                .orElseThrow(() -> new UserException(UserErrorResult.NOT_VALID_REQUEST));
+
+        // 프로필 수정
+        updatedChild.update(request.getName(), request.getBirthDate());
+
+        ChildInfoDetailResponse response = new ChildInfoDetailResponse(updatedChild);
+
+        // 프로필 이미지 수정
+        imageService.saveProfileImage(request.getProfileImg(), updatedChild);
+        response.setProfileImage(imageService.getProfileImage(updatedChild));
 
         return response;
     }
 
     /**
-     * 작성날짜: 2022/06/27 5:47 PM
+     * 작성날짜: 2022-08-09 오후 6:01
      * 작성자: 이승범
-     * 작성내용: 아이 프로필 수정
+     * 작성내용: 학부모/아이 시설 승인 요청
      */
-    public ChildInfoDetailResponse updateChild(Long userId, Long childId, UpdateChildRequest request, Pageable pageable) throws IOException {
+    public Child mappingCenter(Long userId, Long childId, Long centerId) {
 
+        // 승인 받고자 하는 아이
+        Child mappedChild = childRepository.findByIdAndParent(userId, childId)
+                .orElseThrow(() -> new UserException(UserErrorResult.NOT_VALID_REQUEST));
+
+        // 속해있는 시설이 있는 경우
+        if (mappedChild.getCenter() != null) {
+            throw new SignupException(SignupErrorResult.ALREADY_BELONG_CENTER);
+        }
+
+        // 승인 요청 보내는 시설
+        Center center = centerRepository.findByIdAndSignedWithTeacher(centerId)
+                .orElseThrow(() -> new CenterException(CenterErrorResult.CENTER_NOT_EXIST));
+
+        mappedChild.mappingCenter(center);
+
+        center.getTeachers().forEach(teacher -> {
+            AlarmUtils.publishAlarmEvent(new CenterApprovalReceivedAlarm(teacher, Auth.PARENT));
+        });
+
+        return mappedChild;
+    }
+
+    /**
+    *   작성날짜: 2022/08/08 3:58 PM
+    *   작성자: 이승범
+    *   작성내용: 아이의 시설 탈퇴
+    */
+    public Child exitCenter(Long userId, Long childId) {
         // 요청 사용자가 등록한 모든 아이 가져오기
         List<Child> childrenByUser = childRepository.findByUserWithCenter(userId);
 
         // 사용자의 아이중에 childId를 가진 아이가 있는지 검사
-        Child updatedChild = childrenByUser.stream()
+        Child exitedChild = childrenByUser.stream()
                 .filter(child -> Objects.equals(child.getId(), childId))
+                .filter(child -> child.getCenter() != null)
                 .findFirst()
                 .orElseThrow(() -> new UserException(UserErrorResult.NOT_VALID_REQUEST));
 
-        // 시설을 변경하는 경우
-        if (updatedChild.getApproval() == Approval.REJECT || !Objects.equals(updatedChild.getCenter().getId(), request.getCenter_id())) {
+        deleteBookmarkByCenter(userId, childrenByUser, exitedChild);
 
-            // 요청 시설이 서비스에 등록된 시설인지 검사
-            Center center = centerRepository.findByIdAndSignedWithTeacher(request.getCenter_id())
-                    .orElseThrow(() -> new UserException(UserErrorResult.NOT_VALID_REQUEST));
+        exitedChild.exitCenter();
 
-            // 기존에 등록되있었던 시설과 연관된 bookmark 처리
-            if (updatedChild.getCenter() != null) {
-                deleteBookmarkByCenter(userId, childrenByUser, updatedChild);
-            }
-
-            // update 진행
-            updatedChild.updateWithCenter(center, request.getName(), request.getBirthDate());
-
-            // 아이 승인 요청 알람이 해당 시설의 모든 교사에게 감
-            center.getTeachers().forEach(teacher -> {
-                AlarmUtils.publishAlarmEvent(new CenterApprovalReceivedAlarm(teacher, Auth.PARENT));
-            });
-        }else{
-            updatedChild.updateWithoutCenter(request.getName(), request.getBirthDate());
-        }
-
-        ChildInfoDetailResponse response = new ChildInfoDetailResponse(updatedChild);
-
-        imageService.saveProfileImage(request.getProfileImg(), updatedChild);
-        response.setProfileImage(imageService.getProfileImage(updatedChild));
-
-        // 프로필 수정에 필요한 시설정보들 가져오기
-        Slice<CenterInfoDto> centerInfos = centerRepository.findCenterForAddChild(updatedChild.getCenter().getArea().getSido(),
-                updatedChild.getCenter().getArea().getSigungu(), updatedChild.getCenter().getName(), pageable);
-        response.setCenterInfoDtoSlice(centerInfos);
-
-        return response;
+        return exitedChild;
     }
 
     /**
@@ -207,7 +227,6 @@ public class ChildService {
         });
         return response;
     }
-
 
     /**
      * 작성날짜: 2022/06/30 3:13 PM
@@ -274,19 +293,21 @@ public class ChildService {
                 .findFirst()
                 .orElseThrow(() -> new UserException(UserErrorResult.NOT_VALID_REQUEST));
 
-        // 시설과의 연관관계 끊기
-        firedChild.fired();
 
         // 식제하고자 하는 아이의 부모와 그 부모에 속한 모든 아이들 가져오기
         List<Child> childrenByUser = childRepository.findByUserWithCenter(userId);
 
         // bookmark 처리
         deleteBookmarkByCenter(firedChild.getParent().getId(), childrenByUser, firedChild);
+
+        // 시설과의 연관관계 끊기
+        firedChild.exitCenter();
     }
 
     // 삭제되는 아이와 같은 시설에 다니는 또 다른 아이가 없을경우 해당 시설과 관련된 bookmark 모두 삭제
     public void deleteBookmarkByCenter(Long parentId, List<Child> childrenByUser, Child deletedChild) {
         Optional<Child> sameCenterChildren = childrenByUser.stream()
+                .filter(child -> child.getCenter() != null)
                 .filter(child -> Objects.equals(child.getCenter().getId(), deletedChild.getCenter().getId()))
                 .filter(child -> !Objects.equals(child.getId(), deletedChild.getId()))
                 .filter(child -> child.getApproval() == Approval.ACCEPT)
@@ -294,11 +315,8 @@ public class ChildService {
 
         // 없으면 해당 시설과 연관된 bookmark 싹 다 삭제
         if (sameCenterChildren.isEmpty()) {
-            List<Board> boards = boardRepository.findByCenter(deletedChild.getCenter().getId());
-            List<Long> boardIds = boards.stream()
-                    .map(Board::getId)
-                    .collect(Collectors.toList());
-            bookmarkRepository.deleteAllByBoardAndUser(parentId, boardIds);
+            bookmarkRepository.deleteAllByCenterAndUser(parentId, deletedChild.getCenter().getId());
         }
     }
+
 }
