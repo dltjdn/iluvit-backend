@@ -10,13 +10,13 @@ import FIS.iLUVit.domain.User;
 import FIS.iLUVit.domain.alarms.Alarm;
 import FIS.iLUVit.domain.enumtype.AuthKind;
 import FIS.iLUVit.exception.*;
+import FIS.iLUVit.repository.AlarmRepository;
+import FIS.iLUVit.repository.AuthNumberRepository;
 import FIS.iLUVit.repository.TokenPairRepository;
+import FIS.iLUVit.repository.UserRepository;
 import FIS.iLUVit.security.JwtUtils;
 import FIS.iLUVit.security.LoginRequest;
 import FIS.iLUVit.security.LoginResponse;
-import FIS.iLUVit.repository.AlarmRepository;
-import FIS.iLUVit.repository.AuthNumberRepository;
-import FIS.iLUVit.repository.UserRepository;
 import FIS.iLUVit.security.uesrdetails.PrincipalDetails;
 import com.auth0.jwt.exceptions.JWTVerificationException;
 import lombok.RequiredArgsConstructor;
@@ -32,6 +32,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.Duration;
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.stream.Collectors;
 
 @Service
@@ -121,8 +122,8 @@ public class UserService {
                 pageable, alarmSlice.hasNext());
     }
 
-    public Integer deleteUserAlarm(Long userId, Long alarmId) {
-        return alarmRepository.deleteById(userId, alarmId);
+    public Integer deleteUserAlarm(Long userId, List<Long> alarmIds) {
+        return alarmRepository.deleteByIds(userId, alarmIds);
     }
 
 

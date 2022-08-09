@@ -4,9 +4,12 @@ import FIS.iLUVit.config.argumentResolver.Login;
 import FIS.iLUVit.controller.dto.*;
 import FIS.iLUVit.service.PostService;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -14,19 +17,21 @@ import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
+@Slf4j
 public class PostController {
 
     private final PostService postService;
 
     /**
-        작성자: 이창윤
-        작성시간: 2022/06/27 11:31 AM
-        내용: multipart/form-data 형식으로 변환된 request, 이미지 파일 리스트 images 파라미터로 게시글 저장
-    */
+     * 작성자: 이창윤
+     * 작성시간: 2022/06/27 11:31 AM
+     * 내용: multipart/form-data 형식으로 변환된 request, 이미지 파일 리스트 images 파라미터로 게시글 저장
+     */
     @PostMapping(value = "/user/post", consumes = {MediaType.APPLICATION_JSON_VALUE, MediaType.MULTIPART_FORM_DATA_VALUE})
+    @ResponseStatus(HttpStatus.ACCEPTED)
     public Long registerPost(@Login Long userId,
-                             @RequestPart PostRegisterRequest request,
-                             @RequestPart(required = false) List<MultipartFile> images) {
+                             @RequestPart(required = false) List<MultipartFile> images,
+                             @RequestPart @Validated PostRegisterRequest request) {
         return postService.savePost(request, images, userId);
     }
 

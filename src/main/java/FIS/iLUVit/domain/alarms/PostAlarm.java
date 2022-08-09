@@ -1,17 +1,17 @@
 package FIS.iLUVit.domain.alarms;
 
 import FIS.iLUVit.controller.dto.AlarmDto;
-import FIS.iLUVit.domain.*;
+import FIS.iLUVit.domain.Comment;
+import FIS.iLUVit.domain.Post;
+import FIS.iLUVit.domain.User;
 import FIS.iLUVit.exception.BoardErrorResult;
 import FIS.iLUVit.exception.BoardException;
 import FIS.iLUVit.service.AlarmUtils;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
+import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.FetchType;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
 import java.time.LocalDateTime;
 
 @Entity
@@ -19,15 +19,14 @@ import java.time.LocalDateTime;
 @Getter
 public class PostAlarm extends Alarm {
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "postId")
-    private Post post;
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "boardId")
-    private Board board;
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "centerId")
-    private Center center;
+    @Column(name = "postId")
+    private Long postId;
+
+    @Column(name = "boardId")
+    private Long boardId;
+
+    @Column(name = "centerId")
+    private Long centerId;
     private String boardName;
     private String centerName;
     private Boolean anonymous;
@@ -37,15 +36,15 @@ public class PostAlarm extends Alarm {
     public PostAlarm(User postWriter, Post post, Comment comment) {
         super(postWriter);
         this.mode = AlarmUtils.POST_COMMENT;
-        this.post = post;
-        this.board = post.getBoard();
-        this.center = post.getBoard().getCenter();
+        this.postId = post.getId();
+        this.boardId = post.getBoard().getId();
         if (post.getBoard() == null) {
-
             throw new BoardException(BoardErrorResult.BOARD_NOT_EXIST);
         }
-        if(post.getBoard().getCenter() != null)
+        if(post.getBoard().getCenter() != null) {
             this.centerName = post.getBoard().getCenter().getName();
+            this.centerId = post.getBoard().getCenter().getId();
+        }
         this.boardName = post.getBoard().getName();
         this.anonymous = comment.getAnonymous();
         if(!this.anonymous){
@@ -59,9 +58,9 @@ public class PostAlarm extends Alarm {
 
     @Override
     public AlarmDto exportAlarm() {
-        return center == null ?
-                new PostAlarmDto(id, boardName, createdDate, message, dtype, post.getId(), anonymous, commentUserProfileImage, commentUserNickname, centerName, board.getId(), null) :
-                new PostAlarmDto(id, boardName, createdDate, message, dtype, post.getId(), anonymous, commentUserProfileImage, commentUserNickname, centerName, board.getId(), center.getId());
+        return centerId == null ?
+                new PostAlarmDto(id, boardName, createdDate, message, dtype, postId, anonymous, commentUserProfileImage, commentUserNickname, centerName, boardId, null) :
+                new PostAlarmDto(id, boardName, createdDate, message, dtype, postId, anonymous, commentUserProfileImage, commentUserNickname, centerName, boardId, centerId);
     }
 
     @Getter

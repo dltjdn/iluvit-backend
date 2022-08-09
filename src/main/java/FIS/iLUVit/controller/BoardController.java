@@ -9,6 +9,8 @@ import lombok.NoArgsConstructor;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
+
 @RestController
 @RequiredArgsConstructor
 public class BoardController {
@@ -43,7 +45,7 @@ public class BoardController {
     @PostMapping("/user/board")
     public Long createBoard(@Login Long userId,
                             @RequestParam(value = "center_id", required = false) Long center_id,
-                            @RequestBody CreateBoardRequest request) {
+                            @RequestBody @Valid CreateBoardRequest request) {
         return boardService.create(userId, center_id, request);
     }
 
