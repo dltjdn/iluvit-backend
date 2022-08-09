@@ -791,30 +791,60 @@ class CenterRepositoryTest {
         }
     }
 
-    @Test
-    public void findByIdAndSignedWithTeacher () {
-        // given
-        Center center1 = Creator.createCenter("center1", true, new Area("서울시", "구로구"));
-        Center center2 = Creator.createCenter("center2", true, new Area("서울시", "구로구"));
-        Teacher teacher1 = Creator.createTeacher("teacher1", center1, Approval.ACCEPT);
-        Teacher teacher2 = Creator.createTeacher("teacher2", center1, Approval.ACCEPT);
-        Teacher teacher3 = Creator.createTeacher("teacher3", center1, Approval.REJECT);
-        Teacher teacher4 = Creator.createTeacher("teacher4", center2, Approval.ACCEPT);
-        Teacher teacher5 = Creator.createTeacher("teacher5", center1, Approval.WAITING);
-        em.persist(center1);
-        em.persist(center2);
-        em.persist(teacher1);
-        em.persist(teacher2);
-        em.persist(teacher3);
-        em.persist(teacher4);
-        em.persist(teacher5);
-        em.flush();
-        em.clear();
-        // when
-        Center result = centerRepository.findByIdAndSignedWithTeacher(center1.getId()).orElse(null);
-        // then
-        assertThat(result).isNotNull();
-        assertThat(result.getTeachers().size()).isEqualTo(2);
+
+    @Nested
+    @DisplayName("findByIdAndSignedWithTeacher")
+    class findByIdAndSignedWithTeacher {
+        @Test
+        public void 정상등록된시설 () {
+            // given
+            Center center1 = Creator.createCenter("center1", true, new Area("서울시", "구로구"));
+            Center center2 = Creator.createCenter("center2", true, new Area("서울시", "구로구"));
+            Teacher teacher1 = Creator.createTeacher("teacher1", center1, Approval.ACCEPT);
+            Teacher teacher2 = Creator.createTeacher("teacher2", center1, Approval.ACCEPT);
+            Teacher teacher3 = Creator.createTeacher("teacher3", center1, Approval.REJECT);
+            Teacher teacher4 = Creator.createTeacher("teacher4", center2, Approval.ACCEPT);
+            Teacher teacher5 = Creator.createTeacher("teacher5", center1, Approval.WAITING);
+            em.persist(center1);
+            em.persist(center2);
+            em.persist(teacher1);
+            em.persist(teacher2);
+            em.persist(teacher3);
+            em.persist(teacher4);
+            em.persist(teacher5);
+            em.flush();
+            em.clear();
+            // when
+            Center result = centerRepository.findByIdAndSignedWithTeacher(center1.getId()).orElse(null);
+            // then
+            assertThat(result).isNotNull();
+            assertThat(result.getTeachers().size()).isEqualTo(2);
+        }
+
+        @Test
+        public void 미등록시설 () {
+            // given
+            Center center1 = Creator.createCenter("center1", true, new Area("서울시", "구로구"));
+            Center center2 = Creator.createCenter("center2", false, new Area("서울시", "구로구"));
+            Teacher teacher1 = Creator.createTeacher("teacher1", center1, Approval.ACCEPT);
+            Teacher teacher2 = Creator.createTeacher("teacher2", center1, Approval.ACCEPT);
+            Teacher teacher3 = Creator.createTeacher("teacher3", center1, Approval.REJECT);
+            Teacher teacher4 = Creator.createTeacher("teacher4", center2, Approval.WAITING);
+            Teacher teacher5 = Creator.createTeacher("teacher5", center1, Approval.WAITING);
+            em.persist(center1);
+            em.persist(center2);
+            em.persist(teacher1);
+            em.persist(teacher2);
+            em.persist(teacher3);
+            em.persist(teacher4);
+            em.persist(teacher5);
+            em.flush();
+            em.clear();
+            // when
+            Center result = centerRepository.findByIdAndSignedWithTeacher(center2.getId()).orElse(null);
+            // then
+            assertThat(result).isNull();
+        }
     }
 
 }

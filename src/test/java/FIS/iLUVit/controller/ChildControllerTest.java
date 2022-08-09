@@ -289,6 +289,43 @@ public class ChildControllerTest {
     }
 
     @Nested
+    @DisplayName("아이의 시설 탈퇴")
+    class exitCenter {
+        @Test
+        public void 잘못된요청() throws Exception {
+            //given
+            String url = "/parent/child/center/{childId}";
+            UserErrorResult error = UserErrorResult.NOT_VALID_REQUEST;
+            doThrow(new UserException(error))
+                    .when(childService)
+                    .exitCenter(any(), any());
+            //when
+            ResultActions result = mockMvc.perform(
+                    MockMvcRequestBuilders.delete(url, child.getId())
+                            .header("Authorization", Creator.createJwtToken(parent)
+                            ));
+            //then
+            result.andExpect(status().isBadRequest())
+                    .andExpect(content().json(
+                            objectMapper.writeValueAsString(new ErrorResponse(error.getHttpStatus(), error.getMessage()))
+                    ));
+        }
+
+        @Test
+        public void 정상요청() throws Exception {
+            //given
+            String url = "/parent/child/center/{childId}";
+            //when
+            ResultActions result = mockMvc.perform(
+                    MockMvcRequestBuilders.delete(url, child.getId())
+                            .header("Authorization", Creator.createJwtToken(parent)
+                            ));
+            //then
+            result.andExpect(status().isOk());
+        }
+    }
+
+    @Nested
     @DisplayName("아이삭제")
     class deleteChild{
         @Test
