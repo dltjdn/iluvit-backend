@@ -74,6 +74,8 @@ public class ChatRoom extends BaseEntity {
 
     public void updateMessage(String message) {
         this.message = message;
+        this.date = LocalDate.now();
+        this.time = LocalTime.now();
     }
 
     public void updatePartnerId(Long partner_id) {
