@@ -11,11 +11,18 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.context.support.ReloadableResourceBundleMessageSource;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
+import javax.annotation.PostConstruct;
 import javax.persistence.EntityManager;
+import java.util.TimeZone;
 
 @Configuration
 @ForDB
 public class AppConfig {
+
+    @PostConstruct
+    public void start() {
+        TimeZone.setDefault(TimeZone.getTimeZone("Asia/Seoul"));
+    }
 
     @Bean
     public JPAQueryFactory jpaQueryFactory(EntityManager entityManager){
