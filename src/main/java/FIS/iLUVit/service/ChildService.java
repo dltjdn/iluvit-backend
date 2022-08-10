@@ -19,6 +19,7 @@ import java.io.IOException;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 
 @Slf4j
@@ -310,7 +311,11 @@ public class ChildService {
 
         // 없으면 해당 시설과 연관된 bookmark 싹 다 삭제
         if (sameCenterChildren.isEmpty()) {
-            bookmarkRepository.deleteAllByCenterAndUser(parentId, deletedChild.getCenter().getId());
+            List<Board> boards = boardRepository.findByCenter(deletedChild.getCenter().getId());
+            List<Long> boardIds = boards.stream()
+                    .map(Board::getId)
+                    .collect(Collectors.toList());
+            bookmarkRepository.deleteAllByBoardAndUser(parentId, boardIds);
         }
     }
 
