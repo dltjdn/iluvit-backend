@@ -54,6 +54,7 @@ public class Child extends BaseImageEntity {
 
     public void mappingCenter(Center center) {
         this.center = center;
+        this.approval = Approval.WAITING;
     }
 
     public void accepted() {
