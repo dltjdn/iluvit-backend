@@ -65,8 +65,8 @@ public class ChildController {
      * 작성내용: 학부모/아이의 시설 승인 요청
      */
     @PatchMapping("/parent/child/center/{childId}/{centerId}")
-    public void mappingCenter(@Login Long userId, @PathVariable("childId") Long childId, @PathVariable("centerId") Long centerId) {
-        childService.mappingCenter(userId, childId, centerId);
+    public Long mappingCenter(@Login Long userId, @PathVariable("childId") Long childId, @PathVariable("centerId") Long centerId) {
+        return childService.mappingCenter(userId, childId, centerId).getCenter().getId();
     }
 
     /**

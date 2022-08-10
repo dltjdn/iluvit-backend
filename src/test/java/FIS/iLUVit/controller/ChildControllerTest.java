@@ -353,13 +353,18 @@ public class ChildControllerTest {
         public void 승인요청성공() throws Exception {
             //given
             String url = "/parent/child/center/{childId}/{centerId}";
+            doReturn(child)
+                    .when(childService)
+                    .mappingCenter(any(), any(), any());
             //when
             ResultActions result = mockMvc.perform(
                     MockMvcRequestBuilders.patch(url, parent.getId(), child.getId())
                             .header("Authorization", Creator.createJwtToken(parent))
             );
             //then
-            result.andExpect(status().isOk());
+            result.andDo(print())
+                    .andExpect(status().isOk())
+                    .andExpect(content().json(objectMapper.writeValueAsString(center.getId())));
         }
     }
 

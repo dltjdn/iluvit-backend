@@ -11,6 +11,7 @@ import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.boot.test.autoconfigure.orm.jpa.TestEntityManager;
 import org.springframework.context.annotation.ComponentScan;
 
+import javax.transaction.Transactional;
 import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -276,6 +277,7 @@ class BookmarkRepositoryTest {
     }
 
     @Test
+    @Transactional
     public void deleteAllByCenterAndUser() {
         // given
         em.persist(center1);
@@ -297,7 +299,7 @@ class BookmarkRepositoryTest {
         // when
         bookmarkRepository.deleteAllByCenterAndUser(parent1.getId(), center1.getId());
         // then
-        List<Bookmark> result = bookmarkRepository.findByUserWithBoard(parent1.getId());
+        List<Bookmark> result = bookmarkRepository.findByUserWithBoardAndCenter(parent1.getId());
         assertThat(result.size()).isEqualTo(2);
         for (Bookmark bookmark : result) {
             if (bookmark.getBoard().getCenter() != null) {

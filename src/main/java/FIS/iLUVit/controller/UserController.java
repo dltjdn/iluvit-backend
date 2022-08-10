@@ -61,7 +61,7 @@ public class UserController {
      * 작성내용: 비밀번호 변경
      */
     @PutMapping("/user/password")
-    public void updatePassword(@Login Long id, @RequestBody UpdatePasswordRequest request) {
+    public void updatePassword(@Login Long id, @Valid @RequestBody UpdatePasswordRequest request) {
         userService.updatePassword(id, request);
     }
 
