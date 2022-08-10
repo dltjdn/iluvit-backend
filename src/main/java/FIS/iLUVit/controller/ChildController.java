@@ -44,8 +44,8 @@ public class ChildController {
      * 작성내용: 아이 프로필 조회
      */
     @GetMapping("/parent/child/{childId}")
-    public ChildInfoDetailResponse findChildInfoDetail(@Login Long userId, @PathVariable("childId") Long childId, Pageable pageable) {
-        return childService.findChildInfoDetail(userId, childId, pageable);
+    public ChildInfoDetailResponse findChildInfoDetail(@Login Long userId, @PathVariable("childId") Long childId) {
+        return childService.findChildInfoDetail(userId, childId);
     }
 
     /**
@@ -56,7 +56,27 @@ public class ChildController {
     @PutMapping("/parent/child/{childId}")
     public ChildInfoDetailResponse updateChild(@Login Long userId, @PathVariable("childId") Long childId,
                                                @ModelAttribute UpdateChildRequest request, Pageable pageable) throws IOException {
-        return childService.updateChild(userId, childId, request, pageable);
+        return childService.updateChild(userId, childId, request);
+    }
+
+    /**
+     * 작성날짜: 2022-08-09 오후 5:57
+     * 작성자: 이승범
+     * 작성내용: 학부모/아이의 시설 승인 요청
+     */
+    @PatchMapping("/parent/child/center/{childId}/{centerId}")
+    public void mappingCenter(@Login Long userId, @PathVariable("childId") Long childId, @PathVariable("centerId") Long centerId) {
+        childService.mappingCenter(userId, childId, centerId);
+    }
+
+    /**
+     * 작성날짜: 2022/08/08 3:54 PM
+     * 작성자: 이승범
+     * 작성내용: 아이의 시설 탈퇴
+     */
+    @DeleteMapping("/parent/child/center/{childId}")
+    public void exitCenter(@Login Long userId, @PathVariable("childId") Long childId) {
+        childService.exitCenter(userId, childId);
     }
 
     /**
@@ -66,6 +86,7 @@ public class ChildController {
      */
     @DeleteMapping("/parent/child/{childId}")
     public ChildInfoDTO deleteChild(@Login Long userId, @PathVariable("childId") Long childId) {
+
         return childService.deleteChild(userId, childId);
     }
 

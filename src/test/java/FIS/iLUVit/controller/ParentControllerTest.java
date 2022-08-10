@@ -5,11 +5,9 @@ import FIS.iLUVit.config.argumentResolver.LoginUserArgumentResolver;
 import FIS.iLUVit.controller.dto.ParentDetailRequest;
 import FIS.iLUVit.controller.dto.ParentDetailResponse;
 import FIS.iLUVit.controller.dto.SignupParentRequest;
+import FIS.iLUVit.domain.Center;
 import FIS.iLUVit.domain.Parent;
-import FIS.iLUVit.exception.AuthNumberErrorResult;
-import FIS.iLUVit.exception.AuthNumberException;
-import FIS.iLUVit.exception.SignupErrorResult;
-import FIS.iLUVit.exception.SignupException;
+import FIS.iLUVit.exception.*;
 import FIS.iLUVit.exception.exceptionHandler.ErrorResponse;
 import FIS.iLUVit.exception.exceptionHandler.controllerAdvice.GlobalControllerAdvice;
 import FIS.iLUVit.service.ParentService;
@@ -17,6 +15,8 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -56,6 +56,7 @@ public class ParentControllerTest {
     private ObjectMapper objectMapper;
     private MockMultipartFile multipartFile;
     private Parent parent;
+    private Center center;
 
     @BeforeEach
     public void init() throws IOException {
@@ -72,6 +73,10 @@ public class ParentControllerTest {
                 .id(1L)
                 .nickName("nickname")
                 .name("name")
+                .build();
+        center = Center.builder()
+                .id(2L)
+                .name("center")
                 .build();
     }
 
@@ -357,5 +362,62 @@ public class ParentControllerTest {
         result.andExpect(status().isOk());
     }
 
+    @Nested
+    @DisplayName("시설찜하기")
+    class savePrefer{
+        @Test
+        @DisplayName("[error] 이미 찜한 시설")
+        public void 이미찜한시설() throws Exception {
+            // given
+            String url = "/parent/prefer/{centerId}";
+            PreferErrorResult error = PreferErrorResult.ALREADY_PREFER;
+            doThrow(new PreferException(error))
+                    .when(parentService)
+                    .savePrefer(any(), any());
+            // when
+            ResultActions result = mockMvc.perform(
+                    MockMvcRequestBuilders.post(url, center.getId())
+                            .header("Authorization", Creator.createJwtToken(parent))
+            );
+            // then
+            result.andExpect(status().isBadRequest())
+                    .andExpect(content().json(
+                            objectMapper.writeValueAsString(new ErrorResponse(error.getHttpStatus(), error.getMessage()))
+                    ));
+        }
 
+        @Test
+        @DisplayName("[error] 잘못된 시설")
+        public void centerIdError() throws Exception {
+            // given
+            String url = "/parent/prefer/{centerId}";
+            PreferErrorResult error = PreferErrorResult.NOT_VALID_CENTER;
+            doThrow(new PreferException(error))
+                    .when(parentService)
+                    .savePrefer(any(), any());
+            // when
+            ResultActions result = mockMvc.perform(
+                    MockMvcRequestBuilders.post(url, center.getId())
+                            .header("Authorization", parent.getId())
+            );
+            // then
+            result.andExpect(status().isBadRequest())
+                    .andExpect(content().json(
+                            objectMapper.writeValueAsString(new ErrorResponse(error.getHttpStatus(), error.getMessage()))
+                    ));
+        }
+
+        @Test
+        @DisplayName("[success] 찜하기 성공")
+        public void 찜성공() throws Exception {
+            // given
+            String url = "/parent/prefer/{centerId}";
+            // when
+            ResultActions result = mockMvc.perform(
+                    MockMvcRequestBuilders.post(url, center.getId())
+                            .header("Authorization", parent.getId()));
+            // then
+            result.andExpect(status().isOk());
+        }
+    }
 }

@@ -13,19 +13,16 @@ public class ChildInfoDetailResponse {
     private String child_name;
     private LocalDate birthDate;
     private String profileImage;
-    private String sido;
-    private String sigungu;
     private String center_name;
     private Approval approval;
-    Slice<CenterInfoDto> centerInfoDtoSlice;
 
     public ChildInfoDetailResponse(Child child) {
         this.child_id = child.getId();
         this.child_name = child.getName();
         this.birthDate = child.getBirthDate();
-        this.sido = child.getCenter().getArea().getSido();
-        this.sigungu = child.getCenter().getArea().getSigungu();
-        this.center_name = child.getCenter().getName();
+        if (child.getCenter() != null) {
+            this.center_name = child.getCenter().getName();
+        }
         this.approval = child.getApproval();
     }
 }
