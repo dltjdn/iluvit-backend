@@ -11,6 +11,7 @@ import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.boot.test.autoconfigure.orm.jpa.TestEntityManager;
 import org.springframework.context.annotation.ComponentScan;
 
+import javax.transaction.Transactional;
 import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -276,6 +277,7 @@ class BookmarkRepositoryTest {
     }
 
     @Test
+    @Transactional
     public void deleteAllByCenterAndUser() {
         // given
         em.persist(center1);

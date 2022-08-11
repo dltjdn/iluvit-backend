@@ -5,14 +5,13 @@ import FIS.iLUVit.domain.*;
 import FIS.iLUVit.domain.alarms.CenterApprovalAcceptedAlarm;
 import FIS.iLUVit.domain.alarms.CenterApprovalReceivedAlarm;
 import FIS.iLUVit.domain.enumtype.Approval;
+import FIS.iLUVit.exception.*;
 import FIS.iLUVit.domain.enumtype.Auth;
 import FIS.iLUVit.exception.UserErrorResult;
 import FIS.iLUVit.exception.UserException;
 import FIS.iLUVit.repository.*;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Slice;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -21,6 +20,7 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.Collectors;
+
 
 @Slf4j
 @Service
@@ -124,6 +124,35 @@ public class ChildService {
     }
 
     /**
+     * 작성날짜: 2022-08-09 오후 6:01
+     * 작성자: 이승범
+     * 작성내용: 학부모/아이 시설 승인 요청
+     */
+    public Child mappingCenter(Long userId, Long childId, Long centerId) {
+
+        // 승인 받고자 하는 아이
+        Child mappedChild = childRepository.findByIdAndParent(userId, childId)
+                .orElseThrow(() -> new UserException(UserErrorResult.NOT_VALID_REQUEST));
+
+        // 속해있는 시설이 있는 경우
+        if (mappedChild.getCenter() != null) {
+            throw new SignupException(SignupErrorResult.ALREADY_BELONG_CENTER);
+        }
+
+        // 승인 요청 보내는 시설
+        Center center = centerRepository.findByIdAndSignedWithTeacher(centerId)
+                .orElseThrow(() -> new CenterException(CenterErrorResult.CENTER_NOT_EXIST));
+
+        mappedChild.mappingCenter(center);
+
+        center.getTeachers().forEach(teacher -> {
+            AlarmUtils.publishAlarmEvent(new CenterApprovalReceivedAlarm(teacher, Auth.PARENT));
+        });
+
+        return mappedChild;
+    }
+
+    /**
     *   작성날짜: 2022/08/08 3:58 PM
     *   작성자: 이승범
     *   작성내용: 아이의 시설 탈퇴
@@ -135,6 +164,7 @@ public class ChildService {
         // 사용자의 아이중에 childId를 가진 아이가 있는지 검사
         Child exitedChild = childrenByUser.stream()
                 .filter(child -> Objects.equals(child.getId(), childId))
+                .filter(child -> child.getCenter() != null)
                 .findFirst()
                 .orElseThrow(() -> new UserException(UserErrorResult.NOT_VALID_REQUEST));
 
@@ -259,17 +289,18 @@ public class ChildService {
                 .findFirst()
                 .orElseThrow(() -> new UserException(UserErrorResult.NOT_VALID_REQUEST));
 
-        // 시설과의 연관관계 끊기
-        firedChild.fired();
 
         // 식제하고자 하는 아이의 부모와 그 부모에 속한 모든 아이들 가져오기
         List<Child> childrenByUser = childRepository.findByUserWithCenter(userId);
 
         // bookmark 처리
         deleteBookmarkByCenter(firedChild.getParent().getId(), childrenByUser, firedChild);
-    }
-    // 삭제되는 아이와 같은 시설에 다니는 또 다른 아이가 없을경우 해당 시설과 관련된 bookmark 모두 삭제
 
+        // 시설과의 연관관계 끊기
+        firedChild.exitCenter();
+    }
+
+    // 삭제되는 아이와 같은 시설에 다니는 또 다른 아이가 없을경우 해당 시설과 관련된 bookmark 모두 삭제
     public void deleteBookmarkByCenter(Long parentId, List<Child> childrenByUser, Child deletedChild) {
         Optional<Child> sameCenterChildren = childrenByUser.stream()
                 .filter(child -> child.getCenter() != null)
@@ -280,7 +311,12 @@ public class ChildService {
 
         // 없으면 해당 시설과 연관된 bookmark 싹 다 삭제
         if (sameCenterChildren.isEmpty()) {
-            bookmarkRepository.deleteAllByCenterAndUser(parentId, deletedChild.getCenter().getId());
+            List<Board> boards = boardRepository.findByCenter(deletedChild.getCenter().getId());
+            List<Long> boardIds = boards.stream()
+                    .map(Board::getId)
+                    .collect(Collectors.toList());
+            bookmarkRepository.deleteAllByBoardAndUser(parentId, boardIds);
         }
     }
+
 }

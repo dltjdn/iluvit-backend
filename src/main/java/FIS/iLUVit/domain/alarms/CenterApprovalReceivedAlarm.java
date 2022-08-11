@@ -21,19 +21,24 @@ public class CenterApprovalReceivedAlarm extends Alarm{
 
     public CenterApprovalReceivedAlarm(User teacher, Auth auth) {
         super(teacher);
+        this.auth = auth;
         this.mode = AlarmUtils.CENTER_APPROVAL_RECEIVED;
         message = AlarmUtils.getMessage(mode, null);
     }
 
     @Override
     public AlarmDto exportAlarm() {
-        return new CenterApprovalReceivedAlarmDto(id, createdDate, message, dtype);
+        return new CenterApprovalReceivedAlarmDto(id, createdDate, message, dtype, auth);
     }
 
     @Getter
     public static class CenterApprovalReceivedAlarmDto extends AlarmDto{
-        public CenterApprovalReceivedAlarmDto(Long id, LocalDateTime createdDate, String message, String type) {
+
+        private Auth auth;
+
+        public CenterApprovalReceivedAlarmDto(Long id, LocalDateTime createdDate, String message, String type, Auth auth) {
             super(id, createdDate, message, type);
+            this.auth = auth;
         }
     }
 }

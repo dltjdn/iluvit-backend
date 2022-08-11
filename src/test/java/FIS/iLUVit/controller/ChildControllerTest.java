@@ -9,8 +9,7 @@ import FIS.iLUVit.domain.Parent;
 import FIS.iLUVit.domain.Teacher;
 import FIS.iLUVit.domain.enumtype.Approval;
 import FIS.iLUVit.domain.enumtype.Auth;
-import FIS.iLUVit.exception.UserErrorResult;
-import FIS.iLUVit.exception.UserException;
+import FIS.iLUVit.exception.*;
 import FIS.iLUVit.exception.exceptionHandler.ErrorResponse;
 import FIS.iLUVit.exception.exceptionHandler.controllerAdvice.GlobalControllerAdvice;
 import FIS.iLUVit.service.ChildService;
@@ -284,6 +283,124 @@ public class ChildControllerTest {
                     .param("name", "name")
                     .param("birthDate", "2022-01-01"));
             // then
+            result.andExpect(status().isOk());
+        }
+    }
+
+    @Nested
+    @DisplayName("학부모/아이 시설 승인 요청")
+    class mappingCenter {
+        @Test
+        public void 잘못된아이정보() throws Exception {
+            //given
+            String url = "/parent/child/center/{childId}/{centerId}";
+            UserErrorResult error = UserErrorResult.NOT_VALID_REQUEST;
+            doThrow(new UserException(error))
+                    .when(childService)
+                    .mappingCenter(any(), any(), any());
+            //when
+            ResultActions result = mockMvc.perform(
+                    MockMvcRequestBuilders.patch(url, child.getId(), center.getId())
+                            .header("Authorization", Creator.createJwtToken(parent))
+            );
+            //then
+            result.andExpect(status().isBadRequest())
+                    .andExpect(content().json(
+                            objectMapper.writeValueAsString(new ErrorResponse(error.getHttpStatus(), error.getMessage()))
+                    ));
+        }
+
+        @Test
+        public void 아이가시설에속해있는경우() throws Exception {
+            //given
+            String url = "/parent/child/center/{childId}/{centerId}";
+            SignupErrorResult error = SignupErrorResult.ALREADY_BELONG_CENTER;
+            doThrow(new SignupException(error))
+                    .when(childService)
+                    .mappingCenter(any(), any(), any());
+            //when
+            ResultActions result = mockMvc.perform(
+                    MockMvcRequestBuilders.patch(url, parent.getId(), child.getId())
+                            .header("Authorization", Creator.createJwtToken(parent))
+            );
+            //then
+            result.andExpect(status().isBadRequest())
+                    .andExpect(content().json(
+                            objectMapper.writeValueAsString(new ErrorResponse(error.getHttpStatus(), error.getMessage()))
+                    ));
+        }
+
+        @Test
+        public void 잘못된시설정보() throws Exception {
+            //given
+            String url = "/parent/child/center/{childId}/{centerId}";
+            CenterErrorResult error = CenterErrorResult.CENTER_NOT_EXIST;
+            doThrow(new CenterException(error))
+                    .when(childService)
+                    .mappingCenter(any(), any(), any());
+            //when
+            ResultActions result = mockMvc.perform(
+                    MockMvcRequestBuilders.patch(url, parent.getId(), child.getId())
+                            .header("Authorization", Creator.createJwtToken(parent))
+            );
+            //then
+            result.andExpect(status().isBadRequest())
+                    .andExpect(content().json(
+                            objectMapper.writeValueAsString(new ErrorResponse(error.getHttpStatus(), error.getMessage()))
+                    ));
+        }
+        @Test
+        public void 승인요청성공() throws Exception {
+            //given
+            String url = "/parent/child/center/{childId}/{centerId}";
+            doReturn(child)
+                    .when(childService)
+                    .mappingCenter(any(), any(), any());
+            //when
+            ResultActions result = mockMvc.perform(
+                    MockMvcRequestBuilders.patch(url, parent.getId(), child.getId())
+                            .header("Authorization", Creator.createJwtToken(parent))
+            );
+            //then
+            result.andDo(print())
+                    .andExpect(status().isOk())
+                    .andExpect(content().json(objectMapper.writeValueAsString(center.getId())));
+        }
+    }
+
+    @Nested
+    @DisplayName("아이의 시설 탈퇴")
+    class exitCenter {
+        @Test
+        public void 잘못된요청() throws Exception {
+            //given
+            String url = "/parent/child/center/{childId}";
+            UserErrorResult error = UserErrorResult.NOT_VALID_REQUEST;
+            doThrow(new UserException(error))
+                    .when(childService)
+                    .exitCenter(any(), any());
+            //when
+            ResultActions result = mockMvc.perform(
+                    MockMvcRequestBuilders.delete(url, child.getId())
+                            .header("Authorization", Creator.createJwtToken(parent)
+                            ));
+            //then
+            result.andExpect(status().isBadRequest())
+                    .andExpect(content().json(
+                            objectMapper.writeValueAsString(new ErrorResponse(error.getHttpStatus(), error.getMessage()))
+                    ));
+        }
+
+        @Test
+        public void 정상요청() throws Exception {
+            //given
+            String url = "/parent/child/center/{childId}";
+            //when
+            ResultActions result = mockMvc.perform(
+                    MockMvcRequestBuilders.delete(url, child.getId())
+                            .header("Authorization", Creator.createJwtToken(parent)
+                            ));
+            //then
             result.andExpect(status().isOk());
         }
     }

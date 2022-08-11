@@ -54,26 +54,11 @@ public class Child extends BaseImageEntity {
 
     public void mappingCenter(Center center) {
         this.center = center;
-    }
-
-    public void updateWithCenter(Center center, String name, LocalDate birthDate) {
-        this.center = center;
         this.approval = Approval.WAITING;
-        this.name = name;
-        this.birthDate = birthDate;
     }
 
     public void accepted() {
         this.approval = Approval.ACCEPT;
-    }
-
-    public void fired() {
-        this.approval = Approval.REJECT;
-    }
-
-    public void updateWithoutCenter(String name, LocalDate birthDate) {
-        this.name = name;
-        this.birthDate = birthDate;
     }
 
     public void update(String name, LocalDate birthDate) {
