@@ -200,13 +200,25 @@ public class CenterRepositoryImpl extends CenterQueryMethod implements CenterRep
 
     @Override
     public List<CenterRecommendDto> findRecommendCenter(Theme theme, Location location, Pageable pageable) {
-        return jpaQueryFactory.select(new QCenterRecommendDto(center.id, center.name, center.profileImagePath))
+        List<CenterRecommendDto> result = jpaQueryFactory.select(new QCenterRecommendDto(center.id, center.name, center.profileImagePath))
                 .from(center)
                 .where(areaEq(location.getSido(), location.getSigungu()), themeEq(theme))
                 .orderBy(center.score.desc(), center.id.asc())
                 .offset(pageable.getOffset())
                 .limit(pageable.getPageSize())
                 .fetch();
+
+        int size = result.size();
+        if(size < 10){
+            List<CenterRecommendDto> temp = jpaQueryFactory.select(new QCenterRecommendDto(center.id, center.name, center.profileImagePath))
+                    .from(center)
+                    .where(areaEq(location.getSido(), location.getSigungu()), center.theme.isNull())
+                    .orderBy(center.score.desc(), center.id.asc())
+                    .limit(10 - size)
+                    .fetch();
+            result.addAll(temp);
+        }
+        return result;
     }
 
     @Override
