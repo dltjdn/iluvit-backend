@@ -69,7 +69,7 @@ public class ChatService {
         chatRoom1.updatePartnerId(chatRoom2.getId());
         chatRoom2.updatePartnerId(chatRoom1.getId());
 
-        AlarmUtils.publishAlarmEvent(new ChatAlarm(receiveUser, sendUser, false));
+        AlarmUtils.publishAlarmEvent(new ChatAlarm(receiveUser, sendUser, anonymousInfo));
 
 
         chatRepository.save(chat1);

@@ -144,7 +144,7 @@ public class PtDate extends BaseEntity {
     }
 
     public PtDate updateWaitingCntForPtDateChange(Integer changeNum) {
-        participantCnt += changeNum;
+//        participantCnt += changeNum;
         waitingCnt =- changeNum;
         if(waitingCnt < 0)
             waitingCnt = 0;
