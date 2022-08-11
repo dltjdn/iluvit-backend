@@ -4,21 +4,16 @@ import FIS.iLUVit.Creator;
 import FIS.iLUVit.controller.dto.ParentDetailRequest;
 import FIS.iLUVit.controller.dto.ParentDetailResponse;
 import FIS.iLUVit.controller.dto.SignupParentRequest;
-import FIS.iLUVit.domain.Board;
 import FIS.iLUVit.domain.Center;
 import FIS.iLUVit.domain.Parent;
 import FIS.iLUVit.domain.Prefer;
-import FIS.iLUVit.domain.enumtype.BoardKind;
 import FIS.iLUVit.exception.PreferErrorResult;
 import FIS.iLUVit.exception.PreferException;
 import FIS.iLUVit.exception.UserErrorResult;
 import FIS.iLUVit.exception.UserException;
-import FIS.iLUVit.exception.exceptionHandler.ErrorResponse;
 import FIS.iLUVit.repository.*;
-import FIS.iLUVit.service.createmethod.CreateTest;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -29,15 +24,13 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.data.util.Pair;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Optional;
 
-import static FIS.iLUVit.service.createmethod.CreateTest.createBoard;
-import static org.assertj.core.api.Assertions.*;
-import static org.junit.jupiter.api.Assertions.*;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
@@ -64,6 +57,8 @@ public class ParentServiceTest {
     private CenterRepository centerRepository;
     @Mock
     private PreferRepository preferRepository;
+    @Mock
+    private MapService mapService;
 
 
     private ObjectMapper objectMapper;
@@ -96,6 +91,11 @@ public class ParentServiceTest {
         doReturn("hashedPwd")
                 .when(userService)
                 .signupValidation(request.getPassword(), request.getPasswordCheck(), request.getLoginId(), request.getPhoneNum(), request.getNickname());
+        //when
+        Mockito.doReturn(Pair.of(126.8806602, 37.4778951))
+                .when(mapService).convertAddressToLocation(null);
+        Mockito.doReturn(Pair.of("서울특별시", "금천구"))
+                .when(mapService).getSidoSigunguByLocation(126.8806602, 37.4778951);
         // when
         Parent result = target.signup(request);
         // then
@@ -163,12 +163,18 @@ public class ParentServiceTest {
                     .nickname("nickName")
                     .changePhoneNum(true)
                     .phoneNum("newPhoneNum")
-                    .address("address")
+                    .address("서울특별시 금천구 가산동 429-1 가산디지털2로 108")
                     .detailAddress("detailAddress")
                     .emailAddress("emailAddress")
                     .interestAge(3)
                     .theme(objectMapper.writeValueAsString(Creator.createTheme()))
                     .build();
+
+            //when
+            Mockito.doReturn(Pair.of(126.8806602, 37.4778951))
+                    .when(mapService).convertAddressToLocation(anyString());
+            Mockito.doReturn(Pair.of("서울특별시", "금천구"))
+                    .when(mapService).getSidoSigunguByLocation(126.8806602, 37.4778951);
             // when
             ParentDetailResponse result = target.updateDetail(parent1.getId(), request);
             // then

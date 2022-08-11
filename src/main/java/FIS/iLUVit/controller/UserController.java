@@ -106,4 +106,19 @@ public class UserController {
             throw new JWTVerificationException("유효하지 않은 시도입니다.");
         }
     }
+
+    @GetMapping("/readAlarm")
+    public void readAlarm(@Login Long userId){
+        if(userId == null)
+            throw new UserException(UserErrorResult.NOT_LOGIN);
+        userService.readAlarm(userId);
+    }
+
+    @GetMapping("/hasRead")
+    public Boolean hasRead(@Login Long userId){
+        if(userId == null)
+            throw new UserException(UserErrorResult.NOT_LOGIN);
+        return userService.hasRead(userId);
+    }
+
 }

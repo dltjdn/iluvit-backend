@@ -2,6 +2,7 @@ package FIS.iLUVit.service;
 
 import FIS.iLUVit.controller.dto.*;
 import FIS.iLUVit.domain.Center;
+import FIS.iLUVit.domain.Location;
 import FIS.iLUVit.domain.Parent;
 import FIS.iLUVit.domain.Teacher;
 import FIS.iLUVit.domain.embeddable.Score;
@@ -94,7 +95,8 @@ public class CenterService {
         Parent parent = parentRepository.findById(userId)
                 .orElseThrow(() -> new UserException("해당 유저가 존재 하지 않습니다."));
         Theme theme = parent.getTheme();
-        return centerRepository.findRecommendCenter(theme, PageRequest.of(0, 10, Sort.by("score")));
+        Location location = parent.getLocation();
+        return centerRepository.findRecommendCenter(theme, location, PageRequest.of(0, 10, Sort.by("score")));
     }
 
     /**

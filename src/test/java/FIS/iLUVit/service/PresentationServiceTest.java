@@ -46,6 +46,8 @@ class PresentationServiceTest {
     @Mock
     private PresentationRepository presentationRepository;
     @Mock
+    private ParticipationRepository participationRepository;
+    @Mock
     private PtDateRepository ptDateRepository;
     @Mock
     private CenterRepository centerRepository;

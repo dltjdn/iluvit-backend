@@ -2,6 +2,7 @@ package FIS.iLUVit.repository;
 
 import FIS.iLUVit.controller.dto.CenterInfoDto;
 import FIS.iLUVit.controller.dto.CenterRecommendDto;
+import FIS.iLUVit.domain.Location;
 import FIS.iLUVit.domain.embeddable.Area;
 import FIS.iLUVit.domain.embeddable.Theme;
 import FIS.iLUVit.domain.enumtype.KindOf;
@@ -26,7 +27,7 @@ public interface CenterRepositoryCustom {
 
     List<CenterMapPreview> findByFilterForMap(double longitude, double latitude, Double distance, String searchContent);
 
-    List<CenterRecommendDto> findRecommendCenter(Theme theme, Pageable pageable);
+    List<CenterRecommendDto> findRecommendCenter(Theme theme, Location location, Pageable pageable);
 
     Slice<CenterInfoDto> findForSignup(String sido, String sigungu, String centerName, Pageable pageable);
 

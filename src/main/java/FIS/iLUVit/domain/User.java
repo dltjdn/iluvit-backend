@@ -3,7 +3,10 @@ package FIS.iLUVit.domain;
 import FIS.iLUVit.controller.dto.UserInfoResponse;
 import FIS.iLUVit.domain.enumtype.Auth;
 import FIS.iLUVit.security.LoginResponse;
-import lombok.*;
+import lombok.AccessLevel;
+import lombok.Data;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
 import java.util.ArrayList;
@@ -32,6 +35,11 @@ public class User extends BaseImageEntity {
     protected String name;                // 잔짜 이름
     protected String address;             // 주소
     protected String detailAddress;       // 상세주소
+
+    @Embedded
+    protected Location location;
+
+    protected Boolean readAlarm;
 
     @Enumerated(EnumType.STRING)
     protected Auth auth;                   // 교사, 원장, 부모
@@ -68,5 +76,15 @@ public class User extends BaseImageEntity {
 
     public UserInfoResponse getUserInfo() {
         return new UserInfoResponse(id, nickName, auth);
+    }
+
+    public User updateReadAlarm(Boolean readAlarm) {
+        this.readAlarm = readAlarm;
+        return this;
+    }
+
+    public User updateLocation(Location location) {
+        this.location = location;
+        return this;
     }
 }

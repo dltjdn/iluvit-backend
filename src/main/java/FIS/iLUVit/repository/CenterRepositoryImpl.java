@@ -4,6 +4,7 @@ import FIS.iLUVit.controller.dto.CenterInfoDto;
 import FIS.iLUVit.controller.dto.CenterRecommendDto;
 import FIS.iLUVit.controller.dto.QCenterInfoDto;
 import FIS.iLUVit.controller.dto.QCenterRecommendDto;
+import FIS.iLUVit.domain.Location;
 import FIS.iLUVit.domain.embeddable.Area;
 import FIS.iLUVit.domain.embeddable.Theme;
 import FIS.iLUVit.domain.enumtype.KindOf;
@@ -198,10 +199,10 @@ public class CenterRepositoryImpl extends CenterQueryMethod implements CenterRep
     }
 
     @Override
-    public List<CenterRecommendDto> findRecommendCenter(Theme theme, Pageable pageable) {
+    public List<CenterRecommendDto> findRecommendCenter(Theme theme, Location location, Pageable pageable) {
         return jpaQueryFactory.select(new QCenterRecommendDto(center.id, center.name, center.profileImagePath))
                 .from(center)
-                .where(themeEq(theme))
+                .where(areaEq(location.getSido(), location.getSigungu()), themeEq(theme))
                 .orderBy(center.score.desc(), center.id.asc())
                 .offset(pageable.getOffset())
                 .limit(pageable.getPageSize())

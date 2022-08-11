@@ -13,6 +13,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.data.util.Pair;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -36,7 +37,7 @@ public class ParentService {
     private final PreferRepository preferRepository;
     private final BoardRepository boardRepository;
     private final BookmarkRepository bookmarkRepository;
-
+    private final MapService mapService;
 
 
     /**
@@ -88,6 +89,11 @@ public class ParentService {
             findParent.updateDetail(request, theme);
         }
 
+        Pair<Double, Double> loAndLat = mapService.convertAddressToLocation(request.getAddress());
+        Pair<String, String> hangjung = mapService.getSidoSigunguByLocation(loAndLat.getFirst(), loAndLat.getSecond());
+        Location location = new Location(loAndLat, hangjung);
+        findParent.updateLocation(location);
+
         ParentDetailResponse response = new ParentDetailResponse(findParent);
 
         imageService.saveProfileImage(request.getProfileImg(), findParent);
@@ -105,6 +111,11 @@ public class ParentService {
 
         String hashedPwd = userService.signupValidation(request.getPassword(), request.getPasswordCheck(), request.getLoginId(), request.getPhoneNum(), request.getNickname());
         Parent parent = request.createParent(hashedPwd);
+
+        Pair<Double, Double> loAndLat = mapService.convertAddressToLocation(request.getAddress());
+        Pair<String, String> hangjung = mapService.getSidoSigunguByLocation(loAndLat.getFirst(), loAndLat.getSecond());
+        Location location = new Location(loAndLat, hangjung);
+        parent.updateLocation(location);
 
         // default 스크랩 생성
         Scrap scrap = Scrap.createScrap(parent, "default");

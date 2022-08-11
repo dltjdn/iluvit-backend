@@ -27,7 +27,6 @@ import org.springframework.data.domain.SliceImpl;
 import javax.persistence.EntityManager;
 import java.time.LocalDate;
 import java.util.ArrayList;
-import java.util.EnumSet;
 import java.util.List;
 import java.util.Objects;
 
@@ -637,20 +636,22 @@ class CenterRepositoryTest {
             Center center4 = createKindergarten(gumchon, "test4", theme2, 2, 4, "test", "test", basicInfra, 5);
             Center center5 = createKindergarten(gumchon, "test5", theme2, 3, 5, "test", "test", basicInfra, 3);
             Center center6 = createKindergarten(gumchon, "test6", theme2, 2, 3, "test", "test", basicInfra, 1);
-
+            Location location = new Location("서울특별시", "금천구", null, null);
             em.persist(center1);
             em.persist(center2);
             em.persist(center3);
             em.persist(center4);
             em.persist(center5);
             em.persist(center6);
+            em.flush();
+            em.clear();
 
             Theme theme = Theme.builder()
                     .coding(true)
                     .english(true)
                     .build();
             //when
-            List<CenterRecommendDto> recommendCenter = centerRepository.findRecommendCenter(theme, PageRequest.of(0, 10));
+            List<CenterRecommendDto> recommendCenter = centerRepository.findRecommendCenter(theme, location, PageRequest.of(0, 10));
             assertThat(recommendCenter.size()).isEqualTo(3);
             assertThat(recommendCenter.get(0).getCenterName()).isEqualTo("test2");
             assertThat(recommendCenter.get(1).getCenterName()).isEqualTo("test1");

@@ -31,7 +31,7 @@ public abstract class Alarm extends BaseEntity {
     protected User user;
 
     public Alarm(User user) {
-        this.user = user;
+        this.user = user.updateReadAlarm(Boolean.FALSE);
     }
 
     public abstract AlarmDto exportAlarm();
