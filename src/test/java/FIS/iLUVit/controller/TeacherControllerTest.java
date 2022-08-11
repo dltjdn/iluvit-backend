@@ -109,8 +109,8 @@ public class TeacherControllerTest {
         // given
         SignupTeacherRequest request = SignupTeacherRequest.builder()
                 .loginId("loginId")
-                .password("password")
-                .passwordCheck("password")
+                .password("asd123!@#")
+                .passwordCheck("asd123!@#")
                 .phoneNum("phoneNum")
                 .nickname("nickName")
                 .name("name")
@@ -142,8 +142,8 @@ public class TeacherControllerTest {
         // given
         SignupTeacherRequest request = SignupTeacherRequest.builder()
                 .loginId("loginId")
-                .password("password")
-                .passwordCheck("password")
+                .password("asd123!@#")
+                .passwordCheck("asd123!@#")
                 .phoneNum("phoneNum")
                 .nickname("nickName")
                 .name("name")

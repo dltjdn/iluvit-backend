@@ -77,8 +77,8 @@ public class UserControllerTest {
         UpdatePasswordRequest request = UpdatePasswordRequest
                 .builder()
                 .originPwd("originPwd")
-                .newPwd("newPwd")
-                .newPwdCheck("newPwdCheck")
+                .newPwd("asd123!@#")
+                .newPwdCheck("asd123!@#")
                 .build();
         SignupErrorResult error = SignupErrorResult.NOT_MATCH_PWD;
         doThrow(new SignupException(error))
@@ -105,8 +105,8 @@ public class UserControllerTest {
         UpdatePasswordRequest request = UpdatePasswordRequest
                 .builder()
                 .originPwd("originPwd")
-                .newPwd("newPwd")
-                .newPwdCheck("newPwdCheck")
+                .newPwd("asd123!@#")
+                .newPwdCheck("asd123!@")
                 .build();
         SignupErrorResult error = SignupErrorResult.NOT_MATCH_PWDCHECK;
         doThrow(new SignupException(error))
@@ -133,8 +133,8 @@ public class UserControllerTest {
         UpdatePasswordRequest request = UpdatePasswordRequest
                 .builder()
                 .originPwd("originPwd")
-                .newPwd("newPwd")
-                .newPwdCheck("newPwdCheck")
+                .newPwd("asd123!@#")
+                .newPwdCheck("asd123!@#")
                 .build();
         // when
         ResultActions result = mockMvc.perform(
