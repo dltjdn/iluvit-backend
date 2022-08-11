@@ -297,7 +297,7 @@ class BookmarkRepositoryTest {
         // when
         bookmarkRepository.deleteAllByCenterAndUser(parent1.getId(), center1.getId());
         // then
-        List<Bookmark> result = bookmarkRepository.findByUserWithBoard(parent1.getId());
+        List<Bookmark> result = bookmarkRepository.findByUserWithBoardAndCenter(parent1.getId());
         assertThat(result.size()).isEqualTo(2);
         for (Bookmark bookmark : result) {
             if (bookmark.getBoard().getCenter() != null) {

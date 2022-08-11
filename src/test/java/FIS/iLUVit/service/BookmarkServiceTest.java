@@ -10,7 +10,6 @@ import FIS.iLUVit.exception.BookmarkException;
 import FIS.iLUVit.repository.BoardRepository;
 import FIS.iLUVit.repository.BookmarkRepository;
 import FIS.iLUVit.repository.UserRepository;
-import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -21,7 +20,6 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.mockito.junit.jupiter.MockitoSettings;
 import org.mockito.quality.Strictness;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
@@ -132,7 +130,7 @@ class BookmarkServiceTest {
         //given
         Mockito.doReturn(Arrays.asList(bookmark1, bookmark2, bookmark3))
                 .when(bookmarkRepository)
-                .findByUserWithBoard(parent1.getId());
+                .findByUserWithBoardAndCenter(parent1.getId());
 
         Mockito.doReturn(Arrays.asList(post3, post4, post5, post6))
                 .when(bookmarkRepository)

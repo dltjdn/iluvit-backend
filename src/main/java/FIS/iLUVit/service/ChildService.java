@@ -5,6 +5,7 @@ import FIS.iLUVit.domain.*;
 import FIS.iLUVit.domain.alarms.CenterApprovalAcceptedAlarm;
 import FIS.iLUVit.domain.alarms.CenterApprovalReceivedAlarm;
 import FIS.iLUVit.domain.enumtype.Approval;
+import FIS.iLUVit.domain.enumtype.Auth;
 import FIS.iLUVit.exception.UserErrorResult;
 import FIS.iLUVit.exception.UserException;
 import FIS.iLUVit.repository.*;
@@ -75,7 +76,7 @@ public class ChildService {
 
         // 아이 승인 요청 알람이 해당 시설에 승인된 교사들에게 감
         center.getTeachers().forEach(teacher -> {
-            AlarmUtils.publishAlarmEvent(new CenterApprovalReceivedAlarm(teacher));
+            AlarmUtils.publishAlarmEvent(new CenterApprovalReceivedAlarm(teacher, Auth.PARENT));
         });
 
         imageService.saveProfileImage(request.getProfileImg(), newChild);
@@ -143,59 +144,6 @@ public class ChildService {
 
         return exitedChild;
     }
-
-    /**
-     * 작성날짜: 2022/06/27 5:47 PM
-     * 작성자: 이승범
-     * 작성내용: 아이 프로필 수정
-     */
-//    public ChildInfoDetailResponse updateChildtemp(Long userId, Long childId, UpdateChildRequest request) throws IOException {
-//
-//        // 요청 사용자가 등록한 모든 아이 가져오기
-//        List<Child> childrenByUser = childRepository.findByUserWithCenter(userId);
-//
-//        // 사용자의 아이중에 childId를 가진 아이가 있는지 검사
-//        Child updatedChild = childrenByUser.stream()
-//                .filter(child -> Objects.equals(child.getId(), childId))
-//                .findFirst()
-//                .orElseThrow(() -> new UserException(UserErrorResult.NOT_VALID_REQUEST));
-//
-//        // 시설을 변경하는 경우
-//        if (updatedChild.getApproval() == Approval.REJECT || !Objects.equals(updatedChild.getCenter().getId(), request.getCenter_id())) {
-//
-//            // 요청 시설이 서비스에 등록된 시설인지 검사
-//            Center center = centerRepository.findByIdAndSignedWithTeacher(request.getCenter_id())
-//                    .orElseThrow(() -> new UserException(UserErrorResult.NOT_VALID_REQUEST));
-//
-//            // 기존에 등록되있었던 시설과 연관된 bookmark 처리
-//            if (updatedChild.getCenter() != null) {
-//                deleteBookmarkByCenter(userId, childrenByUser, updatedChild);
-//            }
-//
-//            // update 진행
-//            updatedChild.updateWithCenter(center, request.getName(), request.getBirthDate());
-//
-//            // 아이 승인 요청 알람이 해당 시설의 모든 교사에게 감
-//            center.getTeachers().forEach(teacher -> {
-//                AlarmUtils.publishAlarmEvent(new CenterApprovalReceivedAlarm(teacher));
-//            });
-//        }else{
-//            updatedChild.updateWithoutCenter(request.getName(), request.getBirthDate());
-//        }
-//
-//        ChildInfoDetailResponse response = new ChildInfoDetailResponse(updatedChild);
-//
-//        imageService.saveProfileImage(request.getProfileImg(), updatedChild);
-//        response.setProfileImage(imageService.getProfileImage(updatedChild));
-//
-//        // 프로필 수정에 필요한 시설정보들 가져오기
-//        Slice<CenterInfoDto> centerInfos = centerRepository.findCenterForAddChild(updatedChild.getCenter().getArea().getSido(),
-//                updatedChild.getCenter().getArea().getSigungu(), updatedChild.getCenter().getName(), pageable);
-//        response.setCenterInfoDtoSlice(centerInfos);
-//
-//        return response;
-//    }
-
 
     /**
      * 작성날짜: 2022/06/28 3:18 PM

@@ -2,6 +2,7 @@ package FIS.iLUVit.controller;
 
 import FIS.iLUVit.config.argumentResolver.LoginUserArgumentResolver;
 import FIS.iLUVit.controller.dto.BoardListDTO;
+import FIS.iLUVit.controller.dto.CreateBoardRequest;
 import FIS.iLUVit.controller.dto.StoryHomeDTO;
 import FIS.iLUVit.domain.Board;
 import FIS.iLUVit.domain.Center;
@@ -92,12 +93,15 @@ class BoardControllerTest {
     public void 게시판_생성() throws Exception {
         //given
 
+        CreateBoardRequest request = new CreateBoardRequest("자유게시판", BoardKind.NORMAL);
+
         given(boardService.create(eq(null), eq(1L), any()))
                 .willReturn(2L);
 
         given(boardService.create(eq(null), eq(null), any()))
                 .willReturn(3L);
         //when
+
 
         //then
         MvcResult resultOnCenter = mockMvc.perform(post("/user/board")
@@ -106,7 +110,7 @@ class BoardControllerTest {
                         .characterEncoding("UTF-8")
                         .param("center_id", "1")
                         .content(
-                                "{ \"board_name\": \"자유게시판\", \"boardKind\": \"NORMAL\" }"
+                                objectMapper.writeValueAsString(request)
                         ))
                 .andExpect(status().isOk())
                 .andReturn();

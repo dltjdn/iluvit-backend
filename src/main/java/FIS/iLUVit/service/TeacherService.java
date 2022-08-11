@@ -1,25 +1,30 @@
 package FIS.iLUVit.service;
 
-import FIS.iLUVit.controller.dto.*;
+import FIS.iLUVit.controller.dto.SignupTeacherRequest;
+import FIS.iLUVit.controller.dto.TeacherApprovalListResponse;
+import FIS.iLUVit.controller.dto.TeacherDetailResponse;
+import FIS.iLUVit.controller.dto.UpdateTeacherDetailRequest;
 import FIS.iLUVit.domain.*;
 import FIS.iLUVit.domain.alarms.CenterApprovalReceivedAlarm;
 import FIS.iLUVit.domain.enumtype.Approval;
 import FIS.iLUVit.domain.enumtype.Auth;
 import FIS.iLUVit.domain.enumtype.AuthKind;
-import FIS.iLUVit.domain.enumtype.BoardKind;
-import FIS.iLUVit.exception.*;
+import FIS.iLUVit.exception.SignupErrorResult;
+import FIS.iLUVit.exception.SignupException;
+import FIS.iLUVit.exception.UserErrorResult;
+import FIS.iLUVit.exception.UserException;
 import FIS.iLUVit.repository.*;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.io.IOException;
-import java.util.*;
+import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
-import static FIS.iLUVit.controller.dto.TeacherApprovalListResponse.*;
+import static FIS.iLUVit.controller.dto.TeacherApprovalListResponse.TeacherInfoForAdmin;
 
 @Slf4j
 @Service
@@ -112,7 +117,7 @@ public class TeacherService {
             // 시설에 원장들에게 알람보내기
             center.getTeachers().forEach(t -> {
                 if (t.getAuth() == Auth.DIRECTOR) {
-                    AlarmUtils.publishAlarmEvent(new CenterApprovalReceivedAlarm(t));
+                    AlarmUtils.publishAlarmEvent(new CenterApprovalReceivedAlarm(t, Auth.TEACHER));
                 }
             });
         } else {   // 센터를 선택하지 않은 경우
@@ -152,7 +157,7 @@ public class TeacherService {
         // 승인 요청 알람이 해당 시설의 원장들에게 감
         List<Teacher> directors = teacherRepository.findDirectorByCenter(centerId);
         directors.forEach(director -> {
-            AlarmUtils.publishAlarmEvent(new CenterApprovalReceivedAlarm(director));
+            AlarmUtils.publishAlarmEvent(new CenterApprovalReceivedAlarm(director, Auth.TEACHER));
         });
         return teacher;
     }

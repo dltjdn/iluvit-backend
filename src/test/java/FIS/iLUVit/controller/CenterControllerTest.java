@@ -22,7 +22,6 @@ import FIS.iLUVit.exception.exceptionHandler.controllerAdvice.GlobalControllerAd
 import FIS.iLUVit.service.CenterService;
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.algorithms.Algorithm;
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -252,8 +251,8 @@ class CenterControllerTest extends ResponseRequests {
                     .tel("test 전번")
                     .address("주소")
                     .estType("공립")
-                    .sido("sido")
-                    .sigungu("sigungu")
+//                    .sido("sido")
+//                    .sigungu("sigungu")
                     .offerService("")
                     .recruit(false)
                     .theme(coding())

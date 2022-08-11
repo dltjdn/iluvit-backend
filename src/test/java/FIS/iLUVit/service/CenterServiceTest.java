@@ -289,6 +289,8 @@ public class CenterServiceTest {
             //when
             Mockito.doReturn(Pair.of(126.8806602, 37.4778951))
                     .when(mapService).convertAddressToLocation("서울특별시 금천구 가산디지털2로 108 뉴티캐슬");
+            Mockito.doReturn(Pair.of("서울특별시", "금천구"))
+                    .when(mapService).getSidoSigunguByLocation(126.8806602, 37.4778951);
 
             target.modifyCenter(1L, 1L, request, multipartFileList, multipartFile);
 

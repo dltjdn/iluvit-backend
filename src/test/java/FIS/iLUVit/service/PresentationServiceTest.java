@@ -427,8 +427,9 @@ class PresentationServiceTest {
                 alarmUtils.when(() -> AlarmUtils.getMessage(any(String.class), any(Object[].class)))
                         .thenReturn("설명회가 가득 찼습니다");
 
+                PresentationFullAlarm presentationFullAlarm = new PresentationFullAlarm(createParent(1L), presentation, center);
                 alarmUtils.when(() -> AlarmUtils.publishAlarmEvent(any(Alarm.class)))
-                        .thenReturn(new AlarmEvent(new PresentationFullAlarm(createParent(1L), presentation, center)));
+                        .thenReturn(new AlarmEvent(presentationFullAlarm));
                 //when
                 PresentationException result = assertThrows(PresentationException.class,
                         () -> target.modifyWithPtDate(request, null, 1L));
@@ -484,9 +485,9 @@ class PresentationServiceTest {
                         .when(ptDateRepository).deletePtDateByIds(Set.of(2L));
                 alarmUtils.when(() -> AlarmUtils.getMessage(any(String.class), any(Object[].class)))
                         .thenReturn("설명회가 가득 찼습니다");
-
+                PresentationFullAlarm presentationFullAlarm = new PresentationFullAlarm(createParent(1L), presentation, center);
                 alarmUtils.when(() -> AlarmUtils.publishAlarmEvent(any(Alarm.class)))
-                        .thenReturn(new AlarmEvent(new PresentationFullAlarm(createParent(1L), presentation, center)));
+                        .thenReturn(new AlarmEvent(presentationFullAlarm));
                 //when
                 Presentation presentation = target.modifyWithPtDate(request, null, 1L);
 

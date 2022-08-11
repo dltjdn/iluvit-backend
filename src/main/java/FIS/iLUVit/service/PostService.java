@@ -2,6 +2,7 @@ package FIS.iLUVit.service;
 
 import FIS.iLUVit.controller.dto.*;
 import FIS.iLUVit.domain.*;
+import FIS.iLUVit.domain.enumtype.Approval;
 import FIS.iLUVit.domain.enumtype.Auth;
 import FIS.iLUVit.domain.enumtype.BoardKind;
 import FIS.iLUVit.exception.*;
@@ -219,20 +220,15 @@ public class PostService {
         // 학부모 유저일 경우 아이를 통해 센터 정보를 가져옴
         // 교사 유저일 경우 바로 센터 정보 가져옴
         if (findUser.getAuth() == Auth.PARENT) {
-            boolean flag = false;
+            boolean flag;
             List<Long> centerIds = ((Parent) findUser).getChildren()
                     .stream()
-                    .filter(c -> c.getCenter() != null)
+                    .filter(c -> c.getCenter() != null && c.getApproval() == Approval.ACCEPT)
                     .map(c -> c.getCenter().getId())
                     .collect(Collectors.toList());
-            for (Long id : centerIds) {
-                if (Objects.equals(id, centerId)) {
-                    flag = true;
-                    break;
-                }
-            }
+            flag = centerIds.stream().anyMatch(id -> Objects.equals(id, centerId));
             if (!flag) {
-                throw new PostException(PostErrorResult.UNAUTHORIZED_USER_ACCESS);
+                throw new PostException(PostErrorResult.WAITING_OR_REJECT_CANNOT_ACCESS);
             }
 
         } else {

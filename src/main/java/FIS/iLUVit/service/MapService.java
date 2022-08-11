@@ -51,4 +51,30 @@ public class MapService {
         }
     }
 
+    public Pair<String, String> getSidoSigunguByLocation(Double longitude, Double latitude){
+        RestTemplate restTemplate = new RestTemplate();
+        HttpHeaders httpHeaders = new HttpHeaders();
+        httpHeaders.add("X-NCP-APIGW-API-KEY-ID", mapClient);
+        httpHeaders.add("X-NCP-APIGW-API-KEY", secretKey);
+        String url = "https://naveropenapi.apigw.ntruss.com/map-reversegeocode/v2/gc?coords=" + longitude + ',' + latitude + "&output=json";
+        ResponseEntity<String> responseEntity = restTemplate.exchange(url, HttpMethod.GET, new HttpEntity<>(httpHeaders), String.class);
+        JSONParser jsonParser = new JSONParser();
+        JSONObject fullResponse = null;
+        try {
+            fullResponse = (JSONObject) jsonParser.parse(responseEntity.getBody());
+            JSONArray results = (JSONArray) fullResponse.get("results");
+            JSONObject temp = (JSONObject) results.get(0);
+            JSONObject region = (JSONObject) temp.get("region");
+            JSONObject area1 = (JSONObject) region.get("area1");
+            JSONObject area2 = (JSONObject) region.get("area2");
+
+            String sido = area1.get("name").toString();
+            String sigungu = area2.get("name").toString();
+            // x 가 longitude y가 latitude
+            return Pair.of(sido, sigungu);
+        } catch (Exception ex){
+            throw new CenterException(CenterErrorResult.CENTER_WRONG_ADDRESS);
+        }
+    }
+
 }
