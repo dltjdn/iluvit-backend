@@ -258,9 +258,9 @@ public class ChildServiceTest {
                 doReturn(Optional.of(teacher1))
                         .when(teacherRepository)
                         .findByIdWithCenterWithChildWithParent(any());
+                parent1.getChildren().add(child3);
                 parent1.getChildren().add(child1);
                 parent1.getChildren().add(child2);
-                parent1.getChildren().add(child3);
                 doReturn(Optional.of(parent1))
                         .when(parentRepository)
                         .findByIdWithChild(any());
@@ -331,7 +331,7 @@ public class ChildServiceTest {
             // then
             assertThat(child1.getApproval()).isEqualTo(Approval.REJECT);
             assertThat(child1.getCenter()).isNull();
-            verify(bookmarkRepository, times(1)).deleteAllByCenterAndUser(any(), any());
+            verify(bookmarkRepository, times(1)).deleteAllByBoardAndUser(any(), any());
         }
 
         @Test
@@ -597,7 +597,7 @@ public class ChildServiceTest {
             assertThat(result.getId()).isEqualTo(child2.getId());
             assertThat(result.getParent().getId()).isEqualTo(parent1.getId());
             assertThat(result.getCenter()).isNull();
-            verify(bookmarkRepository, times(0)).deleteAllByCenterAndUser(any(), any());
+            verify(bookmarkRepository, times(0)).deleteAllByBoardAndUser(any(), any());
         }
         @Test
         @DisplayName("[success] 해당 시설에 사용자의 아이가 이제 없는경우")
@@ -612,7 +612,7 @@ public class ChildServiceTest {
             assertThat(result.getId()).isEqualTo(child1.getId());
             assertThat(result.getParent().getId()).isEqualTo(parent1.getId());
             assertThat(result.getCenter()).isNull();
-            verify(bookmarkRepository, times(1)).deleteAllByCenterAndUser(any(), any());
+            verify(bookmarkRepository, times(1)).deleteAllByBoardAndUser(any(), any());
         }
 
     }
@@ -662,7 +662,7 @@ public class ChildServiceTest {
             //when
             target.deleteBookmarkByCenter(parent1.getId(), childrenByUser, child2);
             //then
-            verify(bookmarkRepository, times(0)).deleteAllByCenterAndUser(any(), any());
+            verify(bookmarkRepository, times(0)).deleteAllByBoardAndUser(any(), any());
         }
 
         @Test
@@ -672,7 +672,7 @@ public class ChildServiceTest {
             //when
             target.deleteBookmarkByCenter(parent1.getId(), childrenByUser, child1);
             //then
-            verify(bookmarkRepository, times(1)).deleteAllByCenterAndUser(any(), any());
+            verify(bookmarkRepository, times(1)).deleteAllByBoardAndUser(any(), any());
         }
     }
 

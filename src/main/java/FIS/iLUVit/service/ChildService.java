@@ -19,6 +19,7 @@ import java.io.IOException;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 
 @Slf4j
@@ -253,6 +254,7 @@ public class ChildService {
         // bookmark 처리
         // 기존에 있던 아이들중에 현재 승인되는 아이와 같은 시설에 다니는 또 다른 아이가 있는지 검사
         Optional<Child> alreadySignedChild = acceptedParent.getChildren().stream()
+                .filter(child -> child.getCenter() != null)
                 .filter(child -> Objects.equals(child.getCenter().getId(), teacher.getCenter().getId()))
                 .filter(child -> child.getApproval() == Approval.ACCEPT)
                 .filter(child -> !Objects.equals(child.getId(), acceptedChild.getId()))
@@ -310,7 +312,11 @@ public class ChildService {
 
         // 없으면 해당 시설과 연관된 bookmark 싹 다 삭제
         if (sameCenterChildren.isEmpty()) {
-            bookmarkRepository.deleteAllByCenterAndUser(parentId, deletedChild.getCenter().getId());
+            List<Board> boards = boardRepository.findByCenter(deletedChild.getCenter().getId());
+            List<Long> boardIds = boards.stream()
+                    .map(Board::getId)
+                    .collect(Collectors.toList());
+            bookmarkRepository.deleteAllByBoardAndUser(parentId, boardIds);
         }
     }
 
