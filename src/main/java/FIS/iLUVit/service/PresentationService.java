@@ -45,15 +45,16 @@ public class PresentationService {
     private final ImageService imageService;
     private final UserRepository userRepository;
     private final WaitingRepository waitingRepository;
+    private final ParticipationRepository participationRepository;
 
     public List<PresentationResponseDto> findPresentationByCenterIdAndDate(Long centerId, Long userId) {
         List<PresentationWithPtDatesDto> queryDtos =
                 userId == null ? presentationRepository.findByCenterAndDateWithPtDates(centerId, LocalDate.now())
-                : presentationRepository.findByCenterAndDateWithPtDates(centerId, LocalDate.now(), userId);
+                        : presentationRepository.findByCenterAndDateWithPtDates(centerId, LocalDate.now(), userId);
         return queryDtos.stream().collect(
-                groupingBy(PresentationQuryDto::new,
-                        mapping(PtDateDto::new, toList())
-                ))
+                        groupingBy(PresentationQuryDto::new,
+                                mapping(PtDateDto::new, toList())
+                        ))
                 .entrySet().stream()
                 .map(e -> {
                     PresentationResponseDto presentationResponseDto = new PresentationResponseDto(e.getKey(), e.getValue());
@@ -78,9 +79,9 @@ public class PresentationService {
 
         request.getPtDateDtos().forEach(ptDateRequestDto -> {
             PtDate.register(presentation,
-                            ptDateRequestDto.getDate(),
-                            ptDateRequestDto.getTime(),
-                            ptDateRequestDto.getAblePersonNum());
+                    ptDateRequestDto.getDate(),
+                    ptDateRequestDto.getTime(),
+                    ptDateRequestDto.getAblePersonNum());
         });
 
         imageService.saveInfoImages(images, presentation);
@@ -154,7 +155,8 @@ public class PresentationService {
                     waitingRepository.updateWaitingOrderForPtDateChange(changeNum, ptDate);
                     ptDate.updateWaitingCntForPtDateChange(waitingIds.size());
                     waitings.forEach(waiting -> {
-                        Participation.createAndRegisterForWaitings(waiting.getParent(), presentation, ptDate, ptDate.getParticipations());
+                        Participation andRegisterForWaitings = Participation.createAndRegisterForWaitings(waiting.getParent(), presentation, ptDate, ptDate.getParticipations());
+                        participationRepository.save(andRegisterForWaitings);
                     });
                 }
                 ptDate.update(ptDateModifyDto);
