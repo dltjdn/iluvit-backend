@@ -254,6 +254,7 @@ public class ChildService {
         // bookmark 처리
         // 기존에 있던 아이들중에 현재 승인되는 아이와 같은 시설에 다니는 또 다른 아이가 있는지 검사
         Optional<Child> alreadySignedChild = acceptedParent.getChildren().stream()
+                .filter(child -> child.getCenter() != null)
                 .filter(child -> Objects.equals(child.getCenter().getId(), teacher.getCenter().getId()))
                 .filter(child -> child.getApproval() == Approval.ACCEPT)
                 .filter(child -> !Objects.equals(child.getId(), acceptedChild.getId()))
