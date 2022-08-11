@@ -258,9 +258,9 @@ public class ChildServiceTest {
                 doReturn(Optional.of(teacher1))
                         .when(teacherRepository)
                         .findByIdWithCenterWithChildWithParent(any());
+                parent1.getChildren().add(child3);
                 parent1.getChildren().add(child1);
                 parent1.getChildren().add(child2);
-                parent1.getChildren().add(child3);
                 doReturn(Optional.of(parent1))
                         .when(parentRepository)
                         .findByIdWithChild(any());
