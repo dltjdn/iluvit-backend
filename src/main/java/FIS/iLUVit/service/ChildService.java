@@ -306,7 +306,7 @@ public class ChildService {
     // 삭제되는 아이와 같은 시설에 다니는 또 다른 아이가 없을경우 해당 시설과 관련된 bookmark 모두 삭제
     public void deleteBookmarkByCenter(Long parentId, List<Child> childrenByUser, Child deletedChild) {
         Optional<Child> sameCenterChildren = childrenByUser.stream()
-                .filter(child -> child.getCenter() != null)
+                .filter(child-> child.getCenter() != null)
                 .filter(child -> Objects.equals(child.getCenter().getId(), deletedChild.getCenter().getId()))
                 .filter(child -> !Objects.equals(child.getId(), deletedChild.getId()))
                 .filter(child -> child.getApproval() == Approval.ACCEPT)
