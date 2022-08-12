@@ -119,7 +119,7 @@ public class ImageServiceTest {
         //then
         assertThat(destPath).isNull();
         assertThat(center.getInfoImagePath())
-                .isEqualTo(prefix + '/' + "centerInfo/1/" + "1.png," + "http://localhost:8081" + '/' + "centerInfo/1/" + "2.png,");
+                .isEqualTo(prefix + '/' + "centerInfo/1/" + "1.png," + prefix + '/' + "centerInfo/1/" + "2.png,");
         assertThat(center.getImgCnt())
                 .isEqualTo(2);
     }
