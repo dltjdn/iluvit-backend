@@ -30,6 +30,9 @@ public class ImageServiceTest {
     @Value("${image.location.path}")
     String path;
 
+    @Value("${image.location.prefix}")
+    String prefix;
+
     MultipartFile multipartFile;
     List<MultipartFile> multipartFileList = new ArrayList<>();
     @BeforeEach
@@ -99,7 +102,7 @@ public class ImageServiceTest {
         //then
         assertThat(destPath).isNull();
         assertThat(center.getProfileImagePath())
-                .isEqualTo("http://localhost:8081" + '/' + "center/" + "1.png");
+                .isEqualTo(prefix + '/' + "center/" + "1.png");
     }
 
     @Test
@@ -116,7 +119,7 @@ public class ImageServiceTest {
         //then
         assertThat(destPath).isNull();
         assertThat(center.getInfoImagePath())
-                .isEqualTo("http://localhost:8081" + '/' + "centerInfo/1/" + "1.png," + "http://localhost:8081" + '/' + "centerInfo/1/" + "2.png,");
+                .isEqualTo(prefix + '/' + "centerInfo/1/" + "1.png," + "http://localhost:8081" + '/' + "centerInfo/1/" + "2.png,");
         assertThat(center.getImgCnt())
                 .isEqualTo(2);
     }
