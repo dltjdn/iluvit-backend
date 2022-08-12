@@ -192,7 +192,9 @@ public class ChildService {
                 .orElseThrow(() -> new UserException(UserErrorResult.NOT_VALID_REQUEST));
 
         // 삭제하고자 하는 아이와 같은 시설에 다니는 또 다른 자녀가 있는지 확인해서 없으면 해당 시설과 관련된 bookmark 모두 삭제
-        deleteBookmarkByCenter(userId, childrenByUser, deletedChild);
+        if (deletedChild.getCenter() != null) {
+            deleteBookmarkByCenter(userId, childrenByUser, deletedChild);
+        }
 
         childRepository.delete(deletedChild);
         return childrenInfo(userId);

@@ -132,8 +132,10 @@ public class ChatService {
                     if (!Objects.equals(cr.getReceiver().getId(), userId)) {
                         throw new ChatException(ChatErrorResult.UNAUTHORIZED_USER_ACCESS);
                     }
-                    chatRoomRepository.findById(cr.getPartner_id())
-                            .ifPresent(c -> c.updatePartnerId(null));
+                    if (cr.getPartner_id() != null) {
+                        chatRoomRepository.findById(cr.getPartner_id())
+                                .ifPresent(c -> c.updatePartnerId(null));
+                    }
                 });
         chatRoomRepository.deleteById(roomId);
         return roomId;
@@ -184,6 +186,8 @@ public class ChatService {
 
         Chat savedChat = chatRepository.save(chat1);
         chatRepository.save(chat2);
+
+//        AlarmUtils.publishAlarmEvent(new ChatAlarm(receiveUser, sendUser, findRoom.getAnonymous()));
 
         return savedChat.getId();
     }
