@@ -50,4 +50,6 @@ src/main/resources/application-security.yml
 src/main/resources/application-http.yml
 src/main/resources/application-ssl.yml
 src/main/resources/ssl
+src/main/resources/application-http1.yml
+src/main/resources/application-http2.yml
 src/test/resources
