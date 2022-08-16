@@ -122,4 +122,19 @@ public class UserController {
                 .findFirst()
                 .orElse("");
     }
+
+    @GetMapping("/readAlarm")
+    public void readAlarm(@Login Long userId){
+        if(userId == null)
+            throw new UserException(UserErrorResult.NOT_LOGIN);
+        userService.readAlarm(userId);
+    }
+
+    @GetMapping("/hasRead")
+    public Boolean hasRead(@Login Long userId){
+        if(userId == null)
+            throw new UserException(UserErrorResult.NOT_LOGIN);
+        return userService.hasRead(userId);
+    }
+
 }

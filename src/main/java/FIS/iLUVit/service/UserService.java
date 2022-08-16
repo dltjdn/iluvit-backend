@@ -224,4 +224,16 @@ public class UserService {
                     throw new UserException(UserErrorResult.ALREADY_NICKNAME_EXIST);
                 });
     }
+
+    public void readAlarm(Long userId) {
+        userRepository.findById(userId)
+                .orElseThrow(() -> new UserException(UserErrorResult.USER_NOT_EXIST))
+                .updateReadAlarm(Boolean.TRUE);
+    }
+
+    public Boolean hasRead(Long userId) {
+        return userRepository.findById(userId)
+                .orElseThrow(() -> new UserException(UserErrorResult.USER_NOT_EXIST))
+                .getReadAlarm();
+    }
 }

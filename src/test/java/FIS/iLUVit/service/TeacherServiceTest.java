@@ -20,11 +20,9 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
-import org.mockito.MockedStatic;
-import org.mockito.Mockito;
+import org.mockito.*;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.data.util.Pair;
 import org.springframework.mock.web.MockMultipartFile;
 
 import java.io.File;
@@ -66,7 +64,8 @@ public class TeacherServiceTest {
     private ScrapRepository scrapRepository;
     @Mock
     private ImageService imageService;
-
+    @Mock
+    private MapService mapService;
 
     private Center center1;
     private Center center2;
@@ -163,7 +162,13 @@ public class TeacherServiceTest {
             doReturn(Arrays.asList(board1, board2))
                     .when(boardRepository)
                     .findDefaultByModu();
+            //when
+            Mockito.doReturn(Pair.of(126.8806602, 37.4778951))
+                    .when(mapService).convertAddressToLocation(anyString());
+            Mockito.doReturn(Pair.of("서울특별시", "금천구"))
+                    .when(mapService).getSidoSigunguByLocation(126.8806602, 37.4778951);
             // when
+
             Teacher result = target.signup(request);
             // then
             assertThat(result.getLoginId()).isEqualTo(request.getLoginId());
@@ -201,6 +206,11 @@ public class TeacherServiceTest {
         doReturn(new ArrayList<Board>())
                 .when(boardRepository)
                 .findDefaultByModu();
+        //when
+        Mockito.doReturn(Pair.of(126.8806602, 37.4778951))
+                .when(mapService).convertAddressToLocation(anyString());
+        Mockito.doReturn(Pair.of("서울특별시", "금천구"))
+                .when(mapService).getSidoSigunguByLocation(126.8806602, 37.4778951);
         // when
         Teacher result = target.signup(request);
         // then
@@ -293,6 +303,11 @@ public class TeacherServiceTest {
                 .when(teacherRepository)
                 .findById(teacher1.getId());
         // when
+        //when
+        Mockito.doReturn(Pair.of(126.8806602, 37.4778951))
+                .when(mapService).convertAddressToLocation(null);
+        Mockito.doReturn(Pair.of("서울특별시", "금천구"))
+                .when(mapService).getSidoSigunguByLocation(126.8806602, 37.4778951);
         TeacherDetailResponse response = target.updateDetail(teacher1.getId(), request);
         // then
         assertThat(response.getPhoneNumber()).isEqualTo("newPhoneNum");

@@ -113,10 +113,24 @@ class PostServiceTest {
         center2 = Creator.createCenter(2L, "가산유치원", true, true, null);
         center3 = Creator.createCenter(3L,"디지털유치원", true, true, null);
 
-        child1 = Child.createChild("childA", null, Approval.ACCEPT, parent1);
-        child2 = Child.createChild("childB", null, null, parent1);
-        child3 = Child.createChild("childC", null, null, parent1);
+        child1 = Child.builder()
+                .id(55L)
+                .name("childA")
+                .parent(parent1)
+                .build();
+        child2 = Child.builder()
+                .id(56L)
+                .name("childB")
+                .parent(parent1)
+                .build();
+        child3 = Child.builder()
+                .id(57L)
+                .name("childC")
+                .parent(parent1)
+                .build();
+
         child1.mappingCenter(center1);
+        child1.accepted();
         child2.mappingCenter(center2);
         child3.mappingCenter(center3);
 

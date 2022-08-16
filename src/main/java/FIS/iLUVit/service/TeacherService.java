@@ -16,6 +16,7 @@ import FIS.iLUVit.exception.UserException;
 import FIS.iLUVit.repository.*;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.util.Pair;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -41,6 +42,7 @@ public class TeacherService {
     private final BoardRepository boardRepository;
     private final BookmarkRepository bookmarkRepository;
     private final ScrapRepository scrapRepository;
+    private final MapService mapService;
 
     /**
      * 작성날짜: 2022/05/20 4:43 PM
@@ -88,6 +90,11 @@ public class TeacherService {
             findTeacher.updateDetail(request);
         }
 
+        Pair<Double, Double> loAndLat = mapService.convertAddressToLocation(request.getAddress());
+        Pair<String, String> hangjung = mapService.getSidoSigunguByLocation(loAndLat.getFirst(), loAndLat.getSecond());
+        Location location = new Location(loAndLat, hangjung);
+        findTeacher.updateLocation(location);
+
         TeacherDetailResponse response = new TeacherDetailResponse(findTeacher);
 
         imageService.saveProfileImage(request.getProfileImg(), findTeacher);
@@ -113,6 +120,11 @@ public class TeacherService {
             Center center = centerRepository.findByIdWithTeacher(request.getCenterId())
                     .orElseThrow(() -> new SignupException(SignupErrorResult.NOT_EXIST_CENTER));
             teacher = request.createTeacher(center, hashedPwd);
+
+            Pair<Double, Double> loAndLat = mapService.convertAddressToLocation(request.getAddress());
+            Pair<String, String> hangjung = mapService.getSidoSigunguByLocation(loAndLat.getFirst(), loAndLat.getSecond());
+            Location location = new Location(loAndLat, hangjung);
+            teacher.updateLocation(location);
             teacherRepository.save(teacher);
             // 시설에 원장들에게 알람보내기
             center.getTeachers().forEach(t -> {
@@ -122,6 +134,11 @@ public class TeacherService {
             });
         } else {   // 센터를 선택하지 않은 경우
             teacher = request.createTeacher(null, hashedPwd);
+            Pair<Double, Double> loAndLat = mapService.convertAddressToLocation(request.getAddress());
+            Pair<String, String> hangjung = mapService.getSidoSigunguByLocation(loAndLat.getFirst(), loAndLat.getSecond());
+            Location location = new Location(loAndLat, hangjung);
+            teacher.updateLocation(location);
+
             teacherRepository.save(teacher);
         }
         // 모두의 이야기 default boards bookmark 추가하기
