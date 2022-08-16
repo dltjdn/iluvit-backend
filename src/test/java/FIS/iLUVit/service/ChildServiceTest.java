@@ -650,6 +650,24 @@ public class ChildServiceTest {
             // then
             assertThat(result.getData().size()).isEqualTo(2);
         }
+
+        @Test
+        @DisplayName("[success] 시설이없는 아이 삭제")
+        public void 시설없는아이삭제() {
+            // given
+            doReturn(List.of(child1, child2, child3))
+                    .when(childRepository)
+                    .findByUserWithCenter(any());
+            parent1.getChildren().add(child1);
+            parent1.getChildren().add(child2);
+            doReturn(Optional.of(parent1))
+                    .when(parentRepository)
+                    .findWithChildren(any());
+            // when
+            ChildInfoDTO result = target.deleteChild(parent1.getId(), child1.getId());
+            // then
+            assertThat(result.getData().size()).isEqualTo(2);
+        }
     }
 
     @Nested
@@ -675,5 +693,4 @@ public class ChildServiceTest {
             verify(bookmarkRepository, times(1)).deleteAllByBoardAndUser(any(), any());
         }
     }
-
 }
