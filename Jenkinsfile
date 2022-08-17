@@ -18,7 +18,7 @@ node("Master"){
         sh "curl -s https://api.iluvit.app/profile > output"
         CURRENT_PROFILE = readFile 'output'
         echo CURRENT_PROFILE
-        if (CURRENT_PROFILE == 'http1'){
+        if (CURRENT_PROFILE == 'release1'){
             IDLE_PROFILE = 'release2'
             IDLE_PORT = '8082'
         } else{
@@ -43,12 +43,12 @@ node("DEMO"){
         sh "curl -s https://api.iluvit.app/profile > output"
         CURRENT_STATE = readFile 'output'
         echo CURRENT_STATE
-        if (CURRENT_STATE == 'http1'){
+        if (CURRENT_STATE == 'release1'){
             CURRENT_PROFILE = 'release1'
             IDLE_PROFILE = 'release2'
             IDLE_PORT = '8082'
         } else {
-            if (CURRENT_STATE == 'http2') {
+            if (CURRENT_STATE == 'release2') {
                 CURRENT_PROFILE = 'release2'
             } else {
                 CURRENT_PROFILE = null
@@ -63,7 +63,7 @@ node("DEMO"){
         }
         echo "docker image pull"
         sh "docker pull sbl133/iluvit_back:${env.BUILD_NUMBER}"
-        sh "docker run --name ${IDLE_PROFILE} -d -p ${IDLE_PORT}:${IDLE_PORT} sbl133/iluvit_back:${env.BUILD_NUMBER}"
+        sh "docker run --name ${IDLE_PROFILE} -d -p ${IDLE_PORT}:8443 sbl133/iluvit_back:${env.BUILD_NUMBER}"
         sh "sleep 10"
     }
     stage('port switch'){
@@ -72,7 +72,7 @@ node("DEMO"){
         def RESPONSE
         for (int i =0; i < 10; i++){
             try {
-                sh "curl -s https://api.iluvit.app:${IDLE_PORT}/actuator/health | grep UP > output"
+                sh "curl -s https://api.iluvit.app/actuator/health | grep UP > output"
                 RESPONSE = readFile 'output'
                 echo RESPONSE
                 break
@@ -82,9 +82,7 @@ node("DEMO"){
             }
         }
         if (RESPONSE){
-            STR = "set \$service_url https://api.iluvit.app:${IDLE_PORT};"
-            echo STR
-            sh "echo 'set \$service_url https://api.iluvit.app:${IDLE_PORT};' | tee /etc/nginx/conf.d/service-url.inc"
+            sh "echo 'set \$service_url https://127.0.0.1:${IDLE_PORT};' | tee /etc/nginx/conf.d/service-url.inc"
             sh "service nginx reload"
         }
         else{

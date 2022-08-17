@@ -30,8 +30,8 @@ spring:
     active: release2
     group:
       develop: iluvit-develop, h2, local-image, http
-      release1: iluvit-release, mysql, server-image, http1
-      release2: iluvit-release, mysql, server-image, http2
+      release1: iluvit-release, mysql, server-image, ssl
+      release2: iluvit-release, mysql, server-image, ssl
 
 ---
 spring:

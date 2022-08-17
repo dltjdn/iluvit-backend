@@ -17,7 +17,6 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 import java.io.IOException;
-import java.util.Arrays;
 
 
 @Slf4j
@@ -117,10 +116,11 @@ public class UserController {
      */
     @GetMapping("/profile")
     public String profile() {
-        return Arrays.stream(env.getActiveProfiles())
-                .filter(str -> str.startsWith("http"))
-                .findFirst()
-                .orElse("");
+        return env.getProperty("spring.profiles.active");
+//        return Arrays.stream(env.getActiveProfiles())
+//                .filter(str -> str.startsWith("http"))
+//                .findFirst()
+//                .orElse("");
     }
 
     @GetMapping("/readAlarm")
