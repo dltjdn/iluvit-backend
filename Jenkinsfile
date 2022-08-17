@@ -1,62 +1,105 @@
-node('ILUVIT_BACK') {
-    def SCM_VARS
-    stage('Git Clone') {
-        echo "===================== Cloning from Git ======================="
-        SCM_VARS =
-                git(
-                        branch: 'release',
-                        credentialsId: 'ILUVIT_BACK_DEPLOY_KEY',
-                        url: 'git@github.com:FISOLUTION/ILUVIT_BACK.git'
-                )
+node("Master"){
+    stage('git pull'){
+        echo 'hello world'
+        sh "pwd"
+        git branch: 'test/deploy',
+                credentialsId: 'test-deploy',
+                url: 'git@github.com:FISOLUTION/ILUVIT_BACK.git'
+        sh "ls -lat"
     }
-
-
-    stage('has Changed?') {
-        def CHANGE
-        script {
-            CHANGE = java.lang.String.valueOf(currentBuild.changeSets.size())
-            if(CHANGE.equals('0')) {
-                echo "===================== file does not Changed ====================="
-                currentBuild.result = 'SUCCESS'
-                sh "exit 1"
-            }
+    stage('build'){
+        sh "chmod +x gradlew"
+        sh "./gradlew bootJar"
+    }
+    stage('build and push image'){
+        def CURRENT_PROFILE
+        def IDLE_PROFILE
+        def IDLE_PORT
+        sh "curl -s https://api.iluvit.app/profile > output"
+        CURRENT_PROFILE = readFile 'output'
+        echo CURRENT_PROFILE
+        if (CURRENT_PROFILE == 'http1'){
+            IDLE_PROFILE = 'release2'
+            IDLE_PORT = '8082'
+        } else{
+            IDLE_PROFILE = 'release1'
+            IDLE_PORT = '8081'
         }
-
-
-        echo CHANGE
-
+        echo IDLE_PROFILE
+        image = docker.build("sbl133/iluvit_back", "--build-arg IDLE_PROFILE=${IDLE_PROFILE} -t ${IDLE_PROFILE} .")
+        docker.withRegistry("https://registry.hub.docker.com", "docker_hub_credentials"){
+            image.push("${env.BUILD_NUMBER}")
+            echo "image.push"
+        }
     }
-
-    stage('kill ex-Application'){
-        BUILD_JAR = sh(encoding: 'UTF-8', returnStdout: true, script: "ls ./build/libs/*.jar")
-        JAR_NAME = sh(encoding: 'UTF-8', returnStdout: true, script: "basename $BUILD_JAR")
-        echo "$JAR_NAME"
-        script {
-
-            try{
-                pid = sh(encoding: 'UTF-8', returnStdout: true,script: "pgrep -f $JAR_NAME")
-                echo "$pid"
-            } catch (Exception exception) {
-                pid = ""
-            }
-            if (!pid.equals("")) {
-                echo "===================== Killing Process ====================="
-                echo "$pid"
-                sh "sudo kill -15 $pid"
+}
+node("DEMO"){
+    def CURRENT_PROFILE
+    def CURRENT_STATE
+    def IDLE_PROFILE
+    def IDLE_PORT
+    stage('server run'){
+        echo env.BUILD_NUMBER
+        sh "curl -s https://api.iluvit.app/profile > output"
+        CURRENT_STATE = readFile 'output'
+        echo CURRENT_STATE
+        if (CURRENT_STATE == 'http1'){
+            CURRENT_PROFILE = 'release1'
+            IDLE_PROFILE = 'release2'
+            IDLE_PORT = '8082'
+        } else {
+            if (CURRENT_STATE == 'http2') {
+                CURRENT_PROFILE = 'release2'
             } else {
-                echo "===================== Nothing To Kill ====================="
+                CURRENT_PROFILE = null
+            }
+            IDLE_PROFILE = 'release1'
+            IDLE_PORT = '8081'
+        }
+        ISRUN = sh "docker ps | grep ${IDLE_PROFILE} | awk '{print \$1}'"
+        if (ISRUN != null) {
+            sh "docker stop ${IDLE_PROFILE}"
+            sh "docker rm ${IDLE_PROFILE}"
+        }
+        echo "docker image pull"
+        sh "docker pull sbl133/iluvit_back:${env.BUILD_NUMBER}"
+        sh "docker run --name ${IDLE_PROFILE} -d -p ${IDLE_PORT}:${IDLE_PORT} sbl133/iluvit_back:${env.BUILD_NUMBER}"
+        sh "sleep 10"
+    }
+    stage('port switch'){
+        echo "for loop"
+        echo IDLE_PORT
+        def RESPONSE
+        for (int i =0; i < 10; i++){
+            try {
+                sh "curl -s https://api.iluvit.app:${IDLE_PORT}/actuator/health | grep UP > output"
+                RESPONSE = readFile 'output'
+                echo RESPONSE
+                break
+            } catch (Exception e) {
+                RESPONSE = false
+                sh "sleep 5"
             }
         }
+        if (RESPONSE){
+            STR = "set \$service_url https://api.iluvit.app:${IDLE_PORT};"
+            echo STR
+            sh "echo 'set \$service_url https://api.iluvit.app:${IDLE_PORT};' | tee /etc/nginx/conf.d/service-url.inc"
+            sh "service nginx reload"
+        }
+        else{
+            echo "> application deploy fail"
+        }
     }
-
-
-    stage('Access To Jar') {
-        echo "===================== Access ====================="
-        BUILD_JAR = sh(encoding: 'UTF-8', returnStdout: true, script: "ls ./build/libs/*.jar")
-        JAR_NAME = sh(encoding: 'UTF-8', returnStdout: true, script: "basename $BUILD_JAR")
-        dir("./build/libs") {
-            PATH = sh(encoding: 'UTF-8', returnStdout: true, script: "pwd")
-            sh 'JENKINS_NODE_COOKIE=dontKillMe nohup java -jar ./iLUVit-0.0.1-SNAPSHOT.jar >> ./nohup.out 2>&1 &'
+    stage('delete image and container') {
+        def DELETED
+        if (CURRENT_PROFILE != null) {
+            sh "docker ps | grep ${CURRENT_PROFILE} > output"
+            DELETED = readFile 'output'
+        }
+        if (DELETED != null) {
+            sh "docker stop ${CURRENT_PROFILE}"
+            sh "docker rm ${CURRENT_PROFILE}"
         }
     }
 }
