@@ -1,9 +1,8 @@
 node("Master"){
     stage('git pull'){
-        echo 'hello world'
         sh "pwd"
-        git branch: 'test/deploy',
-                credentialsId: 'test-deploy',
+        git branch: 'release',
+                credentialsId: 'ILUVIT_BACK_DEPLOY_KEY',
                 url: 'git@github.com:FISOLUTION/ILUVIT_BACK.git'
         sh "ls -lat"
     }
