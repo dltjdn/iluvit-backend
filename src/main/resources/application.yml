@@ -10,6 +10,8 @@ spring:
     multipart:
       max-file-size: 20MB
   jpa:
+    hibernate:
+      ddl-auto: none
     properties:
       hibernate:
         format_sql: true
@@ -25,17 +27,16 @@ spring:
       - s3
       - map
       - security
-    active: develop
+    active: release2
     group:
       develop: iluvit-develop, h2, local-image, http
-      release: iluvit-release, mysql, server-image, ssl
+      release1: iluvit-release, mysql, server-image, http1
+      release2: iluvit-release, mysql, server-image, http2
 
 ---
 spring:
   config.activate.on-profile: iluvit-develop
-  jpa:
-    hibernate:
-      ddl-auto: update
+
 logging:
   level:
     org.hibernate.SQL: debug
@@ -43,9 +44,7 @@ logging:
 ---
 spring:
   config.activate.on-profile: iluvit-release
-  jpa:
-    hibernate:
-      ddl-auto: none
+
 logging:
   level:
     org.hibernate.SQL: info
