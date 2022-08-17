@@ -10,12 +10,14 @@ import FIS.iLUVit.service.UserService;
 import com.auth0.jwt.exceptions.JWTVerificationException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.core.env.Environment;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 import java.io.IOException;
+import java.util.Arrays;
 
 
 @Slf4j
@@ -24,6 +26,7 @@ import java.io.IOException;
 public class UserController {
 
     private final UserService userService;
+    private final Environment env;
 
     /**
      * 작성날짜: 2022/05/16 11:58 AM
@@ -105,6 +108,19 @@ public class UserController {
         } else {
             throw new JWTVerificationException("유효하지 않은 시도입니다.");
         }
+    }
+
+    /**
+     *   작성날짜: 2022/08/12 10:39 AM
+     *   작성자: 이승범
+     *   작성내용: healthCheck test
+     */
+    @GetMapping("/profile")
+    public String profile() {
+        return Arrays.stream(env.getActiveProfiles())
+                .filter(str -> str.startsWith("http"))
+                .findFirst()
+                .orElse("");
     }
 
     @GetMapping("/readAlarm")
