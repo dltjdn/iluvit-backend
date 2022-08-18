@@ -37,6 +37,8 @@ public class AuthNumberService {
 
     @Value("${coolsms.fromNumber}")
     private String fromNumber;
+    @Value("${security.jwtExpirationInMs}")
+    private int jwtExpirationInMs;
 
     // 인증번호 제한시간(초)
     private final Integer authValidTime = 60;
@@ -50,6 +52,11 @@ public class AuthNumberService {
      * 작성내용: 회원가입을 위한 인증번호 전송
      */
     public AuthNumber sendAuthNumberForSignup(String toNumber) {
+
+        System.out.println("@@@@@@@@@@@@@@@@@@@@@@@@@@@");
+        System.out.println(jwtExpirationInMs);
+        System.out.println(fromNumber);
+
 
         User findUser = userRepository.findByPhoneNumber(toNumber).orElse(null);
 

@@ -29,9 +29,6 @@ public class SecurityConfig {
     private final AuthenticationEntryPoint authenticationEntryPoint;
     private final JwtUtils jwtUtils;
 
-    @Value("${security.secretKey}")
-    private String secretKey;
-
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http.csrf().disable();
@@ -68,7 +65,7 @@ public class SecurityConfig {
 
     @Bean
     public JwtAuthorizationFilter jwtAuthorizationFilter() throws Exception {
-        return new JwtAuthorizationFilter(authenticationManagerBean(), userRepository, secretKey, jwtUtils);
+        return new JwtAuthorizationFilter(authenticationManagerBean(), userRepository, jwtUtils);
     }
 
     @Bean

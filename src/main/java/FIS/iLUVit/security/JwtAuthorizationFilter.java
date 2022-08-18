@@ -33,7 +33,7 @@ public class JwtAuthorizationFilter extends BasicAuthenticationFilter {
     private final JwtUtils jwtUtils;
 
 
-    public JwtAuthorizationFilter(AuthenticationManager authenticationManager, UserRepository userRepository, String secretKey, JwtUtils jwtUtils) {
+    public JwtAuthorizationFilter(AuthenticationManager authenticationManager, UserRepository userRepository, JwtUtils jwtUtils) {
         super(authenticationManager);
         this.userRepository = userRepository;
         this.jwtUtils = jwtUtils;
