@@ -55,7 +55,7 @@ node("ILUVIT_BACK"){
             IDLE_PROFILE = 'release1'
             IDLE_PORT = '8081'
         }
-        ISRUN = sh "docker ps | grep ${IDLE_PROFILE} | awk '{print \$1}'"
+        ISRUN = sh "docker ps -a| grep ${IDLE_PROFILE} | awk '{print \$1}'"
         if (ISRUN != null) {
             sh "docker stop ${IDLE_PROFILE}"
             sh "docker rm ${IDLE_PROFILE}"
@@ -91,7 +91,7 @@ node("ILUVIT_BACK"){
     stage('delete image and container') {
         def DELETED
         if (CURRENT_PROFILE != null) {
-            sh "docker ps | grep ${CURRENT_PROFILE} > output"
+            sh "docker ps -a| grep ${CURRENT_PROFILE} > output"
             DELETED = readFile 'output'
         }
         if (DELETED != null) {
