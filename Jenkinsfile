@@ -14,7 +14,7 @@ node("Master"){
 
         sh "chmod +x gradlew"
         sh './gradlew'
-        sh './gradlew clean bootJar --stacktrace'
+        sh './gradlew clean build --stacktrace'
 
     }
 
