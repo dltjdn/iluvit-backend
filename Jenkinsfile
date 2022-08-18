@@ -7,16 +7,15 @@ node("Master"){
                 credentialsId: 'ILUVIT_BACK_DEPLOY_KEY',
                 url: 'git@github.com:FISOLUTION/ILUVIT_BACK.git'
 
-        echo "============================git pull finish============================"
     }
 
     stage('build'){
         echo "============================build project============================"
 
         sh "chmod +x gradlew"
-        sh "./gradlew bootJar"
+        sh './gradlew'
+        sh './gradlew clean bootJar --stacktrace'
 
-        echo "============================project build end============================"
     }
 
     stage('build and push image'){
@@ -38,21 +37,31 @@ node("Master"){
             IDLE_PROFILE = 'release1'
             IDLE_PORT = '8081'
         }
-        echo "{ \n" +
-                "current profile: ${CURRENT_PROFILE} \n" +
-                "next profile: ${IDLE_PROFILE} \n" +
-                "next app port: ${IDLE_PORT} \n" +
+
+        echo "========= profile Infos...\n" +
+                "{ \n" +
+                "\tcurrent profile: ${CURRENT_PROFILE} \n" +
+                "\tnext profile: ${IDLE_PROFILE} \n" +
+                "\tnext app port: ${IDLE_PORT} \n" +
                 "}"
+
+        echo "============================ image build end ============================"
+
         image = docker.build("fisolution/iluvit_back:${env.BUILD_NUMBER}", "--build-arg IDLE_PROFILE=${IDLE_PROFILE} .")
 
-        String imageName = sh(script: "docker images -a|grep \"iluvit_back\"")
+        echo "========= show Iluvit_Backend images ========"
+        sh(script: "docker images -a|grep \"iluvit_back\"")
 
+        echo "======== push image to dockerHub..."
         docker.withRegistry("", "fisolution_docker_hub"){
             image.push()
-            echo "image.push"
         }
     }
     stage('delete remain images'){
+
+        echo "============================ delete images ============================"
+
+        echo "====== checking remain images..."
         String imageNames = sh(script: "docker images -a|grep \"iluvit_back\"|awk '\$2 <= ${env.BUILD_ID} - 3 {print \$1}'", returnStdout: true)
         String tag = sh(script: "docker images -a|grep \"iluvit_back\"|awk '\$2 <= ${env.BUILD_ID} - 3 {print \$2}'", returnStdout: true)
         if(imageNames.length()){
@@ -60,29 +69,30 @@ node("Master"){
             String[] tags = tag.split('\n')
             int i = 0
             for(String name: names){
-                echo name
-                echo tags[i]
                 try {
                     String temp = name + ':' + tags[i]
                     sh "sudo docker rmi ${temp} --force"
+                    echo "======= ${temp} deleted..."
                     i++
                 } catch (Exception e){
                     continue
                 }
             }
         }
+
+        echo "============================ delete images end ============================"
     }
 }
+
 node("ILUVIT_BACK"){
     def CURRENT_PROFILE
     def CURRENT_STATE
     def IDLE_PROFILE
     def IDLE_PORT
     stage('server run'){
+        "===== checking server Infos..."
         echo env.BUILD_NUMBER
-        sh "curl -s https://api.iluvit.app/profile > output"
-        CURRENT_STATE = readFile 'output'
-        echo CURRENT_STATE
+        CURRENT_STATE = sh(script: "curl -s https://api.iluvit.app/profile", returnStdout: true)
         if (CURRENT_STATE == 'release1'){
             CURRENT_PROFILE = 'release1'
             IDLE_PROFILE = 'release2'
@@ -91,30 +101,42 @@ node("ILUVIT_BACK"){
             if (CURRENT_STATE == 'release2') {
                 CURRENT_PROFILE = 'release2'
             } else {
-                CURRENT_PROFILE = null
+                CURRENT_STATE = 'not Running'
+                CURRENT_PROFILE = 'not Running'
             }
             IDLE_PROFILE = 'release1'
             IDLE_PORT = '8081'
         }
+
+        echo "===== server Infos..." +
+                "{ \n" +
+                "\tcurrent profile: ${CURRENT_PROFILE} \n" +
+                "\tnext profile: ${IDLE_PROFILE} \n" +
+                "\tnext app port: ${IDLE_PORT} \n" +
+                "}"
+
+        echo "===== check rest container..."
         String ISRUN = sh(script: "docker ps -a | grep ${IDLE_PROFILE} | awk '{print \$1}'", returnStdout: true)
+
         if (ISRUN.length()) {
+            echo "current rest container is ${IDLE_PROFILE}"
             sh "docker stop ${IDLE_PROFILE}"
             sh "docker rm ${IDLE_PROFILE}"
         }
-        echo "docker image pull"
+
+        echo "===== pull image from dockerHub..."
         sh "docker pull fisolution/iluvit_back:${env.BUILD_NUMBER}"
         sh "docker run --name ${IDLE_PROFILE} -d -p ${IDLE_PORT}:8443 fisolution/iluvit_back:${env.BUILD_NUMBER}"
+        sh(script: "docker images -a|grep \"iluvit_back\"")
         sh "sleep 10"
     }
+
     stage('port switch'){
-        echo "for loop"
-        echo IDLE_PORT
         def RESPONSE
+        echo "======== polling to application..."
         for (int i =0; i < 10; i++){
             try {
-                sh "curl -s https://api.iluvit.app/actuator/health | grep UP > output"
-                RESPONSE = readFile 'output'
-                echo RESPONSE
+                RESPONSE = sh(script: "curl -s https://api.iluvit.app/actuator/health | grep UP", returnStdout: true)
                 break
             } catch (Exception e) {
                 RESPONSE = false
@@ -122,6 +144,8 @@ node("ILUVIT_BACK"){
             }
         }
         if (RESPONSE){
+            echo "======= application loaded..."
+            echo "======= switch port..."
             sh "echo 'set \$service_url https://127.0.0.1:${IDLE_PORT};' | tee /etc/nginx/conf.d/service-url.inc"
             sh "service nginx reload"
         }
@@ -129,18 +153,37 @@ node("ILUVIT_BACK"){
             echo "> application deploy fail"
         }
     }
+
     stage('delete container') {
+        echo "====== delete container..."
         def DELETED
         if (CURRENT_PROFILE != null) {
-            sh "docker ps -a| grep ${CURRENT_PROFILE} > output"
-            DELETED = readFile 'output'
+            DELETED = sh(script: "docker ps -a| grep ${CURRENT_PROFILE} > output", returnStdout: true)
         }
         if (DELETED != null) {
             sh "docker stop ${CURRENT_PROFILE}"
             sh "docker rm ${CURRENT_PROFILE}"
         }
     }
-    stage('delete remain container'){
 
+    stage('delete remain container'){
+        echo "====== checking remain images..."
+        String imageNames = sh(script: "docker images -a|grep \"iluvit_back\"|awk '\$2 <= ${env.BUILD_ID} - 3 {print \$1}'", returnStdout: true)
+        String tag = sh(script: "docker images -a|grep \"iluvit_back\"|awk '\$2 <= ${env.BUILD_ID} - 3 {print \$2}'", returnStdout: true)
+        if(imageNames.length()){
+            String[] names = imageNames.split('\n')
+            String[] tags = tag.split('\n')
+            int i = 0
+            for(String name: names){
+                try {
+                    String temp = name + ':' + tags[i]
+                    sh "sudo docker rmi ${temp} --force"
+                    echo "======= ${temp} deleted..."
+                    i++
+                } catch (Exception e){
+                    continue
+                }
+            }
+        }
     }
 }
