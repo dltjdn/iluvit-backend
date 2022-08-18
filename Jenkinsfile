@@ -56,6 +56,7 @@ node("ILUVIT_BACK"){
             IDLE_PORT = '8081'
         }
         ISRUN = sh "docker ps -a| grep ${IDLE_PROFILE} | awk '{print \$1}'"
+        echo ISRUN
         if (ISRUN != null) {
             sh "docker stop ${IDLE_PROFILE}"
             sh "docker rm ${IDLE_PROFILE}"
