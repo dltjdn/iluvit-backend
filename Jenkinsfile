@@ -25,14 +25,14 @@ node("Master"){
             IDLE_PORT = '8081'
         }
         echo IDLE_PROFILE
-        image = docker.build("sbl133/iluvit_back", "--build-arg IDLE_PROFILE=${IDLE_PROFILE} -t ${IDLE_PROFILE} .")
-        docker.withRegistry("https://registry.hub.docker.com", "docker_hub_credentials"){
+        image = docker.build("fisolution/iluvit_back", "--build-arg IDLE_PROFILE=${IDLE_PROFILE} -t ${IDLE_PROFILE} .")
+        docker.withRegistry("https://registry.hub.docker.com", "fisolution_docker_hub"){
             image.push("${env.BUILD_NUMBER}")
             echo "image.push"
         }
     }
 }
-node("DEMO"){
+node("ILUVIT_BACK"){
     def CURRENT_PROFILE
     def CURRENT_STATE
     def IDLE_PROFILE
@@ -61,8 +61,8 @@ node("DEMO"){
             sh "docker rm ${IDLE_PROFILE}"
         }
         echo "docker image pull"
-        sh "docker pull sbl133/iluvit_back:${env.BUILD_NUMBER}"
-        sh "docker run --name ${IDLE_PROFILE} -d -p ${IDLE_PORT}:8443 sbl133/iluvit_back:${env.BUILD_NUMBER}"
+        sh "docker pull fisolution/iluvit_back:${env.BUILD_NUMBER}"
+        sh "docker run --name ${IDLE_PROFILE} -d -p ${IDLE_PORT}:8443 fisolution/iluvit_back:${env.BUILD_NUMBER}"
         sh "sleep 10"
     }
     stage('port switch'){
