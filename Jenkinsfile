@@ -1,22 +1,36 @@
 node("Master"){
+
     stage('git pull'){
-        sh "pwd"
+        echo "============================git pull============================"
+
         git branch: 'release',
                 credentialsId: 'ILUVIT_BACK_DEPLOY_KEY',
                 url: 'git@github.com:FISOLUTION/ILUVIT_BACK.git'
-        sh "ls -lat"
+
+        echo "============================git pull finish============================"
     }
+
     stage('build'){
+        echo "============================build project============================"
+
         sh "chmod +x gradlew"
         sh "./gradlew bootJar"
+
+        echo "============================project build end============================"
     }
+
     stage('build and push image'){
+
+        echo "============================image build============================"
+
         def CURRENT_PROFILE
         def IDLE_PROFILE
         def IDLE_PORT
-        sh "curl -s https://api.iluvit.app/profile > output"
-        CURRENT_PROFILE = readFile 'output'
-        echo CURRENT_PROFILE
+
+        echo "======checking CURRENT PROFILE...======"
+
+        CURRENT_PROFILE = sh(script: "curl -s https://api.iluvit.app/profile", returnStdout: true)
+
         if (CURRENT_PROFILE == 'release1'){
             IDLE_PROFILE = 'release2'
             IDLE_PORT = '8082'
@@ -24,11 +38,38 @@ node("Master"){
             IDLE_PROFILE = 'release1'
             IDLE_PORT = '8081'
         }
-        echo IDLE_PROFILE
-        image = docker.build("fisolution/iluvit_back", "--build-arg IDLE_PROFILE=${IDLE_PROFILE} -t ${IDLE_PROFILE} .")
-        docker.withRegistry("https://registry.hub.docker.com", "fisolution_docker_hub"){
-            image.push("${env.BUILD_NUMBER}")
+        echo "{ \n" +
+                "current profile: ${CURRENT_PROFILE} \n" +
+                "next profile: ${IDLE_PROFILE} \n" +
+                "next app port: ${IDLE_PORT} \n" +
+                "}"
+        image = docker.build("fisolution/iluvit_back:${env.BUILD_NUMBER}", "--build-arg IDLE_PROFILE=${IDLE_PROFILE} .")
+
+        String imageName = sh(script: "docker images -a|grep \"iluvit_back\"")
+
+        docker.withRegistry("", "fisolution_docker_hub"){
+            image.push()
             echo "image.push"
+        }
+    }
+    stage('delete remain images'){
+        String imageNames = sh(script: "docker images -a|grep \"iluvit_back\"|awk '\$2 <= ${env.BUILD_ID} - 3 {print \$1}'", returnStdout: true)
+        String tag = sh(script: "docker images -a|grep \"iluvit_back\"|awk '\$2 <= ${env.BUILD_ID} - 3 {print \$2}'", returnStdout: true)
+        if(imageNames.length()){
+            String[] names = imageNames.split('\n')
+            String[] tags = tag.split('\n')
+            int i = 0
+            for(String name: names){
+                echo name
+                echo tags[i]
+                try {
+                    String temp = name + ':' + tags[i]
+                    sh "sudo docker rmi ${temp} --force"
+                    i++
+                } catch (Exception e){
+                    continue
+                }
+            }
         }
     }
 }
@@ -55,10 +96,8 @@ node("ILUVIT_BACK"){
             IDLE_PROFILE = 'release1'
             IDLE_PORT = '8081'
         }
-        sh "docker ps -a | grep ${IDLE_PROFILE} | awk '{print \$1}' > output"
-        ISRUN = readFile 'output'
-        echo ISRUN
-        if (ISRUN != null || ISRUN.equals("")) {
+        String ISRUN = sh(script: "docker ps -a | grep ${IDLE_PROFILE} | awk '{print \$1}'", returnStdout: true)
+        if (ISRUN.length()) {
             sh "docker stop ${IDLE_PROFILE}"
             sh "docker rm ${IDLE_PROFILE}"
         }
@@ -90,7 +129,7 @@ node("ILUVIT_BACK"){
             echo "> application deploy fail"
         }
     }
-    stage('delete image and container') {
+    stage('delete container') {
         def DELETED
         if (CURRENT_PROFILE != null) {
             sh "docker ps -a| grep ${CURRENT_PROFILE} > output"
@@ -100,5 +139,8 @@ node("ILUVIT_BACK"){
             sh "docker stop ${CURRENT_PROFILE}"
             sh "docker rm ${CURRENT_PROFILE}"
         }
+    }
+    stage('delete remain container'){
+
     }
 }

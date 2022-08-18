@@ -1,4 +1,4 @@
-FROM openjdk:11-jdk
+FROM openjdk:11-jre-slim
 ARG IDLE_PROFILE
 ARG JAR_FILE=build/libs/*.jar
 ENV ENV_IDLE_PROFILE=$IDLE_PROFILE
