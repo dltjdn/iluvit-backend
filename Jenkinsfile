@@ -134,13 +134,13 @@ node("ILUVIT_BACK"){
     stage('port switch'){
         def RESPONSE
         echo "======== polling to application..."
-        for (int i =0; i < 10; i++){
+        for (int i =0; i < 18; i++){
             try {
                 RESPONSE = sh(script: "curl -s https://localhost:${IDLE_PORT}/actuator/health | grep UP", returnStdout: true)
                 break
             } catch (Exception e) {
                 RESPONSE = false
-                sh "sleep 5"
+                sh "sleep 10"
             }
         }
         if (RESPONSE){
