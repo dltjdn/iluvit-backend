@@ -58,7 +58,7 @@ node("ILUVIT_BACK"){
         sh "docker ps -a | grep ${IDLE_PROFILE} | awk '{print \$1}' > output"
         ISRUN = readFile 'output'
         echo ISRUN
-        if (ISRUN != null) {
+        if (ISRUN != null || ISRUN.equals("")) {
             sh "docker stop ${IDLE_PROFILE}"
             sh "docker rm ${IDLE_PROFILE}"
         }
