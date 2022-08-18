@@ -20,7 +20,10 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Spy;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.TestPropertySource;
 
 import java.time.LocalDateTime;
 import java.util.Optional;
@@ -31,6 +34,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
+@TestPropertySource(locations = "classpath:test.properties")
 public class AuthNumberServiceTest {
 
     @Mock
@@ -44,6 +48,7 @@ public class AuthNumberServiceTest {
 
     @InjectMocks
     private AuthNumberService target;
+
 
     private final String phoneNum = "phoneNum";
     private final String authNum = "authNum";
@@ -147,7 +152,7 @@ public class AuthNumberServiceTest {
     public void 인증번호인증_실패_인증번호만료() {
         // given
         AuthenticateAuthNumRequest request = new AuthenticateAuthNumRequest(phoneNum, authNum, AuthKind.signup);
-        doReturn(Optional.of(createAuthNumber(AuthKind.signup).setCreatedDateForTest(LocalDateTime.now().minusSeconds(target.getAuthValidTime()+1))))
+        doReturn(Optional.of(createAuthNumber(AuthKind.signup).setCreatedDateForTest(LocalDateTime.now().minusSeconds(target.getAuthValidTime() + 1))))
                 .when(authNumberRepository)
                 .findByPhoneNumAndAuthNumAndAuthKind(phoneNum, authNum, AuthKind.signup);
         // when
@@ -233,7 +238,7 @@ public class AuthNumberServiceTest {
                 .when(userRepository)
                 .findByPhoneNumber(phoneNum);
 
-        doReturn(Optional.of(createAuthNumber(AuthKind.findLoginId).setCreatedDateForTest(LocalDateTime.now().minusSeconds(target.getAuthValidTime()+1))))
+        doReturn(Optional.of(createAuthNumber(AuthKind.findLoginId).setCreatedDateForTest(LocalDateTime.now().minusSeconds(target.getAuthValidTime() + 1))))
                 .when(authNumberRepository)
                 .findOverlap(phoneNum, AuthKind.findLoginId);
 
@@ -377,7 +382,7 @@ public class AuthNumberServiceTest {
         User user = target.changePassword(request);
         // then
         assertThat(user.getId()).isEqualTo(parent.getId());
-        assertThat(encoder.matches( "newPwd", user.getPassword())).isEqualTo(true);
+        assertThat(encoder.matches("newPwd", user.getPassword())).isEqualTo(true);
         verify(authNumberRepository, times(1)).delete(authNumber);
     }
 
@@ -466,7 +471,7 @@ public class AuthNumberServiceTest {
     public void 인증여부확인_실패_인증시간초과() {
         // given
         AuthKind authKind = AuthKind.updatePhoneNum;
-        AuthNumber authNumber = createAuthNumber(phoneNum, authNum, authKind,LocalDateTime.now().minusSeconds(target.getAuthNumberValidTime() + 1));
+        AuthNumber authNumber = createAuthNumber(phoneNum, authNum, authKind, LocalDateTime.now().minusSeconds(target.getAuthNumberValidTime() + 1));
         doReturn(Optional.of(authNumber))
                 .when(authNumberRepository)
                 .findAuthComplete(phoneNum, authKind);

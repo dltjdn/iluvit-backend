@@ -59,8 +59,8 @@ public class PostService {
         //Integer imgSize = (images == null ? 0 : images.size());
         Post post = new Post(request.getTitle(), request.getContent(), request.getAnonymous(),
                 0, 0, 0, 0, 0, findBoard, findUser);
-        imageService.saveInfoImages(images, post);
         Post savedPost = postRepository.save(post); // 게시글 저장 -> Id 생김
+        imageService.saveInfoImages(images, post);
 
 //        if (imgSize > 0) {
 //            String imagePath = imageService.getPostDir(savedPost.getId()); // id로 경로얻어서 이미지 저장
