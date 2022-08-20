@@ -136,7 +136,7 @@ node("ILUVIT_BACK"){
         echo "======== polling to application..."
         for (int i =0; i < 18; i++){
             try {
-                RESPONSE = sh(script: "curl -s https://localhost:${IDLE_PORT}/actuator/health | grep UP", returnStdout: true)
+                RESPONSE = sh(script: "curl -s https://api.iluvit.app:${IDLE_PORT}/actuator/health | grep UP", returnStdout: true)
                 break
             } catch (Exception e) {
                 RESPONSE = false
