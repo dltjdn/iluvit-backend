@@ -27,7 +27,7 @@ spring:
       - s3
       - map
       - security
-    active: release2
+    active: develop
     group:
       develop: iluvit-develop, h2, local-image, http
       release1: iluvit-release, mysql, server-image, ssl
@@ -36,6 +36,9 @@ spring:
 ---
 spring:
   config.activate.on-profile: iluvit-develop
+  jpa:
+    hibernate:
+      ddl-auto: update
 
 logging:
   level:
