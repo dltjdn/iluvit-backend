@@ -22,19 +22,20 @@ public class SignupTeacherRequest {
     private String loginId;
     @Pattern(regexp = "^(?=.*[A-Za-z])(?=.*\\d)(?=.*[@$!%*#?&])[A-Za-z\\d@$!%*#?&]{8,}$", message = "비밀번호는 문자, 숫자, 특수문자를 최소 한개씩 포함한 8자 이상이어야합니다.")
     private String password;
-    @NotNull
+    @NotNull(message = "입력하지 않은 목록이 있습니다.")
     private String passwordCheck;
-    @NotNull
+    @NotNull(message = "입력하지 않은 목록이 있습니다.")
+    @Size(max = 10)
     private String name;
-    @NotNull
+    @Size(min = 3, max = 10, message = "닉네임은 3글자 이상 10글자 이하여야 합니다.")
     private String nickname;
-    @NotNull
+    @NotNull(message = "입력하지 않은 목록이 있습니다.")
     private String phoneNum;
-    @NotNull
+    @NotNull(message = "입력하지 않은 목록이 있습니다.")
     private String emailAddress;
-    @NotNull
+    @NotNull(message = "입력하지 않은 목록이 있습니다.")
     private String address;
-    @NotNull
+    @NotNull(message = "입력하지 않은 목록이 있습니다.")
     private String detailAddress;
     private Long centerId;
 

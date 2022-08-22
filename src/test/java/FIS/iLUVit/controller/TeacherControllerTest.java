@@ -18,6 +18,7 @@ import FIS.iLUVit.exception.exceptionHandler.ErrorResponse;
 import FIS.iLUVit.exception.exceptionHandler.ErrorResult;
 import FIS.iLUVit.exception.exceptionHandler.controllerAdvice.GlobalControllerAdvice;
 import FIS.iLUVit.service.TeacherService;
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -76,6 +77,33 @@ public class TeacherControllerTest {
         Path path = Paths.get(new File("").getAbsolutePath() + '/' + name);
         byte[] content = Files.readAllBytes(path);
         multipartFile = new MockMultipartFile(name, name, "image", content);
+    }
+
+    @Test
+    public void 교사회원가입_실패_닉네임길이() throws Exception {
+        // given
+        SignupTeacherRequest request = SignupTeacherRequest.builder()
+                .loginId("log")
+                .password("password")
+                .passwordCheck("password")
+                .phoneNum("phoneNum")
+                .nickname("nickName123123")
+                .name("name")
+                .emailAddress("asd@asd")
+                .address("address")
+                .detailAddress("detailAddress")
+                .centerId(1L)
+                .build();
+        String url = "/signup/teacher";
+        // when
+        ResultActions result = mockMvc.perform(
+                MockMvcRequestBuilders.post(url)
+                        .content(objectMapper.writeValueAsString(request))
+                        .contentType(MediaType.APPLICATION_JSON)
+        );
+        // then
+        result.andDo(print())
+                .andExpect(status().isBadRequest());
     }
 
     @Test
