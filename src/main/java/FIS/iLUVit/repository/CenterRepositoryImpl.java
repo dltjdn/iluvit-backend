@@ -221,6 +221,11 @@ public class CenterRepositoryImpl extends CenterQueryMethod implements CenterRep
         return result;
     }
 
+    /**
+    *   작성날짜: 2022/08/24 5:17 PM
+    *   작성자: 이승범
+    *   작성내용: 회원가입 과정에서 시설정보 가져오기
+    */
     @Override
     public Slice<CenterInfoDto> findForSignup(String sido, String sigungu, String centerName, Pageable pageable) {
         List<CenterInfoDto> content = jpaQueryFactory.select(new QCenterInfoDto(center.id, center.name, center.address))
@@ -260,6 +265,11 @@ public class CenterRepositoryImpl extends CenterQueryMethod implements CenterRep
         return new SliceImpl<>(content, pageable, hasNext);
     }
 
+    /**
+    *   작성날짜: 2022/08/14 5:17 PM
+    *   작성자: 이승범
+    *   작성내용: 찜한 시설 가져오기
+    */
     @Override
     public Slice<CenterPreview> findByPrefer(Long userId, Pageable pageable) {
         List<CenterPreview> content = jpaQueryFactory.select(new QCenterPreview(center, review.score.avg()))
