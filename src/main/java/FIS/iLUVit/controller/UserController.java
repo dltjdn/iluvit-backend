@@ -68,23 +68,6 @@ public class UserController {
         userService.updatePassword(id, request);
     }
 
-    @GetMapping("/alarm-active")
-    public Slice<AlarmDto> getActiveAlarm(@Login Long userId, Pageable pageable){
-        return userService.findUserActiveAlarm(userId, pageable);
-    }
-
-    @GetMapping("/alarm-presentation")
-    public Slice<AlarmDto> getPresentationAlarm(@Login Long userId, Pageable pageable){
-        return userService.findPresentationActiveAlarm(userId, pageable);
-    }
-
-    @DeleteMapping("/alarm")
-    public Integer deleteAlarm(@Login Long userId, @RequestBody AlarmDeleteDto request) {
-        if(userId == null)
-            throw new UserException(UserErrorResult.NOT_LOGIN);
-        return userService.deleteUserAlarm(userId, request.getAlarmIds());
-    }
-
     /**
      *   작성날짜: 2022/07/29 01:32 AM
      *   작성자: 이승범
@@ -128,6 +111,23 @@ public class UserController {
         if(userId == null)
             throw new UserException(UserErrorResult.NOT_LOGIN);
         userService.readAlarm(userId);
+    }
+
+    @GetMapping("/alarm-active")
+    public Slice<AlarmDto> getActiveAlarm(@Login Long userId, Pageable pageable){
+        return userService.findUserActiveAlarm(userId, pageable);
+    }
+
+    @GetMapping("/alarm-presentation")
+    public Slice<AlarmDto> getPresentationAlarm(@Login Long userId, Pageable pageable){
+        return userService.findPresentationActiveAlarm(userId, pageable);
+    }
+
+    @DeleteMapping("/alarm")
+    public Integer deleteAlarm(@Login Long userId, @RequestBody AlarmDeleteDto request) {
+        if(userId == null)
+            throw new UserException(UserErrorResult.NOT_LOGIN);
+        return userService.deleteUserAlarm(userId, request.getAlarmIds());
     }
 
     @GetMapping("/hasRead")
