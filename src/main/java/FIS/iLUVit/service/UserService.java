@@ -106,22 +106,6 @@ public class UserService {
         return encoder.encode(password);
     }
 
-    public Slice<AlarmDto> findUserActiveAlarm(Long userId, Pageable pageable) {
-        Slice<Alarm> alarmSlice = alarmRepository.findActiveByUser(userId, pageable);
-        return new SliceImpl<>(alarmSlice.stream()
-                .map(Alarm::exportAlarm)
-                .collect(Collectors.toList()),
-                pageable, alarmSlice.hasNext());
-    }
-
-    public Slice<AlarmDto> findPresentationActiveAlarm(Long userId, Pageable pageable) {
-        Slice<Alarm> alarmSlice = alarmRepository.findPresentationByUser(userId, pageable);
-        return new SliceImpl<>(alarmSlice.stream()
-                .map(Alarm::exportAlarm)
-                .collect(Collectors.toList()),
-                pageable, alarmSlice.hasNext());
-    }
-
     public Integer deleteUserAlarm(Long userId, List<Long> alarmIds) {
         return alarmRepository.deleteByIds(userId, alarmIds);
     }
@@ -223,6 +207,22 @@ public class UserService {
                 .ifPresent((user)->{
                     throw new UserException(UserErrorResult.ALREADY_NICKNAME_EXIST);
                 });
+    }
+
+    public Slice<AlarmDto> findUserActiveAlarm(Long userId, Pageable pageable) {
+        Slice<Alarm> alarmSlice = alarmRepository.findActiveByUser(userId, pageable);
+        return new SliceImpl<>(alarmSlice.stream()
+                .map(Alarm::exportAlarm)
+                .collect(Collectors.toList()),
+                pageable, alarmSlice.hasNext());
+    }
+
+    public Slice<AlarmDto> findPresentationActiveAlarm(Long userId, Pageable pageable) {
+        Slice<Alarm> alarmSlice = alarmRepository.findPresentationByUser(userId, pageable);
+        return new SliceImpl<>(alarmSlice.stream()
+                .map(Alarm::exportAlarm)
+                .collect(Collectors.toList()),
+                pageable, alarmSlice.hasNext());
     }
 
     public void readAlarm(Long userId) {

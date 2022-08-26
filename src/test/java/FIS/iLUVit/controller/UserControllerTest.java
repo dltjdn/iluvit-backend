@@ -2,6 +2,7 @@ package FIS.iLUVit.controller;
 
 import FIS.iLUVit.Creator;
 import FIS.iLUVit.config.argumentResolver.LoginUserArgumentResolver;
+import FIS.iLUVit.controller.dto.CheckLoginIdRequest;
 import FIS.iLUVit.controller.dto.UpdatePasswordRequest;
 import FIS.iLUVit.controller.dto.UserInfoResponse;
 import FIS.iLUVit.domain.Parent;
@@ -13,6 +14,8 @@ import FIS.iLUVit.security.LoginResponse;
 import FIS.iLUVit.service.UserService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -22,11 +25,13 @@ import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
+import org.springframework.test.web.servlet.result.MockMvcResultHandlers;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
 import java.io.IOException;
 
 import static org.mockito.Mockito.*;
+import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @ExtendWith(MockitoExtension.class)
@@ -145,5 +150,26 @@ public class UserControllerTest {
         );
         // then
         result.andExpect(status().isOk());
+    }
+
+    @Nested
+    @DisplayName("로그인 중복확인")
+    class checkLoginId{
+
+        @Test
+        @DisplayName("[error] 로그인 아이 5자이상")
+        public void 다섯자이상() throws Exception {
+            // given
+            String url = "/loginid";
+            // when
+            ResultActions result = mockMvc.perform(
+                    MockMvcRequestBuilders.get(url)
+                            .param("loginId", "asd")
+            );
+            // then
+            result.andDo(print())
+                    .andExpect(status().isBadRequest());
+        }
+
     }
 }

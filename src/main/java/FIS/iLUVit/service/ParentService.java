@@ -169,5 +169,4 @@ public class ParentService {
 
         preferRepository.delete(deletedPrefer);
     }
-
 }

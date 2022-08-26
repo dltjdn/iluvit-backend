@@ -303,15 +303,41 @@ public class TeacherServiceTest {
         doReturn(Optional.of(teacher1))
                 .when(teacherRepository)
                 .findById(teacher1.getId());
-        // when
-        //when
         Mockito.doReturn(Pair.of(126.8806602, 37.4778951))
                 .when(mapService).convertAddressToLocation(null);
         Mockito.doReturn(Pair.of("서울특별시", "금천구"))
                 .when(mapService).getSidoSigunguByLocation(126.8806602, 37.4778951);
+        // when
         TeacherDetailResponse response = target.updateDetail(teacher1.getId(), request);
         // then
         assertThat(response.getPhoneNumber()).isEqualTo("newPhoneNum");
+    }
+
+    @Test
+    public void 교사프로필수정_성공_핸드폰미포함() throws IOException {
+        // given
+        UpdateTeacherDetailRequest request = UpdateTeacherDetailRequest.builder()
+                .name("updatedName")
+                .nickname(teacher1.getNickName())
+                .changePhoneNum(false)
+                .phoneNum("newPhoneNum")
+                .emailAddress(teacher1.getEmailAddress())
+                .address(teacher1.getAddress())
+                .detailAddress(teacher1.getDetailAddress())
+                .profileImg(multipartFile)
+                .build();
+        doReturn(Optional.of(teacher1))
+                .when(teacherRepository)
+                .findById(teacher1.getId());
+        Mockito.doReturn(Pair.of(126.8806602, 37.4778951))
+                .when(mapService).convertAddressToLocation(null);
+        Mockito.doReturn(Pair.of("서울특별시", "금천구"))
+                .when(mapService).getSidoSigunguByLocation(126.8806602, 37.4778951);
+        // when
+        TeacherDetailResponse result = target.updateDetail(teacher1.getId(), request);
+        // then
+        assertThat(result.getName()).isEqualTo(request.getName());
+        assertThat(result.getPhoneNumber()).isNotEqualTo(request.getPhoneNum());
     }
 
     @Nested
