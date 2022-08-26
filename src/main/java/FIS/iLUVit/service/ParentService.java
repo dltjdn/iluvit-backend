@@ -141,21 +141,18 @@ public class ParentService {
      *   작성내용: 시설 찜하기
      */
     public Prefer savePrefer(Long userId, Long centerId) {
-        Parent parent = parentRepository.findByIdWithPreferWithCenter(userId)
-                .orElseThrow(() -> new UserException(UserErrorResult.NOT_VALID_REQUEST));
 
-        parent.getPrefers().stream()
-                .filter(prefer -> Objects.equals(prefer.getCenter().getId(), centerId))
-                .findFirst()
+        preferRepository.findByUserIdAndCenterId(userId, centerId)
                 .ifPresent(prefer -> {
                     throw new PreferException(PreferErrorResult.ALREADY_PREFER);
                 });
 
         try {
+            Parent parent = parentRepository.getById(userId);
             Center center = centerRepository.getById(centerId);
-            Prefer newPrefer = Prefer.createPrefer(parent, center);
-            preferRepository.saveAndFlush(newPrefer);
-            return newPrefer;
+            Prefer prefer = Prefer.createPrefer(parent, center);
+            preferRepository.saveAndFlush(prefer);
+            return prefer;
         } catch (DataIntegrityViolationException e) {
             throw new PreferException(PreferErrorResult.NOT_VALID_CENTER);
         }
@@ -167,13 +164,8 @@ public class ParentService {
     *   작성내용: 시설 찜 해제하기
     */
     public void deletePrefer(Long userId, Long centerId) {
-        Parent parent = parentRepository.findByIdWithPreferWithCenter(userId)
-                .orElseThrow(() -> new UserException("존재하지 않는 사용자입니다."));
-
-        Prefer deletedPrefer = parent.getPrefers().stream()
-                .filter(prefer -> Objects.equals(prefer.getCenter().getId(), centerId))
-                .findFirst()
-                .orElseThrow(() -> new UserException("이미 찜한 시설입니다."));
+        Prefer deletedPrefer = preferRepository.findByUserIdAndCenterId(userId, centerId)
+                .orElseThrow(() -> new PreferException(PreferErrorResult.NOT_VALID_CENTER));
 
         preferRepository.delete(deletedPrefer);
     }

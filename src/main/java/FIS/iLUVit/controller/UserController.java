@@ -100,10 +100,6 @@ public class UserController {
     @GetMapping("/profile")
     public String profile() {
         return env.getProperty("spring.profiles.active");
-//        return Arrays.stream(env.getActiveProfiles())
-//                .filter(str -> str.startsWith("http"))
-//                .findFirst()
-//                .orElse("");
     }
 
     @GetMapping("/readAlarm")
