@@ -6,6 +6,7 @@ import FIS.iLUVit.controller.dto.TeacherApprovalListResponse;
 import FIS.iLUVit.controller.dto.TeacherDetailResponse;
 import FIS.iLUVit.controller.dto.UpdateTeacherDetailRequest;
 import FIS.iLUVit.domain.*;
+import FIS.iLUVit.domain.alarms.CenterApprovalAcceptedAlarm;
 import FIS.iLUVit.domain.alarms.CenterApprovalReceivedAlarm;
 import FIS.iLUVit.domain.enumtype.Approval;
 import FIS.iLUVit.domain.enumtype.Auth;
@@ -334,18 +335,29 @@ public class TeacherServiceTest {
         @Test
         @DisplayName("[success] 시설로의 등록신청")
         public void 시설등록신청_성공() {
-            // given
-            doReturn(Optional.of(teacher4))
-                    .when(teacherRepository)
-                    .findByIdAndNotAssign(teacher4.getId());
-            doReturn(center2)
-                    .when(centerRepository)
-                    .getById(center2.getId());
-            // when
-            Teacher result = target.assignCenter(teacher4.getId(), center2.getId());
-            // then
-            assertThat(result.getCenter().getId()).isEqualTo(center2.getId());
-            assertThat(result.getApproval()).isEqualTo(Approval.WAITING);
+            try (MockedStatic<AlarmUtils> alarmUtils = Mockito.mockStatic(AlarmUtils.class)) {
+                // given
+                doReturn(Optional.of(teacher4))
+                        .when(teacherRepository)
+                        .findByIdAndNotAssign(teacher4.getId());
+                doReturn(center1)
+                        .when(centerRepository)
+                        .getById(center1.getId());
+                doReturn(List.of(teacher1))
+                        .when(teacherRepository)
+                        .findDirectorByCenter(center1.getId());
+                alarmUtils.when(() -> AlarmUtils.getMessage(any(String.class), any(Object[].class)))
+                        .thenReturn("설명회가 가득 찼습니다");
+                AlarmEvent alarmEvent = new AlarmEvent(new CenterApprovalAcceptedAlarm(Parent.builder().build(), Center.builder().build()));
+                alarmUtils.when(() -> AlarmUtils.publishAlarmEvent(new CenterApprovalReceivedAlarm(teacher1, Auth.TEACHER)))
+                        .thenReturn(alarmEvent);
+                // when
+                Teacher result = target.assignCenter(teacher4.getId(), center1.getId());
+                // then
+                assertThat(result.getCenter().getId()).isEqualTo(center1.getId());
+                assertThat(result.getApproval()).isEqualTo(Approval.WAITING);
+                alarmUtils.verify(() -> AlarmUtils.publishAlarmEvent(any()), times(1));
+            }
         }
     }
 

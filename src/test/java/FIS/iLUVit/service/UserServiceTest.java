@@ -186,4 +186,6 @@ public class UserServiceTest {
         // then
         assertThat(encoder.matches("newPwd", result.getPassword())).isTrue();
     }
+
+
 }
