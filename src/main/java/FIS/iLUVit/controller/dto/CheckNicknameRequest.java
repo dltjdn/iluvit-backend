@@ -9,7 +9,7 @@ import javax.validation.constraints.Size;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class CheckLoginIdRequest {
-    @Size(min = 5, message = "아이디는 5자 이상이어야 합니다.")
-    private String loginId;
+public class CheckNicknameRequest {
+    @Size(min = 2, max = 10, message = "닉네임은 2글자 이상 10글자 이하여야 합니다.")
+    private String nickname;
 }

@@ -44,7 +44,7 @@ public class UserController {
     */
     @GetMapping("/loginid")
     public void checkLoginId(@Valid @ModelAttribute CheckLoginIdRequest request) {
-        userService.checkLoginId(request.getLoginId());
+        userService.checkLoginId(request);
     }
 
     /**
@@ -53,8 +53,8 @@ public class UserController {
     *   작성내용: 닉네임 중복 확인
     */
     @GetMapping("/nickname")
-    public void checkNickname(@RequestParam String nickname) {
-        userService.checkNickname(nickname);
+    public void checkNickname(@Valid @ModelAttribute CheckNicknameRequest request) {
+        userService.checkNickname(request);
     }
 
     /**
@@ -100,10 +100,6 @@ public class UserController {
     @GetMapping("/profile")
     public String profile() {
         return env.getProperty("spring.profiles.active");
-//        return Arrays.stream(env.getActiveProfiles())
-//                .filter(str -> str.startsWith("http"))
-//                .findFirst()
-//                .orElse("");
     }
 
     @GetMapping("/readAlarm")

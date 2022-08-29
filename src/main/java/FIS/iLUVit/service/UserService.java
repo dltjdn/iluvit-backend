@@ -1,9 +1,6 @@
 package FIS.iLUVit.service;
 
-import FIS.iLUVit.controller.dto.AlarmDto;
-import FIS.iLUVit.controller.dto.TokenRefreshRequest;
-import FIS.iLUVit.controller.dto.UpdatePasswordRequest;
-import FIS.iLUVit.controller.dto.UserInfoResponse;
+import FIS.iLUVit.controller.dto.*;
 import FIS.iLUVit.domain.AuthNumber;
 import FIS.iLUVit.domain.TokenPair;
 import FIS.iLUVit.domain.User;
@@ -106,26 +103,6 @@ public class UserService {
         return encoder.encode(password);
     }
 
-    public Slice<AlarmDto> findUserActiveAlarm(Long userId, Pageable pageable) {
-        Slice<Alarm> alarmSlice = alarmRepository.findActiveByUser(userId, pageable);
-        return new SliceImpl<>(alarmSlice.stream()
-                .map(Alarm::exportAlarm)
-                .collect(Collectors.toList()),
-                pageable, alarmSlice.hasNext());
-    }
-
-    public Slice<AlarmDto> findPresentationActiveAlarm(Long userId, Pageable pageable) {
-        Slice<Alarm> alarmSlice = alarmRepository.findPresentationByUser(userId, pageable);
-        return new SliceImpl<>(alarmSlice.stream()
-                .map(Alarm::exportAlarm)
-                .collect(Collectors.toList()),
-                pageable, alarmSlice.hasNext());
-    }
-
-    public Integer deleteUserAlarm(Long userId, List<Long> alarmIds) {
-        return alarmRepository.deleteByIds(userId, alarmIds);
-    }
-
 
     /**
      *   작성날짜: 2022/07/29 01:32 AM
@@ -206,8 +183,8 @@ public class UserService {
     *   작성자: 이승범
     *   작성내용: 로그인아이디 중복 확인
     */
-    public void checkLoginId(String loginId) {
-        userRepository.findByLoginId(loginId)
+    public void checkLoginId(CheckLoginIdRequest request) {
+        userRepository.findByLoginId(request.getLoginId())
                 .ifPresent((user)->{
                     throw new UserException(UserErrorResult.ALREADY_LOGINID_EXIST);
                 });
@@ -218,11 +195,31 @@ public class UserService {
     *   작성자: 이승범
     *   작성내용: 닉네임 중복 확인
     */
-    public void checkNickname(String nickname) {
-        userRepository.findByNickName(nickname)
+    public void checkNickname(CheckNicknameRequest request) {
+        userRepository.findByNickName(request.getNickname())
                 .ifPresent((user)->{
                     throw new UserException(UserErrorResult.ALREADY_NICKNAME_EXIST);
                 });
+    }
+
+    public Integer deleteUserAlarm(Long userId, List<Long> alarmIds) {
+        return alarmRepository.deleteByIds(userId, alarmIds);
+    }
+
+    public Slice<AlarmDto> findUserActiveAlarm(Long userId, Pageable pageable) {
+        Slice<Alarm> alarmSlice = alarmRepository.findActiveByUser(userId, pageable);
+        return new SliceImpl<>(alarmSlice.stream()
+                .map(Alarm::exportAlarm)
+                .collect(Collectors.toList()),
+                pageable, alarmSlice.hasNext());
+    }
+
+    public Slice<AlarmDto> findPresentationActiveAlarm(Long userId, Pageable pageable) {
+        Slice<Alarm> alarmSlice = alarmRepository.findPresentationByUser(userId, pageable);
+        return new SliceImpl<>(alarmSlice.stream()
+                .map(Alarm::exportAlarm)
+                .collect(Collectors.toList()),
+                pageable, alarmSlice.hasNext());
     }
 
     public void readAlarm(Long userId) {

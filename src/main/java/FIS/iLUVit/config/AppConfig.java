@@ -29,7 +29,7 @@ public class AppConfig {
         return new JPAQueryFactory(entityManager);
     }
 
-    // 비밀번호 해싱을 위한 class 빈등록
+    // 비밀번호 해싱 encoder 빈등록
     @Bean
     public BCryptPasswordEncoder passwordEncoder(){
         return new BCryptPasswordEncoder();
