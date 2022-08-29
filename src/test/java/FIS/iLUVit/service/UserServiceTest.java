@@ -1,6 +1,8 @@
 package FIS.iLUVit.service;
 
 import FIS.iLUVit.Creator;
+import FIS.iLUVit.controller.dto.CheckLoginIdRequest;
+import FIS.iLUVit.controller.dto.CheckNicknameRequest;
 import FIS.iLUVit.controller.dto.UpdatePasswordRequest;
 import FIS.iLUVit.controller.dto.UserInfoResponse;
 import FIS.iLUVit.domain.AuthNumber;
@@ -185,7 +187,7 @@ public class UserServiceTest {
     }
 
     @Nested
-    @DisplayName("로그인아이디 중복 확ㅇ니")
+    @DisplayName("로그인아이디 중복 확인")
     class checkLoginId{
         @Test
         @DisplayName("[error] 이미 존재하는 로그인아이디")
@@ -195,9 +197,10 @@ public class UserServiceTest {
             doReturn(Optional.of(parent))
                     .when(userRepository)
                     .findByLoginId(parent.getLoginId());
+            CheckLoginIdRequest request = new CheckLoginIdRequest(parent.getLoginId());
             // when
             UserException result = assertThrows(UserException.class,
-                    () -> target.checkLoginId(parent.getLoginId()));
+                    () -> target.checkLoginId(request));
             // then
             assertThat(result.getErrorResult()).isEqualTo(UserErrorResult.ALREADY_LOGINID_EXIST);
         }
@@ -209,9 +212,10 @@ public class UserServiceTest {
             doReturn(Optional.empty())
                     .when(userRepository)
                     .findByLoginId(any());
+            CheckLoginIdRequest request = new CheckLoginIdRequest("loginId");
             // when
             // then
-            assertDoesNotThrow(() -> target.checkLoginId("loginId"));
+            assertDoesNotThrow(() -> target.checkLoginId(request));
         }
     }
 
@@ -226,12 +230,14 @@ public class UserServiceTest {
             doReturn(Optional.of(parent))
                     .when(userRepository)
                     .findByNickName(parent.getNickName());
+            CheckNicknameRequest request = new CheckNicknameRequest(parent.getNickName());
             // when
             UserException result = assertThrows(UserException.class,
-                    () -> target.checkNickname(parent.getNickName()));
+                    () -> target.checkNickname(request));
             // then
             assertThat(result.getErrorResult()).isEqualTo(UserErrorResult.ALREADY_NICKNAME_EXIST);
         }
+
         @Test
         @DisplayName("[success] 사용가능한 닉네임")
         public void 사용가능닉네임() {
@@ -239,9 +245,10 @@ public class UserServiceTest {
             doReturn(Optional.empty())
                     .when(userRepository)
                     .findByNickName(any());
+            CheckNicknameRequest request = new CheckNicknameRequest("nickname");
             // when
             // then
-            assertDoesNotThrow(() -> target.checkNickname("nickname"));
+            assertDoesNotThrow(() -> target.checkNickname(request));
         }
     }
 

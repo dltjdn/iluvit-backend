@@ -3,11 +3,14 @@ package FIS.iLUVit.controller;
 import FIS.iLUVit.Creator;
 import FIS.iLUVit.config.argumentResolver.LoginUserArgumentResolver;
 import FIS.iLUVit.controller.dto.CheckLoginIdRequest;
+import FIS.iLUVit.controller.dto.CheckNicknameRequest;
 import FIS.iLUVit.controller.dto.UpdatePasswordRequest;
 import FIS.iLUVit.controller.dto.UserInfoResponse;
 import FIS.iLUVit.domain.Parent;
 import FIS.iLUVit.exception.SignupErrorResult;
 import FIS.iLUVit.exception.SignupException;
+import FIS.iLUVit.exception.UserErrorResult;
+import FIS.iLUVit.exception.UserException;
 import FIS.iLUVit.exception.exceptionHandler.ErrorResponse;
 import FIS.iLUVit.exception.exceptionHandler.controllerAdvice.GlobalControllerAdvice;
 import FIS.iLUVit.security.LoginResponse;
@@ -157,7 +160,7 @@ public class UserControllerTest {
     class checkLoginId{
 
         @Test
-        @DisplayName("[error] 로그인 아이 5자이상")
+        @DisplayName("[error] 로그인 아이디 5자이상")
         public void 다섯자이상() throws Exception {
             // given
             String url = "/loginid";
@@ -171,5 +174,95 @@ public class UserControllerTest {
                     .andExpect(status().isBadRequest());
         }
 
+        @Test
+        @DisplayName("[error] 로그인아이디 중복")
+        public void 아이디중복() throws Exception {
+            // given
+            String url = "/loginid";
+            UserErrorResult error = UserErrorResult.ALREADY_LOGINID_EXIST;
+            doThrow(new UserException(error))
+                    .when(userService)
+                    .checkLoginId(any());
+            // when
+            ResultActions result = mockMvc.perform(
+                    MockMvcRequestBuilders.get(url)
+                            .param("loginId", "asdfg")
+            );
+            // then
+            result.andExpect(status().isBadRequest())
+                    .andExpect(content().json(
+                            objectMapper.writeValueAsString(new ErrorResponse(error.getHttpStatus(), error.getMessage()))
+                    ));
+        }
+
+        @Test
+        @DisplayName("[success] 로그인아이디 안중복")
+        public void 안중복() throws Exception {
+            // given
+            String url = "/loginid";
+            // when
+            ResultActions result = mockMvc.perform(
+                    MockMvcRequestBuilders.get(url)
+                            .param("loginId", "asdfg")
+            );
+            // then
+            result.andExpect(status().isOk());
+        }
     }
+    
+    @Nested
+    @DisplayName("닉네임 중복확인")
+    class checkNickname{
+        @Test
+        @DisplayName("[error] 닉네임 글자 수 2~10자")
+        public void 닉네임글자수() throws Exception {
+            // given
+            String url = "/nickname";
+            // when
+            ResultActions result = mockMvc.perform(
+                    MockMvcRequestBuilders.get(url)
+                            .param("nickname", "10자이상의닉네임이지롱롱롱")
+            );
+            // then
+            result.andDo(print())
+                    .andExpect(status().isBadRequest());
+        }
+
+        @Test
+        @DisplayName("[error] 닉네임 중복")
+        public void 닉네임중복() throws Exception {
+            // given
+            String url = "/nickname";
+            UserErrorResult error = UserErrorResult.ALREADY_NICKNAME_EXIST;
+            CheckNicknameRequest request = new CheckNicknameRequest("asd");
+            doThrow(new UserException(error))
+                    .when(userService)
+                    .checkNickname(request);
+            // when
+            ResultActions result = mockMvc.perform(
+                    MockMvcRequestBuilders.get(url)
+                            .param("nickname", request.getNickname())
+            );
+            // then
+            result.andExpect(status().isBadRequest())
+                    .andExpect(content().json(
+                            objectMapper.writeValueAsString(new ErrorResponse(error.getHttpStatus(), error.getMessage()))
+                    ));
+        }
+
+        @Test
+        @DisplayName("[success] 닉네임 안중복")
+        public void 닉네임안중복() throws Exception {
+            // given
+            String url = "/nickname";
+            // when
+            ResultActions result = mockMvc.perform(
+                    MockMvcRequestBuilders.get(url)
+                            .param("nickname", "asd")
+            );
+            // then
+            result.andExpect(status().isOk());
+        }
+    }
+    
 }
