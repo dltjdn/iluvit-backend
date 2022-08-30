@@ -14,6 +14,9 @@ import FIS.iLUVit.exception.exceptionHandler.ErrorResponse;
 import FIS.iLUVit.repository.AuthNumberRepository;
 import FIS.iLUVit.repository.UserRepository;
 import FIS.iLUVit.stub.MessageServiceStub;
+import org.junit.Before;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -21,9 +24,13 @@ import org.mockito.Mock;
 import org.mockito.Spy;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.context.properties.EnableConfigurationProperties;
+import org.springframework.boot.test.context.ConfigDataApplicationContextInitializer;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.TestPropertySource;
+import org.springframework.test.util.ReflectionTestUtils;
 
 import java.time.LocalDateTime;
 import java.util.Optional;
@@ -34,8 +41,8 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
-@TestPropertySource(locations = "classpath:test.properties")
 public class AuthNumberServiceTest {
+
 
     @Mock
     private AuthNumberRepository authNumberRepository;
@@ -48,7 +55,6 @@ public class AuthNumberServiceTest {
 
     @InjectMocks
     private AuthNumberService target;
-
 
     private final String phoneNum = "phoneNum";
     private final String authNum = "authNum";

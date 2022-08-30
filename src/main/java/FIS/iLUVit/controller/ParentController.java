@@ -20,7 +20,6 @@ import java.io.IOException;
 public class ParentController {
 
     private final ParentService parentService;
-    private final MessageSource messageSource;
 
     /**
      * 작성날짜: 2022/05/13 4:43 PM

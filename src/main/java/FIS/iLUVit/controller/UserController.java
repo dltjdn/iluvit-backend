@@ -44,7 +44,7 @@ public class UserController {
     */
     @GetMapping("/loginid")
     public void checkLoginId(@Valid @ModelAttribute CheckLoginIdRequest request) {
-        userService.checkLoginId(request.getLoginId());
+        userService.checkLoginId(request);
     }
 
     /**
@@ -53,8 +53,8 @@ public class UserController {
     *   작성내용: 닉네임 중복 확인
     */
     @GetMapping("/nickname")
-    public void checkNickname(@RequestParam String nickname) {
-        userService.checkNickname(nickname);
+    public void checkNickname(@Valid @ModelAttribute CheckNicknameRequest request) {
+        userService.checkNickname(request);
     }
 
     /**
@@ -65,23 +65,6 @@ public class UserController {
     @PutMapping("/user/password")
     public void updatePassword(@Login Long id, @Valid @RequestBody UpdatePasswordRequest request) {
         userService.updatePassword(id, request);
-    }
-
-    @GetMapping("/alarm-active")
-    public Slice<AlarmDto> getActiveAlarm(@Login Long userId, Pageable pageable){
-        return userService.findUserActiveAlarm(userId, pageable);
-    }
-
-    @GetMapping("/alarm-presentation")
-    public Slice<AlarmDto> getPresentationAlarm(@Login Long userId, Pageable pageable){
-        return userService.findPresentationActiveAlarm(userId, pageable);
-    }
-
-    @DeleteMapping("/alarm")
-    public Integer deleteAlarm(@Login Long userId, @RequestBody AlarmDeleteDto request) {
-        if(userId == null)
-            throw new UserException(UserErrorResult.NOT_LOGIN);
-        return userService.deleteUserAlarm(userId, request.getAlarmIds());
     }
 
     /**
@@ -117,10 +100,6 @@ public class UserController {
     @GetMapping("/profile")
     public String profile() {
         return env.getProperty("spring.profiles.active");
-//        return Arrays.stream(env.getActiveProfiles())
-//                .filter(str -> str.startsWith("http"))
-//                .findFirst()
-//                .orElse("");
     }
 
     @GetMapping("/readAlarm")
@@ -128,6 +107,23 @@ public class UserController {
         if(userId == null)
             throw new UserException(UserErrorResult.NOT_LOGIN);
         userService.readAlarm(userId);
+    }
+
+    @GetMapping("/alarm-active")
+    public Slice<AlarmDto> getActiveAlarm(@Login Long userId, Pageable pageable){
+        return userService.findUserActiveAlarm(userId, pageable);
+    }
+
+    @GetMapping("/alarm-presentation")
+    public Slice<AlarmDto> getPresentationAlarm(@Login Long userId, Pageable pageable){
+        return userService.findPresentationActiveAlarm(userId, pageable);
+    }
+
+    @DeleteMapping("/alarm")
+    public Integer deleteAlarm(@Login Long userId, @RequestBody AlarmDeleteDto request) {
+        if(userId == null)
+            throw new UserException(UserErrorResult.NOT_LOGIN);
+        return userService.deleteUserAlarm(userId, request.getAlarmIds());
     }
 
     @GetMapping("/hasRead")

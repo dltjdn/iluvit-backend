@@ -4,6 +4,7 @@ import FIS.iLUVit.Creator;
 import FIS.iLUVit.controller.dto.ParentDetailRequest;
 import FIS.iLUVit.controller.dto.ParentDetailResponse;
 import FIS.iLUVit.controller.dto.SignupParentRequest;
+import FIS.iLUVit.domain.Board;
 import FIS.iLUVit.domain.Center;
 import FIS.iLUVit.domain.Parent;
 import FIS.iLUVit.domain.Prefer;
@@ -14,10 +15,7 @@ import FIS.iLUVit.exception.UserException;
 import FIS.iLUVit.repository.*;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Nested;
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.*;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
@@ -27,9 +25,11 @@ import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.data.util.Pair;
 
 import java.io.IOException;
+import java.util.List;
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.*;
 
@@ -67,6 +67,7 @@ public class ParentServiceTest {
     private Center center1;
     private Center center2;
     private Prefer prefer1;
+    private Board board1;
 
     @BeforeEach
     public void init() {
@@ -75,6 +76,7 @@ public class ParentServiceTest {
         center1 = Creator.createCenter(3L, "center1");
         center2 = Creator.createCenter(4L, "center2");
         prefer1 = Creator.createPrefer(5L, parent1, center1);
+        board1 = Creator.createBoard(6L, "board1", null, true);
         objectMapper = new ObjectMapper();
     }
 
@@ -91,7 +93,9 @@ public class ParentServiceTest {
         doReturn("hashedPwd")
                 .when(userService)
                 .signupValidation(request.getPassword(), request.getPasswordCheck(), request.getLoginId(), request.getPhoneNum(), request.getNickname());
-        //when
+        doReturn(List.of(board1))
+                .when(boardRepository)
+                .findDefaultByModu();
         Mockito.doReturn(Pair.of(126.8806602, 37.4778951))
                 .when(mapService).convertAddressToLocation(null);
         Mockito.doReturn(Pair.of("서울특별시", "금천구"))
@@ -101,6 +105,7 @@ public class ParentServiceTest {
         // then
         assertThat(result.getPassword()).isEqualTo("hashedPwd");
         assertThat(result.getLoginId()).isEqualTo("loginId");
+        verify(bookmarkRepository, times(1)).save(any());
     }
 
     @Test
@@ -151,8 +156,39 @@ public class ParentServiceTest {
             // then
             assertThat(result.getErrorResult()).isEqualTo(UserErrorResult.ALREADY_NICKNAME_EXIST);
         }
+
         @Test
-        public void 부모프로필정보수정_성공() throws IOException {
+        public void 부모프로필정보수정_성공_번호변경X() throws IOException {
+            // given
+            doReturn(Optional.of(parent1))
+                    .when(parentRepository)
+                    .findById(any());
+            ParentDetailRequest request = ParentDetailRequest
+                    .builder()
+                    .name("name")
+                    .nickname("nickName")
+                    .changePhoneNum(false)
+                    .phoneNum("invalidPhoneNum")
+                    .address("서울특별시 금천구 가산동 429-1 가산디지털2로 108")
+                    .detailAddress("detailAddress")
+                    .emailAddress("emailAddress")
+                    .interestAge(3)
+                    .theme(objectMapper.writeValueAsString(Creator.createTheme()))
+                    .build();
+            Mockito.doReturn(Pair.of(126.8806602, 37.4778951))
+                    .when(mapService).convertAddressToLocation(anyString());
+            Mockito.doReturn(Pair.of("서울특별시", "금천구"))
+                    .when(mapService).getSidoSigunguByLocation(126.8806602, 37.4778951);
+            // when
+            ParentDetailResponse result = target.updateDetail(parent1.getId(), request);
+            // then
+            assertThat(result).isNotNull();
+            assertThat(result.getAddress()).isEqualTo(request.getAddress());
+            assertThat(result.getPhoneNumber()).isNotEqualTo(request.getPhoneNum());
+        }
+
+        @Test
+        public void 부모프로필정보수정_성공_번호변경O() throws IOException {
             // given
             doReturn(Optional.of(parent1))
                     .when(parentRepository)
@@ -169,8 +205,6 @@ public class ParentServiceTest {
                     .interestAge(3)
                     .theme(objectMapper.writeValueAsString(Creator.createTheme()))
                     .build();
-
-            //when
             Mockito.doReturn(Pair.of(126.8806602, 37.4778951))
                     .when(mapService).convertAddressToLocation(anyString());
             Mockito.doReturn(Pair.of("서울특별시", "금천구"))
@@ -192,10 +226,9 @@ public class ParentServiceTest {
         @DisplayName("[error] 이미 찜한 시설")
         public void 이미찜한시설() {
             // given
-            parent1.getPrefers().add(prefer1);
-            doReturn(Optional.of(parent1))
-                    .when(parentRepository)
-                    .findByIdWithPreferWithCenter(parent1.getId());
+            doReturn(Optional.of(prefer1))
+                    .when(preferRepository)
+                    .findByUserIdAndCenterId(parent1.getId(), center1.getId());
             // when
             PreferException result = assertThrows(PreferException.class,
                     () -> target.savePrefer(parent1.getId(), center1.getId()));
@@ -207,13 +240,15 @@ public class ParentServiceTest {
         @DisplayName("[error] 잘못된 시설을 찜")
         public void 잘못된시설() {
             // given
-            parent1.getPrefers().add(prefer1);
-            doReturn(Optional.of(parent1))
-                    .when(parentRepository)
-                    .findByIdWithPreferWithCenter(parent1.getId());
+            doReturn(Optional.empty())
+                    .when(preferRepository)
+                    .findByUserIdAndCenterId(parent1.getId(), center2.getId());
             doReturn(center2)
                     .when(centerRepository)
                     .getById(any());
+            doReturn(parent1)
+                    .when(parentRepository)
+                    .getById(parent1.getId());
             doThrow(new DataIntegrityViolationException("해당시설없음"))
                     .when(preferRepository)
                     .saveAndFlush(any());
@@ -228,13 +263,15 @@ public class ParentServiceTest {
         @DisplayName("[success] 시설 찜하기 성공")
         public void 찜하기성공() {
             // given
-            parent1.getPrefers().add(prefer1);
-            doReturn(Optional.of(parent1))
-                    .when(parentRepository)
-                    .findByIdWithPreferWithCenter(parent1.getId());
+            doReturn(Optional.empty())
+                    .when(preferRepository)
+                    .findByUserIdAndCenterId(parent1.getId(), center2.getId());
             doReturn(center2)
                     .when(centerRepository)
-                    .getById(center2.getId());
+                    .getById(any());
+            doReturn(parent1)
+                    .when(parentRepository)
+                    .getById(parent1.getId());
             // when
             Prefer result = target.savePrefer(parent1.getId(), center2.getId());
             // then
@@ -250,11 +287,27 @@ public class ParentServiceTest {
         @DisplayName("[error] 찜하지 않은 시설")
         public void 찜하지않은시설() {
             // given
-
+            doReturn(Optional.empty())
+                    .when(preferRepository)
+                    .findByUserIdAndCenterId(any(), any());
             // when
-
+            PreferException result = assertThrows(PreferException.class,
+                    () -> target.deletePrefer(parent1.getId(), center1.getId()));
             // then
+            assertThat(result.getErrorResult()).isEqualTo(PreferErrorResult.NOT_VALID_CENTER);
+        }
 
+        @Test
+        @DisplayName("[success] 찜 해제하기 성공")
+        public void 찜해제하기성공() {
+            // given
+            doReturn(Optional.of(prefer1))
+                    .when(preferRepository)
+                    .findByUserIdAndCenterId(parent1.getId(), center1.getId());
+            // when
+            target.deletePrefer(parent1.getId(), center1.getId());
+            // then
+            verify(preferRepository, times(1)).delete(any());
         }
     }
 
