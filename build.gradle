@@ -9,6 +9,7 @@ plugins {
 	id 'io.spring.dependency-management' version '1.0.11.RELEASE'
 	id 'java'
 	id "com.ewerk.gradle.plugins.querydsl" version "1.0.10"
+	id "jacoco"
 }
 
 group = 'FIS'
@@ -25,6 +26,10 @@ repositories {
 	mavenCentral()
 }
 
+jacoco {
+	toolVersion = "0.8.8"
+}
+
 dependencies {
 	implementation "com.querydsl:querydsl-jpa:${queryDslVersion}"
 	implementation "com.querydsl:querydsl-apt:${queryDslVersion}"
@@ -33,8 +38,8 @@ dependencies {
 	implementation 'org.springframework.boot:spring-boot-starter-security'
 	implementation 'org.springframework.boot:spring-boot-starter-validation'
 	implementation 'org.springframework.boot:spring-boot-starter-web'
-    implementation 'org.projectlombok:lombok:1.18.22'
-    compileOnly 'org.projectlombok:lombok'
+	implementation 'org.projectlombok:lombok:1.18.22'
+	compileOnly 'org.projectlombok:lombok'
 	runtimeOnly 'com.h2database:h2'
 	runtimeOnly 'mysql:mysql-connector-java'
 	annotationProcessor 'org.projectlombok:lombok'
@@ -81,8 +86,39 @@ dependencies {
 	implementation 'org.springframework.boot:spring-boot-starter-actuator'
 }
 
+// 서순이 중요하다 test -> jacocoTestReport -> jacocoTestCoverageVerification 순서로 task 진행
 test {
 	useJUnitPlatform()
+	finalizedBy 'jacocoTestReport'
+	bootJar
+}
+
+// test 결과값 받는 부분을 설정하기 위한 jacocoTestReport
+jacocoTestReport {
+	reports {
+		html.enabled true
+		csv.enabled false
+		xml.enabled false
+	}
+
+	finalizedBy 'jacocoTestCoverageVerification'
+}
+
+jacocoTestCoverageVerification {
+	violationRules {
+		rule {
+			enabled = true
+			// 측정의 큰 단위를 나타냄
+			element = 'CLASS'
+
+			limit {
+				// 커버리지 측정의 최소 단위
+				counter = 'LINE'
+			}
+
+			excludes = []
+		}
+	}
 }
 
 def querydslDir = "$buildDir/generated/querydsl"
