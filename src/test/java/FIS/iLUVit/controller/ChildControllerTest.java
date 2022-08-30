@@ -33,6 +33,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.time.LocalDate;
 
 import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.*;
@@ -442,4 +443,87 @@ public class ChildControllerTest {
             result.andExpect(status().isOk());
         }
     }
+
+    @Nested
+    @DisplayName("아이추가")
+    class saveChild{
+        @Test
+        @DisplayName("[error] 불완전한 요청")
+        public void 불완전한요청() throws Exception {
+            // given
+            String url = "/parent/child";
+            // when
+            ResultActions result = mockMvc.perform(
+                    MockMvcRequestBuilders
+                            .multipart(url)
+                            .file(multipartFile)
+                            .param("center_id", center.getId().toString())
+                            .param("birthDate", LocalDate.now().toString())
+            );
+            // then
+            result.andDo(print())
+                    .andExpect(status().isBadRequest());
+        }
+
+        @Test
+        @DisplayName("[error] 잘못된 센터로의 접근")
+        public void 잘못된요청() throws Exception {
+            // given
+            String url = "/parent/child";
+            UserErrorResult error = UserErrorResult.NOT_VALID_REQUEST;
+            doThrow(new UserException(error))
+                    .when(childService)
+                    .saveChild(any(), any());
+            // when
+            ResultActions result = mockMvc.perform(
+                    MockMvcRequestBuilders
+                            .multipart(url)
+                            .file(multipartFile)
+                            .param("center_id", center.getId().toString())
+                            .param("name", "childName")
+                            .param("birthDate", LocalDate.now().toString())
+            );
+            // then
+            result.andExpect(status().isBadRequest())
+                    .andExpect(content().json(
+                            objectMapper.writeValueAsString(new ErrorResponse(error.getHttpStatus(), error.getMessage()))
+                    ));
+        }
+        @Test
+        @DisplayName("[success] 아이추가 성공")
+        public void 아이추가성공() throws Exception {
+            // given
+            String url = "/parent/child";
+            // when
+            ResultActions result = mockMvc.perform(
+                    MockMvcRequestBuilders
+                            .multipart(url)
+                            .file(multipartFile)
+                            .param("center_id", center.getId().toString())
+                            .param("name", "childName")
+                            .param("birthDate", LocalDate.now().toString()));
+            // then
+            result.andExpect(status().isOk());
+        }
+    }
+
+    @Nested
+    @DisplayName("아이 프로필 조회")
+    class findChildInfoDetail{
+//        @Test
+//        @DisplayName("[error] 잘못된 아이 ID")
+//        public void 잘못된아이정보() {
+//            // given
+//            String url = "/parent/child/{childId}";
+//            // when
+//            mockMvc.perform(
+//                    MockMvcRequestBuilders.get(url, child.getId())
+//                            .
+//            )
+//            // then
+//
+//        }
+    }
+
+
 }
