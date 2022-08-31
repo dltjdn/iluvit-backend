@@ -562,4 +562,102 @@ public class TeacherControllerTest {
         }
     }
 
+    @Nested
+    @DisplayName("원장권한 부여")
+    class mandateTeacher{
+        @Test
+        @DisplayName("[error] 원장권한 없음")
+        public void 원장권한없음() throws Exception {
+            // given
+            String url = "/director/teacher/mandate/{teacherId}";
+            UserErrorResult error = UserErrorResult.HAVE_NOT_AUTHORIZATION;
+            doThrow(new UserException(error))
+                    .when(teacherService)
+                    .mandateTeacher(any(), any());
+            // when
+            ResultActions result = mockMvc.perform(
+                    MockMvcRequestBuilders.patch(url, teacher.getId())
+                            .header("Authorization", createJwtToken(director))
+            );
+            // then
+            result.andExpect(status().isForbidden())
+                    .andExpect(content().json(
+                            objectMapper.writeValueAsString(new ErrorResponse(error.getHttpStatus(), error.getMessage()))
+                    ));
+        }
+
+        @Test
+        @DisplayName("[error] 잘못된 teacherId")
+        public void teacherIdError() throws Exception {
+            // given
+            String url = "/director/teacher/mandate/{teacherId}";
+            UserErrorResult error = UserErrorResult.NOT_VALID_REQUEST;
+            doThrow(new UserException(error))
+                    .when(teacherService)
+                    .mandateTeacher(any(), any());
+            // when
+            ResultActions result = mockMvc.perform(
+                    MockMvcRequestBuilders.patch(url, teacher.getId())
+                            .header("Authorization", createJwtToken(director))
+            );
+            // then
+            result.andExpect(status().isBadRequest())
+                    .andExpect(content().json(
+                            objectMapper.writeValueAsString(new ErrorResponse(error.getHttpStatus(), error.getMessage()))
+                    ));
+        }
+        @Test
+        @DisplayName("[success] 원장권한부여 성공")
+        public void 원장권한부여성공() throws Exception {
+            // given
+            String url = "/director/teacher/mandate/{teacherId}";
+            // when
+            ResultActions result = mockMvc.perform(
+                    MockMvcRequestBuilders.patch(url, teacher.getId())
+                            .header("Authorization", createJwtToken(director))
+            );
+            // then
+            result.andExpect(status().isOk());
+        }
+    }
+    
+    @Nested
+    @DisplayName("원장권한 박탈")
+    class demoteTeacher{
+        @Test
+        @DisplayName("[error] 잘못된 교사 아이디")
+        public void 잘못된교사아이디() throws Exception {
+            // given
+            String url = "/director/teacher/demote/{teacherId}";
+            UserErrorResult error = UserErrorResult.NOT_VALID_REQUEST;
+            doThrow(new UserException(error))
+                    .when(teacherService)
+                    .demoteTeacher(any(), any());
+            // when
+            ResultActions result = mockMvc.perform(
+                    MockMvcRequestBuilders.patch(url, teacher.getId())
+                            .header("Authorization", createJwtToken(director))
+            );
+            // then
+            result.andExpect(status().isBadRequest())
+                    .andExpect(content().json(
+                            objectMapper.writeValueAsString(new ErrorResponse(error.getHttpStatus(), error.getMessage()))
+                    ));
+        }
+
+        @Test
+        @DisplayName("[success] 원장권한 박탈 성공")
+        public void 박탈성공() throws Exception {
+            // given
+            String url = "/director/teacher/demote/{teacherId}";
+            // when
+            ResultActions result = mockMvc.perform(
+                    MockMvcRequestBuilders.patch(url, teacher.getId())
+                            .header("Authorization", createJwtToken(director))
+            );
+            // then
+            result.andExpect(status().isOk());
+        }
+    }
+
 }

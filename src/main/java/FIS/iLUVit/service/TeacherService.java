@@ -301,9 +301,11 @@ public class TeacherService {
      */
     public Teacher mandateTeacher(Long userId, Long teacherId) {
 
+        // 사용자의 시설에 등록된 교사들 엮어서 가져오기
         Teacher director = teacherRepository.findDirectorByIdWithCenterWithTeacher(userId)
                 .orElseThrow(() -> new UserException(UserErrorResult.HAVE_NOT_AUTHORIZATION));
 
+        //
         Teacher mandatedTeacher = director.getCenter().getTeachers().stream()
                 .filter(teacher -> Objects.equals(teacher.getId(), teacherId))
                 .filter(teacher -> teacher.getApproval() == Approval.ACCEPT)

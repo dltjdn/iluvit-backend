@@ -420,4 +420,44 @@ public class ParentControllerTest {
             result.andExpect(status().isOk());
         }
     }
+
+    @Nested
+    @DisplayName("시설 찜 해제")
+    class deletePrefer{
+        @Test
+        @DisplayName("[error] 유효하지 않은 시설정보")
+        public void 시설정보오류() throws Exception {
+            // given
+            String url = "/parent/prefer/{centerId}";
+            PreferErrorResult error = PreferErrorResult.NOT_VALID_CENTER;
+            doThrow(new PreferException(error))
+                    .when(parentService)
+                    .deletePrefer(any(), any());
+            // when
+            ResultActions result = mockMvc.perform(
+                    MockMvcRequestBuilders.delete(url, center.getId())
+                            .header("Authorization", Creator.createJwtToken(parent))
+            );
+            // then
+            result.andExpect(status().isBadRequest())
+                    .andExpect(content().json(
+                            objectMapper.writeValueAsString(new ErrorResponse(error.getHttpStatus(), error.getMessage()))
+                    ));
+        }
+
+        @Test
+        @DisplayName("[success] 찜 해제 성공")
+        public void 찜해제성공() throws Exception {
+            // given
+            String url = "/parent/prefer/{centerId}";
+            // when
+            ResultActions result = mockMvc.perform(
+                    MockMvcRequestBuilders.delete(url, center.getId())
+                            .header("Authorization", Creator.createJwtToken(parent))
+            );
+            // then
+            result.andExpect(status().isOk());
+        }
+    }
+
 }
