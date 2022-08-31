@@ -457,6 +457,7 @@ public class ChildControllerTest {
                     MockMvcRequestBuilders
                             .multipart(url)
                             .file(multipartFile)
+                            .header("Authorization", Creator.createJwtToken(parent))
                             .param("center_id", center.getId().toString())
                             .param("birthDate", LocalDate.now().toString())
             );
@@ -479,6 +480,7 @@ public class ChildControllerTest {
                     MockMvcRequestBuilders
                             .multipart(url)
                             .file(multipartFile)
+                            .header("Authorization", Creator.createJwtToken(parent))
                             .param("center_id", center.getId().toString())
                             .param("name", "childName")
                             .param("birthDate", LocalDate.now().toString())
@@ -499,9 +501,11 @@ public class ChildControllerTest {
                     MockMvcRequestBuilders
                             .multipart(url)
                             .file(multipartFile)
+                            .header("Authorization", Creator.createJwtToken(parent))
                             .param("center_id", center.getId().toString())
                             .param("name", "childName")
                             .param("birthDate", LocalDate.now().toString()));
+
             // then
             result.andExpect(status().isOk());
         }
@@ -510,19 +514,79 @@ public class ChildControllerTest {
     @Nested
     @DisplayName("아이 프로필 조회")
     class findChildInfoDetail{
-//        @Test
-//        @DisplayName("[error] 잘못된 아이 ID")
-//        public void 잘못된아이정보() {
-//            // given
-//            String url = "/parent/child/{childId}";
-//            // when
-//            mockMvc.perform(
-//                    MockMvcRequestBuilders.get(url, child.getId())
-//                            .
-//            )
-//            // then
-//
-//        }
+        @Test
+        @DisplayName("[error] 잘못된 아이 ID")
+        public void 잘못된아이정보() throws Exception {
+            // given
+            String url = "/parent/child/{childId}";
+            UserErrorResult error = UserErrorResult.NOT_VALID_REQUEST;
+            doThrow(new UserException(error))
+                    .when(childService)
+                    .findChildInfoDetail(any(), any());
+            // when
+            ResultActions result = mockMvc.perform(
+                    MockMvcRequestBuilders.get(url, child.getId())
+                            .header("Authorization", Creator.createJwtToken(parent))
+            );
+            // then
+            result.andExpect(status().isBadRequest())
+                    .andExpect(content().json(
+                            objectMapper.writeValueAsString(new ErrorResponse(error.getHttpStatus(), error.getMessage()))
+                    ));
+        }
+
+        @Test
+        @DisplayName("[success] 아이 프로필 조회 성공")
+        public void 프로필조회성공() throws Exception {
+            // given
+            String url = "/parent/child/{childId}";
+            // when
+            ResultActions result = mockMvc.perform(
+                    MockMvcRequestBuilders.get(url, child.getId())
+                            .header("Authorization", Creator.createJwtToken(parent))
+            );
+            // then
+            result.andExpect(status().isOk());
+        }
+    }
+
+    @Nested
+    @DisplayName("시설에 등록된 아이들정보 조회")
+    class approvalList{
+        @Test
+        @DisplayName("[error] 승인되지않은 교사의 요청")
+        public void 승인되지않은교사() throws Exception {
+            // given
+            String url = "/teacher/child/approval";
+            UserErrorResult error = UserErrorResult.HAVE_NOT_AUTHORIZATION;
+            doThrow(new UserException(error))
+                    .when(childService)
+                    .findChildApprovalInfoList(any());
+            // when
+            ResultActions result = mockMvc.perform(
+                    MockMvcRequestBuilders.get(url)
+                            .header("Authorization", Creator.createJwtToken(teacher))
+            );
+            // then
+            result.andExpect(status().isForbidden())
+                    .andExpect(content().json(
+                            objectMapper.writeValueAsString(new ErrorResponse(error.getHttpStatus(), error.getMessage()))
+                    ));
+        }
+
+        @Test
+        @DisplayName("[success] 아이들정보 조회 성공")
+        public void 아이들정보조회성공() throws Exception {
+            // given
+            String url = "/teacher/child/approval";
+            // when
+            ResultActions result = mockMvc.perform(
+                    MockMvcRequestBuilders.get(url)
+                            .header("Authorization", Creator.createJwtToken(teacher))
+            );
+            // then
+            result.andExpect(status().isOk());
+        }
     }
 
 
