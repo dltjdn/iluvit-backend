@@ -28,7 +28,7 @@ public class PostController {
      * 내용: multipart/form-data 형식으로 변환된 request, 이미지 파일 리스트 images 파라미터로 게시글 저장
      */
     @PostMapping(value = "/user/post", consumes = {MediaType.APPLICATION_JSON_VALUE, MediaType.MULTIPART_FORM_DATA_VALUE})
-    @ResponseStatus(HttpStatus.ACCEPTED)
+//    @ResponseStatus(HttpStatus.ACCEPTED)
     public Long registerPost(@Login Long userId,
                              @RequestPart(required = false) List<MultipartFile> images,
                              @RequestPart @Validated PostRegisterRequest request) {

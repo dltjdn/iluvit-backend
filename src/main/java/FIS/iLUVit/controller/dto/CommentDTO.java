@@ -18,8 +18,8 @@ public class CommentDTO {
 
     private Long post_id; // 연관된 게시글 아이디
     private String post_title;
-    private Integer post_heart_cnt;
-    private Integer post_comment_cnt;
+    private Integer heartCnt; // 게시글 좋아요 수
+    private Integer commentCnt; // 게시글 댓글 수
     private Long user_id; // 댓글 작성자 아이디
     private Long board_id; // 게시판 아이디
     private String board_name; // 게시판 이름
@@ -34,8 +34,8 @@ public class CommentDTO {
         this.content = c.getContent();
         this.post_id = c.getPost().getId();
         this.post_title = c.getPost().getTitle();
-        this.post_heart_cnt = c.getPost().getHeartCnt();
-        this.post_comment_cnt = c.getPost().getCommentCnt();
+        this.heartCnt = c.getPost().getHeartCnt();
+        this.commentCnt = c.getPost().getCommentCnt();
         this.user_id = c.getUser().getId();
         this.board_id = c.getPost().getBoard().getId();
         this.board_name = c.getPost().getBoard().getName();

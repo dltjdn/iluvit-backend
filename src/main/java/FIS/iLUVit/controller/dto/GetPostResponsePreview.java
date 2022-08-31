@@ -27,14 +27,14 @@ public class GetPostResponsePreview {
     private int imgCnt;
 
     private String previewImage;
-    private String boardName;
+    private String board_name;
     private Long board_id;
 
     private LocalDate date;
     private LocalTime time;
 
     private Long center_id;
-    private String centerName;
+    private String center_name;
 
     @QueryProjection
     public GetPostResponsePreview(Post post) {
@@ -48,7 +48,7 @@ public class GetPostResponsePreview {
         this.commentCnt = post.getCommentCnt();
         this.heartCnt = post.getHeartCnt();
         this.imgCnt = post.getImgCnt();
-        this.boardName = post.getBoard().getName();
+        this.board_name = post.getBoard().getName();
         this.board_id = post.getBoard().getId();
         this.date = post.getDate();
         this.time = post.getTime();
@@ -56,9 +56,9 @@ public class GetPostResponsePreview {
 
         if (post.getBoard().getCenter() != null) {
             this.center_id = post.getBoard().getCenter().getId();
-            this.centerName = post.getBoard().getCenter().getName();
+            this.center_name = post.getBoard().getCenter().getName();
         } else {
-            this.centerName = "모두의 이야기";
+            this.center_name = "모두의 이야기";
         }
     }
 
@@ -73,7 +73,7 @@ public class GetPostResponsePreview {
         this.heartCnt = post.getHeartCnt();
         this.imgCnt = post.getImgCnt();
         this.previewImage = encodedInfoImage.isEmpty() ? null : encodedInfoImage.get(0);
-        this.boardName = post.getBoard().getName();
+        this.board_name = post.getBoard().getName();
         this.board_id = post.getBoard().getId();
         this.date = post.getDate();
         this.time = post.getTime();
