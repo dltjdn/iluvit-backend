@@ -52,6 +52,9 @@ public class ChatService {
                     .orElseThrow(() -> new CommentException(CommentErrorResult.NO_EXIST_COMMENT));
             anonymousInfo = findComment.getAnonymous();
             receiveUser = findComment.getUser();
+            if (receiveUser == null) {
+                throw new CommentException(CommentErrorResult.NO_EXIST_COMMENT);
+            }
         } else {
             anonymousInfo = findPost.getAnonymous();
             receiveUser = findPost.getUser();
