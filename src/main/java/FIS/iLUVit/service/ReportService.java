@@ -5,13 +5,11 @@ import FIS.iLUVit.domain.Comment;
 import FIS.iLUVit.domain.Post;
 import FIS.iLUVit.domain.User;
 import FIS.iLUVit.domain.enumtype.ReportType;
-import FIS.iLUVit.domain.reports.CommentReport;
-import FIS.iLUVit.domain.reports.PostReport;
+import FIS.iLUVit.domain.reports.Report;
+import FIS.iLUVit.domain.reports.ReportDetailComment;
+import FIS.iLUVit.domain.reports.ReportDetailPost;
 import FIS.iLUVit.exception.*;
-import FIS.iLUVit.repository.CommentRepository;
-import FIS.iLUVit.repository.PostRepository;
-import FIS.iLUVit.repository.ReportRepository;
-import FIS.iLUVit.repository.UserRepository;
+import FIS.iLUVit.repository.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -22,6 +20,7 @@ import org.springframework.transaction.annotation.Transactional;
 public class ReportService {
 
     private final ReportRepository reportRepository;
+    private final ReportDetailRepository reportDetailRepository;
     private final PostRepository postRepository;
     private final CommentRepository commentRepository;
     private final UserRepository userRepository;
@@ -38,7 +37,9 @@ public class ReportService {
 
         User findUser = userRepository.findById(userId)
                 .orElseThrow(() -> new UserException(UserErrorResult.USER_NOT_EXIST));
-        User findTargetUser = userRepository.getById(request.getTargetUserId());
+        User findTargetUser = userRepository.findById(request.getTargetUserId())
+                .orElseThrow(() -> new UserException(UserErrorResult.USER_NOT_EXIST));
+
 
         Long reportId = null;
         // 신고 대상은 게시글(POST)와 댓글(COMMENT)
@@ -48,24 +49,57 @@ public class ReportService {
                     .orElseThrow(() -> new PostException(PostErrorResult.POST_NOT_EXIST));
 
             // 해당 게시글을 이미 신고했으면 중복으로 신고 불가능
-            reportRepository.findByTargetPostIdAndUserId(request.getTargetId(), userId)
-                    .ifPresent(report -> {throw new ReportException(ReportErrorResult.ALREADY_EXIST_POST_REPORT);});
+            reportDetailRepository.findByUserIdAndTargetPostId(userId, request.getTargetId())
+                    .ifPresent(rd -> {
+                        throw new ReportException(ReportErrorResult.ALREADY_EXIST_POST_REPORT);
+                    });
 
             // 신고 가능
-            PostReport postReport = new PostReport(findPost, findUser, findTargetUser, request.getReason());
-            reportId = reportRepository.save(postReport).getId();
+            // 게시글에 대한 최초 신고일 때 : 1) Report 추가 2) ReportDetail 추가
+            // 게시글에 대한 최초 신고가 아닐 때 : 1) ReportDetail 추가
+            Report findReport = reportRepository.findByTargetId(request.getTargetId()).orElse(null);
+
+            if (findReport == null){ // 최초 신고
+                Report report = new Report(request.getType(), request.getTargetId(), findTargetUser);
+                Report saveReport = reportRepository.save(report);
+
+                ReportDetailPost reportDetailPost = new ReportDetailPost(saveReport, findUser, request.getReason(), findPost);
+                reportId = reportDetailRepository.save(reportDetailPost).getId();
+                saveReport.plusCount();
+            }else { // 최초 신고가 아님
+                ReportDetailPost reportDetailPost = new ReportDetailPost(findReport, findUser, request.getReason(), findPost);
+                reportId = reportDetailRepository.save(reportDetailPost).getId();
+                findReport.plusCount();
+            }
+
         }else if (request.getType().equals(ReportType.COMMENT)){
             // 해당 댓글이 삭제되었으면 신고 불가능
             Comment findComment = commentRepository.findById(request.getTargetId())
                     .orElseThrow(() -> new CommentException(CommentErrorResult.NO_EXIST_COMMENT));
 
             // 해당 댓글을 이미 신고했으면 중복으로 신고 불가능
-            reportRepository.findByTargetCommentIdAndUserId(request.getTargetId(), userId)
-                    .ifPresent(report -> {throw new ReportException(ReportErrorResult.ALREADY_EXIST_COMMENT_REPORT);});
+            reportDetailRepository.findByUserIdAndTargetCommentId(userId, request.getTargetId())
+                    .ifPresent(rd -> {
+                        throw new ReportException(ReportErrorResult.ALREADY_EXIST_COMMENT_REPORT);
+                    });
 
             // 신고 가능
-            CommentReport commentReport = new CommentReport(findComment, findUser, findTargetUser, request.getReason());
-            reportId = reportRepository.save(commentReport).getId();
+            // 댓글에 대한 최초 신고일 때 : 1) Report 추가 2) ReportDetail 추가
+            // 댓글에 대한 최초 신고가 아닐 때 : 1) ReportDetail 추가
+            Report findReport = reportRepository.findByTargetId(request.getTargetId()).orElse(null);
+
+            if (findReport == null){ // 최초 신고
+                Report report = new Report(request.getType(), request.getTargetId(), findTargetUser);
+                Report saveReport = reportRepository.save(report);
+
+                ReportDetailComment reportDetailComment = new ReportDetailComment(saveReport, findUser, request.getReason(), findComment);
+                reportId = reportDetailRepository.save(reportDetailComment).getId();
+                saveReport.plusCount();
+            }else { // 최초 신고가 아님
+                ReportDetailComment reportDetailComment = new ReportDetailComment(findReport, findUser, request.getReason(), findComment);
+                reportId = reportDetailRepository.save(reportDetailComment).getId();
+                findReport.plusCount();
+            }
         }
 
         return reportId;

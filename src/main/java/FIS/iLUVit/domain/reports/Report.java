@@ -3,48 +3,56 @@ package FIS.iLUVit.domain.reports;
 import FIS.iLUVit.domain.BaseEntity;
 import FIS.iLUVit.domain.User;
 import FIS.iLUVit.domain.enumtype.ReportStatus;
-import FIS.iLUVit.domain.enumtype.ReportReason;
+import FIS.iLUVit.domain.enumtype.ReportType;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
 import java.time.LocalDate;
 import java.time.LocalTime;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
-@Inheritance(strategy = InheritanceType.SINGLE_TABLE)
-@DiscriminatorColumn(name = "dtype")
 @Getter
 @NoArgsConstructor
-public abstract class Report extends BaseEntity {
+public class Report extends BaseEntity {
 
-    @Id
-    @GeneratedValue
-    protected Long id;
+    @Id @GeneratedValue
+    private Long id;
+    @Column(name = "target_id")
+    private Long targetId;                           // 신고 대상의 id
+    @Enumerated(EnumType.STRING)
+    private ReportType type;                         // 신고 대상 구분
+    private int count;                               // 신고 횟수
+    private LocalDate date;                          // 신고 접수 날짜
+    private LocalTime time;                          // 신고 접수 시간
+
     @Enumerated(value = EnumType.STRING)
-    protected ReportReason reason;                     // 신고 사유
-    @Enumerated(value = EnumType.STRING)
-    protected ReportStatus status;                     // 처리 상태
-    protected LocalDate date;                          // 신고 접수 날짜
-    protected LocalTime time;                          // 신고 접수 시간
+    private ReportStatus status;                     // 처리 상태
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "target_user_id")
-    protected User targetUser;                         // 피신고자(해당 게시글,댓글의 작성자)
+    private User targetUser;                         // 피신고자(해당 게시글,댓글의 작성자)
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "user_id")
-    protected User user;                               // 신고자
+    @OneToMany(mappedBy = "report")
+    private List<ReportDetail> reportDetails = new ArrayList<>();
 
-    @Column(name = "dtype", insertable = false, updatable = false)
-    protected String dtype;                            // 게시글,댓글 구분
-
-    public Report(User user, User targetUser, ReportReason reason){
-        this.user = user;
+    public Report(ReportType type, Long targetId,  User targetUser){
+        this.targetId = targetId;
+        this.type = type;
+        this.count = 0;
         this.targetUser = targetUser;
+        this.status = ReportStatus.ACCEPT;
         this.date = LocalDate.now();
         this.time = LocalTime.now();
-        this.reason = reason;
-        this.status = ReportStatus.ACCEPT;
+    }
+
+    public void plusCount() {
+        this.count +=1;
+    }
+
+    public void updateReportDetail(ReportDetail reportDetail){
+        this.reportDetails.add(reportDetail);
     }
 }
