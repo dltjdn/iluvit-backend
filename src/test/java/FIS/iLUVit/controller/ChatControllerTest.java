@@ -148,7 +148,7 @@ class ChatControllerTest {
                         .contentType(MediaType.APPLICATION_JSON));
         //then
         resultActions.andDo(print())
-                .andExpect(status().isBadRequest())
+                .andExpect(status().isForbidden())
                 .andExpect(
                         content().json(objectMapper.writeValueAsString(
                                 new ErrorResponse(error.getHttpStatus(), error.getMessage())
@@ -205,7 +205,7 @@ class ChatControllerTest {
                         .contentType(MediaType.APPLICATION_JSON));
         //then
         resultActions.andDo(print())
-                .andExpect(status().isBadRequest())
+                .andExpect(status().isIAmATeapot())
                 .andExpect(
                         content().json(objectMapper.writeValueAsString(
                                 new ErrorResponse(error.getHttpStatus(), error.getMessage())
@@ -232,7 +232,7 @@ class ChatControllerTest {
                         .contentType(MediaType.APPLICATION_JSON));
         //then
         resultActions.andDo(print())
-                .andExpect(status().isBadRequest())
+                .andExpect(status().isIAmATeapot())
                 .andExpect(
                         content().json(objectMapper.writeValueAsString(
                                 new ErrorResponse(error.getHttpStatus(), error.getMessage())
@@ -284,7 +284,7 @@ class ChatControllerTest {
                         .contentType(MediaType.APPLICATION_JSON));
         //then
         resultActions.andDo(print())
-                .andExpect(status().isBadRequest())
+                .andExpect(status().isForbidden())
                 .andExpect(
                         content().json(objectMapper.writeValueAsString(
                                 new ErrorResponse(error.getHttpStatus(), error.getMessage())
@@ -311,7 +311,7 @@ class ChatControllerTest {
                         .contentType(MediaType.APPLICATION_JSON));
         //then
         resultActions.andDo(print())
-                .andExpect(status().isBadRequest())
+                .andExpect(status().isIAmATeapot())
                 .andExpect(
                         content().json(objectMapper.writeValueAsString(
                                 new ErrorResponse(error.getHttpStatus(), error.getMessage())
@@ -488,7 +488,7 @@ class ChatControllerTest {
         );
         //then
         resultActions.andDo(print())
-                .andExpect(status().isBadRequest())
+                .andExpect(status().isForbidden())
                 .andExpect(content().json(objectMapper.writeValueAsString(
                         new ErrorResponse(error.getHttpStatus(), error.getMessage())
                 )));
