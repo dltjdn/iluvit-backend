@@ -225,6 +225,7 @@ class CenterRepositoryTest {
         assertThat(result.getContent().size()).isEqualTo(2);
         assertThat(result.getContent().get(0).getName()).isEqualTo(center1.getName());
         assertThat(result.getContent().get(0).getAddress()).isEqualTo(center1.getAddress());
+        assertThat(result.hasNext()).isFalse();
     }
 
     @Nested
@@ -597,6 +598,7 @@ class CenterRepositoryTest {
         // when
         Slice<CenterPreview> result = centerRepository.findByPrefer(parent.getId(), PageRequest.of(0, 10));
         // then
+        assertThat(result.hasNext()).isFalse();
         assertThat(result.getContent().size()).isEqualTo(2);
         for (CenterPreview centerPreview : result) {
             if (Objects.equals(centerPreview.getId(), center1.getId())) {

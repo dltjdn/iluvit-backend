@@ -368,11 +368,11 @@ public class ScrapServiceTest {
         result.getContent().forEach(sp -> {
             if (Objects.equals(sp.getPost_id(), post1.getId())) {
                 assertThat(sp.getUser_id()).isEqualTo(parent1.getId());
-                assertThat(sp.getBoardName()).isEqualTo(board1.getName());
+                assertThat(sp.getBoard_name()).isEqualTo(board1.getName());
                 assertThat(sp.getCenter_id()).isNull();
             } else if (Objects.equals(sp.getPost_id(), post3.getId())) {
                 assertThat(sp.getUser_id()).isEqualTo(parent2.getId());
-                assertThat(sp.getBoardName()).isEqualTo(board3.getName());
+                assertThat(sp.getBoard_name()).isEqualTo(board3.getName());
                 assertThat(sp.getCenter_id()).isEqualTo(center2.getId());
             }
         });

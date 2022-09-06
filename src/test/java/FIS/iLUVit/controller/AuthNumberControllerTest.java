@@ -16,6 +16,8 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.gson.Gson;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -350,5 +352,24 @@ public class AuthNumberControllerTest {
         // then
         resultActions.andExpect(status().isOk());
     }
+
+//    @Nested
+//    @DisplayName("비밀번호 찾기")
+//    class findPassword{
+//        @Test
+//        @DisplayName("[error] 비밀번호 확인 틀림")
+//        public void 비번확인틀림() {
+//            // given
+//            String url = "/findPassword";
+//            AuthNumberErrorResult error = AuthNumberErrorResult.NOT_MATCH_INFO;
+//            doThrow(new AuthNumberException(error))
+//                    .when(authNumberService)
+//                    .changePassword(any)
+//            // when
+//
+//            // then
+//
+//        }
+//    }
 
 }

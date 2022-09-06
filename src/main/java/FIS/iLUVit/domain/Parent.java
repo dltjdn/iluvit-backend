@@ -55,22 +55,6 @@ public class Parent extends User {
         this.interestAge = interestAge;
     }
 
-    public static Parent createParent(String nickName, String loginId, String password, String phoneNumber, String emailAddress, String name, Theme theme, Integer interestAge, Auth auth, String address, String detailAddress) {
-        return Parent.builder()
-                .nickName(nickName)
-                .loginId(loginId)
-                .password(password)
-                .phoneNumber(phoneNumber)
-                .emailAddress(emailAddress)
-                .name(name)
-                .theme(theme)
-                .interestAge(interestAge)
-                .auth(auth)
-                .address(address)
-                .detailAddress(detailAddress)
-                .build();
-    }
-
     public void updateDetail(ParentDetailRequest request, Theme theme) {
         this.name = request.getName();
         this.nickName = request.getNickname();

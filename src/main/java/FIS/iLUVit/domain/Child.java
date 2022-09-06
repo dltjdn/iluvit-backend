@@ -47,11 +47,6 @@ public class Child extends BaseImageEntity {
                 .build();
     }
 
-    public void mappingParent(Parent parent) {
-        this.parent = parent;
-        parent.getChildren().add(this);
-    }
-
     public void mappingCenter(Center center) {
         this.center = center;
         this.approval = Approval.WAITING;

@@ -38,14 +38,16 @@ public class initDB {
         public void dbInit() {
 
             Board board2 = Board.createBoard("자유 게시판", BoardKind.NORMAL, null, true);
-            Board board3 = Board.createBoard("영상 게시판", BoardKind.VIDEO, null, true);
-            Board board4 = Board.createBoard("장터 게시판", BoardKind.MARKET, null, true);
-            Board board5 = Board.createBoard("맛집 게시판", BoardKind.FOOD, null, true);
+            Board board3 = Board.createBoard("학부모 게시판", BoardKind.NORMAL, null, true);
+            Board board4 = Board.createBoard("선생님 게시판", BoardKind.NORMAL, null, true);
+            Board board5 = Board.createBoard("원장님 게시판", BoardKind.NORMAL, null, true);
+            Board board6 = Board.createBoard("정보 게시판", BoardKind.NORMAL, null, true);
 
             em.persist(board2);
             em.persist(board3);
             em.persist(board4);
             em.persist(board5);
+            em.persist(board6);
 
         }
     }
