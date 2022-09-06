@@ -132,7 +132,7 @@ class BookmarkControllerTest {
         //then
 
         resultActions.andDo(print())
-                .andExpect(status().isBadRequest())
+                .andExpect(status().isForbidden())
                 .andExpect(content().json(objectMapper.writeValueAsString(
                         new ErrorResponse(error.getHttpStatus(), error.getMessage())
                 )));
@@ -153,7 +153,7 @@ class BookmarkControllerTest {
         //then
 
         resultActions.andDo(print())
-                .andExpect(status().isBadRequest())
+                .andExpect(status().isIAmATeapot())
                 .andExpect(content().json(objectMapper.writeValueAsString(
                         new ErrorResponse(error.getHttpStatus(), error.getMessage())
                 )));
@@ -174,7 +174,7 @@ class BookmarkControllerTest {
                         .header("Authorization", createJwtToken()));
         //then
         resultActions.andDo(print())
-                .andExpect(status().isBadRequest())
+                .andExpect(status().isIAmATeapot())
                 .andExpect(content().json(objectMapper.writeValueAsString(
                         new ErrorResponse(error.getHttpStatus(), error.getMessage())
                 )));
@@ -213,7 +213,7 @@ class BookmarkControllerTest {
                 MockMvcRequestBuilders.delete(url, bookmark1.getId()));
         //then
         resultActions.andDo(print())
-                .andExpect(status().isBadRequest())
+                .andExpect(status().isForbidden())
                 .andExpect(content().json(objectMapper.writeValueAsString(
                         new ErrorResponse(error.getHttpStatus(), error.getMessage())
                 )));
@@ -233,7 +233,7 @@ class BookmarkControllerTest {
                         .header("Authorization", createJwtToken()));
         //then
         resultActions.andDo(print())
-                .andExpect(status().isBadRequest())
+                .andExpect(status().isIAmATeapot())
                 .andExpect(content().json(objectMapper.writeValueAsString(
                         new ErrorResponse(error.getHttpStatus(), error.getMessage())
                 )));
@@ -253,7 +253,7 @@ class BookmarkControllerTest {
                         .header("Authorization", createJwtToken()));
         //then
         resultActions.andDo(print())
-                .andExpect(status().isBadRequest())
+                .andExpect(status().isForbidden())
                 .andExpect(content().json(objectMapper.writeValueAsString(
                         new ErrorResponse(error.getHttpStatus(), error.getMessage())
                 )));

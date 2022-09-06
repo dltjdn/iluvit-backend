@@ -125,7 +125,7 @@ class CommentControllerTest {
 
         //then
         resultActions.andDo(print())
-                .andExpect(status().isBadRequest())
+                .andExpect(status().isForbidden())
                 .andExpect(content().json(objectMapper.writeValueAsString(
                         new ErrorResponse(error.getHttpStatus(), error.getMessage())
                 )));
@@ -164,7 +164,7 @@ class CommentControllerTest {
 
         //then
         resultActions.andDo(print())
-                .andExpect(status().isBadRequest())
+                .andExpect(status().isIAmATeapot())
                 .andExpect(content().json(objectMapper.writeValueAsString(
                         new ErrorResponse(error.getHttpStatus(), error.getMessage())
                 )));
@@ -249,7 +249,7 @@ class CommentControllerTest {
 
         //then
         resultActions.andDo(print())
-                .andExpect(status().isBadRequest())
+                .andExpect(status().isForbidden())
                 .andExpect(content().json(objectMapper.writeValueAsString(
                         new ErrorResponse(error.getHttpStatus(), error.getMessage())
                 )));
@@ -277,7 +277,7 @@ class CommentControllerTest {
 
         //then
         resultActions.andDo(print())
-                .andExpect(status().isBadRequest())
+                .andExpect(status().isIAmATeapot())
                 .andExpect(content().json(objectMapper.writeValueAsString(
                         new ErrorResponse(error.getHttpStatus(), error.getMessage())
                 )));
@@ -327,7 +327,7 @@ class CommentControllerTest {
 
         //then
         resultActions.andDo(print())
-                .andExpect(status().isBadRequest())
+                .andExpect(status().isForbidden())
                 .andExpect(content().json(objectMapper.writeValueAsString(
                         new ErrorResponse(error.getHttpStatus(), error.getMessage())
                 )));
@@ -402,7 +402,7 @@ class CommentControllerTest {
 
         //then
         resultActions.andDo(print())
-                .andExpect(status().isBadRequest())
+                .andExpect(status().isForbidden())
                 .andExpect(content().json(objectMapper.writeValueAsString(
                         new ErrorResponse(error.getHttpStatus(), error.getMessage())
                 )));
@@ -428,7 +428,7 @@ class CommentControllerTest {
 
         //then
         resultActions.andDo(print())
-                .andExpect(status().isBadRequest())
+                .andExpect(status().isIAmATeapot())
                 .andExpect(content().json(objectMapper.writeValueAsString(
                         new ErrorResponse(error.getHttpStatus(), error.getMessage())
                 )));
