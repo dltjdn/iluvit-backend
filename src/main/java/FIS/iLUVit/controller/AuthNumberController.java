@@ -8,6 +8,8 @@ import FIS.iLUVit.service.AuthNumberService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
+
 @RestController
 @RequiredArgsConstructor
 public class AuthNumberController {
@@ -80,7 +82,7 @@ public class AuthNumberController {
     *   작성내용: 비밀번호 찾기 근데 이제 변경을 곁들인
     */
     @PostMapping("/findPassword")
-    public void findPassword(@RequestBody FindPasswordRequest request) {
+    public void findPassword(@RequestBody @Valid FindPasswordRequest request) {
         authNumberService.changePassword(request);
     }
 }
