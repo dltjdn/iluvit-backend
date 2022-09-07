@@ -401,7 +401,7 @@ public class ParentControllerTest {
                             .header("Authorization", parent.getId())
             );
             // then
-            result.andExpect(status().isBadRequest())
+            result.andExpect(status().isIAmATeapot())
                     .andExpect(content().json(
                             objectMapper.writeValueAsString(new ErrorResponse(error.getHttpStatus(), error.getMessage()))
                     ));
@@ -439,7 +439,7 @@ public class ParentControllerTest {
                             .header("Authorization", Creator.createJwtToken(parent))
             );
             // then
-            result.andExpect(status().isBadRequest())
+            result.andExpect(status().isIAmATeapot())
                     .andExpect(content().json(
                             objectMapper.writeValueAsString(new ErrorResponse(error.getHttpStatus(), error.getMessage()))
                     ));

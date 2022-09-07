@@ -159,7 +159,7 @@ public class TeacherControllerTest {
                         .contentType(MediaType.APPLICATION_JSON)
         );
         // then
-        result.andExpect(status().isBadRequest())
+        result.andExpect(status().isIAmATeapot())
                 .andExpect(content().json(
                         objectMapper.writeValueAsString(new ErrorResponse(error.getHttpStatus(), error.getMessage()))
                 ));
@@ -460,7 +460,7 @@ public class TeacherControllerTest {
                             .header("Authorization", createJwtToken(director))
             );
             // then
-            result.andExpect(status().isBadRequest())
+            result.andExpect(status().isIAmATeapot())
                     .andExpect(content().json(
                             objectMapper.writeValueAsString(new ErrorResponse(error.getHttpStatus(), error.getMessage()))
                     ));
@@ -520,7 +520,7 @@ public class TeacherControllerTest {
                             .header("Authorization", createJwtToken(director))
             );
             // then
-            result.andExpect(status().isBadRequest())
+            result.andExpect(status().isIAmATeapot())
                     .andExpect(content().json(
                             objectMapper.writeValueAsString(new ErrorResponse(error.getHttpStatus(), error.getMessage()))
                     ));
@@ -541,7 +541,7 @@ public class TeacherControllerTest {
                             .header("Authorization", createJwtToken(director))
             );
             // then
-            result.andExpect(status().isBadRequest())
+            result.andExpect(status().isIAmATeapot())
                     .andExpect(content().json(
                             objectMapper.writeValueAsString(new ErrorResponse(error.getHttpStatus(), error.getMessage()))
                     ));
@@ -601,7 +601,7 @@ public class TeacherControllerTest {
                             .header("Authorization", createJwtToken(director))
             );
             // then
-            result.andExpect(status().isBadRequest())
+            result.andExpect(status().isIAmATeapot())
                     .andExpect(content().json(
                             objectMapper.writeValueAsString(new ErrorResponse(error.getHttpStatus(), error.getMessage()))
                     ));
@@ -639,7 +639,7 @@ public class TeacherControllerTest {
                             .header("Authorization", createJwtToken(director))
             );
             // then
-            result.andExpect(status().isBadRequest())
+            result.andExpect(status().isIAmATeapot())
                     .andExpect(content().json(
                             objectMapper.writeValueAsString(new ErrorResponse(error.getHttpStatus(), error.getMessage()))
                     ));

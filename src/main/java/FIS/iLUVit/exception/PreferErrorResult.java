@@ -9,7 +9,7 @@ import org.springframework.http.HttpStatus;
 @RequiredArgsConstructor
 public enum PreferErrorResult implements ErrorResult {
     ALREADY_PREFER(HttpStatus.BAD_REQUEST, "이미 찜한 시설입니다."),
-    NOT_VALID_CENTER(HttpStatus.BAD_REQUEST, "잘못된 시설 아이디 입니다."),
+    NOT_VALID_CENTER(HttpStatus.I_AM_A_TEAPOT, "잘못된 시설 아이디 입니다."),
     ;
 
     private final HttpStatus httpStatus;
