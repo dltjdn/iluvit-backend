@@ -7,9 +7,10 @@ import org.springframework.http.HttpStatus;
 
 @Getter
 @RequiredArgsConstructor
-public enum PreferErrorResult implements ErrorResult {
-    ALREADY_PREFER(HttpStatus.BAD_REQUEST, "이미 찜한 시설입니다."),
-    NOT_VALID_CENTER(HttpStatus.I_AM_A_TEAPOT, "잘못된 시설 아이디 입니다."),
+public enum ReportErrorResult implements ErrorResult {
+
+    ALREADY_EXIST_POST_REPORT(HttpStatus.BAD_REQUEST, "이미 신고한 게시글입니다."),
+    ALREADY_EXIST_COMMENT_REPORT(HttpStatus.BAD_REQUEST, "이미 신고한 댓글입니다."),
     ;
 
     private final HttpStatus httpStatus;

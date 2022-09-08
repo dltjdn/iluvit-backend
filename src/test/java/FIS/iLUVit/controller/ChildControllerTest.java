@@ -130,7 +130,7 @@ public class ChildControllerTest {
                             .header("Authorization", Creator.createJwtToken(teacher))
             );
             // then
-            result.andExpect(status().isBadRequest())
+            result.andExpect(status().isIAmATeapot())
                     .andExpect(content().json(
                             objectMapper.writeValueAsString(new ErrorResponse(error.getHttpStatus(), error.getMessage()))
                     ));
@@ -192,7 +192,7 @@ public class ChildControllerTest {
                             .header("Authorization", teacher.getId())
             );
             // then
-            result.andExpect(status().isBadRequest())
+            result.andExpect(status().isIAmATeapot())
                     .andExpect(content().json(
                             objectMapper.writeValueAsString(new ErrorResponse(error.getHttpStatus(), error.getMessage()))
                     ));
@@ -239,7 +239,7 @@ public class ChildControllerTest {
                     .param("name", "name")
                     .param("birthDate", "2022-01-01"));
             // then
-            result.andExpect(status().isBadRequest())
+            result.andExpect(status().isIAmATeapot())
                     .andExpect(content().json(
                             objectMapper.writeValueAsString(new ErrorResponse(error.getHttpStatus(), error.getMessage()))
                     ));
@@ -305,7 +305,7 @@ public class ChildControllerTest {
                             .header("Authorization", Creator.createJwtToken(parent))
             );
             //then
-            result.andExpect(status().isBadRequest())
+            result.andExpect(status().isIAmATeapot())
                     .andExpect(content().json(
                             objectMapper.writeValueAsString(new ErrorResponse(error.getHttpStatus(), error.getMessage()))
                     ));
@@ -345,7 +345,7 @@ public class ChildControllerTest {
                             .header("Authorization", Creator.createJwtToken(parent))
             );
             //then
-            result.andExpect(status().isBadRequest())
+            result.andExpect(status().isIAmATeapot())
                     .andExpect(content().json(
                             objectMapper.writeValueAsString(new ErrorResponse(error.getHttpStatus(), error.getMessage()))
                     ));
@@ -386,7 +386,7 @@ public class ChildControllerTest {
                             .header("Authorization", Creator.createJwtToken(parent)
                             ));
             //then
-            result.andExpect(status().isBadRequest())
+            result.andExpect(status().isIAmATeapot())
                     .andExpect(content().json(
                             objectMapper.writeValueAsString(new ErrorResponse(error.getHttpStatus(), error.getMessage()))
                     ));
@@ -424,7 +424,7 @@ public class ChildControllerTest {
                             .header("Authorization", Creator.createJwtToken(parent))
             );
             // then
-            result.andExpect(status().isBadRequest())
+            result.andExpect(status().isIAmATeapot())
                     .andExpect(content().json(
                             objectMapper.writeValueAsString(new ErrorResponse(error.getHttpStatus(), error.getMessage()))
                     ));
@@ -486,7 +486,7 @@ public class ChildControllerTest {
                             .param("birthDate", LocalDate.now().toString())
             );
             // then
-            result.andExpect(status().isBadRequest())
+            result.andExpect(status().isIAmATeapot())
                     .andExpect(content().json(
                             objectMapper.writeValueAsString(new ErrorResponse(error.getHttpStatus(), error.getMessage()))
                     ));
@@ -529,7 +529,7 @@ public class ChildControllerTest {
                             .header("Authorization", Creator.createJwtToken(parent))
             );
             // then
-            result.andExpect(status().isBadRequest())
+            result.andExpect(status().isIAmATeapot())
                     .andExpect(content().json(
                             objectMapper.writeValueAsString(new ErrorResponse(error.getHttpStatus(), error.getMessage()))
                     ));
