@@ -41,7 +41,7 @@ public class ReportService {
                 .orElseThrow(() -> new UserException(UserErrorResult.USER_NOT_EXIST));
 
 
-        Long reportId = null;
+        Long reportDetailId = null;
         // 신고 대상은 게시글(POST)와 댓글(COMMENT)
         if (request.getType().equals(ReportType.POST)){
             // 해당 게시글이 삭제되었으면 신고 불가능
@@ -64,11 +64,11 @@ public class ReportService {
                 Report saveReport = reportRepository.save(report);
 
                 ReportDetailPost reportDetailPost = new ReportDetailPost(saveReport, findUser, request.getReason(), findPost);
-                reportId = reportDetailRepository.save(reportDetailPost).getId();
+                reportDetailId = reportDetailRepository.save(reportDetailPost).getId();
                 saveReport.plusCount();
             }else { // 최초 신고가 아님
                 ReportDetailPost reportDetailPost = new ReportDetailPost(findReport, findUser, request.getReason(), findPost);
-                reportId = reportDetailRepository.save(reportDetailPost).getId();
+                reportDetailId = reportDetailRepository.save(reportDetailPost).getId();
                 findReport.plusCount();
             }
 
@@ -93,15 +93,15 @@ public class ReportService {
                 Report saveReport = reportRepository.save(report);
 
                 ReportDetailComment reportDetailComment = new ReportDetailComment(saveReport, findUser, request.getReason(), findComment);
-                reportId = reportDetailRepository.save(reportDetailComment).getId();
+                reportDetailId = reportDetailRepository.save(reportDetailComment).getId();
                 saveReport.plusCount();
             }else { // 최초 신고가 아님
                 ReportDetailComment reportDetailComment = new ReportDetailComment(findReport, findUser, request.getReason(), findComment);
-                reportId = reportDetailRepository.save(reportDetailComment).getId();
+                reportDetailId = reportDetailRepository.save(reportDetailComment).getId();
                 findReport.plusCount();
             }
         }
 
-        return reportId;
+        return reportDetailId;
     }
 }

@@ -4,12 +4,14 @@ import FIS.iLUVit.domain.*;
 import FIS.iLUVit.domain.embeddable.Area;
 import FIS.iLUVit.domain.embeddable.BasicInfra;
 import FIS.iLUVit.domain.embeddable.Theme;
-import FIS.iLUVit.domain.enumtype.Approval;
-import FIS.iLUVit.domain.enumtype.Auth;
-import FIS.iLUVit.domain.enumtype.AuthKind;
-import FIS.iLUVit.domain.enumtype.Status;
+import FIS.iLUVit.domain.enumtype.*;
+import FIS.iLUVit.domain.reports.Report;
+import FIS.iLUVit.domain.reports.ReportDetail;
+import FIS.iLUVit.domain.reports.ReportDetailComment;
+import FIS.iLUVit.domain.reports.ReportDetailPost;
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.algorithms.Algorithm;
+import org.springframework.security.core.parameters.P;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -696,6 +698,54 @@ public class Creator {
                 .name(name)
                 .center(center)
                 .approval(approval)
+                .build();
+    }
+
+    public static Report createReport(Long id, Long targetId){
+        return Report.builder()
+                .id(id)
+                .targetId(targetId)
+                .build();
+    }
+
+    public static Report createReport(Long targetId, User targetUser){
+        return Report.builder()
+                .targetId(targetId)
+                .targetUser(targetUser)
+                .build();
+    }
+
+    public static ReportDetailPost createReportDetailPost(Long id, User user, Post post) {
+        return ReportDetailPost.builder()
+                .id(id)
+                .user(user)
+                .post(post)
+                .build();
+    }
+
+    public static ReportDetailPost createReportDetailPost(Report report, User user, Post post, String dtype) {
+        return ReportDetailPost.builder()
+                .report(report)
+                .user(user)
+                .post(post)
+                .dtype(dtype)
+                .build();
+    }
+
+    public static ReportDetailComment createReportDetailComment(Report report, User user, Comment comment, String dtype) {
+        return ReportDetailComment.builder()
+                .report(report)
+                .user(user)
+                .comment(comment)
+                .dtype(dtype)
+                .build();
+    }
+
+    public static ReportDetailComment createReportDetailComment(Long id, User user, Comment comment) {
+        return ReportDetailComment.builder()
+                .id(id)
+                .user(user)
+                .comment(comment)
                 .build();
     }
 }
