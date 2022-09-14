@@ -42,13 +42,14 @@ public class ReportService {
 
 
         Long reportDetailId = null;
+
         // 신고 대상은 게시글(POST)와 댓글(COMMENT)
         if (request.getType().equals(ReportType.POST)){
             // 해당 게시글이 삭제되었으면 신고 불가능
             Post findPost = postRepository.findById(request.getTargetId())
                     .orElseThrow(() -> new PostException(PostErrorResult.POST_NOT_EXIST));
 
-            // 해당 게시글을 이미 신고했으면 중복으로 신고 불가능
+            // 해당 게시글을 유저가 이미 신고했으면 중복으로 신고 불가능
             reportDetailRepository.findByUserIdAndTargetPostId(userId, request.getTargetId())
                     .ifPresent(rd -> {
                         throw new ReportException(ReportErrorResult.ALREADY_EXIST_POST_REPORT);
@@ -67,6 +68,8 @@ public class ReportService {
                 reportDetailId = reportDetailRepository.save(reportDetailPost).getId();
                 saveReport.plusCount();
             }else { // 최초 신고가 아님
+                findReport.updateStatus();
+
                 ReportDetailPost reportDetailPost = new ReportDetailPost(findReport, findUser, request.getReason(), findPost);
                 reportDetailId = reportDetailRepository.save(reportDetailPost).getId();
                 findReport.plusCount();
@@ -96,6 +99,8 @@ public class ReportService {
                 reportDetailId = reportDetailRepository.save(reportDetailComment).getId();
                 saveReport.plusCount();
             }else { // 최초 신고가 아님
+                findReport.updateStatus();
+
                 ReportDetailComment reportDetailComment = new ReportDetailComment(findReport, findUser, request.getReason(), findComment);
                 reportDetailId = reportDetailRepository.save(reportDetailComment).getId();
                 findReport.plusCount();

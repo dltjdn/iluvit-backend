@@ -69,4 +69,8 @@ public class Report extends BaseEntity {
     public void updateReportDetail(ReportDetail reportDetail){
         this.reportDetails.add(reportDetail);
     }
+
+    public void updateStatus() {
+        this.status = ReportStatus.ACCEPT;
+    }
 }
