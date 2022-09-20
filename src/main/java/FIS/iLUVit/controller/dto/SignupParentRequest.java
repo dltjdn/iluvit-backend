@@ -50,6 +50,7 @@ public class SignupParentRequest {
                 .theme(theme)
                 .interestAge(interestAge)
                 .auth(Auth.PARENT)
+                .readAlarm(true)
                 .build();
     }
 }
