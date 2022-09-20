@@ -63,6 +63,12 @@ class PostServiceTest {
     ChatRoomRepository chatRoomRepository;
     @Mock
     AlarmRepository alarmRepository;
+    @Mock
+    ReportRepository reportRepository;
+    @Mock
+    ReportDetailRepository reportDetailRepository;
+    @Mock
+    CommentRepository commentRepository;
 
     ObjectMapper objectMapper;
 
@@ -360,6 +366,10 @@ class PostServiceTest {
         Mockito.doReturn(Optional.of(post1))
                 .when(postRepository)
                 .findById(post1.getId());
+
+        Mockito.doReturn(Arrays.asList())
+                .when(commentRepository)
+                .findByPostId(post1.getId());
         //when
         PostException result = assertThrows(PostException.class,
                 () -> postService.deleteById(post1.getId(), parent2.getId()));
@@ -380,6 +390,10 @@ class PostServiceTest {
         Mockito.doReturn(Optional.of(post1))
                 .when(postRepository)
                 .findById(post1.getId());
+
+        Mockito.doReturn(Arrays.asList())
+                .when(commentRepository)
+                .findByPostId(post1.getId());
         //when
         Long savedId = postService.deleteById(post1.getId(), parent1.getId());
 
