@@ -90,6 +90,7 @@ public class PostService {
         // 게시글과 연관된 모든 알람의 post_id(fk) 를 null 값으로 만들어줘야함.
         alarmRepository.setPostIsNull(postId);
 
+        // 2022-09-20 최민아
         //------------------------신고 관련------------------------//
         // 게시글과 연관된 모든 신고내역의 target_id 를 null 값으로 만들어줘야함.
         reportRepository.setTargetIsNullAndStatusIsDelete(postId);

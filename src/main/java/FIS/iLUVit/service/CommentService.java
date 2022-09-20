@@ -92,6 +92,7 @@ public class CommentService {
                     if (Objects.equals(c.getUser().getId(), userId)) {
                         //c.deleteComment();
 
+                        // 2022-09-20 최민아
                         // 댓글과 연관된 모든 신고내역의 target_id 를 null 값으로 만들어줘야함.
                         reportRepository.setTargetIsNullAndStatusIsDelete(c.getId());
                         // 댓글과 연관된 모든 신고상세내역의 target_comment_id(fk) 를 null 값으로 만들어줘야함.

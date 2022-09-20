@@ -10,9 +10,7 @@ import FIS.iLUVit.domain.enumtype.Auth;
 import FIS.iLUVit.domain.enumtype.BoardKind;
 import FIS.iLUVit.event.AlarmEvent;
 import FIS.iLUVit.exception.*;
-import FIS.iLUVit.repository.CommentRepository;
-import FIS.iLUVit.repository.PostRepository;
-import FIS.iLUVit.repository.UserRepository;
+import FIS.iLUVit.repository.*;
 import FIS.iLUVit.service.createmethod.CreateTest;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -46,6 +44,10 @@ class CommentServiceTest {
     PostRepository postRepository;
     @Mock
     UserRepository userRepository;
+    @Mock
+    ReportRepository reportRepository;
+    @Mock
+    ReportDetailRepository reportDetailRepository;
 
     Board board1;
     Post post1;
