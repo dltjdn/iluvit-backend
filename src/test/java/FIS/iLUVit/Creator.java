@@ -693,6 +693,14 @@ public class Creator {
                 .build();
     }
 
+    public static Center createKindergarten(String name, boolean signed, Area area) {
+        return Kindergarten.kBuilder()
+                .name(name)
+                .signed(signed)
+                .area(area)
+                .build();
+    }
+
     public static Teacher createTeacher(String name, Center center, Approval approval) {
         return Teacher.builder()
                 .name(name)
