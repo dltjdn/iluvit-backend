@@ -7,9 +7,7 @@ import FIS.iLUVit.domain.Post;
 import FIS.iLUVit.domain.User;
 import FIS.iLUVit.domain.alarms.PostAlarm;
 import FIS.iLUVit.exception.*;
-import FIS.iLUVit.repository.CommentRepository;
-import FIS.iLUVit.repository.PostRepository;
-import FIS.iLUVit.repository.UserRepository;
+import FIS.iLUVit.repository.*;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Pageable;
@@ -17,6 +15,7 @@ import org.springframework.data.domain.Slice;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
 import java.util.Objects;
 
 @Service
@@ -27,6 +26,8 @@ public class CommentService {
     private final CommentRepository commentRepository;
     private final PostRepository postRepository;
     private final UserRepository userRepository;
+    private final ReportRepository reportRepository;
+    private final ReportDetailRepository reportDetailRepository;
 
     public Long registerComment(Long userId, Long postId, Long p_commentId, RegisterCommentRequest request) {
         if (userId == null) {
@@ -89,7 +90,17 @@ public class CommentService {
                     log.info("댓글 작성자 아이디 = {}, 접속 중인 유저 아이디 = {}", c.getUser().getId(), userId);
                     // 내용 -> 삭제된 댓글입니다. + 작성자 -> null
                     if (Objects.equals(c.getUser().getId(), userId)) {
-                        c.deleteComment();
+                        //c.deleteComment();
+
+                        // 2022-09-20 최민아
+                        // 댓글과 연관된 모든 신고내역의 target_id 를 null 값으로 만들어줘야함.
+                        reportRepository.setTargetIsNullAndStatusIsDelete(c.getId());
+                        // 댓글과 연관된 모든 신고상세내역의 target_comment_id(fk) 를 null 값으로 만들어줘야함.
+                        List<Long> commentIds = List.of(c.getId());
+                        reportDetailRepository.setCommentIsNull(commentIds);
+
+                        Comment findComment = commentRepository.findById(commentId).orElse(null);
+                        findComment.deleteComment();
                     } else {
                         throw new CommentException(CommentErrorResult.UNAUTHORIZED_USER_ACCESS);
                     }

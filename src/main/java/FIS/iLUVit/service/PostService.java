@@ -36,6 +36,9 @@ public class PostService {
     private final PostHeartRepository postHeartRepository;
     private final ChatRoomRepository chatRoomRepository;
     private final AlarmRepository alarmRepository;
+    private final ReportRepository reportRepository;
+    private final ReportDetailRepository reportDetailRepository;
+    private final CommentRepository commentRepository;
 
 //    private final Integer heartCriteria = 2; // HOT 게시판 좋아요 기준
 
@@ -86,6 +89,22 @@ public class PostService {
         chatRoomRepository.setPostIsNull(postIds);
         // 게시글과 연관된 모든 알람의 post_id(fk) 를 null 값으로 만들어줘야함.
         alarmRepository.setPostIsNull(postId);
+
+        // 2022-09-20 최민아
+        //------------------------신고 관련------------------------//
+        // 게시글과 연관된 모든 신고내역의 target_id 를 null 값으로 만들어줘야함.
+        reportRepository.setTargetIsNullAndStatusIsDelete(postId);
+        // 게시글과 연관된 모든 신고상세내역의 target_post_id(fk) 를 null 값으로 만들어줘야함.
+        reportDetailRepository.setPostIsNull(postId);
+
+        //------------------------댓글 관련------------------------//
+        List<Long> commentIds = commentRepository.findByPostId(postId).stream()
+                .map(Comment::getId)
+                .collect(Collectors.toList());
+        // 만약 게시글에 달린 댓글도 신고된 상태라면 해당 댓글의 신고내역의 target_id 를 null 값으로 만들어줘야함.
+        reportRepository.setTargetIsNullAndStatusIsDelete(commentIds);
+        // 만약 게시글에 달린 댓글도 신고된 상태라면 해당 댓글의 신고상세내역의 target_comment_id 를 null 값으로 만들어줘야함.
+        reportDetailRepository.setCommentIsNull(commentIds);
 
         if (!Objects.equals(findPost.getUser().getId(), findUser.getId())) {
             throw new PostException(PostErrorResult.UNAUTHORIZED_USER_ACCESS);
