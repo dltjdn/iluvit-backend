@@ -78,7 +78,7 @@ public class Parent extends User {
 
     @Override
     public LoginResponse getLoginInfo() {
-        return new LoginParentResponse(id, nickName, auth);
+        return new LoginParentResponse(this);
     }
 
     @Override

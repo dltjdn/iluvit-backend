@@ -100,7 +100,7 @@ public class Teacher extends User {
 
     @Override
     public LoginResponse getLoginInfo() {
-        return new LoginTeacherResponse(id, nickName, auth, center, approval);
+        return new LoginTeacherResponse(this);
     }
 
     @Override
