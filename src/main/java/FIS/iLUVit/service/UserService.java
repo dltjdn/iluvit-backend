@@ -131,6 +131,7 @@ public class UserService {
         LoginResponse response = principal.getUser().getLoginInfo();
         response.setAccessToken(jwtUtils.addPrefix(jwt));
         response.setRefreshToken(jwtUtils.addPrefix(refresh));
+
         return response;
     }
 
