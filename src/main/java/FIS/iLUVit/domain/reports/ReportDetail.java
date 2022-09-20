@@ -19,8 +19,8 @@ public abstract class ReportDetail extends BaseEntity {
 
     @Id @GeneratedValue
     protected Long id;
-    private LocalDate date;                          // 신고 접수 날짜
-    private LocalTime time;                          // 신고 접수 시간
+    protected LocalDate date;                          // 신고 접수 날짜
+    protected LocalTime time;                          // 신고 접수 시간
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "report_id")

@@ -105,6 +105,7 @@ public class ParentServiceTest {
         // then
         assertThat(result.getPassword()).isEqualTo("hashedPwd");
         assertThat(result.getLoginId()).isEqualTo("loginId");
+        assertThat(result.getReadAlarm()).isEqualTo(true);
         verify(bookmarkRepository, times(1)).save(any());
     }
 

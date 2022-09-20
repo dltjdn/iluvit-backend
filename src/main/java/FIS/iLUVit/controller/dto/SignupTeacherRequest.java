@@ -52,6 +52,7 @@ public class SignupTeacherRequest {
                 .center(center)
                 .approval(Approval.WAITING)
                 .auth(Auth.TEACHER)
+                .readAlarm(true)
                 .build();
     }
 

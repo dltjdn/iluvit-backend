@@ -34,7 +34,7 @@ public class Teacher extends User {
     private Center center;
 
     @Builder
-    public Teacher(Long id, String nickName, String loginId, String password, String phoneNumber, String emailAddress, String name, Auth auth, Approval approval, Center center, String address, String detailAddress) {
+    public Teacher(Long id, String nickName, String loginId, String password, String phoneNumber, String emailAddress, String name, Auth auth, Approval approval, Center center, String address, String detailAddress, Boolean readAlarm) {
         this.id = id;
         this.nickName = nickName;
         this.loginId = loginId;
@@ -47,6 +47,7 @@ public class Teacher extends User {
         this.auth = auth;
         this.approval = approval;
         this.center = center;
+        this.readAlarm = readAlarm;
     }
 
     public static Teacher createTeacher(String nickName, String loginId, String password, String phoneNumber, String emailAddress, String name, Auth auth, Approval approval, Center center, String address, String detailAddress) {

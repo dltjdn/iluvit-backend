@@ -8,6 +8,7 @@ import FIS.iLUVit.domain.enumtype.Auth;
 import FIS.iLUVit.domain.enumtype.BoardKind;
 import FIS.iLUVit.exception.*;
 import FIS.iLUVit.repository.*;
+import FIS.iLUVit.service.constant.Criteria;
 import FIS.iLUVit.service.createmethod.CreateTest;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
@@ -63,6 +64,12 @@ class PostServiceTest {
     ChatRoomRepository chatRoomRepository;
     @Mock
     AlarmRepository alarmRepository;
+    @Mock
+    ReportRepository reportRepository;
+    @Mock
+    ReportDetailRepository reportDetailRepository;
+    @Mock
+    CommentRepository commentRepository;
 
     ObjectMapper objectMapper;
 
@@ -360,6 +367,10 @@ class PostServiceTest {
         Mockito.doReturn(Optional.of(post1))
                 .when(postRepository)
                 .findById(post1.getId());
+
+        Mockito.doReturn(Arrays.asList())
+                .when(commentRepository)
+                .findByPostId(post1.getId());
         //when
         PostException result = assertThrows(PostException.class,
                 () -> postService.deleteById(post1.getId(), parent2.getId()));
@@ -380,6 +391,10 @@ class PostServiceTest {
         Mockito.doReturn(Optional.of(post1))
                 .when(postRepository)
                 .findById(post1.getId());
+
+        Mockito.doReturn(Arrays.asList())
+                .when(commentRepository)
+                .findByPostId(post1.getId());
         //when
         Long savedId = postService.deleteById(post1.getId(), parent1.getId());
 
@@ -997,14 +1012,12 @@ class PostServiceTest {
 
         Mockito.doReturn(previewSlice)
                 .when(postRepository)
-                .findHotPosts(null, 2, PageRequest.of(0, 10));
+                .findHotPosts(null, Criteria.HOT_POST_HEART_CNT, PageRequest.of(0, 10));
         //when
         Slice<GetPostResponsePreview> result = postService
                 .findByHeartCnt(null, PageRequest.of(0, 10));
 
         //then
-        System.out.println("result = " + objectMapper.writeValueAsString(result));
-        System.out.println("result = " + objectMapper.writeValueAsString(previewSlice));
         assertThat(objectMapper.writeValueAsString(result))
                 .isEqualTo(objectMapper.writeValueAsString(previewSlice));
 

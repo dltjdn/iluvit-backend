@@ -40,7 +40,7 @@ public class Parent extends User {
 
 
     @Builder
-    public Parent(Long id, String nickName, String loginId, String password, String phoneNumber, String emailAddress, String name, Theme theme, Integer interestAge, Auth auth, String address, String detailAddress) {
+    public Parent(Long id, String nickName, String loginId, String password, String phoneNumber, String emailAddress, String name, Theme theme, Integer interestAge, Auth auth, String address, String detailAddress, Boolean readAlarm) {
         this.id = id;
         this.nickName = nickName;
         this.loginId = loginId;
@@ -53,6 +53,7 @@ public class Parent extends User {
         this.auth = auth;
         this.theme = theme;
         this.interestAge = interestAge;
+        this.readAlarm = readAlarm;
     }
 
     public void updateDetail(ParentDetailRequest request, Theme theme) {

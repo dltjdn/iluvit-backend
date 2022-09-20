@@ -4,6 +4,8 @@ import FIS.iLUVit.domain.BaseEntity;
 import FIS.iLUVit.domain.User;
 import FIS.iLUVit.domain.enumtype.ReportStatus;
 import FIS.iLUVit.domain.enumtype.ReportType;
+import FIS.iLUVit.service.ReportService;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -38,6 +40,18 @@ public class Report extends BaseEntity {
     @OneToMany(mappedBy = "report")
     private List<ReportDetail> reportDetails = new ArrayList<>();
 
+    @Builder
+    public Report(Long id, Long targetId, ReportType type, int count, LocalDate date, LocalTime time, ReportStatus status, User targetUser){
+        this.id = id;
+        this.targetId = targetId;
+        this.type = type;
+        this.count = count;
+        this.date = date;
+        this.time = time;
+        this.status = status;
+        this.targetUser = targetUser;
+    }
+
     public Report(ReportType type, Long targetId,  User targetUser){
         this.targetId = targetId;
         this.type = type;
@@ -54,5 +68,9 @@ public class Report extends BaseEntity {
 
     public void updateReportDetail(ReportDetail reportDetail){
         this.reportDetails.add(reportDetail);
+    }
+
+    public void updateStatus() {
+        this.status = ReportStatus.ACCEPT;
     }
 }
