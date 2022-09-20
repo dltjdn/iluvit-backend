@@ -99,10 +99,10 @@ public class ReportService {
                 reportDetailId = reportDetailRepository.save(reportDetailComment).getId();
                 saveReport.plusCount();
             }else { // 최초 신고가 아님
-                findReport.updateStatus();
-
                 ReportDetailComment reportDetailComment = new ReportDetailComment(findReport, findUser, request.getReason(), findComment);
                 reportDetailId = reportDetailRepository.save(reportDetailComment).getId();
+
+                findReport.updateStatus();
                 findReport.plusCount();
             }
         }
