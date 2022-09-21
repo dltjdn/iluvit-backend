@@ -83,12 +83,10 @@ class ReportControllerTest {
 
         reportCreateRequestPost.setType(ReportType.POST);
         reportCreateRequestPost.setTargetId(post.getId());
-        reportCreateRequestPost.setTargetUserId(targetUser.getId());
         reportCreateRequestPost.setReason(ReportReason.REPORT_A);
 
         reportCreateRequestComment.setType(ReportType.COMMENT);
         reportCreateRequestComment.setTargetId(comment.getId());
-        reportCreateRequestComment.setTargetUserId(targetUser.getId());
         reportCreateRequestComment.setReason(ReportReason.REPORT_A);
     }
 
