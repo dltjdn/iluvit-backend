@@ -1,5 +1,6 @@
 package FIS.iLUVit;
 
+import FIS.iLUVit.domain.ChildHouse;
 import FIS.iLUVit.domain.Teacher;
 import FIS.iLUVit.domain.User;
 import FIS.iLUVit.domain.enumtype.Approval;

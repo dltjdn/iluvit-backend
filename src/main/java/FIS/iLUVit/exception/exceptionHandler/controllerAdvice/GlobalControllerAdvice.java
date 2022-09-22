@@ -216,4 +216,9 @@ public class GlobalControllerAdvice extends ResponseEntityExceptionHandler {
         return makeErrorResponseEntity(e.getErrorResult());
     }
 
+    @ExceptionHandler(ReportException.class)
+    public ResponseEntity<ErrorResponse> reportException(ReportException e) {
+        return makeErrorResponseEntity(e.getErrorResult());
+    }
+
 }

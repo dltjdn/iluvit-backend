@@ -131,6 +131,9 @@ public class UserService {
         LoginResponse response = principal.getUser().getLoginInfo();
         response.setAccessToken(jwtUtils.addPrefix(jwt));
         response.setRefreshToken(jwtUtils.addPrefix(refresh));
+
+        // 더 이상 튜토리얼이 진행되지 않도록 하기
+        principal.getUser().disableTutorial();
         return response;
     }
 

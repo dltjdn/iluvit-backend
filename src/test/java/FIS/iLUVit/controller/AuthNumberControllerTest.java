@@ -1,7 +1,9 @@
 package FIS.iLUVit.controller;
 
+import FIS.iLUVit.Creator;
 import FIS.iLUVit.config.argumentResolver.LoginUserArgumentResolver;
 import FIS.iLUVit.controller.dto.AuthenticateAuthNumRequest;
+import FIS.iLUVit.controller.dto.FindPasswordRequest;
 import FIS.iLUVit.domain.Parent;
 import FIS.iLUVit.domain.User;
 import FIS.iLUVit.domain.enumtype.AuthKind;
@@ -12,7 +14,6 @@ import FIS.iLUVit.exception.exceptionHandler.controllerAdvice.GlobalControllerAd
 import FIS.iLUVit.service.AuthNumberService;
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.algorithms.Algorithm;
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.gson.Gson;
 import org.junit.jupiter.api.BeforeEach;
@@ -353,23 +354,90 @@ public class AuthNumberControllerTest {
         resultActions.andExpect(status().isOk());
     }
 
-//    @Nested
-//    @DisplayName("비밀번호 찾기")
-//    class findPassword{
-//        @Test
-//        @DisplayName("[error] 비밀번호 확인 틀림")
-//        public void 비번확인틀림() {
-//            // given
-//            String url = "/findPassword";
-//            AuthNumberErrorResult error = AuthNumberErrorResult.NOT_MATCH_INFO;
-//            doThrow(new AuthNumberException(error))
-//                    .when(authNumberService)
-//                    .changePassword(any)
-//            // when
-//
-//            // then
-//
-//        }
-//    }
+    @Nested
+    @DisplayName("비밀번호 찾기")
+    class findPassword{
+        @Test
+        @DisplayName("[error] 비밀번호 조건 불만족")
+        public void 비번확인틀림() throws Exception {
+            // given
+            String url = "/findPassword";
+            FindPasswordRequest request = new FindPasswordRequest(user.getLoginId(), user.getPhoneNumber(), "1234", "asd", "asd");
+            // when
+            ResultActions result = mockMvc.perform(
+                    MockMvcRequestBuilders.post(url)
+                            .header("Authorization", Creator.createJwtToken(user))
+                            .contentType(MediaType.APPLICATION_JSON)
+                            .content(objectMapper.writeValueAsString(request))
+            );
+            // then
+            result.andDo(print())
+                    .andExpect(status().isBadRequest());
+        }
+
+        @Test
+        @DisplayName("[error] 비밀번호확인 불일치")
+        public void 비번확인불일치() throws Exception {
+            // given
+            String url = "/findPassword";
+            AuthNumberErrorResult error = AuthNumberErrorResult.NOT_MATCH_CHECKPWD;
+            FindPasswordRequest request = new FindPasswordRequest(user.getLoginId(), user.getPhoneNumber(), "1234", "asdf1234!", "asdf12345!");
+            doThrow(new AuthNumberException(error))
+                    .when(authNumberService)
+                    .changePassword(any());
+            // when
+            ResultActions result = mockMvc.perform(
+                    MockMvcRequestBuilders.post(url)
+                            .header("Authorization", Creator.createJwtToken(user))
+                            .contentType(MediaType.APPLICATION_JSON)
+                            .content(objectMapper.writeValueAsString(request)));
+            // then
+            result.andExpect(status().isBadRequest())
+                    .andExpect(content().json(
+                            objectMapper.writeValueAsString(new ErrorResponse(error.getHttpStatus(), error.getMessage()))
+                    ));
+        }
+
+        @Test
+        @DisplayName("[error] 사용자 정보 불일치")
+        public void 사용자정보불일치() throws Exception {
+            // given
+            String url = "/findPassword";
+            AuthNumberErrorResult error = AuthNumberErrorResult.NOT_MATCH_INFO;
+            FindPasswordRequest request = new FindPasswordRequest(user.getLoginId(), user.getPhoneNumber(), "1234", "asdf1234!", "asdf1234!");
+            doThrow(new AuthNumberException(error))
+                    .when(authNumberService)
+                    .changePassword(any());
+            // when
+            ResultActions result = mockMvc.perform(
+                    MockMvcRequestBuilders.post(url)
+                            .header("Authorization", Creator.createJwtToken(user))
+                            .contentType(MediaType.APPLICATION_JSON)
+                            .content(objectMapper.writeValueAsString(request))
+            );
+            // then
+            result.andExpect(status().isBadRequest())
+                    .andExpect(content().json(
+                            objectMapper.writeValueAsString(new ErrorResponse(error.getHttpStatus(), error.getMessage()))
+                    ));
+        }
+
+        @Test
+        @DisplayName("[success] 비밀번호찾기 완료")
+        public void 비번찾기완료() throws Exception {
+            // given
+            String url = "/findPassword";
+            FindPasswordRequest request = new FindPasswordRequest(user.getLoginId(), user.getPhoneNumber(), "1234", "asdf1234!", "asdf1234!");
+            // when
+            ResultActions result = mockMvc.perform(
+                    MockMvcRequestBuilders.post(url)
+                            .header("Authorization", Creator.createJwtToken(user))
+                            .contentType(MediaType.APPLICATION_JSON)
+                            .content(objectMapper.writeValueAsString(request))
+            );
+            // then
+            result.andExpect(status().isOk());
+        }
+    }
 
 }
