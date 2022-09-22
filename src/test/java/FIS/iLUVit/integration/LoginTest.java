@@ -142,6 +142,7 @@ public class LoginTest {
                     .andExpect(content().json(
                             objectMapper.writeValueAsString(response)
                     ));
+            assertThat(response.getNeedTutorial()).isTrue();
         }
 
         @Test
@@ -169,6 +170,7 @@ public class LoginTest {
                     .andExpect(content().json(
                             objectMapper.writeValueAsString(response)
                     ));
+            assertThat(response.getNeedTutorial()).isFalse();
         }
     }
 

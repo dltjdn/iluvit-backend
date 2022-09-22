@@ -21,6 +21,6 @@ public class LoginResponse {
         this.id = user.getId();
         this.nickname = user.getNickName();
         this.auth = user.getAuth();
-        this.needTutorial = user.getCreatedDate() == user.getUpdatedDate();
+        this.needTutorial = user.getCreatedDate().equals(user.getUpdatedDate());
     }
 }

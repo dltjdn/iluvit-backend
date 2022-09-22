@@ -89,7 +89,7 @@ public class User extends BaseImageEntity {
     }
 
     public void disableTutorial() {
-        if (this.createdDate == this.updatedDate) {
+        if (this.createdDate.equals(this.updatedDate)) {
             this.updatedDate = LocalDateTime.now();
         }
     }
