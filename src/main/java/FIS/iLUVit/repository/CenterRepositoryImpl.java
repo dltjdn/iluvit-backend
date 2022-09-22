@@ -188,7 +188,7 @@ public class CenterRepositoryImpl extends CenterQueryMethod implements CenterRep
                     .from(center)
                     .leftJoin(center.reviews, review)
                     .groupBy(center)
-                    .where(centerNameEq(searchContent))
+                    .where(centerNameEq(searchContent), (kindOfEq(KindOf.Kindergarten).or(kindOfEq(KindOf.ChildHouse))))
                     .having(distanceEx.loe(distance))
                     .orderBy(center.score.desc())
                     .limit(100)
