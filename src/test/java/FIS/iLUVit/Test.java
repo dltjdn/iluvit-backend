@@ -11,6 +11,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.EntityManager;
+import java.time.LocalDateTime;
 import java.util.List;
 
 @SpringBootTest
@@ -34,5 +35,16 @@ class UserTest {
                 .setParameter("id", teacher.getId())
                 .getSingleResult();
         System.out.println("teacher = " + user.getDtype());
+    }
+
+    @Test
+    void test() {
+        LocalDateTime a = LocalDateTime.now();
+        LocalDateTime b = LocalDateTime.now();
+        if (a == b) {
+            System.out.println("a==b is true");
+        } else {
+            System.out.println("a==b is false");
+        }
     }
 }
