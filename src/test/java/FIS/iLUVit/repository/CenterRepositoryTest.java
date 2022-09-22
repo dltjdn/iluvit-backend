@@ -19,7 +19,6 @@ import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
-import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Slice;
@@ -35,8 +34,8 @@ import java.util.Objects;
 import static FIS.iLUVit.Creator.*;
 import static org.assertj.core.api.Assertions.assertThat;
 
-//@DataJpaTest(includeFilters = @ComponentScan.Filter(ForDB.class))
-@SpringBootTest
+@DataJpaTest(includeFilters = @ComponentScan.Filter(ForDB.class))
+//@SpringBootTest
 @Transactional
 class CenterRepositoryTest {
 
@@ -431,7 +430,7 @@ class CenterRepositoryTest {
             List<CenterMapPreview> result = centerRepository.findByFilterForMap(127.0147458, 37.5015178, 1.0, searchContent);
 
             //then
-            assertThat(result.size()).isEqualTo(6);
+            assertThat(result.size()).isEqualTo(0);
         }
     }
 
