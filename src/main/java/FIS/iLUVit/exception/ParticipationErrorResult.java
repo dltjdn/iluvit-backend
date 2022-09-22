@@ -9,7 +9,7 @@ import org.springframework.http.HttpStatus;
 @Getter
 public enum ParticipationErrorResult implements ErrorResult {
 
-    WRONG_PARTICIPATIONID_REQUEST(HttpStatus.BAD_REQUEST, "올바르지 않은 접근입니다"),
+    WRONG_PARTICIPATIONID_REQUEST(HttpStatus.I_AM_A_TEAPOT, "올바르지 않은 접근입니다"),
     ;
 
     private final HttpStatus httpStatus;
