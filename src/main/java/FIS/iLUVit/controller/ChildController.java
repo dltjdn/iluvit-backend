@@ -74,7 +74,7 @@ public class ChildController {
      * 작성자: 이승범
      * 작성내용: 아이의 시설 탈퇴
      */
-    @DeleteMapping("/parent/child/center/{childId}")
+    @PatchMapping("/parent/child/center/{childId}")
     public void exitCenter(@Login Long userId, @PathVariable("childId") Long childId) {
         childService.exitCenter(userId, childId);
     }
@@ -86,7 +86,6 @@ public class ChildController {
      */
     @DeleteMapping("/parent/child/{childId}")
     public ChildInfoDTO deleteChild(@Login Long userId, @PathVariable("childId") Long childId) {
-
         return childService.deleteChild(userId, childId);
     }
 
