@@ -82,29 +82,6 @@ public class LoginTest {
                 .build();
     }
 
-//    @Test
-//    @DisplayName("[success] jwt")
-//    public void jwt(){
-//        // given
-////        User parent = userRepository.findById(87854L).get();
-////        User director = userRepository.findById(87998L).get();
-////        User teacher = userRepository.findById(88398L).get();
-//        User p = new Parent(87854L, null, null, null, null ,null,null,null,null,null,null,null,null);
-//        User t = new Teacher(87998L, null, null,null,null,null,null,null,null,null,null,null,null);
-//
-//        PrincipalDetails a = new PrincipalDetails(p);
-//        PrincipalDetails b = new PrincipalDetails(t);
-//
-//        UsernamePasswordAuthenticationToken parent = new UsernamePasswordAuthenticationToken(a, null);
-//        UsernamePasswordAuthenticationToken director = new UsernamePasswordAuthenticationToken(a, null);
-//
-//        System.out.println(jwtUtils.addPrefix(jwtUtils.createAccessToken(parent)));
-//        System.out.println(jwtUtils.addPrefix(jwtUtils.createAccessToken(director)));
-//        // when
-//
-//        // then
-//    }
-
     @Nested
     @DisplayName("로그인")
     class login {
