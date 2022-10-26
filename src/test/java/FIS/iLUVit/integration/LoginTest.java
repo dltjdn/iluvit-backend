@@ -13,9 +13,11 @@ import FIS.iLUVit.service.UserService;
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.algorithms.Algorithm;
 import com.auth0.jwt.exceptions.JWTVerificationException;
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import org.junit.jupiter.api.*;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Nested;
+import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
@@ -32,11 +34,13 @@ import java.time.LocalDateTime;
 import java.util.Date;
 import java.util.Optional;
 
-import static org.assertj.core.api.Assertions.*;
-import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.Mockito.*;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.mockito.Mockito.any;
+import static org.mockito.Mockito.doReturn;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @Transactional
 @SpringBootTest
@@ -77,6 +81,29 @@ public class LoginTest {
                 .password(encoder.encode(password))
                 .build();
     }
+
+//    @Test
+//    @DisplayName("[success] jwt")
+//    public void jwt(){
+//        // given
+////        User parent = userRepository.findById(87854L).get();
+////        User director = userRepository.findById(87998L).get();
+////        User teacher = userRepository.findById(88398L).get();
+//        User p = new Parent(87854L, null, null, null, null ,null,null,null,null,null,null,null,null);
+//        User t = new Teacher(87998L, null, null,null,null,null,null,null,null,null,null,null,null);
+//
+//        PrincipalDetails a = new PrincipalDetails(p);
+//        PrincipalDetails b = new PrincipalDetails(t);
+//
+//        UsernamePasswordAuthenticationToken parent = new UsernamePasswordAuthenticationToken(a, null);
+//        UsernamePasswordAuthenticationToken director = new UsernamePasswordAuthenticationToken(a, null);
+//
+//        System.out.println(jwtUtils.addPrefix(jwtUtils.createAccessToken(parent)));
+//        System.out.println(jwtUtils.addPrefix(jwtUtils.createAccessToken(director)));
+//        // when
+//
+//        // then
+//    }
 
     @Nested
     @DisplayName("로그인")

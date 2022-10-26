@@ -20,6 +20,10 @@ public class AsyncConfig extends AsyncConfigurerSupport {
 //    Queue에 저장되어있다가 Thread에 자리가 생기면 하나씩 빠져나가 동작
 //    ThreadNamePrefix : 생성되는 Thread 접두사 지정
 
+    /**
+     * 해당 풀 설정을 한 이유 찾기...
+     * why?
+     */
     @Override
     public Executor getAsyncExecutor() {
         ThreadPoolTaskExecutor executor = new ThreadPoolTaskExecutor();

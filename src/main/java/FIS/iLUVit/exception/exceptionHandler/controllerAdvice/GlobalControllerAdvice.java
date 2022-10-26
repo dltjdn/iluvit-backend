@@ -6,7 +6,6 @@ import FIS.iLUVit.exception.exceptionHandler.ErrorResult;
 import com.auth0.jwt.exceptions.JWTVerificationException;
 import lombok.extern.slf4j.Slf4j;
 import net.nurigo.sdk.message.exception.NurigoBadRequestException;
-import net.nurigo.sdk.message.exception.NurigoException;
 import org.springframework.context.support.DefaultMessageSourceResolvable;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.dao.InvalidDataAccessApiUsageException;
@@ -14,6 +13,7 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageNotReadableException;
+import org.springframework.security.core.AuthenticationException;
 import org.springframework.validation.BindException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -22,7 +22,6 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 
-import javax.naming.AuthenticationException;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -119,7 +118,7 @@ public class GlobalControllerAdvice extends ResponseEntityExceptionHandler {
     @ResponseStatus(HttpStatus.UNAUTHORIZED)
     @ExceptionHandler(AuthenticationException.class)
     public ErrorResponse authenticationException(AuthenticationException e) {
-        log.warn("[AuthenticationException Handler] {}", e.getMessage());
+         log.warn("[AuthenticationException Handler] {}", e.getMessage());
         return new ErrorResponse(HttpStatus.UNAUTHORIZED, "아이디 또는 비밀번호가 잘못되었습니다.");
     }
 
