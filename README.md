@@ -34,8 +34,9 @@
 4️⃣ 아이목록 관리
 - 우리 아이가 다니는 시설을 등록하여 빠르게 소식을 받아볼 수 있습니다.
 
+<!--
 ## 🔍 Architecture
-사진 넣어야됨
+-->
 
 ## 🖥 기술 스택
 <img src="https://img.shields.io/badge/SpringBoot-6DB33F?style=flat&logo=SpringBoot&logoColor=white"/> <img src="https://img.shields.io/badge/SpringSecurity-6DB33F?style=flat&logo=SpringSecurity&logoColor=white"/> <img src="https://img.shields.io/badge/AmazonEC2-FF9900?style=flat&logo=AmazonEC2&logoColor=white"/> <img src="https://img.shields.io/badge/Jenkins-D24939?style=flat&logo=Jenkins&logoColor=white"/> <img src="https://img.shields.io/badge/NGINX-009639?style=flat&logo=NGINX&logoColor=white"/> <img src="https://img.shields.io/badge/JSON Web Tokens-000000?style=flat&logo=JSONWebTokens"/>

@@ -385,7 +385,7 @@ public class ChildControllerTest {
                     .exitCenter(any(), any());
             //when
             ResultActions result = mockMvc.perform(
-                    MockMvcRequestBuilders.delete(url, child.getId())
+                    MockMvcRequestBuilders.patch(url, child.getId())
                             .header("Authorization", Creator.createJwtToken(parent)
                             ));
             //then
@@ -401,7 +401,7 @@ public class ChildControllerTest {
             String url = "/parent/child/center/{childId}";
             //when
             ResultActions result = mockMvc.perform(
-                    MockMvcRequestBuilders.delete(url, child.getId())
+                    MockMvcRequestBuilders.patch(url, child.getId())
                             .header("Authorization", Creator.createJwtToken(parent)
                             ));
             //then
