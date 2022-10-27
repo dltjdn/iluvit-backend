@@ -80,10 +80,16 @@ public class TraceSupports {
     }
 
     public static String currentURI(){
+        if(requestHolder.get() == null){
+            return null;
+        }
         return requestHolder.get().getURI();
     }
 
     public static HttpMethod currentHttpMethod(){
+        if(requestHolder.get() == null){
+            return HttpMethod.TRACE;
+        }
         return requestHolder.get().getMethod();
     }
 
@@ -96,6 +102,9 @@ public class TraceSupports {
     }
 
     public static void countQuery(){
+        if(queryCountHolder.get() == null){
+            queryCountHolder.set(0L);
+        }
         queryCountHolder.set(queryCountHolder.get() + 1);
     }
 }
