@@ -4,8 +4,6 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
-import static java.util.UUID.randomUUID;
-
 @AllArgsConstructor
 @NoArgsConstructor
 @Getter
@@ -17,20 +15,20 @@ public class TraceId {
     private String method;
     private int level;
 
-    public TraceId(Long userId, String request, String method) {
-        UUID = String.valueOf(randomUUID());
+    private TraceId(String UUID, Long userId, String request, String method) {
+        this.UUID = UUID;
         this.userId = userId;
         this.request = request;
         this.method = method;
-        this.level = 0;
+        this.level = 1;
     }
 
-    public static TraceId createTraceId(Long userId, String request, String method){
-        return new TraceId(userId, request, method);
+    public static TraceId createTraceId(String UUID, Long userId, String request, String method){
+        return new TraceId(UUID, userId, request, method);
     }
 
     public boolean isFirstLevel(){
-        return level == 0;
+        return level == 1;
     }
 
     public TraceId levelUp(){

@@ -1,9 +1,11 @@
 package FIS.iLUVit.aspect.trace;
 
-import lombok.Data;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
 import org.springframework.http.HttpMethod;
 
-@Data
+@Getter
+@AllArgsConstructor
 public class RequestInfo {
 
     private String URI;

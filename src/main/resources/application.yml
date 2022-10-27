@@ -6,6 +6,9 @@ server:
       enabled: true
       force: true
 spring:
+  security:
+    filter:
+      order: 2
   servlet:
     multipart:
       max-file-size: 20MB
@@ -42,7 +45,7 @@ spring:
 
 logging:
   level:
-    org.hibernate.SQL: debug
+    org.hibernate.SQL: info
 
 ---
 spring:
