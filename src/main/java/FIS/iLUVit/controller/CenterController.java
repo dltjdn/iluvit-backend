@@ -88,6 +88,23 @@ public class CenterController {
     }
 
     /**
+     * 작성자: 이창윤
+     * 리액트 네이티브용 시설 정보 수정 임시
+     */
+    @PatchMapping("/center/{centerId}/react-rn")
+    @ResponseStatus(HttpStatus.ACCEPTED)
+    public Long modifyCenterTemp(@PathVariable("centerId") Long centerId,
+                             @Login Long userId,
+                             @ModelAttribute(name = "requestDto") @Validated CenterModifyRequestDto requestDto,
+                             @RequestPart(required = false) List<MultipartFile> infoImages,
+                             @RequestPart(required = false) MultipartFile profileImage){
+        if(userId == null)
+            throw new UserException(UserErrorResult.NOT_LOGIN);
+        log.info("requestDto = {}", requestDto);
+        return centerService.modifyCenter(centerId, userId, requestDto, infoImages, profileImage);
+    }
+
+    /**
     *   작성날짜: 2022/06/20 3:49 PM
     *   작성자: 이승범
     *   작성내용: 회원가입, 이직 과정에서 center 정보 가져오기
