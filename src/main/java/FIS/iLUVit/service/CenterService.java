@@ -91,6 +91,29 @@ public class CenterService {
         return center.getId();
     }
 
+    public Long modifyCenterImage(Long centerId, Long userId, List<MultipartFile> infoImages, MultipartFile profileImage) {
+        Teacher teacher = userRepository.findTeacherById(userId)
+                .orElseThrow(() -> new UserException(UserErrorResult.USER_NOT_EXIST))
+                .canWrite(centerId);
+        // 해당하는 center 없으면 RuntimeException 반환
+        Center center = teacher.getCenter();
+        imageService.saveInfoImages(infoImages, center);
+        imageService.saveProfileImage(profileImage, center);
+        return center.getId();
+    }
+
+    public Long modifyCenterInfo(Long centerId, Long userId, CenterModifyRequestDto requestDto) {
+        Teacher teacher = userRepository.findTeacherById(userId)
+                .orElseThrow(() -> new UserException(UserErrorResult.USER_NOT_EXIST))
+                .canWrite(centerId);
+        // 해당하는 center 없으면 RuntimeException 반환
+        Center center = teacher.getCenter();
+        Pair<Double, Double> location = mapService.convertAddressToLocation(requestDto.getAddress());
+        Pair<String, String> area = mapService.getSidoSigunguByLocation(location.getFirst(), location.getSecond());
+        center.update(requestDto, location.getFirst(), location.getSecond(), area.getFirst(), area.getSecond());
+        return center.getId();
+    }
+
     public List<CenterRecommendDto> findCenterForParent(Long userId) {
         Parent parent = parentRepository.findById(userId)
                 .orElseThrow(() -> new UserException("해당 유저가 존재 하지 않습니다."));

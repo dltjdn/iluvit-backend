@@ -89,19 +89,32 @@ public class CenterController {
 
     /**
      * 작성자: 이창윤
-     * 리액트 네이티브용 시설 정보 수정 임시
+     * 리액트 네이티브용 시설 정보 이미지 수정
      */
-    @PatchMapping("/center/{centerId}/react-rn")
+    @PatchMapping("/center/{centerId}/image")
     @ResponseStatus(HttpStatus.ACCEPTED)
-    public Long modifyCenterTemp(@PathVariable("centerId") Long centerId,
+    public Long modifyCenterImage(@PathVariable("centerId") Long centerId,
                              @Login Long userId,
-                             @ModelAttribute(name = "requestDto") @Validated CenterModifyRequestDto requestDto,
                              @RequestPart(required = false) List<MultipartFile> infoImages,
                              @RequestPart(required = false) MultipartFile profileImage){
         if(userId == null)
             throw new UserException(UserErrorResult.NOT_LOGIN);
+        return centerService.modifyCenterImage(centerId, userId, infoImages, profileImage);
+    }
+
+    /**
+     * 작성자: 이창윤
+     * 리액트 네이티브용 시설 정보 수정
+     */
+    @PatchMapping("/center/{centerId}/info")
+    @ResponseStatus(HttpStatus.ACCEPTED)
+    public Long modifyCenterInfo(@PathVariable("centerId") Long centerId,
+                                 @Login Long userId,
+                                 @RequestBody @Validated CenterModifyRequestDto requestDto){
+        if(userId == null)
+            throw new UserException(UserErrorResult.NOT_LOGIN);
         log.info("requestDto = {}", requestDto);
-        return centerService.modifyCenter(centerId, userId, requestDto, infoImages, profileImage);
+        return centerService.modifyCenterInfo(centerId, userId, requestDto);
     }
 
     /**
