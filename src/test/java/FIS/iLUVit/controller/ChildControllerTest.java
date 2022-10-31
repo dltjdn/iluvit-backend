@@ -14,7 +14,10 @@ import FIS.iLUVit.exception.exceptionHandler.ErrorResponse;
 import FIS.iLUVit.exception.exceptionHandler.controllerAdvice.GlobalControllerAdvice;
 import FIS.iLUVit.service.ChildService;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import org.junit.jupiter.api.*;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Nested;
+import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
@@ -25,7 +28,6 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.request.MockMultipartHttpServletRequestBuilder;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
-import org.springframework.test.web.servlet.result.MockMvcResultHandlers;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
 import java.io.File;
@@ -36,8 +38,9 @@ import java.nio.file.Paths;
 import java.time.LocalDate;
 
 import static org.mockito.Mockito.*;
-import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.*;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
+import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @ExtendWith(MockitoExtension.class)
 public class ChildControllerTest {
@@ -382,7 +385,7 @@ public class ChildControllerTest {
                     .exitCenter(any(), any());
             //when
             ResultActions result = mockMvc.perform(
-                    MockMvcRequestBuilders.delete(url, child.getId())
+                    MockMvcRequestBuilders.patch(url, child.getId())
                             .header("Authorization", Creator.createJwtToken(parent)
                             ));
             //then
@@ -398,7 +401,7 @@ public class ChildControllerTest {
             String url = "/parent/child/center/{childId}";
             //when
             ResultActions result = mockMvc.perform(
-                    MockMvcRequestBuilders.delete(url, child.getId())
+                    MockMvcRequestBuilders.patch(url, child.getId())
                             .header("Authorization", Creator.createJwtToken(parent)
                             ));
             //then

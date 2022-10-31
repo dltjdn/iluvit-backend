@@ -394,9 +394,9 @@ class CenterControllerTest extends ResponseRequests {
 
             //then
             result.andDo(print())
-                    .andExpect(status().isUnavailableForLegalReasons())
+                    .andExpect(status().isForbidden())
                     .andExpect(content().json(objectMapper.writeValueAsString(
-                            new ErrorResponse(HttpStatus.UNAVAILABLE_FOR_LEGAL_REASONS
+                            new ErrorResponse(HttpStatus.FORBIDDEN
                                     , CenterErrorResult.AUTHENTICATION_FAILED.getMessage())
                     )));
         }

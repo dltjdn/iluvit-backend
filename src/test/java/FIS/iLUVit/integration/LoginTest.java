@@ -14,7 +14,10 @@ import com.auth0.jwt.JWT;
 import com.auth0.jwt.algorithms.Algorithm;
 import com.auth0.jwt.exceptions.JWTVerificationException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import org.junit.jupiter.api.*;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Nested;
+import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
@@ -27,14 +30,17 @@ import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDateTime;
 import java.util.Date;
 import java.util.Optional;
 
-import static org.assertj.core.api.Assertions.*;
-import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.Mockito.*;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.mockito.Mockito.any;
+import static org.mockito.Mockito.doReturn;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @Transactional
 @SpringBootTest
@@ -116,12 +122,41 @@ public class LoginTest {
         }
 
         @Test
-        @DisplayName("[success] 로그인성공")
+        @DisplayName("[success] 최초 로그인 성공(튜토리얼 진행)")
+        public void 최초로그인성공() throws Exception {
+            // given
+            userRepository.save(parent);
+            String url = "/login";
+            LoginRequest request = new LoginRequest(loginId, password);
+            // when
+            ResultActions result = mockMvc.perform(
+                    MockMvcRequestBuilders.post(url)
+                            .content(objectMapper.writeValueAsString(request))
+                            .contentType(MediaType.APPLICATION_JSON)
+            );
+            // then
+            User user = userRepository.findByLoginId(loginId).get();
+            TokenPair tokenPair = tokenPairRepository.findByUserId(user.getId()).get();
+            LoginResponse response = user.getLoginInfo();
+            response.setAccessToken("Bearer " + tokenPair.getAccessToken());
+            response.setRefreshToken("Bearer " + tokenPair.getRefreshToken());
+            response.setNeedTutorial(true);
+            result.andDo(print())
+                    .andExpect(status().isOk())
+                    .andExpect(content().json(
+                            objectMapper.writeValueAsString(response)
+                    ));
+            assertThat(response.getNeedTutorial()).isTrue();
+        }
+
+        @Test
+        @DisplayName("[success] 로그인 성공(튜토리얼 진행 X)")
         public void 로그인성공() throws Exception {
             // given
             userRepository.save(parent);
             String url = "/login";
             LoginRequest request = new LoginRequest(loginId, password);
+            parent.setUpdateDateForTest(LocalDateTime.now());
             // when
             ResultActions result = mockMvc.perform(
                     MockMvcRequestBuilders.post(url)
@@ -139,6 +174,7 @@ public class LoginTest {
                     .andExpect(content().json(
                             objectMapper.writeValueAsString(response)
                     ));
+            assertThat(response.getNeedTutorial()).isFalse();
         }
     }
 

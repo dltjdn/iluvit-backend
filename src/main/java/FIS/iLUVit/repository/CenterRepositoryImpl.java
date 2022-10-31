@@ -32,7 +32,7 @@ public class CenterRepositoryImpl extends CenterQueryMethod implements CenterRep
     private final JPAQueryFactory jpaQueryFactory;
 
     @Override
-    public Slice<CenterPreview> findByFilter(List<Area> areas, Theme theme, Integer interestedAge, KindOf kindOf, Pageable pageable){
+    public Slice<CenterPreview> findByFilter(List<Area> areas, Theme theme, Integer interestedAge, KindOf kindOf, Pageable pageable) {
         List<CenterPreview> content = jpaQueryFactory.select(new QCenterPreview(center, review.score.avg()))
                 .from(center)
                 .leftJoin(center.reviews, review)
@@ -47,7 +47,7 @@ public class CenterRepositoryImpl extends CenterQueryMethod implements CenterRep
                 .fetch();
 
         boolean hasNext = false;
-        if(content.size() > pageable.getPageSize()){
+        if (content.size() > pageable.getPageSize()) {
             content.remove(pageable.getPageSize());
             hasNext = true;
         }
@@ -131,25 +131,25 @@ public class CenterRepositoryImpl extends CenterQueryMethod implements CenterRep
 
         NumberExpression<Double> distanceEx = acos(
                 sin(radians(latitudeEx)).multiply(sin(radians(center.latitude)))
-                .add(cos(radians(latitudeEx)).multiply(cos(radians(center.latitude)))
-                        .multiply(cos(radians(longitudeEx).subtract(radians(center.longitude)))))).multiply(param);
+                        .add(cos(radians(latitudeEx)).multiply(cos(radians(center.latitude)))
+                                .multiply(cos(radians(longitudeEx).subtract(radians(center.longitude)))))).multiply(param);
 
         List<CenterAndDistancePreview> result =
                 jpaQueryFactory.select(
-                        new QCenterAndDistancePreview(
-                                distanceEx,
-                                center.id, center.name, center.kindOf, center.estType, center.tel, center.startTime, center.endTime, center.minAge, center.maxAge, center.address, center.addressDetail, center.longitude, center.latitude, center.theme,
-                                review.score.avg(),
-                                center.profileImagePath
-                        ))
-                .from(center)
-                .leftJoin(center.reviews, review)
-                .where(kindOfEq(kindOf), center.id.in(centerIds))
-                .groupBy(center)
-                .orderBy(center.score.desc(), center.id.asc())
-                .offset(pageable.getOffset())
-                .limit(pageable.getPageSize() + 1)
-                .fetch();
+                                new QCenterAndDistancePreview(
+                                        distanceEx,
+                                        center.id, center.name, center.kindOf, center.estType, center.tel, center.startTime, center.endTime, center.minAge, center.maxAge, center.address, center.addressDetail, center.longitude, center.latitude, center.theme,
+                                        review.score.avg(),
+                                        center.profileImagePath
+                                ))
+                        .from(center)
+                        .leftJoin(center.reviews, review)
+                        .where(kindOfEq(kindOf), center.id.in(centerIds))
+                        .groupBy(center)
+                        .orderBy(center.score.desc(), center.id.asc())
+                        .offset(pageable.getOffset())
+                        .limit(pageable.getPageSize() + 1)
+                        .fetch();
 
         boolean hasNext = false;
         if (result.size() > pageable.getPageSize()) {
@@ -175,24 +175,24 @@ public class CenterRepositoryImpl extends CenterQueryMethod implements CenterRep
                 .from(center)
                 .leftJoin(center.reviews, review)
                 .groupBy(center)
-                .where(centerNameEq(searchContent))
+                .where(centerNameEq(searchContent), (kindOfEq(KindOf.Kindergarten).or(kindOfEq(KindOf.ChildHouse))))
                 .having(distanceEx.loe(distance))
                 .orderBy(center.score.desc())
                 .limit(100)
                 .fetch();
 
 
-        while(result.size() <= 10 && searchContent != null && !searchContent.equals("") && distance <= 1600){
+        while (result.size() <= 10 && searchContent != null && !searchContent.equals("") && distance <= 1600) {
             distance = distance * 3;
             result = jpaQueryFactory.select(new QCenterMapPreview(center.id, center.name, center.longitude, center.latitude))
-                        .from(center)
-                        .leftJoin(center.reviews, review)
-                        .groupBy(center)
-                        .where(centerNameEq(searchContent))
-                        .having(distanceEx.loe(distance))
-                        .orderBy(center.score.desc())
-                        .limit(100)
-                        .fetch();
+                    .from(center)
+                    .leftJoin(center.reviews, review)
+                    .groupBy(center)
+                    .where(centerNameEq(searchContent), (kindOfEq(KindOf.Kindergarten).or(kindOfEq(KindOf.ChildHouse))))
+                    .having(distanceEx.loe(distance))
+                    .orderBy(center.score.desc())
+                    .limit(100)
+                    .fetch();
         }
 
         return result;
@@ -209,7 +209,7 @@ public class CenterRepositoryImpl extends CenterQueryMethod implements CenterRep
                 .fetch();
 
         int size = result.size();
-        if(size < 10){
+        if (size < 10) {
             List<CenterRecommendDto> temp = jpaQueryFactory.select(new QCenterRecommendDto(center.id, center.name, center.profileImagePath))
                     .from(center)
                     .where(areaEq(location.getSido(), location.getSigungu()), center.theme.isNull())
@@ -222,16 +222,17 @@ public class CenterRepositoryImpl extends CenterQueryMethod implements CenterRep
     }
 
     /**
-    *   작성날짜: 2022/08/24 5:17 PM
-    *   작성자: 이승범
-    *   작성내용: 회원가입 과정에서 시설정보 가져오기
-    */
+     * 작성날짜: 2022/08/24 5:17 PM
+     * 작성자: 이승범
+     * 작성내용: 회원가입 과정에서 시설정보 가져오기
+     */
     @Override
     public Slice<CenterInfoDto> findForSignup(String sido, String sigungu, String centerName, Pageable pageable) {
         List<CenterInfoDto> content = jpaQueryFactory.select(new QCenterInfoDto(center.id, center.name, center.address))
                 .from(center)
                 .where(areaEq(sido, sigungu)
-                        ,(centerNameEq(centerName)))
+                        ,(centerNameEq(centerName))
+                        ,(center.kindOf.isNotNull()))
                 .offset(pageable.getOffset())
                 .limit(pageable.getPageSize() + 1)
                 .fetch();
@@ -245,15 +246,21 @@ public class CenterRepositoryImpl extends CenterQueryMethod implements CenterRep
         return new SliceImpl<>(content, pageable, hasNext);
     }
 
+    /**
+     * 작성날짜: 2022/08/24 5:17 PM
+     * 작성자: 이승범
+     * 작성내용: 아이추가 과정에서 필요한 센터정보 가져오기
+     */
     @Override
     public Slice<CenterInfoDto> findCenterForAddChild(String sido, String sigungu, String centerName, Pageable pageable) {
         List<CenterInfoDto> content = jpaQueryFactory.select(new QCenterInfoDto(center.id, center.name, center.address))
                 .from(center)
                 .where(center.signed.eq(true)
-                        ,(areaEq(sido, sigungu))
-                        ,(centerNameEq(centerName)))
+                        , (areaEq(sido, sigungu))
+                        , (centerNameEq(centerName))
+                        , (center.kindOf.isNotNull()))
                 .offset(pageable.getOffset())
-                .limit(pageable.getPageSize()+1)
+                .limit(pageable.getPageSize() + 1)
                 .fetch();
 
         boolean hasNext = false;
@@ -266,10 +273,10 @@ public class CenterRepositoryImpl extends CenterQueryMethod implements CenterRep
     }
 
     /**
-    *   작성날짜: 2022/08/14 5:17 PM
-    *   작성자: 이승범
-    *   작성내용: 찜한 시설 가져오기
-    */
+     * 작성날짜: 2022/08/14 5:17 PM
+     * 작성자: 이승범
+     * 작성내용: 찜한 시설 가져오기
+     */
     @Override
     public Slice<CenterPreview> findByPrefer(Long userId, Pageable pageable) {
         List<CenterPreview> content = jpaQueryFactory.select(new QCenterPreview(center, review.score.avg()))
@@ -278,7 +285,7 @@ public class CenterRepositoryImpl extends CenterQueryMethod implements CenterRep
                 .leftJoin(center.reviews, review)
                 .groupBy(center)
                 .offset(pageable.getOffset())
-                .limit(pageable.getPageSize()+1)
+                .limit(pageable.getPageSize() + 1)
                 .fetch();
 
         boolean hasNext = false;

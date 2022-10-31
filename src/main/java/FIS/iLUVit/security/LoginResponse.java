@@ -13,12 +13,14 @@ public class LoginResponse {
     private Long id;
     private String nickname;
     private Auth auth;
+    private Boolean needTutorial;
     private String accessToken;
     private String refreshToken;
 
-    public LoginResponse(Long id, String nickname, Auth auth) {
-        this.id = id;
-        this.nickname = nickname;
-        this.auth = auth;
+    public LoginResponse(User user) {
+        this.id = user.getId();
+        this.nickname = user.getNickName();
+        this.auth = user.getAuth();
+        this.needTutorial = user.getCreatedDate().equals(user.getUpdatedDate());
     }
 }

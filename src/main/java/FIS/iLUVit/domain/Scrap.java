@@ -46,7 +46,7 @@ public class Scrap extends BaseEntity {
     public static Scrap createDefaultScrap(User user) {
         Scrap scrap = new Scrap();
         scrap.user = user;
-        scrap.name = "default";
+        scrap.name = "기본폴더";
         scrap.isDefault = true;
         return scrap;
     }

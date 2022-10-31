@@ -297,9 +297,9 @@ class ParticipationControllerTest {
 
             //then
             resultActions.andDo(print())
-                    .andExpect(status().isBadRequest())
+                    .andExpect(status().isIAmATeapot())
                     .andExpect(content().json(objectMapper.writeValueAsString(
-                            new ErrorResponse(HttpStatus.BAD_REQUEST
+                            new ErrorResponse(HttpStatus.I_AM_A_TEAPOT
                                     , "올바르지 않은 접근입니다")
                     )));
         }

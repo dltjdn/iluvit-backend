@@ -9,13 +9,13 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
 @Entity
 @Getter
-@Data
 @Inheritance(strategy = InheritanceType.JOINED)
 @DiscriminatorColumn
 @DiscriminatorValue("null")
@@ -71,7 +71,7 @@ public class User extends BaseImageEntity {
     }
 
     public LoginResponse getLoginInfo() {
-        return new LoginResponse(id, nickName, auth);
+        return new LoginResponse(this);
     }
 
     public UserInfoResponse getUserInfo() {
@@ -86,5 +86,11 @@ public class User extends BaseImageEntity {
     public User updateLocation(Location location) {
         this.location = location;
         return this;
+    }
+
+    public void disableTutorial() {
+        if (this.createdDate.equals(this.updatedDate)) {
+            this.updatedDate = LocalDateTime.now();
+        }
     }
 }

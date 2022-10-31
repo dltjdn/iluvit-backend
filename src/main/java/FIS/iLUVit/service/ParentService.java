@@ -118,7 +118,7 @@ public class ParentService {
         parent.updateLocation(location);
 
         // default 스크랩 생성
-        Scrap scrap = Scrap.createScrap(parent, "default");
+        Scrap scrap = Scrap.createDefaultScrap(parent);
 
         parentRepository.save(parent);
         scrapRepository.save(scrap);

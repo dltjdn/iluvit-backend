@@ -9,7 +9,7 @@ import org.springframework.http.HttpStatus;
 @Getter
 public enum WaitingErrorResult implements ErrorResult {
 
-    NO_RESULT(HttpStatus.BAD_REQUEST, "잘못된 요청입니다");
+    NO_RESULT(HttpStatus.I_AM_A_TEAPOT, "잘못된 요청입니다");
 
     private final HttpStatus httpStatus;
     private final String message;

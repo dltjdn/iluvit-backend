@@ -1,9 +1,12 @@
 package FIS.iLUVit;
 
+import FIS.iLUVit.service.S3ImageService;
+import com.amazonaws.services.s3.AmazonS3Client;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
@@ -19,6 +22,12 @@ public class TestExample {
     private Warehouse warehouse = new WarehouseImpl();
     @Mock
     private Warehouse mockWarehouse;
+
+    @Mock
+    private AmazonS3Client amazonS3Client;
+
+    @InjectMocks
+    private S3ImageService s3ImageService;
 
     @BeforeEach
     protected void setUp() throws Exception {

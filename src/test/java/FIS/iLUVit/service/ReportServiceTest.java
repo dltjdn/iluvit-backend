@@ -95,15 +95,10 @@ class ReportServiceTest {
         //given
         reportCreateRequest.setType(ReportType.POST);
         reportCreateRequest.setTargetId(post.getId());
-        reportCreateRequest.setTargetUserId(targetUser.getId());
 
         doReturn(Optional.of(user))
                 .when(userRepository)
                 .findById(user.getId());
-
-        doReturn(Optional.of(targetUser))
-                .when(userRepository)
-                .findById(targetUser.getId());
 
         doReturn(Optional.empty())
                 .when(postRepository)
@@ -121,7 +116,6 @@ class ReportServiceTest {
         //given
         reportCreateRequest.setType(ReportType.POST);
         reportCreateRequest.setTargetId(post.getId());
-        reportCreateRequest.setTargetUserId(targetUser.getId());
 
         doReturn(Optional.of(user))
                 .when(userRepository)
@@ -151,7 +145,6 @@ class ReportServiceTest {
         //given
         reportCreateRequest.setType(ReportType.POST);
         reportCreateRequest.setTargetId(post.getId());
-        reportCreateRequest.setTargetUserId(targetUser.getId());
 
         doReturn(Optional.of(user))
                 .when(userRepository)
@@ -195,7 +188,6 @@ class ReportServiceTest {
         //given
         reportCreateRequest.setType(ReportType.POST);
         reportCreateRequest.setTargetId(post.getId());
-        reportCreateRequest.setTargetUserId(targetUser.getId());
 
         doReturn(Optional.of(user))
                 .when(userRepository)
@@ -235,15 +227,10 @@ class ReportServiceTest {
         //given
         reportCreateRequest.setType(ReportType.COMMENT);
         reportCreateRequest.setTargetId(comment.getId());
-        reportCreateRequest.setTargetUserId(targetUser.getId());
 
         doReturn(Optional.of(user))
                 .when(userRepository)
                 .findById(user.getId());
-
-        doReturn(Optional.of(targetUser))
-                .when(userRepository)
-                .findById(targetUser.getId());
 
         doReturn(Optional.empty())
                 .when(commentRepository)
@@ -261,7 +248,6 @@ class ReportServiceTest {
         //given
         reportCreateRequest.setType(ReportType.COMMENT);
         reportCreateRequest.setTargetId(comment.getId());
-        reportCreateRequest.setTargetUserId(targetUser.getId());
 
         doReturn(Optional.of(user))
                 .when(userRepository)
@@ -292,7 +278,6 @@ class ReportServiceTest {
         //given
         reportCreateRequest.setType(ReportType.COMMENT);
         reportCreateRequest.setTargetId(comment.getId());
-        reportCreateRequest.setTargetUserId(targetUser.getId());
 
         doReturn(Optional.of(user))
                 .when(userRepository)
@@ -335,7 +320,6 @@ class ReportServiceTest {
         //given
         reportCreateRequest.setType(ReportType.COMMENT);
         reportCreateRequest.setTargetId(comment.getId());
-        reportCreateRequest.setTargetUserId(targetUser.getId());
 
         doReturn(Optional.of(user))
                 .when(userRepository)
