@@ -8,6 +8,7 @@ import FIS.iLUVit.service.PresentationService;
 import FIS.iLUVit.service.UserService;
 import FIS.iLUVit.service.dto.ParentInfoForDirectorDto;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.SliceImpl;
 import org.springframework.http.HttpStatus;
@@ -19,6 +20,7 @@ import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
+@Slf4j
 public class PresentationController {
 
     private final PresentationService presentationService;
@@ -50,6 +52,37 @@ public class PresentationController {
     }
 
     /**
+     * 작성자: 이창윤
+     * 원장/ 선생의 presentation 등록 PtDate 설정하기
+     * 리액트 네이티브용 정보 저장
+     */
+    @PostMapping(value = "/presentation/info")
+    @ResponseStatus(HttpStatus.CREATED)
+    public PresentationSaveResponseDto registerPresentationInfo(@RequestBody @Validated PresentationRequestRequestFormDto request,
+                                                                @Login Long userId){
+        if(userId == null)
+            throw new UserException(UserErrorResult.NOT_LOGIN);
+        log.info("PresentationRequestRequestFormDto = {}", request);
+        return new PresentationSaveResponseDto(presentationService.saveInfoWithPtDate(request, userId));
+    }
+
+    /**
+     * 작성자: 이창윤
+     * 원장/ 선생의 presentation 등록 PtDate 설정하기
+     * 리액트 네이티브용 이미지 저장
+     */
+    @PostMapping(value = "/presentation/images")
+    @ResponseStatus(HttpStatus.CREATED)
+    public PresentationSaveResponseDto registerPresentationImage(@RequestParam Long presentationId,
+                                                                 @RequestPart(required = false) List<MultipartFile> images,
+                                                                 @Login Long userId) {
+        if (userId == null)
+            throw new UserException(UserErrorResult.NOT_LOGIN);
+        return new PresentationSaveResponseDto(presentationService.saveImageWithPtDate(presentationId, images, userId));
+    }
+
+
+    /**
      * 원장, 선생의 설명회 수정
      */
     @PatchMapping(value = "/presentation")
@@ -58,6 +91,31 @@ public class PresentationController {
                                                             @RequestPart(required = false) List<MultipartFile> images,
                                                             @Login Long userId){
         return new PresentationModifyResponseDto(presentationService.modifyWithPtDate(request, images, userId));
+    }
+
+    /**
+     * 작성자: 이창윤
+     * 원장, 선생의 설명회 수정
+     * 리액트 네이티브용 정보 수정
+     */
+    @PatchMapping(value = "/presentation/info")
+    @ResponseStatus(HttpStatus.ACCEPTED)
+    public PresentationModifyResponseDto modifyPresentationInfo(@RequestBody @Validated PresentationModifyRequestDto request,
+                                                            @Login Long userId){
+        return new PresentationModifyResponseDto(presentationService.modifyInfoWithPtDate(request, userId));
+    }
+
+    /**
+     * 작성자: 이창윤
+     * 원장, 선생의 설명회 수정
+     * 리액트 네이티브용 이미지 수정
+     */
+    @PatchMapping(value = "/presentation/images")
+    @ResponseStatus(HttpStatus.ACCEPTED)
+    public PresentationModifyResponseDto modifyPresentationImage(@RequestParam Long presentationId,
+                                                                @RequestPart(required = false) List<MultipartFile> images,
+                                                                @Login Long userId){
+        return new PresentationModifyResponseDto(presentationService.modifyImageWithPtDate(presentationId, images, userId));
     }
 
     /**
