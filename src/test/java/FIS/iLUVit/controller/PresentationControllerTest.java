@@ -258,7 +258,7 @@ class PresentationControllerTest {
         @Test
         @DisplayName("[success] 설명회 정보 저장 성공")
         public void 정보저장성공_APP용() throws Exception {
-            MockMultipartHttpServletRequestBuilder builder = MockMvcRequestBuilders.multipart("/presentation/images");
+            MockMultipartHttpServletRequestBuilder builder = MockMvcRequestBuilders.multipart("/presentation/info");
 
             Presentation presentation = createValidPresentation();
             PtDate ptDate1 = createPtDate(1L);
