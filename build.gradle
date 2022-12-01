@@ -84,6 +84,7 @@ dependencies {
 
 	// 스프링 상태 검사
 	implementation 'org.springframework.boot:spring-boot-starter-actuator'
+
 }
 
 // 서순이 중요하다 test -> jacocoTestReport -> jacocoTestCoverageVerification 순서로 task 진행
