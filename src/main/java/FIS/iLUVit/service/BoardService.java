@@ -138,30 +138,32 @@ public class BoardService {
          * 4. 원장이 속한 센터 != 게시판이 속한 센터 -> 삭제 불가
          * 5. 디폴트 게시판 -> 삭제 불가
          */
-        userRepository.findById(userId)
-                .ifPresent(u -> {
-                    if (u.getAuth() == Auth.PARENT) {
-                        throw new BoardException(BoardErrorResult.UNAUTHORIZED_USER_ACCESS);
-                    } else {
-                        Teacher t = (Teacher) u;
-                        if (t.getAuth() != Auth.DIRECTOR) {
-                            throw new BoardException(BoardErrorResult.UNAUTHORIZED_USER_ACCESS);
-                        }
-                        if (t.getCenter() == null) {
-                            throw new BoardException(BoardErrorResult.UNAUTHORIZED_USER_ACCESS);
-                        }
-                        if (t.getCenter().getId() != findBoard.getCenter().getId()) {
-                            throw new BoardException(BoardErrorResult.UNAUTHORIZED_USER_ACCESS);
-                        }
-                    }
-                });
 
         if (findBoard.getIsDefault()) {
             throw new BoardException(BoardErrorResult.DEFAULT_BOARD_DELETE_BAN);
         }
+        userRepository.findById(userId)
+                .ifPresent(u -> validateAuth(findBoard, u));
 
         boardRepository.delete(findBoard);
         return boardId;
+    }
+
+    private void validateAuth(Board findBoard, User u) {
+        if (u.getAuth() == Auth.PARENT) {
+            throw new BoardException(BoardErrorResult.UNAUTHORIZED_USER_ACCESS);
+        } else {
+            Teacher t = (Teacher) u;
+            if (t.getAuth() != Auth.DIRECTOR) {
+                throw new BoardException(BoardErrorResult.UNAUTHORIZED_USER_ACCESS);
+            }
+            if (t.getCenter() == null) {
+                throw new BoardException(BoardErrorResult.UNAUTHORIZED_USER_ACCESS);
+            }
+            if (t.getCenter().getId() != findBoard.getCenter().getId()) {
+                throw new BoardException(BoardErrorResult.UNAUTHORIZED_USER_ACCESS);
+            }
+        }
     }
 
     public StoryHomeDTO findCenterStory(Long userId) {
