@@ -11,5 +11,5 @@ public interface ExpoTokenRepository extends JpaRepository<ExpoToken, Long> {
 
     List<ExpoToken> findByUser(User user);
 
-    Optional<ExpoToken> findByUserAndToken(User user, String token);
+    Optional<ExpoToken> findByToken(String token);
 }

@@ -1,5 +1,6 @@
 package FIS.iLUVit.service;
 
+import FIS.iLUVit.controller.dto.ExpoTokenInfo;
 import FIS.iLUVit.controller.dto.ExpoTokenRequest;
 import FIS.iLUVit.domain.ExpoToken;
 import FIS.iLUVit.domain.User;
@@ -8,8 +9,11 @@ import FIS.iLUVit.exception.UserException;
 import FIS.iLUVit.repository.ExpoTokenRepository;
 import FIS.iLUVit.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
+import org.jetbrains.annotations.NotNull;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.Objects;
 
 @Service
 @Transactional
@@ -24,16 +28,31 @@ public class ExpoTokenService {
         ExpoToken token = ExpoToken.builder()
                 .user(findUser)
                 .token(request.getToken())
+                .accept(request.getAccept())
                 .build();
         ExpoToken savedToken = expoTokenRepository.save(token);
         return savedToken.getId();
     }
 
-    public void deleteToken(Long userId, ExpoTokenRequest request) {
-        User findUser = userRepository.getById(userId);
-        ExpoToken expoToken = expoTokenRepository.findByUserAndToken(findUser, request.getToken())
+    public void modifyAcceptStatus(Long userId, ExpoTokenRequest request) {
+        ExpoToken expoToken = getExpoTokenWithUserException(request.getToken(), userId);
+
+        expoToken.modifyAcceptStatus(request.getAccept());
+    }
+
+    public ExpoTokenInfo findById(Long userId, String token) {
+        ExpoToken expoToken = getExpoTokenWithUserException(token, userId);
+        return new ExpoTokenInfo(expoToken.getId(), expoToken.getToken(), expoToken.getAccept());
+    }
+
+    @NotNull
+    private ExpoToken getExpoTokenWithUserException(String token, Long userId) {
+        ExpoToken expoToken = expoTokenRepository.findByToken(token)
                 .orElseThrow(() -> new UserException(UserErrorResult.NOT_VALID_TOKEN));
 
-        expoTokenRepository.delete(expoToken);
+        if (!Objects.equals(expoToken.getUser().getId(), userId)) {
+            throw new UserException(UserErrorResult.HAVE_NOT_AUTHORIZATION);
+        }
+        return expoToken;
     }
 }

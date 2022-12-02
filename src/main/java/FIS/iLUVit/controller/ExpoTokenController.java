@@ -1,11 +1,14 @@
 package FIS.iLUVit.controller;
 
 import FIS.iLUVit.config.argumentResolver.Login;
+import FIS.iLUVit.controller.dto.ExpoTokenInfo;
 import FIS.iLUVit.controller.dto.ExpoTokenRequest;
 import FIS.iLUVit.service.ExpoTokenService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
+
+import javax.validation.Valid;
 
 @RestController
 @RequiredArgsConstructor
@@ -20,19 +23,30 @@ public class ExpoTokenController {
     @PostMapping("/expoTokens")
     @ResponseStatus(HttpStatus.CREATED)
     public Long save(@Login Long userId,
-            @RequestBody ExpoTokenRequest request) {
+            @RequestBody @Valid ExpoTokenRequest request) {
         return expoTokenService.saveToken(userId, request);
     }
 
     /**
      * 작성자: 이창윤
-     * 푸쉬 알림 비동의하면 [Token]을 삭제합니다.
+     * 푸쉬 알림 동의, 비동의 체크
      */
-    @DeleteMapping("/expoTokens")
+    @PostMapping("/expoTokens/status")
     @ResponseStatus(HttpStatus.OK)
-    public void remove(@Login Long userId,
-                     @RequestBody ExpoTokenRequest request) {
-        expoTokenService.deleteToken(userId, request);
+    public void modifyStatus(@Login Long userId,
+                       @RequestBody @Valid ExpoTokenRequest request) {
+        expoTokenService.modifyAcceptStatus(userId, request);
     }
 
+    /**
+     * 작성자: 이창윤
+     * 엑스포 토큰 정보 조회
+     * 현재 푸쉬 알림 동의 상태 들어있음
+     * 동의 --> True, 비동의 --> False 로 응답
+     */
+    @GetMapping("/expoTokens/{token}")
+    public ExpoTokenInfo findById(@Login Long userId,
+                                  @PathVariable String token) {
+        return expoTokenService.findById(userId, token);
+    }
 }
