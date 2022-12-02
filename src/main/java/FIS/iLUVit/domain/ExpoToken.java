@@ -31,11 +31,6 @@ public class ExpoToken {
         this.user = user;
     }
 
-    @PrePersist
-    public void prePersist() {
-        this.accept = this.accept == null && false;
-    }
-
     public void modifyAcceptStatus(Boolean accept) {
         this.accept = accept;
     }

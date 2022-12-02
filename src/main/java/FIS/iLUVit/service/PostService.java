@@ -158,21 +158,23 @@ public class PostService {
     }
 
     public Slice<GetPostResponsePreview> searchByKeywordAndCenter(Long centerId, String input, Auth auth, Long userId, Pageable pageable) {
-        if (auth == Auth.PARENT) {
-            // 학부모 유저일 때 아이와 연관된 센터의 아이디를 모두 가져옴
-            Set<Long> centerIds = userRepository.findChildren(userId)
-                    .stream().filter(c -> c.getCenter() != null).map(c -> c.getCenter().getId())
-                    .collect(Collectors.toSet());
-            if (!centerIds.contains(centerId)) {
-                log.warn("Set {} 에 센터 아이디가 없음", centerIds);
-                throw new PostException(PostErrorResult.UNAUTHORIZED_USER_ACCESS);
-            }
-        } else {
-            Teacher teacher = userRepository.findTeacherById(userId)
-                    .orElseThrow(() -> new PostException(PostErrorResult.UNAUTHORIZED_USER_ACCESS));
-            // 교사 아이디 + center로 join fetch 조회한 결과가 없으면 Teacher의 Center가 null이므로 권한 X
-            if (!Objects.equals(teacher.getCenter().getId(), centerId)) {
-                throw new PostException(PostErrorResult.UNAUTHORIZED_USER_ACCESS);
+        if (centerId != null) {
+            if (auth == Auth.PARENT) {
+                // 학부모 유저일 때 아이와 연관된 센터의 아이디를 모두 가져옴
+                Set<Long> centerIds = userRepository.findChildren(userId)
+                        .stream().filter(c -> c.getCenter() != null).map(c -> c.getCenter().getId())
+                        .collect(Collectors.toSet());
+                if (!centerIds.contains(centerId)) {
+                    log.warn("Set {} 에 센터 아이디가 없음", centerIds);
+                    throw new PostException(PostErrorResult.UNAUTHORIZED_USER_ACCESS);
+                }
+            } else {
+                Teacher teacher = userRepository.findTeacherById(userId)
+                        .orElseThrow(() -> new PostException(PostErrorResult.UNAUTHORIZED_USER_ACCESS));
+                // 교사 아이디 + center로 join fetch 조회한 결과가 없으면 Teacher의 Center가 null이므로 권한 X
+                if (!Objects.equals(teacher.getCenter().getId(), centerId)) {
+                    throw new PostException(PostErrorResult.UNAUTHORIZED_USER_ACCESS);
+                }
             }
         }
         // 센터 아이디 null 인 경우 모두의 이야기 안에서 검색됨
