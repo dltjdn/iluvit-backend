@@ -1,9 +1,9 @@
 package FIS.iLUVit.event;
 
 import FIS.iLUVit.domain.ExpoToken;
+import FIS.iLUVit.event.dto.ExpoServerResponse;
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.client.RestTemplate;
 
 import java.util.List;
@@ -19,7 +19,7 @@ public class ExpoServerUtils {
         private String body;
     }
 
-    public static void sendToExpoServer(List<ExpoToken> expoTokens, String message) {
+    public static ExpoServerResponse sendToExpoServer(List<ExpoToken> expoTokens, String message) {
         // accept true 인 것만 모으기
         List<String> recipients = expoTokens.stream()
                 .filter(ExpoToken::getAccept)
@@ -27,7 +27,7 @@ public class ExpoServerUtils {
                 .collect(Collectors.toList());
 
         if (recipients.isEmpty()) {
-            return;
+            return null;
         }
 
         String title = "아이러빗 알림";
@@ -41,8 +41,8 @@ public class ExpoServerUtils {
 
         log.info("PUSH 알림 전송");
         RestTemplate restTemplate = new RestTemplate();
-        ResponseEntity<String> response = restTemplate.postForEntity(url, body, String.class);
+        ExpoServerResponse response = restTemplate.postForObject(url, body, ExpoServerResponse.class);
         log.info("PUSH 전송 완료, response = {}", response);
-
+        return response;
     }
 }

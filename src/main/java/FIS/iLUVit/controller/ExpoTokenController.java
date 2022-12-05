@@ -49,4 +49,17 @@ public class ExpoTokenController {
                                   @PathVariable String token) {
         return expoTokenService.findById(userId, token);
     }
+
+    /**
+     * 작성자: 이창윤
+     * 엑스포 토큰 삭제
+     * 유저 로그아웃 시 토큰 삭제하기
+     */
+    @DeleteMapping("/expoTokens/{token}")
+    @ResponseStatus(HttpStatus.OK)
+    public void remove(@Login Long userId,
+                                  @PathVariable String token) {
+        expoTokenService.deleteById(userId, token);
+    }
+
 }
