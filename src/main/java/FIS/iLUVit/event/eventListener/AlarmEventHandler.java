@@ -4,6 +4,8 @@ import FIS.iLUVit.domain.ExpoToken;
 import FIS.iLUVit.domain.User;
 import FIS.iLUVit.domain.alarms.Alarm;
 import FIS.iLUVit.event.AlarmEvent;
+import FIS.iLUVit.event.dto.Details;
+import FIS.iLUVit.event.dto.ExpoServerResponse;
 import FIS.iLUVit.event.ExpoServerUtils;
 import FIS.iLUVit.repository.AlarmRepository;
 import FIS.iLUVit.repository.CenterRepository;
@@ -16,6 +18,8 @@ import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Objects;
+import java.util.stream.Collectors;
 
 @Component
 @RequiredArgsConstructor
@@ -46,9 +50,29 @@ public class AlarmEventHandler {
         User user = alarm.getUser();
         log.info(alarm.getMessage());
         alarmRepository.save(alarm);
+
         List<ExpoToken> expoTokens = expoTokenRepository.findByUser(user);
-        ExpoServerUtils.sendToExpoServer(expoTokens, alarm.getMessage());
+        ExpoServerResponse response = ExpoServerUtils.sendToExpoServer(expoTokens, alarm.getMessage());
+        if (response != null) {
+            removeInvalidToken(response);
+        }
+
         log.info("알람생성 종료");
+    }
+
+    // 엑스포 토큰 전송 결과에 에러 발생한 해당 토큰 삭제함
+    private void removeInvalidToken(ExpoServerResponse response) {
+        List<String> invalidTokens = response.getData()
+                .stream()
+                .filter(i -> Objects.equals(i.getStatus(), "error"))
+                .map(i -> i.getDetails().getExpoPushToken())
+                .collect(Collectors.toList());
+
+        if (invalidTokens.isEmpty()) {
+            return;
+        }
+
+        expoTokenRepository.deleteByTokenIn(invalidTokens);
     }
 
 }

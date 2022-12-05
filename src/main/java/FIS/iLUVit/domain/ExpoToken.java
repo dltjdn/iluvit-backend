@@ -9,12 +9,15 @@ import javax.persistence.*;
 @Entity
 @Getter
 @NoArgsConstructor
+@Table(uniqueConstraints = {@UniqueConstraint(
+        name = "user_token_unique",
+        columnNames = {"token", "user_id"}
+)})
 public class ExpoToken {
 
     @Id @GeneratedValue
     private Long id;
 
-    @Column(unique = true)
     private String token;
 
     private Boolean accept; // 푸쉬 알림 동의 여부

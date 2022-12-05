@@ -47,12 +47,18 @@ public class ExpoTokenService {
 
     @NotNull
     private ExpoToken getExpoTokenWithUserException(String token, Long userId) {
-        ExpoToken expoToken = expoTokenRepository.findByToken(token)
+        User user = userRepository.getById(userId);
+        ExpoToken expoToken = expoTokenRepository.findByTokenAndUser(token, user)
                 .orElseThrow(() -> new UserException(UserErrorResult.NOT_VALID_TOKEN));
 
         if (!Objects.equals(expoToken.getUser().getId(), userId)) {
             throw new UserException(UserErrorResult.HAVE_NOT_AUTHORIZATION);
         }
         return expoToken;
+    }
+
+    public void deleteById(Long userId, String token) {
+        User user = userRepository.getById(userId);
+        expoTokenRepository.deleteByTokenAndUser(token, user);
     }
 }
