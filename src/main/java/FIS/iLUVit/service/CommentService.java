@@ -77,7 +77,8 @@ public class CommentService {
             comment.updateParentComment(parentComment);
         }
 
-        AlarmUtils.publishAlarmEvent(new PostAlarm(findPost.getUser(), findPost, comment));
+        if (!userId.equals(findPost.getUser().getId())) // 본인 게시글에 댓글단 건 알림 X
+            AlarmUtils.publishAlarmEvent(new PostAlarm(findPost.getUser(), findPost, comment));
         return commentRepository.save(comment).getId();
     }
 

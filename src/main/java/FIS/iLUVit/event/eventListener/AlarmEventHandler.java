@@ -53,14 +53,22 @@ public class AlarmEventHandler {
 
         List<ExpoToken> expoTokens = expoTokenRepository.findByUser(user);
         ExpoServerResponse response = ExpoServerUtils.sendToExpoServer(expoTokens, alarm.getMessage());
-        if (response != null) {
-            removeInvalidToken(response);
-        }
+        handleTokenSendingError(response);
 
         log.info("알람생성 종료");
     }
 
-    // 엑스포 토큰 전송 결과에 에러 발생한 해당 토큰 삭제함
+    /**
+     * handleTokenSendingError + removeInvalidToken
+     * 작성자: 이창윤
+     * 내용: 엑스포 토큰 전송 결과에 에러 발생한 경우 해당 토큰을 삭제함
+     */
+    private void handleTokenSendingError(ExpoServerResponse response) {
+        if (response != null) {
+            removeInvalidToken(response);
+        }
+    }
+
     private void removeInvalidToken(ExpoServerResponse response) {
         List<String> invalidTokens = response.getData()
                 .stream()

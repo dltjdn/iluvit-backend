@@ -11,12 +11,8 @@ import org.springframework.boot.test.context.SpringBootTest;
 import java.util.ArrayList;
 import java.util.List;
 
-@SpringBootTest
 @Slf4j
 class ExpoServerUtilsTest {
-
-    @Autowired
-    AlarmEventHandler eventHandler;
 
     @Test
     public void test() throws Exception {
@@ -26,6 +22,17 @@ class ExpoServerUtilsTest {
                 .token(recipient1)
                 .build();
         List<ExpoToken> recipients = new ArrayList<>(List.of(expoToken));
+    }
+
+    @Test
+    public void androidTest() throws Exception {
+        String token = "ExponentPushToken[fDu27bDrnVP47UpdPVxENF]";
+        ExpoToken expoToken = ExpoToken.builder()
+                .token(token)
+                .accept(true)
+                .build();
+        List<ExpoToken> recipients = new ArrayList<>(List.of(expoToken));
+        ExpoServerUtils.sendToExpoServer(recipients, "테스트용 메시지입니당");
     }
 
 }
