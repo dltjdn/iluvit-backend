@@ -20,7 +20,7 @@ public class ExpoToken {
 
     private String token;
 
-    private Boolean accept; // 푸쉬 알림 동의 여부
+    private Boolean accept; // 알림 수신 O, X
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id")
