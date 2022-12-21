@@ -100,8 +100,11 @@ public class BoardService {
                 .orElseThrow(() -> new UserException("유저 아이디 오류"));
 
         if (findUser.getAuth() == Auth.PARENT) {
-            childRepository.findByParentAndCenter(userId, center_id)
-                    .orElseThrow(() -> new BoardException(BoardErrorResult.UNAUTHORIZED_USER_ACCESS));
+            boolean childless = childRepository.findByParentAndCenter(userId, center_id)
+                    .isEmpty();
+            if (childless) {
+                throw new BoardException(BoardErrorResult.UNAUTHORIZED_USER_ACCESS);
+            }
         } else {
             Teacher teacher = (Teacher) findUser;
             if (teacher.getCenter() == null || !Objects.equals(teacher.getCenter().getId(), center_id)) {
