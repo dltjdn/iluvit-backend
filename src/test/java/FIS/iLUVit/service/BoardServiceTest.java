@@ -222,7 +222,7 @@ class BoardServiceTest {
                 .when(centerRepository)
                 .findById(1L);
 
-        Mockito.doReturn(Optional.empty())
+        Mockito.doReturn(List.of())
                 .when(childRepository)
                 .findByParentAndCenter(parent1.getId(), 1L);
 
@@ -275,7 +275,7 @@ class BoardServiceTest {
                 .when(userRepository)
                 .findById(parent1.getId());
 
-        Mockito.doReturn(Optional.of(child1))
+        Mockito.doReturn(List.of(child1))
                 .when(childRepository)
                 .findByParentAndCenter(0L, 1L);
         //when
