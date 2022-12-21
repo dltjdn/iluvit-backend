@@ -27,22 +27,22 @@ public class ExpoTokenController {
         return expoTokenService.saveToken(userId, request);
     }
 
-    /**
-     * 작성자: 이창윤
-     * 푸쉬 알림 동의, 비동의 체크
-     */
-    @PostMapping("/expoTokens/status")
-    @ResponseStatus(HttpStatus.OK)
-    public void modifyStatus(@Login Long userId,
-                       @RequestBody @Valid ExpoTokenRequest request) {
-        expoTokenService.modifyAcceptStatus(userId, request);
-    }
+//    /**
+//     * 작성자: 이창윤
+//     * 푸쉬 알림 동의, 비동의 체크?
+//     */
+//    @PostMapping("/expoTokens/status")
+//    @ResponseStatus(HttpStatus.OK)
+//    public void modifyStatus(@Login Long userId,
+//                       @RequestBody @Valid ExpoTokenRequest request) {
+//        expoTokenService.modifyAcceptStatus(userId, request);
+//    }
 
     /**
      * 작성자: 이창윤
      * 엑스포 토큰 정보 조회
-     * 현재 푸쉬 알림 동의 상태 들어있음
-     * 동의 --> True, 비동의 --> False 로 응답
+     * 현재 알림 수신 OX 상태 들어있음
+     * O --> True, X --> False 로 응답
      */
     @GetMapping("/expoTokens/{token}")
     public ExpoTokenInfo findById(@Login Long userId,
