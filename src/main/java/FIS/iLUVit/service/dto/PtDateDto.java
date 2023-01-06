@@ -27,9 +27,9 @@ public class PtDateDto {
         ablePersonNum = queryDto.getAblePersonNum();
         participantCnt = queryDto.getParticipantCnt();
         waitingCnt = queryDto.getWaitingCnt();
-        isParticipant = queryDto.getParticipationId() == null ? false : true;
+        isParticipant = queryDto.getParticipationId() != null;
         participantId = queryDto.getParticipationId();
-        isWaiting = queryDto.getWaitingId() == null ? false : true;
+        isWaiting = queryDto.getWaitingId() != null;
         waitingId = queryDto.getWaitingId();
     }
 
