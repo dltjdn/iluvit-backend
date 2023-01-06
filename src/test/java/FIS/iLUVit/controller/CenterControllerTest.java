@@ -475,6 +475,72 @@ class CenterControllerTest extends ResponseRequests {
                             1L
                     )));
         }
+
+        @Test
+        @DisplayName("[success] 시설 수정 성공")
+        public void 시설이미지수정성공_APP() throws Exception {
+            MockMultipartHttpServletRequestBuilder builder = MockMvcRequestBuilders.multipart("/center/1/image");
+            builder.with(new RequestPostProcessor() {
+                @Override
+                public MockHttpServletRequest postProcessRequest(MockHttpServletRequest request) {
+                    request.setMethod(HttpMethod.PATCH.toString());
+                    return request;
+                }
+            });
+
+            Mockito.doReturn(1L)
+                    .when(centerService).modifyCenterImage(any(Long.class), any(Long.class), anyList(), any(MultipartFile.class));
+
+            MockMultipartFile requestDto = new MockMultipartFile("requestDto", null,
+                    "application/json", objectMapper.writeValueAsString(rightRequest).getBytes());
+
+
+            //when
+            ResultActions result = mockMvc.perform(
+                    builder.file("infoImages", multipartFile.getBytes())
+                            .file("profileImage", multipartFile.getBytes())
+                            .header(HttpHeaders.AUTHORIZATION, createJwtToken(createParent(1L)))
+                            .contentType(MediaType.APPLICATION_FORM_URLENCODED)
+            );
+
+            //then
+            result.andDo(print())
+                    .andExpect(status().isAccepted())
+                    .andExpect(content().json(objectMapper.writeValueAsString(
+                            1L
+                    )));
+        }
+
+        @Test
+        @DisplayName("[success] 시설 수정 성공")
+        public void 시설정보수정성공_APP() throws Exception {
+            MockMultipartHttpServletRequestBuilder builder = MockMvcRequestBuilders.multipart("/center/1/info");
+            builder.with(new RequestPostProcessor() {
+                @Override
+                public MockHttpServletRequest postProcessRequest(MockHttpServletRequest request) {
+                    request.setMethod(HttpMethod.PATCH.toString());
+                    return request;
+                }
+            });
+
+            Mockito.doReturn(1L)
+                    .when(centerService).modifyCenterInfo(any(Long.class), any(Long.class), any(CenterModifyRequestDto.class));
+
+            //when
+            ResultActions result = mockMvc.perform(
+                    builder
+                            .content(objectMapper.writeValueAsString(rightRequest))
+                            .header(HttpHeaders.AUTHORIZATION, createJwtToken(createParent(1L)))
+                            .contentType(MediaType.APPLICATION_JSON)
+            );
+
+            //then
+            result.andDo(print())
+                    .andExpect(status().isAccepted())
+                    .andExpect(content().json(objectMapper.writeValueAsString(
+                            1L
+                    )));
+        }
     }
 
     @Test

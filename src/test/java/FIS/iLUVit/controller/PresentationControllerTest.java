@@ -255,6 +255,65 @@ class PresentationControllerTest {
                     )));
         }
 
+        @Test
+        @DisplayName("[success] 설명회 정보 저장 성공")
+        public void 정보저장성공_APP용() throws Exception {
+            MockMultipartHttpServletRequestBuilder builder = MockMvcRequestBuilders.multipart("/presentation/info");
+
+            Presentation presentation = createValidPresentation();
+            PtDate ptDate1 = createPtDate(1L);
+            PtDate ptDate2 = createPtDate(2L);
+            presentation.getPtDates().add(ptDate1);
+            presentation.getPtDates().add(ptDate2);
+
+            Mockito.doReturn(presentation)
+                    .when(presentationService).saveInfoWithPtDate(any(PresentationRequestRequestFormDto.class), any(Long.class));
+
+            //when
+            ResultActions result = mockMvc.perform(
+                    builder.content(objectMapper.writeValueAsString(request))
+                            .contentType(MediaType.APPLICATION_JSON)
+                            .header(HttpHeaders.AUTHORIZATION, createJwtToken())
+            );
+
+            //then
+            result.andDo(print())
+                    .andExpect(status().isCreated())
+                    .andExpect(content().json(objectMapper.writeValueAsString(
+                            new PresentationSaveResponseDto(presentation)
+                    )));
+        }
+
+        @Test
+        @DisplayName("[success] 설명회 이미지 저장 성공")
+        public void 이미지저장성공_APP용() throws Exception {
+            MockMultipartHttpServletRequestBuilder builder = MockMvcRequestBuilders.multipart("/presentation/images");
+
+            Presentation presentation = createValidPresentation();
+            PtDate ptDate1 = createPtDate(1L);
+            PtDate ptDate2 = createPtDate(2L);
+            presentation.getPtDates().add(ptDate1);
+            presentation.getPtDates().add(ptDate2);
+
+            Mockito.doReturn(presentation)
+                    .when(presentationService).saveImageWithPtDate(any(Long.class), anyList(), any(Long.class));
+
+            //when
+            ResultActions result = mockMvc.perform(
+                    builder.file("images", multipartFile.getBytes())
+                            .param("presentationId", presentation.getId().toString())
+                            .contentType(MediaType.MULTIPART_FORM_DATA)
+                            .header(HttpHeaders.AUTHORIZATION, createJwtToken())
+            );
+
+            //then
+            result.andDo(print())
+                    .andExpect(status().isCreated())
+                    .andExpect(content().json(objectMapper.writeValueAsString(
+                            new PresentationSaveResponseDto(presentation)
+                    )));
+        }
+
 
     }
 

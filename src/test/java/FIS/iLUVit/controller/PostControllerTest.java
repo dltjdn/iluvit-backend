@@ -389,6 +389,45 @@ class PostControllerTest {
     }
 
     @Test
+    public void 게시글_저장_성공_APP용() throws Exception {
+        byte[] request = objectMapper.writeValueAsBytes(postRegisterRequest);
+
+        String name = "162693895955046828.png";
+        Path path = Paths.get(new File("").getAbsolutePath() + '/' + name);
+        byte[] content = Files.readAllBytes(path);
+
+        MockMultipartFile multipartFile1 = new MockMultipartFile("images", name, "image", content);
+        MockMultipartFile multipartFile2 = new MockMultipartFile("images", name, "image", content);
+        MockMultipartFile jsonFile = new MockMultipartFile("request", "", "application/json", request);
+
+        List<MultipartFile> fileList = Arrays.asList(multipartFile1, multipartFile2);
+
+        String url = "/user/post/react-native";
+
+        Mockito.doReturn(post1.getId())
+                .when(postService)
+                .savePost(postRegisterRequest, fileList, parent1.getId());
+        //when
+
+
+        ResultActions resultActions = mockMvc.perform(
+                MockMvcRequestBuilders.multipart(url)
+                        .file(multipartFile1)
+                        .file(multipartFile2)
+                        .flashAttr("request", postRegisterRequest)
+                        .header("Authorization", createJwtToken(parent1))
+
+        );
+
+        //then
+        resultActions.andDo(print())
+                .andExpect(status().isOk())
+                .andExpect(content().json(objectMapper.writeValueAsString(
+                        post1.getId()
+                )));
+    }
+
+    @Test
     public void 게시글_삭제_비회원() throws Exception {
         //given
 

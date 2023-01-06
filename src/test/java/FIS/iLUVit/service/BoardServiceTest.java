@@ -222,7 +222,7 @@ class BoardServiceTest {
                 .when(centerRepository)
                 .findById(1L);
 
-        Mockito.doReturn(Optional.empty())
+        Mockito.doReturn(List.of())
                 .when(childRepository)
                 .findByParentAndCenter(parent1.getId(), 1L);
 
@@ -275,7 +275,7 @@ class BoardServiceTest {
                 .when(userRepository)
                 .findById(parent1.getId());
 
-        Mockito.doReturn(Optional.of(child1))
+        Mockito.doReturn(List.of(child1))
                 .when(childRepository)
                 .findByParentAndCenter(0L, 1L);
         //when
@@ -419,16 +419,13 @@ class BoardServiceTest {
                 .when(boardRepository)
                 .findById(any());
 
-        Mockito.doReturn(Optional.ofNullable(parent1))
-                .when(userRepository)
-                .findById(0L);
         //when
         BoardException result = assertThrows(BoardException.class,
                 () -> boardService.remove(0L, board3.getId()));
 
         //then
         assertThat(result.getErrorResult())
-                .isEqualTo(BoardErrorResult.UNAUTHORIZED_USER_ACCESS);
+                .isEqualTo(BoardErrorResult.DEFAULT_BOARD_DELETE_BAN);
     }
 
     @Test
@@ -438,16 +435,13 @@ class BoardServiceTest {
                 .when(boardRepository)
                 .findById(any());
 
-        Mockito.doReturn(Optional.ofNullable(teacher1))
-                .when(userRepository)
-                .findById(0L);
         //when
         BoardException result = assertThrows(BoardException.class,
                 () -> boardService.remove(0L, board3.getId()));
 
         //then
         assertThat(result.getErrorResult())
-                .isEqualTo(BoardErrorResult.UNAUTHORIZED_USER_ACCESS);
+                .isEqualTo(BoardErrorResult.DEFAULT_BOARD_DELETE_BAN);
     }
 
 
@@ -458,16 +452,13 @@ class BoardServiceTest {
                 .when(boardRepository)
                 .findById(any());
 
-        Mockito.doReturn(Optional.ofNullable(director1))
-                .when(userRepository)
-                .findById(0L);
         //when
         BoardException result = assertThrows(BoardException.class,
                 () -> boardService.remove(0L, board3.getId()));
 
         //then
         assertThat(result.getErrorResult())
-                .isEqualTo(BoardErrorResult.UNAUTHORIZED_USER_ACCESS);
+                .isEqualTo(BoardErrorResult.DEFAULT_BOARD_DELETE_BAN);
     }
 
     @Test
@@ -477,16 +468,13 @@ class BoardServiceTest {
                 .when(boardRepository)
                 .findById(any());
 
-        Mockito.doReturn(Optional.ofNullable(director2))
-                .when(userRepository)
-                .findById(0L);
         //when
         BoardException result = assertThrows(BoardException.class,
                 () -> boardService.remove(0L, board3.getId()));
 
         //then
         assertThat(result.getErrorResult())
-                .isEqualTo(BoardErrorResult.UNAUTHORIZED_USER_ACCESS);
+                .isEqualTo(BoardErrorResult.DEFAULT_BOARD_DELETE_BAN);
     }
 
     @Test
@@ -496,12 +484,9 @@ class BoardServiceTest {
                 .when(boardRepository)
                 .findById(any());
 
-        Mockito.doReturn(Optional.ofNullable(director2))
-                .when(userRepository)
-                .findById(0L);
         //when
         BoardException result = assertThrows(BoardException.class,
-                () -> boardService.remove(0L, board4.getId()));
+                () -> boardService.remove(100L, board4.getId()));
 
         //then
         assertThat(result.getErrorResult())

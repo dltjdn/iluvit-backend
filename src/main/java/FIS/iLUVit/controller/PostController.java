@@ -36,6 +36,20 @@ public class PostController {
     }
 
     /**
+     * 작성자: 이창윤
+     * 작성시간: 2022/06/27 11:31 AM
+     * 내용: 리액트 네이티브용 임시 API
+     */
+    @PostMapping(value = "/user/post/react-native", consumes = {MediaType.APPLICATION_JSON_VALUE, MediaType.MULTIPART_FORM_DATA_VALUE})
+//    @ResponseStatus(HttpStatus.ACCEPTED)
+    public Long registerPostTemp(@Login Long userId,
+                             @RequestPart(required = false) List<MultipartFile> images,
+                             @ModelAttribute("request") @Validated PostRegisterRequest request) {
+        log.info("PostRegisterRequest = {}", request);
+        return postService.savePost(request, images, userId);
+    }
+
+    /**
         작성자: 이창윤
         작성시간: 2022/06/27 1:14 PM
         내용: 게시글 삭제
