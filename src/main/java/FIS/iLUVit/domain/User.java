@@ -20,6 +20,7 @@ import java.util.Objects;
 @DiscriminatorColumn
 @DiscriminatorValue("null")
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
+@Table(name = "user")
 public class User extends BaseImageEntity {
 
     @GeneratedValue @Id
