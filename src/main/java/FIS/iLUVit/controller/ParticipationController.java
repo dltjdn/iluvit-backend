@@ -22,6 +22,7 @@ import java.util.Map;
 @RestController
 @RequiredArgsConstructor
 @Slf4j
+@RequestMapping("/participation")
 public class ParticipationController {
 
     private final ParticipationService participationService;
@@ -31,7 +32,7 @@ public class ParticipationController {
      *
      * @return
      */
-    @PostMapping("/participation")
+    @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
     public Long register(@Login Long userId, @RequestBody @Validated ParticipationRegisterRequestDto dto){
         if(userId == null)
@@ -42,7 +43,7 @@ public class ParticipationController {
     /**
      * 설명회 취소
      */
-    @PatchMapping("/participation")
+    @PatchMapping
     @ResponseStatus(HttpStatus.ACCEPTED)
     public Long cancel(@Login Long userId, @RequestBody @Validated ParticipationCancelRequestDto dto){
         if(userId == null)
@@ -50,7 +51,7 @@ public class ParticipationController {
         return participationService.cancel(userId, dto.getParticipationId());
     }
 
-    @GetMapping("/participation/parent")
+    @GetMapping("/parent")
     @ResponseStatus(HttpStatus.ACCEPTED)
     public Map<Status, List<MyParticipationsDto>> getMyParticipation(@Login Long userId){
         if(userId == null)
@@ -58,7 +59,7 @@ public class ParticipationController {
         return participationService.getMyParticipation(userId);
     }
 
-    @GetMapping("/joinParticipation/parent")
+    @GetMapping("/join/parent")
     @ResponseStatus(HttpStatus.ACCEPTED)
     public Slice<MyParticipationsDto> getMyJoinParticipation(@Login Long userId, Pageable pageable){
         if(userId == null)
@@ -66,7 +67,7 @@ public class ParticipationController {
         return participationService.getMyJoinParticipation(userId, pageable);
     }
 
-    @GetMapping("/cancelParticipation/parent")
+    @GetMapping("/cancel/parent")
     @ResponseStatus(HttpStatus.ACCEPTED)
     public Slice<MyParticipationsDto> getMyCancelParticipation(@Login Long userId, Pageable pageable){
         if(userId == null)
