@@ -43,4 +43,3 @@ public class PostHeartController {
         postHeartRepository.delete(postHeart);
     }
 }
-ㄴ
