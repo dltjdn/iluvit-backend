@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/comment")
+@RequestMapping("comment")
 public class CommentController {
 
     private final CommentService commentService;
@@ -23,7 +23,7 @@ public class CommentController {
         작성시간: 2022/06/27 10:09 AM
         내용: 댓글 작성, comment_id 값까지 보내는 경우 대댓글 작성
     */
-    @PostMapping("/user")
+    @PostMapping("user")
     public Long registerComment(@Login Long userId,
                                 @RequestParam("post_id") Long postId,
                                 @RequestParam(value = "comment_id", required = false) Long commentId,
@@ -37,7 +37,7 @@ public class CommentController {
         작성시간: 2022/06/27 10:14 AM
         내용: 댓글 삭제, 댓글 데이터 지우지 않고 내용(content), 작성자(user)만 null로 변경
     */
-    @PatchMapping("/user")
+    @PatchMapping("user")
     public Long deleteComment(@Login Long userId,
                               @RequestParam("comment_id") Long commentId) {
         return commentService.deleteComment(userId, commentId);
@@ -49,7 +49,7 @@ public class CommentController {
         작성시간: 2022/06/27 10:16 AM
         내용: 댓글 좋아요
     */
-    @PostMapping("/user/commentHeart/{comment_id}")
+    @PostMapping("user/commentHeart/{comment_id}")
     public Long like(@Login Long userId, @PathVariable Long comment_id) {
         return commentHeartService.save(userId, comment_id);
     }
@@ -59,7 +59,7 @@ public class CommentController {
         작성시간: 2022/06/27 10:18 AM
         내용: 댓글 좋아요 취소
     */
-    @DeleteMapping("/user/commentHeart/{comment_id}")
+    @DeleteMapping("user/commentHeart/{comment_id}")
     public Long cancel(@Login Long userId, @PathVariable Long comment_id) {
         return commentHeartService.delete(userId, comment_id);
     }
@@ -69,7 +69,7 @@ public class CommentController {
         작성시간: 2022/06/27 10:19 AM
         내용: 댓글 단 글 리스트
     */
-    @GetMapping("/user/mypage")
+    @GetMapping("user/mypage")
     public Slice<CommentDTO> searchCommentByUser(@Login Long userId, Pageable pageable) {
         return commentService.searchByUser(userId, pageable);
     }

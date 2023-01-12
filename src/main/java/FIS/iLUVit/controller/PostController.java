@@ -28,7 +28,7 @@ public class PostController {
      * 작성시간: 2022/06/27 11:31 AM
      * 내용: multipart/form-data 형식으로 변환된 request, 이미지 파일 리스트 images 파라미터로 게시글 저장
      */
-    @PostMapping(value = "/user", consumes = {MediaType.APPLICATION_JSON_VALUE, MediaType.MULTIPART_FORM_DATA_VALUE})
+    @PostMapping(value = "user", consumes = {MediaType.APPLICATION_JSON_VALUE, MediaType.MULTIPART_FORM_DATA_VALUE})
 //    @ResponseStatus(HttpStatus.ACCEPTED)
     public Long registerPost(@Login Long userId,
                              @RequestPart(required = false) List<MultipartFile> images,
@@ -41,7 +41,7 @@ public class PostController {
      * 작성시간: 2022/06/27 11:31 AM
      * 내용: 리액트 네이티브용 임시 API
      */
-    @PostMapping(value = "/user/react-native", consumes = {MediaType.APPLICATION_JSON_VALUE, MediaType.MULTIPART_FORM_DATA_VALUE})
+    @PostMapping(value = "user/react-native", consumes = {MediaType.APPLICATION_JSON_VALUE, MediaType.MULTIPART_FORM_DATA_VALUE})
 //    @ResponseStatus(HttpStatus.ACCEPTED)
     public Long registerPostTemp(@Login Long userId,
                              @RequestPart(required = false) List<MultipartFile> images,
@@ -55,7 +55,7 @@ public class PostController {
         작성시간: 2022/06/27 1:14 PM
         내용: 게시글 삭제
     */
-    @DeleteMapping("/user/{post_id}")
+    @DeleteMapping("user/{post_id}")
     public Long deletePost(@Login Long userId, @PathVariable("post_id") Long postId) {
         return postService.deleteById(postId, userId);
     }
@@ -65,7 +65,7 @@ public class PostController {
         작성시간: 2022/06/27 1:14 PM
         내용: 게시글 1개 조회(게시글 자세히 보기)
     */
-    @GetMapping("/{post_id}")
+    @GetMapping("{post_id}")
     public GetPostResponse getPost(@Login Long userId, @PathVariable("post_id") Long postId) {
         return postService.findById(userId, postId);
     }
@@ -77,7 +77,7 @@ public class PostController {
             input -> 제목 + 내용 검색 키워드
             auth -> 유저 권한
     */
-    @GetMapping("/user/all/search")
+    @GetMapping("user/all/search")
     public Slice<GetPostResponsePreview> searchPost(@Login Long userId,
                                                     @RequestParam("input") String input,
                                                     Pageable pageable) {
@@ -89,7 +89,7 @@ public class PostController {
         작성시간: 2022/06/27 1:24 PM
         내용: 게시글 제목+내용+센터 검색 (각 센터 별 검색)
     */
-    @GetMapping("/search/inCenter")
+    @GetMapping("search/inCenter")
     public Slice<GetPostResponsePreview> searchPostByCenter(
             @Login Long userId,
             @ModelAttribute PostSearchRequestDTO requestDTO,
@@ -103,7 +103,7 @@ public class PostController {
         작성시간: 2022/06/27 1:25 PM
         내용: 게시글 제목+내용+보드 검색 (각 게시판 별 검색)
     */
-    @GetMapping("/search/inBoard")
+    @GetMapping("search/inBoard")
     public Slice<GetPostResponsePreview> searchPostByBoard(
             @RequestParam("board_id") Long boardId,
             @RequestParam(value = "input", required = false) String input,
@@ -116,7 +116,7 @@ public class PostController {
         작성시간: 2022/06/27 1:30 PM
         내용: HOT 게시판 글 목록 조회
     */
-    @GetMapping("/search/hotBoard")
+    @GetMapping("search/hotBoard")
     public Slice<GetPostResponsePreview> searchHotPosts(
             @RequestParam(value = "center_id", required = false) Long centerId,
             Pageable pageable) {
@@ -128,7 +128,7 @@ public class PostController {
         작성시간: 2022/06/27 1:32 PM
         내용: 내가 쓴 글 리스트
     */
-    @GetMapping("/user/mypage")
+    @GetMapping("user/mypage")
     public PostList searchPostByUser(@Login Long userId,
                                      Pageable pageable) {
         return postService.searchByUser(userId, pageable);
@@ -139,7 +139,7 @@ public class PostController {
         작성시간: 2022/06/27 1:32 PM
         내용: 모두의 이야기 글 리스트 불러오기
     */
-    @GetMapping("/modu-main")
+    @GetMapping("modu-main")
     public List<BoardPreview> searchMainPreview(@Login Long userId) {
 
         return postService.searchMainPreview(userId);
@@ -150,7 +150,7 @@ public class PostController {
         작성시간: 2022/06/27 1:33 PM
         내용: 유치원별 이야기 글 리스트 불러오기
     */
-    @GetMapping("/user/center-main")
+    @GetMapping("user/center-main")
     public List<BoardPreview> searchCenterMainPreview(@Login Long userId, @RequestParam("center_id") Long centerId) {
         return postService.searchCenterMainPreview(userId, centerId);
     }
@@ -160,7 +160,7 @@ public class PostController {
         작성시간: 2022/06/27 1:34 PM
         내용: 장터글 끌어올리기
     */
-    @PutMapping("/update/{post_id}")
+    @PutMapping("update/{post_id}")
     public void pullUp(@Login Long userId, @PathVariable("post_id") Long postId) {
         postService.updateDate(userId, postId);
     }
