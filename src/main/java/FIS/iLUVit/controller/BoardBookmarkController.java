@@ -8,7 +8,8 @@ import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequiredArgsConstructor
-public class BookmarkController {
+@RequestMapping("bookmark")
+public class BoardBookmarkController {
 
     private final BookmarkService bookmarkService;
 
@@ -18,7 +19,7 @@ public class BookmarkController {
         내용: 게시글 목록 한번에 불러오기. 메인 페이지에서 유저의 모든 이야기에서 즐겨찾는 게시판에서 최신 글 하나씩 엮어서 보여줌.
             + 게시글 목록 한번에 불러오기 (비회원 전용)
     */
-    @GetMapping("/bookmark-main")
+    @GetMapping("bookmark-main")
     public BookmarkMainDTO search(@Login Long userId) {
         if (userId == null) {
             return bookmarkService.searchByDefault();
@@ -31,7 +32,7 @@ public class BookmarkController {
         작성시간: 2022/06/24 3:08 PM
         내용: 즐겨찾는 게시판 추가
     */
-    @PostMapping("/user/bookmark/{board_id}")
+    @PostMapping("user/{board_id}")
     public Long createBookmark(@Login Long userId, @PathVariable("board_id") Long boardId) {
         return bookmarkService.create(userId, boardId);
     }
@@ -41,7 +42,7 @@ public class BookmarkController {
         작성시간: 2022/06/24 3:09 PM
         내용: 즐겨찾는 게시판 삭제
     */
-    @DeleteMapping("/user/bookmark/{bookmark_id}")
+    @DeleteMapping("user/{bookmark_id}")
     public Long deleteBookmark(@Login Long userId, @PathVariable("bookmark_id") Long bookmarkId) {
         return bookmarkService.delete(userId, bookmarkId);
     }

@@ -45,7 +45,7 @@ class BookmarkControllerTest {
     private BookmarkService bookmarkService;
 
     @InjectMocks
-    private BookmarkController bookmarkController;
+    private BoardBookmarkController bookmarkController;
 
     ObjectMapper objectMapper;
 
