@@ -7,6 +7,7 @@ import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequiredArgsConstructor
+@RequestMapping("reviewHeart")
 public class ReviewHeartController {
 
     private final ReviewHeartService reviewHeartService;
@@ -16,7 +17,7 @@ public class ReviewHeartController {
         작성시간: 2022/06/27 2:21 PM
         내용: 리뷰 좋아요
     */
-    @PostMapping("/user/reviewHeart/review/{review_id}")
+    @PostMapping("user/review/{review_id}")
     public Long like(@PathVariable("review_id") Long reviewId,
                      @Login Long userId) {
         return reviewHeartService.saveReviewHeart(reviewId, userId);
@@ -27,7 +28,7 @@ public class ReviewHeartController {
         작성시간: 2022/06/27 2:23 PM
         내용: 리뷰 좋아요 취소
     */
-    @DeleteMapping("/user/reviewHeart/review/{review_id}")
+    @DeleteMapping("user/review/{review_id}")
     public void cancel(@PathVariable("review_id") Long reviewId,
                        @Login Long userId) {
         reviewHeartService.deleteReviewHeart(reviewId, userId);
