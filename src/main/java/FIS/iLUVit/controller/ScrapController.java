@@ -94,7 +94,7 @@ public class ScrapController {
      *   작성자: 이승범
      *   작성내용: 스크랩 폴더별 게시물 리스트
      */
-    @GetMapping("/user/post/scrap")
+    @GetMapping("/post")
     public Slice<GetScrapPostResponsePreview> searchPostsByScrap(@Login Long userId, @RequestParam Long scrapId, Pageable pageable) {
         return scrapService.searchByScrap(userId, scrapId, pageable);
     }
