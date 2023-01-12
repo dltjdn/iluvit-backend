@@ -17,11 +17,12 @@ import org.springframework.web.bind.annotation.*;
 @RequiredArgsConstructor
 @Slf4j
 @Transactional
+@RequestMapping("waiting")
 public class WaitingController {
 
     private final WaitingService waitingService;
 
-    @PostMapping("/waiting")
+    @PostMapping("")
     @ResponseStatus(HttpStatus.CREATED)
     public Long register(@Login Long userId, @RequestBody @Validated WaitingRegisterDto dto){
         if(userId == null)
@@ -30,7 +31,7 @@ public class WaitingController {
         return waitingService.register(userId, ptDateId).getId();
     }
 
-    @DeleteMapping("/waiting")
+    @DeleteMapping("")
     @ResponseStatus(HttpStatus.ACCEPTED)
     public Long cancel(@Login Long userId, @RequestBody @Validated WaitingCancelDto dto){
         if(userId == null)
