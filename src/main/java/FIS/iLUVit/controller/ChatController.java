@@ -34,7 +34,7 @@ public class ChatController {
      작성시간: 2022/06/24 3:11 PM
      내용: 쪽지 작성 ( 대화방 생성 후 쪽지 작성 )
      */
-    @PostMapping("room")
+    @PostMapping("in-room")
     public Long createChatInRoom(@Login Long userId, @RequestBody CreateChatRoomRequest request) {
         return chatService.saveChatInRoom(userId, request);
     }
@@ -44,7 +44,7 @@ public class ChatController {
      작성시간: 2022/06/24 3:10 PM
      내용: 나의 쪽지함 (대화 상대 목록)
      */
-    @GetMapping("list")
+    @GetMapping("")
     public Slice<ChatListDTO> findAll(@Login Long userId, Pageable pageable) {
         return chatService.findAll(userId, pageable);
     }
