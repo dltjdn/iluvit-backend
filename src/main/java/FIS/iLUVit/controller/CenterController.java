@@ -6,7 +6,6 @@ import FIS.iLUVit.exception.UserErrorResult;
 import FIS.iLUVit.exception.UserException;
 import FIS.iLUVit.repository.dto.CenterAndDistancePreview;
 import FIS.iLUVit.repository.dto.CenterMapPreview;
-import FIS.iLUVit.repository.dto.CenterPreview;
 import FIS.iLUVit.service.CenterService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -63,16 +62,6 @@ public class CenterController {
     @GetMapping("{centerId}/recruit")
     public CenterBannerResponseDto centerBanner(@PathVariable("centerId") Long id, @Login Long userId){
         return centerService.findBannerById(id, userId);
-    }
-
-    /**
-     *   작성날짜: 2022/07/04 2:26 PM
-     *   작성자: 이승범
-     *   작성내용: 찜한 시설 리스트
-     */
-    @GetMapping("prefer")
-    public Slice<CenterPreview> findCentersByPrefer(@Login Long userId, Pageable pageable) {
-        return centerService.findCentersByPrefer(userId, pageable);
     }
 
     /**
