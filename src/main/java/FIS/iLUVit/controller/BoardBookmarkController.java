@@ -19,7 +19,7 @@ public class BoardBookmarkController {
         내용: 게시글 목록 한번에 불러오기. 메인 페이지에서 유저의 모든 이야기에서 즐겨찾는 게시판에서 최신 글 하나씩 엮어서 보여줌.
             + 게시글 목록 한번에 불러오기 (비회원 전용)
     */
-    @GetMapping("bookmark-main")
+    @GetMapping("main")
     public BookmarkMainDTO search(@Login Long userId) {
         if (userId == null) {
             return bookmarkService.searchByDefault();
