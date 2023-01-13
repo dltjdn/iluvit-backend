@@ -32,8 +32,8 @@ public class BoardBookmarkController {
         작성시간: 2022/06/24 3:08 PM
         내용: 즐겨찾는 게시판 추가
     */
-    @PostMapping("user/{board_id}")
-    public Long createBookmark(@Login Long userId, @PathVariable("board_id") Long boardId) {
+    @PostMapping("{boardId}")
+    public Long createBookmark(@Login Long userId, @PathVariable("boardId") Long boardId) {
         return bookmarkService.create(userId, boardId);
     }
 
@@ -42,8 +42,8 @@ public class BoardBookmarkController {
         작성시간: 2022/06/24 3:09 PM
         내용: 즐겨찾는 게시판 삭제
     */
-    @DeleteMapping("user/{bookmark_id}")
-    public Long deleteBookmark(@Login Long userId, @PathVariable("bookmark_id") Long bookmarkId) {
+    @DeleteMapping("{bookmarkId}")
+    public Long deleteBookmark(@Login Long userId, @PathVariable("bookmarkId") Long bookmarkId) {
         return bookmarkService.delete(userId, bookmarkId);
     }
 }

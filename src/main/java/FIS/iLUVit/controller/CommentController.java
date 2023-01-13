@@ -3,7 +3,6 @@ package FIS.iLUVit.controller;
 import FIS.iLUVit.config.argumentResolver.Login;
 import FIS.iLUVit.controller.dto.CommentDTO;
 import FIS.iLUVit.controller.dto.RegisterCommentRequest;
-import FIS.iLUVit.service.CommentHeartService;
 import FIS.iLUVit.service.CommentService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
@@ -16,17 +15,16 @@ import org.springframework.web.bind.annotation.*;
 public class CommentController {
 
     private final CommentService commentService;
-    private final CommentHeartService commentHeartService;
 
     /**
         작성자: 이창윤
         작성시간: 2022/06/27 10:09 AM
         내용: 댓글 작성, comment_id 값까지 보내는 경우 대댓글 작성
     */
-    @PostMapping("user")
+    @PostMapping("")
     public Long registerComment(@Login Long userId,
-                                @RequestParam("post_id") Long postId,
-                                @RequestParam(value = "comment_id", required = false) Long commentId,
+                                @RequestParam("postId") Long postId,
+                                @RequestParam(value = "commentId", required = false) Long commentId,
                                 @RequestBody RegisterCommentRequest request) {
 
         return commentService.registerComment(userId, postId, commentId, request);
@@ -37,31 +35,11 @@ public class CommentController {
         작성시간: 2022/06/27 10:14 AM
         내용: 댓글 삭제, 댓글 데이터 지우지 않고 내용(content), 작성자(user)만 null로 변경
     */
-    @PatchMapping("user")
+    @PatchMapping("")
     public Long deleteComment(@Login Long userId,
-                              @RequestParam("comment_id") Long commentId) {
+                              @RequestParam("commentId") Long commentId) {
         return commentService.deleteComment(userId, commentId);
         // 삭제하면 그 대댓글까지 삭제? or 대댓글은 남김?
-    }
-
-    /**
-        작성자: 이창윤
-        작성시간: 2022/06/27 10:16 AM
-        내용: 댓글 좋아요
-    */
-    @PostMapping("user/commentHeart/{comment_id}")
-    public Long like(@Login Long userId, @PathVariable Long comment_id) {
-        return commentHeartService.save(userId, comment_id);
-    }
-
-    /**
-        작성자: 이창윤
-        작성시간: 2022/06/27 10:18 AM
-        내용: 댓글 좋아요 취소
-    */
-    @DeleteMapping("user/commentHeart/{comment_id}")
-    public Long cancel(@Login Long userId, @PathVariable Long comment_id) {
-        return commentHeartService.delete(userId, comment_id);
     }
 
     /**
