@@ -139,7 +139,7 @@ public class PostController {
         작성시간: 2022/06/27 1:32 PM
         내용: 모두의 이야기 글 리스트 불러오기
     */
-    @GetMapping("modu-main")
+    @GetMapping("public-main")
     public List<BoardPreview> searchMainPreview(@Login Long userId) {
 
         return postService.searchMainPreview(userId);
