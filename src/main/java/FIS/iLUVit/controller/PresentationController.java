@@ -40,7 +40,7 @@ public class PresentationController {
      * 현재날짜에 맞춰서 설명회 기간에 있으면 반환 그렇지 않으면 반환 하지않음 <p>
      * 내용 - 신청기간, 내용, 사진, 동영상, 신청할 수 있는 설명회 목록?
      */
-    @GetMapping("center/info/{centerId}")
+    @GetMapping("info/centerId/{centerId}")
     @ResponseStatus(HttpStatus.ACCEPTED)
     public List<PresentationResponseDto> findPresentationByCenterId(@PathVariable("centerId") Long centerId, @Login Long userId){
         return presentationService.findPresentationByCenterIdAndDate(centerId, userId);
@@ -50,7 +50,7 @@ public class PresentationController {
      * 원장/ 선생의 presentation 등록 PtDate 설정하기
      * @return
      */
-    @PostMapping(value = "")
+    @PostMapping("")
     @ResponseStatus(HttpStatus.CREATED)
     public PresentationSaveResponseDto registerPresentation(@RequestPart @Validated PresentationRequestRequestFormDto request,
                                                             @RequestPart(required = false) List<MultipartFile> images,
@@ -63,7 +63,7 @@ public class PresentationController {
     /**
      * 원장, 선생의 설명회 수정
      */
-    @PatchMapping(value = "")
+    @PatchMapping("")
     @ResponseStatus(HttpStatus.ACCEPTED)
     public PresentationModifyResponseDto modifyPresentation(@RequestPart @Validated PresentationModifyRequestDto request,
                                                             @RequestPart(required = false) List<MultipartFile> images,
@@ -76,7 +76,7 @@ public class PresentationController {
      * 원장/ 선생의 presentation 등록 PtDate 설정하기
      * 리액트 네이티브용 정보 저장
      */
-    @PostMapping(value = "info")
+    @PostMapping("react-native")
     @ResponseStatus(HttpStatus.CREATED)
     public PresentationSaveResponseDto registerPresentationInfo(@RequestBody @Validated PresentationRequestRequestFormDto request,
                                                                 @Login Long userId){
@@ -91,7 +91,7 @@ public class PresentationController {
      * 원장, 선생의 설명회 수정
      * 리액트 네이티브용 정보 수정
      */
-    @PatchMapping(value = "info")
+    @PatchMapping("react-native")
     @ResponseStatus(HttpStatus.ACCEPTED)
     public PresentationModifyResponseDto modifyPresentationInfo(@RequestBody @Validated PresentationModifyRequestDto request,
                                                                 @Login Long userId){
@@ -103,7 +103,7 @@ public class PresentationController {
      * 원장/ 선생의 presentation 등록 PtDate 설정하기
      * 리액트 네이티브용 이미지 저장
      */
-    @PostMapping(value = "images")
+    @PostMapping("image/react-native")
     @ResponseStatus(HttpStatus.CREATED)
     public PresentationSaveResponseDto registerPresentationImage(@RequestParam Long presentationId,
                                                                  @RequestPart(required = false) List<MultipartFile> images,
@@ -119,7 +119,7 @@ public class PresentationController {
      * 원장, 선생의 설명회 수정
      * 리액트 네이티브용 이미지 수정
      */
-    @PatchMapping(value = "images")
+    @PatchMapping("images/react-native")
     @ResponseStatus(HttpStatus.ACCEPTED)
     public PresentationModifyResponseDto modifyPresentationImage(@RequestParam Long presentationId,
                                                                 @RequestPart(required = false) List<MultipartFile> images,
