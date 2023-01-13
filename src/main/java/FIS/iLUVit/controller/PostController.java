@@ -160,7 +160,7 @@ public class PostController {
         작성시간: 2022/06/27 1:34 PM
         내용: 장터글 끌어올리기
     */
-    @PutMapping("update/{postId}")
+    @PutMapping("{postId}/update")
     public void pullUp(@Login Long userId, @PathVariable("postId") Long postId) {
         postService.updateDate(userId, postId);
     }
