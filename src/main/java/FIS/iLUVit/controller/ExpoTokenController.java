@@ -12,7 +12,7 @@ import javax.validation.Valid;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("expoTokens")
+@RequestMapping("expo-tokens")
 public class ExpoTokenController {
 
     private final ExpoTokenService expoTokenService;
