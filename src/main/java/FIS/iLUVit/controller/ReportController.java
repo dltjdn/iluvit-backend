@@ -6,10 +6,12 @@ import FIS.iLUVit.service.ReportService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequiredArgsConstructor
+@RequestMapping("report")
 public class ReportController {
 
     private final ReportService reportService;
@@ -19,7 +21,7 @@ public class ReportController {
      * 작성자: 최민아
      * 작성내용: 신고하기
      */
-    @PostMapping("/report")
+    @PostMapping("")
     public Long registerReport(@Login Long userId, @RequestBody ReportCreateRequest request){
         return reportService.registerReport(userId, request);
     }

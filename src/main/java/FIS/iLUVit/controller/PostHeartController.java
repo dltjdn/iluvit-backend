@@ -15,7 +15,7 @@ import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("postHeart")
+@RequestMapping("post-heart")
 public class PostHeartController {
 
     private final PostHeartRepository postHeartRepository;
@@ -26,8 +26,8 @@ public class PostHeartController {
         작성시간: 2022/06/27 1:35 PM
         내용: 게시글 좋아요
     */
-    @PostMapping("user/post/{post_id}")
-    public Long like(@Login Long userId, @PathVariable("post_id") Long postId) {
+    @PostMapping("{postId}")
+    public Long like(@Login Long userId, @PathVariable("postId") Long postId) {
         return postService.savePostHeart(userId, postId);
     }
     
@@ -36,8 +36,8 @@ public class PostHeartController {
         작성시간: 2022/06/27 1:39 PM
         내용: 게시글 좋아요 취소, 기존에 좋아요 눌렀던 상태여야 취소 가능
     */
-    @DeleteMapping("user/post/{post_id}")
-    public void cancel(@Login Long userId, @PathVariable("post_id") Long postId) {
+    @DeleteMapping("{postId}")
+    public void cancel(@Login Long userId, @PathVariable("postId") Long postId) {
         PostHeart postHeart = postHeartRepository.findByPostAndUser(userId, postId)
                 .orElseThrow(() -> new PostException(PostErrorResult.POST_NOT_EXIST));
         postHeartRepository.delete(postHeart);

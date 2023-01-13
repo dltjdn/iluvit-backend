@@ -22,9 +22,9 @@ public class ScrapController {
     /**
      * 작성날짜: 2022/06/21 2:11 PM
      * 작성자: 이승범
-     * 작성내용: 스크랩 폴더 목록 정보 가져오기
+     * 작성내용: 스크랩 폴더 목록
      */
-    @GetMapping("user/dir")
+    @GetMapping("dir")
     public ScrapListInfoResponse ScrapListInfo(@Login Long id) {
         return scrapService.findScrapDirListInfo(id);
     }
@@ -32,9 +32,9 @@ public class ScrapController {
     /**
      * 작성날짜: 2022/06/21 2:11 PM
      * 작성자: 이승범
-     * 작성내용: 스크랩 폴더 추가하기
+     * 작성내용: 스크랩 폴더 생성
      */
-    @PostMapping("user/dir")
+    @PostMapping("dir")
     public ScrapListInfoResponse addScrap(@Login Long id, @Valid @RequestBody AddScrapRequest request) {
         return scrapService.addScrapDir(id, request);
     }
@@ -42,9 +42,9 @@ public class ScrapController {
     /**
      * 작성날짜: 2022/06/21 3:00 PM
      * 작성자: 이승범
-     * 작성내용: 스크랩 폴더 삭제하기
+     * 작성내용: 스크랩 폴더 삭제
      */
-    @DeleteMapping("user/dir")
+    @DeleteMapping("dir")
     public ScrapListInfoResponse deleteScrap(@Login Long userId, @RequestParam Long scrapId) {
         return scrapService.deleteScrapDir(userId, scrapId);
     }
@@ -54,7 +54,7 @@ public class ScrapController {
      * 작성자: 이승범
      * 작성내용: 스크랩 폴더 이름 바꾸기
      */
-    @PutMapping("user/dir/name")
+    @PutMapping("dir/name")
     public void updateScrapDirName(@Login Long id, @Valid @RequestBody UpdateScrapDirNameRequest request) {
         scrapService.updateScrapDirName(id, request);
     }
@@ -62,9 +62,9 @@ public class ScrapController {
     /**
     *   작성날짜: 2022/06/22 2:13 PM
     *   작성자: 이승범
-    *   작성내용: 스크랩폴더에서 해당게시물 지우기
+    *   작성내용: 스크랩한 게시물 스크랩 취소
     */
-    @DeleteMapping("user/post")
+    @DeleteMapping("post")
     public void deleteScrapPost(@Login Long userId, @RequestParam Long scrapPostId) {
         scrapService.deleteScrapPost(userId, scrapPostId);
     }
@@ -72,9 +72,9 @@ public class ScrapController {
     /**
      *   작성날짜: 2022/06/22 4:51 PM
      *   작성자: 이승범
-     *   작성내용: 해당 게시물에 대한 스크랩폴더 상태 목록 보여주기
+     *   작성내용: 게시물 관련 스크랩 폴더 목록
      */
-    @GetMapping("user/post")
+    @GetMapping("post/dir")
     public ScrapListByPostResponse ScrapListByPost(@Login Long userId, @RequestParam Long postId) {
         return scrapService.findScrapListByPost(userId, postId);
     }
@@ -82,9 +82,9 @@ public class ScrapController {
     /**
      * 작성날짜: 2022/06/21 5:06 PM
      * 작성자: 이승범
-     * 작성내용: 게시물 스크랩하기
+     * 작성내용: 게시물 관련 스크랩 상태 수정
      */
-    @PutMapping("user/post")
+    @PutMapping("post")
     public void scrapPost(@Login Long userId, @Valid @RequestBody UpdateScrapByPostRequest request) {
         scrapService.scrapPost(userId, request);
     }
@@ -94,7 +94,7 @@ public class ScrapController {
      *   작성자: 이승범
      *   작성내용: 스크랩 폴더별 게시물 리스트
      */
-    @GetMapping("post")
+    @GetMapping("dir/post")
     public Slice<GetScrapPostResponsePreview> searchPostsByScrap(@Login Long userId, @RequestParam Long scrapId, Pageable pageable) {
         return scrapService.searchByScrap(userId, scrapId, pageable);
     }
