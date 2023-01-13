@@ -22,7 +22,7 @@ import java.util.Map;
 @RestController
 @RequiredArgsConstructor
 @Slf4j
-@RequestMapping("/participation")
+@RequestMapping("participation")
 public class ParticipationController {
 
     private final ParticipationService participationService;
@@ -32,7 +32,7 @@ public class ParticipationController {
      *
      * @return
      */
-    @PostMapping
+    @PostMapping("")
     @ResponseStatus(HttpStatus.CREATED)
     public Long register(@Login Long userId, @RequestBody @Validated ParticipationRegisterRequestDto dto){
         if(userId == null)
@@ -43,7 +43,7 @@ public class ParticipationController {
     /**
      * 설명회 취소
      */
-    @PatchMapping
+    @PatchMapping("")
     @ResponseStatus(HttpStatus.ACCEPTED)
     public Long cancel(@Login Long userId, @RequestBody @Validated ParticipationCancelRequestDto dto){
         if(userId == null)
@@ -51,7 +51,7 @@ public class ParticipationController {
         return participationService.cancel(userId, dto.getParticipationId());
     }
 
-    @GetMapping("/parent")
+    @GetMapping("")
     @ResponseStatus(HttpStatus.ACCEPTED)
     public Map<Status, List<MyParticipationsDto>> getMyParticipation(@Login Long userId){
         if(userId == null)
@@ -59,7 +59,7 @@ public class ParticipationController {
         return participationService.getMyParticipation(userId);
     }
 
-    @GetMapping("/join/parent")
+    @GetMapping("join")
     @ResponseStatus(HttpStatus.ACCEPTED)
     public Slice<MyParticipationsDto> getMyJoinParticipation(@Login Long userId, Pageable pageable){
         if(userId == null)
@@ -67,7 +67,7 @@ public class ParticipationController {
         return participationService.getMyJoinParticipation(userId, pageable);
     }
 
-    @GetMapping("/cancel/parent")
+    @GetMapping("cancel")
     @ResponseStatus(HttpStatus.ACCEPTED)
     public Slice<MyParticipationsDto> getMyCancelParticipation(@Login Long userId, Pageable pageable){
         if(userId == null)
@@ -75,7 +75,7 @@ public class ParticipationController {
         return participationService.getMyCancelParticipation(userId, pageable);
     }
 
-    @GetMapping("/waiting/parent")
+    @GetMapping("waiting")
     @ResponseStatus(HttpStatus.ACCEPTED)
     public Slice<MyParticipationsDto> getMyWaiting(@Login Long userId, Pageable pageable){
         if(userId == null)
