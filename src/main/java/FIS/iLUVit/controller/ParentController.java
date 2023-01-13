@@ -23,7 +23,7 @@ public class ParentController {
      * 작성자: 이승범
      * 작성내용: 학부모 프로필 조회
      */
-    @GetMapping("detail")
+    @GetMapping("info")
     public ParentDetailResponse findParentDetail(@Login Long id) throws IOException {
         return parentService.findDetail(id);
     }
@@ -33,7 +33,7 @@ public class ParentController {
      * 작성자: 이승범
      * 작성내용: 학부모 프로필 정보 업데이트
      */
-    @PostMapping("detail")
+    @PostMapping("info")
     public ParentDetailResponse updateParentDetail(@Login Long id, @Valid @ModelAttribute ParentDetailRequest request) throws IOException {
         return parentService.updateDetail(id, request);
     }
@@ -43,7 +43,7 @@ public class ParentController {
      * 작성자: 이승범
      * 작성내용: 학부모 회원가입
      */
-    @PostMapping("sign-up")
+    @PostMapping("signup")
     public void signupParent(@RequestBody @Valid SignupParentRequest request) {
         parentService.signup(request);
     }
