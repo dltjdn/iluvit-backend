@@ -12,6 +12,7 @@ import javax.validation.Valid;
 
 @RestController
 @RequiredArgsConstructor
+@RequestMapping("expo-tokens")
 public class ExpoTokenController {
 
     private final ExpoTokenService expoTokenService;
@@ -20,7 +21,7 @@ public class ExpoTokenController {
      * 작성자: 이창윤
      * 앱 최초 접속 시 푸쉬 알림을 위한 [Token]을 받아야 합니다.
      */
-    @PostMapping("/expoTokens")
+    @PostMapping("")
     @ResponseStatus(HttpStatus.CREATED)
     public Long save(@Login Long userId,
             @RequestBody @Valid ExpoTokenRequest request) {
@@ -44,7 +45,7 @@ public class ExpoTokenController {
      * 현재 알림 수신 OX 상태 들어있음
      * O --> True, X --> False 로 응답
      */
-    @GetMapping("/expoTokens/{token}")
+    @GetMapping("{token}")
     public ExpoTokenInfo findById(@Login Long userId,
                                   @PathVariable String token) {
         return expoTokenService.findById(userId, token);
@@ -55,7 +56,7 @@ public class ExpoTokenController {
      * 엑스포 토큰 삭제
      * 유저 로그아웃 시 토큰 삭제하기
      */
-    @DeleteMapping("/expoTokens/{token}")
+    @DeleteMapping("{token}")
     @ResponseStatus(HttpStatus.OK)
     public void remove(@Login Long userId,
                                   @PathVariable String token) {

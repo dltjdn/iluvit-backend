@@ -21,19 +21,28 @@ import java.util.List;
 @RestController
 @RequiredArgsConstructor
 @Slf4j
+@RequestMapping("presentation")
 public class PresentationController {
 
     private final PresentationService presentationService;
     private final UserService userService;
 
     /**
+     * 필터 기반으로 presentation 검색
+     */
+    @PostMapping("search")
+    public SliceImpl<PresentationPreviewForUsersResponse> searchByFilterAndMap(@RequestBody PresentationSearchFilterDTO dto, Pageable pageable){
+        return presentationService.findByFilter(dto.getAreas(), dto.getTheme(), dto.getInterestedAge(), dto.getKindOf(), dto.getSearchContent(), pageable);
+    }
+
+    /**
      * 모달창으로 나오는 시설 정보 + 설명회 + 리뷰 정보가 나오는 곳에서 보여줄 설명회에 대한 내용 <p>
      * 현재날짜에 맞춰서 설명회 기간에 있으면 반환 그렇지 않으면 반환 하지않음 <p>
      * 내용 - 신청기간, 내용, 사진, 동영상, 신청할 수 있는 설명회 목록?
      */
-    @GetMapping("/presentation/center/{center_id}")
+    @GetMapping("info/centerId/{centerId}")
     @ResponseStatus(HttpStatus.ACCEPTED)
-    public List<PresentationResponseDto> findPresentationByCenterId(@PathVariable("center_id") Long centerId, @Login Long userId){
+    public List<PresentationResponseDto> findPresentationByCenterId(@PathVariable("centerId") Long centerId, @Login Long userId){
         return presentationService.findPresentationByCenterIdAndDate(centerId, userId);
     }
 
@@ -41,7 +50,7 @@ public class PresentationController {
      * 원장/ 선생의 presentation 등록 PtDate 설정하기
      * @return
      */
-    @PostMapping(value = "/presentation")
+    @PostMapping("")
     @ResponseStatus(HttpStatus.CREATED)
     public PresentationSaveResponseDto registerPresentation(@RequestPart @Validated PresentationRequestRequestFormDto request,
                                                             @RequestPart(required = false) List<MultipartFile> images,
@@ -52,11 +61,22 @@ public class PresentationController {
     }
 
     /**
+     * 원장, 선생의 설명회 수정
+     */
+    @PatchMapping("")
+    @ResponseStatus(HttpStatus.ACCEPTED)
+    public PresentationModifyResponseDto modifyPresentation(@RequestPart @Validated PresentationModifyRequestDto request,
+                                                            @RequestPart(required = false) List<MultipartFile> images,
+                                                            @Login Long userId){
+        return new PresentationModifyResponseDto(presentationService.modifyWithPtDate(request, images, userId));
+    }
+
+    /**
      * 작성자: 이창윤
      * 원장/ 선생의 presentation 등록 PtDate 설정하기
      * 리액트 네이티브용 정보 저장
      */
-    @PostMapping(value = "/presentation/info")
+    @PostMapping("react-native")
     @ResponseStatus(HttpStatus.CREATED)
     public PresentationSaveResponseDto registerPresentationInfo(@RequestBody @Validated PresentationRequestRequestFormDto request,
                                                                 @Login Long userId){
@@ -68,10 +88,22 @@ public class PresentationController {
 
     /**
      * 작성자: 이창윤
+     * 원장, 선생의 설명회 수정
+     * 리액트 네이티브용 정보 수정
+     */
+    @PatchMapping("react-native")
+    @ResponseStatus(HttpStatus.ACCEPTED)
+    public PresentationModifyResponseDto modifyPresentationInfo(@RequestBody @Validated PresentationModifyRequestDto request,
+                                                                @Login Long userId){
+        return new PresentationModifyResponseDto(presentationService.modifyInfoWithPtDate(request, userId));
+    }
+
+    /**
+     * 작성자: 이창윤
      * 원장/ 선생의 presentation 등록 PtDate 설정하기
      * 리액트 네이티브용 이미지 저장
      */
-    @PostMapping(value = "/presentation/images")
+    @PostMapping("image/react-native")
     @ResponseStatus(HttpStatus.CREATED)
     public PresentationSaveResponseDto registerPresentationImage(@RequestParam Long presentationId,
                                                                  @RequestPart(required = false) List<MultipartFile> images,
@@ -83,34 +115,11 @@ public class PresentationController {
 
 
     /**
-     * 원장, 선생의 설명회 수정
-     */
-    @PatchMapping(value = "/presentation")
-    @ResponseStatus(HttpStatus.ACCEPTED)
-    public PresentationModifyResponseDto modifyPresentation(@RequestPart @Validated PresentationModifyRequestDto request,
-                                                            @RequestPart(required = false) List<MultipartFile> images,
-                                                            @Login Long userId){
-        return new PresentationModifyResponseDto(presentationService.modifyWithPtDate(request, images, userId));
-    }
-
-    /**
-     * 작성자: 이창윤
-     * 원장, 선생의 설명회 수정
-     * 리액트 네이티브용 정보 수정
-     */
-    @PatchMapping(value = "/presentation/info")
-    @ResponseStatus(HttpStatus.ACCEPTED)
-    public PresentationModifyResponseDto modifyPresentationInfo(@RequestBody @Validated PresentationModifyRequestDto request,
-                                                            @Login Long userId){
-        return new PresentationModifyResponseDto(presentationService.modifyInfoWithPtDate(request, userId));
-    }
-
-    /**
      * 작성자: 이창윤
      * 원장, 선생의 설명회 수정
      * 리액트 네이티브용 이미지 수정
      */
-    @PatchMapping(value = "/presentation/images")
+    @PatchMapping("image/react-native")
     @ResponseStatus(HttpStatus.ACCEPTED)
     public PresentationModifyResponseDto modifyPresentationImage(@RequestParam Long presentationId,
                                                                 @RequestPart(required = false) List<MultipartFile> images,
@@ -119,20 +128,11 @@ public class PresentationController {
     }
 
     /**
-     * 설명회 자세히 보기 기능
-     * @return
-     */
-    @GetMapping("/presentation/{presentationId}/teacher")
-    public PresentationResponseDto findMyCenterPresentation(@PathVariable("presentationId") Long presentationId){
-        return presentationService.findPresentationDetail(presentationId);
-    }
-
-    /**
      * 원장의 시설 설명회 내역
      *
      * @return
      */
-    @GetMapping("/presentation/center/{centerId}/list")
+    @GetMapping("center/{centerId}")
     public List<PresentationPreviewAndImageForTeacher> findMyCenterPresentationList(@Login Long userId,
                                                                                     @PathVariable("centerId") Long centerId,
                                                                                     Pageable pageable){
@@ -140,9 +140,19 @@ public class PresentationController {
     }
 
     /**
+     * 설명회 자세히 보기 기능
+     * @return
+     */
+    @GetMapping("{presentationId}")
+    public PresentationResponseDto findMyCenterPresentation(@PathVariable("presentationId") Long presentationId){
+        return presentationService.findPresentationDetail(presentationId);
+    }
+
+
+    /**
      * 설명회를 신청한 사람들의 목록 반환 이름, 전화번호
      */
-    @GetMapping("/presentation/ptDate/{ptDateId}/participating/parentList")
+    @GetMapping("pt-date/{ptDateId}/participating")
     public List<ParentInfoForDirectorDto> findParentParticipate(@Login Long userId, @PathVariable("ptDateId") Long ptDateId){
         return presentationService.findPtDateParticipatingParents(userId, ptDateId);
     }
@@ -150,16 +160,9 @@ public class PresentationController {
     /**
      * 대기를 신청한 사람들의 목록 반환 이름, 전화번호
      */
-    @GetMapping("/presentation/ptDate/{ptDateId}/waiting/parentList")
+    @GetMapping("pt-date/{ptDateId}/waiting")
     public List<ParentInfoForDirectorDto> findParentWait(@Login Long userId, @PathVariable("ptDateId") Long ptDateId){
         return presentationService.findPtDateWaitingParents(userId, ptDateId);
     }
 
-    /**
-     * 필터 기반으로 presentation 검색
-     */
-    @PostMapping("/presentation/search")
-    public SliceImpl<PresentationPreviewForUsersResponse> searchByFilterAndMap(@RequestBody PresentationSearchFilterDTO dto, Pageable pageable){
-        return presentationService.findByFilter(dto.getAreas(), dto.getTheme(), dto.getInterestedAge(), dto.getKindOf(), dto.getSearchContent(), pageable);
-    }
 }
