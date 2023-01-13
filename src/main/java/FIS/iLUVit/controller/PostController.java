@@ -77,7 +77,7 @@ public class PostController {
             input -> 제목 + 내용 검색 키워드
             auth -> 유저 권한
     */
-    @GetMapping("all/search")
+    @GetMapping("search/all")
     public Slice<GetPostResponsePreview> searchPost(@Login Long userId,
                                                     @RequestParam("input") String input,
                                                     Pageable pageable) {
