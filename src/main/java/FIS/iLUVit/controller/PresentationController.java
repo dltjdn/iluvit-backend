@@ -119,7 +119,7 @@ public class PresentationController {
      * 원장, 선생의 설명회 수정
      * 리액트 네이티브용 이미지 수정
      */
-    @PatchMapping("images/react-native")
+    @PatchMapping("image/react-native")
     @ResponseStatus(HttpStatus.ACCEPTED)
     public PresentationModifyResponseDto modifyPresentationImage(@RequestParam Long presentationId,
                                                                 @RequestPart(required = false) List<MultipartFile> images,
