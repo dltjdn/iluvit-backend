@@ -23,8 +23,8 @@ public class CommentController {
     */
     @PostMapping("")
     public Long registerComment(@Login Long userId,
-                                @RequestParam("postId") Long postId,
-                                @RequestParam(value = "commentId", required = false) Long commentId,
+                                @RequestParam("post_id") Long postId,
+                                @RequestParam(value = "comment_id", required = false) Long commentId,
                                 @RequestBody RegisterCommentRequest request) {
 
         return commentService.registerComment(userId, postId, commentId, request);
@@ -37,7 +37,7 @@ public class CommentController {
     */
     @PatchMapping("")
     public Long deleteComment(@Login Long userId,
-                              @RequestParam("commentId") Long commentId) {
+                              @RequestParam("comment_id") Long commentId) {
         return commentService.deleteComment(userId, commentId);
         // 삭제하면 그 대댓글까지 삭제? or 대댓글은 남김?
     }

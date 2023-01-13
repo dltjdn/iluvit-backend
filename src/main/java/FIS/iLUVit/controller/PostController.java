@@ -151,7 +151,7 @@ public class PostController {
         내용: 유치원별 이야기 글 리스트 불러오기
     */
     @GetMapping("center-main")
-    public List<BoardPreview> searchCenterMainPreview(@Login Long userId, @RequestParam("centerId") Long centerId) {
+    public List<BoardPreview> searchCenterMainPreview(@Login Long userId, @RequestParam("center_id") Long centerId) {
         return postService.searchCenterMainPreview(userId, centerId);
     }
 

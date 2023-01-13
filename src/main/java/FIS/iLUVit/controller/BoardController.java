@@ -44,7 +44,7 @@ public class BoardController {
      */
     @PostMapping("")
     public Long createBoard(@Login Long userId,
-                            @RequestParam(value = "centerId", required = false) Long center_id,
+                            @RequestParam(value = "center_id", required = false) Long center_id,
                             @RequestBody @Valid CreateBoardRequest request) {
         return boardService.create(userId, center_id, request);
     }
