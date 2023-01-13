@@ -8,7 +8,7 @@ import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("bookmark")
+@RequestMapping("board-bookmark")
 public class BoardBookmarkController {
 
     private final BookmarkService bookmarkService;

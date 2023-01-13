@@ -64,7 +64,7 @@ public class BoardController {
      * 작성시간: 2022/07/29 2:47 PM
      * 내용: 이야기 홈에서 센터의 게시판 띄워주기
      */
-    @GetMapping("story/home")
+    @GetMapping("home")
     public StoryHomeDTO homeDTO(@Login Long userId) {
         return boardService.findCenterStory(userId);
     }
