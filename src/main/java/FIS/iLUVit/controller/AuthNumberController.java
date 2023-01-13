@@ -52,7 +52,7 @@ public class AuthNumberController {
     *   작성자: 이승범
     *   작성내용: 핸드폰번호 변경을 위한 인증번호 전송
     */
-    @GetMapping("user/phoneNumber")
+    @GetMapping("phoneNumber")
     public void sendAuthNumberForUpdatePhoneNum(@Login Long userId, @RequestParam String phoneNumber) {
         authNumberService.sendAuthNumberForChangePhone(userId, phoneNumber);
     }
