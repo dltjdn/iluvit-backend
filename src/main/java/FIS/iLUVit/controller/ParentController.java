@@ -43,7 +43,7 @@ public class ParentController {
      * 작성자: 이승범
      * 작성내용: 학부모 회원가입
      */
-    @PostMapping("signup")
+    @PostMapping("sign-up")
     public void signupParent(@RequestBody @Valid SignupParentRequest request) {
         parentService.signup(request);
     }
