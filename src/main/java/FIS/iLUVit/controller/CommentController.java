@@ -47,7 +47,7 @@ public class CommentController {
         작성시간: 2022/06/27 10:19 AM
         내용: 댓글 단 글 리스트
     */
-    @GetMapping("user/mypage")
+    @GetMapping("mypage")
     public Slice<CommentDTO> searchCommentByUser(@Login Long userId, Pageable pageable) {
         return commentService.searchByUser(userId, pageable);
     }

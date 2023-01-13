@@ -7,7 +7,7 @@ import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("comment")
+@RequestMapping("comment-heart")
 public class CommentHeartController {
 
     private final CommentHeartService commentHeartService;
@@ -17,7 +17,7 @@ public class CommentHeartController {
      작성시간: 2022/06/27 10:16 AM
      내용: 댓글 좋아요
      */
-    @PostMapping("comment-heart/{commentId}")
+    @PostMapping("{commentId}")
     public Long like(@Login Long userId, @PathVariable Long commentId) {
         return commentHeartService.save(userId, commentId);
     }
@@ -27,7 +27,7 @@ public class CommentHeartController {
      작성시간: 2022/06/27 10:18 AM
      내용: 댓글 좋아요 취소
      */
-    @DeleteMapping("comment-heart/{commentId}")
+    @DeleteMapping("{commentId}")
     public Long cancel(@Login Long userId, @PathVariable Long commentId) {
         return commentHeartService.delete(userId, commentId);
     }
