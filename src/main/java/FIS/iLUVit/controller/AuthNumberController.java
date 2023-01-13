@@ -12,7 +12,7 @@ import javax.validation.Valid;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("authNumber")
+@RequestMapping("auth")
 public class AuthNumberController {
 
     private final AuthNumberService authNumberService;
@@ -32,9 +32,19 @@ public class AuthNumberController {
      * 작성자: 이승범
      * 작성내용: 로그인 아이디를 찾기위한 인증번호 전송
      */
-    @GetMapping("loginId")
+    @GetMapping("loginid")
     public void sendAuthNumberForFindLoginId(@RequestParam String phoneNumber) {
         authNumberService.sendAuthNumberForFindLoginId(phoneNumber);
+    }
+
+    /**
+     * 작성날짜: 2022/05/25 3:39 PM
+     * 작성자: 이승범
+     * 작성내용: 인증번호를 통한 로그인 아이디 찾기
+     */
+    @PostMapping("loginid")
+    public String findLoginId(@RequestBody AuthenticateAuthNumRequest request) {
+        return authNumberService.findLoginId(request);
     }
 
     /**
@@ -48,11 +58,21 @@ public class AuthNumberController {
     }
 
     /**
+     *   작성날짜: 2022/05/25 4:15 PM
+     *   작성자: 이승범
+     *   작성내용: 비밀번호 찾기 근데 이제 변경을 곁들인
+     */
+    @PostMapping("password")
+    public void findPassword(@RequestBody @Valid FindPasswordRequest request) {
+        authNumberService.changePassword(request);
+    }
+
+    /**
     *   작성날짜: 2022/06/20 11:08 AM
     *   작성자: 이승범
     *   작성내용: 핸드폰번호 변경을 위한 인증번호 전송
     */
-    @GetMapping("phoneNumber")
+    @GetMapping("phonenumber")
     public void sendAuthNumberForUpdatePhoneNum(@Login Long userId, @RequestParam String phoneNumber) {
         authNumberService.sendAuthNumberForChangePhone(userId, phoneNumber);
     }
@@ -67,23 +87,6 @@ public class AuthNumberController {
         authNumberService.authenticateAuthNum(userId, request);
     }
 
-    /**
-     * 작성날짜: 2022/05/25 3:39 PM
-     * 작성자: 이승범
-     * 작성내용: 인증번호를 통한 로그인 아이디 찾기
-     */
-    @PostMapping("findLoginId")
-    public String findLoginId(@RequestBody AuthenticateAuthNumRequest request) {
-        return authNumberService.findLoginId(request);
-    }
 
-    /**
-    *   작성날짜: 2022/05/25 4:15 PM
-    *   작성자: 이승범
-    *   작성내용: 비밀번호 찾기 근데 이제 변경을 곁들인
-    */
-    @PostMapping("findPassword")
-    public void findPassword(@RequestBody @Valid FindPasswordRequest request) {
-        authNumberService.changePassword(request);
-    }
+
 }
