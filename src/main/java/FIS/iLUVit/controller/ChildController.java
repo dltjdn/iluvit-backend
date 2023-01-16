@@ -2,10 +2,12 @@ package FIS.iLUVit.controller;
 
 import FIS.iLUVit.config.argumentResolver.Login;
 import FIS.iLUVit.controller.dto.*;
+import FIS.iLUVit.service.CenterService;
 import FIS.iLUVit.service.ChildService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Slice;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
@@ -18,6 +20,8 @@ import java.io.IOException;
 public class ChildController {
 
     private final ChildService childService;
+
+    private final CenterService centerService;
 
     /**
      * 작성날짜: 2022/05/13 4:43 PM
@@ -119,5 +123,15 @@ public class ChildController {
     @PatchMapping("{childId}/reject")
     public void fireChild(@Login Long userId, @PathVariable("childId") Long childId) {
         childService.fireChild(userId, childId);
+    }
+
+    /**
+     *   작성날짜: 2022/06/24 10:29 AM
+     *   작성자: 이승범
+     *   작성내용: 아이추가 과정에서 필요한 센터정보 가져오기
+     */
+    @GetMapping("search/center")
+    public Slice<CenterInfoDto> centerInfoForAddChild(@ModelAttribute CenterInfoRequest request, Pageable pageable) {
+        return centerService.findCenterForAddChild(request, pageable);
     }
 }
