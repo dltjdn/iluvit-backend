@@ -73,25 +73,6 @@ public class CenterController {
         return centerService.findCenterForParent(userId);
     }
 
-    /**
-     *   작성날짜: 2022/06/24 10:29 AM
-     *   작성자: 이승범
-     *   작성내용: 아이추가 과정에서 필요한 센터정보 가져오기
-     */
-    @GetMapping("search/child")
-    public Slice<CenterInfoDto> centerInfoForAddChild(@ModelAttribute CenterInfoRequest request, Pageable pageable) {
-        return centerService.findCenterForAddChild(request, pageable);
-    }
-
-    /**
-     *   작성날짜: 2022/06/20 3:49 PM
-     *   작성자: 이승범
-     *   작성내용: 회원가입, 이직 과정에서 center 정보 가져오기
-     */
-    @GetMapping("search/signup")
-    public Slice<CenterInfoDto> centerInfoForSignup(@ModelAttribute CenterInfoRequest request, Pageable pageable) {
-        return centerService.findCenterForSignup(request, pageable);
-    }
 
     /**
      * 시설 정보 수정

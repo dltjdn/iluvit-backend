@@ -2,9 +2,12 @@ package FIS.iLUVit.controller;
 
 import FIS.iLUVit.config.argumentResolver.Login;
 import FIS.iLUVit.controller.dto.*;
+import FIS.iLUVit.service.CenterService;
 import FIS.iLUVit.service.TeacherService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Slice;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
@@ -17,6 +20,7 @@ import java.io.IOException;
 public class TeacherController {
 
     private final TeacherService teacherService;
+    private final CenterService centerService;
 
     /**
      * 작성날짜: 2022/05/20 4:43 PM
@@ -116,5 +120,15 @@ public class TeacherController {
     @PatchMapping("{teacherId}/demote")
     public void demoteTeacher(@Login Long userId, @PathVariable("teacherId") Long teacherId) {
         teacherService.demoteTeacher(userId, teacherId);
+    }
+
+    /**
+     *   작성날짜: 2022/06/20 3:49 PM
+     *   작성자: 이승범
+     *   작성내용: 회원가입, 이직 과정에서 center 정보 가져오기
+     */
+    @GetMapping("search/center")
+    public Slice<CenterInfoDto> centerInfoForSignup(@ModelAttribute CenterInfoRequest request, Pageable pageable) {
+        return centerService.findCenterForSignup(request, pageable);
     }
 }
