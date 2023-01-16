@@ -18,6 +18,7 @@ import java.io.IOException;
 @Slf4j
 @RestController
 @RequiredArgsConstructor
+@RequestMapping("user")
 public class UserController {
 
     private final UserService userService;
@@ -28,7 +29,7 @@ public class UserController {
      * 작성자: 이승범
      * 작성내용: 사용자 기본정보(id, nickname, auth)반환
      */
-    @GetMapping("/user/info")
+    @GetMapping("")
     public UserInfoResponse findUserInfo(@Login Long id) {
         return userService.findUserInfo(id);
     }
@@ -38,7 +39,7 @@ public class UserController {
     *   작성자: 이승범
     *   작성내용: 로그인 중복 확인
     */
-    @GetMapping("/loginid")
+    @GetMapping("check-loginid")
     public void checkLoginId(@Valid @ModelAttribute CheckLoginIdRequest request) {
         userService.checkLoginId(request);
     }
@@ -48,7 +49,7 @@ public class UserController {
     *   작성자: 이승범
     *   작성내용: 닉네임 중복 확인
     */
-    @GetMapping("/nickname")
+    @GetMapping("check-nickname")
     public void checkNickname(@Valid @ModelAttribute CheckNicknameRequest request) {
         userService.checkNickname(request);
     }
@@ -58,7 +59,7 @@ public class UserController {
      * 작성자: 이승범
      * 작성내용: 비밀번호 변경
      */
-    @PutMapping("/user/password")
+    @PutMapping("password")
     public void updatePassword(@Login Long id, @Valid @RequestBody UpdatePasswordRequest request) {
         userService.updatePassword(id, request);
     }
@@ -68,7 +69,7 @@ public class UserController {
      *   작성자: 이승범
      *   작성내용: login기능 security filter에서 옮김
      */
-    @PostMapping("/login")
+    @PostMapping("login")
     public LoginResponse login(@RequestBody LoginRequest request) {
         return userService.login(request);
     }
@@ -78,7 +79,7 @@ public class UserController {
      *   작성자: 이승범
      *   작성내용: refreshToken으로 AccessToken발급
      */
-    @PostMapping("/refresh")
+    @PostMapping("refresh")
     public LoginResponse refresh(@Valid @RequestBody TokenRefreshRequest request) throws IOException {
         LoginResponse response = userService.refresh(request);
         if (response != null) {
@@ -93,7 +94,7 @@ public class UserController {
      *   작성자: 이승범
      *   작성내용: healthCheck test
      */
-    @GetMapping("/profile")
+    @GetMapping("profile")
     public String profile() {
         return env.getProperty("spring.profiles.active");
     }
