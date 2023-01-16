@@ -29,9 +29,9 @@ public class ParentService {
 
     private final UserService userService;
     private final ImageService imageService;
-    private final AuthNumberService authNumberService;
+    private final AuthService authService;
     private final ParentRepository parentRepository;
-    private final AuthNumberRepository authNumberRepository;
+    private final AuthRepository authRepository;
     private final ScrapRepository scrapRepository;
     private final CenterRepository centerRepository;
     private final PreferRepository preferRepository;
@@ -80,11 +80,11 @@ public class ParentService {
         // 핸드폰 번호도 변경하는 경우
         if (request.getChangePhoneNum()) {
             // 핸드폰 인증이 완료되었는지 검사
-            authNumberService.validateAuthNumber(request.getPhoneNum(), AuthKind.updatePhoneNum);
+            authService.validateAuthNumber(request.getPhoneNum(), AuthKind.updatePhoneNum);
             // 핸드폰 번호와 함께 프로필 update
             findParent.updateDetailWithPhoneNum(request, theme);
             // 인증번호 테이블에서 지우기
-            authNumberRepository.deleteByPhoneNumAndAuthKind(request.getPhoneNum(), AuthKind.updatePhoneNum);
+            authRepository.deleteByPhoneNumAndAuthKind(request.getPhoneNum(), AuthKind.updatePhoneNum);
         } else { // 핸드폰 번호 변경은 변경하지 않는 경우
             findParent.updateDetail(request, theme);
         }
@@ -124,7 +124,7 @@ public class ParentService {
         scrapRepository.save(scrap);
 
         // 사용이 끝난 인증번호를 테이블에서 지우기
-        authNumberRepository.deleteByPhoneNumAndAuthKind(request.getPhoneNum(), AuthKind.signup);
+        authRepository.deleteByPhoneNumAndAuthKind(request.getPhoneNum(), AuthKind.signup);
 
         // 모두의 이야기 default boards bookmark 추가하기
         List<Board> defaultBoards = boardRepository.findDefaultByModu();

@@ -39,7 +39,7 @@ public class ParentServiceTest {
     @Mock
     private UserService userService;
     @Mock
-    private AuthNumberService authNumberService;
+    private AuthService authService;
     @Mock
     private ParentRepository parentRepository;
     @Mock
@@ -49,7 +49,7 @@ public class ParentServiceTest {
     @Mock
     private ScrapRepository scrapRepository;
     @Mock
-    private AuthNumberRepository authNumberRepository;
+    private AuthRepository authRepository;
     @Mock
     private ImageService imageService;
     @Mock

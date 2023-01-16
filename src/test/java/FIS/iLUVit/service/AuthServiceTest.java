@@ -10,27 +10,16 @@ import FIS.iLUVit.domain.User;
 import FIS.iLUVit.domain.enumtype.AuthKind;
 import FIS.iLUVit.exception.AuthNumberErrorResult;
 import FIS.iLUVit.exception.AuthNumberException;
-import FIS.iLUVit.exception.exceptionHandler.ErrorResponse;
-import FIS.iLUVit.repository.AuthNumberRepository;
+import FIS.iLUVit.repository.AuthRepository;
 import FIS.iLUVit.repository.UserRepository;
 import FIS.iLUVit.stub.MessageServiceStub;
-import org.junit.Before;
-import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Spy;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.boot.context.properties.EnableConfigurationProperties;
-import org.springframework.boot.test.context.ConfigDataApplicationContextInitializer;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import org.springframework.test.context.ActiveProfiles;
-import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.TestPropertySource;
-import org.springframework.test.util.ReflectionTestUtils;
 
 import java.time.LocalDateTime;
 import java.util.Optional;
@@ -41,11 +30,11 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
-public class AuthNumberServiceTest {
+public class AuthServiceTest {
 
 
     @Mock
-    private AuthNumberRepository authNumberRepository;
+    private AuthRepository authRepository;
     @Mock
     private UserRepository userRepository;
     @Spy
@@ -54,7 +43,7 @@ public class AuthNumberServiceTest {
     private MessageServiceStub messageServiceStub;
 
     @InjectMocks
-    private AuthNumberService target;
+    private AuthService target;
 
     private final String phoneNum = "phoneNum";
     private final String authNum = "authNum";
@@ -79,7 +68,7 @@ public class AuthNumberServiceTest {
         // given
         doReturn(Optional.empty()).when(userRepository).findByPhoneNumber(phoneNum);
         doReturn(Optional.of(createAuthNumber(AuthKind.signup)))
-                .when(authNumberRepository)
+                .when(authRepository)
                 .findOverlap(phoneNum, AuthKind.signup);
         // when
         AuthNumberException result = assertThrows(AuthNumberException.class,
@@ -98,11 +87,11 @@ public class AuthNumberServiceTest {
                 .findByPhoneNumber(phoneNum);
 
         doReturn(Optional.empty())
-                .when(authNumberRepository)
+                .when(authRepository)
                 .findOverlap(phoneNum, AuthKind.signup);
 
         doReturn(createAuthNumber(AuthKind.signup))
-                .when(authNumberRepository)
+                .when(authRepository)
                 .save(any(AuthNumber.class));
 
         // when
@@ -122,11 +111,11 @@ public class AuthNumberServiceTest {
                 .findByPhoneNumber(phoneNum);
 
         doReturn(Optional.of(createAuthNumber(AuthKind.signup).setCreatedDateForTest(LocalDateTime.now().minusSeconds(target.getAuthValidTime() + 1))))
-                .when(authNumberRepository)
+                .when(authRepository)
                 .findOverlap(phoneNum, AuthKind.signup);
 
         doReturn(createAuthNumber(AuthKind.signup))
-                .when(authNumberRepository)
+                .when(authRepository)
                 .save(any(AuthNumber.class));
         // when
         AuthNumber result = target.sendAuthNumberForSignup(phoneNum);
@@ -137,7 +126,7 @@ public class AuthNumberServiceTest {
         assertThat(result.getAuthKind()).isEqualTo(AuthKind.signup);
 
         // verify
-        verify(authNumberRepository, times(1)).deleteExpiredNumber(phoneNum, AuthKind.signup);
+        verify(authRepository, times(1)).deleteExpiredNumber(phoneNum, AuthKind.signup);
     }
 
     @Test
@@ -145,7 +134,7 @@ public class AuthNumberServiceTest {
         // given
         AuthenticateAuthNumRequest request = new AuthenticateAuthNumRequest(phoneNum, authNum, AuthKind.signup);
         doReturn(Optional.empty())
-                .when(authNumberRepository)
+                .when(authRepository)
                 .findByPhoneNumAndAuthNumAndAuthKind(phoneNum, authNum, AuthKind.signup);
         // when
         AuthNumberException result = assertThrows(AuthNumberException.class,
@@ -159,7 +148,7 @@ public class AuthNumberServiceTest {
         // given
         AuthenticateAuthNumRequest request = new AuthenticateAuthNumRequest(phoneNum, authNum, AuthKind.signup);
         doReturn(Optional.of(createAuthNumber(AuthKind.signup).setCreatedDateForTest(LocalDateTime.now().minusSeconds(target.getAuthValidTime() + 1))))
-                .when(authNumberRepository)
+                .when(authRepository)
                 .findByPhoneNumAndAuthNumAndAuthKind(phoneNum, authNum, AuthKind.signup);
         // when
         AuthNumberException result = assertThrows(AuthNumberException.class,
@@ -176,7 +165,7 @@ public class AuthNumberServiceTest {
         AuthenticateAuthNumRequest request = new AuthenticateAuthNumRequest(phoneNum, authNum, AuthKind.signup);
         AuthNumber authNumber = createAuthNumber(AuthKind.signup);
         doReturn(Optional.of(authNumber))
-                .when(authNumberRepository)
+                .when(authRepository)
                 .findByPhoneNumAndAuthNumAndAuthKind(phoneNum, authNum, AuthKind.signup);
         assertThat(authNumber.getAuthTime()).isNull();
         // when
@@ -204,7 +193,7 @@ public class AuthNumberServiceTest {
         // given
         doReturn(Optional.of(Teacher.builder().build())).when(userRepository).findByPhoneNumber(phoneNum);
         doReturn(Optional.of(createAuthNumber(AuthKind.findLoginId)))
-                .when(authNumberRepository)
+                .when(authRepository)
                 .findOverlap(phoneNum, AuthKind.findLoginId);
         // when
         AuthNumberException result = assertThrows(AuthNumberException.class,
@@ -221,11 +210,11 @@ public class AuthNumberServiceTest {
                 .findByPhoneNumber(phoneNum);
 
         doReturn(Optional.empty())
-                .when(authNumberRepository)
+                .when(authRepository)
                 .findOverlap(phoneNum, AuthKind.findLoginId);
 
         doReturn(createAuthNumber(AuthKind.findLoginId))
-                .when(authNumberRepository)
+                .when(authRepository)
                 .save(any(AuthNumber.class));
         // when
         AuthNumber result = target.sendAuthNumberForFindLoginId(phoneNum);
@@ -234,7 +223,7 @@ public class AuthNumberServiceTest {
         assertThat(result.getAuthKind()).isEqualTo(AuthKind.findLoginId);
 
         // verify
-        verify(authNumberRepository, times(0)).deleteExpiredNumber(phoneNum, AuthKind.findLoginId);
+        verify(authRepository, times(0)).deleteExpiredNumber(phoneNum, AuthKind.findLoginId);
     }
 
     @Test
@@ -245,11 +234,11 @@ public class AuthNumberServiceTest {
                 .findByPhoneNumber(phoneNum);
 
         doReturn(Optional.of(createAuthNumber(AuthKind.findLoginId).setCreatedDateForTest(LocalDateTime.now().minusSeconds(target.getAuthValidTime() + 1))))
-                .when(authNumberRepository)
+                .when(authRepository)
                 .findOverlap(phoneNum, AuthKind.findLoginId);
 
         doReturn(createAuthNumber(AuthKind.findLoginId))
-                .when(authNumberRepository)
+                .when(authRepository)
                 .save(any(AuthNumber.class));
         // when
         AuthNumber result = target.sendAuthNumberForFindLoginId(phoneNum);
@@ -259,7 +248,7 @@ public class AuthNumberServiceTest {
         assertThat(result.getAuthKind()).isEqualTo(AuthKind.findLoginId);
 
         // verify
-        verify(authNumberRepository, times(1)).deleteExpiredNumber(phoneNum, AuthKind.findLoginId);
+        verify(authRepository, times(1)).deleteExpiredNumber(phoneNum, AuthKind.findLoginId);
     }
 
     @Test
@@ -267,7 +256,7 @@ public class AuthNumberServiceTest {
         // given
         AuthenticateAuthNumRequest request = new AuthenticateAuthNumRequest(phoneNum, authNum, AuthKind.findLoginId);
         doReturn(Optional.of(createAuthNumber(AuthKind.findLoginId)))
-                .when(authNumberRepository)
+                .when(authRepository)
                 .findByPhoneNumAndAuthNumAndAuthKind(phoneNum, authNum, AuthKind.findLoginId);
         doReturn(Optional.of(Parent.builder().loginId("asdfg").build()))
                 .when(userRepository)
@@ -302,11 +291,11 @@ public class AuthNumberServiceTest {
                 .findByLoginIdAndPhoneNumber(loginId, phoneNum);
 
         doReturn(Optional.empty())
-                .when(authNumberRepository)
+                .when(authRepository)
                 .findOverlap(phoneNum, AuthKind.findPwd);
 
         doReturn(createAuthNumber(AuthKind.findPwd))
-                .when(authNumberRepository)
+                .when(authRepository)
                 .save(any(AuthNumber.class));
         // when
         AuthNumber authNumber = target.sendAuthNumberForFindPassword(loginId, phoneNum);
@@ -332,7 +321,7 @@ public class AuthNumberServiceTest {
         FindPasswordRequest request = new FindPasswordRequest("loginId", phoneNum, authNum, "newPwd", "newPwd");
 
         doReturn(Optional.empty())
-                .when(authNumberRepository)
+                .when(authRepository)
                 .findAuthComplete(phoneNum, AuthKind.findPwd);
         // when
         AuthNumberException result = assertThrows(AuthNumberException.class,
@@ -346,7 +335,7 @@ public class AuthNumberServiceTest {
         // given
         FindPasswordRequest request = new FindPasswordRequest("loginId", phoneNum, authNum, "newPwd", "newPwd");
         doReturn(Optional.of(createAuthNumber(phoneNum, authNum, AuthKind.findPwd, LocalDateTime.now().minusSeconds(target.getAuthNumberValidTime() + 1))))
-                .when(authNumberRepository)
+                .when(authRepository)
                 .findAuthComplete(phoneNum, AuthKind.findPwd);
         // when
         AuthNumberException result = assertThrows(AuthNumberException.class,
@@ -360,7 +349,7 @@ public class AuthNumberServiceTest {
         // given
         FindPasswordRequest request = new FindPasswordRequest("loginId", phoneNum, authNum, "newPwd", "newPwd");
         doReturn(Optional.of(createAuthNumber(phoneNum, authNum, AuthKind.findPwd, LocalDateTime.now().minusSeconds(target.getAuthNumberValidTime() - 1))))
-                .when(authNumberRepository)
+                .when(authRepository)
                 .findAuthComplete(phoneNum, AuthKind.findPwd);
         doReturn(Optional.empty())
                 .when(userRepository)
@@ -378,7 +367,7 @@ public class AuthNumberServiceTest {
         FindPasswordRequest request = new FindPasswordRequest("loginId", phoneNum, authNum, "newPwd", "newPwd");
         AuthNumber authNumber = createAuthNumber(phoneNum, authNum, AuthKind.findPwd, LocalDateTime.now().minusSeconds(target.getAuthNumberValidTime() - 1));
         doReturn(Optional.of(authNumber))
-                .when(authNumberRepository)
+                .when(authRepository)
                 .findAuthComplete(phoneNum, AuthKind.findPwd);
         Parent parent = Creator.createParent(phoneNum);
         doReturn(Optional.of(Creator.createParent(phoneNum)))
@@ -389,7 +378,7 @@ public class AuthNumberServiceTest {
         // then
         assertThat(user.getId()).isEqualTo(parent.getId());
         assertThat(encoder.matches("newPwd", user.getPassword())).isEqualTo(true);
-        verify(authNumberRepository, times(1)).delete(authNumber);
+        verify(authRepository, times(1)).delete(authNumber);
     }
 
     @Test
@@ -415,11 +404,11 @@ public class AuthNumberServiceTest {
                 .findByPhoneNumber(phoneNum);
 
         doReturn(Optional.empty())
-                .when(authNumberRepository)
+                .when(authRepository)
                 .findOverlap(phoneNum, AuthKind.updatePhoneNum);
 
         doReturn(createAuthNumber(AuthKind.updatePhoneNum))
-                .when(authNumberRepository)
+                .when(authRepository)
                 .save(any(AuthNumber.class));
         // when
         AuthNumber result = target.sendAuthNumberForChangePhone(id, phoneNum);
@@ -434,7 +423,7 @@ public class AuthNumberServiceTest {
         Long userId = 1L;
         AuthenticateAuthNumRequest request = new AuthenticateAuthNumRequest(phoneNum, authNum, AuthKind.updatePhoneNum);
         doReturn(Optional.empty())
-                .when(authNumberRepository)
+                .when(authRepository)
                 .findByPhoneNumAndAuthNumAndAuthKindAndUserId(phoneNum, authNum, AuthKind.updatePhoneNum, userId);
         // when
         AuthNumberException result = assertThrows(AuthNumberException.class,
@@ -450,7 +439,7 @@ public class AuthNumberServiceTest {
         AuthenticateAuthNumRequest request = new AuthenticateAuthNumRequest(phoneNum, authNum, AuthKind.updatePhoneNum);
         AuthNumber authNumber = createAuthNumber(AuthKind.updatePhoneNum);
         doReturn(Optional.of(authNumber))
-                .when(authNumberRepository)
+                .when(authRepository)
                 .findByPhoneNumAndAuthNumAndAuthKindAndUserId(phoneNum, authNum, AuthKind.updatePhoneNum, userId);
         // when
         AuthNumber result = target.authenticateAuthNum(userId, request);
@@ -464,7 +453,7 @@ public class AuthNumberServiceTest {
         // given
         AuthKind authKind = AuthKind.updatePhoneNum;
         doReturn(Optional.empty())
-                .when(authNumberRepository)
+                .when(authRepository)
                 .findAuthComplete(phoneNum, authKind);
         // when
         AuthNumberException result = assertThrows(AuthNumberException.class,
@@ -479,7 +468,7 @@ public class AuthNumberServiceTest {
         AuthKind authKind = AuthKind.updatePhoneNum;
         AuthNumber authNumber = createAuthNumber(phoneNum, authNum, authKind, LocalDateTime.now().minusSeconds(target.getAuthNumberValidTime() + 1));
         doReturn(Optional.of(authNumber))
-                .when(authNumberRepository)
+                .when(authRepository)
                 .findAuthComplete(phoneNum, authKind);
         // when
         AuthNumberException result = assertThrows(AuthNumberException.class,

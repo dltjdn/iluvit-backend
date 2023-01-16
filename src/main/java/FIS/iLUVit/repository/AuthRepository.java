@@ -6,12 +6,10 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
-import org.springframework.security.core.parameters.P;
 
-import java.util.List;
 import java.util.Optional;
 
-public interface AuthNumberRepository extends JpaRepository<AuthNumber, Long> {
+public interface AuthRepository extends JpaRepository<AuthNumber, Long> {
 
     @Modifying
     @Query("delete from AuthNumber a where a.phoneNum =:pNum and a.authKind =:kind")

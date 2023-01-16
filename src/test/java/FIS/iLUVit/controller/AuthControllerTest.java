@@ -11,7 +11,7 @@ import FIS.iLUVit.exception.AuthNumberErrorResult;
 import FIS.iLUVit.exception.AuthNumberException;
 import FIS.iLUVit.exception.exceptionHandler.ErrorResponse;
 import FIS.iLUVit.exception.exceptionHandler.controllerAdvice.GlobalControllerAdvice;
-import FIS.iLUVit.service.AuthNumberService;
+import FIS.iLUVit.service.AuthService;
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.algorithms.Algorithm;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -37,12 +37,12 @@ import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @ExtendWith(MockitoExtension.class)
-public class AuthNumberControllerTest {
+public class AuthControllerTest {
 
     @Mock
-    private AuthNumberService authNumberService;
+    private AuthService authService;
     @InjectMocks
-    private AuthNumberController target;
+    private AuthController target;
 
     private MockMvc mockMvc;
     private ObjectMapper objectMapper;
@@ -79,7 +79,7 @@ public class AuthNumberControllerTest {
         AuthNumberErrorResult error = AuthNumberErrorResult.ALREADY_PHONENUMBER_REGISTER;
 
         doThrow(new AuthNumberException(error))
-                .when(authNumberService)
+                .when(authService)
                 .sendAuthNumberForSignup(phoneNum);
 
         // when
@@ -105,7 +105,7 @@ public class AuthNumberControllerTest {
         AuthNumberErrorResult error = AuthNumberErrorResult.YET_AUTHNUMBER_VALID;
 
         doThrow(new AuthNumberException(error))
-                .when(authNumberService)
+                .when(authService)
                 .sendAuthNumberForSignup(phoneNum);
         // when
         ResultActions resultActions = mockMvc.perform(
@@ -145,7 +145,7 @@ public class AuthNumberControllerTest {
         AuthenticateAuthNumRequest request = new AuthenticateAuthNumRequest(phoneNum, authNum, AuthKind.signup);
         AuthNumberErrorResult error = AuthNumberErrorResult.AUTHENTICATION_FAIL;
         doThrow(new AuthNumberException(error))
-                .when(authNumberService)
+                .when(authService)
                 .authenticateAuthNum(null, request);
         // when
         ResultActions resultActions = mockMvc.perform(
@@ -169,7 +169,7 @@ public class AuthNumberControllerTest {
         AuthenticateAuthNumRequest request = new AuthenticateAuthNumRequest(phoneNum, authNum, AuthKind.signup);
         AuthNumberErrorResult error = AuthNumberErrorResult.EXPIRED;
         doThrow(new AuthNumberException(error))
-                .when(authNumberService)
+                .when(authService)
                 .authenticateAuthNum(null, request);
         // when
         ResultActions resultActions = mockMvc.perform(
@@ -227,7 +227,7 @@ public class AuthNumberControllerTest {
         final String url = "/authNumber/loginId";
         AuthNumberErrorResult error = AuthNumberErrorResult.NOT_SIGNUP_PHONE;
         doThrow(new AuthNumberException(error))
-                .when(authNumberService)
+                .when(authService)
                 .sendAuthNumberForFindLoginId(phoneNum);
         // when
         ResultActions resultActions = mockMvc.perform(
@@ -265,7 +265,7 @@ public class AuthNumberControllerTest {
         String loginId = "lo***Id";
         AuthenticateAuthNumRequest request = new AuthenticateAuthNumRequest(phoneNum, authNum, AuthKind.findLoginId);
         doReturn(loginId)
-                .when(authNumberService)
+                .when(authService)
                 .findLoginId(request);
         // when
         ResultActions resultActions = mockMvc.perform(
@@ -285,7 +285,7 @@ public class AuthNumberControllerTest {
         String url = "/authNumber/password";
         AuthNumberErrorResult error = AuthNumberErrorResult.NOT_MATCH_INFO;
         doThrow(new AuthNumberException(error))
-                .when(authNumberService)
+                .when(authService)
                 .sendAuthNumberForFindPassword("loginId", "phoneNumber");
         // when
         ResultActions resultActions = mockMvc.perform(
@@ -324,7 +324,7 @@ public class AuthNumberControllerTest {
         String url = "/user/authNumber/phoneNumber";
         AuthNumberErrorResult error = AuthNumberErrorResult.AUTHENTICATION_FAIL;
         doThrow(new AuthNumberException(error))
-                .when(authNumberService)
+                .when(authService)
                 .sendAuthNumberForChangePhone(null, phoneNum);
         // when
         ResultActions resultActions = mockMvc.perform(
@@ -383,7 +383,7 @@ public class AuthNumberControllerTest {
             AuthNumberErrorResult error = AuthNumberErrorResult.NOT_MATCH_CHECKPWD;
             FindPasswordRequest request = new FindPasswordRequest(user.getLoginId(), user.getPhoneNumber(), "1234", "asdf1234!", "asdf12345!");
             doThrow(new AuthNumberException(error))
-                    .when(authNumberService)
+                    .when(authService)
                     .changePassword(any());
             // when
             ResultActions result = mockMvc.perform(
@@ -406,7 +406,7 @@ public class AuthNumberControllerTest {
             AuthNumberErrorResult error = AuthNumberErrorResult.NOT_MATCH_INFO;
             FindPasswordRequest request = new FindPasswordRequest(user.getLoginId(), user.getPhoneNumber(), "1234", "asdf1234!", "asdf1234!");
             doThrow(new AuthNumberException(error))
-                    .when(authNumberService)
+                    .when(authService)
                     .changePassword(any());
             // when
             ResultActions result = mockMvc.perform(

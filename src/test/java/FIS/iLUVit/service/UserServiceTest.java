@@ -11,9 +11,8 @@ import FIS.iLUVit.domain.User;
 import FIS.iLUVit.domain.enumtype.AuthKind;
 import FIS.iLUVit.exception.*;
 import FIS.iLUVit.security.JwtUtils;
-import FIS.iLUVit.security.LoginResponse;
 import FIS.iLUVit.repository.AlarmRepository;
-import FIS.iLUVit.repository.AuthNumberRepository;
+import FIS.iLUVit.repository.AuthRepository;
 import FIS.iLUVit.repository.UserRepository;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -41,7 +40,7 @@ public class UserServiceTest {
     @Mock
     private UserRepository userRepository;
     @Mock
-    private AuthNumberRepository authNumberRepository;
+    private AuthRepository authRepository;
     @Mock
     private AlarmRepository alarmRepository;
     @Spy
@@ -92,7 +91,7 @@ public class UserServiceTest {
                 .when(userRepository)
                 .findByLoginIdOrNickName("loginId", "nickName");
         doReturn(Optional.empty())
-                .when(authNumberRepository)
+                .when(authRepository)
                 .findAuthComplete("phoneNum", AuthKind.signup);
         // when
         AuthNumberException result = assertThrows(AuthNumberException.class,
@@ -108,7 +107,7 @@ public class UserServiceTest {
                 .when(userRepository)
                 .findByLoginIdOrNickName("loginId", "nickName");
         doReturn(Optional.of(authNumber))
-                .when(authNumberRepository)
+                .when(authRepository)
                 .findAuthComplete("phoneNum", AuthKind.signup);
         // when
         AuthNumberException result = assertThrows(AuthNumberException.class,
@@ -125,7 +124,7 @@ public class UserServiceTest {
                 .when(userRepository)
                 .findByLoginIdOrNickName("loginId", "nickName");
         doReturn(Optional.of(authNumber))
-                .when(authNumberRepository)
+                .when(authRepository)
                 .findAuthComplete("phoneNum", AuthKind.signup);
         // when
         String result = target.signupValidation("pwd", "pwd", "loginId", "phoneNum", "nickName");
