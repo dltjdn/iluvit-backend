@@ -31,7 +31,7 @@ public class ParentController {
     /**
      * 작성날짜: 2022/05/16 10:18 AM
      * 작성자: 이승범
-     * 작성내용: 학부모 프로필 정보 업데이트
+     * 작성내용: 학부모 정보 수정
      */
     @PostMapping("info")
     public ParentDetailResponse updateParentDetail(@Login Long id, @Valid @ModelAttribute ParentDetailRequest request) throws IOException {
