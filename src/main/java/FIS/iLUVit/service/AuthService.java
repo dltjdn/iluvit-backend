@@ -4,11 +4,10 @@ import FIS.iLUVit.controller.dto.AuthenticateAuthNumRequest;
 import FIS.iLUVit.controller.dto.FindPasswordRequest;
 import FIS.iLUVit.domain.AuthNumber;
 import FIS.iLUVit.domain.User;
-import FIS.iLUVit.domain.enumtype.Auth;
 import FIS.iLUVit.domain.enumtype.AuthKind;
 import FIS.iLUVit.exception.AuthNumberErrorResult;
 import FIS.iLUVit.exception.AuthNumberException;
-import FIS.iLUVit.repository.AuthNumberRepository;
+import FIS.iLUVit.repository.AuthRepository;
 import FIS.iLUVit.repository.UserRepository;
 import FIS.iLUVit.service.messageService.MessageService;
 import lombok.RequiredArgsConstructor;
@@ -28,11 +27,11 @@ import java.util.Random;
 @Service
 @Transactional
 @RequiredArgsConstructor
-public class AuthNumberService {
+public class AuthService {
 
     private final MessageService defaultMessageService;
     private final UserRepository userRepository;
-    private final AuthNumberRepository authNumberRepository;
+    private final AuthRepository authRepository;
     private final BCryptPasswordEncoder encoder;
 
     @Value("${coolsms.fromNumber}")
@@ -112,12 +111,12 @@ public class AuthNumberService {
         AuthNumber authNumber;
 
         if (request.getAuthKind().equals(AuthKind.updatePhoneNum)) {
-            authNumber = authNumberRepository
+            authNumber = authRepository
                     .findByPhoneNumAndAuthNumAndAuthKindAndUserId(request.getPhoneNum(), request.getAuthNum(), request.getAuthKind(), userId)
                     .orElseThrow(() -> new AuthNumberException(AuthNumberErrorResult.AUTHENTICATION_FAIL));
 
         } else {
-            authNumber = authNumberRepository
+            authNumber = authRepository
                     .findByPhoneNumAndAuthNumAndAuthKind(request.getPhoneNum(), request.getAuthNum(), request.getAuthKind())
                     .orElseThrow(() -> new AuthNumberException(AuthNumberErrorResult.AUTHENTICATION_FAIL));
         }
@@ -143,7 +142,7 @@ public class AuthNumberService {
         User findUser = userRepository.findByPhoneNumber(authNumber.getPhoneNum())
                 .orElseThrow(() -> new AuthNumberException(AuthNumberErrorResult.NOT_SIGNUP_PHONE));
 
-        authNumberRepository.delete(authNumber);
+        authRepository.delete(authNumber);
         return blindLoginId(findUser.getLoginId());
     }
 
@@ -166,14 +165,14 @@ public class AuthNumberService {
                 .orElseThrow(() -> new AuthNumberException(AuthNumberErrorResult.NOT_MATCH_INFO));
 
         user.changePassword(encoder.encode(request.getNewPwd()));
-        authNumberRepository.delete(authNumber);
+        authRepository.delete(authNumber);
         return user;
     }
 
     // 인증이 완료된 인증번호인지 검사
     public AuthNumber validateAuthNumber(String phoneNum, AuthKind authKind) {
         // 핸드폰 인증여부 확인
-        AuthNumber authComplete = authNumberRepository.findAuthComplete(phoneNum, authKind)
+        AuthNumber authComplete = authRepository.findAuthComplete(phoneNum, authKind)
                 .orElseThrow(() -> new AuthNumberException(AuthNumberErrorResult.NOT_AUTHENTICATION));
         // 핸드폰 인증 후 일정시간이 지나면 무효화
         if (Duration.between(authComplete.getAuthTime(), LocalDateTime.now()).getSeconds() > authNumberValidTime) {
@@ -188,7 +187,7 @@ public class AuthNumberService {
         // 4자리 랜덤 숫자 생성
         String authNum = createRandomNumber();
 
-        AuthNumber overlaps = authNumberRepository.findOverlap(toNumber, authKind).orElse(null);
+        AuthNumber overlaps = authRepository.findOverlap(toNumber, authKind).orElse(null);
 
         // 인증번호 최초 요청인 경우 || 이미 인증번호를 받았지만 제한시간이 지난 경우
         if (overlaps == null || Duration.between(overlaps.getCreatedDate(), LocalDateTime.now()).getSeconds() > authValidTime) {
@@ -196,13 +195,13 @@ public class AuthNumberService {
             // 이미 인증번호를 받았지만 제한시간이 지난 경우
             if (overlaps != null) {
                 // 예전 인증번호 관련 정보를 db에서 지우고
-                authNumberRepository.deleteExpiredNumber(toNumber, authKind);
+                authRepository.deleteExpiredNumber(toNumber, authKind);
             }
             // 인증번호 보내고
             requestCoolSMS(toNumber, authNum);
             // 인증번호 관련 정보를 db에 저장
             AuthNumber authNumber = AuthNumber.createAuthNumber(toNumber, authNum, authKind, userId);
-            return authNumberRepository.save(authNumber);
+            return authRepository.save(authNumber);
 
             // 이미 인증번호를 요청하였고 제한시간이 지나지 않은 경우
         } else {

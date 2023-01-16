@@ -17,17 +17,16 @@ import javax.persistence.EntityManager;
 import javax.persistence.PersistenceException;
 
 import java.time.LocalDateTime;
-import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.*;
 
 
 @DataJpaTest(includeFilters = @ComponentScan.Filter(ForDB.class))
-public class AuthNumberRepositoryTest {
+public class AuthRepositoryTest {
 
     @Autowired
-    private AuthNumberRepository authNumberRepository;
+    private AuthRepository authRepository;
 
     @Autowired
     private EntityManager em;
@@ -58,12 +57,12 @@ public class AuthNumberRepositoryTest {
         //given
 
         //when
-        AuthNumber result = authNumberRepository.save(authNumber1);
+        AuthNumber result = authRepository.save(authNumber1);
         em.flush();
         em.clear();
 
         //then
-        AuthNumber target = authNumberRepository.findById(result.getId()).orElse(null);
+        AuthNumber target = authRepository.findById(result.getId()).orElse(null);
         assertThat(target).isNotNull();
         assertThat(target.getId()).isEqualTo(result.getId());
     }
@@ -71,13 +70,13 @@ public class AuthNumberRepositoryTest {
     @Test
     public void findOverlap() {
         // given
-        authNumberRepository.save(authNumber1);
-        authNumberRepository.save(authNumber2);
+        authRepository.save(authNumber1);
+        authRepository.save(authNumber2);
         em.flush();
         em.clear();
 
         // when
-        AuthNumber target = authNumberRepository.findOverlap(phoneNum1, AuthKind.signup).orElse(null);
+        AuthNumber target = authRepository.findOverlap(phoneNum1, AuthKind.signup).orElse(null);
 
         // then
         assertThat(target).isNotNull();
@@ -88,16 +87,16 @@ public class AuthNumberRepositoryTest {
     @Test
     public void deleteExpiredNumber() {
         // given
-        authNumberRepository.save(authNumber1);
-        authNumberRepository.save(authNumber2);
-        authNumberRepository.save(authNumber3);
-        authNumberRepository.save(authNumber4);
+        authRepository.save(authNumber1);
+        authRepository.save(authNumber2);
+        authRepository.save(authNumber3);
+        authRepository.save(authNumber4);
         em.flush();
         em.clear();
 
         // when
-        authNumberRepository.deleteExpiredNumber(phoneNum1, AuthKind.signup);
-        AuthNumber target = authNumberRepository.findOverlap(phoneNum1, AuthKind.signup).orElse(null);
+        authRepository.deleteExpiredNumber(phoneNum1, AuthKind.signup);
+        AuthNumber target = authRepository.findOverlap(phoneNum1, AuthKind.signup).orElse(null);
 
         // then
         assertThat(target).isNull();
@@ -106,16 +105,16 @@ public class AuthNumberRepositoryTest {
     @Test
     public void 이미인증번호발급받음() {
         // given
-        authNumberRepository.save(authNumber1);
-        authNumberRepository.save(authNumber2);
-        authNumberRepository.save(authNumber3);
-        authNumberRepository.save(authNumber4);
+        authRepository.save(authNumber1);
+        authRepository.save(authNumber2);
+        authRepository.save(authNumber3);
+        authRepository.save(authNumber4);
         em.flush();
         em.clear();
 
         // when
         AuthNumber over = AuthNumber.createAuthNumber(phoneNum1, authNum, AuthKind.signup, null);
-        authNumberRepository.save(over);
+        authRepository.save(over);
 
         // then
         PersistenceException exception = assertThrows(PersistenceException.class, () -> em.flush());
@@ -125,15 +124,15 @@ public class AuthNumberRepositoryTest {
     @Test
     public void findByPhoneNumAndAuthNumAndAuthKind() {
         // given
-        authNumberRepository.save(authNumber1);
-        authNumberRepository.save(authNumber2);
-        authNumberRepository.save(authNumber3);
-        authNumberRepository.save(authNumber4);
+        authRepository.save(authNumber1);
+        authRepository.save(authNumber2);
+        authRepository.save(authNumber3);
+        authRepository.save(authNumber4);
         em.flush();
         em.clear();
 
         // when
-        AuthNumber target = authNumberRepository.findByPhoneNumAndAuthNumAndAuthKind(phoneNum1, authNum, AuthKind.signup)
+        AuthNumber target = authRepository.findByPhoneNumAndAuthNumAndAuthKind(phoneNum1, authNum, AuthKind.signup)
                 .orElse(null);
 
         // then
@@ -145,11 +144,11 @@ public class AuthNumberRepositoryTest {
     public void findAuthComplete_인증된거없음() {
         // given
         AuthNumber authNumber = Creator.createAuthNumber(phoneNum1, authNum, AuthKind.findPwd, null);
-        authNumberRepository.save(authNumber);
+        authRepository.save(authNumber);
         em.flush();
         em.clear();
         // when
-        AuthNumber target = authNumberRepository.findAuthComplete(phoneNum1, AuthKind.findPwd).orElse(null);
+        AuthNumber target = authRepository.findAuthComplete(phoneNum1, AuthKind.findPwd).orElse(null);
         // then
         assertThat(target).isNull();
     }
@@ -158,11 +157,11 @@ public class AuthNumberRepositoryTest {
     public void findAuthComplete_인증된거있음() {
         // given
         AuthNumber authNumber = Creator.createAuthNumber(phoneNum1, authNum, AuthKind.findPwd, LocalDateTime.now());
-        authNumberRepository.save(authNumber);
+        authRepository.save(authNumber);
         em.flush();
         em.clear();
         // when
-        AuthNumber target = authNumberRepository.findAuthComplete(phoneNum1, AuthKind.findPwd).orElse(null);
+        AuthNumber target = authRepository.findAuthComplete(phoneNum1, AuthKind.findPwd).orElse(null);
         // then
         assertThat(target).isNotNull();
         assertThat(target.getId()).isEqualTo(authNumber.getId());
@@ -171,14 +170,14 @@ public class AuthNumberRepositoryTest {
     @Test
     public void deleteByPhoneNumAndAuthKind() {
         // given
-        authNumberRepository.save(authNumber1);
-        authNumberRepository.save(authNumber2);
+        authRepository.save(authNumber1);
+        authRepository.save(authNumber2);
         em.flush();
         em.clear();
         // when
-        authNumberRepository.deleteByPhoneNumAndAuthKind(authNumber1.getPhoneNum(), AuthKind.signup);
+        authRepository.deleteByPhoneNumAndAuthKind(authNumber1.getPhoneNum(), AuthKind.signup);
         // then
-        AuthNumber result = authNumberRepository.findById(authNumber1.getId()).orElse(null);
+        AuthNumber result = authRepository.findById(authNumber1.getId()).orElse(null);
         assertThat(result).isNull();
     }
 
@@ -192,15 +191,15 @@ public class AuthNumberRepositoryTest {
                 .authKind(AuthKind.updatePhoneNum)
                 .userId(user.getId())
                 .build();
-        authNumberRepository.save(authNumber);
-        authNumberRepository.save(authNumber1);
-        authNumberRepository.save(authNumber2);
-        authNumberRepository.save(authNumber3);
-        authNumberRepository.save(authNumber4);
+        authRepository.save(authNumber);
+        authRepository.save(authNumber1);
+        authRepository.save(authNumber2);
+        authRepository.save(authNumber3);
+        authRepository.save(authNumber4);
         em.flush();
         em.clear();
         // when
-        AuthNumber target = authNumberRepository.findByPhoneNumAndAuthNumAndAuthKindAndUserId(phoneNum1, authNum, authNumber.getAuthKind(), user.getId())
+        AuthNumber target = authRepository.findByPhoneNumAndAuthNumAndAuthKindAndUserId(phoneNum1, authNum, authNumber.getAuthKind(), user.getId())
                 .orElse(null);
         // then
         assertThat(target).isNotNull();

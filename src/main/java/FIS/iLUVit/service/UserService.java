@@ -8,7 +8,7 @@ import FIS.iLUVit.domain.alarms.Alarm;
 import FIS.iLUVit.domain.enumtype.AuthKind;
 import FIS.iLUVit.exception.*;
 import FIS.iLUVit.repository.AlarmRepository;
-import FIS.iLUVit.repository.AuthNumberRepository;
+import FIS.iLUVit.repository.AuthRepository;
 import FIS.iLUVit.repository.TokenPairRepository;
 import FIS.iLUVit.repository.UserRepository;
 import FIS.iLUVit.security.JwtUtils;
@@ -39,7 +39,7 @@ public class UserService {
 
     private final UserRepository userRepository;
     private final BCryptPasswordEncoder encoder;
-    private final AuthNumberRepository authNumberRepository;
+    private final AuthRepository authRepository;
     private final AlarmRepository alarmRepository;
     private final AuthenticationManager authenticationManager;
     private final JwtUtils jwtUtils;
@@ -92,7 +92,7 @@ public class UserService {
         }
 
         // 핸드폰 인증확인
-        AuthNumber authComplete = authNumberRepository.findAuthComplete(phoneNum, AuthKind.signup)
+        AuthNumber authComplete = authRepository.findAuthComplete(phoneNum, AuthKind.signup)
                 .orElseThrow(() -> new AuthNumberException(AuthNumberErrorResult.NOT_AUTHENTICATION));
 
         // 핸드폰 인증후 너무 많은 시간이 지났으면 인증 무효

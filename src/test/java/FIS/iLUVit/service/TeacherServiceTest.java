@@ -48,7 +48,7 @@ public class TeacherServiceTest {
     private TeacherService target;
 
     @Mock
-    private AuthNumberService authNumberService;
+    private AuthService authService;
     @Mock
     private UserService userService;
     @Mock
@@ -56,7 +56,7 @@ public class TeacherServiceTest {
     @Mock
     private TeacherRepository teacherRepository;
     @Mock
-    private AuthNumberRepository authNumberRepository;
+    private AuthRepository authRepository;
     @Mock
     private BoardRepository boardRepository;
     @Mock
@@ -178,7 +178,7 @@ public class TeacherServiceTest {
             verify(boardBookmarkRepository, times(2)).save(any(Bookmark.class));
             verify(centerRepository, times(1)).findByIdWithTeacher(request.getCenterId());
             verify(scrapRepository, times(1)).save(any(Scrap.class));
-            verify(authNumberRepository, times(1)).deleteByPhoneNumAndAuthKind(request.getPhoneNum(), AuthKind.signup);
+            verify(authRepository, times(1)).deleteByPhoneNumAndAuthKind(request.getPhoneNum(), AuthKind.signup);
         }
     }
 
@@ -221,7 +221,7 @@ public class TeacherServiceTest {
         verify(centerRepository, times(0)).findByIdWithTeacher(request.getCenterId());
         verify(boardBookmarkRepository, times(0)).save(any(Bookmark.class));
         verify(scrapRepository, times(1)).save(any(Scrap.class));
-        verify(authNumberRepository, times(1)).deleteByPhoneNumAndAuthKind(request.getPhoneNum(), AuthKind.signup);
+        verify(authRepository, times(1)).deleteByPhoneNumAndAuthKind(request.getPhoneNum(), AuthKind.signup);
     }
 
     @Test
@@ -278,7 +278,7 @@ public class TeacherServiceTest {
                 .findById(teacher1.getId());
         AuthNumberErrorResult error = AuthNumberErrorResult.NOT_AUTHENTICATION;
         doThrow(new AuthNumberException(error))
-                .when(authNumberService)
+                .when(authService)
                 .validateAuthNumber(request.getPhoneNum(), AuthKind.updatePhoneNum);
         // when
         AuthNumberException result = assertThrows(AuthNumberException.class,
