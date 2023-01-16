@@ -1,6 +1,5 @@
 package FIS.iLUVit.service;
 
-import FIS.iLUVit.Creator;
 import FIS.iLUVit.controller.dto.BoardListDTO;
 import FIS.iLUVit.controller.dto.CreateBoardRequest;
 import FIS.iLUVit.controller.dto.StoryHomeDTO;
@@ -21,7 +20,6 @@ import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.test.util.ReflectionTestUtils;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
@@ -43,7 +41,7 @@ class BoardServiceTest {
     private CenterRepository centerRepository;
 
     @Mock
-    private BookmarkRepository bookmarkRepository;
+    private BoardBookmarkRepository boardBookmarkRepository;
 
     @Mock
     private UserRepository userRepository;
@@ -335,7 +333,7 @@ class BoardServiceTest {
     public void 모두의_이야기_모든_게시판_조회() throws Exception {
         //given
         Mockito.doReturn(Arrays.asList(bookmark3))
-                .when(bookmarkRepository)
+                .when(boardBookmarkRepository)
                 .findBoardByUser(parent1.getId());
 
         Mockito.doReturn(Arrays.asList(board1, board2))
@@ -365,7 +363,7 @@ class BoardServiceTest {
                 .when(centerRepository)
                 .findById(1L);
         Mockito.doReturn(Arrays.asList(bookmark1, bookmark2))
-                .when(bookmarkRepository)
+                .when(boardBookmarkRepository)
                 .findBoardByUserAndCenter(parent1.getId(), 1L);
 
         Mockito.doReturn(Arrays.asList(board3, board5, board6))

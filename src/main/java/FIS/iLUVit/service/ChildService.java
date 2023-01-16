@@ -29,12 +29,12 @@ import java.util.stream.Collectors;
 public class ChildService {
 
     private final ImageService imageService;
-    private final BookmarkService bookmarkService;
+    private final BoardBookmarkService boardBookmarkService;
     private final ParentRepository parentRepository;
     private final CenterRepository centerRepository;
     private final ChildRepository childRepository;
     private final BoardRepository boardRepository;
-    private final BookmarkRepository bookmarkRepository;
+    private final BoardBookmarkRepository boardBookmarkRepository;
     private final TeacherRepository teacherRepository;
 
     /**
@@ -267,7 +267,7 @@ public class ChildService {
             // 승인하고자 하는 시설의 게시판들 lazyLoading 통해 가져오기
             teacher.getCenter().getBoards().forEach(board -> {
                 if (board.getIsDefault()) {
-                    bookmarkService.create(acceptedParent.getId(), board.getId());
+                    boardBookmarkService.create(acceptedParent.getId(), board.getId());
                 }
             });
         }
@@ -318,7 +318,7 @@ public class ChildService {
             List<Long> boardIds = boards.stream()
                     .map(Board::getId)
                     .collect(Collectors.toList());
-            bookmarkRepository.deleteAllByBoardAndUser(parentId, boardIds);
+            boardBookmarkRepository.deleteAllByBoardAndUser(parentId, boardIds);
         }
     }
 

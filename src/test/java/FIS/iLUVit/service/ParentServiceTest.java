@@ -29,7 +29,6 @@ import java.util.List;
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.*;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.*;
 
@@ -44,7 +43,7 @@ public class ParentServiceTest {
     @Mock
     private ParentRepository parentRepository;
     @Mock
-    private BookmarkRepository bookmarkRepository;
+    private BoardBookmarkRepository boardBookmarkRepository;
     @Mock
     private BoardRepository boardRepository;
     @Mock
@@ -106,7 +105,7 @@ public class ParentServiceTest {
         assertThat(result.getPassword()).isEqualTo("hashedPwd");
         assertThat(result.getLoginId()).isEqualTo("loginId");
         assertThat(result.getReadAlarm()).isEqualTo(true);
-        verify(bookmarkRepository, times(1)).save(any());
+        verify(boardBookmarkRepository, times(1)).save(any());
     }
 
     @Test

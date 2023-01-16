@@ -17,9 +17,9 @@ import java.util.stream.Collectors;
 @Transactional
 @RequiredArgsConstructor
 @Slf4j
-public class BookmarkService {
+public class BoardBookmarkService {
 
-    private final BookmarkRepository bookmarkRepository;
+    private final BoardBookmarkRepository boardBookmarkRepository;
     private final UserRepository userRepository;
     private final BoardRepository boardRepository;
 
@@ -84,13 +84,13 @@ public class BookmarkService {
     }
 
     private Map<Center, List<Post>> getCenterPostMapByBookmark(Long userId, Center tmp) {
-        return bookmarkRepository.findPostByBoard(userId).stream()
+        return boardBookmarkRepository.findPostByBoard(userId).stream()
                 .collect(Collectors.groupingBy(p -> p.getBoard().getCenter() == null ?
                         tmp : p.getBoard().getCenter()));
     }
 
     private Map<Center, List<Board>> getCenterBoardMapByBookmark(Long userId, Center tmp) {
-        return bookmarkRepository.findByUserWithBoardAndCenter(userId)
+        return boardBookmarkRepository.findByUserWithBoardAndCenter(userId)
                 .stream()
                 .map(bookmark -> bookmark.getBoard())
                 .collect(Collectors.toList())
@@ -153,19 +153,19 @@ public class BookmarkService {
         Board findBoard = boardRepository.findById(boardId)
                 .orElseThrow(() -> new BookmarkException(BookmarkErrorResult.BOARD_NOT_EXIST));
         Bookmark bookmark = new Bookmark(findBoard, findUser);
-        return bookmarkRepository.save(bookmark).getId();
+        return boardBookmarkRepository.save(bookmark).getId();
     }
 
     public Long delete(Long userId, Long bookmarkId) {
         if (userId == null) {
             throw new BookmarkException(BookmarkErrorResult.UNAUTHORIZED_USER_ACCESS);
         }
-        Bookmark findBookmark = bookmarkRepository.findById(bookmarkId)
+        Bookmark findBookmark = boardBookmarkRepository.findById(bookmarkId)
                 .orElseThrow(() -> new BookmarkException(BookmarkErrorResult.BOOKMARK_NOT_EXIST));
         if (!Objects.equals(findBookmark.getUser().getId(), userId)) {
             throw new BookmarkException(BookmarkErrorResult.UNAUTHORIZED_USER_ACCESS);
         }
-        bookmarkRepository.delete(findBookmark);
+        boardBookmarkRepository.delete(findBookmark);
         return bookmarkId;
    }
 }

@@ -32,7 +32,7 @@ public class PostService {
     private final ImageService imageService;
     private final BoardRepository boardRepository;
     private final CenterRepository centerRepository;
-    private final BookmarkRepository bookmarkRepository;
+    private final BoardBookmarkRepository boardBookmarkRepository;
     private final PostHeartRepository postHeartRepository;
     private final ChatRoomRepository chatRoomRepository;
     private final AlarmRepository alarmRepository;
@@ -219,7 +219,7 @@ public class PostService {
 
             addBoardPreviews(boardPreviews, boardList);
         } else {
-            List<Bookmark> bookmarkList = bookmarkRepository.findBoardByUser(userId);
+            List<Bookmark> bookmarkList = boardBookmarkRepository.findBoardByUser(userId);
             getBoardPreviews(bookmarkList, boardPreviews);
         }
 
@@ -260,7 +260,7 @@ public class PostService {
         }
 
         List<BoardPreview> boardPreviews = new ArrayList<>();
-        List<Bookmark> bookmarkList = bookmarkRepository.findBoardByUserAndCenter(userId, centerId);
+        List<Bookmark> bookmarkList = boardBookmarkRepository.findBoardByUserAndCenter(userId, centerId);
         getBoardPreviews(bookmarkList, boardPreviews);
 
         // HOT 게시판 정보 추가

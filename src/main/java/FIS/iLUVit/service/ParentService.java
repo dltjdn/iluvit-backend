@@ -36,7 +36,7 @@ public class ParentService {
     private final CenterRepository centerRepository;
     private final PreferRepository preferRepository;
     private final BoardRepository boardRepository;
-    private final BookmarkRepository bookmarkRepository;
+    private final BoardBookmarkRepository boardBookmarkRepository;
     private final MapService mapService;
 
 
@@ -130,7 +130,7 @@ public class ParentService {
         List<Board> defaultBoards = boardRepository.findDefaultByModu();
         for (Board defaultBoard : defaultBoards) {
             Bookmark bookmark = Bookmark.createBookmark(defaultBoard, parent);
-            bookmarkRepository.save(bookmark);
+            boardBookmarkRepository.save(bookmark);
         }
         return parent;
     }

@@ -16,12 +16,8 @@ import org.mockito.Mock;
 import org.mockito.MockedStatic;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.SliceImpl;
 import org.springframework.mock.web.MockMultipartFile;
 
-import javax.swing.text.html.Option;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
@@ -41,7 +37,7 @@ public class ChildServiceTest {
     @InjectMocks
     private ChildService target;
     @Mock
-    private BookmarkService bookmarkService;
+    private BoardBookmarkService boardBookmarkService;
     @Mock
     private ImageService imageService;
     @Mock
@@ -55,7 +51,7 @@ public class ChildServiceTest {
     @Mock
     private BoardRepository boardRepository;
     @Mock
-    private BookmarkRepository bookmarkRepository;
+    private BoardBookmarkRepository boardBookmarkRepository;
 
     private Parent parent1;
     private Parent parent2;
@@ -239,7 +235,7 @@ public class ChildServiceTest {
                 // then
                 assertThat(result.getId()).isEqualTo(child4.getId());
                 assertThat(result.getApproval()).isEqualTo(Approval.ACCEPT);
-                verify(bookmarkService, times(2)).create(any(), any());
+                verify(boardBookmarkService, times(2)).create(any(), any());
             }
         }
 
@@ -274,7 +270,7 @@ public class ChildServiceTest {
                 // then
                 assertThat(result.getId()).isEqualTo(child2.getId());
                 assertThat(result.getApproval()).isEqualTo(Approval.ACCEPT);
-                verify(bookmarkService, times(0)).create(any(), any());
+                verify(boardBookmarkService, times(0)).create(any(), any());
             }
         }
     }
@@ -331,7 +327,7 @@ public class ChildServiceTest {
             // then
             assertThat(child1.getApproval()).isEqualTo(Approval.REJECT);
             assertThat(child1.getCenter()).isNull();
-            verify(bookmarkRepository, times(1)).deleteAllByBoardAndUser(any(), any());
+            verify(boardBookmarkRepository, times(1)).deleteAllByBoardAndUser(any(), any());
         }
 
         @Test
@@ -354,7 +350,7 @@ public class ChildServiceTest {
             assertThat(child1.getApproval()).isEqualTo(Approval.REJECT);
             assertThat(child1.getCenter()).isNull();
             verify(boardRepository, times(0)).findByCenter(any());
-            verify(bookmarkRepository, times(0)).deleteAllByBoardAndUser(any(), any());
+            verify(boardBookmarkRepository, times(0)).deleteAllByBoardAndUser(any(), any());
         }
     }
 
@@ -597,7 +593,7 @@ public class ChildServiceTest {
             assertThat(result.getId()).isEqualTo(child2.getId());
             assertThat(result.getParent().getId()).isEqualTo(parent1.getId());
             assertThat(result.getCenter()).isNull();
-            verify(bookmarkRepository, times(0)).deleteAllByBoardAndUser(any(), any());
+            verify(boardBookmarkRepository, times(0)).deleteAllByBoardAndUser(any(), any());
         }
         @Test
         @DisplayName("[success] 해당 시설에 사용자의 아이가 이제 없는경우")
@@ -612,7 +608,7 @@ public class ChildServiceTest {
             assertThat(result.getId()).isEqualTo(child1.getId());
             assertThat(result.getParent().getId()).isEqualTo(parent1.getId());
             assertThat(result.getCenter()).isNull();
-            verify(bookmarkRepository, times(1)).deleteAllByBoardAndUser(any(), any());
+            verify(boardBookmarkRepository, times(1)).deleteAllByBoardAndUser(any(), any());
         }
 
     }
@@ -680,7 +676,7 @@ public class ChildServiceTest {
             //when
             target.deleteBookmarkByCenter(parent1.getId(), childrenByUser, child2);
             //then
-            verify(bookmarkRepository, times(0)).deleteAllByBoardAndUser(any(), any());
+            verify(boardBookmarkRepository, times(0)).deleteAllByBoardAndUser(any(), any());
         }
 
         @Test
@@ -690,7 +686,7 @@ public class ChildServiceTest {
             //when
             target.deleteBookmarkByCenter(parent1.getId(), childrenByUser, child1);
             //then
-            verify(bookmarkRepository, times(1)).deleteAllByBoardAndUser(any(), any());
+            verify(boardBookmarkRepository, times(1)).deleteAllByBoardAndUser(any(), any());
         }
     }
 }

@@ -8,7 +8,7 @@ import FIS.iLUVit.domain.enumtype.BoardKind;
 import FIS.iLUVit.exception.BookmarkErrorResult;
 import FIS.iLUVit.exception.BookmarkException;
 import FIS.iLUVit.repository.BoardRepository;
-import FIS.iLUVit.repository.BookmarkRepository;
+import FIS.iLUVit.repository.BoardBookmarkRepository;
 import FIS.iLUVit.repository.UserRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -32,10 +32,10 @@ import static org.mockito.ArgumentMatchers.any;
 
 @ExtendWith(MockitoExtension.class)
 @MockitoSettings(strictness = Strictness.LENIENT)
-class BookmarkServiceTest {
+class BoardBookmarkServiceTest {
 
     @Mock
-    BookmarkRepository bookmarkRepository;
+    BoardBookmarkRepository boardBookmarkRepository;
 
     @Mock
     UserRepository userRepository;
@@ -44,7 +44,7 @@ class BookmarkServiceTest {
     BoardRepository boardRepository;
 
     @InjectMocks
-    BookmarkService bookmarkService;
+    BoardBookmarkService boardBookmarkService;
 
     Board board1;
     Board board2;
@@ -129,14 +129,14 @@ class BookmarkServiceTest {
     public void 북마크_목록_한번에() throws Exception {
         //given
         Mockito.doReturn(Arrays.asList(bookmark1, bookmark2, bookmark3))
-                .when(bookmarkRepository)
+                .when(boardBookmarkRepository)
                 .findByUserWithBoardAndCenter(parent1.getId());
 
         Mockito.doReturn(Arrays.asList(post3, post4, post5, post6))
-                .when(bookmarkRepository)
+                .when(boardBookmarkRepository)
                 .findPostByBoard(parent1.getId());
         //when
-        BookmarkMainDTO dto = bookmarkService.search(parent1.getId());
+        BookmarkMainDTO dto = boardBookmarkService.search(parent1.getId());
         //then
         List<BookmarkMainDTO.StoryDTO> stories = dto.getStories();
 
@@ -151,7 +151,7 @@ class BookmarkServiceTest {
                 .when(boardRepository)
                 .findPostByDefault();
         //when
-        BookmarkMainDTO dto = bookmarkService.searchByDefault();
+        BookmarkMainDTO dto = boardBookmarkService.searchByDefault();
         //then
         List<BookmarkMainDTO.StoryDTO> stories = dto.getStories();
         List<BookmarkMainDTO.BoardDTO> boardDTOList = stories.get(0).getBoardDTOList();
@@ -167,7 +167,7 @@ class BookmarkServiceTest {
         //given
         //when
         BookmarkException result = assertThrows(BookmarkException.class,
-                () -> bookmarkService.create(null, board1.getId()));
+                () -> boardBookmarkService.create(null, board1.getId()));
         //then
         assertThat(result.getErrorResult())
                 .isEqualTo(BookmarkErrorResult.UNAUTHORIZED_USER_ACCESS);
@@ -181,7 +181,7 @@ class BookmarkServiceTest {
                 .findById(any());
         //when
         BookmarkException result = assertThrows(BookmarkException.class,
-                () -> bookmarkService.create(parent1.getId(), board1.getId()));
+                () -> boardBookmarkService.create(parent1.getId(), board1.getId()));
         //then
         assertThat(result.getErrorResult())
                 .isEqualTo(BookmarkErrorResult.USER_NOT_EXIST);
@@ -199,7 +199,7 @@ class BookmarkServiceTest {
                 .findById(any());
         //when
         BookmarkException result = assertThrows(BookmarkException.class,
-                () -> bookmarkService.create(parent1.getId(), board1.getId()));
+                () -> boardBookmarkService.create(parent1.getId(), board1.getId()));
         //then
         assertThat(result.getErrorResult())
                 .isEqualTo(BookmarkErrorResult.BOARD_NOT_EXIST);
@@ -217,10 +217,10 @@ class BookmarkServiceTest {
                 .findById(any());
 
         Mockito.doReturn(bookmark1)
-                .when(bookmarkRepository)
+                .when(boardBookmarkRepository)
                 .save(any());
         //when
-        Long bookmarkId = bookmarkService.create(parent1.getId(), board1.getId());
+        Long bookmarkId = boardBookmarkService.create(parent1.getId(), board1.getId());
         //then
         assertThat(bookmarkId).isEqualTo(bookmark1.getId());
     }
@@ -229,11 +229,11 @@ class BookmarkServiceTest {
     public void 북마크_삭제_북마크X() throws Exception {
         //given
         Mockito.doReturn(Optional.empty())
-                .when(bookmarkRepository)
+                .when(boardBookmarkRepository)
                 .findById(any());
         //when
         BookmarkException result = assertThrows(BookmarkException.class,
-                () -> bookmarkService.delete(parent1.getId(), bookmark1.getId()));
+                () -> boardBookmarkService.delete(parent1.getId(), bookmark1.getId()));
 
         //then
         assertThat(result.getErrorResult())
@@ -245,7 +245,7 @@ class BookmarkServiceTest {
         //given
         //when
         BookmarkException result = assertThrows(BookmarkException.class,
-                () -> bookmarkService.delete(null, bookmark1.getId()));
+                () -> boardBookmarkService.delete(null, bookmark1.getId()));
 
         //then
         assertThat(result.getErrorResult())
@@ -256,11 +256,11 @@ class BookmarkServiceTest {
     public void 북마크_삭제_권한없는_유저() throws Exception {
         //given
         Mockito.doReturn(Optional.ofNullable(bookmark1))
-                .when(bookmarkRepository)
+                .when(boardBookmarkRepository)
                 .findById(bookmark1.getId());
         //when
         BookmarkException result = assertThrows(BookmarkException.class,
-                () -> bookmarkService.delete(teacher1.getId(), bookmark1.getId()));
+                () -> boardBookmarkService.delete(teacher1.getId(), bookmark1.getId()));
 
         //then
         assertThat(result.getErrorResult())
@@ -271,11 +271,11 @@ class BookmarkServiceTest {
     public void 북마크_삭제_성공() throws Exception {
         //given
         Mockito.doReturn(Optional.ofNullable(bookmark1))
-                .when(bookmarkRepository)
+                .when(boardBookmarkRepository)
                 .findById(any());
 
         //when
-        Long deletedId = bookmarkService.delete(parent1.getId(), bookmark1.getId());
+        Long deletedId = boardBookmarkService.delete(parent1.getId(), bookmark1.getId());
 
         //then
         assertThat(deletedId).isEqualTo(bookmark1.getId());

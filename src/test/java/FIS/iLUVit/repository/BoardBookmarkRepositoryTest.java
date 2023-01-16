@@ -19,16 +19,15 @@ import java.util.stream.Collectors;
 import static FIS.iLUVit.service.createmethod.CreateTest.*;
 import static FIS.iLUVit.service.createmethod.CreateTest.createCenter;
 import static org.assertj.core.api.Assertions.*;
-import static org.junit.jupiter.api.Assertions.*;
 
 @DataJpaTest(includeFilters = @ComponentScan.Filter(ForDB.class))
-class BookmarkRepositoryTest {
+class BoardBookmarkRepositoryTest {
 
     @Autowired
     private TestEntityManager em;
 
     @Autowired
-    private BookmarkRepository bookmarkRepository;
+    private BoardBookmarkRepository boardBookmarkRepository;
 
     @Autowired
     private BoardRepository boardRepository;
@@ -122,7 +121,7 @@ class BookmarkRepositoryTest {
         em.flush();
         em.clear();
         //when
-        List<Bookmark> bookmarkList = bookmarkRepository.findBoardByUser(parent1.getId());
+        List<Bookmark> bookmarkList = boardBookmarkRepository.findBoardByUser(parent1.getId());
         Board findBoard1 = boardRepository.findById(board1.getId()).get();
         Board findBoard2 = boardRepository.findById(board2.getId()).get();
         //then
@@ -140,7 +139,7 @@ class BookmarkRepositoryTest {
         em.flush();
         em.clear();
         //when
-        List<Bookmark> bookmarkList = bookmarkRepository.findBoardByUserAndCenter(parent1.getId(), center1.getId());
+        List<Bookmark> bookmarkList = boardBookmarkRepository.findBoardByUserAndCenter(parent1.getId(), center1.getId());
         Board findBoard1 = boardRepository.findById(board3.getId()).get();
         //then
         assertThat(bookmarkList).extracting("board")
@@ -169,7 +168,7 @@ class BookmarkRepositoryTest {
         em.flush();
         em.clear();
         //when
-        List<Post> postList = bookmarkRepository.findPostByBoard(saved1.getId());
+        List<Post> postList = boardBookmarkRepository.findPostByBoard(saved1.getId());
         //then
         List<Board> boardList = postList.stream()
                 .map(Post::getBoard)
@@ -209,12 +208,12 @@ class BookmarkRepositoryTest {
         List<Long> boardIds = Arrays
                 .asList(saved1.getId(), saved2.getId(), saved3.getId(), saved4.getId());
 
-        List<Bookmark> bookmarkList = bookmarkRepository.findAll();
+        List<Bookmark> bookmarkList = boardBookmarkRepository.findAll();
         //when
-        bookmarkRepository.deleteAllByBoardAndUser(savedParent.getId(), boardIds);
+        boardBookmarkRepository.deleteAllByBoardAndUser(savedParent.getId(), boardIds);
 
         //then
-        List<Bookmark> postDelete = bookmarkRepository.findAll();
+        List<Bookmark> postDelete = boardBookmarkRepository.findAll();
 
         assertThat(bookmarkList.size()).isEqualTo(4);
         assertThat(postDelete).isEmpty();
@@ -237,11 +236,11 @@ class BookmarkRepositoryTest {
         em.clear();
         List<Long> boardIds = List.of(board3.getId(), board4.getId());
         // when
-        bookmarkRepository.deleteAllByBoardAndUser(parent1.getId(), boardIds);
+        boardBookmarkRepository.deleteAllByBoardAndUser(parent1.getId(), boardIds);
         em.flush();
         em.clear();
         // then
-        List<Bookmark> result = bookmarkRepository.findByUser(parent1);
+        List<Bookmark> result = boardBookmarkRepository.findByUser(parent1);
         assertThat(result.size()).isEqualTo(2);
         result.forEach(bookmark -> {
             assertThat(bookmark.getBoard().getCenter()).isNull();
@@ -268,7 +267,7 @@ class BookmarkRepositoryTest {
         em.flush();
         em.clear();
         // when
-        List<Bookmark> result = bookmarkRepository.findByUser(parent1);
+        List<Bookmark> result = boardBookmarkRepository.findByUser(parent1);
         // then
         assertThat(result.size()).isEqualTo(4);
         for (Bookmark bookmark : result) {
@@ -297,9 +296,9 @@ class BookmarkRepositoryTest {
         em.flush();
         em.clear();
         // when
-        bookmarkRepository.deleteAllByCenterAndUser(parent1.getId(), center1.getId());
+        boardBookmarkRepository.deleteAllByCenterAndUser(parent1.getId(), center1.getId());
         // then
-        List<Bookmark> result = bookmarkRepository.findByUserWithBoardAndCenter(parent1.getId());
+        List<Bookmark> result = boardBookmarkRepository.findByUserWithBoardAndCenter(parent1.getId());
         assertThat(result.size()).isEqualTo(2);
         for (Bookmark bookmark : result) {
             if (bookmark.getBoard().getCenter() != null) {
