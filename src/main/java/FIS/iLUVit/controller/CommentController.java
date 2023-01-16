@@ -17,6 +17,16 @@ public class CommentController {
     private final CommentService commentService;
 
     /**
+     작성자: 이창윤
+     작성시간: 2022/06/27 10:19 AM
+     내용: 댓글 단 글 리스트
+     */
+    @GetMapping("mypage")
+    public Slice<CommentDTO> searchCommentByUser(@Login Long userId, Pageable pageable) {
+        return commentService.searchByUser(userId, pageable);
+    }
+
+    /**
         작성자: 이창윤
         작성시간: 2022/06/27 10:09 AM
         내용: 댓글 작성, comment_id 값까지 보내는 경우 대댓글 작성
@@ -42,13 +52,4 @@ public class CommentController {
         // 삭제하면 그 대댓글까지 삭제? or 대댓글은 남김?
     }
 
-    /**
-        작성자: 이창윤
-        작성시간: 2022/06/27 10:19 AM
-        내용: 댓글 단 글 리스트
-    */
-    @GetMapping("mypage")
-    public Slice<CommentDTO> searchCommentByUser(@Login Long userId, Pageable pageable) {
-        return commentService.searchByUser(userId, pageable);
-    }
 }
