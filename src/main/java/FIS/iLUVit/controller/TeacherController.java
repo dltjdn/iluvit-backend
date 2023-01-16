@@ -13,6 +13,7 @@ import java.io.IOException;
 @Slf4j
 @RestController
 @RequiredArgsConstructor
+@RequestMapping("teacher")
 public class TeacherController {
 
     private final TeacherService teacherService;
@@ -22,7 +23,7 @@ public class TeacherController {
      * 작성자: 이승범
      * 작성내용: 선생의 프로필 조회
      */
-    @GetMapping("/teacher/detail")
+    @GetMapping("")
     public TeacherDetailResponse findTeacherDetail(@Login Long id) throws IOException {
         return teacherService.findDetail(id);
     }
@@ -32,7 +33,7 @@ public class TeacherController {
      * 작성자: 이승범
      * 작성내용: 선생의 프로필 정보 update
      */
-    @PostMapping("/teacher/detail")
+    @PostMapping("")
     public TeacherDetailResponse updateTeacherDetail(@Login Long id, @Valid @ModelAttribute UpdateTeacherDetailRequest request) throws IOException {
         return teacherService.updateDetail(id, request);
     }
@@ -42,7 +43,7 @@ public class TeacherController {
      * 작성자: 이승범
      * 작성내용: 교사 회원가입
      */
-    @PostMapping("/signup/teacher")
+    @PostMapping("signup")
     public void signup(@RequestBody @Valid SignupTeacherRequest request) {
         teacherService.signup(request);
     }
@@ -52,7 +53,7 @@ public class TeacherController {
      * 작성자: 이승범
      * 작성내용: 시설에 등록신청
      */
-    @PatchMapping("/teacher/{centerId}/assign")
+    @PatchMapping("center/{centerId}")
     public void assignCenter(@Login Long userId, @PathVariable("centerId") Long centerId) {
         teacherService.assignCenter(userId, centerId);
     }
@@ -62,7 +63,7 @@ public class TeacherController {
      * 작성자: 이승범
      * 작성내용: 시설 탈퇴하기
      */
-    @PatchMapping("/teacher/center/escape")
+    @PatchMapping("center")
     public void escapeCenter(@Login Long userId) {
         teacherService.escapeCenter(userId);
     }
@@ -72,7 +73,7 @@ public class TeacherController {
      * 작성자: 이승범
      * 작성내용: 교사 관리 페이지
      */
-    @GetMapping("/director/teacher/approval")
+    @GetMapping("approval")
     public TeacherApprovalListResponse teacherApprovalList(@Login Long userId) {
         return teacherService.findTeacherApprovalList(userId);
     }
@@ -82,7 +83,7 @@ public class TeacherController {
      * 작성자: 이승범
      * 작성내용: 교사 승인
      */
-    @PatchMapping("/director/teacher/accept/{teacherId}")
+    @PatchMapping("{teacherId}/accept")
     public void acceptTeacher(@Login Long userId, @PathVariable("teacherId") Long teacherId) {
         teacherService.acceptTeacher(userId, teacherId);
     }
@@ -92,7 +93,7 @@ public class TeacherController {
      * 작성자: 이승범
      * 작성내용: 교사 삭제/승인거절
      */
-    @PatchMapping("/director/teacher/fire/{teacherId}")
+    @PatchMapping("{teacherId}/reject")
     public void fireTeacher(@Login Long userId, @PathVariable("teacherId") Long teacherId) {
         teacherService.fireTeacher(userId, teacherId);
     }
@@ -102,7 +103,7 @@ public class TeacherController {
      * 작성자: 이승범
      * 작성내용: 원장권한 부여
      */
-    @PatchMapping("/director/teacher/mandate/{teacherId}")
+    @PatchMapping("{teacherId}/mandate")
     public void mandateTeacher(@Login Long userId, @PathVariable("teacherId") Long teacherId) {
         teacherService.mandateTeacher(userId, teacherId);
     }
@@ -112,7 +113,7 @@ public class TeacherController {
      * 작성자: 이승범
      * 작성내용: 원장권한 박탈
      */
-    @PatchMapping("/director/teacher/demote/{teacherId}")
+    @PatchMapping("{teacherId}/demote")
     public void demoteTeacher(@Login Long userId, @PathVariable("teacherId") Long teacherId) {
         teacherService.demoteTeacher(userId, teacherId);
     }
