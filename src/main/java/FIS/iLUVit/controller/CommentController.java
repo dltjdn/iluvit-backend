@@ -29,7 +29,7 @@ public class CommentController {
     /**
         작성자: 이창윤
         작성시간: 2022/06/27 10:09 AM
-        내용: 댓글 작성, comment_id 값까지 보내는 경우 대댓글 작성
+        내용: comment_id 값이 null일 경우 댓글 작성, comment_id 값까지 보내는 경우 대댓글 작성
     */
     @PostMapping("")
     public Long registerComment(@Login Long userId,
