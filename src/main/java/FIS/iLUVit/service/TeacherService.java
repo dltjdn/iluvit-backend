@@ -40,7 +40,7 @@ public class TeacherService {
     private final TeacherRepository teacherRepository;
     private final AuthNumberRepository authNumberRepository;
     private final BoardRepository boardRepository;
-    private final BookmarkRepository bookmarkRepository;
+    private final BoardBookmarkRepository boardBookmarkRepository;
     private final ScrapRepository scrapRepository;
     private final MapService mapService;
 
@@ -145,7 +145,7 @@ public class TeacherService {
         List<Board> defaultBoards = boardRepository.findDefaultByModu();
         for (Board defaultBoard : defaultBoards) {
             Bookmark bookmark = Bookmark.createBookmark(defaultBoard, teacher);
-            bookmarkRepository.save(bookmark);
+            boardBookmarkRepository.save(bookmark);
         }
 
         // default 스크랩 생성
@@ -261,7 +261,7 @@ public class TeacherService {
         List<Board> defaultBoards = boardRepository.findDefaultByCenter(director.getCenter().getId());
         for (Board defaultBoard : defaultBoards) {
             Bookmark bookmark = Bookmark.createBookmark(defaultBoard, acceptedTeacher);
-            bookmarkRepository.save(bookmark);
+            boardBookmarkRepository.save(bookmark);
         }
 
         return acceptedTeacher;
@@ -342,7 +342,7 @@ public class TeacherService {
             List<Long> boardIds = boards.stream()
                     .map(Board::getId)
                     .collect(Collectors.toList());
-            bookmarkRepository.deleteAllByBoardAndUser(escapedTeacher.getId(), boardIds);
+            boardBookmarkRepository.deleteAllByBoardAndUser(escapedTeacher.getId(), boardIds);
         }
     }
 }

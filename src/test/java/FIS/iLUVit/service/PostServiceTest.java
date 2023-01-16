@@ -55,7 +55,7 @@ class PostServiceTest {
     @Mock
     CenterRepository centerRepository;
     @Mock
-    BookmarkRepository bookmarkRepository;
+    BoardBookmarkRepository boardBookmarkRepository;
     @Mock
     ScrapPostRepository scrapPostRepository;
     @Mock
@@ -823,7 +823,7 @@ class PostServiceTest {
                 .findById(parent1.getId());
 
         Mockito.doReturn(Arrays.asList(bookmark1, bookmark2, bookmark3))
-                .when(bookmarkRepository)
+                .when(boardBookmarkRepository)
                 .findBoardByUserAndCenter(parent1.getId(), center1.getId());
 
         Mockito.doReturn(Arrays.asList(post1, post3, post5, post7))
@@ -905,7 +905,7 @@ class PostServiceTest {
         Bookmark bookmark3 = new Bookmark(52L, board3, teacher1);
 
         Mockito.doReturn(Arrays.asList(bookmark1, bookmark2, bookmark3))
-                .when(bookmarkRepository)
+                .when(boardBookmarkRepository)
                 .findBoardByUserAndCenter(teacher1.getId(), center1.getId());
 
         Mockito.doReturn(Arrays.asList(post1, post3, post5, post7))

@@ -2,7 +2,7 @@ package FIS.iLUVit.controller;
 
 import FIS.iLUVit.config.argumentResolver.Login;
 import FIS.iLUVit.controller.dto.BookmarkMainDTO;
-import FIS.iLUVit.service.BookmarkService;
+import FIS.iLUVit.service.BoardBookmarkService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("board-bookmark")
 public class BoardBookmarkController {
 
-    private final BookmarkService bookmarkService;
+    private final BoardBookmarkService boardBookmarkService;
 
     /**
         작성자: 이창윤
@@ -22,9 +22,9 @@ public class BoardBookmarkController {
     @GetMapping("main")
     public BookmarkMainDTO search(@Login Long userId) {
         if (userId == null) {
-            return bookmarkService.searchByDefault();
+            return boardBookmarkService.searchByDefault();
         }
-        return bookmarkService.search(userId);
+        return boardBookmarkService.search(userId);
     }
 
     /**
@@ -34,7 +34,7 @@ public class BoardBookmarkController {
     */
     @PostMapping("{boardId}")
     public Long createBookmark(@Login Long userId, @PathVariable("boardId") Long boardId) {
-        return bookmarkService.create(userId, boardId);
+        return boardBookmarkService.create(userId, boardId);
     }
 
     /**
@@ -44,6 +44,6 @@ public class BoardBookmarkController {
     */
     @DeleteMapping("{bookmarkId}")
     public Long deleteBookmark(@Login Long userId, @PathVariable("bookmarkId") Long bookmarkId) {
-        return bookmarkService.delete(userId, bookmarkId);
+        return boardBookmarkService.delete(userId, bookmarkId);
     }
 }

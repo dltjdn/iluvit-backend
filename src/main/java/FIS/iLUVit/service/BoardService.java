@@ -26,7 +26,7 @@ import java.util.stream.Collectors;
 public class BoardService {
 
     private final BoardRepository boardRepository;
-    private final BookmarkRepository bookmarkRepository;
+    private final BoardBookmarkRepository boardBookmarkRepository;
     private final CenterRepository centerRepository;
     private final UserRepository userRepository;
     private final ChildRepository childRepository;
@@ -34,7 +34,7 @@ public class BoardService {
     public BoardListDTO findAllWithBookmark(Long userId) {
         BoardListDTO dto = new BoardListDTO(null, "모두의 이야기");
         // 모두의 이야기 내 유저의 북마크 정보
-        List<Bookmark> bookmarks = bookmarkRepository.findBoardByUser(userId);
+        List<Bookmark> bookmarks = boardBookmarkRepository.findBoardByUser(userId);
         // 모두의 이야기 내 모든 게시판
         List<Board> boards = boardRepository.findByCenterIsNull();
         // DTO 생성 후 반환
@@ -48,7 +48,7 @@ public class BoardService {
                 .orElseThrow(() -> new CenterException(CenterErrorResult.CENTER_NOT_EXIST));
         BoardListDTO dto = new BoardListDTO(centerId, findCenter.getName());
         // 시설(유치원)의 이야기 내 유저의 북마크 정보
-        List<Bookmark> bookmarks = bookmarkRepository.findBoardByUserAndCenter(userId, centerId);
+        List<Bookmark> bookmarks = boardBookmarkRepository.findBoardByUserAndCenter(userId, centerId);
         // 시설(유치원)의 이야기 모든 게시판
         List<Board> boards = boardRepository.findByCenter(centerId);
         // DTO 생성 후 반환

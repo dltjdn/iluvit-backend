@@ -10,7 +10,7 @@ import org.springframework.data.repository.query.Param;
 
 import java.util.List;
 
-public interface BookmarkRepository extends JpaRepository<Bookmark, Long> {
+public interface BoardBookmarkRepository extends JpaRepository<Bookmark, Long> {
     @Query("select b from Bookmark b join fetch b.user u join fetch b.board bd left join fetch bd.center c " +
             "where u.id = :userId")
     List<Bookmark> findWithUserAndBoard(@Param("userId") Long userId);

@@ -60,7 +60,7 @@ public class TeacherServiceTest {
     @Mock
     private BoardRepository boardRepository;
     @Mock
-    private BookmarkRepository bookmarkRepository;
+    private BoardBookmarkRepository boardBookmarkRepository;
     @Mock
     private ScrapRepository scrapRepository;
     @Mock
@@ -175,7 +175,7 @@ public class TeacherServiceTest {
             assertThat(result.getLoginId()).isEqualTo(request.getLoginId());
             assertThat(result.getCenter().getId()).isEqualTo(request.getCenterId());
             // verify
-            verify(bookmarkRepository, times(2)).save(any(Bookmark.class));
+            verify(boardBookmarkRepository, times(2)).save(any(Bookmark.class));
             verify(centerRepository, times(1)).findByIdWithTeacher(request.getCenterId());
             verify(scrapRepository, times(1)).save(any(Scrap.class));
             verify(authNumberRepository, times(1)).deleteByPhoneNumAndAuthKind(request.getPhoneNum(), AuthKind.signup);
@@ -219,7 +219,7 @@ public class TeacherServiceTest {
         assertThat(result.getCenter()).isNull();
         // verify
         verify(centerRepository, times(0)).findByIdWithTeacher(request.getCenterId());
-        verify(bookmarkRepository, times(0)).save(any(Bookmark.class));
+        verify(boardBookmarkRepository, times(0)).save(any(Bookmark.class));
         verify(scrapRepository, times(1)).save(any(Scrap.class));
         verify(authNumberRepository, times(1)).deleteByPhoneNumAndAuthKind(request.getPhoneNum(), AuthKind.signup);
     }
@@ -539,7 +539,7 @@ public class TeacherServiceTest {
             assertThat(result.getId()).isEqualTo(teacher3.getId());
             assertThat(result.getApproval()).isEqualTo(Approval.ACCEPT);
             verify(boardRepository, times(1)).findDefaultByCenter(teacher1.getCenter().getId());
-            verify(bookmarkRepository, times(2)).save(any());
+            verify(boardBookmarkRepository, times(2)).save(any());
         }
     }
 
@@ -632,7 +632,7 @@ public class TeacherServiceTest {
             // then
             assertThat(result.getCenter()).isNull();
             verify(boardRepository, times(1)).findByCenter(teacher1.getCenter().getId());
-            verify(bookmarkRepository, times(1)).deleteAllByBoardAndUser(any(), any());
+            verify(boardBookmarkRepository, times(1)).deleteAllByBoardAndUser(any(), any());
         }
     }
 
