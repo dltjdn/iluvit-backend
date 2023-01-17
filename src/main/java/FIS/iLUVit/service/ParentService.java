@@ -33,8 +33,6 @@ public class ParentService {
     private final ParentRepository parentRepository;
     private final AuthRepository authRepository;
     private final ScrapRepository scrapRepository;
-    private final CenterRepository centerRepository;
-
     private final BoardRepository boardRepository;
     private final BoardBookmarkRepository boardBookmarkRepository;
     private final MapService mapService;

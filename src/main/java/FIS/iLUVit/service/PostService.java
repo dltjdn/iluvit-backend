@@ -31,7 +31,6 @@ public class PostService {
     private final UserRepository userRepository;
     private final ImageService imageService;
     private final BoardRepository boardRepository;
-    private final CenterRepository centerRepository;
     private final BoardBookmarkRepository boardBookmarkRepository;
     private final PostHeartRepository postHeartRepository;
     private final ChatRoomRepository chatRoomRepository;

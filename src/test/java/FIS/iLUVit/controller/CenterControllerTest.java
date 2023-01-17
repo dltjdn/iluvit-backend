@@ -20,6 +20,8 @@ import FIS.iLUVit.exception.UserException;
 import FIS.iLUVit.exception.exceptionHandler.ErrorResponse;
 import FIS.iLUVit.exception.exceptionHandler.controllerAdvice.GlobalControllerAdvice;
 import FIS.iLUVit.service.CenterService;
+import FIS.iLUVit.service.ChildService;
+import FIS.iLUVit.service.TeacherService;
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.algorithms.Algorithm;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -73,6 +75,11 @@ class CenterControllerTest extends ResponseRequests {
     CenterController target;
     @Mock
     CenterService centerService;
+    @Mock
+    TeacherService teacherService;
+
+    @Mock
+    ChildService childService;
     MockMvc mockMvc;
     ObjectMapper objectMapper;
 
@@ -111,7 +118,7 @@ class CenterControllerTest extends ResponseRequests {
         PageRequest pageable = PageRequest.of(0, 5);
         SliceImpl<CenterInfoDto> response = new SliceImpl<>(content, pageable, false);
         doReturn(response)
-                .when(centerService)
+                .when(teacherService)
                 .findCenterForSignup(request, pageable);
         // when
         ResultActions result = mockMvc.perform(
@@ -552,7 +559,7 @@ class CenterControllerTest extends ResponseRequests {
         Pageable pageable = PageRequest.of(0, 10);
         SliceImpl<CenterInfoDto> response = new SliceImpl<>(content, pageable, false);
         doReturn(response)
-                .when(centerService)
+                .when(childService)
                 .findCenterForAddChild(any(), any());
         // when
         ResultActions result = mockMvc.perform(
