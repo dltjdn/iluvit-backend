@@ -7,7 +7,7 @@ import FIS.iLUVit.exception.PreferErrorResult;
 import FIS.iLUVit.exception.PreferException;
 import FIS.iLUVit.repository.CenterRepository;
 import FIS.iLUVit.repository.ParentRepository;
-import FIS.iLUVit.repository.PreferRepository;
+import FIS.iLUVit.repository.CenterBookmarkRepository;
 import FIS.iLUVit.repository.dto.CenterPreview;
 import lombok.RequiredArgsConstructor;
 import org.springframework.dao.DataIntegrityViolationException;
@@ -21,7 +21,7 @@ import org.springframework.transaction.annotation.Transactional;
 @RequiredArgsConstructor
 public class CenterBookmarkService {
     private final CenterRepository centerRepository;
-    private final PreferRepository preferRepository;
+    private final CenterBookmarkRepository centerBookmarkRepository;
 
     private final ParentRepository parentRepository;
     /**
@@ -41,7 +41,7 @@ public class CenterBookmarkService {
      */
     public Prefer savePrefer(Long userId, Long centerId) {
 
-        preferRepository.findByUserIdAndCenterId(userId, centerId)
+        centerBookmarkRepository.findByUserIdAndCenterId(userId, centerId)
                 .ifPresent(prefer -> {
                     throw new PreferException(PreferErrorResult.ALREADY_PREFER);
                 });
@@ -50,7 +50,7 @@ public class CenterBookmarkService {
             Parent parent = parentRepository.getById(userId);
             Center center = centerRepository.getById(centerId);
             Prefer prefer = Prefer.createPrefer(parent, center);
-            preferRepository.saveAndFlush(prefer);
+            centerBookmarkRepository.saveAndFlush(prefer);
             return prefer;
         } catch (DataIntegrityViolationException e) {
             throw new PreferException(PreferErrorResult.NOT_VALID_CENTER);
@@ -63,10 +63,10 @@ public class CenterBookmarkService {
      *   작성내용: 시설 찜 해제하기
      */
     public void deletePrefer(Long userId, Long centerId) {
-        Prefer deletedPrefer = preferRepository.findByUserIdAndCenterId(userId, centerId)
+        Prefer deletedPrefer = centerBookmarkRepository.findByUserIdAndCenterId(userId, centerId)
                 .orElseThrow(() -> new PreferException(PreferErrorResult.NOT_VALID_CENTER));
 
-        preferRepository.delete(deletedPrefer);
+        centerBookmarkRepository.delete(deletedPrefer);
     }
 
 }
