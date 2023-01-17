@@ -20,7 +20,6 @@ import java.io.IOException;
 public class TeacherController {
 
     private final TeacherService teacherService;
-    private final CenterService centerService;
 
     /**
      * 작성날짜: 2022/05/20 4:43 PM
@@ -129,6 +128,6 @@ public class TeacherController {
      */
     @GetMapping("search/center")
     public Slice<CenterInfoDto> centerInfoForSignup(@ModelAttribute CenterInfoRequest request, Pageable pageable) {
-        return centerService.findCenterForSignup(request, pageable);
+        return teacherService.findCenterForSignup(request, pageable);
     }
 }

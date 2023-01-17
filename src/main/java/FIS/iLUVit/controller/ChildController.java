@@ -21,8 +21,6 @@ public class ChildController {
 
     private final ChildService childService;
 
-    private final CenterService centerService;
-
     /**
      * 작성날짜: 2022/05/13 4:43 PM
      * 작성자: 이승범
@@ -132,6 +130,6 @@ public class ChildController {
      */
     @GetMapping("search/center")
     public Slice<CenterInfoDto> centerInfoForAddChild(@ModelAttribute CenterInfoRequest request, Pageable pageable) {
-        return centerService.findCenterForAddChild(request, pageable);
+        return childService.findCenterForAddChild(request, pageable);
     }
 }
