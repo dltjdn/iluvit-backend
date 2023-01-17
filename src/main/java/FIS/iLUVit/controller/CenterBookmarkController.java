@@ -1,6 +1,7 @@
 package FIS.iLUVit.controller;
 
 import FIS.iLUVit.config.argumentResolver.Login;
+import FIS.iLUVit.service.CenterBookmarkService;
 import FIS.iLUVit.service.ParentService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -17,7 +18,7 @@ import org.springframework.data.domain.Slice;
 public class CenterBookmarkController {
 
     private final ParentService parentService;
-    private final CenterService centerService;
+    private final CenterBookmarkService centerBookmarkService;
 
     /**
      *   작성날짜: 2022/07/04 2:26 PM
@@ -26,7 +27,7 @@ public class CenterBookmarkController {
      */
     @GetMapping("")
     public Slice<CenterPreview> findCentersByPrefer(@Login Long userId, Pageable pageable) {
-        return centerService.findCentersByPrefer(userId, pageable);
+        return centerBookmarkService.findCentersByPrefer(userId, pageable);
     }
 
     /**
@@ -36,7 +37,7 @@ public class CenterBookmarkController {
      */
     @PostMapping("{centerId}")
     public void savePrefer(@Login Long userId, @PathVariable("centerId") Long centerId) {
-        parentService.savePrefer(userId, centerId);
+        centerBookmarkService.savePrefer(userId, centerId);
     }
 
     /**
@@ -46,7 +47,7 @@ public class CenterBookmarkController {
      */
     @DeleteMapping("{centerId}")
     public void deletePrefer(@Login Long userId, @PathVariable("centerId") Long centerId) {
-        parentService.deletePrefer(userId, centerId);
+        centerBookmarkService.deletePrefer(userId, centerId);
     }
 
 }
