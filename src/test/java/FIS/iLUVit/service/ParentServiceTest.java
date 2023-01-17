@@ -36,20 +36,17 @@ import static org.mockito.Mockito.*;
 public class ParentServiceTest {
     @InjectMocks
     private ParentService target;
+
+    @InjectMocks
+    private CenterBookmarkService centerBookmarkService;
     @Mock
     private UserService userService;
-    @Mock
-    private AuthService authService;
     @Mock
     private ParentRepository parentRepository;
     @Mock
     private BoardBookmarkRepository boardBookmarkRepository;
     @Mock
     private BoardRepository boardRepository;
-    @Mock
-    private ScrapRepository scrapRepository;
-    @Mock
-    private AuthRepository authRepository;
     @Mock
     private ImageService imageService;
     @Mock
@@ -58,6 +55,8 @@ public class ParentServiceTest {
     private PreferRepository preferRepository;
     @Mock
     private MapService mapService;
+
+
 
 
     private ObjectMapper objectMapper;
@@ -231,7 +230,7 @@ public class ParentServiceTest {
                     .findByUserIdAndCenterId(parent1.getId(), center1.getId());
             // when
             PreferException result = assertThrows(PreferException.class,
-                    () -> target.savePrefer(parent1.getId(), center1.getId()));
+                    () -> centerBookmarkService.savePrefer(parent1.getId(), center1.getId()));
             // then
             assertThat(result.getErrorResult()).isEqualTo(PreferErrorResult.ALREADY_PREFER);
         }
@@ -254,7 +253,7 @@ public class ParentServiceTest {
                     .saveAndFlush(any());
             // when
             PreferException result = assertThrows(PreferException.class,
-                    () -> target.savePrefer(parent1.getId(), center2.getId()));
+                    () -> centerBookmarkService.savePrefer(parent1.getId(), center2.getId()));
             // then
             assertThat(result.getErrorResult()).isEqualTo(PreferErrorResult.NOT_VALID_CENTER);
         }
@@ -273,7 +272,7 @@ public class ParentServiceTest {
                     .when(parentRepository)
                     .getById(parent1.getId());
             // when
-            Prefer result = target.savePrefer(parent1.getId(), center2.getId());
+            Prefer result = centerBookmarkService.savePrefer(parent1.getId(), center2.getId());
             // then
             assertThat(result.getParent().getId()).isEqualTo(parent1.getId());
             assertThat(result.getCenter().getId()).isEqualTo(center2.getId());
@@ -292,7 +291,7 @@ public class ParentServiceTest {
                     .findByUserIdAndCenterId(any(), any());
             // when
             PreferException result = assertThrows(PreferException.class,
-                    () -> target.deletePrefer(parent1.getId(), center1.getId()));
+                    () -> centerBookmarkService.deletePrefer(parent1.getId(), center1.getId()));
             // then
             assertThat(result.getErrorResult()).isEqualTo(PreferErrorResult.NOT_VALID_CENTER);
         }
@@ -305,7 +304,7 @@ public class ParentServiceTest {
                     .when(preferRepository)
                     .findByUserIdAndCenterId(parent1.getId(), center1.getId());
             // when
-            target.deletePrefer(parent1.getId(), center1.getId());
+            centerBookmarkService.deletePrefer(parent1.getId(), center1.getId());
             // then
             verify(preferRepository, times(1)).delete(any());
         }
