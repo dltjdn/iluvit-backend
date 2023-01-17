@@ -12,6 +12,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.SliceImpl;
 import org.springframework.http.HttpStatus;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -103,6 +104,7 @@ public class PresentationController {
      * 원장/ 선생의 presentation 등록 PtDate 설정하기
      * 리액트 네이티브용 이미지 저장
      */
+    @Transactional
     @PostMapping("image/react-native")
     @ResponseStatus(HttpStatus.CREATED)
     public PresentationSaveResponseDto registerPresentationImage(@RequestParam Long presentationId,
@@ -119,6 +121,7 @@ public class PresentationController {
      * 원장, 선생의 설명회 수정
      * 리액트 네이티브용 이미지 수정
      */
+    @Transactional
     @PatchMapping("image/react-native")
     @ResponseStatus(HttpStatus.ACCEPTED)
     public PresentationModifyResponseDto modifyPresentationImage(@RequestParam Long presentationId,
