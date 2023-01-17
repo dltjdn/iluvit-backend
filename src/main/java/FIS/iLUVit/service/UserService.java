@@ -40,7 +40,6 @@ public class UserService {
     private final UserRepository userRepository;
     private final BCryptPasswordEncoder encoder;
     private final AuthRepository authRepository;
-    private final AlarmRepository alarmRepository;
     private final AuthenticationManager authenticationManager;
     private final JwtUtils jwtUtils;
     private final TokenPairRepository tokenPairRepository;
@@ -205,35 +204,5 @@ public class UserService {
                 });
     }
 
-    public Integer deleteUserAlarm(Long userId, List<Long> alarmIds) {
-        return alarmRepository.deleteByIds(userId, alarmIds);
-    }
 
-    public Slice<AlarmDto> findUserActiveAlarm(Long userId, Pageable pageable) {
-        Slice<Alarm> alarmSlice = alarmRepository.findActiveByUser(userId, pageable);
-        return new SliceImpl<>(alarmSlice.stream()
-                .map(Alarm::exportAlarm)
-                .collect(Collectors.toList()),
-                pageable, alarmSlice.hasNext());
-    }
-
-    public Slice<AlarmDto> findPresentationActiveAlarm(Long userId, Pageable pageable) {
-        Slice<Alarm> alarmSlice = alarmRepository.findPresentationByUser(userId, pageable);
-        return new SliceImpl<>(alarmSlice.stream()
-                .map(Alarm::exportAlarm)
-                .collect(Collectors.toList()),
-                pageable, alarmSlice.hasNext());
-    }
-
-    public void readAlarm(Long userId) {
-        userRepository.findById(userId)
-                .orElseThrow(() -> new UserException(UserErrorResult.USER_NOT_EXIST))
-                .updateReadAlarm(Boolean.TRUE);
-    }
-
-    public Boolean hasRead(Long userId) {
-        return userRepository.findById(userId)
-                .orElseThrow(() -> new UserException(UserErrorResult.USER_NOT_EXIST))
-                .getReadAlarm();
-    }
 }
