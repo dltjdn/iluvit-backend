@@ -18,7 +18,6 @@ import java.io.IOException;
 @Slf4j
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("user")
 public class UserController {
 
     private final UserService userService;
@@ -29,7 +28,7 @@ public class UserController {
      * 작성자: 이승범
      * 작성내용: 사용자 기본정보(id, nickname, auth)반환
      */
-    @GetMapping("")
+    @GetMapping("user")
     public UserInfoResponse findUserInfo(@Login Long id) {
         return userService.findUserInfo(id);
     }
