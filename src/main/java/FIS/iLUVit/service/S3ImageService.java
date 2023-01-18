@@ -158,21 +158,26 @@ public class S3ImageService implements ImageService {
     }
 
     public String saveProfileImage(MultipartFile image, BaseImageEntity entity) {
-        // null 이거나 비어있다면 return
-        if (image == null || image.isEmpty()) {
-            entity.updateProfileImagePath(null);
-            return null;
+        //null 이거나 비어있다면 return
+        if(image == null || image.isEmpty()){
+            updateProfileImagePath(entity,"");
+        }else{
+            // image fullpath 완성
+            String destPath = getProfileDestPath(image, entity);
+
+            // 이미지 저장 로직 + entity 업데이트 추가 작업 필요
+            saveImage(image, destPath);
+            updateProfileImagePath(entity, destPath);
         }
-        // image fullpath 완성
-        String destPath = getProfileDestPath(image, entity);
-        // 이미지 저장 로직 + entity 업데이트 추가 작업 필요
-        saveImage(image, destPath);
-        updateProfileImagePath(entity, destPath);
         return null;
     }
 
     private void updateProfileImagePath(BaseImageEntity entity, String destPath) {
-        entity.updateProfileImagePath(prefix + destPath);
+        if(destPath==""){
+            entity.updateProfileImagePath("basic");
+        }else{
+            entity.updateProfileImagePath(prefix + destPath);
+        }
     }
 
     private void saveImage(MultipartFile image, String destPath) {
