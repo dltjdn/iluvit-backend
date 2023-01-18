@@ -141,7 +141,7 @@ public class LocalImageService implements ImageService {
     public void saveProfileImage(MultipartFile image, BaseImageEntity entity) {
         // null 이거나 비어있다면 return
         if(image == null || image.isEmpty()){
-            return;
+            entity.updateProfileImagePath("basic");
         }else{
             // image fullpath 완성
             String destPath = getProfileDestPath(image, entity);
