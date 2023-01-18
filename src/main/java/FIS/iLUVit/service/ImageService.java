@@ -10,7 +10,7 @@ public interface ImageService {
 
     String saveInfoImages(List<MultipartFile> images, BaseImageEntity entity);
 
-    String saveProfileImage(MultipartFile image, BaseImageEntity entity);
+    void saveProfileImage(MultipartFile image, BaseImageEntity entity);
 
     String getProfileImage(BaseImageEntity entity);
 

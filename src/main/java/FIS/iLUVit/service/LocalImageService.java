@@ -138,17 +138,18 @@ public class LocalImageService implements ImageService {
         entity.updateInfoImagePath(imgCnt, temp);
     }
 
-    public String saveProfileImage(MultipartFile image, BaseImageEntity entity) {
+    public void saveProfileImage(MultipartFile image, BaseImageEntity entity) {
         // null 이거나 비어있다면 return
-        if(image == null || image.isEmpty())
-            return null;
-        // image fullpath 완성
-        String destPath = getProfileDestPath(image, entity);
+        if(image == null || image.isEmpty()){
+            return;
+        }else{
+            // image fullpath 완성
+            String destPath = getProfileDestPath(image, entity);
 
-        // 이미지 저장 로직 + entity 업데이트 추가 작업 필요
-        saveImage(image, destPath);
-        updateProfileImagePath(entity, destPath);
-        return null;
+            // 이미지 저장 로직 + entity 업데이트 추가 작업 필요
+            saveImage(image, destPath);
+            updateProfileImagePath(entity, destPath);
+        }
     }
 
     private void updateProfileImagePath(BaseImageEntity entity, String destPath) {
