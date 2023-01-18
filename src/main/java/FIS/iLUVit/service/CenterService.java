@@ -122,30 +122,5 @@ public class CenterService {
         return centerRepository.findRecommendCenter(theme, location, PageRequest.of(0, 10, Sort.by("score")));
     }
 
-    /**
-    *   작성날짜: 2022/06/24 10:28 AM
-    *   작성자: 이승범
-    *   작성내용: 회원가입 과정에서 필요한 센터정보 가져오기
-    */
-    public Slice<CenterInfoDto> findCenterForSignup(CenterInfoRequest request, Pageable pageable) {
-       return centerRepository.findForSignup(request.getSido(), request.getSigungu(), request.getCenterName(), pageable);
-    }
 
-    /**
-    *   작성날짜: 2022/06/24 10:31 AM
-    *   작성자: 이승범
-    *   작성내용: 아이추가 과정에서 필요한 센터정보 가져오기
-    */
-    public Slice<CenterInfoDto> findCenterForAddChild(CenterInfoRequest request, Pageable pageable) {
-        return centerRepository.findCenterForAddChild(request.getSido(), request.getSigungu(), request.getCenterName(), pageable);
-    }
-
-    /**
-     *   작성날짜: 2022/07/04 3:04 PM
-     *   작성자: 이승범
-     *   작성내용: 찜한 시설 리스트
-     */
-    public Slice<CenterPreview> findCentersByPrefer(Long userId, Pageable pageable) {
-        return centerRepository.findByPrefer(userId, pageable);
-    }
 }

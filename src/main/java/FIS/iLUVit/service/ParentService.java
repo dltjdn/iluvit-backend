@@ -33,8 +33,6 @@ public class ParentService {
     private final ParentRepository parentRepository;
     private final AuthRepository authRepository;
     private final ScrapRepository scrapRepository;
-    private final CenterRepository centerRepository;
-    private final PreferRepository preferRepository;
     private final BoardRepository boardRepository;
     private final BoardBookmarkRepository boardBookmarkRepository;
     private final MapService mapService;
@@ -135,38 +133,5 @@ public class ParentService {
         return parent;
     }
 
-    /**
-     *   작성날짜: 2022/07/01 5:09 PM
-     *   작성자: 이승범
-     *   작성내용: 시설 찜하기
-     */
-    public Prefer savePrefer(Long userId, Long centerId) {
 
-        preferRepository.findByUserIdAndCenterId(userId, centerId)
-                .ifPresent(prefer -> {
-                    throw new PreferException(PreferErrorResult.ALREADY_PREFER);
-                });
-
-        try {
-            Parent parent = parentRepository.getById(userId);
-            Center center = centerRepository.getById(centerId);
-            Prefer prefer = Prefer.createPrefer(parent, center);
-            preferRepository.saveAndFlush(prefer);
-            return prefer;
-        } catch (DataIntegrityViolationException e) {
-            throw new PreferException(PreferErrorResult.NOT_VALID_CENTER);
-        }
-    }
-
-    /**
-    *   작성날짜: 2022/07/04 2:17 PM
-    *   작성자: 이승범
-    *   작성내용: 시설 찜 해제하기
-    */
-    public void deletePrefer(Long userId, Long centerId) {
-        Prefer deletedPrefer = preferRepository.findByUserIdAndCenterId(userId, centerId)
-                .orElseThrow(() -> new PreferException(PreferErrorResult.NOT_VALID_CENTER));
-
-        preferRepository.delete(deletedPrefer);
-    }
 }

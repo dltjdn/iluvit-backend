@@ -10,6 +10,7 @@ import FIS.iLUVit.domain.Parent;
 import FIS.iLUVit.exception.*;
 import FIS.iLUVit.exception.exceptionHandler.ErrorResponse;
 import FIS.iLUVit.exception.exceptionHandler.controllerAdvice.GlobalControllerAdvice;
+import FIS.iLUVit.service.CenterBookmarkService;
 import FIS.iLUVit.service.ParentService;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -51,6 +52,9 @@ public class ParentControllerTest {
     private ParentController target;
     @Mock
     private ParentService parentService;
+
+    @Mock
+    private CenterBookmarkService centerBookmarkService;
 
     private MockMvc mockMvc;
     private ObjectMapper objectMapper;
@@ -372,7 +376,7 @@ public class ParentControllerTest {
             String url = "/parent/prefer/{centerId}";
             PreferErrorResult error = PreferErrorResult.ALREADY_PREFER;
             doThrow(new PreferException(error))
-                    .when(parentService)
+                    .when(centerBookmarkService)
                     .savePrefer(any(), any());
             // when
             ResultActions result = mockMvc.perform(
@@ -393,7 +397,7 @@ public class ParentControllerTest {
             String url = "/parent/prefer/{centerId}";
             PreferErrorResult error = PreferErrorResult.NOT_VALID_CENTER;
             doThrow(new PreferException(error))
-                    .when(parentService)
+                    .when(centerBookmarkService)
                     .savePrefer(any(), any());
             // when
             ResultActions result = mockMvc.perform(
@@ -431,7 +435,7 @@ public class ParentControllerTest {
             String url = "/parent/prefer/{centerId}";
             PreferErrorResult error = PreferErrorResult.NOT_VALID_CENTER;
             doThrow(new PreferException(error))
-                    .when(parentService)
+                    .when(centerBookmarkService)
                     .deletePrefer(any(), any());
             // when
             ResultActions result = mockMvc.perform(

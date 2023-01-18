@@ -12,6 +12,8 @@ import FIS.iLUVit.exception.UserException;
 import FIS.iLUVit.repository.*;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Slice;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -320,6 +322,15 @@ public class ChildService {
                     .collect(Collectors.toList());
             boardBookmarkRepository.deleteAllByBoardAndUser(parentId, boardIds);
         }
+    }
+
+    /**
+     *   작성날짜: 2022/06/24 10:31 AM
+     *   작성자: 이승범
+     *   작성내용: 아이추가 과정에서 필요한 센터정보 가져오기
+     */
+    public Slice<CenterInfoDto> findCenterForAddChild(CenterInfoRequest request, Pageable pageable) {
+        return centerRepository.findCenterForAddChild(request.getSido(), request.getSigungu(), request.getCenterName(), pageable);
     }
 
 }

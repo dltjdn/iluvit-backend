@@ -5,6 +5,7 @@ import FIS.iLUVit.controller.dto.AlarmDeleteDto;
 import FIS.iLUVit.controller.dto.AlarmDto;
 import FIS.iLUVit.exception.UserErrorResult;
 import FIS.iLUVit.exception.UserException;
+import FIS.iLUVit.service.AlarmService;
 import FIS.iLUVit.service.UserService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -20,37 +21,36 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("alarm")
 public class AlarmController {
 
-    private final UserService userService;
-    private final Environment env;
-//
-//    @GetMapping("/readAlarm")
+    private final AlarmService alarmService;
+
+
 //    public void readAlarm(@Login Long userId){
 //        if(userId == null)
 //            throw new UserException(UserErrorResult.NOT_LOGIN);
-//        userService.readAlarm(userId);
+//        alarmService.readAlarm(userId);
 //    }
 
     @GetMapping("")
     public Slice<AlarmDto> getActiveAlarm(@Login Long userId, Pageable pageable){
-        return userService.findUserActiveAlarm(userId, pageable);
+        return alarmService.findUserActiveAlarm(userId, pageable);
     }
 
     @GetMapping("presentation")
     public Slice<AlarmDto> getPresentationAlarm(@Login Long userId, Pageable pageable){
-        return userService.findPresentationActiveAlarm(userId, pageable);
+        return alarmService.findPresentationActiveAlarm(userId, pageable);
     }
 
     @DeleteMapping("")
     public Integer deleteAlarm(@Login Long userId, @RequestBody AlarmDeleteDto request) {
         if(userId == null)
             throw new UserException(UserErrorResult.NOT_LOGIN);
-        return userService.deleteUserAlarm(userId, request.getAlarmIds());
+        return alarmService.deleteUserAlarm(userId, request.getAlarmIds());
     }
 
     @GetMapping("is-read")
     public Boolean hasRead(@Login Long userId){
         if(userId == null)
             throw new UserException(UserErrorResult.NOT_LOGIN);
-        return userService.hasRead(userId);
+        return alarmService.hasRead(userId);
     }
 }

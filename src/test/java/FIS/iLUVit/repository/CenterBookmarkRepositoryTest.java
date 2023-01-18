@@ -5,7 +5,6 @@ import FIS.iLUVit.config.argumentResolver.ForDB;
 import FIS.iLUVit.domain.Center;
 import FIS.iLUVit.domain.Parent;
 import FIS.iLUVit.domain.Prefer;
-import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,10 +16,10 @@ import javax.persistence.EntityManager;
 import static org.assertj.core.api.Assertions.*;
 
 @DataJpaTest(includeFilters = @ComponentScan.Filter(ForDB.class))
-public class PreferRepositoryTest {
+public class CenterBookmarkRepositoryTest {
 
     @Autowired
-    private PreferRepository preferRepository;
+    private CenterBookmarkRepository centerBookmarkRepository;
 
     @Autowired
     private EntityManager em;
@@ -51,7 +50,7 @@ public class PreferRepositoryTest {
         em.flush();
         em.clear();
         // when
-        Prefer result = preferRepository.findByUserIdAndCenterId(parent1.getId(), center1.getId())
+        Prefer result = centerBookmarkRepository.findByUserIdAndCenterId(parent1.getId(), center1.getId())
                 .orElse(null);
         // then
         assertThat(result).isNotNull();
