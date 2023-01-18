@@ -15,7 +15,6 @@ public class CommentDTO {
     private LocalTime time;          // 게시글 작성 시간
     private Boolean anonymous;       // 익명 댓글 여부
     private String content;
-
     private Long post_id; // 연관된 게시글 아이디
     private String post_title;
     private Integer heartCnt; // 게시글 좋아요 수
