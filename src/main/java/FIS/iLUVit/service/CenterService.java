@@ -77,20 +77,6 @@ public class CenterService {
         return new CenterBannerResponseDto(data, infoImages);
     }
 
-    public Long modifyCenter(Long centerId, Long userId, CenterModifyRequestDto requestDto, List<MultipartFile> infoImages, MultipartFile profileImage) {
-        Teacher teacher = userRepository.findTeacherById(userId)
-                .orElseThrow(() -> new UserException(UserErrorResult.USER_NOT_EXIST))
-                .canWrite(centerId);
-        // 해당하는 center 없으면 RuntimeException 반환
-        Center center = teacher.getCenter();
-        imageService.saveInfoImages(infoImages, center);
-        imageService.saveProfileImage(profileImage, center);
-        Pair<Double, Double> location = mapService.convertAddressToLocation(requestDto.getAddress());
-        Pair<String, String> area = mapService.getSidoSigunguByLocation(location.getFirst(), location.getSecond());
-        center.update(requestDto, location.getFirst(), location.getSecond(), area.getFirst(), area.getSecond());
-        return center.getId();
-    }
-
     public Long modifyCenterImage(Long centerId, Long userId, List<MultipartFile> infoImages, MultipartFile profileImage) {
         Teacher teacher = userRepository.findTeacherById(userId)
                 .orElseThrow(() -> new UserException(UserErrorResult.USER_NOT_EXIST))
