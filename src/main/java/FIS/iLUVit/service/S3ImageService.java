@@ -160,7 +160,7 @@ public class S3ImageService implements ImageService {
     public String saveProfileImage(MultipartFile image, BaseImageEntity entity) {
         //null 이거나 비어있다면 return
         if(image == null || image.isEmpty()){
-            updateProfileImagePath(entity,"");
+            entity.updateProfileImagePath("basic");
         }else{
             // image fullpath 완성
             String destPath = getProfileDestPath(image, entity);
@@ -173,11 +173,7 @@ public class S3ImageService implements ImageService {
     }
 
     private void updateProfileImagePath(BaseImageEntity entity, String destPath) {
-        if(destPath==""){
-            entity.updateProfileImagePath("basic");
-        }else{
-            entity.updateProfileImagePath(prefix + destPath);
-        }
+        entity.updateProfileImagePath(prefix + destPath);
     }
 
     private void saveImage(MultipartFile image, String destPath) {
