@@ -36,7 +36,7 @@ public class UserController {
     /**
     *   작성날짜: 2022/07/29 5:04 PM
     *   작성자: 이승범
-    *   작성내용: 로그인 중복 확인
+    *   작성내용: 아이디 중복 확인
     */
     @GetMapping("check-loginid")
     public void checkLoginId(@Valid @ModelAttribute CheckLoginIdRequest request) {

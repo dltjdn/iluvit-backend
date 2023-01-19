@@ -7,6 +7,7 @@ import com.amazonaws.services.s3.AmazonS3Client;
 import com.amazonaws.services.s3.model.DeleteObjectRequest;
 import com.amazonaws.services.s3.model.ObjectMetadata;
 import com.amazonaws.services.s3.model.PutObjectRequest;
+import com.amazonaws.util.StringUtils;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Primary;
@@ -19,10 +20,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 @RequiredArgsConstructor
 @Service
@@ -153,11 +151,16 @@ public class S3ImageService implements ImageService {
         });
 
         Integer imgCnt = destPaths.size();
-        String temp = "";
+        StringBuilder temp2 = new StringBuilder();
         for (String destPath : list) {
-            temp += destPath + ',';
+            temp2.append(destPath).append(",");
         }
+        if(temp2.length() > 0) {
+            temp2.deleteCharAt(temp2.length() - 1);
+        }
+        String temp = temp2.toString();
         entity.updateInfoImagePath(imgCnt, temp);
+
     }
 
     public void saveProfileImage(MultipartFile image, BaseImageEntity entity) {
