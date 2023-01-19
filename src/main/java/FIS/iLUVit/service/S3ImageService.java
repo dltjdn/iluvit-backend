@@ -111,17 +111,14 @@ public class S3ImageService implements ImageService {
     }
 
 
-    public String saveInfoImages(List<MultipartFile> images, BaseImageEntity entity) {
+    public void saveInfoImages(List<MultipartFile> images, BaseImageEntity entity) {
         // null 이거나 비어있다면 return
-        System.out.println("++++++++++++++++++"+images);
         if (images == null || images.size() == 0) {
-
             entity.updateInfoImagePath(0, null);
-            return null;
+            return;
         }
         // 이미지 분석 단계
         List<String> destPaths = getInfoDestPath(images, entity);
-        System.out.println("+++++++++++++++++++++++++"+destPaths);
 
         // 이미지 저장 로직 + entity 업데이트 추가
         for (int i = 0; i < images.size(); i++) {
@@ -132,7 +129,6 @@ public class S3ImageService implements ImageService {
         clear(getInfoDeleteKey(entity, destPaths));
         updateInfoImagePath(entity, destPaths);
 
-        return null;
     }
 
     private void clear(Set<String> deleteKeys) {
