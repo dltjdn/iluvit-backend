@@ -47,30 +47,6 @@ public class PresentationController {
         return presentationService.findPresentationByCenterIdAndDate(centerId, userId);
     }
 
-    /**
-     * 원장/ 선생의 presentation 등록 PtDate 설정하기
-     * @return
-     */
-    @PostMapping("")
-    @ResponseStatus(HttpStatus.CREATED)
-    public PresentationSaveResponseDto registerPresentation(@RequestPart @Validated PresentationRequestRequestFormDto request,
-                                                            @RequestPart(required = false) List<MultipartFile> images,
-                                                            @Login Long userId){
-        if(userId == null)
-            throw new UserException(UserErrorResult.NOT_LOGIN);
-        return new PresentationSaveResponseDto(presentationService.saveWithPtDate(request, images, userId));
-    }
-
-    /**
-     * 원장, 선생의 설명회 수정
-     */
-    @PatchMapping("")
-    @ResponseStatus(HttpStatus.ACCEPTED)
-    public PresentationModifyResponseDto modifyPresentation(@RequestPart @Validated PresentationModifyRequestDto request,
-                                                            @RequestPart(required = false) List<MultipartFile> images,
-                                                            @Login Long userId){
-        return new PresentationModifyResponseDto(presentationService.modifyWithPtDate(request, images, userId));
-    }
 
     /**
      * 작성자: 이창윤
@@ -112,6 +88,7 @@ public class PresentationController {
                                                                  @Login Long userId) {
         if (userId == null)
             throw new UserException(UserErrorResult.NOT_LOGIN);
+
         return new PresentationSaveResponseDto(presentationService.saveImageWithPtDate(presentationId, images, userId));
     }
 
