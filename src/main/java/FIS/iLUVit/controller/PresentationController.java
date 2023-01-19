@@ -53,7 +53,7 @@ public class PresentationController {
      * 원장/ 선생의 presentation 등록 PtDate 설정하기
      * 리액트 네이티브용 정보 저장
      */
-    @PostMapping("react-native")
+    @PostMapping("")
     @ResponseStatus(HttpStatus.CREATED)
     public PresentationSaveResponseDto registerPresentationInfo(@RequestBody @Validated PresentationRequestRequestFormDto request,
                                                                 @Login Long userId){
@@ -68,7 +68,7 @@ public class PresentationController {
      * 원장, 선생의 설명회 수정
      * 리액트 네이티브용 정보 수정
      */
-    @PatchMapping("react-native")
+    @PatchMapping("")
     @ResponseStatus(HttpStatus.ACCEPTED)
     public PresentationModifyResponseDto modifyPresentationInfo(@RequestBody @Validated PresentationModifyRequestDto request,
                                                                 @Login Long userId){
@@ -81,9 +81,9 @@ public class PresentationController {
      * 리액트 네이티브용 이미지 저장
      */
     @Transactional
-    @PostMapping("image/react-native")
+    @PostMapping("{presentationdId}/image")
     @ResponseStatus(HttpStatus.CREATED)
-    public PresentationSaveResponseDto registerPresentationImage(@RequestParam Long presentationId,
+    public PresentationSaveResponseDto registerPresentationImage(@PathVariable("presentationId") Long presentationId,
                                                                  @RequestPart(required = false) List<MultipartFile> images,
                                                                  @Login Long userId) {
         if (userId == null)
@@ -99,9 +99,9 @@ public class PresentationController {
      * 리액트 네이티브용 이미지 수정
      */
     @Transactional
-    @PatchMapping("image/react-native")
+    @PatchMapping("{presentationId}/image")
     @ResponseStatus(HttpStatus.ACCEPTED)
-    public PresentationModifyResponseDto modifyPresentationImage(@RequestParam Long presentationId,
+    public PresentationModifyResponseDto modifyPresentationImage(@PathVariable("presentationId") Long presentationId,
                                                                 @RequestPart(required = false) List<MultipartFile> images,
                                                                 @Login Long userId){
         return new PresentationModifyResponseDto(presentationService.modifyImageWithPtDate(presentationId, images, userId));
