@@ -73,27 +73,11 @@ public class CenterController {
         return centerService.findCenterForParent(userId);
     }
 
-
-    /**
-     * 시설 정보 수정
-     */
-    @PatchMapping("{centerId}")
-    @ResponseStatus(HttpStatus.ACCEPTED)
-    public Long modifyCenter(@PathVariable("centerId") Long centerId,
-                             @Login Long userId,
-                             @RequestPart @Validated CenterModifyRequestDto requestDto,
-                             @RequestPart(required = false) List<MultipartFile> infoImages,
-                             @RequestPart(required = false) MultipartFile profileImage){
-        if(userId == null)
-            throw new UserException(UserErrorResult.NOT_LOGIN);
-        return centerService.modifyCenter(centerId, userId, requestDto, infoImages, profileImage);
-    }
-
     /**
      * 작성자: 이창윤
      * 리액트 네이티브용 시설 정보 이미지 수정
      */
-    @PatchMapping("{centerId}/image/react-native")
+    @PatchMapping("{centerId}/image")
     @ResponseStatus(HttpStatus.ACCEPTED)
     public Long modifyCenterImage(@PathVariable("centerId") Long centerId,
                              @Login Long userId,
@@ -108,7 +92,7 @@ public class CenterController {
      * 작성자: 이창윤
      * 리액트 네이티브용 시설 정보 수정
      */
-    @PatchMapping("{centerId}/react-native")
+    @PatchMapping("{centerId}")
     @ResponseStatus(HttpStatus.ACCEPTED)
     public Long modifyCenterInfo(@PathVariable("centerId") Long centerId,
                                  @Login Long userId,

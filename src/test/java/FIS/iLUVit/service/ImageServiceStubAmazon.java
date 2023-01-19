@@ -26,7 +26,7 @@ public class ImageServiceStubAmazon implements ImageService {
         try {
             Class<?> clazz = entity.getClass();
             Field[] declaredFields = clazz.getDeclaredFields();
-            while(true) {
+            while (true) {
                 for (Field field : declaredFields) {
                     Annotation annotation = field.getAnnotation(Id.class);
                     if (annotation != null) {
@@ -46,7 +46,7 @@ public class ImageServiceStubAmazon implements ImageService {
     /**
      * 엔티티 class 이름 추출
      */
-    protected String abstractEntityName(Class<? extends BaseImageEntity> clazz){
+    protected String abstractEntityName(Class<? extends BaseImageEntity> clazz) {
         String absoluteName = clazz.getName();
         String[] split = absoluteName.split("[.]");
         String entityName = split[split.length - 1];
@@ -56,24 +56,24 @@ public class ImageServiceStubAmazon implements ImageService {
     /**
      * 이미지 폴더 완성 시키기
      */
-    protected String getInfoFolder(BaseImageEntity entity){
+    protected String getInfoFolder(BaseImageEntity entity) {
         String className = abstractEntityName(entity.getClass());
         Long entityId = abstractEntityId(entity);
         String folder = className + "Info" + '/' + entityId + '/';
         return folder;
     }
 
-    protected String getProfileFolder(BaseImageEntity entity){
+    protected String getProfileFolder(BaseImageEntity entity) {
         String className = abstractEntityName(entity.getClass());
         String folder = className + "Profile" + '/';
         return folder;
     }
 
-    public List<String> getInfoDestPath(List<MultipartFile> multipartFiles , BaseImageEntity entity){
+    public List<String> getInfoDestPath(List<MultipartFile> multipartFiles, BaseImageEntity entity) {
         String infoFolderPath = getInfoFolder(entity);
         int size = multipartFiles.size();
         List<String> infoDestPath = new ArrayList<>();
-        for(int i = 1; i<= size; i++){
+        for (int i = 1; i <= size; i++) {
             MultipartFile multipartFile = multipartFiles.get(i - 1);
             String ext = extractExt(multipartFile.getOriginalFilename());
             infoDestPath.add(infoFolderPath + i + '.' + ext);
@@ -81,7 +81,7 @@ public class ImageServiceStubAmazon implements ImageService {
         return infoDestPath;
     }
 
-    public String getProfileDestPath(MultipartFile multipartFile, BaseImageEntity entity){
+    public String getProfileDestPath(MultipartFile multipartFile, BaseImageEntity entity) {
         String profileFolderPath = getProfileFolder(entity);
         Long entityId = abstractEntityId(entity);
         String ext = extractExt(multipartFile.getOriginalFilename());
@@ -91,13 +91,13 @@ public class ImageServiceStubAmazon implements ImageService {
 
     public String saveInfoImages(List<MultipartFile> images, BaseImageEntity entity) {
         // null 이거나 비어있다면 return
-        if(images == null || images.size() == 0)
+        if (images == null || images.size() == 0)
             return null;
         // 이미지 분석 단계
         List<String> destPaths = getInfoDestPath(images, entity);
 
         // 이미지 저장 로직 + entity 업데이트 추가
-        for(int i = 0; i < images.size(); i++){
+        for (int i = 0; i < images.size(); i++) {
             MultipartFile image = images.get(i);
             String destPath = destPaths.get(i);
             saveImage(image, destPath);
@@ -131,16 +131,17 @@ public class ImageServiceStubAmazon implements ImageService {
         entity.updateInfoImagePath(imgCnt, temp);
     }
 
-    public String saveProfileImage(MultipartFile image, BaseImageEntity entity) {
+    public void saveProfileImage(MultipartFile image, BaseImageEntity entity) {
         // null 이거나 비어있다면 return
-        if(image == null || image.isEmpty())
-            return null;
-        // image fullpath 완성
-        String destPath = getProfileDestPath(image, entity);
-        // 이미지 저장 로직 + entity 업데이트 추가 작업 필요
-        saveImage(image, destPath);
-        updateProfileImagePath(entity, destPath);
-        return null;
+        if (image == null || image.isEmpty()) {
+            entity.updateProfileImagePath("basic");
+        } else {
+            // image fullpath 완성
+            String destPath = getProfileDestPath(image, entity);
+            // 이미지 저장 로직 + entity 업데이트 추가 작업 필요
+            saveImage(image, destPath);
+            updateProfileImagePath(entity, destPath);
+        }
     }
 
     private void updateProfileImagePath(BaseImageEntity entity, String destPath) {
@@ -156,19 +157,19 @@ public class ImageServiceStubAmazon implements ImageService {
         return originalFilename.substring(pos + 1);
     }
 
-    private String extractFileName(String originalFilename){
+    private String extractFileName(String originalFilename) {
         int pos = originalFilename.lastIndexOf(".");
         return originalFilename.substring(0, pos);
     }
 
-    public void mkDirForS3(){
+    public void mkDirForS3() {
 
     }
 
-    public Set<String> getInfoDeleteKey(BaseImageEntity entity, List<String> destPaths){
+    public Set<String> getInfoDeleteKey(BaseImageEntity entity, List<String> destPaths) {
         String infoImagePath = entity.getInfoImagePath();
-        if(infoImagePath == null || infoImagePath.equals(""))
-                return new HashSet<>();
+        if (infoImagePath == null || infoImagePath.equals(""))
+            return new HashSet<>();
         Set<String> targetKeys = new HashSet<>(List.of(infoImagePath.replace(prefix, "").split(",")));
         targetKeys.removeAll(destPaths);
         return targetKeys;
@@ -176,26 +177,26 @@ public class ImageServiceStubAmazon implements ImageService {
 
     public String getProfileImage(BaseImageEntity entity) {
         String profileImagePath = entity.getProfileImagePath();
-        if(profileImagePath == null)
+        if (profileImagePath == null)
             return null;
         return profileImagePath;
     }
 
-    public List<String> getInfoImages(BaseImageEntity entity){
+    public List<String> getInfoImages(BaseImageEntity entity) {
         String infoImagePath = entity.getInfoImagePath();
-        if(infoImagePath == null || infoImagePath.equals(""))
+        if (infoImagePath == null || infoImagePath.equals(""))
             return new ArrayList<>();
         return List.of(infoImagePath.split(","));
     }
 
     public String getProfileImage(String profileImagePath) {
-        if(profileImagePath == null)
+        if (profileImagePath == null)
             return null;
         return profileImagePath;
     }
 
-    public List<String> getInfoImages(String infoImagePath){
-        if(infoImagePath == null || infoImagePath.equals(""))
+    public List<String> getInfoImages(String infoImagePath) {
+        if (infoImagePath == null || infoImagePath.equals(""))
             return new ArrayList<>();
         return List.of(infoImagePath.split(","));
     }
