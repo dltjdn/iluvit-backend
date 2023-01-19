@@ -151,11 +151,8 @@ public class imageServiceStubTest {
                 .build();
 
         //when
-        String destPath = imageServiceStubAmazon.saveProfileImage(multipartFile, center);
-
         System.out.println("center.getProfileImagePath() = " + center.getProfileImagePath());
         //then
-        assertThat(destPath).isNull();
         assertThat(center.getProfileImagePath())
                 .isEqualTo("https://iluvit.s3.ap-northeast-2.amazonaws.com" + '/' + "centerProfile/" + "1.png");
     }
@@ -170,9 +167,8 @@ public class imageServiceStubTest {
                         "https://iluvit.s3.ap-northeast-2.amazonaws.com" + '/' + "centerInfo/1/" + "3.png,")
                 .build();
 
-        String destPath = imageServiceStubAmazon.saveInfoImages(multipartFileList, center);
+        imageServiceStubAmazon.saveInfoImages(multipartFileList, center);
         //then
-        assertThat(destPath).isNull();
         assertThat(center.getInfoImagePath())
                 .isEqualTo("https://iluvit.s3.ap-northeast-2.amazonaws.com" + '/' + "centerInfo/1/" + "1.png," +
                         "https://iluvit.s3.ap-northeast-2.amazonaws.com" + '/' + "centerInfo/1/" + "2.png,");
@@ -186,11 +182,10 @@ public class imageServiceStubTest {
                 .build();
 
         //when
-        String destPath = imageServiceStubAmazon.saveInfoImages(multipartFileList, center);
+        imageServiceStubAmazon.saveInfoImages(multipartFileList, center);
 
         System.out.println("center.getInfoImagePath() = " + center.getInfoImagePath());
         //then
-        assertThat(destPath).isNull();
         assertThat(center.getInfoImagePath())
                 .isEqualTo("https://iluvit.s3.ap-northeast-2.amazonaws.com" + '/' + "centerInfo/1/" + "1.png," +
                         "https://iluvit.s3.ap-northeast-2.amazonaws.com" + '/' + "centerInfo/1/" + "2.png,");

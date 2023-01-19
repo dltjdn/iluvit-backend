@@ -89,10 +89,11 @@ public class ImageServiceStubAmazon implements ImageService {
     }
 
 
-    public String saveInfoImages(List<MultipartFile> images, BaseImageEntity entity) {
+    public void saveInfoImages(List<MultipartFile> images, BaseImageEntity entity) {
         // null 이거나 비어있다면 return
-        if (images == null || images.size() == 0)
-            return null;
+        if (images == null || images.size() == 0) {
+            return;
+        }
         // 이미지 분석 단계
         List<String> destPaths = getInfoDestPath(images, entity);
 
@@ -105,7 +106,7 @@ public class ImageServiceStubAmazon implements ImageService {
         clear(getInfoDeleteKey(entity, destPaths));
         updateInfoImagePath(entity, destPaths);
 
-        return null;
+
     }
 
     private void clear(Set<String> deleteKeys) {

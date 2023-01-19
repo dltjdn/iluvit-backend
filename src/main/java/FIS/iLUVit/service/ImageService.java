@@ -8,7 +8,7 @@ import java.util.List;
 public interface ImageService {
 
 
-    String saveInfoImages(List<MultipartFile> images, BaseImageEntity entity);
+    void saveInfoImages(List<MultipartFile> images, BaseImageEntity entity);
 
     void saveProfileImage(MultipartFile image, BaseImageEntity entity);
 

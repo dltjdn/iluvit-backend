@@ -190,7 +190,6 @@ public class PresentationService {
         userRepository.findTeacherById(userId)
                 .orElseThrow(() -> new UserException(UserErrorResult.USER_NOT_EXIST))
                 .canWrite(presentation.getCenter().getId());
-        System.out.println("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!"+images);
 
         imageService.saveInfoImages(images, presentation);
 
