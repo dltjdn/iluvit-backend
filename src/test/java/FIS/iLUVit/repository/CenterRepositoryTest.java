@@ -10,10 +10,10 @@ import FIS.iLUVit.domain.embeddable.BasicInfra;
 import FIS.iLUVit.domain.embeddable.Theme;
 import FIS.iLUVit.domain.enumtype.Approval;
 import FIS.iLUVit.domain.enumtype.KindOf;
-import FIS.iLUVit.repository.dto.CenterAndDistancePreview;
+import FIS.iLUVit.repository.dto.CenterAndDistancePreviewDto;
 import FIS.iLUVit.repository.dto.CenterBannerDto;
-import FIS.iLUVit.repository.dto.CenterMapPreview;
-import FIS.iLUVit.repository.dto.CenterPreview;
+import FIS.iLUVit.repository.dto.CenterMapPreviewDto;
+import FIS.iLUVit.repository.dto.CenterPreviewDto;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -55,9 +55,9 @@ class CenterRepositoryTest {
 
         List<Area> areas = new ArrayList<>();
         areas.add(new Area("서울시", "금천구"));
-        Slice<CenterPreview> byFilter = centerRepository.findByFilter(areas, null, null, null, PageRequest.of(0, 10));
-        CenterPreview centerPreview = byFilter.getContent().get(0);
-        assertThat(centerPreview.getName()).isEqualTo("떡잎유치원");
+        Slice<CenterPreviewDto> byFilter = centerRepository.findByFilter(areas, null, null, null, PageRequest.of(0, 10));
+        CenterPreviewDto centerPreviewDto = byFilter.getContent().get(0);
+        assertThat(centerPreviewDto.getName()).isEqualTo("떡잎유치원");
 
     }
 
@@ -86,8 +86,8 @@ class CenterRepositoryTest {
         //when
         PageRequest pageable = PageRequest.of(0, 5);
 
-        Slice<CenterPreview> byFilter = centerRepository.findByFilter(areas, theme, 3, KindOf.ALL, pageable);
-        List<CenterPreview> contents = byFilter.getContent();
+        Slice<CenterPreviewDto> byFilter = centerRepository.findByFilter(areas, theme, 3, KindOf.ALL, pageable);
+        List<CenterPreviewDto> contents = byFilter.getContent();
 
         //then
         assertThat(byFilter.hasNext()).isFalse();
@@ -124,8 +124,8 @@ class CenterRepositoryTest {
         //when
         PageRequest pageable = PageRequest.of(0, 5);
 
-        Slice<CenterPreview> byFilter = centerRepository.findByFilter(areas, theme, 3, KindOf.ALL, pageable);
-        List<CenterPreview> contents = byFilter.getContent();
+        Slice<CenterPreviewDto> byFilter = centerRepository.findByFilter(areas, theme, 3, KindOf.ALL, pageable);
+        List<CenterPreviewDto> contents = byFilter.getContent();
 
         //then
         assertThat(byFilter.hasNext()).isFalse();
@@ -286,11 +286,11 @@ class CenterRepositoryTest {
 
 
             //when
-            SliceImpl<CenterAndDistancePreview> result = centerRepository.findByFilterForMapList(127.0147458, 37.5015178, KindOf.ALL, idList, PageRequest.of(0, 10));
+            SliceImpl<CenterAndDistancePreviewDto> result = centerRepository.findByFilterForMapList(127.0147458, 37.5015178, KindOf.ALL, idList, PageRequest.of(0, 10));
             //then
             assertThat(result.getContent().size()).isEqualTo(4);
             // 로그인 안 했으므로 항상 false
-            assertThat((int) result.stream().filter(CenterAndDistancePreview::getPrefer).count()).isEqualTo(0);
+            assertThat((int) result.stream().filter(CenterAndDistancePreviewDto::getPrefer).count()).isEqualTo(0);
             result.forEach(centerAndDistancePreview -> System.out.println("centerAndDistancePreview.getDistance() = " + centerAndDistancePreview.getDistance()));
         }
 
@@ -342,11 +342,11 @@ class CenterRepositoryTest {
             idList.add(center3.getId());
 
             //when
-            SliceImpl<CenterAndDistancePreview> result = centerRepository.findByFilterForMapList(127.0147458, 37.5015178, parent1.getId(), KindOf.ALL, idList, PageRequest.of(0, 2));
+            SliceImpl<CenterAndDistancePreviewDto> result = centerRepository.findByFilterForMapList(127.0147458, 37.5015178, parent1.getId(), KindOf.ALL, idList, PageRequest.of(0, 2));
             //then
             assertThat(result.getContent().size()).isEqualTo(2);
             assertThat(result.hasNext()).isTrue();
-            assertThat((int) result.stream().filter(CenterAndDistancePreview::getPrefer).count()).isEqualTo(2);
+            assertThat((int) result.stream().filter(CenterAndDistancePreviewDto::getPrefer).count()).isEqualTo(2);
             result.forEach(centerAndDistancePreview -> System.out.println("centerAndDistancePreview.getDistance() = " + centerAndDistancePreview.getDistance()));
         }
 
@@ -399,11 +399,11 @@ class CenterRepositoryTest {
             idList.add(center5.getId());
 
             //when
-            SliceImpl<CenterAndDistancePreview> result = centerRepository.findByFilterForMapList(127.0147458, 37.5015178, parent1.getId(), KindOf.Kindergarten, idList, PageRequest.of(0, 5));
+            SliceImpl<CenterAndDistancePreviewDto> result = centerRepository.findByFilterForMapList(127.0147458, 37.5015178, parent1.getId(), KindOf.Kindergarten, idList, PageRequest.of(0, 5));
             //then
             assertThat(result.getContent().size()).isEqualTo(3);
             assertThat(result.hasNext()).isFalse();
-            assertThat((int) result.stream().filter(CenterAndDistancePreview::getPrefer).count()).isEqualTo(2);
+            assertThat((int) result.stream().filter(CenterAndDistancePreviewDto::getPrefer).count()).isEqualTo(2);
             result.forEach(centerAndDistancePreview -> System.out.println("centerAndDistancePreview.getDistance() = " + centerAndDistancePreview.getDistance()));
         }
 
@@ -427,7 +427,7 @@ class CenterRepositoryTest {
             em.clear();
             String searchContent = "어린이집";
             //when
-            List<CenterMapPreview> result = centerRepository.findByFilterForMap(127.0147458, 37.5015178, 1.0, searchContent);
+            List<CenterMapPreviewDto> result = centerRepository.findByFilterForMap(127.0147458, 37.5015178, 1.0, searchContent);
 
             //then
             assertThat(result.size()).isEqualTo(0);
@@ -601,15 +601,15 @@ class CenterRepositoryTest {
         em.flush();
         em.clear();
         // when
-        Slice<CenterPreview> result = centerRepository.findByPrefer(parent.getId(), PageRequest.of(0, 10));
+        Slice<CenterPreviewDto> result = centerRepository.findByPrefer(parent.getId(), PageRequest.of(0, 10));
         // then
         assertThat(result.hasNext()).isFalse();
         assertThat(result.getContent().size()).isEqualTo(2);
-        for (CenterPreview centerPreview : result) {
-            if (Objects.equals(centerPreview.getId(), center1.getId())) {
-                assertThat(centerPreview.getStarAverage()).isEqualTo(2.5);
-            } else if (Objects.equals(centerPreview.getId(), center2.getId())) {
-                assertThat(centerPreview.getStarAverage()).isEqualTo(3);
+        for (CenterPreviewDto centerPreviewDto : result) {
+            if (Objects.equals(centerPreviewDto.getId(), center1.getId())) {
+                assertThat(centerPreviewDto.getStarAverage()).isEqualTo(2.5);
+            } else if (Objects.equals(centerPreviewDto.getId(), center2.getId())) {
+                assertThat(centerPreviewDto.getStarAverage()).isEqualTo(3);
             } else {
                 throw new RuntimeException();
             }

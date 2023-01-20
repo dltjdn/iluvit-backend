@@ -13,7 +13,7 @@ import java.time.LocalDate;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class PresentationPreviewForUsers {
+public class PresentationForUserDto {
 
     private Long centerId;
     private String centerName;
@@ -26,7 +26,7 @@ public class PresentationPreviewForUsers {
     private String infoImages;
 
     @QueryProjection
-    public PresentationPreviewForUsers(Presentation presentation, Center center) {
+    public PresentationForUserDto(Presentation presentation, Center center) {
         centerId = center.getId();
         centerName = center.getName();
         presentationId = presentation.getId();
