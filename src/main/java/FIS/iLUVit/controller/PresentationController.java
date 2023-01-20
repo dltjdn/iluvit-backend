@@ -47,37 +47,13 @@ public class PresentationController {
         return presentationService.findPresentationByCenterIdAndDate(centerId, userId);
     }
 
-    /**
-     * 원장/ 선생의 presentation 등록 PtDate 설정하기
-     * @return
-     */
-    @PostMapping("")
-    @ResponseStatus(HttpStatus.CREATED)
-    public PresentationResponse registerPresentation(@RequestPart @Validated PresentationDetailRequest request,
-                                                     @RequestPart(required = false) List<MultipartFile> images,
-                                                     @Login Long userId){
-        if(userId == null)
-            throw new UserException(UserErrorResult.NOT_LOGIN);
-        return new PresentationResponse(presentationService.saveWithPtDate(request, images, userId));
-    }
-
-    /**
-     * 원장, 선생의 설명회 수정
-     */
-    @PatchMapping("")
-    @ResponseStatus(HttpStatus.ACCEPTED)
-    public PresentationResponse modifyPresentation(@RequestPart @Validated PresentationRequest request,
-                                                   @RequestPart(required = false) List<MultipartFile> images,
-                                                   @Login Long userId){
-        return new PresentationResponse(presentationService.modifyWithPtDate(request, images, userId));
-    }
 
     /**
      * 작성자: 이창윤
      * 원장/ 선생의 presentation 등록 PtDate 설정하기
      * 리액트 네이티브용 정보 저장
      */
-    @PostMapping("react-native")
+    @PostMapping("")
     @ResponseStatus(HttpStatus.CREATED)
     public PresentationResponse registerPresentationInfo(@RequestBody @Validated PresentationDetailRequest request,
                                                          @Login Long userId){
@@ -92,7 +68,7 @@ public class PresentationController {
      * 원장, 선생의 설명회 수정
      * 리액트 네이티브용 정보 수정
      */
-    @PatchMapping("react-native")
+    @PatchMapping("")
     @ResponseStatus(HttpStatus.ACCEPTED)
     public PresentationResponse modifyPresentationInfo(@RequestBody @Validated PresentationRequest request,
                                                        @Login Long userId){
@@ -105,7 +81,7 @@ public class PresentationController {
      * 리액트 네이티브용 이미지 저장
      */
     @Transactional
-    @PostMapping("image/react-native")
+    @PostMapping("{presentationdId}/image")
     @ResponseStatus(HttpStatus.CREATED)
     public PresentationResponse registerPresentationImage(@RequestParam Long presentationId,
                                                           @RequestPart(required = false) List<MultipartFile> images,
@@ -122,7 +98,7 @@ public class PresentationController {
      * 리액트 네이티브용 이미지 수정
      */
     @Transactional
-    @PatchMapping("image/react-native")
+    @PatchMapping("{presentationId}/image")
     @ResponseStatus(HttpStatus.ACCEPTED)
     public PresentationResponse modifyPresentationImage(@RequestParam Long presentationId,
                                                         @RequestPart(required = false) List<MultipartFile> images,
