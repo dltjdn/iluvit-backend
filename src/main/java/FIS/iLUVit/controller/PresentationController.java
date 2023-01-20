@@ -53,12 +53,12 @@ public class PresentationController {
      */
     @PostMapping("")
     @ResponseStatus(HttpStatus.CREATED)
-    public PresentationInfoResponse registerPresentation(@RequestPart @Validated PresentationDetailRequest request,
-                                                         @RequestPart(required = false) List<MultipartFile> images,
-                                                         @Login Long userId){
+    public PresentationResponse registerPresentation(@RequestPart @Validated PresentationDetailRequest request,
+                                                     @RequestPart(required = false) List<MultipartFile> images,
+                                                     @Login Long userId){
         if(userId == null)
             throw new UserException(UserErrorResult.NOT_LOGIN);
-        return new PresentationInfoResponse(presentationService.saveWithPtDate(request, images, userId));
+        return new PresentationResponse(presentationService.saveWithPtDate(request, images, userId));
     }
 
     /**
@@ -66,10 +66,10 @@ public class PresentationController {
      */
     @PatchMapping("")
     @ResponseStatus(HttpStatus.ACCEPTED)
-    public PresentationInfoResponse modifyPresentation(@RequestPart @Validated PresentationInfoRequest request,
-                                                       @RequestPart(required = false) List<MultipartFile> images,
-                                                       @Login Long userId){
-        return new PresentationInfoResponse(presentationService.modifyWithPtDate(request, images, userId));
+    public PresentationResponse modifyPresentation(@RequestPart @Validated PresentationRequest request,
+                                                   @RequestPart(required = false) List<MultipartFile> images,
+                                                   @Login Long userId){
+        return new PresentationResponse(presentationService.modifyWithPtDate(request, images, userId));
     }
 
     /**
@@ -79,12 +79,12 @@ public class PresentationController {
      */
     @PostMapping("react-native")
     @ResponseStatus(HttpStatus.CREATED)
-    public PresentationInfoResponse registerPresentationInfo(@RequestBody @Validated PresentationDetailRequest request,
-                                                             @Login Long userId){
+    public PresentationResponse registerPresentationInfo(@RequestBody @Validated PresentationDetailRequest request,
+                                                         @Login Long userId){
         if(userId == null)
             throw new UserException(UserErrorResult.NOT_LOGIN);
         log.info("PresentationRequestRequestFormDto = {}", request);
-        return new PresentationInfoResponse(presentationService.saveInfoWithPtDate(request, userId));
+        return new PresentationResponse(presentationService.saveInfoWithPtDate(request, userId));
     }
 
     /**
@@ -94,9 +94,9 @@ public class PresentationController {
      */
     @PatchMapping("react-native")
     @ResponseStatus(HttpStatus.ACCEPTED)
-    public PresentationInfoResponse modifyPresentationInfo(@RequestBody @Validated PresentationInfoRequest request,
-                                                           @Login Long userId){
-        return new PresentationInfoResponse(presentationService.modifyInfoWithPtDate(request, userId));
+    public PresentationResponse modifyPresentationInfo(@RequestBody @Validated PresentationRequest request,
+                                                       @Login Long userId){
+        return new PresentationResponse(presentationService.modifyInfoWithPtDate(request, userId));
     }
 
     /**
@@ -107,12 +107,12 @@ public class PresentationController {
     @Transactional
     @PostMapping("image/react-native")
     @ResponseStatus(HttpStatus.CREATED)
-    public PresentationInfoResponse registerPresentationImage(@RequestParam Long presentationId,
-                                                              @RequestPart(required = false) List<MultipartFile> images,
-                                                              @Login Long userId) {
+    public PresentationResponse registerPresentationImage(@RequestParam Long presentationId,
+                                                          @RequestPart(required = false) List<MultipartFile> images,
+                                                          @Login Long userId) {
         if (userId == null)
             throw new UserException(UserErrorResult.NOT_LOGIN);
-        return new PresentationInfoResponse(presentationService.saveImageWithPtDate(presentationId, images, userId));
+        return new PresentationResponse(presentationService.saveImageWithPtDate(presentationId, images, userId));
     }
 
 
@@ -124,10 +124,10 @@ public class PresentationController {
     @Transactional
     @PatchMapping("image/react-native")
     @ResponseStatus(HttpStatus.ACCEPTED)
-    public PresentationInfoResponse modifyPresentationImage(@RequestParam Long presentationId,
-                                                            @RequestPart(required = false) List<MultipartFile> images,
-                                                            @Login Long userId){
-        return new PresentationInfoResponse(presentationService.modifyImageWithPtDate(presentationId, images, userId));
+    public PresentationResponse modifyPresentationImage(@RequestParam Long presentationId,
+                                                        @RequestPart(required = false) List<MultipartFile> images,
+                                                        @Login Long userId){
+        return new PresentationResponse(presentationService.modifyImageWithPtDate(presentationId, images, userId));
     }
 
     /**

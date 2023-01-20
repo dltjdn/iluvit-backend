@@ -3,8 +3,8 @@ package FIS.iLUVit.controller;
 import FIS.iLUVit.Creator;
 import FIS.iLUVit.config.argumentResolver.LoginUserArgumentResolver;
 import FIS.iLUVit.controller.dto.CenterBannerResponse;
-import FIS.iLUVit.controller.dto.CenterInfoDto;
-import FIS.iLUVit.controller.dto.CenterInfoRequest;
+import FIS.iLUVit.controller.dto.CenterDto;
+import FIS.iLUVit.controller.dto.CenterRequest;
 import FIS.iLUVit.controller.dto.CenterDetailRequest;
 import FIS.iLUVit.controller.messagecreate.ResponseRequests;
 import FIS.iLUVit.domain.Center;
@@ -106,17 +106,17 @@ class CenterControllerTest extends ResponseRequests {
     public void 회원가입과정에서center정보가져오기() throws Exception {
         // given
         String url = "/center/signup?page=0&size=5";
-        CenterInfoRequest request = CenterInfoRequest.builder()
+        CenterRequest request = CenterRequest.builder()
                 .sido("서울시")
                 .sigungu("금천구")
                 .build();
-        List<CenterInfoDto> content = List.of(CenterInfoDto.builder()
+        List<CenterDto> content = List.of(CenterDto.builder()
                 .id(1L)
                 .name("name")
                 .address("address")
                 .build());
         PageRequest pageable = PageRequest.of(0, 5);
-        SliceImpl<CenterInfoDto> response = new SliceImpl<>(content, pageable, false);
+        SliceImpl<CenterDto> response = new SliceImpl<>(content, pageable, false);
         doReturn(response)
                 .when(teacherService)
                 .findCenterForSignup(request, pageable);
@@ -554,10 +554,10 @@ class CenterControllerTest extends ResponseRequests {
     public void 아이추가센터정보조회() throws Exception {
         // given
         String url = "/center/child/add?page=0&size=10";
-        List<CenterInfoDto> content = List.of(CenterInfoDto.builder().build());
-        CenterInfoRequest request = CenterInfoRequest.builder().build();
+        List<CenterDto> content = List.of(CenterDto.builder().build());
+        CenterRequest request = CenterRequest.builder().build();
         Pageable pageable = PageRequest.of(0, 10);
-        SliceImpl<CenterInfoDto> response = new SliceImpl<>(content, pageable, false);
+        SliceImpl<CenterDto> response = new SliceImpl<>(content, pageable, false);
         doReturn(response)
                 .when(childService)
                 .findCenterForAddChild(any(), any());

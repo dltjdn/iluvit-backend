@@ -6,12 +6,12 @@ import FIS.iLUVit.domain.enumtype.Auth;
 import lombok.Data;
 
 @Data
-public class TeacherInfoResponse extends UserInfoResponse {
+public class TeacherResponse extends UserResponse {
 
     private Long centerId;
     private Approval approval;
 
-    public TeacherInfoResponse(Long id, String nickName, Auth auth, Center center, Approval approval) {
+    public TeacherResponse(Long id, String nickName, Auth auth, Center center, Approval approval) {
         super(id, nickName, auth);
         if (center != null) {
             this.centerId = center.getId();

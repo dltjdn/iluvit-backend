@@ -126,7 +126,7 @@ public class TeacherController {
      *   작성내용: 회원가입, 이직 과정에서 center 정보 가져오기
      */
     @GetMapping("search/center")
-    public Slice<CenterInfoDto> centerInfoForSignup(@ModelAttribute CenterInfoRequest request, Pageable pageable) {
+    public Slice<CenterDto> centerInfoForSignup(@ModelAttribute CenterRequest request, Pageable pageable) {
         return teacherService.findCenterForSignup(request, pageable);
     }
 }

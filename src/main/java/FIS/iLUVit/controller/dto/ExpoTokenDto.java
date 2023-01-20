@@ -5,7 +5,7 @@ import lombok.Data;
 
 @Data
 @AllArgsConstructor
-public class ExpoTokenInfoDto {
+public class ExpoTokenDto {
     private Long id;
     private String token;
     private Boolean accept;

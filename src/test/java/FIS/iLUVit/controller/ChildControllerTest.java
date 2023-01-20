@@ -2,7 +2,7 @@ package FIS.iLUVit.controller;
 
 import FIS.iLUVit.Creator;
 import FIS.iLUVit.config.argumentResolver.LoginUserArgumentResolver;
-import FIS.iLUVit.controller.dto.ChildInfoDto;
+import FIS.iLUVit.controller.dto.ChildDto;
 import FIS.iLUVit.domain.Center;
 import FIS.iLUVit.domain.Child;
 import FIS.iLUVit.domain.Parent;
@@ -81,7 +81,7 @@ public class ChildControllerTest {
     public void 아이들정보반환() throws Exception {
         // given
         String url = "/parent/childInfo";
-        doReturn(new ChildInfoDto())
+        doReturn(new ChildDto())
                 .when(childService)
                 .childrenInfo(any());
         // when

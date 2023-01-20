@@ -44,19 +44,19 @@ public class ChildService {
      * 작성자: 이승범
      * 작성내용: 부모의 메인페이지에 필요한 아이들 정보 반환
      */
-    public ChildInfoDto childrenInfo(Long id) {
+    public ChildDto childrenInfo(Long id) {
         Parent findParent = parentRepository.findWithChildren(id)
                 .orElseThrow(() -> new UserException(UserErrorResult.NOT_VALID_TOKEN));
 
-        ChildInfoDto childInfoDTO = new ChildInfoDto();
+        ChildDto childDTO = new ChildDto();
 
         findParent.getChildren().forEach(child -> {
-            childInfoDTO.getData().add(
-                    new ChildInfoDto.ChildInfo(child, imageService.getProfileImage(child))
+            childDTO.getData().add(
+                    new ChildDto.ChildInfo(child, imageService.getProfileImage(child))
             );
         });
 
-        return childInfoDTO;
+        return childDTO;
     }
 
     /**
@@ -182,7 +182,7 @@ public class ChildService {
      * 작성자: 이승범
      * 작성내용: 아이 삭제
      */
-    public ChildInfoDto deleteChild(Long userId, Long childId) {
+    public ChildDto deleteChild(Long userId, Long childId) {
 
         // 요청 사용자가 등록한 모든 아이 가져오기
         List<Child> childrenByUser = childRepository.findByUserWithCenter(userId);
@@ -329,7 +329,7 @@ public class ChildService {
      *   작성자: 이승범
      *   작성내용: 아이추가 과정에서 필요한 센터정보 가져오기
      */
-    public Slice<CenterInfoDto> findCenterForAddChild(CenterInfoRequest request, Pageable pageable) {
+    public Slice<CenterDto> findCenterForAddChild(CenterRequest request, Pageable pageable) {
         return centerRepository.findCenterForAddChild(request.getSido(), request.getSigungu(), request.getCenterName(), pageable);
     }
 

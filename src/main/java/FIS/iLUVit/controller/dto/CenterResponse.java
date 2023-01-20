@@ -12,7 +12,7 @@ import java.util.List;
 
 @Data
 @AllArgsConstructor
-public class CenterInfoResponse {
+public class CenterResponse {
     private Long id;
     private String name;                    // 시설명
     private String estType;                 // 설립유형
@@ -49,7 +49,7 @@ public class CenterInfoResponse {
     private List<String> programs = new ArrayList<>();
     private List<String> addInfos = new ArrayList<>();
 
-    public CenterInfoResponse(Center center){
+    public CenterResponse(Center center){
         this.id = center.getId();
         this.name = center.getName();
         this.estType = center.getEstType();

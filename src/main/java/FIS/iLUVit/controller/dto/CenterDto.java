@@ -8,13 +8,13 @@ import lombok.NoArgsConstructor;
 @Data
 @Builder
 @NoArgsConstructor
-public class CenterInfoDto {
+public class CenterDto {
     private Long id;
     private String name;
     private String address;
 
     @QueryProjection
-    public CenterInfoDto(Long id, String centerName, String centerAddress) {
+    public CenterDto(Long id, String centerName, String centerAddress) {
         this.id = id;
         this.name = centerName;
         this.address = centerAddress;

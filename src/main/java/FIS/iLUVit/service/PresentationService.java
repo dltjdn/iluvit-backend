@@ -151,7 +151,7 @@ public class PresentationService {
         return new PresentationDetailResponse(presentation, imageService.getInfoImages(presentation));
     }
 
-    public Presentation modifyWithPtDate(PresentationInfoRequest request, List<MultipartFile> images, Long userId) {
+    public Presentation modifyWithPtDate(PresentationRequest request, List<MultipartFile> images, Long userId) {
         //
         Presentation presentation = presentationRepository.findByIdAndJoinPtDate(request.getPresentationId())
                 .orElseThrow(() -> new PresentationException(PresentationErrorResult.NO_RESULT));
@@ -212,7 +212,7 @@ public class PresentationService {
         return presentation;
     }
 
-    public Presentation modifyInfoWithPtDate(PresentationInfoRequest request, Long userId) {
+    public Presentation modifyInfoWithPtDate(PresentationRequest request, Long userId) {
         //
         Presentation presentation = presentationRepository.findByIdAndJoinPtDate(request.getPresentationId())
                 .orElseThrow(() -> new PresentationException(PresentationErrorResult.NO_RESULT));

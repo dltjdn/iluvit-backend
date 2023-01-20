@@ -2,7 +2,7 @@ package FIS.iLUVit.repository;
 
 import FIS.iLUVit.Creator;
 import FIS.iLUVit.config.argumentResolver.ForDB;
-import FIS.iLUVit.controller.dto.CenterInfoDto;
+import FIS.iLUVit.controller.dto.CenterDto;
 import FIS.iLUVit.controller.dto.CenterRecommendDto;
 import FIS.iLUVit.domain.*;
 import FIS.iLUVit.domain.embeddable.Area;
@@ -225,7 +225,7 @@ class CenterRepositoryTest {
         em.flush();
         em.clear();
         // when
-        Slice<CenterInfoDto> result = centerRepository.findForSignup("서울시", "금천구", "떡잎유치원", PageRequest.of(0, 5));
+        Slice<CenterDto> result = centerRepository.findForSignup("서울시", "금천구", "떡잎유치원", PageRequest.of(0, 5));
         // then
         assertThat(result.getContent().size()).isEqualTo(2);
         assertThat(result.getContent().get(0).getName()).isEqualTo(center1.getName());
@@ -685,7 +685,7 @@ class CenterRepositoryTest {
             em.persist(center4);
             em.persist(center5);
             // when
-            Slice<CenterInfoDto> result = centerRepository.findCenterForAddChild(null, "", "", PageRequest.of(0, 10));
+            Slice<CenterDto> result = centerRepository.findCenterForAddChild(null, "", "", PageRequest.of(0, 10));
             // then
             assertThat(result.getContent().size()).isEqualTo(3);
         }
@@ -706,7 +706,7 @@ class CenterRepositoryTest {
             em.persist(center5);
             em.persist(center6);
             // when
-            Slice<CenterInfoDto> result = centerRepository.findCenterForAddChild("서울시", "구로구", "", PageRequest.of(0, 10));
+            Slice<CenterDto> result = centerRepository.findCenterForAddChild("서울시", "구로구", "", PageRequest.of(0, 10));
             // then
             assertThat(result.getContent().size()).isEqualTo(2);
         }
@@ -727,7 +727,7 @@ class CenterRepositoryTest {
             em.persist(center5);
             em.persist(center6);
             // when
-            Slice<CenterInfoDto> result = centerRepository.findCenterForAddChild("", null, "center3", PageRequest.of(0, 10));
+            Slice<CenterDto> result = centerRepository.findCenterForAddChild("", null, "center3", PageRequest.of(0, 10));
             // then
             assertThat(result.getContent().size()).isEqualTo(1);
         }
@@ -748,7 +748,7 @@ class CenterRepositoryTest {
             em.persist(center5);
             em.persist(center6);
             // when
-            Slice<CenterInfoDto> result = centerRepository.findCenterForAddChild("", null, "", PageRequest.of(0, 3));
+            Slice<CenterDto> result = centerRepository.findCenterForAddChild("", null, "", PageRequest.of(0, 3));
             // then
             assertThat(result.getContent().size()).isEqualTo(3);
         }

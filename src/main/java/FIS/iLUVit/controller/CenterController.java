@@ -51,7 +51,7 @@ public class CenterController {
      * 개발 추가 사항 - 사진, 영상 정보 반환할 것 추가하기
      */
     @GetMapping("{centerId}/info")
-    public CenterInfoResponse centerInfo(@PathVariable("centerId") Long id){
+    public CenterResponse centerInfo(@PathVariable("centerId") Long id){
         return centerService.findInfoById(id);
     }
 

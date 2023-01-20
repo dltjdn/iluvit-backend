@@ -26,7 +26,7 @@ public class ChildController {
      * 작성내용: 부모의 메인페이지에 필요한 아이들 정보 반환
      */
     @GetMapping("info")
-    public ChildInfoDto childInfo(@Login Long id) {
+    public ChildDto childInfo(@Login Long id) {
         return childService.childrenInfo(id);
     }
 
@@ -67,7 +67,7 @@ public class ChildController {
      * 작성내용: 아이삭제
      */
     @DeleteMapping("{childId}")
-    public ChildInfoDto deleteChild(@Login Long userId, @PathVariable("childId") Long childId) {
+    public ChildDto deleteChild(@Login Long userId, @PathVariable("childId") Long childId) {
         return childService.deleteChild(userId, childId);
     }
 
@@ -128,7 +128,7 @@ public class ChildController {
      *   작성내용: 아이추가 과정에서 필요한 센터정보 가져오기
      */
     @GetMapping("search/center")
-    public Slice<CenterInfoDto> centerInfoForAddChild(@ModelAttribute CenterInfoRequest request, Pageable pageable) {
+    public Slice<CenterDto> centerInfoForAddChild(@ModelAttribute CenterRequest request, Pageable pageable) {
         return childService.findCenterForAddChild(request, pageable);
     }
 }

@@ -110,7 +110,7 @@ public class ChildServiceTest {
                     .when(imageService)
                     .getProfileImage(any(Child.class));
             // when
-            ChildInfoDto result = target.childrenInfo(parent1.getId());
+            ChildDto result = target.childrenInfo(parent1.getId());
             // then
             assertThat(result.getData().size()).isEqualTo(2);
         }
@@ -127,10 +127,10 @@ public class ChildServiceTest {
                     .when(imageService)
                     .getProfileImage(any(Child.class));
             // when
-            ChildInfoDto result = target.childrenInfo(parent1.getId());
+            ChildDto result = target.childrenInfo(parent1.getId());
             // then
             assertThat(result.getData().size()).isEqualTo(3);
-            for (ChildInfoDto.ChildInfo childInfo : result.getData()) {
+            for (ChildDto.ChildInfo childInfo : result.getData()) {
                 if (Objects.equals(childInfo.getId(), child3.getId())) {
                     assertThat(childInfo.getCenter_id()).isNull();
                 }
@@ -142,7 +142,7 @@ public class ChildServiceTest {
             doReturn(Optional.of(parent2))
                     .when(parentRepository)
                     .findWithChildren(any());
-            ChildInfoDto result = target.childrenInfo(parent2.getId());
+            ChildDto result = target.childrenInfo(parent2.getId());
             // then
             assertThat(result.getData().size()).isEqualTo(0);
         }
@@ -642,7 +642,7 @@ public class ChildServiceTest {
                     .when(parentRepository)
                     .findWithChildren(any());
             // when
-            ChildInfoDto result = target.deleteChild(parent1.getId(), child1.getId());
+            ChildDto result = target.deleteChild(parent1.getId(), child1.getId());
             // then
             assertThat(result.getData().size()).isEqualTo(2);
         }
@@ -660,7 +660,7 @@ public class ChildServiceTest {
                     .when(parentRepository)
                     .findWithChildren(any());
             // when
-            ChildInfoDto result = target.deleteChild(parent1.getId(), child1.getId());
+            ChildDto result = target.deleteChild(parent1.getId(), child1.getId());
             // then
             assertThat(result.getData().size()).isEqualTo(2);
         }

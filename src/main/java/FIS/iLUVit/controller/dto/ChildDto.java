@@ -12,7 +12,7 @@ import java.util.List;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class ChildInfoDto {
+public class ChildDto {
 
     private List<ChildInfo> data = new ArrayList<>();
 

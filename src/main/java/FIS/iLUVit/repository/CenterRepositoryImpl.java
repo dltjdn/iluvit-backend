@@ -1,8 +1,8 @@
 package FIS.iLUVit.repository;
 
-import FIS.iLUVit.controller.dto.CenterInfoDto;
+import FIS.iLUVit.controller.dto.CenterDto;
 import FIS.iLUVit.controller.dto.CenterRecommendDto;
-import FIS.iLUVit.controller.dto.QCenterInfoDto;
+import FIS.iLUVit.controller.dto.QCenterDto;
 import FIS.iLUVit.controller.dto.QCenterRecommendDto;
 import FIS.iLUVit.domain.Location;
 import FIS.iLUVit.domain.embeddable.Area;
@@ -227,8 +227,8 @@ public class CenterRepositoryImpl extends CenterQueryMethod implements CenterRep
      * 작성내용: 회원가입 과정에서 시설정보 가져오기
      */
     @Override
-    public Slice<CenterInfoDto> findForSignup(String sido, String sigungu, String centerName, Pageable pageable) {
-        List<CenterInfoDto> content = jpaQueryFactory.select(new QCenterInfoDto(center.id, center.name, center.address))
+    public Slice<CenterDto> findForSignup(String sido, String sigungu, String centerName, Pageable pageable) {
+        List<CenterDto> content = jpaQueryFactory.select(new QCenterDto(center.id, center.name, center.address))
                 .from(center)
                 .where(areaEq(sido, sigungu)
                         ,(centerNameEq(centerName))
@@ -252,8 +252,8 @@ public class CenterRepositoryImpl extends CenterQueryMethod implements CenterRep
      * 작성내용: 아이추가 과정에서 필요한 센터정보 가져오기
      */
     @Override
-    public Slice<CenterInfoDto> findCenterForAddChild(String sido, String sigungu, String centerName, Pageable pageable) {
-        List<CenterInfoDto> content = jpaQueryFactory.select(new QCenterInfoDto(center.id, center.name, center.address))
+    public Slice<CenterDto> findCenterForAddChild(String sido, String sigungu, String centerName, Pageable pageable) {
+        List<CenterDto> content = jpaQueryFactory.select(new QCenterDto(center.id, center.name, center.address))
                 .from(center)
                 .where(center.signed.eq(true)
                         , (areaEq(sido, sigungu))

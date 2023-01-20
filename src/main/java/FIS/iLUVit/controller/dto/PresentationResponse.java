@@ -11,12 +11,12 @@ import java.util.List;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class PresentationInfoResponse {
+public class PresentationResponse {
 
     Long presentationId;
     List<Long> ptDateId = new ArrayList<>();
 
-    public PresentationInfoResponse(Presentation presentation) {
+    public PresentationResponse(Presentation presentation) {
         presentationId = presentation.getId();
         presentation.getPtDates().forEach(ptDate -> ptDateId.add(ptDate.getId()));
     }

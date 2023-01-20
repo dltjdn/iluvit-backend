@@ -1,7 +1,7 @@
 package FIS.iLUVit.controller;
 
 import FIS.iLUVit.config.argumentResolver.Login;
-import FIS.iLUVit.controller.dto.ExpoTokenInfoDto;
+import FIS.iLUVit.controller.dto.ExpoTokenDto;
 import FIS.iLUVit.controller.dto.ExpoTokenRequest;
 import FIS.iLUVit.service.ExpoTokenService;
 import lombok.RequiredArgsConstructor;
@@ -46,8 +46,8 @@ public class ExpoTokenController {
      * O --> True, X --> False 로 응답
      */
     @GetMapping("{token}")
-    public ExpoTokenInfoDto findById(@Login Long userId,
-                                     @PathVariable String token) {
+    public ExpoTokenDto findById(@Login Long userId,
+                                 @PathVariable String token) {
         return expoTokenService.findById(userId, token);
     }
 

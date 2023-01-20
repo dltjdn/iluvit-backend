@@ -3,7 +3,7 @@ package FIS.iLUVit.controller;
 import FIS.iLUVit.config.argumentResolver.LoginUserArgumentResolver;
 import FIS.iLUVit.controller.dto.PresentationDetailRequest;
 import FIS.iLUVit.controller.dto.PresentationDateDetailRequest;
-import FIS.iLUVit.controller.dto.PresentationInfoResponse;
+import FIS.iLUVit.controller.dto.PresentationResponse;
 import FIS.iLUVit.domain.Parent;
 import FIS.iLUVit.domain.Presentation;
 import FIS.iLUVit.domain.PtDate;
@@ -251,7 +251,7 @@ class PresentationControllerTest {
             result.andDo(print())
                     .andExpect(status().isCreated())
                     .andExpect(content().json(objectMapper.writeValueAsString(
-                            new PresentationInfoResponse(presentation)
+                            new PresentationResponse(presentation)
                     )));
         }
 
@@ -280,7 +280,7 @@ class PresentationControllerTest {
             result.andDo(print())
                     .andExpect(status().isCreated())
                     .andExpect(content().json(objectMapper.writeValueAsString(
-                            new PresentationInfoResponse(presentation)
+                            new PresentationResponse(presentation)
                     )));
         }
 
@@ -310,7 +310,7 @@ class PresentationControllerTest {
             result.andDo(print())
                     .andExpect(status().isCreated())
                     .andExpect(content().json(objectMapper.writeValueAsString(
-                            new PresentationInfoResponse(presentation)
+                            new PresentationResponse(presentation)
                     )));
 
         }

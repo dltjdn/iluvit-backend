@@ -9,7 +9,7 @@ import lombok.NoArgsConstructor;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class CenterInfoRequest {
+public class CenterRequest {
     private String sido;
     private String sigungu;
     private String centerName;

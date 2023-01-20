@@ -328,7 +328,7 @@ class PresentationServiceTest {
         PresentationDateDto dto2;
         PresentationDateDto dto3;
         PresentationDateDto dto4;
-        PresentationInfoRequest request;
+        PresentationRequest request;
         Presentation presentation;
         PtDate ptDate1;
         PtDate ptDate2;
@@ -347,7 +347,7 @@ class PresentationServiceTest {
             dtos.add(dto2);
             dtos.add(dto3);
             dtos.add(dto4);
-            request = new PresentationInfoRequest(1L, LocalDate.now(), LocalDate.now(), "장소", "콘텐츠", dtos);
+            request = new PresentationRequest(1L, LocalDate.now(), LocalDate.now(), "장소", "콘텐츠", dtos);
             presentation = createValidPresentation(center);
             ptDate1 = createCanRegisterPtDate(1L, presentation);
             ptDate2 = createCanNotRegisterPtDate(2L, presentation);
@@ -455,8 +455,8 @@ class PresentationServiceTest {
             dtos.add(dto2);
             dtos.add(dto3);
             dtos.add(dto4);
-            request = new PresentationInfoRequest(1L, LocalDate.now(), LocalDate.now(), "장소", "콘텐츠", dtos);
-            request = new PresentationInfoRequest(1L, LocalDate.now(), LocalDate.now(), "장소", "콘텐츠", dtos);
+            request = new PresentationRequest(1L, LocalDate.now(), LocalDate.now(), "장소", "콘텐츠", dtos);
+            request = new PresentationRequest(1L, LocalDate.now(), LocalDate.now(), "장소", "콘텐츠", dtos);
             presentation = createValidPresentation(center);
             ptDate1 = createCanRegisterPtDate(1L, presentation);
             ptDate2 = createNoParticipantsPtDate(2L, presentation);

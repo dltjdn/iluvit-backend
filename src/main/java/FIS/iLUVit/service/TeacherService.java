@@ -350,7 +350,7 @@ public class TeacherService {
      *   작성자: 이승범
      *   작성내용: 회원가입 과정에서 필요한 센터정보 가져오기
      */
-    public Slice<CenterInfoDto> findCenterForSignup(CenterInfoRequest request, Pageable pageable) {
+    public Slice<CenterDto> findCenterForSignup(CenterRequest request, Pageable pageable) {
         return centerRepository.findForSignup(request.getSido(), request.getSigungu(), request.getCenterName(), pageable);
     }
 }

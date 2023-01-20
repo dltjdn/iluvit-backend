@@ -4,7 +4,7 @@ import FIS.iLUVit.Creator;
 import FIS.iLUVit.controller.dto.CheckLoginIdRequest;
 import FIS.iLUVit.controller.dto.CheckNicknameRequest;
 import FIS.iLUVit.controller.dto.PasswordRequest;
-import FIS.iLUVit.controller.dto.UserInfoResponse;
+import FIS.iLUVit.controller.dto.UserResponse;
 import FIS.iLUVit.domain.AuthNumber;
 import FIS.iLUVit.domain.Parent;
 import FIS.iLUVit.domain.User;
@@ -56,7 +56,7 @@ public class UserServiceTest {
                 .when(userRepository)
                 .findById(parent.getId());
         // when
-        UserInfoResponse result = target.findUserInfo(parent.getId());
+        UserResponse result = target.findUserInfo(parent.getId());
         // then
         assertThat(result.getId()).isEqualTo(parent.getId());
     }

@@ -4,9 +4,9 @@ import FIS.iLUVit.domain.enumtype.Auth;
 import lombok.Data;
 
 @Data
-public class ParentInfoResponse extends UserInfoResponse {
+public class ParentResponse extends UserResponse {
 
-    public ParentInfoResponse(Long id, String nickName, Auth auth) {
+    public ParentResponse(Long id, String nickName, Auth auth) {
         super(id, nickName, auth);
     }
 }

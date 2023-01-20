@@ -1,6 +1,6 @@
 package FIS.iLUVit.repository;
 
-import FIS.iLUVit.controller.dto.CenterInfoDto;
+import FIS.iLUVit.controller.dto.CenterDto;
 import FIS.iLUVit.controller.dto.CenterRecommendDto;
 import FIS.iLUVit.domain.Location;
 import FIS.iLUVit.domain.embeddable.Area;
@@ -29,9 +29,9 @@ public interface CenterRepositoryCustom {
 
     List<CenterRecommendDto> findRecommendCenter(Theme theme, Location location, Pageable pageable);
 
-    Slice<CenterInfoDto> findForSignup(String sido, String sigungu, String centerName, Pageable pageable);
+    Slice<CenterDto> findForSignup(String sido, String sigungu, String centerName, Pageable pageable);
 
-    Slice<CenterInfoDto> findCenterForAddChild(String sido, String sigungu, String centerName, Pageable pageable);
+    Slice<CenterDto> findCenterForAddChild(String sido, String sigungu, String centerName, Pageable pageable);
 
     Slice<CenterPreview> findByPrefer(Long userId, Pageable pageable);
 }

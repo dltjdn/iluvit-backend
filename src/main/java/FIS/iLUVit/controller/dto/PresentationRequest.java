@@ -16,7 +16,7 @@ import java.util.List;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class PresentationInfoRequest {
+public class PresentationRequest {
     @NotNull
     private Long presentationId;
 

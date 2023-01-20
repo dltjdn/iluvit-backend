@@ -1,6 +1,6 @@
 package FIS.iLUVit.service;
 
-import FIS.iLUVit.controller.dto.ExpoTokenInfoDto;
+import FIS.iLUVit.controller.dto.ExpoTokenDto;
 import FIS.iLUVit.controller.dto.ExpoTokenRequest;
 import FIS.iLUVit.domain.ExpoToken;
 import FIS.iLUVit.domain.User;
@@ -40,9 +40,9 @@ public class ExpoTokenService {
         expoToken.modifyAcceptStatus(request.getAccept());
     }
 
-    public ExpoTokenInfoDto findById(Long userId, String token) {
+    public ExpoTokenDto findById(Long userId, String token) {
         ExpoToken expoToken = getExpoTokenWithUserException(token, userId);
-        return new ExpoTokenInfoDto(expoToken.getId(), expoToken.getToken(), expoToken.getAccept());
+        return new ExpoTokenDto(expoToken.getId(), expoToken.getToken(), expoToken.getAccept());
     }
 
     @NotNull
