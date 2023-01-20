@@ -21,14 +21,14 @@ public class AlarmController {
 
     private final AlarmService alarmService;
 
+    @GetMapping("read")
+    public void readAlarm(@Login Long userId){
+        if(userId == null)
+            throw new UserException(UserErrorResult.NOT_LOGIN);
+        alarmService.readAlarm(userId);
+    }
 
-//    public void readAlarm(@Login Long userId){
-//        if(userId == null)
-//            throw new UserException(UserErrorResult.NOT_LOGIN);
-//        alarmService.readAlarm(userId);
-//    }
-
-    @GetMapping("")
+    @GetMapping("active")
     public Slice<AlarmDetailDto> getActiveAlarm(@Login Long userId, Pageable pageable){
         return alarmService.findUserActiveAlarm(userId, pageable);
     }
