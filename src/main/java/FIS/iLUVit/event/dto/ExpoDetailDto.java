@@ -5,7 +5,7 @@ import lombok.NoArgsConstructor;
 
 @Data
 @NoArgsConstructor
-public class Details {
+public class ExpoDetailDto {
     private String error;
     private String expoPushToken;
 }

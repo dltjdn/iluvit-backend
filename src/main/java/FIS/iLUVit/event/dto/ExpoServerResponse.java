@@ -9,6 +9,6 @@ import java.util.List;
 @NoArgsConstructor
 public class ExpoServerResponse {
 
-    private List<Info> data;
+    private List<ExpoResponse> data;
 
 }
