@@ -33,7 +33,7 @@ public class CenterRepositoryImpl extends CenterQueryMethod implements CenterRep
 
     @Override
     public Slice<CenterPreviewDto> findByFilter(List<Area> areas, Theme theme, Integer interestedAge, KindOf kindOf, Pageable pageable) {
-        List<CenterPreviewDto> content = jpaQueryFactory.select(new QCenterPreview(center, review.score.avg()))
+        List<CenterPreviewDto> content = jpaQueryFactory.select(new QCenterPreviewDto(center, review.score.avg()))
                 .from(center)
                 .leftJoin(center.reviews, review)
                 .where(areasIn(areas)
@@ -67,7 +67,7 @@ public class CenterRepositoryImpl extends CenterQueryMethod implements CenterRep
                 .multiply(cos(radians(center.longitude).subtract(radians(longitudeEx))))
                 .add(sin(radians(longitudeEx)).multiply(sin(radians(center.longitude))))).multiply(param).as("distance");
 
-        List<CenterAndDistancePreviewDto> result = jpaQueryFactory.select(new QCenterAndDistancePreview(center, review.score.avg(), distanceEx))
+        List<CenterAndDistancePreviewDto> result = jpaQueryFactory.select(new QCenterAndDistancePreviewDto(center, review.score.avg(), distanceEx))
                 .from(center)
                 .leftJoin(center.reviews, review)
                 .where(center.latitude.between(latitude_l, latitude_h)
@@ -97,7 +97,7 @@ public class CenterRepositoryImpl extends CenterQueryMethod implements CenterRep
 
         List<CenterAndDistancePreviewDto> result =
                 jpaQueryFactory.select(
-                                new QCenterAndDistancePreview(
+                                new QCenterAndDistancePreviewDto(
                                         distanceEx,
                                         center.id, center.name, center.kindOf, center.estType, center.tel, center.startTime, center.endTime, center.minAge, center.maxAge, center.address, center.addressDetail, center.longitude, center.latitude, center.theme,
                                         review.score.avg(),
@@ -136,7 +136,7 @@ public class CenterRepositoryImpl extends CenterQueryMethod implements CenterRep
 
         List<CenterAndDistancePreviewDto> result =
                 jpaQueryFactory.select(
-                                new QCenterAndDistancePreview(
+                                new QCenterAndDistancePreviewDto(
                                         distanceEx,
                                         center.id, center.name, center.kindOf, center.estType, center.tel, center.startTime, center.endTime, center.minAge, center.maxAge, center.address, center.addressDetail, center.longitude, center.latitude, center.theme,
                                         review.score.avg(),
@@ -171,7 +171,7 @@ public class CenterRepositoryImpl extends CenterQueryMethod implements CenterRep
                         .add(cos(radians(latitudeEx)).multiply(cos(radians(center.latitude)))
                                 .multiply(cos(radians(longitudeEx).subtract(radians(center.longitude)))))).multiply(param);
 
-        List<CenterMapPreviewDto> result = jpaQueryFactory.select(new QCenterMapPreview(center.id, center.name, center.longitude, center.latitude))
+        List<CenterMapPreviewDto> result = jpaQueryFactory.select(new QCenterMapPreviewDto(center.id, center.name, center.longitude, center.latitude))
                 .from(center)
                 .leftJoin(center.reviews, review)
                 .groupBy(center)
@@ -184,7 +184,7 @@ public class CenterRepositoryImpl extends CenterQueryMethod implements CenterRep
 
         while (result.size() <= 10 && searchContent != null && !searchContent.equals("") && distance <= 1600) {
             distance = distance * 3;
-            result = jpaQueryFactory.select(new QCenterMapPreview(center.id, center.name, center.longitude, center.latitude))
+            result = jpaQueryFactory.select(new QCenterMapPreviewDto(center.id, center.name, center.longitude, center.latitude))
                     .from(center)
                     .leftJoin(center.reviews, review)
                     .groupBy(center)
@@ -279,7 +279,7 @@ public class CenterRepositoryImpl extends CenterQueryMethod implements CenterRep
      */
     @Override
     public Slice<CenterPreviewDto> findByPrefer(Long userId, Pageable pageable) {
-        List<CenterPreviewDto> content = jpaQueryFactory.select(new QCenterPreview(center, review.score.avg()))
+        List<CenterPreviewDto> content = jpaQueryFactory.select(new QCenterPreviewDto(center, review.score.avg()))
                 .from(center)
                 .join(center.prefers, prefer).on(prefer.parent.id.eq(userId))
                 .leftJoin(center.reviews, review)
