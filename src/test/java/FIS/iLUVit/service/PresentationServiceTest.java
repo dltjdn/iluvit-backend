@@ -220,10 +220,10 @@ class PresentationServiceTest {
     @DisplayName("설명회 저장")
     class 설명회저장{
 
-        PresentationDateDetailRequest ptDateRequest1;
-        PresentationDateDetailRequest ptDateRequest2;
-        PresentationDateDetailRequest ptDateRequest3;
-        List<PresentationDateDetailRequest> dtoList = new ArrayList<>();
+        PtDateDetailRequest ptDateRequest1;
+        PtDateDetailRequest ptDateRequest2;
+        PtDateDetailRequest ptDateRequest3;
+        List<PtDateDetailRequest> dtoList = new ArrayList<>();
         PresentationDetailRequest request;
         MultipartFile multipartFile;
         List<MultipartFile> multipartFileList = new ArrayList<>();
@@ -231,10 +231,10 @@ class PresentationServiceTest {
 
         @BeforeEach
         void init() throws IOException {
-             ptDateRequest1 = new PresentationDateDetailRequest(LocalDate.now(), "test time", 10);
-             ptDateRequest2 = new PresentationDateDetailRequest(LocalDate.now(), "test time", 10);
-             ptDateRequest3 = new PresentationDateDetailRequest(LocalDate.now(), "test time", 10);
-             List<PresentationDateDetailRequest> dtoList = new ArrayList<>();
+             ptDateRequest1 = new PtDateDetailRequest(LocalDate.now(), "test time", 10);
+             ptDateRequest2 = new PtDateDetailRequest(LocalDate.now(), "test time", 10);
+             ptDateRequest3 = new PtDateDetailRequest(LocalDate.now(), "test time", 10);
+             List<PtDateDetailRequest> dtoList = new ArrayList<>();
              dtoList.add(ptDateRequest1);
              dtoList.add(ptDateRequest2);
              dtoList.add(ptDateRequest3);
@@ -324,10 +324,10 @@ class PresentationServiceTest {
     @Nested
     @DisplayName("설명회 수정")
     class 설명회수정{
-        PresentationDateDto dto1;
-        PresentationDateDto dto2;
-        PresentationDateDto dto3;
-        PresentationDateDto dto4;
+        PtDateDto dto1;
+        PtDateDto dto2;
+        PtDateDto dto3;
+        PtDateDto dto4;
         PresentationRequest request;
         Presentation presentation;
         PtDate ptDate1;
@@ -338,11 +338,11 @@ class PresentationServiceTest {
         List<Waiting> waiting;
         @BeforeEach
         void init(){
-            dto1 = new PresentationDateDto(null, LocalDate.now(), "test time", 10);
-            dto2 = new PresentationDateDto(1L, LocalDate.now(), "test time", 10);
-            dto3 = new PresentationDateDto(null, LocalDate.now(), "test time", 10);
-            dto4 = new PresentationDateDto(3L, LocalDate.now(), "test time", 10);
-            List<PresentationDateDto> dtos = new ArrayList<>();
+            dto1 = new PtDateDto(null, LocalDate.now(), "test time", 10);
+            dto2 = new PtDateDto(1L, LocalDate.now(), "test time", 10);
+            dto3 = new PtDateDto(null, LocalDate.now(), "test time", 10);
+            dto4 = new PtDateDto(3L, LocalDate.now(), "test time", 10);
+            List<PtDateDto> dtos = new ArrayList<>();
             dtos.add(dto1);
             dtos.add(dto2);
             dtos.add(dto3);
@@ -446,11 +446,11 @@ class PresentationServiceTest {
         @DisplayName("[success] 설명회 수정 성공")
         public void 설명회수정성공() throws Exception {
             //given
-            dto1 = new PresentationDateDto(null, LocalDate.now(), "test time", 10);
-            dto2 = new PresentationDateDto(1L, LocalDate.now(), "test time", 10);
-            dto3 = new PresentationDateDto(null, LocalDate.now(), "test time", 10);
-            dto4 = new PresentationDateDto(3L, LocalDate.now(), "test time", 10);
-            List<PresentationDateDto> dtos = new ArrayList<>();
+            dto1 = new PtDateDto(null, LocalDate.now(), "test time", 10);
+            dto2 = new PtDateDto(1L, LocalDate.now(), "test time", 10);
+            dto3 = new PtDateDto(null, LocalDate.now(), "test time", 10);
+            dto4 = new PtDateDto(3L, LocalDate.now(), "test time", 10);
+            List<PtDateDto> dtos = new ArrayList<>();
             dtos.add(dto1);
             dtos.add(dto2);
             dtos.add(dto3);

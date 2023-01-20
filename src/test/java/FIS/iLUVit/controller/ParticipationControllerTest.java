@@ -2,7 +2,7 @@ package FIS.iLUVit.controller;
 
 import FIS.iLUVit.config.argumentResolver.LoginUserArgumentResolver;
 import FIS.iLUVit.controller.dto.ParticipationRequest;
-import FIS.iLUVit.controller.dto.PresentationDateRequest;
+import FIS.iLUVit.controller.dto.PtDateRequest;
 import FIS.iLUVit.controller.dto.WaitingRegisterDto;
 import FIS.iLUVit.domain.Parent;
 import FIS.iLUVit.domain.User;
@@ -71,8 +71,8 @@ class ParticipationControllerTest {
                 .build();
     }
 
-    private PresentationDateRequest participationRegisterRequestDto(Long ptDateId){
-        return new PresentationDateRequest(ptDateId);
+    private PtDateRequest participationRegisterRequestDto(Long ptDateId){
+        return new PtDateRequest(ptDateId);
     }
 
     public String createJwtToken(){

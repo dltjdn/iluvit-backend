@@ -36,5 +36,5 @@ public class PresentationRequest {
 
     @Size(min = 1, message = "설명회 작성 미완료")
     @NotNull
-    private List<PresentationDateDto> ptDateDtos = new ArrayList<>();
+    private List<PtDateDto> ptDateDtos = new ArrayList<>();
 }
