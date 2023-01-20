@@ -5,7 +5,7 @@ import FIS.iLUVit.domain.embeddable.Area;
 import FIS.iLUVit.domain.embeddable.Theme;
 import FIS.iLUVit.domain.enumtype.KindOf;
 import FIS.iLUVit.repository.dto.PresentationForUserDto;
-import FIS.iLUVit.repository.dto.QPresentationPreviewForUsers;
+import FIS.iLUVit.repository.dto.QPresentationForUserDto;
 import com.querydsl.core.types.OrderSpecifier;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.AllArgsConstructor;
@@ -32,7 +32,7 @@ public class PresentationRepositoryCustomImpl extends CenterQueryMethod implemen
 
         LocalDate now = LocalDate.now();
 
-        List<PresentationForUserDto> content = jpaQueryFactory.select(new QPresentationPreviewForUsers(presentation, center))
+        List<PresentationForUserDto> content = jpaQueryFactory.select(new QPresentationForUserDto(presentation, center))
                 .from(presentation)
                 .join(presentation.center, center)
                 .where(areasIn(areas)
