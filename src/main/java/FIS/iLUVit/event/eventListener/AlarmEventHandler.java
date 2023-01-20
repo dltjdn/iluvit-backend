@@ -4,7 +4,6 @@ import FIS.iLUVit.domain.ExpoToken;
 import FIS.iLUVit.domain.User;
 import FIS.iLUVit.domain.alarms.Alarm;
 import FIS.iLUVit.event.AlarmEvent;
-import FIS.iLUVit.event.dto.Details;
 import FIS.iLUVit.event.dto.ExpoServerResponse;
 import FIS.iLUVit.event.ExpoServerUtils;
 import FIS.iLUVit.repository.AlarmRepository;
@@ -73,7 +72,7 @@ public class AlarmEventHandler {
         List<String> invalidTokens = response.getData()
                 .stream()
                 .filter(i -> Objects.equals(i.getStatus(), "error"))
-                .map(i -> i.getDetails().getExpoPushToken())
+                .map(i -> i.getExpoDetailDto().getExpoPushToken())
                 .collect(Collectors.toList());
 
         if (invalidTokens.isEmpty()) {

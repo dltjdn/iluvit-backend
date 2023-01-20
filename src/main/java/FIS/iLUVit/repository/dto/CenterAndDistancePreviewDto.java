@@ -9,7 +9,7 @@ import lombok.Data;
 
 
 @Data
-public class CenterAndDistancePreview {
+public class CenterAndDistancePreviewDto {
     private Long id;
     private String name;                    // 시설명
     private KindOf kindOf;
@@ -31,7 +31,7 @@ public class CenterAndDistancePreview {
     private Boolean prefer;
 
     @QueryProjection
-    public CenterAndDistancePreview(Center center, Double starAverage, Long prefer){
+    public CenterAndDistancePreviewDto(Center center, Double starAverage, Long prefer){
         this.id = center.getId();
         this.name = center.getName();
         this.estType = center.getEstType();
@@ -52,7 +52,7 @@ public class CenterAndDistancePreview {
 
     @Builder
     @QueryProjection
-    public CenterAndDistancePreview(Double distance, Long id, String name, KindOf kindOf, String estType, String tel, String startTime, String endTime, Integer minAge, Integer maxAge, String address, String addressDetail, Double longitude, Double latitude, Theme theme, Double starAverage, String profileImage, Long prefer) {
+    public CenterAndDistancePreviewDto(Double distance, Long id, String name, KindOf kindOf, String estType, String tel, String startTime, String endTime, Integer minAge, Integer maxAge, String address, String addressDetail, Double longitude, Double latitude, Theme theme, Double starAverage, String profileImage, Long prefer) {
         this.id = id;
         this.name = name;
         this.kindOf = kindOf;
@@ -74,7 +74,7 @@ public class CenterAndDistancePreview {
     }
 
     @QueryProjection
-    public CenterAndDistancePreview(Double distance, Long id, String name, KindOf kindOf, String estType, String tel, String startTime, String endTime, Integer minAge, Integer maxAge, String address, String addressDetail, Double longitude, Double latitude, Theme theme, Double starAverage, String profileImage) {
+    public CenterAndDistancePreviewDto(Double distance, Long id, String name, KindOf kindOf, String estType, String tel, String startTime, String endTime, Integer minAge, Integer maxAge, String address, String addressDetail, Double longitude, Double latitude, Theme theme, Double starAverage, String profileImage) {
         this.id = id;
         this.name = name;
         this.kindOf = kindOf;
@@ -96,7 +96,7 @@ public class CenterAndDistancePreview {
     }
 
     @QueryProjection
-    public CenterAndDistancePreview(Center center, Double starAverage, Double distance){
+    public CenterAndDistancePreviewDto(Center center, Double starAverage, Double distance){
         this.id = center.getId();
         this.name = center.getName();
         this.estType = center.getEstType();

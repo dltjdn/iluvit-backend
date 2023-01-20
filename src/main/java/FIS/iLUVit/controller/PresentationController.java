@@ -6,7 +6,7 @@ import FIS.iLUVit.exception.UserErrorResult;
 import FIS.iLUVit.exception.UserException;
 import FIS.iLUVit.service.PresentationService;
 import FIS.iLUVit.service.UserService;
-import FIS.iLUVit.service.dto.ParentInfoForDirectorDto;
+import FIS.iLUVit.service.dto.ParentDto;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Pageable;
@@ -132,7 +132,7 @@ public class PresentationController {
      * 설명회를 신청한 사람들의 목록 반환 이름, 전화번호
      */
     @GetMapping("pt-date/{ptDateId}/participating")
-    public List<ParentInfoForDirectorDto> findParentParticipate(@Login Long userId, @PathVariable("ptDateId") Long ptDateId){
+    public List<ParentDto> findParentParticipate(@Login Long userId, @PathVariable("ptDateId") Long ptDateId){
         return presentationService.findPtDateParticipatingParents(userId, ptDateId);
     }
 
@@ -140,7 +140,7 @@ public class PresentationController {
      * 대기를 신청한 사람들의 목록 반환 이름, 전화번호
      */
     @GetMapping("pt-date/{ptDateId}/waiting")
-    public List<ParentInfoForDirectorDto> findParentWait(@Login Long userId, @PathVariable("ptDateId") Long ptDateId){
+    public List<ParentDto> findParentWait(@Login Long userId, @PathVariable("ptDateId") Long ptDateId){
         return presentationService.findPtDateWaitingParents(userId, ptDateId);
     }
 

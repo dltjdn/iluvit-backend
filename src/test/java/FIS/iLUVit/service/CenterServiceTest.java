@@ -14,7 +14,7 @@ import FIS.iLUVit.exception.UserErrorResult;
 import FIS.iLUVit.exception.UserException;
 import FIS.iLUVit.repository.CenterRepository;
 import FIS.iLUVit.repository.UserRepository;
-import FIS.iLUVit.repository.dto.CenterAndDistancePreview;
+import FIS.iLUVit.repository.dto.CenterAndDistancePreviewDto;
 import FIS.iLUVit.repository.dto.CenterBannerDto;
 import org.junit.jupiter.api.*;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -127,14 +127,14 @@ public class CenterServiceTest {
             Center center4 = createCenter("김유정 어린이집", 3, 37.5500494, 127.0097435);
             Center center5 = createCenter("신은수 어린이집", 3, 37.5618861, 127.020072);
             Center center6 = createCenter("한명수 어린이집", 3, 37.5105178, 127.0147458);
-            List<CenterAndDistancePreview> data = new ArrayList<>();
-            data.add(new CenterAndDistancePreview(center1, 2.3, 1L));
-            data.add(new CenterAndDistancePreview(center2, 2.3, 1L));
-            data.add(new CenterAndDistancePreview(center3, 2.3, 1L));
-            data.add(new CenterAndDistancePreview(center4, 2.3, 1L));
-            data.add(new CenterAndDistancePreview(center5, 2.3, 1L));
-            data.add(new CenterAndDistancePreview(center6, 2.3, 1L));
-            SliceImpl<CenterAndDistancePreview> dataSlice = new SliceImpl<>(data, PageRequest.of(0, 10), false);
+            List<CenterAndDistancePreviewDto> data = new ArrayList<>();
+            data.add(new CenterAndDistancePreviewDto(center1, 2.3, 1L));
+            data.add(new CenterAndDistancePreviewDto(center2, 2.3, 1L));
+            data.add(new CenterAndDistancePreviewDto(center3, 2.3, 1L));
+            data.add(new CenterAndDistancePreviewDto(center4, 2.3, 1L));
+            data.add(new CenterAndDistancePreviewDto(center5, 2.3, 1L));
+            data.add(new CenterAndDistancePreviewDto(center6, 2.3, 1L));
+            SliceImpl<CenterAndDistancePreviewDto> dataSlice = new SliceImpl<>(data, PageRequest.of(0, 10), false);
             List<Long> centerIds = new ArrayList<>();
             centerIds.add(center1.getId());
             centerIds.add(center2.getId());
@@ -146,7 +146,7 @@ public class CenterServiceTest {
             Mockito.doReturn(dataSlice).when(centerRepository).findByFilterForMapList(1.2, 1.2, 1L, KindOf.ALL, centerIds, PageRequest.of(0, 10));
 
             //when
-            List<CenterAndDistancePreview> result = target.findByFilterForMapList(1.2, 1.2, centerIds, 1L, KindOf.ALL, PageRequest.of(0, 10)).getContent();
+            List<CenterAndDistancePreviewDto> result = target.findByFilterForMapList(1.2, 1.2, centerIds, 1L, KindOf.ALL, PageRequest.of(0, 10)).getContent();
 
             //then
             verify(centerRepository, times(1)).findByFilterForMapList(1.2, 1.2, 1L, KindOf.ALL, centerIds, PageRequest.of(0, 10));
@@ -157,13 +157,13 @@ public class CenterServiceTest {
         @DisplayName("[success] 위경도 기반으로 검색 자료가 없을 경우 빈 배열 반환")
         public void 자료없으면빈배열반환() throws Exception {
             //given
-            List<CenterAndDistancePreview> data = new ArrayList<>();
-            SliceImpl<CenterAndDistancePreview> dataSlice = new SliceImpl<>(data, PageRequest.of(0, 10), false);
+            List<CenterAndDistancePreviewDto> data = new ArrayList<>();
+            SliceImpl<CenterAndDistancePreviewDto> dataSlice = new SliceImpl<>(data, PageRequest.of(0, 10), false);
             List<Long> centerIds = new ArrayList<>();
             Mockito.doReturn(dataSlice).when(centerRepository).findByFilterForMapList(1.2, 1.2, 1L, KindOf.ALL, centerIds, PageRequest.of(0, 10));
 
             //when
-            List<CenterAndDistancePreview> result = target.findByFilterForMapList(1.2, 1.2, new ArrayList<>(), 1L, KindOf.ALL, PageRequest.of(0, 10)).getContent();
+            List<CenterAndDistancePreviewDto> result = target.findByFilterForMapList(1.2, 1.2, new ArrayList<>(), 1L, KindOf.ALL, PageRequest.of(0, 10)).getContent();
 
             //then
             verify(centerRepository, times(1)).findByFilterForMapList(1.2, 1.2, 1L, KindOf.ALL, centerIds, PageRequest.of(0, 10));
@@ -180,14 +180,14 @@ public class CenterServiceTest {
             Center center4 = createCenter(4L,"김유정 어린이집", 3, 37.5500494, 127.0097435);
             Center center5 = createCenter(5L,"신은수 어린이집", 3, 37.5618861, 127.020072);
             Center center6 = createCenter(6L,"한명수 어린이집", 3, 37.5105178, 127.0147458);
-            List<CenterAndDistancePreview> data = new ArrayList<>();
-            data.add(new CenterAndDistancePreview(center1, 2.3, 1L));
-            data.add(new CenterAndDistancePreview(center2, 2.3, 1L));
-            data.add(new CenterAndDistancePreview(center3, 2.3, 1L));
-            data.add(new CenterAndDistancePreview(center4, 2.3, 1L));
-            data.add(new CenterAndDistancePreview(center5, 2.3, 1L));
-            data.add(new CenterAndDistancePreview(center6, 2.3, 1L));
-            SliceImpl<CenterAndDistancePreview> dataSlice = new SliceImpl<>(data, PageRequest.of(0, 10), false);
+            List<CenterAndDistancePreviewDto> data = new ArrayList<>();
+            data.add(new CenterAndDistancePreviewDto(center1, 2.3, 1L));
+            data.add(new CenterAndDistancePreviewDto(center2, 2.3, 1L));
+            data.add(new CenterAndDistancePreviewDto(center3, 2.3, 1L));
+            data.add(new CenterAndDistancePreviewDto(center4, 2.3, 1L));
+            data.add(new CenterAndDistancePreviewDto(center5, 2.3, 1L));
+            data.add(new CenterAndDistancePreviewDto(center6, 2.3, 1L));
+            SliceImpl<CenterAndDistancePreviewDto> dataSlice = new SliceImpl<>(data, PageRequest.of(0, 10), false);
             List<Long> centerIds = new ArrayList<>();
             centerIds.add(center1.getId());
             centerIds.add(center2.getId());
@@ -200,7 +200,7 @@ public class CenterServiceTest {
             Mockito.doReturn(dataSlice).when(centerRepository).findByFilterForMapList(1.2, 1.2, KindOf.ALL, centerIds, PageRequest.of(0, 10));
 
             //when
-            List<CenterAndDistancePreview> result = target.findByFilterForMapList(1.2, 1.2, centerIds, null, KindOf.ALL,PageRequest.of(0, 10)).getContent();
+            List<CenterAndDistancePreviewDto> result = target.findByFilterForMapList(1.2, 1.2, centerIds, null, KindOf.ALL,PageRequest.of(0, 10)).getContent();
 
             //then
             verify(centerRepository, times(1)).findByFilterForMapList(1.2, 1.2,  KindOf.ALL, centerIds, PageRequest.of(0, 10));

@@ -1,7 +1,7 @@
 package FIS.iLUVit.controller.dto;
 
 import FIS.iLUVit.domain.embeddable.Theme;
-import FIS.iLUVit.repository.dto.PresentationPreviewForUsers;
+import FIS.iLUVit.repository.dto.PresentationForUserDto;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -24,7 +24,7 @@ public class PresentationForUserResponse {
     private Theme theme;
     private List<String> infoImages = new ArrayList<>();
 
-    public PresentationForUserResponse(PresentationPreviewForUsers dto){
+    public PresentationForUserResponse(PresentationForUserDto dto){
         this.centerId = dto.getCenterId();
         this.centerName = dto.getCenterName();
         this.presentationId = dto.getPresentationId();

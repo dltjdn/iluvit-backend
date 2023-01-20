@@ -8,7 +8,7 @@ import lombok.Builder;
 import lombok.Data;
 
 @Data
-public class CenterPreview {
+public class CenterPreviewDto {
     private Long id;
     private String name;                    // 시설명
     private String owner;                   // 대표자명
@@ -29,7 +29,7 @@ public class CenterPreview {
     private Double starAverage;
 
     @QueryProjection
-    public CenterPreview(Center center, Double starAverage){
+    public CenterPreviewDto(Center center, Double starAverage){
         this.id = center.getId();
         this.name = center.getName();
         this.owner = center.getOwner();
@@ -51,7 +51,7 @@ public class CenterPreview {
     }
 
     @Builder
-    public CenterPreview(Long id, String name, String owner, String director, String estType, String tel, String startTime, String endTime, Integer minAge, Integer maxAge, String address, String AddressDetail, Area area, Double longitude, Double latitude, Theme theme, String profileImage, Double starAverage) {
+    public CenterPreviewDto(Long id, String name, String owner, String director, String estType, String tel, String startTime, String endTime, Integer minAge, Integer maxAge, String address, String AddressDetail, Area area, Double longitude, Double latitude, Theme theme, String profileImage, Double starAverage) {
         this.id = id;
         this.name = name;
         this.owner = owner;
