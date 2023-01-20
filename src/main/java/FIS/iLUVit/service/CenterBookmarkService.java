@@ -8,7 +8,7 @@ import FIS.iLUVit.exception.PreferException;
 import FIS.iLUVit.repository.CenterRepository;
 import FIS.iLUVit.repository.ParentRepository;
 import FIS.iLUVit.repository.CenterBookmarkRepository;
-import FIS.iLUVit.repository.dto.CenterPreview;
+import FIS.iLUVit.repository.dto.CenterPreviewDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.data.domain.Pageable;
@@ -29,7 +29,7 @@ public class CenterBookmarkService {
      *   작성자: 이승범
      *   작성내용: 찜한 시설 리스트
      */
-    public Slice<CenterPreview> findCentersByPrefer(Long userId, Pageable pageable) {
+    public Slice<CenterPreviewDto> findCentersByPrefer(Long userId, Pageable pageable) {
         return centerRepository.findByPrefer(userId, pageable);
     }
 

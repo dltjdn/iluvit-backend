@@ -8,7 +8,7 @@ import java.time.LocalDate;
 
 @Data
 @AllArgsConstructor
-public class PresentationQuryDto {
+public class PresentationQueryDto {
     private Long presentationId;
     private LocalDate startDate;          // 설명회 신청 기간
     private LocalDate endDate;
@@ -18,7 +18,7 @@ public class PresentationQuryDto {
     private Integer videoCnt;           // 설명회 동영상 개수 최대 _개
     private String infoImages;
 
-    public PresentationQuryDto(PresentationWithPtDatesDto querydto) {
+    public PresentationQueryDto(PresentationWithPtDatesDto querydto) {
         presentationId = querydto.getPresentationId();
         startDate = querydto.getStartDate();
         endDate = querydto.getEndDate();

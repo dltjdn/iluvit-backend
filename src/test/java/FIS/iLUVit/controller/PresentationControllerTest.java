@@ -2,7 +2,7 @@ package FIS.iLUVit.controller;
 
 import FIS.iLUVit.config.argumentResolver.LoginUserArgumentResolver;
 import FIS.iLUVit.controller.dto.PresentationDetailRequest;
-import FIS.iLUVit.controller.dto.PresentationDateDetailRequest;
+import FIS.iLUVit.controller.dto.PtDateDetailRequest;
 import FIS.iLUVit.controller.dto.PresentationResponse;
 import FIS.iLUVit.domain.Parent;
 import FIS.iLUVit.domain.Presentation;
@@ -100,19 +100,19 @@ class PresentationControllerTest {
     @DisplayName("설명회 저장")
     class 설명회저장{
 
-        PresentationDateDetailRequest ptDateRequest1;
-        PresentationDateDetailRequest ptDateRequest2;
-        PresentationDateDetailRequest ptDateRequest3;
-        List<PresentationDateDetailRequest> dtoList = new ArrayList<>();
+        PtDateDetailRequest ptDateRequest1;
+        PtDateDetailRequest ptDateRequest2;
+        PtDateDetailRequest ptDateRequest3;
+        List<PtDateDetailRequest> dtoList = new ArrayList<>();
         PresentationDetailRequest request;
         MultipartFile multipartFile;
         List<MultipartFile> multipartFileList = new ArrayList<>();
 
         @BeforeEach
         void init() throws IOException {
-            ptDateRequest1 = new PresentationDateDetailRequest(LocalDate.now(), "test time", 10);
-            ptDateRequest2 = new PresentationDateDetailRequest(LocalDate.now(), "test time", 10);
-            ptDateRequest3 = new PresentationDateDetailRequest(LocalDate.now(), "test time", 10);
+            ptDateRequest1 = new PtDateDetailRequest(LocalDate.now(), "test time", 10);
+            ptDateRequest2 = new PtDateDetailRequest(LocalDate.now(), "test time", 10);
+            ptDateRequest3 = new PtDateDetailRequest(LocalDate.now(), "test time", 10);
             dtoList.add(ptDateRequest1);
             dtoList.add(ptDateRequest2);
             dtoList.add(ptDateRequest3);

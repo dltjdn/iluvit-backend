@@ -9,7 +9,7 @@ import java.time.LocalDate;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class PresentationPreviewForTeacher {
+public class PresentationForTeacherDto {
     private Long presentationId;
     private LocalDate startDate;          // 설명회 신청 기간
     private LocalDate endDate;
@@ -18,7 +18,7 @@ public class PresentationPreviewForTeacher {
     private String presentationInfoImage;
     private boolean periodValid;
 
-    public PresentationPreviewForTeacher(Long presentationId, LocalDate startDate, LocalDate endDate, String place, String content, String presentationInfoImage) {
+    public PresentationForTeacherDto(Long presentationId, LocalDate startDate, LocalDate endDate, String place, String content, String presentationInfoImage) {
         this.presentationId = presentationId;
         this.startDate = startDate;
         this.endDate = endDate;

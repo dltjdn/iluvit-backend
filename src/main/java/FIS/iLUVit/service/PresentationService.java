@@ -13,8 +13,8 @@ import FIS.iLUVit.exception.UserErrorResult;
 import FIS.iLUVit.exception.UserException;
 import FIS.iLUVit.repository.*;
 import FIS.iLUVit.repository.dto.PresentationWithPtDatesDto;
-import FIS.iLUVit.service.dto.ParentInfoForDirectorDto;
-import FIS.iLUVit.service.dto.PresentationQuryDto;
+import FIS.iLUVit.service.dto.ParentDto;
+import FIS.iLUVit.service.dto.PresentationQueryDto;
 import FIS.iLUVit.service.dto.PtDateDto;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -52,7 +52,7 @@ public class PresentationService {
                 userId == null ? presentationRepository.findByCenterAndDateWithPtDates(centerId, LocalDate.now())
                         : presentationRepository.findByCenterAndDateWithPtDates(centerId, LocalDate.now(), userId);
         return queryDtos.stream().collect(
-                        groupingBy(PresentationQuryDto::new,
+                        groupingBy(PresentationQueryDto::new,
                                 mapping(PtDateDto::new, toList())
                         ))
                 .entrySet().stream()
@@ -195,7 +195,7 @@ public class PresentationService {
         return presentation;
     }
 
-    public List<ParentInfoForDirectorDto> findPtDateParticipatingParents(Long userId, Long ptDateId) {
+    public List<ParentDto> findPtDateParticipatingParents(Long userId, Long ptDateId) {
         //
         PtDate ptDate = ptDateRepository.findByIdAndJoinParticipationForSearch(ptDateId)
                 .orElseThrow(() -> new PresentationException("존재하지 않는 설명회 회차 입니다."));
@@ -204,12 +204,12 @@ public class PresentationService {
                 .canRead(ptDate.getPresentation().getCenter().getId());
         return ptDate.getParticipations().stream()
                 .filter(participation -> participation.getStatus().equals(Status.JOINED))
-                .map(participation -> new ParentInfoForDirectorDto(participation.getParent()))
+                .map(participation -> new ParentDto(participation.getParent()))
                 .collect(Collectors.toList());
 
     }
 
-    public List<ParentInfoForDirectorDto> findPtDateWaitingParents(Long userId, Long ptDateId) {
+    public List<ParentDto> findPtDateWaitingParents(Long userId, Long ptDateId) {
         //
         PtDate ptDate = ptDateRepository.findByIdWithWaitingAndPresentationAndCenterAndParent(ptDateId)
                 .orElseThrow(() -> new PresentationException("존재하지 않는 설명회 회차 입니다."));
@@ -218,7 +218,7 @@ public class PresentationService {
                 .canRead(ptDate.getPresentation().getCenter().getId());
 
         return ptDate.getWaitings().stream()
-                .map(participation -> new ParentInfoForDirectorDto(participation.getParent()))
+                .map(participation -> new ParentDto(participation.getParent()))
                 .collect(Collectors.toList());
     }
 

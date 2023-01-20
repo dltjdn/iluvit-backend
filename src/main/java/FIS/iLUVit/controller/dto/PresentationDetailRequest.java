@@ -40,7 +40,7 @@ public class PresentationDetailRequest {
 
     @Size(min = 1, message = "설명회 작성 미완료")
     @NotNull(message = "설명회 작성 미완료")
-    private List<PresentationDateDetailRequest> ptDateDtos;
+    private List<PtDateDetailRequest> ptDateDtos;
 
     public static Presentation toPresentation(PresentationDetailRequest request){
         if(request.endDate.isBefore(request.startDate))

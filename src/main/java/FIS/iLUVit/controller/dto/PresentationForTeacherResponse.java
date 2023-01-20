@@ -1,6 +1,6 @@
 package FIS.iLUVit.controller.dto;
 
-import FIS.iLUVit.repository.dto.PresentationPreviewForTeacher;
+import FIS.iLUVit.repository.dto.PresentationForTeacherDto;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -20,7 +20,7 @@ public class PresentationForTeacherResponse {
     private List<String> presentationInfoImage;
     private boolean periodValid;
 
-    public PresentationForTeacherResponse(PresentationPreviewForTeacher dto) {
+    public PresentationForTeacherResponse(PresentationForTeacherDto dto) {
         this.presentationId = dto.getPresentationId();
         this.startDate = dto.getStartDate();
         this.endDate = dto.getEndDate();

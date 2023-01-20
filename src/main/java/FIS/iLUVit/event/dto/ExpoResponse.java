@@ -5,9 +5,9 @@ import lombok.NoArgsConstructor;
 
 @Data
 @NoArgsConstructor
-public class Info {
+public class ExpoResponse {
     private String status;
     private String id;
     private String message;
-    private Details details;
+    private ExpoDetailDto expoDetailDto;
 }

@@ -4,8 +4,8 @@ import FIS.iLUVit.config.argumentResolver.Login;
 import FIS.iLUVit.controller.dto.*;
 import FIS.iLUVit.exception.UserErrorResult;
 import FIS.iLUVit.exception.UserException;
-import FIS.iLUVit.repository.dto.CenterAndDistancePreview;
-import FIS.iLUVit.repository.dto.CenterMapPreview;
+import FIS.iLUVit.repository.dto.CenterAndDistancePreviewDto;
+import FIS.iLUVit.repository.dto.CenterMapPreviewDto;
 import FIS.iLUVit.service.CenterService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -27,7 +27,7 @@ public class CenterController {
     private final CenterService centerService;
 
     @GetMapping("search/all")
-    public List<CenterMapPreview> searchByFilterForMap(@ModelAttribute @Validated CenterSearchMapDto dto){
+    public List<CenterMapPreviewDto> searchByFilterForMap(@ModelAttribute @Validated CenterSearchMapDto dto){
         return centerService.findByFilterForMap(dto.getLongitude(), dto.getLatitude(), dto.getDistance(), dto.getSearchContent());
     }
 
@@ -39,9 +39,9 @@ public class CenterController {
      * center 검색 정보 반환 front 검색인자 값 - 위도 경도 지도와 관련하여 api 던져준다
      */
     @PostMapping("search")
-    public SliceImpl<CenterAndDistancePreview> searchByFilterForMapList(@RequestBody @Validated CenterSearchMapFilterDto dto,
-                                                                        @Login Long userId,
-                                                                        Pageable pageable){
+    public SliceImpl<CenterAndDistancePreviewDto> searchByFilterForMapList(@RequestBody @Validated CenterSearchMapFilterDto dto,
+                                                                           @Login Long userId,
+                                                                           Pageable pageable){
         return centerService.findByFilterForMapList(dto.getLongitude(), dto.getLatitude(), dto.getCenterIds(), userId, dto.getKindOf(), pageable);
     }
 

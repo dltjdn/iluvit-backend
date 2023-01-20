@@ -3,7 +3,7 @@ package FIS.iLUVit.controller;
 import FIS.iLUVit.config.argumentResolver.Login;
 import FIS.iLUVit.controller.dto.ParticipationListDto;
 import FIS.iLUVit.controller.dto.ParticipationRequest;
-import FIS.iLUVit.controller.dto.PresentationDateRequest;
+import FIS.iLUVit.controller.dto.PtDateRequest;
 import FIS.iLUVit.domain.enumtype.Status;
 import FIS.iLUVit.exception.UserErrorResult;
 import FIS.iLUVit.exception.UserException;
@@ -34,7 +34,7 @@ public class ParticipationController {
      */
     @PostMapping("")
     @ResponseStatus(HttpStatus.CREATED)
-    public Long register(@Login Long userId, @RequestBody @Validated PresentationDateRequest dto){
+    public Long register(@Login Long userId, @RequestBody @Validated PtDateRequest dto){
         if(userId == null)
             throw new UserException(UserErrorResult.NOT_LOGIN);
         return participationService.register(userId, dto.getPtDateId());
