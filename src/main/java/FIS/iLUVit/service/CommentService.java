@@ -1,7 +1,7 @@
 package FIS.iLUVit.service;
 
 import FIS.iLUVit.controller.dto.CommentDto;
-import FIS.iLUVit.controller.dto.RegisterCommentRequest;
+import FIS.iLUVit.controller.dto.CommentRequest;
 import FIS.iLUVit.domain.Comment;
 import FIS.iLUVit.domain.Post;
 import FIS.iLUVit.domain.User;
@@ -29,7 +29,7 @@ public class CommentService {
     private final ReportRepository reportRepository;
     private final ReportDetailRepository reportDetailRepository;
 
-    public Long registerComment(Long userId, Long postId, Long p_commentId, RegisterCommentRequest request) {
+    public Long registerComment(Long userId, Long postId, Long p_commentId, CommentRequest request) {
         if (userId == null) {
             throw new CommentException(CommentErrorResult.UNAUTHORIZED_USER_ACCESS);
         }

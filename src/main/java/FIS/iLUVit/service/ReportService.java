@@ -1,6 +1,6 @@
 package FIS.iLUVit.service;
 
-import FIS.iLUVit.controller.dto.ReportCreateRequest;
+import FIS.iLUVit.controller.dto.ReportRequest;
 import FIS.iLUVit.domain.Comment;
 import FIS.iLUVit.domain.Post;
 import FIS.iLUVit.domain.User;
@@ -30,7 +30,7 @@ public class ReportService {
      * 작성자: 최민아
      * 작성내용: 신고하기
      */
-    public Long registerReport(Long userId, ReportCreateRequest request) {
+    public Long registerReport(Long userId, ReportRequest request) {
         if (userId == null){
             throw new UserException(UserErrorResult.NOT_VALID_TOKEN);
         }

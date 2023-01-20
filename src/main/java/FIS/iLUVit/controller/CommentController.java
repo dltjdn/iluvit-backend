@@ -2,7 +2,7 @@ package FIS.iLUVit.controller;
 
 import FIS.iLUVit.config.argumentResolver.Login;
 import FIS.iLUVit.controller.dto.CommentDto;
-import FIS.iLUVit.controller.dto.RegisterCommentRequest;
+import FIS.iLUVit.controller.dto.CommentRequest;
 import FIS.iLUVit.service.CommentService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
@@ -35,7 +35,7 @@ public class CommentController {
     public Long registerComment(@Login Long userId,
                                 @RequestParam("post_id") Long postId,
                                 @RequestParam(value = "comment_id", required = false) Long commentId,
-                                @RequestBody RegisterCommentRequest request) {
+                                @RequestBody CommentRequest request) {
 
         return commentService.registerComment(userId, postId, commentId, request);
     }

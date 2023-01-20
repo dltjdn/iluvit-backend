@@ -3,7 +3,7 @@ package FIS.iLUVit.controller;
 import FIS.iLUVit.Creator;
 import FIS.iLUVit.config.argumentResolver.LoginUserArgumentResolver;
 import FIS.iLUVit.controller.dto.CommentDto;
-import FIS.iLUVit.controller.dto.RegisterCommentRequest;
+import FIS.iLUVit.controller.dto.CommentRequest;
 import FIS.iLUVit.domain.*;
 import FIS.iLUVit.domain.enumtype.Auth;
 import FIS.iLUVit.domain.enumtype.BoardKind;
@@ -67,7 +67,7 @@ class CommentControllerTest {
     Comment comment3;
     Comment comment4;
     CommentHeart commentHeart1;
-    RegisterCommentRequest request = new RegisterCommentRequest();
+    CommentRequest request = new CommentRequest();
 
     @BeforeEach
     public void init() {

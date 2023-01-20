@@ -106,7 +106,7 @@ public class PostController {
 //    @ResponseStatus(HttpStatus.ACCEPTED)
     public Long registerPost(@Login Long userId,
                              @RequestPart(required = false) List<MultipartFile> images,
-                             @RequestPart @Validated PostRegisterRequest request) {
+                             @RequestPart @Validated PostRequest request) {
         return postService.savePost(request, images, userId);
     }
 
@@ -139,7 +139,7 @@ public class PostController {
 //    @ResponseStatus(HttpStatus.ACCEPTED)
     public Long registerPostTemp(@Login Long userId,
                              @RequestPart(required = false) List<MultipartFile> images,
-                             @ModelAttribute("request") @Validated PostRegisterRequest request) {
+                             @ModelAttribute("request") @Validated PostRequest request) {
         log.info("PostRegisterRequest = {}", request);
         return postService.savePost(request, images, userId);
     }

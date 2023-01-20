@@ -41,7 +41,7 @@ public class PostService {
 
 //    private final Integer heartCriteria = 2; // HOT 게시판 좋아요 기준
 
-    public Long savePost(PostRegisterRequest request, List<MultipartFile> images, Long userId) {
+    public Long savePost(PostRequest request, List<MultipartFile> images, Long userId) {
         if (userId == null) {
             throw new UserException(UserErrorResult.NOT_VALID_TOKEN);
         }

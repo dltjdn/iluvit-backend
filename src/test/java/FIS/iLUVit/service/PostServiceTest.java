@@ -110,7 +110,7 @@ class PostServiceTest {
 
     MultipartFile multipartFile;
     List<MultipartFile> multipartFileList = new ArrayList<>();
-    PostRegisterRequest postRegisterRequest = new PostRegisterRequest();
+    PostRequest postRequest = new PostRequest();
 
     @BeforeEach
     public void init() throws IOException {
@@ -207,14 +207,14 @@ class PostServiceTest {
     @Test
     public void 게시글_저장_비회원() throws Exception {
         //given
-        postRegisterRequest.setAnonymous(true);
-        postRegisterRequest.setBoard_id(board1.getId());
-        postRegisterRequest.setContent("게시글 저장 내용");
-        postRegisterRequest.setTitle("게시글 저장 제목");
+        postRequest.setAnonymous(true);
+        postRequest.setBoard_id(board1.getId());
+        postRequest.setContent("게시글 저장 내용");
+        postRequest.setTitle("게시글 저장 제목");
 
         //when
         UserException result = assertThrows(UserException.class,
-                () -> postService.savePost(postRegisterRequest, new ArrayList<>(), null));
+                () -> postService.savePost(postRequest, new ArrayList<>(), null));
 
         //then
         assertThat(result.getErrorResult())
@@ -224,10 +224,10 @@ class PostServiceTest {
     @Test
     public void 게시글_저장_유저X() throws Exception {
         //given
-        postRegisterRequest.setAnonymous(true);
-        postRegisterRequest.setBoard_id(board1.getId());
-        postRegisterRequest.setContent("게시글 저장 내용");
-        postRegisterRequest.setTitle("게시글 저장 제목");
+        postRequest.setAnonymous(true);
+        postRequest.setBoard_id(board1.getId());
+        postRequest.setContent("게시글 저장 내용");
+        postRequest.setTitle("게시글 저장 제목");
 
         Mockito.doReturn(Optional.empty())
                 .when(userRepository)
@@ -235,7 +235,7 @@ class PostServiceTest {
 
         //when
         UserException result = assertThrows(UserException.class,
-                () -> postService.savePost(postRegisterRequest, new ArrayList<>(), parent1.getId()));
+                () -> postService.savePost(postRequest, new ArrayList<>(), parent1.getId()));
 
         //then
         assertThat(result.getErrorResult())
@@ -245,10 +245,10 @@ class PostServiceTest {
     @Test
     public void 게시글_저장_게시판X() throws Exception {
         //given
-        postRegisterRequest.setAnonymous(true);
-        postRegisterRequest.setBoard_id(board1.getId());
-        postRegisterRequest.setContent("게시글 저장 내용");
-        postRegisterRequest.setTitle("게시글 저장 제목");
+        postRequest.setAnonymous(true);
+        postRequest.setBoard_id(board1.getId());
+        postRequest.setContent("게시글 저장 내용");
+        postRequest.setTitle("게시글 저장 제목");
 
         Mockito.doReturn(Optional.of(parent1))
                 .when(userRepository)
@@ -260,7 +260,7 @@ class PostServiceTest {
 
         //when
         BoardException result = assertThrows(BoardException.class,
-                () -> postService.savePost(postRegisterRequest, new ArrayList<>(), parent1.getId()));
+                () -> postService.savePost(postRequest, new ArrayList<>(), parent1.getId()));
 
         //then
         assertThat(result.getErrorResult())
@@ -270,10 +270,10 @@ class PostServiceTest {
     @Test
     public void 게시글_저장_학부모가_공지_게시판_접근() throws Exception {
         //given
-        postRegisterRequest.setAnonymous(true);
-        postRegisterRequest.setBoard_id(board1.getId());
-        postRegisterRequest.setContent("게시글 저장 내용");
-        postRegisterRequest.setTitle("게시글 저장 제목");
+        postRequest.setAnonymous(true);
+        postRequest.setBoard_id(board1.getId());
+        postRequest.setContent("게시글 저장 내용");
+        postRequest.setTitle("게시글 저장 제목");
 
         Mockito.doReturn(Optional.of(parent1))
                 .when(userRepository)
@@ -285,7 +285,7 @@ class PostServiceTest {
 
         //when
         PostException result = assertThrows(PostException.class,
-                () -> postService.savePost(postRegisterRequest, new ArrayList<>(), parent1.getId()));
+                () -> postService.savePost(postRequest, new ArrayList<>(), parent1.getId()));
 
         //then
         assertThat(result.getErrorResult())
@@ -295,10 +295,10 @@ class PostServiceTest {
     @Test
     public void 게시글_저장_성공() throws Exception {
         //given
-        postRegisterRequest.setAnonymous(true);
-        postRegisterRequest.setBoard_id(board2.getId());
-        postRegisterRequest.setContent("게시글 저장 내용");
-        postRegisterRequest.setTitle("게시글 저장 제목");
+        postRequest.setAnonymous(true);
+        postRequest.setBoard_id(board2.getId());
+        postRequest.setContent("게시글 저장 내용");
+        postRequest.setTitle("게시글 저장 제목");
 
         Mockito.doReturn(Optional.of(parent1))
                 .when(userRepository)
@@ -317,7 +317,7 @@ class PostServiceTest {
                 .saveInfoImages(any(), any());
 
         //when
-        Long savedId = postService.savePost(postRegisterRequest, multipartFileList, parent1.getId());
+        Long savedId = postService.savePost(postRequest, multipartFileList, parent1.getId());
         //then
         assertThat(savedId).isEqualTo(post1.getId());
     }

@@ -9,7 +9,7 @@ import javax.validation.constraints.NotNull;
 
 @Data
 @NoArgsConstructor
-public class PostRegisterRequest {
+public class PostRequest {
     @NotBlank(message = "제목을 입력해주세요.")
     private String title;                   // 게시글 제목
     @Lob

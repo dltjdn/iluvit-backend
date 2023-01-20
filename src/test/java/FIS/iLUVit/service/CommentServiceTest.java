@@ -2,7 +2,7 @@ package FIS.iLUVit.service;
 
 import FIS.iLUVit.Creator;
 import FIS.iLUVit.controller.dto.CommentDto;
-import FIS.iLUVit.controller.dto.RegisterCommentRequest;
+import FIS.iLUVit.controller.dto.CommentRequest;
 import FIS.iLUVit.domain.*;
 import FIS.iLUVit.domain.alarms.Alarm;
 import FIS.iLUVit.domain.alarms.PostAlarm;
@@ -57,7 +57,7 @@ class CommentServiceTest {
     Comment comment2;
     Comment comment3;
     Comment comment4;
-    RegisterCommentRequest request = new RegisterCommentRequest();
+    CommentRequest request = new CommentRequest();
 
     @BeforeEach
     public void init() {

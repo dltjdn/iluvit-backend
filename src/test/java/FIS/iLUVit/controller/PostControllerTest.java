@@ -61,7 +61,7 @@ class PostControllerTest {
 
     ObjectMapper objectMapper;
 
-    PostRegisterRequest postRegisterRequest = new PostRegisterRequest();
+    PostRequest postRequest = new PostRequest();
 
     Center center1;
     Center center2;
@@ -174,10 +174,10 @@ class PostControllerTest {
         post12 = Creator.createPost(25L, "제목12", "내용12", true, board5, parent3);
         post13 = Creator.createPost(26L, "제목13", "내용13", true, board5, parent3);
 
-        postRegisterRequest.setTitle("제목1016");
-        postRegisterRequest.setContent("내용1016");
-        postRegisterRequest.setBoard_id(board1.getId());
-        postRegisterRequest.setAnonymous(true);
+        postRequest.setTitle("제목1016");
+        postRequest.setContent("내용1016");
+        postRequest.setBoard_id(board1.getId());
+        postRequest.setAnonymous(true);
 
     }
 
@@ -192,7 +192,7 @@ class PostControllerTest {
     @Test
     public void 게시글_저장_비회원() throws Exception {
         //given
-        byte[] request = objectMapper.writeValueAsBytes(postRegisterRequest);
+        byte[] request = objectMapper.writeValueAsBytes(postRequest);
 
         String name = "162693895955046828.png";
         Path path = Paths.get(new File("").getAbsolutePath() + '/' + name);
@@ -208,7 +208,7 @@ class PostControllerTest {
 
         Mockito.doThrow(new UserException(error))
                 .when(postService)
-                .savePost(postRegisterRequest, fileList, null);
+                .savePost(postRequest, fileList, null);
         //when
 
 
@@ -232,7 +232,7 @@ class PostControllerTest {
     @Test
     public void 게시글_저장_유저X() throws Exception {
         //given
-        byte[] request = objectMapper.writeValueAsBytes(postRegisterRequest);
+        byte[] request = objectMapper.writeValueAsBytes(postRequest);
 
         String name = "162693895955046828.png";
         Path path = Paths.get(new File("").getAbsolutePath() + '/' + name);
@@ -248,7 +248,7 @@ class PostControllerTest {
 
         Mockito.doThrow(new UserException(error))
                 .when(postService)
-                .savePost(postRegisterRequest, fileList, parent1.getId());
+                .savePost(postRequest, fileList, parent1.getId());
         //when
 
 
@@ -271,7 +271,7 @@ class PostControllerTest {
 
     @Test
     public void 게시글_저장_게시판X() throws Exception {
-        byte[] request = objectMapper.writeValueAsBytes(postRegisterRequest);
+        byte[] request = objectMapper.writeValueAsBytes(postRequest);
 
         String name = "162693895955046828.png";
         Path path = Paths.get(new File("").getAbsolutePath() + '/' + name);
@@ -288,7 +288,7 @@ class PostControllerTest {
 
         Mockito.doThrow(new BoardException(error))
                 .when(postService)
-                .savePost(postRegisterRequest, fileList, parent1.getId());
+                .savePost(postRequest, fileList, parent1.getId());
         //when
 
 
@@ -311,7 +311,7 @@ class PostControllerTest {
 
     @Test
     public void 게시글_저장_공지게시판에_학부모가_작성시도() throws Exception {
-        byte[] request = objectMapper.writeValueAsBytes(postRegisterRequest);
+        byte[] request = objectMapper.writeValueAsBytes(postRequest);
 
         String name = "162693895955046828.png";
         Path path = Paths.get(new File("").getAbsolutePath() + '/' + name);
@@ -328,7 +328,7 @@ class PostControllerTest {
 
         Mockito.doThrow(new PostException(error))
                 .when(postService)
-                .savePost(postRegisterRequest, fileList, parent1.getId());
+                .savePost(postRequest, fileList, parent1.getId());
         //when
 
 
@@ -351,7 +351,7 @@ class PostControllerTest {
 
     @Test
     public void 게시글_저장_성공() throws Exception {
-        byte[] request = objectMapper.writeValueAsBytes(postRegisterRequest);
+        byte[] request = objectMapper.writeValueAsBytes(postRequest);
 
         String name = "162693895955046828.png";
         Path path = Paths.get(new File("").getAbsolutePath() + '/' + name);
@@ -367,7 +367,7 @@ class PostControllerTest {
 
         Mockito.doReturn(post1.getId())
                 .when(postService)
-                .savePost(postRegisterRequest, fileList, parent1.getId());
+                .savePost(postRequest, fileList, parent1.getId());
         //when
 
 
@@ -390,7 +390,7 @@ class PostControllerTest {
 
     @Test
     public void 게시글_저장_성공_APP용() throws Exception {
-        byte[] request = objectMapper.writeValueAsBytes(postRegisterRequest);
+        byte[] request = objectMapper.writeValueAsBytes(postRequest);
 
         String name = "162693895955046828.png";
         Path path = Paths.get(new File("").getAbsolutePath() + '/' + name);
@@ -406,7 +406,7 @@ class PostControllerTest {
 
         Mockito.doReturn(post1.getId())
                 .when(postService)
-                .savePost(postRegisterRequest, fileList, parent1.getId());
+                .savePost(postRequest, fileList, parent1.getId());
         //when
 
 
@@ -414,7 +414,7 @@ class PostControllerTest {
                 MockMvcRequestBuilders.multipart(url)
                         .file(multipartFile1)
                         .file(multipartFile2)
-                        .flashAttr("request", postRegisterRequest)
+                        .flashAttr("request", postRequest)
                         .header("Authorization", createJwtToken(parent1))
 
         );
