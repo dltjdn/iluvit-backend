@@ -2,7 +2,7 @@ package FIS.iLUVit.controller;
 
 import FIS.iLUVit.Creator;
 import FIS.iLUVit.config.argumentResolver.LoginUserArgumentResolver;
-import FIS.iLUVit.controller.dto.CommentDTO;
+import FIS.iLUVit.controller.dto.CommentDto;
 import FIS.iLUVit.controller.dto.RegisterCommentRequest;
 import FIS.iLUVit.domain.*;
 import FIS.iLUVit.domain.enumtype.Auth;
@@ -40,7 +40,6 @@ import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import java.util.Arrays;
 import java.util.Date;
 
-import static org.junit.jupiter.api.Assertions.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -464,12 +463,12 @@ class CommentControllerTest {
         //given
         final String url = "/user/comment/mypage";
 
-        CommentDTO commentDTO1 = new CommentDTO(comment1);
-        CommentDTO commentDTO2 = new CommentDTO(comment2);
-        CommentDTO commentDTO3 = new CommentDTO(comment3);
-        CommentDTO commentDTO4 = new CommentDTO(comment4);
-        Slice<CommentDTO> commentSlice = new SliceImpl<>(
-                Arrays.asList(commentDTO1, commentDTO2, commentDTO3, commentDTO4));
+        CommentDto commentDto1 = new CommentDto(comment1);
+        CommentDto commentDto2 = new CommentDto(comment2);
+        CommentDto commentDto3 = new CommentDto(comment3);
+        CommentDto commentDto4 = new CommentDto(comment4);
+        Slice<CommentDto> commentSlice = new SliceImpl<>(
+                Arrays.asList(commentDto1, commentDto2, commentDto3, commentDto4));
 
         Mockito.doReturn(commentSlice)
                 .when(commentService)

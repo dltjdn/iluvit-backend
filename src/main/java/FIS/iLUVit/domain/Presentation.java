@@ -1,6 +1,6 @@
 package FIS.iLUVit.domain;
 
-import FIS.iLUVit.controller.dto.PresentationModifyRequestDto;
+import FIS.iLUVit.controller.dto.PresentationInfoRequest;
 import FIS.iLUVit.exception.PresentationException;
 import lombok.Builder;
 import lombok.Getter;
@@ -70,7 +70,7 @@ public class Presentation extends BaseImageEntity {
         return this;
     }
 
-    public Presentation update(PresentationModifyRequestDto request) {
+    public Presentation update(PresentationInfoRequest request) {
         startDate = request.getStartDate();
         endDate = request.getEndDate();
         if(endDate.isBefore(startDate))

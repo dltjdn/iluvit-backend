@@ -32,7 +32,7 @@ public class PresentationController {
      * 필터 기반으로 presentation 검색
      */
     @PostMapping("search")
-    public SliceImpl<PresentationPreviewForUsersResponse> searchByFilterAndMap(@RequestBody PresentationSearchFilterDTO dto, Pageable pageable){
+    public SliceImpl<PresentationForUserResponse> searchByFilterAndMap(@RequestBody PresentationSearchFilterDto dto, Pageable pageable){
         return presentationService.findByFilter(dto.getAreas(), dto.getTheme(), dto.getInterestedAge(), dto.getKindOf(), dto.getSearchContent(), pageable);
     }
 
@@ -43,7 +43,7 @@ public class PresentationController {
      */
     @GetMapping("info/centerId/{centerId}")
     @ResponseStatus(HttpStatus.ACCEPTED)
-    public List<PresentationResponseDto> findPresentationByCenterId(@PathVariable("centerId") Long centerId, @Login Long userId){
+    public List<PresentationDetailResponse> findPresentationByCenterId(@PathVariable("centerId") Long centerId, @Login Long userId){
         return presentationService.findPresentationByCenterIdAndDate(centerId, userId);
     }
 
@@ -53,12 +53,12 @@ public class PresentationController {
      */
     @PostMapping("")
     @ResponseStatus(HttpStatus.CREATED)
-    public PresentationSaveResponseDto registerPresentation(@RequestPart @Validated PresentationRequestRequestFormDto request,
-                                                            @RequestPart(required = false) List<MultipartFile> images,
-                                                            @Login Long userId){
+    public PresentationInfoResponse registerPresentation(@RequestPart @Validated PresentationDetailRequest request,
+                                                         @RequestPart(required = false) List<MultipartFile> images,
+                                                         @Login Long userId){
         if(userId == null)
             throw new UserException(UserErrorResult.NOT_LOGIN);
-        return new PresentationSaveResponseDto(presentationService.saveWithPtDate(request, images, userId));
+        return new PresentationInfoResponse(presentationService.saveWithPtDate(request, images, userId));
     }
 
     /**
@@ -66,10 +66,10 @@ public class PresentationController {
      */
     @PatchMapping("")
     @ResponseStatus(HttpStatus.ACCEPTED)
-    public PresentationModifyResponseDto modifyPresentation(@RequestPart @Validated PresentationModifyRequestDto request,
-                                                            @RequestPart(required = false) List<MultipartFile> images,
-                                                            @Login Long userId){
-        return new PresentationModifyResponseDto(presentationService.modifyWithPtDate(request, images, userId));
+    public PresentationInfoResponse modifyPresentation(@RequestPart @Validated PresentationInfoRequest request,
+                                                       @RequestPart(required = false) List<MultipartFile> images,
+                                                       @Login Long userId){
+        return new PresentationInfoResponse(presentationService.modifyWithPtDate(request, images, userId));
     }
 
     /**
@@ -79,12 +79,12 @@ public class PresentationController {
      */
     @PostMapping("react-native")
     @ResponseStatus(HttpStatus.CREATED)
-    public PresentationSaveResponseDto registerPresentationInfo(@RequestBody @Validated PresentationRequestRequestFormDto request,
-                                                                @Login Long userId){
+    public PresentationInfoResponse registerPresentationInfo(@RequestBody @Validated PresentationDetailRequest request,
+                                                             @Login Long userId){
         if(userId == null)
             throw new UserException(UserErrorResult.NOT_LOGIN);
         log.info("PresentationRequestRequestFormDto = {}", request);
-        return new PresentationSaveResponseDto(presentationService.saveInfoWithPtDate(request, userId));
+        return new PresentationInfoResponse(presentationService.saveInfoWithPtDate(request, userId));
     }
 
     /**
@@ -94,9 +94,9 @@ public class PresentationController {
      */
     @PatchMapping("react-native")
     @ResponseStatus(HttpStatus.ACCEPTED)
-    public PresentationModifyResponseDto modifyPresentationInfo(@RequestBody @Validated PresentationModifyRequestDto request,
-                                                                @Login Long userId){
-        return new PresentationModifyResponseDto(presentationService.modifyInfoWithPtDate(request, userId));
+    public PresentationInfoResponse modifyPresentationInfo(@RequestBody @Validated PresentationInfoRequest request,
+                                                           @Login Long userId){
+        return new PresentationInfoResponse(presentationService.modifyInfoWithPtDate(request, userId));
     }
 
     /**
@@ -107,12 +107,12 @@ public class PresentationController {
     @Transactional
     @PostMapping("image/react-native")
     @ResponseStatus(HttpStatus.CREATED)
-    public PresentationSaveResponseDto registerPresentationImage(@RequestParam Long presentationId,
-                                                                 @RequestPart(required = false) List<MultipartFile> images,
-                                                                 @Login Long userId) {
+    public PresentationInfoResponse registerPresentationImage(@RequestParam Long presentationId,
+                                                              @RequestPart(required = false) List<MultipartFile> images,
+                                                              @Login Long userId) {
         if (userId == null)
             throw new UserException(UserErrorResult.NOT_LOGIN);
-        return new PresentationSaveResponseDto(presentationService.saveImageWithPtDate(presentationId, images, userId));
+        return new PresentationInfoResponse(presentationService.saveImageWithPtDate(presentationId, images, userId));
     }
 
 
@@ -124,10 +124,10 @@ public class PresentationController {
     @Transactional
     @PatchMapping("image/react-native")
     @ResponseStatus(HttpStatus.ACCEPTED)
-    public PresentationModifyResponseDto modifyPresentationImage(@RequestParam Long presentationId,
-                                                                @RequestPart(required = false) List<MultipartFile> images,
-                                                                @Login Long userId){
-        return new PresentationModifyResponseDto(presentationService.modifyImageWithPtDate(presentationId, images, userId));
+    public PresentationInfoResponse modifyPresentationImage(@RequestParam Long presentationId,
+                                                            @RequestPart(required = false) List<MultipartFile> images,
+                                                            @Login Long userId){
+        return new PresentationInfoResponse(presentationService.modifyImageWithPtDate(presentationId, images, userId));
     }
 
     /**
@@ -136,9 +136,9 @@ public class PresentationController {
      * @return
      */
     @GetMapping("center/{centerId}")
-    public List<PresentationPreviewAndImageForTeacher> findMyCenterPresentationList(@Login Long userId,
-                                                                                    @PathVariable("centerId") Long centerId,
-                                                                                    Pageable pageable){
+    public List<PresentationForTeacherResponse> findMyCenterPresentationList(@Login Long userId,
+                                                                             @PathVariable("centerId") Long centerId,
+                                                                             Pageable pageable){
         return presentationService.findPresentationListByCenterId(userId, centerId, pageable);
     }
 
@@ -147,7 +147,7 @@ public class PresentationController {
      * @return
      */
     @GetMapping("{presentationId}")
-    public PresentationResponseDto findMyCenterPresentation(@PathVariable("presentationId") Long presentationId){
+    public PresentationDetailResponse findMyCenterPresentation(@PathVariable("presentationId") Long presentationId){
         return presentationService.findPresentationDetail(presentationId);
     }
 

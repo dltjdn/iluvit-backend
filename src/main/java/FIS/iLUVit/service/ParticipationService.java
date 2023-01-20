@@ -1,6 +1,6 @@
 package FIS.iLUVit.service;
 
-import FIS.iLUVit.controller.dto.MyParticipationsDto;
+import FIS.iLUVit.controller.dto.ParticipationListDto;
 import FIS.iLUVit.domain.Parent;
 import FIS.iLUVit.domain.Participation;
 import FIS.iLUVit.domain.Presentation;
@@ -98,34 +98,34 @@ public class ParticipationService {
         return participationId;
     }
 
-    public Map<Status, List<MyParticipationsDto>> getMyParticipation(Long userId) {
+    public Map<Status, List<ParticipationListDto>> getMyParticipation(Long userId) {
         // 학부모 조회
         Parent parent = parentRepository.findMyParticipation(userId);
         parentRepository.findMyWaiting(userId);
 
-        List<MyParticipationsDto> myParticipationsDtos = parent.getParticipations().stream()
-                .map(MyParticipationsDto::createDto)
+        List<ParticipationListDto> participationListDtos = parent.getParticipations().stream()
+                .map(ParticipationListDto::createDto)
                 .collect(Collectors.toList());
 
-        myParticipationsDtos.addAll(
+        participationListDtos.addAll(
                 parent.getWaitings().stream()
-                .map(MyParticipationsDto::createDto)
+                .map(ParticipationListDto::createDto)
                 .collect(Collectors.toList())
         );
 
-        return myParticipationsDtos.stream()
-                .collect(Collectors.groupingBy(MyParticipationsDto::getStatus));
+        return participationListDtos.stream()
+                .collect(Collectors.groupingBy(ParticipationListDto::getStatus));
     }
 
-    public Slice<MyParticipationsDto> getMyJoinParticipation(Long userId, Pageable pageable){
+    public Slice<ParticipationListDto> getMyJoinParticipation(Long userId, Pageable pageable){
         return parentRepository.findMyJoinParticipation(userId, pageable);
     }
 
-    public Slice<MyParticipationsDto> getMyCancelParticipation(Long userId, Pageable pageable){
+    public Slice<ParticipationListDto> getMyCancelParticipation(Long userId, Pageable pageable){
         return parentRepository.findMyCancelParticipation(userId, pageable);
     }
 
-    public Slice<MyParticipationsDto> getMyWaiting(Long userId, Pageable pageable){
+    public Slice<ParticipationListDto> getMyWaiting(Long userId, Pageable pageable){
         return parentRepository.findMyWaiting(userId, pageable);
     }
 

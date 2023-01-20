@@ -44,15 +44,15 @@ public class ChildService {
      * 작성자: 이승범
      * 작성내용: 부모의 메인페이지에 필요한 아이들 정보 반환
      */
-    public ChildInfoDTO childrenInfo(Long id) {
+    public ChildInfoDto childrenInfo(Long id) {
         Parent findParent = parentRepository.findWithChildren(id)
                 .orElseThrow(() -> new UserException(UserErrorResult.NOT_VALID_TOKEN));
 
-        ChildInfoDTO childInfoDTO = new ChildInfoDTO();
+        ChildInfoDto childInfoDTO = new ChildInfoDto();
 
         findParent.getChildren().forEach(child -> {
             childInfoDTO.getData().add(
-                    new ChildInfoDTO.ChildInfo(child, imageService.getProfileImage(child))
+                    new ChildInfoDto.ChildInfo(child, imageService.getProfileImage(child))
             );
         });
 
@@ -64,7 +64,7 @@ public class ChildService {
      * 작성자: 이승범
      * 작성내용: 아이 추가
      */
-    public Child saveChild(Long userId, SaveChildRequest request) throws IOException {
+    public Child saveChild(Long userId, ChildDetailRequest request) throws IOException {
 
         Parent parent = parentRepository.getById(userId);
 
@@ -91,12 +91,12 @@ public class ChildService {
      * 작성자: 이승범
      * 작성내용: 아이 프로필 조회
      */
-    public ChildInfoDetailResponse findChildInfoDetail(Long userId, Long childId) {
+    public ChildDetailResponse findChildInfoDetail(Long userId, Long childId) {
         // 프로필 수정하고자 하는 아이 가져오기
         Child child = childRepository.findByIdAndParentWithCenter(userId, childId)
                 .orElseThrow(() -> new UserException(UserErrorResult.NOT_VALID_REQUEST));
 
-        ChildInfoDetailResponse response = new ChildInfoDetailResponse(child);
+        ChildDetailResponse response = new ChildDetailResponse(child);
 
         response.setProfileImage(imageService.getProfileImage(child));
 
@@ -108,7 +108,7 @@ public class ChildService {
     *   작성자: 이승범
     *   작성내용: 아이 프로필 수정
     */
-    public ChildInfoDetailResponse updateChild(Long userId, Long childId, UpdateChildRequest request) {
+    public ChildDetailResponse updateChild(Long userId, Long childId, ChildRequest request) {
         // 수정하고자 하는 아이
         Child updatedChild = childRepository.findByIdAndParentWithCenter(userId, childId)
                 .orElseThrow(() -> new UserException(UserErrorResult.NOT_VALID_REQUEST));
@@ -116,7 +116,7 @@ public class ChildService {
         // 프로필 수정
         updatedChild.update(request.getName(), request.getBirthDate());
 
-        ChildInfoDetailResponse response = new ChildInfoDetailResponse(updatedChild);
+        ChildDetailResponse response = new ChildDetailResponse(updatedChild);
 
         // 프로필 이미지 수정
         imageService.saveProfileImage(request.getProfileImg(), updatedChild);
@@ -182,7 +182,7 @@ public class ChildService {
      * 작성자: 이승범
      * 작성내용: 아이 삭제
      */
-    public ChildInfoDTO deleteChild(Long userId, Long childId) {
+    public ChildInfoDto deleteChild(Long userId, Long childId) {
 
         // 요청 사용자가 등록한 모든 아이 가져오기
         List<Child> childrenByUser = childRepository.findByUserWithCenter(userId);

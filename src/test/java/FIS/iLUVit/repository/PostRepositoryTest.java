@@ -2,7 +2,7 @@ package FIS.iLUVit.repository;
 
 import FIS.iLUVit.Creator;
 import FIS.iLUVit.config.argumentResolver.ForDB;
-import FIS.iLUVit.controller.dto.GetPostResponsePreview;
+import FIS.iLUVit.controller.dto.PostPreviewResponse;
 import FIS.iLUVit.domain.*;
 import FIS.iLUVit.domain.enumtype.Approval;
 import FIS.iLUVit.domain.enumtype.Auth;
@@ -295,11 +295,11 @@ class PostRepositoryTest {
         //given
 
         //when
-        Slice<GetPostResponsePreview> dtoSlice = postRepository
+        Slice<PostPreviewResponse> dtoSlice = postRepository
                 .findByCenterAndKeyword(center1.getId(), "1", PageRequest.of(0, 10));
         //then
-        List<GetPostResponsePreview> result = dtoSlice.getContent();
-        for (GetPostResponsePreview gprp : result) {
+        List<PostPreviewResponse> result = dtoSlice.getContent();
+        for (PostPreviewResponse gprp : result) {
             System.out.println("gprp = " + gprp);
         }
         assertThat(result)
@@ -312,11 +312,11 @@ class PostRepositoryTest {
         //given
 
         //when
-        Slice<GetPostResponsePreview> dtoSlice = postRepository
+        Slice<PostPreviewResponse> dtoSlice = postRepository
                 .findByBoardAndKeyword(board1.getId(), "제목", PageRequest.of(0, 10));
         //then
-        List<GetPostResponsePreview> result = dtoSlice.getContent();
-        for (GetPostResponsePreview gprp : result) {
+        List<PostPreviewResponse> result = dtoSlice.getContent();
+        for (PostPreviewResponse gprp : result) {
             System.out.println("gprp = " + gprp);
         }
         assertThat(result)
@@ -345,11 +345,11 @@ class PostRepositoryTest {
         em.clear();
 
         //when
-        Slice<GetPostResponsePreview> hotPosts = postRepository
+        Slice<PostPreviewResponse> hotPosts = postRepository
                 .findHotPosts(null, n, PageRequest.of(0, 10));
         //then
-        List<GetPostResponsePreview> result = hotPosts.getContent();
-        for (GetPostResponsePreview gprp : result) {
+        List<PostPreviewResponse> result = hotPosts.getContent();
+        for (PostPreviewResponse gprp : result) {
             System.out.println("gprp = " + gprp);
         }
         assertThat(result)
@@ -374,11 +374,11 @@ class PostRepositoryTest {
         em.flush();
         em.clear();
         //when
-        Slice<GetPostResponsePreview> hotPosts = postRepository
+        Slice<PostPreviewResponse> hotPosts = postRepository
                 .findHotPosts(center1.getId(), n, PageRequest.of(0, 10));
         //then
-        List<GetPostResponsePreview> result = hotPosts.getContent();
-        for (GetPostResponsePreview gprp : result) {
+        List<PostPreviewResponse> result = hotPosts.getContent();
+        for (PostPreviewResponse gprp : result) {
             System.out.println("gprp = " + gprp);
         }
         assertThat(result)
@@ -392,11 +392,11 @@ class PostRepositoryTest {
 
         Set<Long> centerIds = Set.of(centerId1, centerId2, centerId3);
         //when
-        Slice<GetPostResponsePreview> postSlice = postRepository
+        Slice<PostPreviewResponse> postSlice = postRepository
                 .findInCenterByKeyword(centerIds, "1", PageRequest.of(0, 10));
         //then
-        List<GetPostResponsePreview> result = postSlice.getContent();
-        for (GetPostResponsePreview gprp : result) {
+        List<PostPreviewResponse> result = postSlice.getContent();
+        for (PostPreviewResponse gprp : result) {
             System.out.println("gprp = " + gprp);
         }
         assertThat(result)

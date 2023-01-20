@@ -64,7 +64,7 @@ public class TeacherService {
      * 작성자: 이승범
      * 작성내용: 선생의 마이페이지에 정보 update
      */
-    public TeacherDetailResponse updateDetail(Long id, UpdateTeacherDetailRequest request) throws IOException {
+    public TeacherDetailResponse updateDetail(Long id, TeacherDetailRequest request) throws IOException {
 
         Teacher findTeacher = teacherRepository.findById(id)
                 .orElseThrow(() -> new UserException(UserErrorResult.NOT_VALID_TOKEN));

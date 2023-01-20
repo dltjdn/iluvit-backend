@@ -20,7 +20,7 @@ public class ReviewController {
         내용: 학부모가 작성한 리뷰 조회
     */
     @GetMapping("")
-    public ReviewByParentDTO searchByParent(@Login Long userId, Pageable pageable) { // @Login 어노테이션 달아야됨.
+    public ReviewByParentDto searchByParent(@Login Long userId, Pageable pageable) { // @Login 어노테이션 달아야됨.
         return reviewService.findByParent(userId, pageable);
     }
 
@@ -30,7 +30,7 @@ public class ReviewController {
         내용: 학부모가 쓴 리뷰 등록
     */
     @PostMapping("")
-    public Long registerReview(@Login Long userId, @RequestBody ReviewCreateDTO reviewCreateDTO) {
+    public Long registerReview(@Login Long userId, @RequestBody ReviewDetailDto reviewCreateDTO) {
         return reviewService.saveReview(userId, reviewCreateDTO);
     }
 
@@ -41,8 +41,8 @@ public class ReviewController {
     */
     @PatchMapping("{reviewId}")
     public void updateReview(@Login Long userId, @PathVariable(name = "reviewId") Long reviewId,
-                             @RequestBody ReviewUpdateDTO reviewUpdateDto) {
-        reviewService.updateReview(reviewId, userId, reviewUpdateDto.getContent());
+                             @RequestBody ReviewDto reviewDto) {
+        reviewService.updateReview(reviewId, userId, reviewDto.getContent());
     }
 
     /**
@@ -61,7 +61,7 @@ public class ReviewController {
         내용: 센터에 올라온 리뷰들 조회
     */
     @GetMapping("center/{centerId}")
-    public ReviewByCenterDTO searchByCenter(@PathVariable(name = "centerId") Long centerId,
+    public ReviewByCenterDto searchByCenter(@PathVariable(name = "centerId") Long centerId,
                                             Pageable pageable) {
         return reviewService.findByCenter(centerId, pageable);
     }
@@ -73,7 +73,7 @@ public class ReviewController {
      */
     @PostMapping("{reviewId}/comment")
     public Long registerComment(@Login Long teacherId, @PathVariable("reviewId") Long reviewId,
-                                @RequestBody ReviewCommentDTO reviewCommentDTO) {
+                                @RequestBody ReviewCommentDto reviewCommentDTO) {
         return reviewService.saveComment(reviewId, reviewCommentDTO.getComment(), teacherId);
     }
 

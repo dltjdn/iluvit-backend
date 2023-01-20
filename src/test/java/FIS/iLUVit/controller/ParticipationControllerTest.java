@@ -1,8 +1,8 @@
 package FIS.iLUVit.controller;
 
 import FIS.iLUVit.config.argumentResolver.LoginUserArgumentResolver;
-import FIS.iLUVit.controller.dto.ParticipationCancelRequestDto;
-import FIS.iLUVit.controller.dto.ParticipationRegisterRequestDto;
+import FIS.iLUVit.controller.dto.ParticipationRequest;
+import FIS.iLUVit.controller.dto.PresentationDateRequest;
 import FIS.iLUVit.controller.dto.WaitingRegisterDto;
 import FIS.iLUVit.domain.Parent;
 import FIS.iLUVit.domain.User;
@@ -71,8 +71,8 @@ class ParticipationControllerTest {
                 .build();
     }
 
-    private ParticipationRegisterRequestDto participationRegisterRequestDto(Long ptDateId){
-        return new ParticipationRegisterRequestDto(ptDateId);
+    private PresentationDateRequest participationRegisterRequestDto(Long ptDateId){
+        return new PresentationDateRequest(ptDateId);
     }
 
     public String createJwtToken(){
@@ -265,7 +265,7 @@ class ParticipationControllerTest {
             //when
             ResultActions resultActions = mockMvc.perform(
                     MockMvcRequestBuilders.patch(url)
-                            .content(objectMapper.writeValueAsString(new ParticipationCancelRequestDto(-1L)))
+                            .content(objectMapper.writeValueAsString(new ParticipationRequest(-1L)))
                             .header(HttpHeaders.AUTHORIZATION, jwtToken)
                             .contentType(MediaType.APPLICATION_JSON)
             );
@@ -290,7 +290,7 @@ class ParticipationControllerTest {
             //when
             ResultActions resultActions = mockMvc.perform(
                     MockMvcRequestBuilders.patch(url)
-                            .content(objectMapper.writeValueAsString(new ParticipationCancelRequestDto(1L)))
+                            .content(objectMapper.writeValueAsString(new ParticipationRequest(1L)))
                             .header(HttpHeaders.AUTHORIZATION, jwtToken)
                             .contentType(MediaType.APPLICATION_JSON)
             );
@@ -315,7 +315,7 @@ class ParticipationControllerTest {
             //when
             ResultActions resultActions = mockMvc.perform(
                     MockMvcRequestBuilders.patch(url)
-                            .content(objectMapper.writeValueAsString(new ParticipationCancelRequestDto(1L)))
+                            .content(objectMapper.writeValueAsString(new ParticipationRequest(1L)))
                             .header(HttpHeaders.AUTHORIZATION, jwtToken)
                             .contentType(MediaType.APPLICATION_JSON)
             );

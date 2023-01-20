@@ -1,8 +1,8 @@
 package FIS.iLUVit.service;
 
-import FIS.iLUVit.controller.dto.BoardListDTO;
-import FIS.iLUVit.controller.dto.CreateBoardRequest;
-import FIS.iLUVit.controller.dto.StoryHomeDTO;
+import FIS.iLUVit.controller.dto.BoardListDto;
+import FIS.iLUVit.controller.dto.BoardRequest;
+import FIS.iLUVit.controller.dto.StoryHomeDto;
 import FIS.iLUVit.domain.*;
 import FIS.iLUVit.domain.enumtype.Approval;
 import FIS.iLUVit.domain.enumtype.Auth;
@@ -137,7 +137,7 @@ class BoardServiceTest {
     @Test
     public void 게시판_추가_비회원_접근_제한() throws Exception {
         //given
-        CreateBoardRequest request = new CreateBoardRequest("자유게시판", BoardKind.NORMAL);
+        BoardRequest request = new BoardRequest("자유게시판", BoardKind.NORMAL);
 
         //when
         BoardException result = assertThrows(BoardException.class,
@@ -150,7 +150,7 @@ class BoardServiceTest {
     @Test
     public void 모두의_이야기_게시판_추가_이름_중복() throws Exception {
         //given
-        CreateBoardRequest request = new CreateBoardRequest("자유게시판", BoardKind.NORMAL);
+        BoardRequest request = new BoardRequest("자유게시판", BoardKind.NORMAL);
 
         Mockito.doReturn(Optional.ofNullable(board1))
                 .when(boardRepository)
@@ -168,7 +168,7 @@ class BoardServiceTest {
     @Test
     public void 모두의_이야기_게시판_추가_성공() throws Exception {
         //given
-        CreateBoardRequest request = new CreateBoardRequest("자유게시판", BoardKind.NORMAL);
+        BoardRequest request = new BoardRequest("자유게시판", BoardKind.NORMAL);
         Board board = Board.createBoard(request.getBoard_name(), request.getBoardKind(), null, false);
         Long fakeId = 1L;
         ReflectionTestUtils.setField(board, "id", fakeId);
@@ -193,7 +193,7 @@ class BoardServiceTest {
     
     @Test
     public void 센터의_이야기_게시판_추가_센터의_학부모X() throws Exception {
-        CreateBoardRequest request = new CreateBoardRequest("공지게시판", BoardKind.NORMAL);
+        BoardRequest request = new BoardRequest("공지게시판", BoardKind.NORMAL);
         Mockito.doReturn(Optional.empty())
                 .when(userRepository)
                 .findById(parent1.getId());
@@ -211,7 +211,7 @@ class BoardServiceTest {
 
     @Test
     public void 센터의_이야기_게시판_추가_학부모의_아이_센터에_속하지않음() throws Exception {
-        CreateBoardRequest request = new CreateBoardRequest("공지게시판", BoardKind.NORMAL);
+        BoardRequest request = new BoardRequest("공지게시판", BoardKind.NORMAL);
         Mockito.doReturn(Optional.ofNullable(parent1))
                 .when(userRepository)
                 .findById(parent1.getId());
@@ -237,7 +237,7 @@ class BoardServiceTest {
 
     @Test
     public void 센터의_이야기_게시판_추가_교사_센터에_속하지않음() throws Exception {
-        CreateBoardRequest request = new CreateBoardRequest("공지게시판", BoardKind.NORMAL);
+        BoardRequest request = new BoardRequest("공지게시판", BoardKind.NORMAL);
         Mockito.doReturn(Optional.ofNullable(center2))
                 .when(centerRepository)
                 .findById(2L);
@@ -259,7 +259,7 @@ class BoardServiceTest {
     @Test
     public void 센터의_이야기_게시판_추가_이름_중복() throws Exception {
         //given
-        CreateBoardRequest request = new CreateBoardRequest("공지게시판", BoardKind.NORMAL);
+        BoardRequest request = new BoardRequest("공지게시판", BoardKind.NORMAL);
 
         Mockito.doReturn(Optional.ofNullable(board3))
                 .when(boardRepository)
@@ -288,7 +288,7 @@ class BoardServiceTest {
     @Test
     public void 센터의_이야기_게시판_추가_시설_아이디_오류() throws Exception {
         //given
-        CreateBoardRequest request = new CreateBoardRequest("공지게시판", BoardKind.NORMAL);
+        BoardRequest request = new BoardRequest("공지게시판", BoardKind.NORMAL);
 
         Mockito.doReturn(Optional.empty())
                 .when(centerRepository)
@@ -305,7 +305,7 @@ class BoardServiceTest {
     @Test
     public void 센터의_이야기_게시판_추가_성공() throws Exception {
         //given
-        CreateBoardRequest request = new CreateBoardRequest("자유게시판", BoardKind.NORMAL);
+        BoardRequest request = new BoardRequest("자유게시판", BoardKind.NORMAL);
         Center center = new Center();
         Board board = Board.createBoard(request.getBoard_name(), request.getBoardKind(), center, false);
         Long fakeId = 1L;
@@ -340,10 +340,10 @@ class BoardServiceTest {
                 .when(boardRepository)
                 .findByCenterIsNull();
         //when
-        BoardListDTO dto = boardService.findAllWithBookmark(parent1.getId());
+        BoardListDto dto = boardService.findAllWithBookmark(parent1.getId());
         //then
-        BoardListDTO.BookmarkDTO board = dto.getBoardList().get(0);
-        List<BoardListDTO.BookmarkDTO> bookmarkList = dto.getBookmarkList();
+        BoardListDto.BookmarkDTO board = dto.getBoardList().get(0);
+        List<BoardListDto.BookmarkDTO> bookmarkList = dto.getBookmarkList();
         assertThat(board.getBoard_name()).isEqualTo(board1.getName());
         assertThat(board.getBookmark_id()).isNull();
         assertThat(bookmarkList).extracting("board_name")
@@ -370,10 +370,10 @@ class BoardServiceTest {
                 .when(boardRepository)
                 .findByCenter(1L);
         //when
-        BoardListDTO dto = boardService.findAllWithBookmarkInCenter(parent1.getId(), 1L);
+        BoardListDto dto = boardService.findAllWithBookmarkInCenter(parent1.getId(), 1L);
         //then
-        BoardListDTO.BookmarkDTO board = dto.getBoardList().get(0);
-        List<BoardListDTO.BookmarkDTO> bookmarkList = dto.getBookmarkList();
+        BoardListDto.BookmarkDTO board = dto.getBoardList().get(0);
+        List<BoardListDto.BookmarkDTO> bookmarkList = dto.getBookmarkList();
         assertThat(board.getBoard_name()).isEqualTo(board6.getName());
         assertThat(board.getBookmark_id()).isNull();
         assertThat(bookmarkList).extracting("board_name")
@@ -510,9 +510,9 @@ class BoardServiceTest {
     @Test
     public void 이야기_홈에서_센터의_게시판_띄워주기_비회원() throws Exception {
         //given
-        StoryHomeDTO storyHomeDTO = new StoryHomeDTO(List.of(new StoryHomeDTO.CenterStoryDTO(null)));
+        StoryHomeDto storyHomeDTO = new StoryHomeDto(List.of(new StoryHomeDto.CenterStoryDTO(null)));
         //when
-        StoryHomeDTO centerStory = boardService.findCenterStory(null);
+        StoryHomeDto centerStory = boardService.findCenterStory(null);
         //then
 
         assertThat(objectMapper.writeValueAsString(centerStory))
@@ -523,11 +523,11 @@ class BoardServiceTest {
     @Test
     public void 이야기_홈에서_센터의_게시판_띄워주기_유저X() throws Exception {
         //given
-        List<StoryHomeDTO.CenterStoryDTO> centerStoryList = Arrays.asList(
-                new StoryHomeDTO.CenterStoryDTO(null),
-                new StoryHomeDTO.CenterStoryDTO(center1),
-                new StoryHomeDTO.CenterStoryDTO(center2));
-        StoryHomeDTO storyHomeDTO = new StoryHomeDTO(centerStoryList);
+        List<StoryHomeDto.CenterStoryDTO> centerStoryList = Arrays.asList(
+                new StoryHomeDto.CenterStoryDTO(null),
+                new StoryHomeDto.CenterStoryDTO(center1),
+                new StoryHomeDto.CenterStoryDTO(center2));
+        StoryHomeDto storyHomeDTO = new StoryHomeDto(centerStoryList);
 
         Mockito.doReturn(Optional.empty())
                 .when(userRepository)
@@ -547,11 +547,11 @@ class BoardServiceTest {
     @Test
     public void 이야기_홈에서_센터의_게시판_띄워주기_학부모() throws Exception {
         //given
-        List<StoryHomeDTO.CenterStoryDTO> centerStoryList = Arrays.asList(
-                new StoryHomeDTO.CenterStoryDTO(null),
-                new StoryHomeDTO.CenterStoryDTO(center1),
-                new StoryHomeDTO.CenterStoryDTO(center2));
-        StoryHomeDTO storyHomeDTO = new StoryHomeDTO(centerStoryList);
+        List<StoryHomeDto.CenterStoryDTO> centerStoryList = Arrays.asList(
+                new StoryHomeDto.CenterStoryDTO(null),
+                new StoryHomeDto.CenterStoryDTO(center1),
+                new StoryHomeDto.CenterStoryDTO(center2));
+        StoryHomeDto storyHomeDTO = new StoryHomeDto(centerStoryList);
 
         Mockito.doReturn(Optional.of(parent1))
                 .when(userRepository)
@@ -561,7 +561,7 @@ class BoardServiceTest {
                 .when(userRepository)
                 .findChildrenWithCenter(parent1.getId());
         //when
-        StoryHomeDTO result = boardService.findCenterStory(parent1.getId());
+        StoryHomeDto result = boardService.findCenterStory(parent1.getId());
 
         //then
 
@@ -574,16 +574,16 @@ class BoardServiceTest {
     @Test
     public void 이야기_홈에서_센터의_게시판_띄워주기_교사() throws Exception {
         //given
-        List<StoryHomeDTO.CenterStoryDTO> centerStoryList = Arrays.asList(
-                new StoryHomeDTO.CenterStoryDTO(null),
-                new StoryHomeDTO.CenterStoryDTO(center1));
-        StoryHomeDTO storyHomeDTO = new StoryHomeDTO(centerStoryList);
+        List<StoryHomeDto.CenterStoryDTO> centerStoryList = Arrays.asList(
+                new StoryHomeDto.CenterStoryDTO(null),
+                new StoryHomeDto.CenterStoryDTO(center1));
+        StoryHomeDto storyHomeDTO = new StoryHomeDto(centerStoryList);
 
         Mockito.doReturn(Optional.of(teacher1))
                 .when(userRepository)
                 .findById(teacher1.getId());
         //when
-        StoryHomeDTO result = boardService.findCenterStory(teacher1.getId());
+        StoryHomeDto result = boardService.findCenterStory(teacher1.getId());
 
         //then
 

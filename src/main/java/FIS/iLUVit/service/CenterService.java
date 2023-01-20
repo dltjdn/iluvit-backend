@@ -17,7 +17,6 @@ import FIS.iLUVit.repository.UserRepository;
 import FIS.iLUVit.repository.dto.CenterAndDistancePreview;
 import FIS.iLUVit.repository.dto.CenterBannerDto;
 import FIS.iLUVit.repository.dto.CenterMapPreview;
-import FIS.iLUVit.repository.dto.CenterPreview;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.*;
 import org.springframework.data.util.Pair;
@@ -54,18 +53,18 @@ public class CenterService {
     }
 
 
-    public CenterInfoResponseDto findInfoById(Long id) {
+    public CenterInfoResponse findInfoById(Long id) {
         Center center = centerRepository.findById(id)
                 .orElseThrow(() -> new CenterException("해당 센터 존재하지 않음"));
         // Center 가 id 에 의해 조회 되었으므로 score에 1 추가
         center.addScore(Score.GET);
-        CenterInfoResponseDto result = new CenterInfoResponseDto(center);
+        CenterInfoResponse result = new CenterInfoResponse(center);
         result.setProfileImage(imageService.getProfileImage(center));
         result.setInfoImages(imageService.getInfoImages(center));
         return result;
     }
 
-    public CenterBannerResponseDto findBannerById(Long id, Long userId) {
+    public CenterBannerResponse findBannerById(Long id, Long userId) {
         CenterBannerDto data = userId == null ?
                 centerRepository.findBannerById(id) :
                 centerRepository.findBannerById(id, userId);
@@ -74,7 +73,7 @@ public class CenterService {
             return null;
 
         List<String> infoImages = imageService.getInfoImages(data.getInfoImages());
-        return new CenterBannerResponseDto(data, infoImages);
+        return new CenterBannerResponse(data, infoImages);
     }
 
     public Long modifyCenterImage(Long centerId, Long userId, List<MultipartFile> infoImages, MultipartFile profileImage) {
@@ -88,7 +87,7 @@ public class CenterService {
         return center.getId();
     }
 
-    public Long modifyCenterInfo(Long centerId, Long userId, CenterModifyRequestDto requestDto) {
+    public Long modifyCenterInfo(Long centerId, Long userId, CenterDetailRequest requestDto) {
         Teacher teacher = userRepository.findTeacherById(userId)
                 .orElseThrow(() -> new UserException(UserErrorResult.USER_NOT_EXIST))
                 .canWrite(centerId);

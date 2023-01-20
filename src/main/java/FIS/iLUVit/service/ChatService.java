@@ -1,9 +1,9 @@
 package FIS.iLUVit.service;
 
-import FIS.iLUVit.controller.dto.ChatDTO;
-import FIS.iLUVit.controller.dto.ChatListDTO;
-import FIS.iLUVit.controller.dto.CreateChatRequest;
-import FIS.iLUVit.controller.dto.CreateChatRoomRequest;
+import FIS.iLUVit.controller.dto.ChatDto;
+import FIS.iLUVit.controller.dto.ChatListDto;
+import FIS.iLUVit.controller.dto.ChatRequest;
+import FIS.iLUVit.controller.dto.ChatRoomRequest;
 import FIS.iLUVit.domain.*;
 import FIS.iLUVit.domain.alarms.ChatAlarm;
 import FIS.iLUVit.exception.*;
@@ -28,7 +28,7 @@ public class ChatService {
     private final ChatRoomRepository chatRoomRepository;
     private final ImageService imageService;
 
-    public Long saveChat(Long userId, CreateChatRequest request) {
+    public Long saveChat(Long userId, ChatRequest request) {
 
         if (userId == null) {
             throw new ChatException(ChatErrorResult.UNAUTHORIZED_USER_ACCESS);
@@ -103,24 +103,24 @@ public class ChatService {
         }
     }
 
-    public Slice<ChatListDTO> findAll(Long userId, Pageable pageable) {
+    public Slice<ChatListDto> findAll(Long userId, Pageable pageable) {
         Slice<ChatRoom> chatList = chatRoomRepository.findByUser(userId, pageable);
         return chatList.map(c -> {
-            ChatListDTO chatListDTO = new ChatListDTO(c);
+            ChatListDto chatListDTO = new ChatListDto(c);
             String profileImage = imageService.getProfileImage(c.getSender());
             chatListDTO.updateImage(profileImage);
             return chatListDTO;
         });
     }
 
-    public ChatDTO findByOpponent(Long userId, Long roomId, Pageable pageable) {
+    public ChatDto findByOpponent(Long userId, Long roomId, Pageable pageable) {
         ChatRoom findRoom = chatRoomRepository.findById(roomId)
                 .orElseThrow(() -> new ChatException(ChatErrorResult.ROOM_NOT_EXIST));
 
         Slice<Chat> chatList = chatRepository.findByChatRoom(userId, roomId, pageable);
 
-        Slice<ChatDTO.ChatInfo> chatInfos = chatList.map(ChatDTO.ChatInfo::new);
-        ChatDTO chatDTO = new ChatDTO(findRoom, chatInfos);
+        Slice<ChatDto.ChatInfo> chatInfos = chatList.map(ChatDto.ChatInfo::new);
+        ChatDto chatDTO = new ChatDto(findRoom, chatInfos);
         String profileImage = imageService.getProfileImage(findRoom.getSender());
         chatDTO.updateImage(profileImage);
         return chatDTO;
@@ -144,7 +144,7 @@ public class ChatService {
         return roomId;
     }
 
-    public Long saveChatInRoom(Long userId, CreateChatRoomRequest request) {
+    public Long saveChatInRoom(Long userId, ChatRoomRequest request) {
 
         if (userId == null) {
             throw new ChatException(ChatErrorResult.UNAUTHORIZED_USER_ACCESS);

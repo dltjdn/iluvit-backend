@@ -2,10 +2,10 @@ package FIS.iLUVit.controller;
 
 import FIS.iLUVit.Creator;
 import FIS.iLUVit.config.argumentResolver.LoginUserArgumentResolver;
-import FIS.iLUVit.controller.dto.ChatDTO;
-import FIS.iLUVit.controller.dto.ChatListDTO;
-import FIS.iLUVit.controller.dto.CreateChatRequest;
-import FIS.iLUVit.controller.dto.CreateChatRoomRequest;
+import FIS.iLUVit.controller.dto.ChatDto;
+import FIS.iLUVit.controller.dto.ChatListDto;
+import FIS.iLUVit.controller.dto.ChatRequest;
+import FIS.iLUVit.controller.dto.ChatRoomRequest;
 import FIS.iLUVit.domain.*;
 import FIS.iLUVit.domain.enumtype.Auth;
 import FIS.iLUVit.domain.enumtype.BoardKind;
@@ -76,8 +76,8 @@ class ChatControllerTest {
     Chat chat5;
     Chat chat6;
 
-    CreateChatRequest request = new CreateChatRequest();
-    CreateChatRoomRequest roomRequest = new CreateChatRoomRequest();
+    ChatRequest request = new ChatRequest();
+    ChatRoomRequest roomRequest = new ChatRoomRequest();
 
     @BeforeEach
     public void init() {
@@ -137,7 +137,7 @@ class ChatControllerTest {
 
         Mockito.doThrow(new ChatException(error))
                 .when(chatService)
-                .saveChat(eq(null), any(CreateChatRequest.class));
+                .saveChat(eq(null), any(ChatRequest.class));
         //when
         ResultActions resultActions = mockMvc.perform(
                 MockMvcRequestBuilders.post(url)
@@ -164,7 +164,7 @@ class ChatControllerTest {
 
         Mockito.doThrow(new ChatException(error))
                 .when(chatService)
-                .saveChat(any(Long.class), any(CreateChatRequest.class));
+                .saveChat(any(Long.class), any(ChatRequest.class));
 
         //when
         ResultActions resultActions = mockMvc.perform(
@@ -193,7 +193,7 @@ class ChatControllerTest {
 
         Mockito.doThrow(new ChatException(error))
                 .when(chatService)
-                .saveChat(any(Long.class), any(CreateChatRequest.class));
+                .saveChat(any(Long.class), any(ChatRequest.class));
         //when
         ResultActions resultActions = mockMvc.perform(
                 MockMvcRequestBuilders.post(url)
@@ -220,7 +220,7 @@ class ChatControllerTest {
 
         Mockito.doThrow(new ChatException(error))
                 .when(chatService)
-                .saveChat(any(Long.class), any(CreateChatRequest.class));
+                .saveChat(any(Long.class), any(ChatRequest.class));
         //when
         ResultActions resultActions = mockMvc.perform(
                 MockMvcRequestBuilders.post(url)
@@ -246,7 +246,7 @@ class ChatControllerTest {
 
         Mockito.doReturn(chat2.getId())
                 .when(chatService)
-                .saveChat(any(Long.class), any(CreateChatRequest.class));
+                .saveChat(any(Long.class), any(ChatRequest.class));
         //when
         ResultActions resultActions = mockMvc.perform(
                 MockMvcRequestBuilders.post(url)
@@ -273,7 +273,7 @@ class ChatControllerTest {
         final ChatErrorResult error = ChatErrorResult.UNAUTHORIZED_USER_ACCESS;
         Mockito.doThrow(new ChatException(error))
                 .when(chatService)
-                .saveChatInRoom(eq(null), any(CreateChatRoomRequest.class));
+                .saveChatInRoom(eq(null), any(ChatRoomRequest.class));
         //when
         ResultActions resultActions = mockMvc.perform(
                 MockMvcRequestBuilders.post(url)
@@ -299,7 +299,7 @@ class ChatControllerTest {
         final ChatErrorResult error = ChatErrorResult.ROOM_NOT_EXIST;
         Mockito.doThrow(new ChatException(error))
                 .when(chatService)
-                .saveChatInRoom(any(Long.class), any(CreateChatRoomRequest.class));
+                .saveChatInRoom(any(Long.class), any(ChatRoomRequest.class));
         //when
         ResultActions resultActions = mockMvc.perform(
                 MockMvcRequestBuilders.post(url)
@@ -326,7 +326,7 @@ class ChatControllerTest {
         final ChatErrorResult error = ChatErrorResult.WITHDRAWN_MEMBER;
         Mockito.doThrow(new ChatException(error))
                 .when(chatService)
-                .saveChatInRoom(any(Long.class), any(CreateChatRoomRequest.class));
+                .saveChatInRoom(any(Long.class), any(ChatRoomRequest.class));
         //when
         ResultActions resultActions = mockMvc.perform(
                 MockMvcRequestBuilders.post(url)
@@ -353,7 +353,7 @@ class ChatControllerTest {
         final ChatErrorResult error = ChatErrorResult.NO_SEND_TO_SELF;
         Mockito.doThrow(new ChatException(error))
                 .when(chatService)
-                .saveChatInRoom(any(Long.class), any(CreateChatRoomRequest.class));
+                .saveChatInRoom(any(Long.class), any(ChatRoomRequest.class));
         //when
         ResultActions resultActions = mockMvc.perform(
                 MockMvcRequestBuilders.post(url)
@@ -380,7 +380,7 @@ class ChatControllerTest {
 
         Mockito.doReturn(chat1.getId())
                 .when(chatService)
-                .saveChatInRoom(any(Long.class), any(CreateChatRoomRequest.class));
+                .saveChatInRoom(any(Long.class), any(ChatRoomRequest.class));
         //when
         ResultActions resultActions = mockMvc.perform(
                 MockMvcRequestBuilders.post(url)
@@ -400,9 +400,9 @@ class ChatControllerTest {
     @Test
     public void 나의_쪽지함_조회() throws Exception {
         //given
-        ChatListDTO chatListDTO = new ChatListDTO(chatRoom1);
-        List<ChatListDTO> dtoList = List.of(chatListDTO);
-        Slice<ChatListDTO> chatListDTOSlice = new SliceImpl<>(dtoList);
+        ChatListDto chatListDTO = new ChatListDto(chatRoom1);
+        List<ChatListDto> dtoList = List.of(chatListDTO);
+        Slice<ChatListDto> chatListDTOSlice = new SliceImpl<>(dtoList);
 
         final String url = "/user/chat/list";
 
@@ -425,11 +425,11 @@ class ChatControllerTest {
     @Test
     public void 쪽지_자세히_보기() throws Exception {
         //given
-        ChatDTO.ChatInfo chatInfo1 = new ChatDTO.ChatInfo(chat1);
-        ChatDTO.ChatInfo chatInfo2 = new ChatDTO.ChatInfo(chat2);
-        ChatDTO.ChatInfo chatInfo3 = new ChatDTO.ChatInfo(chat3);
-        SliceImpl<ChatDTO.ChatInfo> chatInfoSlice = new SliceImpl<>(Arrays.asList(chatInfo1, chatInfo2, chatInfo3));
-        ChatDTO chatDTO = new ChatDTO(chatRoom1, chatInfoSlice);
+        ChatDto.ChatInfo chatInfo1 = new ChatDto.ChatInfo(chat1);
+        ChatDto.ChatInfo chatInfo2 = new ChatDto.ChatInfo(chat2);
+        ChatDto.ChatInfo chatInfo3 = new ChatDto.ChatInfo(chat3);
+        SliceImpl<ChatDto.ChatInfo> chatInfoSlice = new SliceImpl<>(Arrays.asList(chatInfo1, chatInfo2, chatInfo3));
+        ChatDto chatDTO = new ChatDto(chatRoom1, chatInfoSlice);
 
         Mockito.doReturn(chatDTO)
                 .when(chatService)

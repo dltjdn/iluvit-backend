@@ -1,7 +1,7 @@
 package FIS.iLUVit.controller;
 
 import FIS.iLUVit.config.argumentResolver.Login;
-import FIS.iLUVit.controller.dto.CommentDTO;
+import FIS.iLUVit.controller.dto.CommentDto;
 import FIS.iLUVit.controller.dto.RegisterCommentRequest;
 import FIS.iLUVit.service.CommentService;
 import lombok.RequiredArgsConstructor;
@@ -22,7 +22,7 @@ public class CommentController {
      내용: 댓글 단 글 리스트
      */
     @GetMapping("mypage")
-    public Slice<CommentDTO> searchCommentByUser(@Login Long userId, Pageable pageable) {
+    public Slice<CommentDto> searchCommentByUser(@Login Long userId, Pageable pageable) {
         return commentService.searchByUser(userId, pageable);
     }
 

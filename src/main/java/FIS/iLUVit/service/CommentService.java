@@ -1,6 +1,6 @@
 package FIS.iLUVit.service;
 
-import FIS.iLUVit.controller.dto.CommentDTO;
+import FIS.iLUVit.controller.dto.CommentDto;
 import FIS.iLUVit.controller.dto.RegisterCommentRequest;
 import FIS.iLUVit.domain.Comment;
 import FIS.iLUVit.domain.Post;
@@ -111,8 +111,8 @@ public class CommentService {
         return commentId;
     }
 
-    public Slice<CommentDTO> searchByUser(Long userId, Pageable pageable) {
+    public Slice<CommentDto> searchByUser(Long userId, Pageable pageable) {
         // Comment -> CommentDTO 타입으로 변환
-        return commentRepository.findByUser(userId, pageable).map(CommentDTO::new);
+        return commentRepository.findByUser(userId, pageable).map(CommentDto::new);
     }
 }

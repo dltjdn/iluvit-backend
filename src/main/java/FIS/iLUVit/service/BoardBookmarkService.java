@@ -1,6 +1,6 @@
 package FIS.iLUVit.service;
 
-import FIS.iLUVit.controller.dto.BookmarkMainDTO;
+import FIS.iLUVit.controller.dto.BoardBookmarkDto;
 import FIS.iLUVit.domain.*;
 import FIS.iLUVit.exception.BookmarkErrorResult;
 import FIS.iLUVit.exception.BookmarkException;
@@ -23,8 +23,8 @@ public class BoardBookmarkService {
     private final UserRepository userRepository;
     private final BoardRepository boardRepository;
 
-    public BookmarkMainDTO search(Long userId) {
-        BookmarkMainDTO dto = new BookmarkMainDTO();
+    public BoardBookmarkDto search(Long userId) {
+        BoardBookmarkDto dto = new BoardBookmarkDto();
         // stream groupingBy가 null 키 값을 허용하지 않아서 임시 값으로 생성한 센터 -> tmp = 모두의 이야기 센터
         Center tmp = new Center();
 
@@ -42,11 +42,11 @@ public class BoardBookmarkService {
                 .forEach(center -> centerPostMap.put(center, new ArrayList<>()));
 
         // ~의 이야기 DTO의 리스트
-        List<BookmarkMainDTO.StoryDTO> storyDTOS = new ArrayList<>();
+        List<BoardBookmarkDto.StoryDTO> storyDTOS = new ArrayList<>();
 
         // 센터(이야기)-게시글리스트 Map 루프 돌림.
         centerPostMap.forEach((c, pl) -> {
-            BookmarkMainDTO.StoryDTO storyDTO = new BookmarkMainDTO.StoryDTO();
+            BoardBookmarkDto.StoryDTO storyDTO = new BoardBookmarkDto.StoryDTO();
             // (~의 이야기안의 게시판 + 최신글 1개씩) DTO를 모아 리스트로 만듬.
             Map<Board, List<Post>> boardPostMap = pl.stream()
                     .collect(Collectors.groupingBy(post -> post.getBoard()));
@@ -72,8 +72,8 @@ public class BoardBookmarkService {
         });
 
         // 시설의 이야기 리스트는 아이디로 정렬 후
-        List<BookmarkMainDTO.StoryDTO> sortedStoryDTOS = storyDTOS.stream()
-                .sorted(Comparator.comparing(BookmarkMainDTO.StoryDTO::getCenter_id))
+        List<BoardBookmarkDto.StoryDTO> sortedStoryDTOS = storyDTOS.stream()
+                .sorted(Comparator.comparing(BoardBookmarkDto.StoryDTO::getCenter_id))
                 .collect(Collectors.toList());
 
         // 최종 결과 dto에 넣어서 반환함. center_id Null 은 stream 으로 정렬이 불가능..
@@ -99,7 +99,7 @@ public class BoardBookmarkService {
                         tmp : b.getCenter()));
     }
 
-    private void updateStoryDTO(List<Board> boardList, Map<Board, List<Post>> boardPostMap, BookmarkMainDTO.StoryDTO storyDTO) {
+    private void updateStoryDTO(List<Board> boardList, Map<Board, List<Post>> boardPostMap, BoardBookmarkDto.StoryDTO storyDTO) {
         // 게시판이 없는 경우 == 게시글이 하나도 없는 경우 -> 빈 배열 넣어줌.
         for (Board board : boardList) {
             if (!boardPostMap.containsKey(board)) {
@@ -107,7 +107,7 @@ public class BoardBookmarkService {
             }
         }
 
-        List<BookmarkMainDTO.BoardDTO> boardDTOS = new ArrayList<>();
+        List<BoardBookmarkDto.BoardDTO> boardDTOS = new ArrayList<>();
 
         // 게시판 DTO 생성 -> boardDTOS 에 추가
         boardPostMap.forEach((b, p) -> {
@@ -118,24 +118,24 @@ public class BoardBookmarkService {
                 postTitle = gp.getTitle();
                 postId = gp.getId();
             }
-            BookmarkMainDTO.BoardDTO boardDTO = new BookmarkMainDTO.BoardDTO(
+            BoardBookmarkDto.BoardDTO boardDTO = new BoardBookmarkDto.BoardDTO(
                     b.getId(), b.getName(), postTitle, postId);
             boardDTOS.add(boardDTO);
         });
 
         // 게시판 아이디 오름차순 정렬
-        List<BookmarkMainDTO.BoardDTO> boardDTOasc = boardDTOS.stream()
+        List<BoardBookmarkDto.BoardDTO> boardDTOasc = boardDTOS.stream()
                 .sorted(Comparator.comparing(b -> b.getBoard_id()))
                 .collect(Collectors.toList());
         // ~의 이야기에 (게시판+최신글) DTO 리스트 넣어줌.
         storyDTO.setBoardDTOList(boardDTOasc);
     }
 
-    public BookmarkMainDTO searchByDefault() {
-        BookmarkMainDTO dto = new BookmarkMainDTO();
+    public BoardBookmarkDto searchByDefault() {
+        BoardBookmarkDto dto = new BoardBookmarkDto();
         List<Board> defaultBoards = boardRepository.findDefaultByModu();
 
-        BookmarkMainDTO.StoryDTO storyDTO = new BookmarkMainDTO.StoryDTO(null, "모두의 이야기");
+        BoardBookmarkDto.StoryDTO storyDTO = new BoardBookmarkDto.StoryDTO(null, "모두의 이야기");
         Map<Board, List<Post>> boardPostMap = boardRepository.findPostByDefault()
                 .stream()
                 .collect(Collectors.groupingBy(p -> p.getBoard()));

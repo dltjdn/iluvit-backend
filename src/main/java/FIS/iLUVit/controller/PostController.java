@@ -7,7 +7,6 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
@@ -29,8 +28,8 @@ public class PostController {
      내용: 내가 쓴 글 리스트
      */
     @GetMapping("mypage")
-    public PostList searchPostByUser(@Login Long userId,
-                                     Pageable pageable) {
+    public PostListDto searchPostByUser(@Login Long userId,
+                                        Pageable pageable) {
         return postService.searchByUser(userId, pageable);
     }
 
@@ -42,9 +41,9 @@ public class PostController {
      auth -> 유저 권한
      */
     @GetMapping("search/all")
-    public Slice<GetPostResponsePreview> searchPost(@Login Long userId,
-                                                    @RequestParam("input") String input,
-                                                    Pageable pageable) {
+    public Slice<PostPreviewResponse> searchPost(@Login Long userId,
+                                                 @RequestParam("input") String input,
+                                                 Pageable pageable) {
         return postService.searchByKeyword(input, userId, pageable);
     }
 
@@ -54,7 +53,7 @@ public class PostController {
      내용: 모두의 이야기 글 리스트 불러오기
      */
     @GetMapping("public-main")
-    public List<BoardPreview> searchMainPreview(@Login Long userId) {
+    public List<BoardPreviewDto> searchMainPreview(@Login Long userId) {
 
         return postService.searchMainPreview(userId);
     }
@@ -65,9 +64,9 @@ public class PostController {
      내용: 게시글 제목+내용+센터 검색 (각 센터 별 검색)
      */
     @GetMapping("search/in-center")
-    public Slice<GetPostResponsePreview> searchPostByCenter(
+    public Slice<PostPreviewResponse> searchPostByCenter(
             @Login Long userId,
-            @ModelAttribute PostSearchRequestDTO requestDTO,
+            @ModelAttribute PostSearchRequest requestDTO,
             Pageable pageable) {
         return postService.searchByKeywordAndCenter(requestDTO.getCenter_id(), requestDTO.getInput()
                 , requestDTO.getAuth(), userId, pageable);
@@ -79,7 +78,7 @@ public class PostController {
      내용: 게시글 제목+내용+보드 검색 (각 게시판 별 검색)
      */
     @GetMapping("search/in-board")
-    public Slice<GetPostResponsePreview> searchPostByBoard(
+    public Slice<PostPreviewResponse> searchPostByBoard(
             @RequestParam("board_id") Long boardId,
             @RequestParam(value = "input", required = false) String input,
             Pageable pageable) {
@@ -92,7 +91,7 @@ public class PostController {
      내용: HOT 게시판 글 목록 조회
      */
     @GetMapping("search/hot-board")
-    public Slice<GetPostResponsePreview> searchHotPosts(
+    public Slice<PostPreviewResponse> searchHotPosts(
             @RequestParam(value = "center_id", required = false) Long centerId,
             Pageable pageable) {
         return postService.findByHeartCnt(centerId, pageable);
@@ -127,7 +126,7 @@ public class PostController {
      내용: 게시글 1개 조회(게시글 자세히 보기)
      */
     @GetMapping("{postId}")
-    public GetPostResponse getPost(@Login Long userId, @PathVariable("postId") Long postId) {
+    public PostResponse getPost(@Login Long userId, @PathVariable("postId") Long postId) {
         return postService.findById(userId, postId);
     }
 
@@ -151,7 +150,7 @@ public class PostController {
         내용: 유치원별 이야기 글 리스트 불러오기
     */
     @GetMapping("center-main")
-    public List<BoardPreview> searchCenterMainPreview(@Login Long userId, @RequestParam("center_id") Long centerId) {
+    public List<BoardPreviewDto> searchCenterMainPreview(@Login Long userId, @RequestParam("center_id") Long centerId) {
         return postService.searchCenterMainPreview(userId, centerId);
     }
 

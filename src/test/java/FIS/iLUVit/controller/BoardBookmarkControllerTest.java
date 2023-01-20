@@ -1,7 +1,7 @@
 package FIS.iLUVit.controller;
 
 import FIS.iLUVit.config.argumentResolver.LoginUserArgumentResolver;
-import FIS.iLUVit.controller.dto.BookmarkMainDTO;
+import FIS.iLUVit.controller.dto.BoardBookmarkDto;
 import FIS.iLUVit.domain.Board;
 import FIS.iLUVit.domain.Bookmark;
 import FIS.iLUVit.domain.Parent;
@@ -84,7 +84,7 @@ class BoardBookmarkControllerTest {
     @Test
     public void 메인화면_목록조회_비회원() throws Exception {
         //given
-        BookmarkMainDTO dto = new BookmarkMainDTO();
+        BoardBookmarkDto dto = new BoardBookmarkDto();
         final String url = "/bookmark-main";
         Mockito.doReturn(dto)
                 .when(boardBookmarkService)
@@ -102,7 +102,7 @@ class BoardBookmarkControllerTest {
     @Test
     public void 메인화면_목록조회_회원() throws Exception {
         //given
-        BookmarkMainDTO dto = new BookmarkMainDTO();
+        BoardBookmarkDto dto = new BoardBookmarkDto();
         final String url = "/bookmark-main";
         Mockito.doReturn(dto)
                 .when(boardBookmarkService)

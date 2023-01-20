@@ -1,9 +1,9 @@
 package FIS.iLUVit.controller;
 
 import FIS.iLUVit.config.argumentResolver.LoginUserArgumentResolver;
-import FIS.iLUVit.controller.dto.BoardListDTO;
-import FIS.iLUVit.controller.dto.CreateBoardRequest;
-import FIS.iLUVit.controller.dto.StoryHomeDTO;
+import FIS.iLUVit.controller.dto.BoardListDto;
+import FIS.iLUVit.controller.dto.BoardRequest;
+import FIS.iLUVit.controller.dto.StoryHomeDto;
 import FIS.iLUVit.domain.Board;
 import FIS.iLUVit.domain.Center;
 import FIS.iLUVit.domain.Parent;
@@ -31,7 +31,6 @@ import org.springframework.test.util.ReflectionTestUtils;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.ResultActions;
-import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
 import java.util.ArrayList;
@@ -93,7 +92,7 @@ class BoardControllerTest {
     public void 게시판_생성() throws Exception {
         //given
 
-        CreateBoardRequest request = new CreateBoardRequest("자유게시판", BoardKind.NORMAL);
+        BoardRequest request = new BoardRequest("자유게시판", BoardKind.NORMAL);
 
         given(boardService.create(eq(null), eq(1L), any()))
                 .willReturn(2L);
@@ -151,8 +150,8 @@ class BoardControllerTest {
         //given
         Board board1 = Board.createBoard("자유게시판", BoardKind.NORMAL, null, true);
         Board board2 = Board.createBoard("장터게시판", BoardKind.NORMAL, null, true);
-        BoardListDTO boardListDTO = new BoardListDTO();
-        List<BoardListDTO.BookmarkDTO> boardList = getBookmarkDTOS(board1, board2, boardListDTO);
+        BoardListDto boardListDTO = new BoardListDto();
+        List<BoardListDto.BookmarkDTO> boardList = getBookmarkDTOS(board1, board2, boardListDTO);
         boardListDTO.setBoardList(boardList);
         given(boardService.findAllWithBookmark(any()))
                 .willReturn(boardListDTO);
@@ -173,8 +172,8 @@ class BoardControllerTest {
         ReflectionTestUtils.setField(center, "id", 1L);
         Board board1 = Board.createBoard("공지게시판", BoardKind.NORMAL, center, true);
         Board board2 = Board.createBoard("정보게시판", BoardKind.NORMAL, center, true);
-        BoardListDTO boardListDTO = new BoardListDTO();
-        List<BoardListDTO.BookmarkDTO> boardList = getBookmarkDTOS(board1, board2, boardListDTO);
+        BoardListDto boardListDTO = new BoardListDto();
+        List<BoardListDto.BookmarkDTO> boardList = getBookmarkDTOS(board1, board2, boardListDTO);
         boardListDTO.setBoardList(boardList);
         given(boardService.findAllWithBookmarkInCenter(any(), any()))
                 .willReturn(boardListDTO);
@@ -188,11 +187,11 @@ class BoardControllerTest {
     }
 
     @NotNull
-    public List<BoardListDTO.BookmarkDTO> getBookmarkDTOS(Board board1, Board board2, BoardListDTO boardListDTO) {
-        BoardListDTO.BookmarkDTO bookmarkDTO1 = new BoardListDTO.BookmarkDTO(board1);
-        BoardListDTO.BookmarkDTO bookmarkDTO2 = new BoardListDTO.BookmarkDTO(board2);
-        List<BoardListDTO.BookmarkDTO> bookmarkList = Arrays.asList(bookmarkDTO1);
-        List<BoardListDTO.BookmarkDTO> boardList = Arrays.asList(bookmarkDTO2);
+    public List<BoardListDto.BookmarkDTO> getBookmarkDTOS(Board board1, Board board2, BoardListDto boardListDTO) {
+        BoardListDto.BookmarkDTO bookmarkDTO1 = new BoardListDto.BookmarkDTO(board1);
+        BoardListDto.BookmarkDTO bookmarkDTO2 = new BoardListDto.BookmarkDTO(board2);
+        List<BoardListDto.BookmarkDTO> bookmarkList = Arrays.asList(bookmarkDTO1);
+        List<BoardListDto.BookmarkDTO> boardList = Arrays.asList(bookmarkDTO2);
         boardListDTO.setBookmarkList(bookmarkList);
         return boardList;
     }
@@ -200,9 +199,9 @@ class BoardControllerTest {
     @Test
     public void 이야기_홈에서_센터_게시판_띄워주기_비회원() throws Exception {
         //given
-        List<StoryHomeDTO.CenterStoryDTO> storyDTOList = new ArrayList<>();
-        storyDTOList.add(new StoryHomeDTO.CenterStoryDTO(null));
-        StoryHomeDTO storyHomeDTO = new StoryHomeDTO(storyDTOList);
+        List<StoryHomeDto.CenterStoryDTO> storyDTOList = new ArrayList<>();
+        storyDTOList.add(new StoryHomeDto.CenterStoryDTO(null));
+        StoryHomeDto storyHomeDTO = new StoryHomeDto(storyDTOList);
 
         String url = "/story/home";
 
@@ -248,10 +247,10 @@ class BoardControllerTest {
     @Test
     public void 이야기_홈에서_센터_게시판_띄워주기_성공() throws Exception {
         //given
-        List<StoryHomeDTO.CenterStoryDTO> storyDTOList = new ArrayList<>();
-        storyDTOList.add(new StoryHomeDTO.CenterStoryDTO(null));
-        storyDTOList.add(new StoryHomeDTO.CenterStoryDTO(center1));
-        StoryHomeDTO storyHomeDTO = new StoryHomeDTO(storyDTOList);
+        List<StoryHomeDto.CenterStoryDTO> storyDTOList = new ArrayList<>();
+        storyDTOList.add(new StoryHomeDto.CenterStoryDTO(null));
+        storyDTOList.add(new StoryHomeDto.CenterStoryDTO(center1));
+        StoryHomeDto storyHomeDTO = new StoryHomeDto(storyDTOList);
 
         String url = "/story/home";
         Mockito.doReturn(storyHomeDTO)

@@ -2,7 +2,7 @@ package FIS.iLUVit.domain;
 
 import FIS.iLUVit.controller.dto.LoginTeacherResponse;
 import FIS.iLUVit.controller.dto.TeacherInfoResponse;
-import FIS.iLUVit.controller.dto.UpdateTeacherDetailRequest;
+import FIS.iLUVit.controller.dto.TeacherDetailRequest;
 import FIS.iLUVit.controller.dto.UserInfoResponse;
 import FIS.iLUVit.domain.enumtype.Approval;
 import FIS.iLUVit.domain.enumtype.Auth;
@@ -70,7 +70,7 @@ public class Teacher extends User {
         this.center = center;
     }
 
-    public void updateDetail(UpdateTeacherDetailRequest request) {
+    public void updateDetail(TeacherDetailRequest request) {
         this.name = request.getName();
         this.nickName = request.getNickname();
         this.emailAddress = request.getEmailAddress();
@@ -78,7 +78,7 @@ public class Teacher extends User {
         this.detailAddress = request.getDetailAddress();
     }
 
-    public void updateDetailWithPhoneNum(UpdateTeacherDetailRequest request) {
+    public void updateDetailWithPhoneNum(TeacherDetailRequest request) {
         this.name = request.getName();
         this.nickName = request.getNickname();
         this.emailAddress = request.getEmailAddress();

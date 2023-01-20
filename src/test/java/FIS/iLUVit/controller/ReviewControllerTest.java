@@ -70,10 +70,10 @@ class ReviewControllerTest {
     Review review2;
     Review review3;
 
-    ReviewCreateDTO reviewCreateDTO = new ReviewCreateDTO();
-    ReviewUpdateDTO reviewUpdateDTO = new ReviewUpdateDTO();
-    ReviewCommentDTO reviewCommentDTO = new ReviewCommentDTO();
-    ReviewByCenterDTO reviewByCenterDTO = new ReviewByCenterDTO();
+    ReviewDetailDto reviewCreateDTO = new ReviewDetailDto();
+    ReviewDto reviewDTO = new ReviewDto();
+    ReviewCommentDto reviewCommentDTO = new ReviewCommentDto();
+    ReviewByCenterDto reviewByCenterDTO = new ReviewByCenterDto();
 
     @BeforeEach
     public void init() {
@@ -144,11 +144,11 @@ class ReviewControllerTest {
     @Test
     public void 학부모가_작성한_리뷰_조회() throws Exception {
         //given
-        ReviewByParentDTO expected = new ReviewByParentDTO();
-        ReviewByParentDTO.ReviewDto reviewDto = new ReviewByParentDTO.ReviewDto(review1);
+        ReviewByParentDto expected = new ReviewByParentDto();
+        ReviewByParentDto.ReviewDto reviewDto = new ReviewByParentDto.ReviewDto(review1);
         System.out.println("reviewDto = " + reviewDto);
-        List<ReviewByParentDTO.ReviewDto> reviewDtos = List.of(reviewDto);
-        SliceImpl<ReviewByParentDTO.ReviewDto> reviewDtoSlice = new SliceImpl<>(reviewDtos, PageRequest.of(0, 10), false);
+        List<ReviewByParentDto.ReviewDto> reviewDtos = List.of(reviewDto);
+        SliceImpl<ReviewByParentDto.ReviewDto> reviewDtoSlice = new SliceImpl<>(reviewDtos, PageRequest.of(0, 10), false);
         expected.setReviews(reviewDtoSlice);
 
         Mockito.doReturn(expected)
@@ -353,13 +353,13 @@ class ReviewControllerTest {
         Mockito.doThrow(new ReviewException(error))
                 .when(reviewService)
                 .updateReview(review1.getId(), parent1.getId(), "수정했어요");
-        reviewUpdateDTO.setContent("수정했어요");
+        reviewDTO.setContent("수정했어요");
         //when
 
         ResultActions resultActions = mockMvc.perform(
                 MockMvcRequestBuilders.patch(url, review1.getId())
                         .header("Authorization", createJwtToken(parent1))
-                        .content(objectMapper.writeValueAsString(reviewUpdateDTO))
+                        .content(objectMapper.writeValueAsString(reviewDTO))
                         .contentType(MediaType.APPLICATION_JSON)
         );
         //then
@@ -378,13 +378,13 @@ class ReviewControllerTest {
         Mockito.doThrow(new ReviewException(error))
                 .when(reviewService)
                 .updateReview(review1.getId(), parent1.getId(), "수정했어요");
-        reviewUpdateDTO.setContent("수정했어요");
+        reviewDTO.setContent("수정했어요");
         //when
 
         ResultActions resultActions = mockMvc.perform(
                 MockMvcRequestBuilders.patch(url, review1.getId())
                         .header("Authorization", createJwtToken(parent1))
-                        .content(objectMapper.writeValueAsString(reviewUpdateDTO))
+                        .content(objectMapper.writeValueAsString(reviewDTO))
                         .contentType(MediaType.APPLICATION_JSON)
         );
         //then
@@ -403,13 +403,13 @@ class ReviewControllerTest {
         Mockito.doNothing()
                 .when(reviewService)
                 .updateReview(review1.getId(), parent1.getId(), "수정했어요");
-        reviewUpdateDTO.setContent("수정했어요");
+        reviewDTO.setContent("수정했어요");
         //when
 
         ResultActions resultActions = mockMvc.perform(
                 MockMvcRequestBuilders.patch(url, review1.getId())
                         .header("Authorization", createJwtToken(parent1))
-                        .content(objectMapper.writeValueAsString(reviewUpdateDTO))
+                        .content(objectMapper.writeValueAsString(reviewDTO))
                         .contentType(MediaType.APPLICATION_JSON)
         );
         //then
@@ -425,13 +425,13 @@ class ReviewControllerTest {
         Mockito.doThrow(new ReviewException(error))
                 .when(reviewService)
                 .deleteReview(review1.getId(), parent1.getId());
-        reviewUpdateDTO.setContent("수정했어요");
+        reviewDTO.setContent("수정했어요");
         //when
 
         ResultActions resultActions = mockMvc.perform(
                 MockMvcRequestBuilders.delete(url, review1.getId())
                         .header("Authorization", createJwtToken(parent1))
-                        .content(objectMapper.writeValueAsString(reviewUpdateDTO))
+                        .content(objectMapper.writeValueAsString(reviewDTO))
                         .contentType(MediaType.APPLICATION_JSON)
         );
         //then
@@ -450,13 +450,13 @@ class ReviewControllerTest {
         Mockito.doThrow(new ReviewException(error))
                 .when(reviewService)
                 .deleteReview(review1.getId(), parent1.getId());
-        reviewUpdateDTO.setContent("수정했어요");
+        reviewDTO.setContent("수정했어요");
         //when
 
         ResultActions resultActions = mockMvc.perform(
                 MockMvcRequestBuilders.delete(url, review1.getId())
                         .header("Authorization", createJwtToken(parent1))
-                        .content(objectMapper.writeValueAsString(reviewUpdateDTO))
+                        .content(objectMapper.writeValueAsString(reviewDTO))
                         .contentType(MediaType.APPLICATION_JSON)
         );
         //then
@@ -475,13 +475,13 @@ class ReviewControllerTest {
         Mockito.doNothing()
                 .when(reviewService)
                 .deleteReview(review1.getId(), parent1.getId());
-        reviewUpdateDTO.setContent("수정했어요");
+        reviewDTO.setContent("수정했어요");
         //when
 
         ResultActions resultActions = mockMvc.perform(
                 MockMvcRequestBuilders.delete(url, review1.getId())
                         .header("Authorization", createJwtToken(parent1))
-                        .content(objectMapper.writeValueAsString(reviewUpdateDTO))
+                        .content(objectMapper.writeValueAsString(reviewDTO))
                         .contentType(MediaType.APPLICATION_JSON)
         );
         //then
@@ -490,8 +490,8 @@ class ReviewControllerTest {
     }
 
     @NotNull
-    private ReviewByCenterDTO.ReviewCenterDto getReviewCenterDto(Review review, String imagePath, Long teacherId) {
-        return new ReviewByCenterDTO.ReviewCenterDto(review.getId(), review.getParent().getId(),
+    private ReviewByCenterDto.ReviewCenterDto getReviewCenterDto(Review review, String imagePath, Long teacherId) {
+        return new ReviewByCenterDto.ReviewCenterDto(review.getId(), review.getParent().getId(),
                 review.getParent().getNickName(), review.getContent(), review.getScore(),
                 review.getCreateDate(), review.getCreateTime(), review.getUpdateDate(),
                 review.getUpdateTime(), teacherId, review.getAnswer(),
@@ -502,11 +502,11 @@ class ReviewControllerTest {
     public void 센터에_올라온_리뷰들_조회() throws Exception {
         //given
         String imagePath = "/Desktop/User";
-        ReviewByCenterDTO.ReviewCenterDto reviewCenterDto1 = getReviewCenterDto(review1, imagePath, teacher1.getId());
-        ReviewByCenterDTO.ReviewCenterDto reviewCenterDto2 = getReviewCenterDto(review2, imagePath, null);
-        ReviewByCenterDTO.ReviewCenterDto reviewCenterDto3 = getReviewCenterDto(review3, imagePath, null);
-        List<ReviewByCenterDTO.ReviewCenterDto> reviewCenterDtos = Arrays.asList(reviewCenterDto1, reviewCenterDto2, reviewCenterDto3);
-        Slice<ReviewByCenterDTO.ReviewCenterDto> dtoSlice = new SliceImpl<>(reviewCenterDtos);
+        ReviewByCenterDto.ReviewCenterDto reviewCenterDto1 = getReviewCenterDto(review1, imagePath, teacher1.getId());
+        ReviewByCenterDto.ReviewCenterDto reviewCenterDto2 = getReviewCenterDto(review2, imagePath, null);
+        ReviewByCenterDto.ReviewCenterDto reviewCenterDto3 = getReviewCenterDto(review3, imagePath, null);
+        List<ReviewByCenterDto.ReviewCenterDto> reviewCenterDtos = Arrays.asList(reviewCenterDto1, reviewCenterDto2, reviewCenterDto3);
+        Slice<ReviewByCenterDto.ReviewCenterDto> dtoSlice = new SliceImpl<>(reviewCenterDtos);
         reviewByCenterDTO.setReviews(dtoSlice);
 
         Mockito.doReturn(reviewByCenterDTO)

@@ -569,7 +569,7 @@ class PostControllerTest {
     @Test
     public void 게시글_1개_조회_성공() throws Exception {
         //given
-        GetPostResponse response = new GetPostResponse(post1, new ArrayList<>(), null, null);
+        PostResponse response = new PostResponse(post1, new ArrayList<>(), null, null);
 
         String url = "/post/{post_id}";
 
@@ -648,14 +648,14 @@ class PostControllerTest {
         //given
         String url = "/user/post/all/search";
 
-        List<GetPostResponsePreview> previewList = Arrays.asList(
-                new GetPostResponsePreview(post1),
-                new GetPostResponsePreview(post10),
-                new GetPostResponsePreview(post11),
-                new GetPostResponsePreview(post12),
-                new GetPostResponsePreview(post13)
+        List<PostPreviewResponse> previewList = Arrays.asList(
+                new PostPreviewResponse(post1),
+                new PostPreviewResponse(post10),
+                new PostPreviewResponse(post11),
+                new PostPreviewResponse(post12),
+                new PostPreviewResponse(post13)
         );
-        Slice<GetPostResponsePreview> previewSlice = new SliceImpl<>
+        Slice<PostPreviewResponse> previewSlice = new SliceImpl<>
                 (previewList, PageRequest.of(0, 10), false);
 
         Mockito.doReturn(previewSlice)
@@ -715,14 +715,14 @@ class PostControllerTest {
         //given
         String url = "/post/search/inBoard";
 
-        List<GetPostResponsePreview> previewList = Arrays.asList(
-                new GetPostResponsePreview(post1),
-                new GetPostResponsePreview(post2),
-                new GetPostResponsePreview(post3),
-                new GetPostResponsePreview(post4)
+        List<PostPreviewResponse> previewList = Arrays.asList(
+                new PostPreviewResponse(post1),
+                new PostPreviewResponse(post2),
+                new PostPreviewResponse(post3),
+                new PostPreviewResponse(post4)
         );
 
-        Slice<GetPostResponsePreview> previewSlice = new SliceImpl<>
+        Slice<PostPreviewResponse> previewSlice = new SliceImpl<>
                 (previewList, PageRequest.of(0, 10), false);
 
         Mockito.doReturn(previewSlice)
@@ -751,14 +751,14 @@ class PostControllerTest {
         //given
         String url = "/post/search/hotBoard";
 
-        List<GetPostResponsePreview> previewList = Arrays.asList(
-                new GetPostResponsePreview(post1),
-                new GetPostResponsePreview(post2),
-                new GetPostResponsePreview(post3),
-                new GetPostResponsePreview(post4)
+        List<PostPreviewResponse> previewList = Arrays.asList(
+                new PostPreviewResponse(post1),
+                new PostPreviewResponse(post2),
+                new PostPreviewResponse(post3),
+                new PostPreviewResponse(post4)
         );
 
-        Slice<GetPostResponsePreview> previewSlice = new SliceImpl<>
+        Slice<PostPreviewResponse> previewSlice = new SliceImpl<>
                 (previewList, PageRequest.of(0, 10), false);
 
         Mockito.doReturn(previewSlice)
@@ -786,17 +786,17 @@ class PostControllerTest {
         //given
         String url = "/user/post/mypage";
 
-        List<GetPostResponsePreview> previewList = Arrays.asList(
-                new GetPostResponsePreview(post1),
-                new GetPostResponsePreview(post2),
-                new GetPostResponsePreview(post3),
-                new GetPostResponsePreview(post4)
+        List<PostPreviewResponse> previewList = Arrays.asList(
+                new PostPreviewResponse(post1),
+                new PostPreviewResponse(post2),
+                new PostPreviewResponse(post3),
+                new PostPreviewResponse(post4)
         );
 
-        Slice<GetPostResponsePreview> previewSlice = new SliceImpl<>
+        Slice<PostPreviewResponse> previewSlice = new SliceImpl<>
                 (previewList, PageRequest.of(0, 10), false);
 
-        PostList postList = new PostList(previewSlice);
+        PostListDto postList = new PostListDto(previewSlice);
 
         Mockito.doReturn(postList)
                 .when(postService)
@@ -832,24 +832,24 @@ class PostControllerTest {
         Post post95 = Creator.createPost(107L, "제목95", "내용95", true, board8, parent1);
         Post post96 = Creator.createPost(108L, "제목96", "내용96", true, board8, parent1);
 
-        BoardPreview boardPreview1 = new BoardPreview(board6.getId(), board6.getName(),
-                Arrays.asList(new BoardPreview.PostInfo(post90), new BoardPreview.PostInfo(post91)),
+        BoardPreviewDto boardPreview1 = new BoardPreviewDto(board6.getId(), board6.getName(),
+                Arrays.asList(new BoardPreviewDto.PostInfo(post90), new BoardPreviewDto.PostInfo(post91)),
                 board6.getBoardKind());
 
-        BoardPreview boardPreview2 = new BoardPreview(board7.getId(), board7.getName(),
-                Arrays.asList(new BoardPreview.PostInfo(post92)),
+        BoardPreviewDto boardPreview2 = new BoardPreviewDto(board7.getId(), board7.getName(),
+                Arrays.asList(new BoardPreviewDto.PostInfo(post92)),
                 board6.getBoardKind());
 
-        BoardPreview boardPreview3 = new BoardPreview(board8.getId(), board8.getName(),
-                Arrays.asList(new BoardPreview.PostInfo(post93), new BoardPreview.PostInfo(post94)),
+        BoardPreviewDto boardPreview3 = new BoardPreviewDto(board8.getId(), board8.getName(),
+                Arrays.asList(new BoardPreviewDto.PostInfo(post93), new BoardPreviewDto.PostInfo(post94)),
                 board6.getBoardKind());
 
 
-        BoardPreview hots = new BoardPreview(null, "HOT 게시판",
-                Arrays.asList(new BoardPreview.PostInfo(post95), new BoardPreview.PostInfo(post96)),
+        BoardPreviewDto hots = new BoardPreviewDto(null, "HOT 게시판",
+                Arrays.asList(new BoardPreviewDto.PostInfo(post95), new BoardPreviewDto.PostInfo(post96)),
                 BoardKind.NORMAL);
 
-        List<BoardPreview> boardPreviews = Arrays.asList(hots, boardPreview1, boardPreview2, boardPreview3);
+        List<BoardPreviewDto> boardPreviews = Arrays.asList(hots, boardPreview1, boardPreview2, boardPreview3);
 
         Mockito.doReturn(boardPreviews)
                 .when(postService)
@@ -885,24 +885,24 @@ class PostControllerTest {
         Post post95 = Creator.createPost(107L, "제목95", "내용95", true, board8, parent1);
         Post post96 = Creator.createPost(108L, "제목96", "내용96", true, board8, parent1);
 
-        BoardPreview boardPreview1 = new BoardPreview(board6.getId(), board6.getName(),
-                Arrays.asList(new BoardPreview.PostInfo(post90), new BoardPreview.PostInfo(post91)),
+        BoardPreviewDto boardPreview1 = new BoardPreviewDto(board6.getId(), board6.getName(),
+                Arrays.asList(new BoardPreviewDto.PostInfo(post90), new BoardPreviewDto.PostInfo(post91)),
                 board6.getBoardKind());
 
-        BoardPreview boardPreview2 = new BoardPreview(board7.getId(), board7.getName(),
-                Arrays.asList(new BoardPreview.PostInfo(post92)),
+        BoardPreviewDto boardPreview2 = new BoardPreviewDto(board7.getId(), board7.getName(),
+                Arrays.asList(new BoardPreviewDto.PostInfo(post92)),
                 board6.getBoardKind());
 
-        BoardPreview boardPreview3 = new BoardPreview(board8.getId(), board8.getName(),
-                Arrays.asList(new BoardPreview.PostInfo(post93), new BoardPreview.PostInfo(post94)),
+        BoardPreviewDto boardPreview3 = new BoardPreviewDto(board8.getId(), board8.getName(),
+                Arrays.asList(new BoardPreviewDto.PostInfo(post93), new BoardPreviewDto.PostInfo(post94)),
                 board6.getBoardKind());
 
 
-        BoardPreview hots = new BoardPreview(null, "HOT 게시판",
-                Arrays.asList(new BoardPreview.PostInfo(post95), new BoardPreview.PostInfo(post96)),
+        BoardPreviewDto hots = new BoardPreviewDto(null, "HOT 게시판",
+                Arrays.asList(new BoardPreviewDto.PostInfo(post95), new BoardPreviewDto.PostInfo(post96)),
                 BoardKind.NORMAL);
 
-        List<BoardPreview> boardPreviews = Arrays.asList(hots, boardPreview1, boardPreview2, boardPreview3);
+        List<BoardPreviewDto> boardPreviews = Arrays.asList(hots, boardPreview1, boardPreview2, boardPreview3);
 
         Mockito.doReturn(boardPreviews)
                 .when(postService)
@@ -1002,37 +1002,37 @@ class PostControllerTest {
         //given
         String url = "/user/post/center-main";
 
-        List<BoardPreview.PostInfo> postInfoList1 = Arrays.asList(
-                new BoardPreview.PostInfo(post1),
-                new BoardPreview.PostInfo(post3),
-                new BoardPreview.PostInfo(post5),
-                new BoardPreview.PostInfo(post7)
+        List<BoardPreviewDto.PostInfo> postInfoList1 = Arrays.asList(
+                new BoardPreviewDto.PostInfo(post1),
+                new BoardPreviewDto.PostInfo(post3),
+                new BoardPreviewDto.PostInfo(post5),
+                new BoardPreviewDto.PostInfo(post7)
         );
 
-        BoardPreview boardPreview1 = new BoardPreview(null, "HOT 게시판", postInfoList1, BoardKind.NORMAL);
+        BoardPreviewDto boardPreview1 = new BoardPreviewDto(null, "HOT 게시판", postInfoList1, BoardKind.NORMAL);
 
-        List<BoardPreview.PostInfo> postInfoList2 = Arrays.asList(
-                new BoardPreview.PostInfo(post1),
-                new BoardPreview.PostInfo(post3)
+        List<BoardPreviewDto.PostInfo> postInfoList2 = Arrays.asList(
+                new BoardPreviewDto.PostInfo(post1),
+                new BoardPreviewDto.PostInfo(post3)
         );
 
-        BoardPreview boardPreview2 = new BoardPreview(board1.getId(), board1.getName(), postInfoList2, board1.getBoardKind());
+        BoardPreviewDto boardPreview2 = new BoardPreviewDto(board1.getId(), board1.getName(), postInfoList2, board1.getBoardKind());
 
-        List<BoardPreview.PostInfo> postInfoList3 = Arrays.asList(
-                new BoardPreview.PostInfo(post5),
-                new BoardPreview.PostInfo(post7)
+        List<BoardPreviewDto.PostInfo> postInfoList3 = Arrays.asList(
+                new BoardPreviewDto.PostInfo(post5),
+                new BoardPreviewDto.PostInfo(post7)
         );
 
-        BoardPreview boardPreview3 = new BoardPreview(board2.getId(), board2.getName(), postInfoList3, board2.getBoardKind());
+        BoardPreviewDto boardPreview3 = new BoardPreviewDto(board2.getId(), board2.getName(), postInfoList3, board2.getBoardKind());
 
-        List<BoardPreview.PostInfo> postInfoList4 = Arrays.asList(
-                new BoardPreview.PostInfo(post9),
-                new BoardPreview.PostInfo(post10)
+        List<BoardPreviewDto.PostInfo> postInfoList4 = Arrays.asList(
+                new BoardPreviewDto.PostInfo(post9),
+                new BoardPreviewDto.PostInfo(post10)
         );
 
-        BoardPreview boardPreview4 = new BoardPreview(board3.getId(), board3.getName(), postInfoList4, board3.getBoardKind());
+        BoardPreviewDto boardPreview4 = new BoardPreviewDto(board3.getId(), board3.getName(), postInfoList4, board3.getBoardKind());
 
-        List<BoardPreview> boardPreviewList = Arrays.asList(
+        List<BoardPreviewDto> boardPreviewList = Arrays.asList(
                 boardPreview1, boardPreview2, boardPreview3, boardPreview4);
 
         Mockito.doReturn(boardPreviewList)

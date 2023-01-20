@@ -110,7 +110,7 @@ public class ChildServiceTest {
                     .when(imageService)
                     .getProfileImage(any(Child.class));
             // when
-            ChildInfoDTO result = target.childrenInfo(parent1.getId());
+            ChildInfoDto result = target.childrenInfo(parent1.getId());
             // then
             assertThat(result.getData().size()).isEqualTo(2);
         }
@@ -127,10 +127,10 @@ public class ChildServiceTest {
                     .when(imageService)
                     .getProfileImage(any(Child.class));
             // when
-            ChildInfoDTO result = target.childrenInfo(parent1.getId());
+            ChildInfoDto result = target.childrenInfo(parent1.getId());
             // then
             assertThat(result.getData().size()).isEqualTo(3);
-            for (ChildInfoDTO.ChildInfo childInfo : result.getData()) {
+            for (ChildInfoDto.ChildInfo childInfo : result.getData()) {
                 if (Objects.equals(childInfo.getId(), child3.getId())) {
                     assertThat(childInfo.getCenter_id()).isNull();
                 }
@@ -142,7 +142,7 @@ public class ChildServiceTest {
             doReturn(Optional.of(parent2))
                     .when(parentRepository)
                     .findWithChildren(any());
-            ChildInfoDTO result = target.childrenInfo(parent2.getId());
+            ChildInfoDto result = target.childrenInfo(parent2.getId());
             // then
             assertThat(result.getData().size()).isEqualTo(0);
         }
@@ -362,7 +362,7 @@ public class ChildServiceTest {
         @DisplayName("[error] 시설정보 잘못됨")
         public void 시설정보에러() {
             // given
-            SaveChildRequest request = new SaveChildRequest(321L, "name", LocalDate.now(), multipartFile);
+            ChildDetailRequest request = new ChildDetailRequest(321L, "name", LocalDate.now(), multipartFile);
             doReturn(parent1)
                     .when(parentRepository)
                     .getById(any());
@@ -384,7 +384,7 @@ public class ChildServiceTest {
                 center1.getTeachers().add(director);
                 center1.getTeachers().add(teacher1);
                 center1.getTeachers().add(teacher2);
-                SaveChildRequest request = new SaveChildRequest(center1.getId(), "name", LocalDate.now(), multipartFile);
+                ChildDetailRequest request = new ChildDetailRequest(center1.getId(), "name", LocalDate.now(), multipartFile);
                 doReturn(parent1)
                         .when(parentRepository)
                         .getById(any());
@@ -426,7 +426,7 @@ public class ChildServiceTest {
                     .when(imageService)
                     .getProfileImage(any(Child.class));
             // when
-            ChildInfoDetailResponse result = target.findChildInfoDetail(parent1.getId(), child3.getId());
+            ChildDetailResponse result = target.findChildInfoDetail(parent1.getId(), child3.getId());
             // then
             assertThat(result.getChild_id()).isEqualTo(child3.getId());
             assertThat(result.getCenter_name()).isNull();
@@ -441,7 +441,7 @@ public class ChildServiceTest {
                     .when(imageService)
                     .getProfileImage(any(Child.class));
             //when
-            ChildInfoDetailResponse result = target.findChildInfoDetail(parent1.getId(), child1.getId());
+            ChildDetailResponse result = target.findChildInfoDetail(parent1.getId(), child1.getId());
             //then
             assertThat(result.getChild_id()).isEqualTo(child1.getId());
             assertThat(result.getCenter_name()).isEqualTo(center1.getName());
@@ -455,7 +455,7 @@ public class ChildServiceTest {
         @DisplayName("존재하지 않는 아이")
         public void 존재하지않는아이() throws Exception {
             //given
-            UpdateChildRequest request = new UpdateChildRequest(multipartFile, "name", LocalDate.now());
+            ChildRequest request = new ChildRequest(multipartFile, "name", LocalDate.now());
             doReturn(Optional.empty())
                     .when(childRepository)
                     .findByIdAndParentWithCenter(any(), any());
@@ -469,12 +469,12 @@ public class ChildServiceTest {
         @DisplayName("[success] 아이 프로필 수정성공")
         public void 수정성공() throws IOException {
             // given
-            UpdateChildRequest request = new UpdateChildRequest(multipartFile, "name", LocalDate.now());
+            ChildRequest request = new ChildRequest(multipartFile, "name", LocalDate.now());
             doReturn(Optional.of(child1))
                     .when(childRepository)
                     .findByIdAndParentWithCenter(any(), any());
             // when
-            ChildInfoDetailResponse result = target.updateChild(parent1.getId(), child1.getId(), request);
+            ChildDetailResponse result = target.updateChild(parent1.getId(), child1.getId(), request);
             // then
             assertThat(result.getChild_id()).isEqualTo(child1.getId());
             assertThat(result.getChild_name()).isEqualTo(request.getName());
@@ -642,7 +642,7 @@ public class ChildServiceTest {
                     .when(parentRepository)
                     .findWithChildren(any());
             // when
-            ChildInfoDTO result = target.deleteChild(parent1.getId(), child1.getId());
+            ChildInfoDto result = target.deleteChild(parent1.getId(), child1.getId());
             // then
             assertThat(result.getData().size()).isEqualTo(2);
         }
@@ -660,7 +660,7 @@ public class ChildServiceTest {
                     .when(parentRepository)
                     .findWithChildren(any());
             // when
-            ChildInfoDTO result = target.deleteChild(parent1.getId(), child1.getId());
+            ChildInfoDto result = target.deleteChild(parent1.getId(), child1.getId());
             // then
             assertThat(result.getData().size()).isEqualTo(2);
         }

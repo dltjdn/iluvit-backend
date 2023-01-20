@@ -1,19 +1,18 @@
 package FIS.iLUVit.repository;
 
-import FIS.iLUVit.controller.dto.GetPostResponsePreview;
+import FIS.iLUVit.controller.dto.PostPreviewResponse;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
 
 import java.util.Collection;
-import java.util.Set;
 
 public interface PostRepositoryCustom {
 
-    Slice<GetPostResponsePreview> findInCenterByKeyword(Collection<Long> centerIds, String keyword, Pageable pageable);
+    Slice<PostPreviewResponse> findInCenterByKeyword(Collection<Long> centerIds, String keyword, Pageable pageable);
 
-    Slice<GetPostResponsePreview> findByCenterAndKeyword(Long centerId, String keyword, Pageable pageable);
+    Slice<PostPreviewResponse> findByCenterAndKeyword(Long centerId, String keyword, Pageable pageable);
 
-    Slice<GetPostResponsePreview> findByBoardAndKeyword(Long boardId, String keyword, Pageable pageable);
+    Slice<PostPreviewResponse> findByBoardAndKeyword(Long boardId, String keyword, Pageable pageable);
 
-    Slice<GetPostResponsePreview> findHotPosts(Long centerId, Integer heartCnt, Pageable pageable);
+    Slice<PostPreviewResponse> findHotPosts(Long centerId, Integer heartCnt, Pageable pageable);
 }

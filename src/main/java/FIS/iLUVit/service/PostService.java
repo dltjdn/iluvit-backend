@@ -113,7 +113,7 @@ public class PostService {
     }
 
 
-    public GetPostResponse findById(Long userId, Long postId) {
+    public PostResponse findById(Long userId, Long postId) {
         // 게시글과 연관된 유저, 게시판, 시설 한 번에 끌고옴
         Post findPost = postRepository.findByIdWithUserAndBoardAndCenter(postId)
                 .orElseThrow(() -> new PostException(PostErrorResult.POST_NOT_EXIST));
@@ -123,7 +123,7 @@ public class PostService {
     }
 
     // [모두의 이야기 + 유저가 속한 센터의 이야기] 에서 통합 검색
-    public Slice<GetPostResponsePreview> searchByKeyword(String input, Long userId, Pageable pageable) {
+    public Slice<PostPreviewResponse> searchByKeyword(String input, Long userId, Pageable pageable) {
         log.info("input : " + input);
 
         if (userId == null) {
@@ -150,13 +150,13 @@ public class PostService {
         }
 
         // 센터의 게시판 + 모두의 게시판(centerId == null) 키워드 검색
-        Slice<GetPostResponsePreview> posts = postRepository.findInCenterByKeyword(centerIds, input, pageable);
+        Slice<PostPreviewResponse> posts = postRepository.findInCenterByKeyword(centerIds, input, pageable);
         // 끌어온 게시글에 이미지 있으면 프리뷰용 이미지 넣어줌
         posts.forEach(g -> setPreviewImage(g));
         return posts;
     }
 
-    public Slice<GetPostResponsePreview> searchByKeywordAndCenter(Long centerId, String input, Auth auth, Long userId, Pageable pageable) {
+    public Slice<PostPreviewResponse> searchByKeywordAndCenter(Long centerId, String input, Auth auth, Long userId, Pageable pageable) {
         if (centerId != null) {
             if (auth == Auth.PARENT) {
                 // 학부모 유저일 때 아이와 연관된 센터의 아이디를 모두 가져옴
@@ -177,40 +177,40 @@ public class PostService {
             }
         }
         // 센터 아이디 null 인 경우 모두의 이야기 안에서 검색됨
-        Slice<GetPostResponsePreview> posts = postRepository.findByCenterAndKeyword(centerId, input, pageable);
+        Slice<PostPreviewResponse> posts = postRepository.findByCenterAndKeyword(centerId, input, pageable);
         posts.forEach(g -> setPreviewImage(g));
         return posts;
     }
 
-    public Slice<GetPostResponsePreview> searchByKeywordAndBoard(Long boardId, String input, Pageable pageable) {
-        Slice<GetPostResponsePreview> posts = postRepository.findByBoardAndKeyword(boardId, input, pageable);
+    public Slice<PostPreviewResponse> searchByKeywordAndBoard(Long boardId, String input, Pageable pageable) {
+        Slice<PostPreviewResponse> posts = postRepository.findByBoardAndKeyword(boardId, input, pageable);
         posts.forEach(g -> setPreviewImage(g));
         return posts;
     }
 
-    public GetPostResponse getPostResponseDto(Post post, Long userId) {
+    public PostResponse getPostResponseDto(Post post, Long userId) {
 //        String postDir = imageService.getPostDir(post.getId());
 //        List<String> encodedInfoImage = imageService.getEncodedInfoImage(postDir, post.getImgCnt());
 //        String userProfileDir = imageService.getUserProfileDir();
 //        String encodedProfileImage = imageService.getEncodedProfileImage(userProfileDir, post.getUser().getId());
-        return new GetPostResponse(post, imageService.getInfoImages(post), imageService.getProfileImage(post.getUser()), userId);
+        return new PostResponse(post, imageService.getInfoImages(post), imageService.getProfileImage(post.getUser()), userId);
     }
 
-    public void setPreviewImage(GetPostResponsePreview preview) {
+    public void setPreviewImage(PostPreviewResponse preview) {
 //        String postDir = imageService.getPostDir(preview.getPost_id());
 //        List<String> encodedInfoImage = imageService.getEncodedInfoImage(postDir, preview.getImgCnt());
         List<String> infoImages = imageService.getInfoImages(preview.getPreviewImage());
         preview.updatePreviewImage(infoImages);
     }
 
-    public PostList searchByUser(Long userId, Pageable pageable) {
+    public PostListDto searchByUser(Long userId, Pageable pageable) {
         Slice<Post> posts = postRepository.findByUser(userId, pageable);
-        Slice<GetPostResponsePreview> preview = posts.map(p -> new GetPostResponsePreview(p));
-        return new PostList(preview);
+        Slice<PostPreviewResponse> preview = posts.map(p -> new PostPreviewResponse(p));
+        return new PostListDto(preview);
     }
 
-    public List<BoardPreview> searchMainPreview(Long userId) {
-        List<BoardPreview> boardPreviews = new ArrayList<>();
+    public List<BoardPreviewDto> searchMainPreview(Long userId) {
+        List<BoardPreviewDto> boardPreviews = new ArrayList<>();
 
         // 비회원일 때 기본 게시판들의 id를 북마크처럼 디폴트로 제공, 회원일 땐 북마크를 통해서 제공
         if (userId == null) {
@@ -224,13 +224,13 @@ public class PostService {
 
         // HOT 게시판 정보 추가
         List<Post> hotPosts = postRepository.findTop3ByHeartCnt(Criteria.HOT_POST_HEART_CNT, PageRequest.of(0, 3));
-        List<BoardPreview> results = new ArrayList<>();
+        List<BoardPreviewDto> results = new ArrayList<>();
 
         return getPreivewResult(hotPosts, results, boardPreviews);
     }
 
 
-    public List<BoardPreview> searchCenterMainPreview(Long userId, Long centerId) {
+    public List<BoardPreviewDto> searchCenterMainPreview(Long userId, Long centerId) {
         if (userId == null) {
             throw new UserException(UserErrorResult.NOT_VALID_TOKEN);
         }
@@ -258,18 +258,18 @@ public class PostService {
             }
         }
 
-        List<BoardPreview> boardPreviews = new ArrayList<>();
+        List<BoardPreviewDto> boardPreviews = new ArrayList<>();
         List<Bookmark> bookmarkList = boardBookmarkRepository.findBoardByUserAndCenter(userId, centerId);
         getBoardPreviews(bookmarkList, boardPreviews);
 
         // HOT 게시판 정보 추가
         List<Post> hotPosts = postRepository.findTop3ByHeartCntWithCenter(Criteria.HOT_POST_HEART_CNT, centerId, PageRequest.of(0, 3));
-        List<BoardPreview> results = new ArrayList<>();
+        List<BoardPreviewDto> results = new ArrayList<>();
 
         return getPreivewResult(hotPosts, results, boardPreviews);
     }
 
-    private void getBoardPreviews(List<Bookmark> bookmarkList, List<BoardPreview> boardPreviews) {
+    private void getBoardPreviews(List<Bookmark> bookmarkList, List<BoardPreviewDto> boardPreviews) {
         List<Board> boardList = bookmarkList.stream()
                 .map(bookmark -> bookmark.getBoard())
                 .collect(Collectors.toList());
@@ -277,7 +277,7 @@ public class PostService {
         addBoardPreviews(boardPreviews, boardList);
     }
 
-    private void addBoardPreviews(List<BoardPreview> boardPreviews, List<Board> boardList) {
+    private void addBoardPreviews(List<BoardPreviewDto> boardPreviews, List<Board> boardList) {
         List<Long> boardIds = boardList
                 .stream().map(Board::getId)
                 .collect(Collectors.toList());
@@ -293,9 +293,9 @@ public class PostService {
         }
 
         boardPostMap.forEach((k, v) -> {
-            List<BoardPreview.PostInfo> postInfos = v.stream()
+            List<BoardPreviewDto.PostInfo> postInfos = v.stream()
                     .map(p -> {
-                        BoardPreview.PostInfo postInfo = new BoardPreview.PostInfo(p);
+                        BoardPreviewDto.PostInfo postInfo = new BoardPreviewDto.PostInfo(p);
 //                        String postDir = imageService.getPostDir(p.getId());
 //                        List<String> images = imageService.getEncodedInfoImage(postDir, p.getImgCnt());
 //                        postInfo.setImages(images);
@@ -304,24 +304,24 @@ public class PostService {
                     })
                     .collect(Collectors.toList());
 
-            boardPreviews.add(new BoardPreview(k.getId(), k.getName(), postInfos, k.getBoardKind()));
+            boardPreviews.add(new BoardPreviewDto(k.getId(), k.getName(), postInfos, k.getBoardKind()));
         });
     }
 
     @NotNull
-    private List<BoardPreview> getPreivewResult(List<Post> hotPosts, List<BoardPreview> results, List<BoardPreview> boardPreviews) {
-        List<BoardPreview.PostInfo> postInfoList = hotPosts.stream()
+    private List<BoardPreviewDto> getPreivewResult(List<Post> hotPosts, List<BoardPreviewDto> results, List<BoardPreviewDto> boardPreviews) {
+        List<BoardPreviewDto.PostInfo> postInfoList = hotPosts.stream()
                 .map((Post p) -> {
-                    BoardPreview.PostInfo postInfo = new BoardPreview.PostInfo(p);
+                    BoardPreviewDto.PostInfo postInfo = new BoardPreviewDto.PostInfo(p);
                     postInfo.setImages(imageService.getInfoImages(p));
                     return postInfo;
                 })
                 .collect(Collectors.toList());
 
-        results.add(new BoardPreview(null, "HOT 게시판", postInfoList, BoardKind.NORMAL));
+        results.add(new BoardPreviewDto(null, "HOT 게시판", postInfoList, BoardKind.NORMAL));
 
         boardPreviews = boardPreviews.stream()
-                .sorted(Comparator.comparing(BoardPreview::getBoard_id)).collect(Collectors.toList());
+                .sorted(Comparator.comparing(BoardPreviewDto::getBoard_id)).collect(Collectors.toList());
         results.addAll(boardPreviews);
 
         return results;
@@ -339,7 +339,7 @@ public class PostService {
         findPost.updateTime(LocalDateTime.now());
     }
 
-    public Slice<GetPostResponsePreview> findByHeartCnt(Long centerId, Pageable pageable) {
+    public Slice<PostPreviewResponse> findByHeartCnt(Long centerId, Pageable pageable) {
         // heartCnt 가 n 개 이상이면 HOT 게시판에 넣어줍니다.
         return postRepository.findHotPosts(centerId, Criteria.HOT_POST_HEART_CNT, pageable);
     }
