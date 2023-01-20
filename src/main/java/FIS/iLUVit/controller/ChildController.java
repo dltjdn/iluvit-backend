@@ -2,7 +2,6 @@ package FIS.iLUVit.controller;
 
 import FIS.iLUVit.config.argumentResolver.Login;
 import FIS.iLUVit.controller.dto.*;
-import FIS.iLUVit.service.CenterService;
 import FIS.iLUVit.service.ChildService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -27,7 +26,7 @@ public class ChildController {
      * 작성내용: 부모의 메인페이지에 필요한 아이들 정보 반환
      */
     @GetMapping("info")
-    public ChildInfoDTO childInfo(@Login Long id) {
+    public ChildDto childInfo(@Login Long id) {
         return childService.childrenInfo(id);
     }
 
@@ -37,7 +36,7 @@ public class ChildController {
      * 작성내용: 아이 추가
      */
     @PostMapping("")
-    public void saveChild(@Login Long userId, @Valid @ModelAttribute SaveChildRequest request) throws IOException {
+    public void saveChild(@Login Long userId, @Valid @ModelAttribute ChildDetailRequest request) throws IOException {
         childService.saveChild(userId, request);
     }
 
@@ -47,7 +46,7 @@ public class ChildController {
      * 작성내용: 아이 프로필 조회
      */
     @GetMapping("{childId}")
-    public ChildInfoDetailResponse findChildInfoDetail(@Login Long userId, @PathVariable("childId") Long childId) {
+    public ChildDetailResponse findChildInfoDetail(@Login Long userId, @PathVariable("childId") Long childId) {
         return childService.findChildInfoDetail(userId, childId);
     }
 
@@ -57,8 +56,8 @@ public class ChildController {
      * 작성내용: 아이 프로필 수정
      */
     @PutMapping("{childId}")
-    public ChildInfoDetailResponse updateChild(@Login Long userId, @PathVariable("childId") Long childId,
-                                               @ModelAttribute UpdateChildRequest request, Pageable pageable) throws IOException {
+    public ChildDetailResponse updateChild(@Login Long userId, @PathVariable("childId") Long childId,
+                                           @ModelAttribute ChildRequest request, Pageable pageable) throws IOException {
         return childService.updateChild(userId, childId, request);
     }
 
@@ -68,7 +67,7 @@ public class ChildController {
      * 작성내용: 아이삭제
      */
     @DeleteMapping("{childId}")
-    public ChildInfoDTO deleteChild(@Login Long userId, @PathVariable("childId") Long childId) {
+    public ChildDto deleteChild(@Login Long userId, @PathVariable("childId") Long childId) {
         return childService.deleteChild(userId, childId);
     }
 
@@ -129,7 +128,7 @@ public class ChildController {
      *   작성내용: 아이추가 과정에서 필요한 센터정보 가져오기
      */
     @GetMapping("search/center")
-    public Slice<CenterInfoDto> centerInfoForAddChild(@ModelAttribute CenterInfoRequest request, Pageable pageable) {
+    public Slice<CenterDto> centerInfoForAddChild(@ModelAttribute CenterRequest request, Pageable pageable) {
         return childService.findCenterForAddChild(request, pageable);
     }
 }

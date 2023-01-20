@@ -1,7 +1,7 @@
 package FIS.iLUVit.service;
 
-import FIS.iLUVit.controller.dto.CenterBannerResponseDto;
-import FIS.iLUVit.controller.dto.CenterModifyRequestDto;
+import FIS.iLUVit.controller.dto.CenterBannerResponse;
+import FIS.iLUVit.controller.dto.CenterDetailRequest;
 import FIS.iLUVit.domain.Center;
 import FIS.iLUVit.domain.Teacher;
 import FIS.iLUVit.domain.embeddable.Theme;
@@ -73,7 +73,7 @@ public class CenterServiceTest {
             doReturn(null)
                     .when(centerRepository).findBannerById(2L);
             //when
-            CenterBannerResponseDto result = target.findBannerById(2L, null);
+            CenterBannerResponse result = target.findBannerById(2L, null);
 
             //then
             assertThat(result)
@@ -89,7 +89,7 @@ public class CenterServiceTest {
                     .when(centerRepository).findBannerById(any(Long.class), any(Long.class));
 
             //when
-            CenterBannerResponseDto result = target.findBannerById(1L, 1L);
+            CenterBannerResponse result = target.findBannerById(1L, 1L);
             //then
             verify(centerRepository, times(1))
                     .findBannerById(any(Long.class), any(Long.class));
@@ -105,7 +105,7 @@ public class CenterServiceTest {
                     .when(centerRepository).findBannerById(any(Long.class));
 
             //when
-            CenterBannerResponseDto result = target.findBannerById(1L, null);
+            CenterBannerResponse result = target.findBannerById(1L, null);
             //then
             verify(centerRepository, times(1))
                     .findBannerById(any(Long.class));
@@ -239,7 +239,7 @@ public class CenterServiceTest {
                     .when(userRepository).findTeacherById(1L);
             //when
             UserException result = Assertions.assertThrows(UserException.class,
-                    () -> target.modifyCenter(1L, 1L, new CenterModifyRequestDto(), multipartFileList, multipartFile));
+                    () -> target.modifyCenter(1L, 1L, new CenterDetailRequest(), multipartFileList, multipartFile));
 
             //then
             assertThat(result.getErrorResult()).isEqualTo(UserErrorResult.USER_NOT_EXIST);
@@ -254,7 +254,7 @@ public class CenterServiceTest {
                     .when(userRepository).findTeacherById(1L);
             //when
             CenterException result = Assertions.assertThrows(CenterException.class,
-                    () -> target.modifyCenter(1L, 1L, new CenterModifyRequestDto(), multipartFileList, multipartFile));
+                    () -> target.modifyCenter(1L, 1L, new CenterDetailRequest(), multipartFileList, multipartFile));
 
             //then
             assertThat(result.getErrorResult()).isEqualTo(CenterErrorResult.AUTHENTICATION_FAILED);
@@ -266,7 +266,7 @@ public class CenterServiceTest {
             //given
             Mockito.doReturn(Optional.of(acceptTeacher))
                     .when(userRepository).findTeacherById(1L);
-            CenterModifyRequestDto request = new CenterModifyRequestDto();
+            CenterDetailRequest request = new CenterDetailRequest();
             request.setAddress("잘못된 주소");
             Mockito.doThrow(new CenterException(CenterErrorResult.CENTER_WRONG_ADDRESS))
                     .when(mapService).convertAddressToLocation("잘못된 주소");
@@ -284,7 +284,7 @@ public class CenterServiceTest {
             //given
             Mockito.doReturn(Optional.of(acceptTeacher))
                     .when(userRepository).findTeacherById(1L);
-            CenterModifyRequestDto request = new CenterModifyRequestDto();
+            CenterDetailRequest request = new CenterDetailRequest();
             request.setAddress("서울특별시 금천구 가산디지털2로 108 뉴티캐슬");
             //when
             Mockito.doReturn(Pair.of(126.8806602, 37.4778951))

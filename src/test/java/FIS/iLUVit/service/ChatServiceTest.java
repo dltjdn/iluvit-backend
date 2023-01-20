@@ -1,10 +1,10 @@
 package FIS.iLUVit.service;
 
 import FIS.iLUVit.Creator;
-import FIS.iLUVit.controller.dto.ChatDTO;
-import FIS.iLUVit.controller.dto.ChatListDTO;
-import FIS.iLUVit.controller.dto.CreateChatRequest;
-import FIS.iLUVit.controller.dto.CreateChatRoomRequest;
+import FIS.iLUVit.controller.dto.ChatDto;
+import FIS.iLUVit.controller.dto.ChatListDto;
+import FIS.iLUVit.controller.dto.ChatRequest;
+import FIS.iLUVit.controller.dto.ChatRoomRequest;
 import FIS.iLUVit.domain.*;
 import FIS.iLUVit.domain.alarms.Alarm;
 import FIS.iLUVit.domain.alarms.ChatAlarm;
@@ -79,8 +79,8 @@ class ChatServiceTest {
     Chat chat5;
     Chat chat6;
 
-    CreateChatRequest request = new CreateChatRequest();
-    CreateChatRoomRequest roomRequest = new CreateChatRoomRequest();
+    ChatRequest request = new ChatRequest();
+    ChatRoomRequest roomRequest = new ChatRoomRequest();
 
     @BeforeEach
     public void init() {
@@ -339,12 +339,12 @@ class ChatServiceTest {
                 .getProfileImage(any(BaseImageEntity.class));
 
         //when
-        Slice<ChatListDTO> all = chatService
+        Slice<ChatListDto> all = chatService
                 .findAll(receiver.getId(), PageRequest.of(0, 10));
         //then
-        List<ChatListDTO> content = all.getContent();
+        List<ChatListDto> content = all.getContent();
         assertThat(content.size()).isEqualTo(1);
-        ChatListDTO chatListDTO = content.get(0);
+        ChatListDto chatListDTO = content.get(0);
         assertThat(chatListDTO.getRoom_id()).isEqualTo(chatRoom1.getId());
     }
 
@@ -587,12 +587,12 @@ class ChatServiceTest {
     @Test
     public void 채팅방_상대방과의_대화목록_조회_성공() throws Exception {
         //given
-        ChatDTO.ChatInfo chatInfo1 = new ChatDTO.ChatInfo(chat1);
-        ChatDTO.ChatInfo chatInfo2 = new ChatDTO.ChatInfo(chat3);
-        ChatDTO.ChatInfo chatInfo3 = new ChatDTO.ChatInfo(chat5);
-        List<ChatDTO.ChatInfo> chatInfos = Arrays.asList(chatInfo1, chatInfo2, chatInfo3);
-        SliceImpl<ChatDTO.ChatInfo> chatInfoSlice = new SliceImpl<>(chatInfos);
-        ChatDTO givenChatDTO = new ChatDTO(chatRoom1, chatInfoSlice);
+        ChatDto.ChatInfo chatInfo1 = new ChatDto.ChatInfo(chat1);
+        ChatDto.ChatInfo chatInfo2 = new ChatDto.ChatInfo(chat3);
+        ChatDto.ChatInfo chatInfo3 = new ChatDto.ChatInfo(chat5);
+        List<ChatDto.ChatInfo> chatInfos = Arrays.asList(chatInfo1, chatInfo2, chatInfo3);
+        SliceImpl<ChatDto.ChatInfo> chatInfoSlice = new SliceImpl<>(chatInfos);
+        ChatDto givenChatDto = new ChatDto(chatRoom1, chatInfoSlice);
 
         chatRoom1.updatePartnerId(chatRoom2.getId());
         chatRoom2.updatePartnerId(chatRoom1.getId());
@@ -608,12 +608,12 @@ class ChatServiceTest {
                 .findByChatRoom(receiver.getId(), chatRoom1.getId(), PageRequest.of(0, 10));
 
         //when
-        ChatDTO chatDTO = chatService.findByOpponent(receiver.getId(), chatRoom1.getId(),
+        ChatDto chatDTO = chatService.findByOpponent(receiver.getId(), chatRoom1.getId(),
                 PageRequest.of(0, 10));
         //then
         String actual = objectMapper.writeValueAsString(chatDTO);
         System.out.println("actual = " + actual);
-        String expected = objectMapper.writeValueAsString(givenChatDTO);
+        String expected = objectMapper.writeValueAsString(givenChatDto);
         System.out.println("expected = " + expected);
         assertThat(actual)
                 .isEqualTo(expected);

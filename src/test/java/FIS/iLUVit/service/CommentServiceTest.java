@@ -1,8 +1,8 @@
 package FIS.iLUVit.service;
 
 import FIS.iLUVit.Creator;
-import FIS.iLUVit.controller.dto.CommentDTO;
-import FIS.iLUVit.controller.dto.RegisterCommentRequest;
+import FIS.iLUVit.controller.dto.CommentDto;
+import FIS.iLUVit.controller.dto.CommentRequest;
 import FIS.iLUVit.domain.*;
 import FIS.iLUVit.domain.alarms.Alarm;
 import FIS.iLUVit.domain.alarms.PostAlarm;
@@ -57,7 +57,7 @@ class CommentServiceTest {
     Comment comment2;
     Comment comment3;
     Comment comment4;
-    RegisterCommentRequest request = new RegisterCommentRequest();
+    CommentRequest request = new CommentRequest();
 
     @BeforeEach
     public void init() {
@@ -380,7 +380,7 @@ class CommentServiceTest {
                 .when(commentRepository)
                 .findByUser(user1.getId(), PageRequest.of(0, 10));
 
-        Slice<CommentDTO> commentDTOS = commentService.searchByUser(user1.getId(), PageRequest.of(0, 10));
+        Slice<CommentDto> commentDTOS = commentService.searchByUser(user1.getId(), PageRequest.of(0, 10));
         //then
 
         assertThat(commentDTOS.getContent())

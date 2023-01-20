@@ -1,6 +1,6 @@
 package FIS.iLUVit.domain;
 
-import FIS.iLUVit.controller.dto.PtDateModifyDto;
+import FIS.iLUVit.controller.dto.PresentationDateDto;
 import FIS.iLUVit.exception.PresentationErrorResult;
 import FIS.iLUVit.exception.PresentationException;
 import lombok.Builder;
@@ -115,12 +115,12 @@ public class PtDate extends BaseEntity {
         else return false;
     }
 
-    public PtDate update(PtDateModifyDto ptDateModifyDto) {
-        if(participantCnt > ptDateModifyDto.getAblePersonNum())
+    public PtDate update(PresentationDateDto presentationDateDto) {
+        if(participantCnt > presentationDateDto.getAblePersonNum())
             throw new PresentationException(PresentationErrorResult.UPDATE_ERROR_ABLE_PERSON_NUM);
-        date = ptDateModifyDto.getDate();
-        time = ptDateModifyDto.getTime();
-        ablePersonNum = ptDateModifyDto.getAblePersonNum();
+        date = presentationDateDto.getDate();
+        time = presentationDateDto.getTime();
+        ablePersonNum = presentationDateDto.getAblePersonNum();
         return this;
     }
 

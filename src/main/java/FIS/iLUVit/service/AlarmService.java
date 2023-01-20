@@ -1,6 +1,6 @@
 package FIS.iLUVit.service;
 
-import FIS.iLUVit.controller.dto.AlarmDto;
+import FIS.iLUVit.controller.dto.AlarmDetailDto;
 import FIS.iLUVit.domain.alarms.Alarm;
 import FIS.iLUVit.exception.UserErrorResult;
 import FIS.iLUVit.exception.UserException;
@@ -26,7 +26,7 @@ public class AlarmService {
         return alarmRepository.deleteByIds(userId, alarmIds);
     }
 
-    public Slice<AlarmDto> findUserActiveAlarm(Long userId, Pageable pageable) {
+    public Slice<AlarmDetailDto> findUserActiveAlarm(Long userId, Pageable pageable) {
         Slice<Alarm> alarmSlice = alarmRepository.findActiveByUser(userId, pageable);
         return new SliceImpl<>(alarmSlice.stream()
                 .map(Alarm::exportAlarm)
@@ -34,7 +34,7 @@ public class AlarmService {
                 pageable, alarmSlice.hasNext());
     }
 
-    public Slice<AlarmDto> findPresentationActiveAlarm(Long userId, Pageable pageable) {
+    public Slice<AlarmDetailDto> findPresentationActiveAlarm(Long userId, Pageable pageable) {
         Slice<Alarm> alarmSlice = alarmRepository.findPresentationByUser(userId, pageable);
         return new SliceImpl<>(alarmSlice.stream()
                 .map(Alarm::exportAlarm)

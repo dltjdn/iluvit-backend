@@ -1,8 +1,8 @@
 package FIS.iLUVit.service;
 
-import FIS.iLUVit.controller.dto.ReviewByCenterDTO;
-import FIS.iLUVit.controller.dto.ReviewByParentDTO;
-import FIS.iLUVit.controller.dto.ReviewCreateDTO;
+import FIS.iLUVit.controller.dto.ReviewByCenterDto;
+import FIS.iLUVit.controller.dto.ReviewByParentDto;
+import FIS.iLUVit.controller.dto.ReviewDetailDto;
 import FIS.iLUVit.domain.*;
 import FIS.iLUVit.domain.embeddable.Score;
 import FIS.iLUVit.domain.enumtype.Approval;
@@ -31,16 +31,16 @@ public class ReviewService {
     private final CenterRepository centerRepository;
     private final ImageService imageService;
 
-    public ReviewByParentDTO findByParent(Long userId, Pageable pageable) {
+    public ReviewByParentDto findByParent(Long userId, Pageable pageable) {
         Slice<Review> reviews = reviewRepository.findByParent(userId, pageable);
 
-        Slice<ReviewByParentDTO.ReviewDto> reviewDtoSlice = reviews
-                .map(review -> new ReviewByParentDTO.ReviewDto(review));
+        Slice<ReviewByParentDto.ReviewDto> reviewDtoSlice = reviews
+                .map(review -> new ReviewByParentDto.ReviewDto(review));
 
-        return new ReviewByParentDTO(reviewDtoSlice);
+        return new ReviewByParentDto(reviewDtoSlice);
     }
 
-    public Long saveReview(Long userId, ReviewCreateDTO reviewCreateDTO) {
+    public Long saveReview(Long userId, ReviewDetailDto reviewCreateDTO) {
 
         if (userId == null) {
             throw new UserException(UserErrorResult.NOT_VALID_TOKEN);
@@ -98,16 +98,16 @@ public class ReviewService {
         reviewRepository.delete(findReview);
     }
 
-    public ReviewByCenterDTO findByCenter(Long centerId, Pageable pageable) {
+    public ReviewByCenterDto findByCenter(Long centerId, Pageable pageable) {
         // getParent 지연 로딩 쿼리 막음
         Slice<Review> reviews = reviewRepository.findByCenter(centerId, pageable);
 
-        Slice<ReviewByCenterDTO.ReviewCenterDto> dtos = reviews.map(review -> {
+        Slice<ReviewByCenterDto.ReviewCenterDto> dtos = reviews.map(review -> {
             Integer like = review.getReviewHearts().size();
 //            String imagePath = imageService.getUserProfileDir();
 //            String encodedProfileImage = imageService.getEncodedProfileImage(imagePath, review.getParent().getId());
             Long teacherId = review.getTeacher() == null ? null : review.getTeacher().getId();
-            return new ReviewByCenterDTO.ReviewCenterDto(
+            return new ReviewByCenterDto.ReviewCenterDto(
                     review.getId(), review.getParent().getId(), review.getParent().getNickName(), review.getContent(), review.getScore(),
                     review.getCreateDate(), review.getCreateTime(), review.getUpdateDate(), review.getUpdateTime(),
                     teacherId, review.getAnswer(), review.getAnswerCreateDate(), review.getAnswerCreateTime(),
@@ -115,7 +115,7 @@ public class ReviewService {
             );
         });
 
-        return new ReviewByCenterDTO(dtos);
+        return new ReviewByCenterDto(dtos);
     }
 
     public Long saveComment(Long reviewId, String comment, Long teacherId) {

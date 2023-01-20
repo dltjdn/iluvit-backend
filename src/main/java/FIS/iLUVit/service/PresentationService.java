@@ -47,7 +47,7 @@ public class PresentationService {
     private final WaitingRepository waitingRepository;
     private final ParticipationRepository participationRepository;
 
-    public List<PresentationResponseDto> findPresentationByCenterIdAndDate(Long centerId, Long userId) {
+    public List<PresentationDetailResponse> findPresentationByCenterIdAndDate(Long centerId, Long userId) {
         List<PresentationWithPtDatesDto> queryDtos =
                 userId == null ? presentationRepository.findByCenterAndDateWithPtDates(centerId, LocalDate.now())
                         : presentationRepository.findByCenterAndDateWithPtDates(centerId, LocalDate.now(), userId);
@@ -57,15 +57,15 @@ public class PresentationService {
                         ))
                 .entrySet().stream()
                 .map(e -> {
-                    PresentationResponseDto presentationResponseDto = new PresentationResponseDto(e.getKey(), e.getValue());
-                    presentationResponseDto.setImages(imageService.getInfoImages(e.getKey().getInfoImages()));
-                    return presentationResponseDto;
+                    PresentationDetailResponse presentationDetailResponse = new PresentationDetailResponse(e.getKey(), e.getValue());
+                    presentationDetailResponse.setImages(imageService.getInfoImages(e.getKey().getInfoImages()));
+                    return presentationDetailResponse;
                 })
                 .collect(toList());
     }
 
 
-    public Presentation saveInfoWithPtDate(PresentationRequestRequestFormDto request, Long userId) {
+    public Presentation saveInfoWithPtDate(PresentationDetailRequest request, Long userId) {
         // 리펙터링 필요 findById 를 통해서 그냥 canWrite 와 canRead 를 override 하기
         userRepository.findTeacherById(userId)
                 .orElseThrow(() -> new UserException(UserErrorResult.USER_NOT_EXIST))
@@ -73,7 +73,7 @@ public class PresentationService {
         if (presentationRepository.findByCenterIdAndDate(request.getCenterId(), LocalDate.now()) != null)
             throw new PresentationException(PresentationErrorResult.ALREADY_PRESENTATION_EXIST);
         Center center = centerRepository.getById(request.getCenterId());
-        Presentation presentation = PresentationRequestRequestFormDto.toPresentation(request).updateCenter(center);
+        Presentation presentation = PresentationDetailRequest.toPresentation(request).updateCenter(center);
 
         request.getPtDateDtos().forEach(ptDateRequestDto -> {
             PtDate.register(presentation,
@@ -101,28 +101,27 @@ public class PresentationService {
         return presentation;
     }
 
-    public List<PresentationPreviewAndImageForTeacher> findPresentationListByCenterId(Long userId, Long centerId, Pageable pageable) {
+    public List<PresentationForTeacherResponse> findPresentationListByCenterId(Long userId, Long centerId, Pageable pageable) {
         //
         userRepository.findTeacherById(userId)
                 .orElseThrow(() -> new UserException("존재하지 않는 유저입니다"))
                 .canRead(centerId);
         return presentationRepository.findByCenterId(centerId, pageable)
                 .stream().map(data -> {
-                    PresentationPreviewAndImageForTeacher result = new PresentationPreviewAndImageForTeacher(data);
+                    PresentationForTeacherResponse result = new PresentationForTeacherResponse(data);
                     result.setPresentationInfoImage(imageService.getInfoImages(data.getPresentationInfoImage()));
                     return result;
                 }).collect(toList());
     }
 
-    public PresentationResponseDto findPresentationDetail(Long presentationId) {
+    public PresentationDetailResponse findPresentationDetail(Long presentationId) {
         //
         Presentation presentation = presentationRepository.findByIdAndJoinPtDate(presentationId)
                 .orElseThrow(() -> new PresentationException("존재하지않는 설명회 입니다"));
-        return new PresentationResponseDto(presentation, imageService.getInfoImages(presentation));
+        return new PresentationDetailResponse(presentation, imageService.getInfoImages(presentation));
     }
 
-
-    public Presentation modifyInfoWithPtDate(PresentationModifyRequestDto request, Long userId) {
+    public Presentation modifyInfoWithPtDate(PresentationRequest request, Long userId) {
         //
         Presentation presentation = presentationRepository.findByIdAndJoinPtDate(request.getPresentationId())
                 .orElseThrow(() -> new PresentationException(PresentationErrorResult.NO_RESULT));
@@ -223,7 +222,7 @@ public class PresentationService {
                 .collect(Collectors.toList());
     }
 
-    public SliceImpl<PresentationPreviewForUsersResponse> findByFilter(List<Area> areas, Theme theme, Integer interestedAge, KindOf kindOf, String searchContent, Pageable pageable) {
+    public SliceImpl<PresentationForUserResponse> findByFilter(List<Area> areas, Theme theme, Integer interestedAge, KindOf kindOf, String searchContent, Pageable pageable) {
         return presentationRepository.findByFilter(areas, theme, interestedAge, kindOf, searchContent, pageable);
     }
 }

@@ -1,7 +1,7 @@
 package FIS.iLUVit.controller.messagecreate;
 
-import FIS.iLUVit.controller.dto.CenterSearchFilterDTO;
-import FIS.iLUVit.controller.dto.CenterSearchMapFilterDTO;
+import FIS.iLUVit.controller.dto.CenterSearchFilterDto;
+import FIS.iLUVit.controller.dto.CenterSearchMapFilterDto;
 import FIS.iLUVit.domain.embeddable.Area;
 import FIS.iLUVit.domain.embeddable.Theme;
 import FIS.iLUVit.domain.enumtype.KindOf;
@@ -13,11 +13,11 @@ import java.util.List;
 
 public class ResponseRequests {
 
-    public CenterSearchFilterDTO centerSearchFilterRequest(List<Area> areas){
+    public CenterSearchFilterDto centerSearchFilterRequest(List<Area> areas){
 
         Theme theme = new Theme(true, false, true, false, true, true, false, false, false, false, true, false, false, false, false, true, false);
 
-        return CenterSearchFilterDTO.builder()
+        return CenterSearchFilterDto.builder()
                 .areas(areas)
                 .interestedAge(4)
                 .kindOf(KindOf.Kindergarten)
@@ -51,11 +51,11 @@ public class ResponseRequests {
                 .build());
     }
 
-    public CenterSearchMapFilterDTO centerSearchMapFilterDTO(double longitude, double latitude){
+    public CenterSearchMapFilterDto centerSearchMapFilterDTO(double longitude, double latitude){
 
         Theme theme = new Theme(true, false, true, false, true, true, false, false, false, false, true, false, false, false, false, true, false);
 
-        return CenterSearchMapFilterDTO.builder()
+        return CenterSearchMapFilterDto.builder()
                 .longitude(longitude)
                 .latitude(latitude)
                 .kindOf(KindOf.ALL)

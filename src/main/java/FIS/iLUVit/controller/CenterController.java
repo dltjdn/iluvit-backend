@@ -10,7 +10,6 @@ import FIS.iLUVit.service.CenterService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Slice;
 import org.springframework.data.domain.SliceImpl;
 import org.springframework.http.HttpStatus;
 import org.springframework.validation.annotation.Validated;
@@ -40,7 +39,7 @@ public class CenterController {
      * center 검색 정보 반환 front 검색인자 값 - 위도 경도 지도와 관련하여 api 던져준다
      */
     @PostMapping("search")
-    public SliceImpl<CenterAndDistancePreview> searchByFilterForMapList(@RequestBody @Validated CenterSearchMapFilterDTO dto,
+    public SliceImpl<CenterAndDistancePreview> searchByFilterForMapList(@RequestBody @Validated CenterSearchMapFilterDto dto,
                                                                         @Login Long userId,
                                                                         Pageable pageable){
         return centerService.findByFilterForMapList(dto.getLongitude(), dto.getLatitude(), dto.getCenterIds(), userId, dto.getKindOf(), pageable);
@@ -52,7 +51,7 @@ public class CenterController {
      * 개발 추가 사항 - 사진, 영상 정보 반환할 것 추가하기
      */
     @GetMapping("{centerId}/info")
-    public CenterInfoResponseDto centerInfo(@PathVariable("centerId") Long id){
+    public CenterResponse centerInfo(@PathVariable("centerId") Long id){
         return centerService.findInfoById(id);
     }
 
@@ -60,7 +59,7 @@ public class CenterController {
      * id 기반 으로 센터 클릭시 배너로 나올 center 이름, 모집 상황 반환할 api
      */
     @GetMapping("{centerId}/recruit")
-    public CenterBannerResponseDto centerBanner(@PathVariable("centerId") Long id, @Login Long userId){
+    public CenterBannerResponse centerBanner(@PathVariable("centerId") Long id, @Login Long userId){
         return centerService.findBannerById(id, userId);
     }
 
@@ -96,7 +95,7 @@ public class CenterController {
     @ResponseStatus(HttpStatus.ACCEPTED)
     public Long modifyCenterInfo(@PathVariable("centerId") Long centerId,
                                  @Login Long userId,
-                                 @RequestBody @Validated CenterModifyRequestDto requestDto){
+                                 @RequestBody @Validated CenterDetailRequest requestDto){
         if(userId == null)
             throw new UserException(UserErrorResult.NOT_LOGIN);
         log.info("requestDto = {}", requestDto);

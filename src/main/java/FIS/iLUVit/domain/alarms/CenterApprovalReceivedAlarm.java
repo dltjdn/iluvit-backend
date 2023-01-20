@@ -1,6 +1,6 @@
 package FIS.iLUVit.domain.alarms;
 
-import FIS.iLUVit.controller.dto.AlarmDto;
+import FIS.iLUVit.controller.dto.AlarmDetailDto;
 import FIS.iLUVit.domain.User;
 import FIS.iLUVit.domain.enumtype.Auth;
 import FIS.iLUVit.service.AlarmUtils;
@@ -27,12 +27,12 @@ public class CenterApprovalReceivedAlarm extends Alarm{
     }
 
     @Override
-    public AlarmDto exportAlarm() {
+    public AlarmDetailDto exportAlarm() {
         return new CenterApprovalReceivedAlarmDto(id, createdDate, message, dtype, auth);
     }
 
     @Getter
-    public static class CenterApprovalReceivedAlarmDto extends AlarmDto{
+    public static class CenterApprovalReceivedAlarmDto extends AlarmDetailDto {
 
         private Auth auth;
 

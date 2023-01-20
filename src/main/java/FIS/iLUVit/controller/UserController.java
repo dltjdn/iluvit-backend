@@ -29,7 +29,7 @@ public class UserController {
      * 작성내용: 사용자 기본정보(id, nickname, auth)반환
      */
     @GetMapping("user")
-    public UserInfoResponse findUserInfo(@Login Long id) {
+    public UserResponse findUserInfo(@Login Long id) {
         return userService.findUserInfo(id);
     }
 
@@ -59,7 +59,7 @@ public class UserController {
      * 작성내용: 비밀번호 변경
      */
     @PutMapping("password")
-    public void updatePassword(@Login Long id, @Valid @RequestBody UpdatePasswordRequest request) {
+    public void updatePassword(@Login Long id, @Valid @RequestBody PasswordRequest request) {
         userService.updatePassword(id, request);
     }
 

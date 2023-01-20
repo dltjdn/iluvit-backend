@@ -3,8 +3,8 @@ package FIS.iLUVit.service;
 import FIS.iLUVit.Creator;
 import FIS.iLUVit.controller.dto.CheckLoginIdRequest;
 import FIS.iLUVit.controller.dto.CheckNicknameRequest;
-import FIS.iLUVit.controller.dto.UpdatePasswordRequest;
-import FIS.iLUVit.controller.dto.UserInfoResponse;
+import FIS.iLUVit.controller.dto.PasswordRequest;
+import FIS.iLUVit.controller.dto.UserResponse;
 import FIS.iLUVit.domain.AuthNumber;
 import FIS.iLUVit.domain.Parent;
 import FIS.iLUVit.domain.User;
@@ -56,7 +56,7 @@ public class UserServiceTest {
                 .when(userRepository)
                 .findById(parent.getId());
         // when
-        UserInfoResponse result = target.findUserInfo(parent.getId());
+        UserResponse result = target.findUserInfo(parent.getId());
         // then
         assertThat(result.getId()).isEqualTo(parent.getId());
     }
@@ -135,7 +135,7 @@ public class UserServiceTest {
     @Test
     public void 비밀번호변경_실패_비밀번호틀림() {
         // given
-        UpdatePasswordRequest request = new UpdatePasswordRequest("pwd", "newPwd", "newPwd");
+        PasswordRequest request = new PasswordRequest("pwd", "newPwd", "newPwd");
         Parent parent = Parent.builder()
                 .id(1L)
                 .password(encoder.encode("password"))
@@ -153,7 +153,7 @@ public class UserServiceTest {
     @Test
     public void 비밀번호변경_실패_비밀번호확인틀림() {
         // given
-        UpdatePasswordRequest request = new UpdatePasswordRequest("password", "newPwd", "new");
+        PasswordRequest request = new PasswordRequest("password", "newPwd", "new");
         Parent parent = Parent.builder()
                 .id(1L)
                 .password(encoder.encode("password"))
@@ -171,7 +171,7 @@ public class UserServiceTest {
     @Test
     public void 비밀번호변경_성공() {
         // given
-        UpdatePasswordRequest request = new UpdatePasswordRequest("password", "newPwd", "newPwd");
+        PasswordRequest request = new PasswordRequest("password", "newPwd", "newPwd");
         Parent parent = Parent.builder()
                 .id(1L)
                 .password(encoder.encode("password"))

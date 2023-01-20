@@ -1,7 +1,7 @@
 package FIS.iLUVit.service;
 
 import FIS.iLUVit.Creator;
-import FIS.iLUVit.controller.dto.AuthenticateAuthNumRequest;
+import FIS.iLUVit.controller.dto.AuthNumRequest;
 import FIS.iLUVit.controller.dto.FindPasswordRequest;
 import FIS.iLUVit.domain.AuthNumber;
 import FIS.iLUVit.domain.Parent;
@@ -132,7 +132,7 @@ public class AuthServiceTest {
     @Test
     public void 인증번호인증_실패_인증번호불일치() {
         // given
-        AuthenticateAuthNumRequest request = new AuthenticateAuthNumRequest(phoneNum, authNum, AuthKind.signup);
+        AuthNumRequest request = new AuthNumRequest(phoneNum, authNum, AuthKind.signup);
         doReturn(Optional.empty())
                 .when(authRepository)
                 .findByPhoneNumAndAuthNumAndAuthKind(phoneNum, authNum, AuthKind.signup);
@@ -146,7 +146,7 @@ public class AuthServiceTest {
     @Test
     public void 인증번호인증_실패_인증번호만료() {
         // given
-        AuthenticateAuthNumRequest request = new AuthenticateAuthNumRequest(phoneNum, authNum, AuthKind.signup);
+        AuthNumRequest request = new AuthNumRequest(phoneNum, authNum, AuthKind.signup);
         doReturn(Optional.of(createAuthNumber(AuthKind.signup).setCreatedDateForTest(LocalDateTime.now().minusSeconds(target.getAuthValidTime() + 1))))
                 .when(authRepository)
                 .findByPhoneNumAndAuthNumAndAuthKind(phoneNum, authNum, AuthKind.signup);
@@ -162,7 +162,7 @@ public class AuthServiceTest {
     @Test
     public void 인증번호인증_성공() {
         // given
-        AuthenticateAuthNumRequest request = new AuthenticateAuthNumRequest(phoneNum, authNum, AuthKind.signup);
+        AuthNumRequest request = new AuthNumRequest(phoneNum, authNum, AuthKind.signup);
         AuthNumber authNumber = createAuthNumber(AuthKind.signup);
         doReturn(Optional.of(authNumber))
                 .when(authRepository)
@@ -254,7 +254,7 @@ public class AuthServiceTest {
     @Test
     public void 아이디찾기_성공() {
         // given
-        AuthenticateAuthNumRequest request = new AuthenticateAuthNumRequest(phoneNum, authNum, AuthKind.findLoginId);
+        AuthNumRequest request = new AuthNumRequest(phoneNum, authNum, AuthKind.findLoginId);
         doReturn(Optional.of(createAuthNumber(AuthKind.findLoginId)))
                 .when(authRepository)
                 .findByPhoneNumAndAuthNumAndAuthKind(phoneNum, authNum, AuthKind.findLoginId);
@@ -421,7 +421,7 @@ public class AuthServiceTest {
     public void 핸드폰변경을위한인증번호인증_실패_정보불일치() {
         // given
         Long userId = 1L;
-        AuthenticateAuthNumRequest request = new AuthenticateAuthNumRequest(phoneNum, authNum, AuthKind.updatePhoneNum);
+        AuthNumRequest request = new AuthNumRequest(phoneNum, authNum, AuthKind.updatePhoneNum);
         doReturn(Optional.empty())
                 .when(authRepository)
                 .findByPhoneNumAndAuthNumAndAuthKindAndUserId(phoneNum, authNum, AuthKind.updatePhoneNum, userId);
@@ -436,7 +436,7 @@ public class AuthServiceTest {
     public void 핸드폰변경을위한인증번호인증_성공() {
         // given
         Long userId = 1L;
-        AuthenticateAuthNumRequest request = new AuthenticateAuthNumRequest(phoneNum, authNum, AuthKind.updatePhoneNum);
+        AuthNumRequest request = new AuthNumRequest(phoneNum, authNum, AuthKind.updatePhoneNum);
         AuthNumber authNumber = createAuthNumber(AuthKind.updatePhoneNum);
         doReturn(Optional.of(authNumber))
                 .when(authRepository)

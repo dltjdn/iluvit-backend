@@ -182,7 +182,7 @@ class PresentationServiceTest {
                     .when(presentationRepository).findByCenterAndDateWithPtDates(1L, LocalDate.now());
 
             //when
-            List<PresentationResponseDto> result = target.findPresentationByCenterIdAndDate(1L, null);
+            List<PresentationDetailResponse> result = target.findPresentationByCenterIdAndDate(1L, null);
 
             //then
             assertThat(result.size()).isEqualTo(2);
@@ -207,7 +207,7 @@ class PresentationServiceTest {
                     .when(presentationRepository).findByCenterAndDateWithPtDates(1L, LocalDate.now(), 1L);
 
             //when
-            List<PresentationResponseDto> result = target.findPresentationByCenterIdAndDate(1L, 1L);
+            List<PresentationDetailResponse> result = target.findPresentationByCenterIdAndDate(1L, 1L);
 
             //then
             assertThat(result.size()).isEqualTo(2);
@@ -220,25 +220,25 @@ class PresentationServiceTest {
     @DisplayName("설명회 저장")
     class 설명회저장{
 
-        PtDateRequestDto ptDateRequestDto1;
-        PtDateRequestDto ptDateRequestDto2;
-        PtDateRequestDto ptDateRequestDto3;
-        List<PtDateRequestDto> dtoList = new ArrayList<>();
-        PresentationRequestRequestFormDto request;
+        PresentationDateDetailRequest ptDateRequest1;
+        PresentationDateDetailRequest ptDateRequest2;
+        PresentationDateDetailRequest ptDateRequest3;
+        List<PresentationDateDetailRequest> dtoList = new ArrayList<>();
+        PresentationDetailRequest request;
         MultipartFile multipartFile;
         List<MultipartFile> multipartFileList = new ArrayList<>();
 
 
         @BeforeEach
         void init() throws IOException {
-             ptDateRequestDto1 = new PtDateRequestDto(LocalDate.now(), "test time", 10);
-             ptDateRequestDto2 = new PtDateRequestDto(LocalDate.now(), "test time", 10);
-             ptDateRequestDto3 = new PtDateRequestDto(LocalDate.now(), "test time", 10);
-             List<PtDateRequestDto> dtoList = new ArrayList<>();
-             dtoList.add(ptDateRequestDto1);
-             dtoList.add(ptDateRequestDto2);
-             dtoList.add(ptDateRequestDto3);
-             request = new PresentationRequestRequestFormDto(1L, LocalDate.now(), LocalDate.now(), "test place", "test content", dtoList);
+             ptDateRequest1 = new PresentationDateDetailRequest(LocalDate.now(), "test time", 10);
+             ptDateRequest2 = new PresentationDateDetailRequest(LocalDate.now(), "test time", 10);
+             ptDateRequest3 = new PresentationDateDetailRequest(LocalDate.now(), "test time", 10);
+             List<PresentationDateDetailRequest> dtoList = new ArrayList<>();
+             dtoList.add(ptDateRequest1);
+             dtoList.add(ptDateRequest2);
+             dtoList.add(ptDateRequest3);
+             request = new PresentationDetailRequest(1L, LocalDate.now(), LocalDate.now(), "test place", "test content", dtoList);
             String name = "162693895955046828.png";
             Path path1 = Paths.get(new File("").getAbsolutePath() + '/' + name);
             byte[] content = Files.readAllBytes(path1);
@@ -324,11 +324,11 @@ class PresentationServiceTest {
     @Nested
     @DisplayName("설명회 수정")
     class 설명회수정{
-        PtDateModifyDto dto1;
-        PtDateModifyDto dto2;
-        PtDateModifyDto dto3;
-        PtDateModifyDto dto4;
-        PresentationModifyRequestDto request;
+        PresentationDateDto dto1;
+        PresentationDateDto dto2;
+        PresentationDateDto dto3;
+        PresentationDateDto dto4;
+        PresentationRequest request;
         Presentation presentation;
         PtDate ptDate1;
         PtDate ptDate2;
@@ -338,16 +338,16 @@ class PresentationServiceTest {
         List<Waiting> waiting;
         @BeforeEach
         void init(){
-            dto1 = new PtDateModifyDto(null, LocalDate.now(), "test time", 10);
-            dto2 = new PtDateModifyDto(1L, LocalDate.now(), "test time", 10);
-            dto3 = new PtDateModifyDto(null, LocalDate.now(), "test time", 10);
-            dto4 = new PtDateModifyDto(3L, LocalDate.now(), "test time", 10);
-            List<PtDateModifyDto> dtos = new ArrayList<>();
+            dto1 = new PresentationDateDto(null, LocalDate.now(), "test time", 10);
+            dto2 = new PresentationDateDto(1L, LocalDate.now(), "test time", 10);
+            dto3 = new PresentationDateDto(null, LocalDate.now(), "test time", 10);
+            dto4 = new PresentationDateDto(3L, LocalDate.now(), "test time", 10);
+            List<PresentationDateDto> dtos = new ArrayList<>();
             dtos.add(dto1);
             dtos.add(dto2);
             dtos.add(dto3);
             dtos.add(dto4);
-            request = new PresentationModifyRequestDto(1L, LocalDate.now(), LocalDate.now(), "장소", "콘텐츠", dtos);
+            request = new PresentationRequest(1L, LocalDate.now(), LocalDate.now(), "장소", "콘텐츠", dtos);
             presentation = createValidPresentation(center);
             ptDate1 = createCanRegisterPtDate(1L, presentation);
             ptDate2 = createCanNotRegisterPtDate(2L, presentation);
@@ -446,17 +446,17 @@ class PresentationServiceTest {
         @DisplayName("[success] 설명회 수정 성공")
         public void 설명회수정성공() throws Exception {
             //given
-            dto1 = new PtDateModifyDto(null, LocalDate.now(), "test time", 10);
-            dto2 = new PtDateModifyDto(1L, LocalDate.now(), "test time", 10);
-            dto3 = new PtDateModifyDto(null, LocalDate.now(), "test time", 10);
-            dto4 = new PtDateModifyDto(3L, LocalDate.now(), "test time", 10);
-            List<PtDateModifyDto> dtos = new ArrayList<>();
+            dto1 = new PresentationDateDto(null, LocalDate.now(), "test time", 10);
+            dto2 = new PresentationDateDto(1L, LocalDate.now(), "test time", 10);
+            dto3 = new PresentationDateDto(null, LocalDate.now(), "test time", 10);
+            dto4 = new PresentationDateDto(3L, LocalDate.now(), "test time", 10);
+            List<PresentationDateDto> dtos = new ArrayList<>();
             dtos.add(dto1);
             dtos.add(dto2);
             dtos.add(dto3);
             dtos.add(dto4);
-            request = new PresentationModifyRequestDto(1L, LocalDate.now(), LocalDate.now(), "장소", "콘텐츠", dtos);
-            request = new PresentationModifyRequestDto(1L, LocalDate.now(), LocalDate.now(), "장소", "콘텐츠", dtos);
+            request = new PresentationRequest(1L, LocalDate.now(), LocalDate.now(), "장소", "콘텐츠", dtos);
+            request = new PresentationRequest(1L, LocalDate.now(), LocalDate.now(), "장소", "콘텐츠", dtos);
             presentation = createValidPresentation(center);
             ptDate1 = createCanRegisterPtDate(1L, presentation);
             ptDate2 = createNoParticipantsPtDate(2L, presentation);

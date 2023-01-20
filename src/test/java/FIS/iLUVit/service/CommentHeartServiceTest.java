@@ -1,7 +1,6 @@
 package FIS.iLUVit.service;
 
 import FIS.iLUVit.Creator;
-import FIS.iLUVit.controller.dto.RegisterCommentRequest;
 import FIS.iLUVit.domain.*;
 import FIS.iLUVit.domain.enumtype.Auth;
 import FIS.iLUVit.domain.enumtype.BoardKind;
@@ -11,7 +10,6 @@ import FIS.iLUVit.repository.CommentHeartRepository;
 import FIS.iLUVit.repository.CommentRepository;
 import FIS.iLUVit.repository.UserRepository;
 import FIS.iLUVit.service.createmethod.CreateTest;
-import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;

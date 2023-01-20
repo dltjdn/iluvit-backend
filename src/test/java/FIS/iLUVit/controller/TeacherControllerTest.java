@@ -5,7 +5,7 @@ import FIS.iLUVit.config.argumentResolver.LoginUserArgumentResolver;
 import FIS.iLUVit.controller.dto.SignupTeacherRequest;
 import FIS.iLUVit.controller.dto.TeacherApprovalListResponse;
 import FIS.iLUVit.controller.dto.TeacherDetailResponse;
-import FIS.iLUVit.controller.dto.UpdateTeacherDetailRequest;
+import FIS.iLUVit.controller.dto.TeacherDetailRequest;
 import FIS.iLUVit.domain.Center;
 import FIS.iLUVit.domain.Teacher;
 import FIS.iLUVit.domain.enumtype.Approval;
@@ -15,10 +15,8 @@ import FIS.iLUVit.exception.SignupException;
 import FIS.iLUVit.exception.UserErrorResult;
 import FIS.iLUVit.exception.UserException;
 import FIS.iLUVit.exception.exceptionHandler.ErrorResponse;
-import FIS.iLUVit.exception.exceptionHandler.ErrorResult;
 import FIS.iLUVit.exception.exceptionHandler.controllerAdvice.GlobalControllerAdvice;
 import FIS.iLUVit.service.TeacherService;
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -39,8 +37,6 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.List;
-import java.util.Optional;
 
 import static FIS.iLUVit.Creator.*;
 import static org.mockito.ArgumentMatchers.any;
@@ -239,7 +235,7 @@ public class TeacherControllerTest {
         SignupErrorResult error = SignupErrorResult.DUPLICATED_NICKNAME;
         doThrow(new SignupException(error))
                 .when(teacherService)
-                .updateDetail(any(), any(UpdateTeacherDetailRequest.class));
+                .updateDetail(any(), any(TeacherDetailRequest.class));
         // when
         ResultActions result = mockMvc.perform(
                 MockMvcRequestBuilders
