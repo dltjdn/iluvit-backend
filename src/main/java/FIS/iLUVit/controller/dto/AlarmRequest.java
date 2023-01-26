@@ -9,6 +9,6 @@ import java.util.List;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class AlarmDto {
+public class AlarmRequest {
     private List<Long> alarmIds;
 }

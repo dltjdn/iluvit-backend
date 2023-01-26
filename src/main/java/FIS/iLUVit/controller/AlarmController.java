@@ -1,7 +1,7 @@
 package FIS.iLUVit.controller;
 
 import FIS.iLUVit.config.argumentResolver.Login;
-import FIS.iLUVit.controller.dto.AlarmDto;
+import FIS.iLUVit.controller.dto.AlarmRequest;
 import FIS.iLUVit.controller.dto.AlarmDetailDto;
 import FIS.iLUVit.exception.UserErrorResult;
 import FIS.iLUVit.exception.UserException;
@@ -39,7 +39,7 @@ public class AlarmController {
     }
 
     @DeleteMapping("")
-    public Integer deleteAlarm(@Login Long userId, @RequestBody AlarmDto request) {
+    public Integer deleteAlarm(@Login Long userId, @RequestBody AlarmRequest request) {
         if(userId == null)
             throw new UserException(UserErrorResult.NOT_LOGIN);
         return alarmService.deleteUserAlarm(userId, request.getAlarmIds());
