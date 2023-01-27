@@ -128,12 +128,9 @@ public class ReviewServiceTest {
     @Test
     public void 학부모로_리뷰_찾기() throws Exception {
         //given
-        ReviewByParentDto expected = new ReviewByParentDto();
-        ReviewByParentDto.ReviewDto reviewDto = new ReviewByParentDto.ReviewDto(review1);
-        System.out.println("reviewDto = " + reviewDto);
-        List<ReviewByParentDto.ReviewDto> reviewDtos = List.of(reviewDto);
-        SliceImpl<ReviewByParentDto.ReviewDto> reviewDtoSlice = new SliceImpl<>(reviewDtos, PageRequest.of(0, 10), false);
-        expected.setReviews(reviewDtoSlice);
+        ReviewByParentDto reviewDto = new ReviewByParentDto(review1);
+        List<ReviewByParentDto> reviewDtos = List.of(reviewDto);
+        SliceImpl<ReviewByParentDto> reviewDtoSlice = new SliceImpl<>(reviewDtos, PageRequest.of(0, 10), false);
 
         List<Review> reviewList = List.of(review1);
         SliceImpl<Review> reviewSlice = new SliceImpl<>(reviewList, PageRequest.of(0, 10), false);
@@ -141,10 +138,10 @@ public class ReviewServiceTest {
                 .when(reviewRepository)
                 .findByParent(parent1.getId(), PageRequest.of(0, 10));
         //when
-        ReviewByParentDto result = reviewService.findByParent(parent1.getId(), PageRequest.of(0, 10));
+        Slice<ReviewByParentDto> result = reviewService.findByParent(parent1.getId(), PageRequest.of(0, 10));
         //then
         assertThat(objectMapper.writeValueAsString(result))
-                .isEqualTo(objectMapper.writeValueAsString(expected));
+                .isEqualTo(objectMapper.writeValueAsString(reviewDtoSlice));
     }
     
     @Test

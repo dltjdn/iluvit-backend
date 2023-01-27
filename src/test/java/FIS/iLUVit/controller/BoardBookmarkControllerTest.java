@@ -1,7 +1,7 @@
 package FIS.iLUVit.controller;
 
 import FIS.iLUVit.config.argumentResolver.LoginUserArgumentResolver;
-import FIS.iLUVit.controller.dto.BoardBookmarkDto;
+import FIS.iLUVit.controller.dto.StoryDto;
 import FIS.iLUVit.domain.Board;
 import FIS.iLUVit.domain.Bookmark;
 import FIS.iLUVit.domain.Parent;
@@ -29,7 +29,9 @@ import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
@@ -84,8 +86,9 @@ class BoardBookmarkControllerTest {
     @Test
     public void 메인화면_목록조회_비회원() throws Exception {
         //given
-        BoardBookmarkDto dto = new BoardBookmarkDto();
-        final String url = "/bookmark-main";
+        List<StoryDto> dto = new ArrayList<>();
+
+        final String url = "/board-bookmark/main";
         Mockito.doReturn(dto)
                 .when(boardBookmarkService)
                 .searchByDefault();
@@ -102,8 +105,8 @@ class BoardBookmarkControllerTest {
     @Test
     public void 메인화면_목록조회_회원() throws Exception {
         //given
-        BoardBookmarkDto dto = new BoardBookmarkDto();
-        final String url = "/bookmark-main";
+        List<StoryDto> dto = new ArrayList<>();
+        final String url = "/board-bookmark/main";
         Mockito.doReturn(dto)
                 .when(boardBookmarkService)
                 .search(any());

@@ -83,9 +83,11 @@ public class ImageServiceTest {
                 .id(1L)
                 .build();
         //when
-        String destPath = imageServiceLocal.saveProfileImage(null, center);
+        //String destPath = imageServiceLocal.saveProfileImage(null, center);
+        imageServiceLocal.saveProfileImage(null, center);
+
         //then
-        assertThat(destPath).isNull();
+        //assertThat(destPath).isNull();
     }
 
     @Test
@@ -96,11 +98,12 @@ public class ImageServiceTest {
                 .build();
 
         //when
-        String destPath = imageServiceLocal.saveProfileImage(multipartFile, center);
+        //String destPath = imageServiceLocal.saveProfileImage(multipartFile, center);
+        imageServiceLocal.saveProfileImage(multipartFile, center);
 
         System.out.println("center.getProfileImagePath() = " + center.getProfileImagePath());
         //then
-        assertThat(destPath).isNull();
+        //assertThat(destPath).isNull();
         assertThat(center.getProfileImagePath())
                 .isEqualTo(prefix + '/' + "center/" + "1.png");
     }
@@ -113,11 +116,12 @@ public class ImageServiceTest {
                 .build();
 
         //when
-        String destPath = imageServiceLocal.saveInfoImages(multipartFileList, center);
+        //String destPath = imageServiceLocal.saveInfoImages(multipartFileList, center);
+        imageServiceLocal.saveInfoImages(multipartFileList, center);
 
         System.out.println("center.getProfileImagePath() = " + center.getInfoImagePath());
         //then
-        assertThat(destPath).isNull();
+        //assertThat(destPath).isNull();
         assertThat(center.getInfoImagePath())
                 .isEqualTo(prefix + '/' + "centerInfo/1/" + "1.png," + prefix + '/' + "centerInfo/1/" + "2.png,");
         assertThat(center.getImgCnt())
@@ -165,11 +169,12 @@ public class ImageServiceTest {
                 .build();
 
         //when
-        String destPath = imageServiceAmazon.saveProfileImage(multipartFile, center);
+        //String destPath = imageServiceAmazon.saveProfileImage(multipartFile, center);
+        imageServiceAmazon.saveProfileImage(multipartFile, center);
 
         System.out.println("center.getProfileImagePath() = " + center.getProfileImagePath());
         //then
-        assertThat(destPath).isNull();
+        //assertThat(destPath).isNull();
         assertThat(center.getProfileImagePath())
                 .isEqualTo("https://iluvit.s3.ap-northeast-2.amazonaws.com" + '/' + "centerProfile/" + "1.png");
     }
@@ -184,9 +189,11 @@ public class ImageServiceTest {
                         "https://iluvit.s3.ap-northeast-2.amazonaws.com" + '/' + "centerInfo/1/" + "3.png,")
                 .build();
 
-        String destPath = imageServiceAmazon.saveInfoImages(multipartFileList, center);
+        //String destPath = imageServiceAmazon.saveInfoImages(multipartFileList, center);
+        imageServiceAmazon.saveInfoImages(multipartFileList, center);
+
         //then
-        assertThat(destPath).isNull();
+        //assertThat(destPath).isNull();
         assertThat(center.getInfoImagePath())
                 .isEqualTo("https://iluvit.s3.ap-northeast-2.amazonaws.com" + '/' + "centerInfo/1/" + "1.png," +
                         "https://iluvit.s3.ap-northeast-2.amazonaws.com" + '/' + "centerInfo/1/" + "2.png,");
@@ -200,11 +207,12 @@ public class ImageServiceTest {
                 .build();
 
         //when
-        String destPath = imageServiceAmazon.saveInfoImages(multipartFileList, center);
+        //String destPath = imageServiceAmazon.saveInfoImages(multipartFileList, center);
+        imageServiceAmazon.saveInfoImages(multipartFileList, center);
 
         System.out.println("center.getInfoImagePath() = " + center.getInfoImagePath());
         //then
-        assertThat(destPath).isNull();
+        //assertThat(destPath).isNull();
         assertThat(center.getInfoImagePath())
                 .isEqualTo("https://iluvit.s3.ap-northeast-2.amazonaws.com" + '/' + "centerInfo/1/" + "1.png," +
                         "https://iluvit.s3.ap-northeast-2.amazonaws.com" + '/' + "centerInfo/1/" + "2.png,");

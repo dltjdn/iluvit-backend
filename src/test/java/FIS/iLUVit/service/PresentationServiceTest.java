@@ -255,7 +255,7 @@ class PresentationServiceTest {
                     .when(userRepository).findTeacherById(1L);
             //when
             UserException result = assertThrows(UserException.class, () -> {
-                target.saveWithPtDate(request, multipartFileList, 1L);
+                target.saveInfoWithPtDate(request,  1L);
             });
 
             //then
@@ -266,12 +266,12 @@ class PresentationServiceTest {
         @DisplayName("[error] 설명회 저장 권한 없음")
         public void 설명회작성권한없는경우() throws Exception {
             //given
-            Teacher teacher = Creator.createTeacher(1L, center, Auth.DIRECTOR, Approval.WAITING);
+            Teacher teacher = createTeacher(1L, center, Auth.DIRECTOR, Approval.WAITING);
             Mockito.doReturn(Optional.of(teacher))
                     .when(userRepository).findTeacherById(1L);
             //when
             CenterException result = assertThrows(CenterException.class, () -> {
-                target.saveWithPtDate(request, multipartFileList, 1L);
+                target.saveInfoWithPtDate(request,1L);
             });
 
             //then
@@ -282,7 +282,7 @@ class PresentationServiceTest {
         @DisplayName("[error] 이미 유효한 설명회 존재")
         public void 유효한설명회존재() throws Exception {
             //given
-            Teacher teacher = Creator.createTeacher(1L, center, Auth.DIRECTOR, Approval.ACCEPT);
+            Teacher teacher = createTeacher(1L, center, Auth.DIRECTOR, Approval.ACCEPT);
             Mockito.doReturn(Optional.of(teacher))
                     .when(userRepository).findTeacherById(1L);
             Mockito.doReturn(presentation)
@@ -290,7 +290,7 @@ class PresentationServiceTest {
 
             //when
             PresentationException result = assertThrows(PresentationException.class, () -> {
-                target.saveWithPtDate(request, multipartFileList, 1L);
+                target.saveInfoWithPtDate(request, 1L);
             });
 
             //then
@@ -301,7 +301,7 @@ class PresentationServiceTest {
         @DisplayName("[success] 설명회 저장 성공")
         public void 설명회저장성공() throws Exception {
             //given
-            Teacher teacher = Creator.createTeacher(1L, center, Auth.DIRECTOR, Approval.ACCEPT);
+            Teacher teacher = createTeacher(1L, center, Auth.DIRECTOR, Approval.ACCEPT);
             Mockito.doReturn(Optional.of(teacher))
                     .when(userRepository).findTeacherById(1L);
             Mockito.doReturn(null)
@@ -312,7 +312,7 @@ class PresentationServiceTest {
                     .when(centerRepository).getById(center.getId());
 
             //when
-            Presentation result = target.saveWithPtDate(request, multipartFileList, 1L);
+            Presentation result = target.saveInfoWithPtDate(request, 1L);
 
             //then
             assertThat(result.getCenter().getId()).isEqualTo(1L);
@@ -368,7 +368,7 @@ class PresentationServiceTest {
                     .when(presentationRepository).findByIdAndJoinPtDate(request.getPresentationId());
             //when
             PresentationException result = assertThrows(PresentationException.class, () -> {
-                target.modifyWithPtDate(request, null, 1L);
+                target.modifyInfoWithPtDate(request, 1L);
             });
 
             //then
@@ -387,7 +387,7 @@ class PresentationServiceTest {
 
             //when
             UserException result = assertThrows(UserException.class, () -> {
-                target.modifyWithPtDate(request, null, 1L);
+                target.modifyInfoWithPtDate(request, 1L);
             });
 
             //then
@@ -406,7 +406,7 @@ class PresentationServiceTest {
 
             //when
             CenterException result = assertThrows(CenterException.class, () -> {
-                target.modifyWithPtDate(request, null, 1L);
+                target.modifyInfoWithPtDate(request, 1L);
             });
 
             //then
@@ -434,7 +434,7 @@ class PresentationServiceTest {
                         .thenReturn(new AlarmEvent(presentationFullAlarm));
                 //when
                 PresentationException result = assertThrows(PresentationException.class,
-                        () -> target.modifyWithPtDate(request, null, 1L));
+                        () -> target.modifyInfoWithPtDate(request, 1L));
 
                 //then
                 verify(ptDateRepository, times(2)).save(any(PtDate.class));
@@ -491,7 +491,7 @@ class PresentationServiceTest {
                 alarmUtils.when(() -> AlarmUtils.publishAlarmEvent(any(Alarm.class)))
                         .thenReturn(new AlarmEvent(presentationFullAlarm));
                 //when
-                Presentation presentation = target.modifyWithPtDate(request, null, 1L);
+                Presentation presentation = target.modifyInfoWithPtDate(request, 1L);
 
                 //then
                 verify(ptDateRepository, times(2)).save(any(PtDate.class));

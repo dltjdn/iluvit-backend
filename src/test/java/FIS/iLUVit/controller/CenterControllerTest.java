@@ -345,7 +345,7 @@ class CenterControllerTest extends ResponseRequests {
             });
 
             Mockito.doThrow(new UserException(UserErrorResult.USER_NOT_EXIST))
-                    .when(centerService).modifyCenter(any(Long.class), any(Long.class), any(CenterDetailRequest.class), anyList(), any(MultipartFile.class));
+                    .when(centerService).modifyCenterInfo(any(Long.class), any(Long.class), any(CenterDetailRequest.class));
 
             MockMultipartFile requestDto = new MockMultipartFile("requestDto", null,
                     "application/json", objectMapper.writeValueAsString(rightRequest).getBytes());
@@ -383,7 +383,7 @@ class CenterControllerTest extends ResponseRequests {
             });
 
             Mockito.doThrow(new CenterException(CenterErrorResult.AUTHENTICATION_FAILED))
-                    .when(centerService).modifyCenter(any(Long.class), any(Long.class), any(CenterDetailRequest.class), anyList(), any(MultipartFile.class));
+                    .when(centerService).modifyCenterInfo(any(Long.class), any(Long.class), any(CenterDetailRequest.class));
 
             MockMultipartFile requestDto = new MockMultipartFile("requestDto", null,
                     "application/json", objectMapper.writeValueAsString(rightRequest).getBytes());
@@ -421,7 +421,7 @@ class CenterControllerTest extends ResponseRequests {
             });
 
             Mockito.doThrow(new CenterException(CenterErrorResult.CENTER_WRONG_ADDRESS))
-                    .when(centerService).modifyCenter(any(Long.class), any(Long.class), any(CenterDetailRequest.class), anyList(), any(MultipartFile.class));
+                    .when(centerService).modifyCenterInfo(any(Long.class), any(Long.class), any(CenterDetailRequest.class));
 
             MockMultipartFile requestDto = new MockMultipartFile("requestDto", null,
                     "application/json", objectMapper.writeValueAsString(rightRequest).getBytes());
@@ -459,7 +459,7 @@ class CenterControllerTest extends ResponseRequests {
             });
 
             Mockito.doReturn(1L)
-                    .when(centerService).modifyCenter(any(Long.class), any(Long.class), any(CenterDetailRequest.class), anyList(), any(MultipartFile.class));
+                    .when(centerService).modifyCenterInfo(any(Long.class), any(Long.class), any(CenterDetailRequest.class));
 
             MockMultipartFile requestDto = new MockMultipartFile("requestDto", null,
                     "application/json", objectMapper.writeValueAsString(rightRequest).getBytes());

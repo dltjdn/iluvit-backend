@@ -144,18 +144,16 @@ class ReviewControllerTest {
     @Test
     public void 학부모가_작성한_리뷰_조회() throws Exception {
         //given
-        ReviewByParentDto expected = new ReviewByParentDto();
-        ReviewByParentDto.ReviewDto reviewDto = new ReviewByParentDto.ReviewDto(review1);
-        System.out.println("reviewDto = " + reviewDto);
-        List<ReviewByParentDto.ReviewDto> reviewDtos = List.of(reviewDto);
-        SliceImpl<ReviewByParentDto.ReviewDto> reviewDtoSlice = new SliceImpl<>(reviewDtos, PageRequest.of(0, 10), false);
-        expected.setReviews(reviewDtoSlice);
+        ReviewByParentDto reviewDto = new ReviewByParentDto(review1);
+        List<ReviewByParentDto> reviewDtos = List.of(reviewDto);
+        SliceImpl<ReviewByParentDto> reviewByParentSlice = new SliceImpl<>(reviewDtos, PageRequest.of(0, 10), false);
 
-        Mockito.doReturn(expected)
+
+        Mockito.doReturn(reviewByParentSlice)
                 .when(reviewService)
                 .findByParent(parent1.getId(), PageRequest.of(0, 10));
 
-        final String url = "/parent/review";
+        final String url = "/review";
         //when
         ResultActions resultActions = mockMvc.perform(
                 MockMvcRequestBuilders.get(url)
@@ -167,7 +165,7 @@ class ReviewControllerTest {
         //then
         resultActions.andDo(print())
                 .andExpect(content().json(
-                        objectMapper.writeValueAsString(expected)
+                        objectMapper.writeValueAsString(reviewByParentSlice)
                 ));
     }
 
