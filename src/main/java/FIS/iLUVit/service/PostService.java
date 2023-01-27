@@ -203,10 +203,10 @@ public class PostService {
         preview.updatePreviewImage(infoImages);
     }
 
-    public PostListDto searchByUser(Long userId, Pageable pageable) {
+    public Slice<PostPreviewResponse> searchByUser(Long userId, Pageable pageable) {
         Slice<Post> posts = postRepository.findByUser(userId, pageable);
-        Slice<PostPreviewResponse> preview = posts.map(p -> new PostPreviewResponse(p));
-        return new PostListDto(preview);
+        Slice<PostPreviewResponse> preview = posts.map(post -> new PostPreviewResponse(post));
+        return preview;
     }
 
     public List<BoardPreviewDto> searchMainPreview(Long userId) {

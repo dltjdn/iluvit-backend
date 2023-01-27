@@ -796,9 +796,8 @@ class PostControllerTest {
         Slice<PostPreviewResponse> previewSlice = new SliceImpl<>
                 (previewList, PageRequest.of(0, 10), false);
 
-        PostListDto postList = new PostListDto(previewSlice);
 
-        Mockito.doReturn(postList)
+        Mockito.doReturn(previewSlice)
                 .when(postService)
                 .searchByUser(parent1.getId(), PageRequest.of(0, 10));
         //when
@@ -812,7 +811,7 @@ class PostControllerTest {
         resultActions.andDo(print())
                 .andExpect(status().isOk())
                 .andExpect(content().json(objectMapper.writeValueAsString(
-                        postList
+                        previewSlice
                 )));
     }
 

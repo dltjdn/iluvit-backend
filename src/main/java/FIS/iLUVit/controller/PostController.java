@@ -28,7 +28,7 @@ public class PostController {
      내용: 내가 쓴 글 리스트
      */
     @GetMapping("mypage")
-    public PostListDto searchPostByUser(@Login Long userId,
+    public Slice<PostPreviewResponse> searchPostByUser(@Login Long userId,
                                         Pageable pageable) {
         return postService.searchByUser(userId, pageable);
     }

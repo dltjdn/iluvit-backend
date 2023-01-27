@@ -667,17 +667,16 @@ class PostServiceTest {
         //given
         List<Post> postList = Arrays.asList(post1, post2, post3, post4);
         Slice<Post> postSlice = new SliceImpl<>(postList, PageRequest.of(0, 10), false);
-        Slice<PostPreviewResponse> dtoSlice = postSlice.map(p -> new PostPreviewResponse(p));
-        PostListDto postListDTO = new PostListDto(dtoSlice);
+        Slice<PostPreviewResponse> postPreviewSlice = postSlice.map(post -> new PostPreviewResponse(post));
 
         Mockito.doReturn(postSlice)
                 .when(postRepository)
                 .findByUser(parent1.getId(), PageRequest.of(0, 10));
         //when
-        PostListDto result = postService.searchByUser(parent1.getId(), PageRequest.of(0, 10));
+        Slice<PostPreviewResponse> result = postService.searchByUser(parent1.getId(), PageRequest.of(0, 10));
         //then
         assertThat(objectMapper.writeValueAsString(result))
-                .isEqualTo(objectMapper.writeValueAsString(postListDTO));
+                .isEqualTo(objectMapper.writeValueAsString(postPreviewSlice));
     }
 
     @Test

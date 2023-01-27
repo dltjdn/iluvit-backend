@@ -62,27 +62,6 @@ public class PostPreviewResponse {
         }
     }
 
-    public PostPreviewResponse(Post post, List<String> encodedInfoImage) {
-        this.post_id = post.getId();
-        this.title = post.getTitle();
-        this.content = post.getContent();
-        this.anonymous = post.getAnonymous();
-        this.nickname = post.getUser().getNickName();
-        this.user_id = post.getUser().getId();
-        this.commentCnt = post.getCommentCnt();
-        this.heartCnt = post.getHeartCnt();
-        this.imgCnt = post.getImgCnt();
-        this.previewImage = encodedInfoImage.isEmpty() ? null : encodedInfoImage.get(0);
-        this.board_name = post.getBoard().getName();
-        this.board_id = post.getBoard().getId();
-        this.date = post.getDate();
-        this.time = post.getTime();
-
-        if (post.getBoard().getCenter() != null) {
-            this.center_id = post.getBoard().getCenter().getId();
-        }
-    }
-
     public void updatePreviewImage(List<String> encodedInfoImage) {
         this.previewImage = encodedInfoImage.isEmpty() ? null : encodedInfoImage.get(0);
     }
