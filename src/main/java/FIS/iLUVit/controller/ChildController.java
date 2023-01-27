@@ -27,8 +27,8 @@ public class ChildController {
      * 작성내용: 부모의 메인페이지에 필요한 아이들 정보 반환
      */
     @GetMapping("info")
-    public ChildDto childInfo(@Login Long id) {
-        return childService.childrenInfo(id);
+    public List<ChildDto> childInfo(@Login Long id) {
+        return childService.childInfo(id);
     }
 
     /**
@@ -68,7 +68,7 @@ public class ChildController {
      * 작성내용: 아이삭제
      */
     @DeleteMapping("{childId}")
-    public ChildDto deleteChild(@Login Long userId, @PathVariable("childId") Long childId) {
+    public List<ChildDto> deleteChild(@Login Long userId, @PathVariable("childId") Long childId) {
         return childService.deleteChild(userId, childId);
     }
 

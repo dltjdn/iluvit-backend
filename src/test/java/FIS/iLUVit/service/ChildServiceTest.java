@@ -110,9 +110,9 @@ public class ChildServiceTest {
                     .when(imageService)
                     .getProfileImage(any(Child.class));
             // when
-            ChildDto result = target.childrenInfo(parent1.getId());
+            List<ChildDto> result = target.childInfo(parent1.getId());
             // then
-            assertThat(result.getData().size()).isEqualTo(2);
+            assertThat(result.size()).isEqualTo(2);
         }
         @Test
         public void 시설없는아이있음() {
@@ -127,10 +127,10 @@ public class ChildServiceTest {
                     .when(imageService)
                     .getProfileImage(any(Child.class));
             // when
-            ChildDto result = target.childrenInfo(parent1.getId());
+            List<ChildDto> result = target.childInfo(parent1.getId());
             // then
-            assertThat(result.getData().size()).isEqualTo(3);
-            for (ChildDto.ChildInfo childInfo : result.getData()) {
+            assertThat(result.size()).isEqualTo(3);
+            for (ChildDto childInfo : result) {
                 if (Objects.equals(childInfo.getId(), child3.getId())) {
                     assertThat(childInfo.getCenter_id()).isNull();
                 }
@@ -142,9 +142,9 @@ public class ChildServiceTest {
             doReturn(Optional.of(parent2))
                     .when(parentRepository)
                     .findWithChildren(any());
-            ChildDto result = target.childrenInfo(parent2.getId());
+            List<ChildDto> result = target.childInfo(parent2.getId());
             // then
-            assertThat(result.getData().size()).isEqualTo(0);
+            assertThat(result.size()).isEqualTo(0);
         }
     }
 
@@ -642,9 +642,9 @@ public class ChildServiceTest {
                     .when(parentRepository)
                     .findWithChildren(any());
             // when
-            ChildDto result = target.deleteChild(parent1.getId(), child1.getId());
+            List<ChildDto> result = target.deleteChild(parent1.getId(), child1.getId());
             // then
-            assertThat(result.getData().size()).isEqualTo(2);
+            assertThat(result.size()).isEqualTo(2);
         }
 
         @Test
@@ -660,9 +660,9 @@ public class ChildServiceTest {
                     .when(parentRepository)
                     .findWithChildren(any());
             // when
-            ChildDto result = target.deleteChild(parent1.getId(), child1.getId());
+            List<ChildDto> result = target.deleteChild(parent1.getId(), child1.getId());
             // then
-            assertThat(result.getData().size()).isEqualTo(2);
+            assertThat(result.size()).isEqualTo(2);
         }
     }
 
