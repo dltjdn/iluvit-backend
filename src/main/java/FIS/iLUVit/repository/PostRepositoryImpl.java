@@ -1,7 +1,7 @@
 package FIS.iLUVit.repository;
 
-import FIS.iLUVit.controller.dto.PostPreviewResponse;
-import FIS.iLUVit.controller.dto.QPostPreviewResponse;
+import FIS.iLUVit.controller.dto.PostPreviewDto;
+import FIS.iLUVit.controller.dto.QPostPreviewDto;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.AllArgsConstructor;
 import org.springframework.data.domain.Pageable;
@@ -21,8 +21,8 @@ public class PostRepositoryImpl extends PostQueryMethod implements PostRepositor
     private final JPAQueryFactory jpaQueryFactory;
 
     @Override
-    public Slice<PostPreviewResponse> findInCenterByKeyword(Collection<Long> centerIds, String keyword, Pageable pageable) {
-        List<PostPreviewResponse> posts = jpaQueryFactory.select(new QPostPreviewResponse(post))
+    public Slice<PostPreviewDto> findInCenterByKeyword(Collection<Long> centerIds, String keyword, Pageable pageable) {
+        List<PostPreviewDto> posts = jpaQueryFactory.select(new QPostPreviewDto(post))
                 .from(post)
                 .join(post.board, board).fetchJoin()
                 .leftJoin(board.center, center).fetchJoin()
@@ -41,8 +41,8 @@ public class PostRepositoryImpl extends PostQueryMethod implements PostRepositor
     }
 
     @Override
-    public Slice<PostPreviewResponse> findByCenterAndKeyword(Long centerId, String keyword, Pageable pageable) {
-        List<PostPreviewResponse> posts = jpaQueryFactory.select(new QPostPreviewResponse(post))
+    public Slice<PostPreviewDto> findByCenterAndKeyword(Long centerId, String keyword, Pageable pageable) {
+        List<PostPreviewDto> posts = jpaQueryFactory.select(new QPostPreviewDto(post))
                 .from(post)
                 .join(post.board, board).fetchJoin()
                 .leftJoin(board.center, center).fetchJoin()
@@ -62,8 +62,8 @@ public class PostRepositoryImpl extends PostQueryMethod implements PostRepositor
     }
 
     @Override
-    public Slice<PostPreviewResponse> findByBoardAndKeyword(Long boardId, String keyword, Pageable pageable) {
-        List<PostPreviewResponse> posts = jpaQueryFactory.select(new QPostPreviewResponse(post))
+    public Slice<PostPreviewDto> findByBoardAndKeyword(Long boardId, String keyword, Pageable pageable) {
+        List<PostPreviewDto> posts = jpaQueryFactory.select(new QPostPreviewDto(post))
                 .from(post)
                 .join(post.board, board).fetchJoin()
                 .where(board.id.eq(boardId), keywordContains(keyword))
@@ -82,8 +82,8 @@ public class PostRepositoryImpl extends PostQueryMethod implements PostRepositor
     }
 
     @Override
-    public Slice<PostPreviewResponse> findHotPosts(Long centerId, Integer heartCnt, Pageable pageable) {
-        List<PostPreviewResponse> posts = jpaQueryFactory.select(new QPostPreviewResponse(post))
+    public Slice<PostPreviewDto> findHotPosts(Long centerId, Integer heartCnt, Pageable pageable) {
+        List<PostPreviewDto> posts = jpaQueryFactory.select(new QPostPreviewDto(post))
                 .from(post)
                 .join(post.board, board).fetchJoin()
                 .leftJoin(board.center, center).fetchJoin()

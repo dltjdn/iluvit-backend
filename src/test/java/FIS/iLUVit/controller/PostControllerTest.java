@@ -648,14 +648,14 @@ class PostControllerTest {
         //given
         String url = "/user/post/all/search";
 
-        List<PostPreviewResponse> previewList = Arrays.asList(
-                new PostPreviewResponse(post1),
-                new PostPreviewResponse(post10),
-                new PostPreviewResponse(post11),
-                new PostPreviewResponse(post12),
-                new PostPreviewResponse(post13)
+        List<PostPreviewDto> previewList = Arrays.asList(
+                new PostPreviewDto(post1),
+                new PostPreviewDto(post10),
+                new PostPreviewDto(post11),
+                new PostPreviewDto(post12),
+                new PostPreviewDto(post13)
         );
-        Slice<PostPreviewResponse> previewSlice = new SliceImpl<>
+        Slice<PostPreviewDto> previewSlice = new SliceImpl<>
                 (previewList, PageRequest.of(0, 10), false);
 
         Mockito.doReturn(previewSlice)
@@ -715,14 +715,14 @@ class PostControllerTest {
         //given
         String url = "/post/search/inBoard";
 
-        List<PostPreviewResponse> previewList = Arrays.asList(
-                new PostPreviewResponse(post1),
-                new PostPreviewResponse(post2),
-                new PostPreviewResponse(post3),
-                new PostPreviewResponse(post4)
+        List<PostPreviewDto> previewList = Arrays.asList(
+                new PostPreviewDto(post1),
+                new PostPreviewDto(post2),
+                new PostPreviewDto(post3),
+                new PostPreviewDto(post4)
         );
 
-        Slice<PostPreviewResponse> previewSlice = new SliceImpl<>
+        Slice<PostPreviewDto> previewSlice = new SliceImpl<>
                 (previewList, PageRequest.of(0, 10), false);
 
         Mockito.doReturn(previewSlice)
@@ -751,14 +751,14 @@ class PostControllerTest {
         //given
         String url = "/post/search/hotBoard";
 
-        List<PostPreviewResponse> previewList = Arrays.asList(
-                new PostPreviewResponse(post1),
-                new PostPreviewResponse(post2),
-                new PostPreviewResponse(post3),
-                new PostPreviewResponse(post4)
+        List<PostPreviewDto> previewList = Arrays.asList(
+                new PostPreviewDto(post1),
+                new PostPreviewDto(post2),
+                new PostPreviewDto(post3),
+                new PostPreviewDto(post4)
         );
 
-        Slice<PostPreviewResponse> previewSlice = new SliceImpl<>
+        Slice<PostPreviewDto> previewSlice = new SliceImpl<>
                 (previewList, PageRequest.of(0, 10), false);
 
         Mockito.doReturn(previewSlice)
@@ -786,14 +786,14 @@ class PostControllerTest {
         //given
         String url = "/user/post/mypage";
 
-        List<PostPreviewResponse> previewList = Arrays.asList(
-                new PostPreviewResponse(post1),
-                new PostPreviewResponse(post2),
-                new PostPreviewResponse(post3),
-                new PostPreviewResponse(post4)
+        List<PostPreviewDto> previewList = Arrays.asList(
+                new PostPreviewDto(post1),
+                new PostPreviewDto(post2),
+                new PostPreviewDto(post3),
+                new PostPreviewDto(post4)
         );
 
-        Slice<PostPreviewResponse> previewSlice = new SliceImpl<>
+        Slice<PostPreviewDto> previewSlice = new SliceImpl<>
                 (previewList, PageRequest.of(0, 10), false);
 
 

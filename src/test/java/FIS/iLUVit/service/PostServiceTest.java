@@ -460,14 +460,14 @@ class PostServiceTest {
                 .when(userRepository)
                 .findById(parent1.getId());
 
-        List<PostPreviewResponse> previewList = Arrays.asList(
-                new PostPreviewResponse(post1),
-                new PostPreviewResponse(post10),
-                new PostPreviewResponse(post11),
-                new PostPreviewResponse(post12),
-                new PostPreviewResponse(post13)
+        List<PostPreviewDto> previewList = Arrays.asList(
+                new PostPreviewDto(post1),
+                new PostPreviewDto(post10),
+                new PostPreviewDto(post11),
+                new PostPreviewDto(post12),
+                new PostPreviewDto(post13)
         );
-        Slice<PostPreviewResponse> previewSlice = new SliceImpl<>
+        Slice<PostPreviewDto> previewSlice = new SliceImpl<>
                 (previewList, PageRequest.of(0, 10), false);
 
         List<Child> children = Arrays.asList(child1, child2, child3);
@@ -482,7 +482,7 @@ class PostServiceTest {
                 .findInCenterByKeyword(centerIds, keyword, PageRequest.of(0, 10));
 
         //when
-        Slice<PostPreviewResponse> result = postService
+        Slice<PostPreviewDto> result = postService
                 .searchByKeyword(keyword, parent1.getId(), PageRequest.of(0, 10));
         //then
 
@@ -498,8 +498,8 @@ class PostServiceTest {
                 .when(userRepository)
                 .findById(teacher2.getId());
 
-        List<PostPreviewResponse> previewList = new ArrayList<>();
-        Slice<PostPreviewResponse> previewSlice = new SliceImpl<>
+        List<PostPreviewDto> previewList = new ArrayList<>();
+        Slice<PostPreviewDto> previewSlice = new SliceImpl<>
                 (previewList, PageRequest.of(0, 10), false);
 
         Set<Long> centerIds = new HashSet<>();
@@ -509,7 +509,7 @@ class PostServiceTest {
                 .findInCenterByKeyword(centerIds, keyword, PageRequest.of(0, 10));
 
         //when
-        Slice<PostPreviewResponse> result = postService
+        Slice<PostPreviewDto> result = postService
                 .searchByKeyword(keyword, teacher2.getId(), PageRequest.of(0, 10));
         //then
 
@@ -526,12 +526,12 @@ class PostServiceTest {
                 .when(userRepository)
                 .findById(teacher2.getId());
 
-        List<PostPreviewResponse> previewList = Arrays.asList(
-                new PostPreviewResponse(post12),
-                new PostPreviewResponse(post13)
+        List<PostPreviewDto> previewList = Arrays.asList(
+                new PostPreviewDto(post12),
+                new PostPreviewDto(post13)
         );
 
-        Slice<PostPreviewResponse> previewSlice = new SliceImpl<>
+        Slice<PostPreviewDto> previewSlice = new SliceImpl<>
                 (previewList, PageRequest.of(0, 10), false);
 
         Set<Long> centerIds = Set.of(center3.getId());
@@ -541,7 +541,7 @@ class PostServiceTest {
                 .findInCenterByKeyword(centerIds, keyword, PageRequest.of(0, 10));
 
         //when
-        Slice<PostPreviewResponse> result = postService
+        Slice<PostPreviewDto> result = postService
                 .searchByKeyword(keyword, teacher2.getId(), PageRequest.of(0, 10));
         //then
 
@@ -574,14 +574,14 @@ class PostServiceTest {
                 .when(userRepository)
                 .findChildren(parent1.getId());
 
-        List<PostPreviewResponse> previewList = Arrays.asList(
-                new PostPreviewResponse(post1),
-                new PostPreviewResponse(post10),
-                new PostPreviewResponse(post11),
-                new PostPreviewResponse(post12),
-                new PostPreviewResponse(post13)
+        List<PostPreviewDto> previewList = Arrays.asList(
+                new PostPreviewDto(post1),
+                new PostPreviewDto(post10),
+                new PostPreviewDto(post11),
+                new PostPreviewDto(post12),
+                new PostPreviewDto(post13)
         );
-        Slice<PostPreviewResponse> previewSlice = new SliceImpl<>
+        Slice<PostPreviewDto> previewSlice = new SliceImpl<>
                 (previewList, PageRequest.of(0, 10), false);
 
         Mockito.doReturn(previewSlice)
@@ -590,7 +590,7 @@ class PostServiceTest {
 
 
         //when
-        Slice<PostPreviewResponse> result = postService.searchByKeywordAndCenter(
+        Slice<PostPreviewDto> result = postService.searchByKeywordAndCenter(
                 center1.getId(), "1", Auth.PARENT, parent1.getId(), PageRequest.of(0, 10));
         //then
         assertThat(objectMapper.writeValueAsString(result))
@@ -620,10 +620,10 @@ class PostServiceTest {
                 .when(userRepository)
                 .findTeacherById(teacher1.getId());
 
-        List<PostPreviewResponse> previewList = Arrays.asList(
-                new PostPreviewResponse(post1)
+        List<PostPreviewDto> previewList = Arrays.asList(
+                new PostPreviewDto(post1)
         );
-        Slice<PostPreviewResponse> previewSlice = new SliceImpl<>
+        Slice<PostPreviewDto> previewSlice = new SliceImpl<>
                 (previewList, PageRequest.of(0, 10), false);
 
         Mockito.doReturn(previewSlice)
@@ -631,7 +631,7 @@ class PostServiceTest {
                 .findByCenterAndKeyword(center1.getId(), "1", PageRequest.of(0, 10));
 
         //when
-        Slice<PostPreviewResponse> result = postService.searchByKeywordAndCenter(
+        Slice<PostPreviewDto> result = postService.searchByKeywordAndCenter(
                 center1.getId(), "1", Auth.TEACHER, teacher1.getId(), PageRequest.of(0, 10));
 
         //then
@@ -642,20 +642,20 @@ class PostServiceTest {
     @Test
     public void 게시판_내_검색_성공() throws Exception {
         //given
-        List<PostPreviewResponse> previewList = Arrays.asList(
-                new PostPreviewResponse(post1),
-                new PostPreviewResponse(post2),
-                new PostPreviewResponse(post3),
-                new PostPreviewResponse(post4)
+        List<PostPreviewDto> previewList = Arrays.asList(
+                new PostPreviewDto(post1),
+                new PostPreviewDto(post2),
+                new PostPreviewDto(post3),
+                new PostPreviewDto(post4)
         );
-        Slice<PostPreviewResponse> previewSlice = new SliceImpl<>
+        Slice<PostPreviewDto> previewSlice = new SliceImpl<>
                 (previewList, PageRequest.of(0, 10), false);
 
         Mockito.doReturn(previewSlice)
                 .when(postRepository)
                 .findByBoardAndKeyword(board1.getId(), "제목", PageRequest.of(0, 10));
         //when
-        Slice<PostPreviewResponse> result = postService
+        Slice<PostPreviewDto> result = postService
                 .searchByKeywordAndBoard(board1.getId(), "제목", PageRequest.of(0, 10));
         //then
         assertThat(objectMapper.writeValueAsString(result))
@@ -667,13 +667,13 @@ class PostServiceTest {
         //given
         List<Post> postList = Arrays.asList(post1, post2, post3, post4);
         Slice<Post> postSlice = new SliceImpl<>(postList, PageRequest.of(0, 10), false);
-        Slice<PostPreviewResponse> postPreviewSlice = postSlice.map(post -> new PostPreviewResponse(post));
+        Slice<PostPreviewDto> postPreviewSlice = postSlice.map(post -> new PostPreviewDto(post));
 
         Mockito.doReturn(postSlice)
                 .when(postRepository)
                 .findByUser(parent1.getId(), PageRequest.of(0, 10));
         //when
-        Slice<PostPreviewResponse> result = postService.searchByUser(parent1.getId(), PageRequest.of(0, 10));
+        Slice<PostPreviewDto> result = postService.searchByUser(parent1.getId(), PageRequest.of(0, 10));
         //then
         assertThat(objectMapper.writeValueAsString(result))
                 .isEqualTo(objectMapper.writeValueAsString(postPreviewSlice));
@@ -1003,17 +1003,17 @@ class PostServiceTest {
         PostHeart postHeart4 = new PostHeart(parent1, post91);
         PostHeart postHeart5 = new PostHeart(parent1, post91);
 
-        PostPreviewResponse preview1 = new PostPreviewResponse(post90);
-        PostPreviewResponse preview2 = new PostPreviewResponse(post91);
+        PostPreviewDto preview1 = new PostPreviewDto(post90);
+        PostPreviewDto preview2 = new PostPreviewDto(post91);
 
-        SliceImpl<PostPreviewResponse> previewSlice = new SliceImpl<>
+        SliceImpl<PostPreviewDto> previewSlice = new SliceImpl<>
                 (Arrays.asList(preview1, preview2), PageRequest.of(0, 10), false);
 
         Mockito.doReturn(previewSlice)
                 .when(postRepository)
                 .findHotPosts(null, Criteria.HOT_POST_HEART_CNT, PageRequest.of(0, 10));
         //when
-        Slice<PostPreviewResponse> result = postService
+        Slice<PostPreviewDto> result = postService
                 .findByHeartCnt(null, PageRequest.of(0, 10));
 
         //then

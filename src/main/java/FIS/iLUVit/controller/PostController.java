@@ -28,8 +28,8 @@ public class PostController {
      내용: 내가 쓴 글 리스트
      */
     @GetMapping("mypage")
-    public Slice<PostPreviewResponse> searchPostByUser(@Login Long userId,
-                                        Pageable pageable) {
+    public Slice<PostPreviewDto> searchPostByUser(@Login Long userId,
+                                                  Pageable pageable) {
         return postService.searchByUser(userId, pageable);
     }
 
@@ -41,9 +41,9 @@ public class PostController {
      auth -> 유저 권한
      */
     @GetMapping("search/all")
-    public Slice<PostPreviewResponse> searchPost(@Login Long userId,
-                                                 @RequestParam("input") String input,
-                                                 Pageable pageable) {
+    public Slice<PostPreviewDto> searchPost(@Login Long userId,
+                                            @RequestParam("input") String input,
+                                            Pageable pageable) {
         return postService.searchByKeyword(input, userId, pageable);
     }
 
@@ -64,7 +64,7 @@ public class PostController {
      내용: 게시글 제목+내용+센터 검색 (각 센터 별 검색)
      */
     @GetMapping("search/in-center")
-    public Slice<PostPreviewResponse> searchPostByCenter(
+    public Slice<PostPreviewDto> searchPostByCenter(
             @Login Long userId,
             @ModelAttribute PostSearchRequest requestDTO,
             Pageable pageable) {
@@ -78,7 +78,7 @@ public class PostController {
      내용: 게시글 제목+내용+보드 검색 (각 게시판 별 검색)
      */
     @GetMapping("search/in-board")
-    public Slice<PostPreviewResponse> searchPostByBoard(
+    public Slice<PostPreviewDto> searchPostByBoard(
             @RequestParam("board_id") Long boardId,
             @RequestParam(value = "input", required = false) String input,
             Pageable pageable) {
@@ -91,7 +91,7 @@ public class PostController {
      내용: HOT 게시판 글 목록 조회
      */
     @GetMapping("search/hot-board")
-    public Slice<PostPreviewResponse> searchHotPosts(
+    public Slice<PostPreviewDto> searchHotPosts(
             @RequestParam(value = "center_id", required = false) Long centerId,
             Pageable pageable) {
         return postService.findByHeartCnt(centerId, pageable);

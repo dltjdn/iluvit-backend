@@ -13,7 +13,7 @@ import java.util.List;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class PostPreviewResponse {
+public class PostPreviewDto {
 
     private Long post_id;
     private String title;
@@ -37,7 +37,7 @@ public class PostPreviewResponse {
     private String center_name;
 
     @QueryProjection
-    public PostPreviewResponse(Post post) {
+    public PostPreviewDto(Post post) {
         this.post_id = post.getId();
         this.title = post.getTitle();
         this.content = post.getContent();
