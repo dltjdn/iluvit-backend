@@ -18,6 +18,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
@@ -207,22 +208,23 @@ public class ChildService {
      * 작성자: 이승범
      * 작성내용: 아이 승인 페이지를 위한 시설에 등록된 아이들 정보 조회
      */
-    public ChildApprovalListResponse findChildApprovalInfoList(Long userId) {
+    public List<ChildInfoForAdminDto> findChildApprovalInfoList(Long userId) {
         // 사용자가 속한 시설의 아이들 끌어오기
         Teacher teacher = teacherRepository.findByIdWithCenterWithChildWithParent(userId)
                 .orElseThrow(() -> new UserException(UserErrorResult.HAVE_NOT_AUTHORIZATION));
 
-        ChildApprovalListResponse response = new ChildApprovalListResponse();
+        List<ChildInfoForAdminDto> response = new ArrayList<>();
 
         teacher.getCenter().getChildren().forEach(child -> {
             // 해당시설에 대해 거절/삭제 당하지 않은 아이들만 보여주기
             if (child.getApproval() != Approval.REJECT) {
 
-                ChildApprovalListResponse.ChildInfoForAdmin childInfo =
-                        new ChildApprovalListResponse.ChildInfoForAdmin(child);
+                ChildInfoForAdminDto childInfo =
+                        new ChildInfoForAdminDto(child);
+
                 childInfo.setChild_profileImg(imageService.getProfileImage(child));
 
-                response.getData().add(childInfo);
+                response.add(childInfo);
             }
         });
         return response;

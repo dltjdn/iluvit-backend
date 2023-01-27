@@ -162,9 +162,9 @@ public class ChildServiceTest {
                 .when(imageService)
                 .getProfileImage(any(Child.class));
         // when
-        ChildApprovalListResponse result = target.findChildApprovalInfoList(director.getId());
+        List<ChildInfoForAdminDto> result = target.findChildApprovalInfoList(director.getId());
         // then
-        assertThat(result.getData().size()).isEqualTo(3);
+        assertThat(result.size()).isEqualTo(3);
     }
 
     @Nested
