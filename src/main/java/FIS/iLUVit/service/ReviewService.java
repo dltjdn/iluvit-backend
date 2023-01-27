@@ -98,16 +98,16 @@ public class ReviewService {
         reviewRepository.delete(findReview);
     }
 
-    public ReviewByCenterDto findByCenter(Long centerId, Pageable pageable) {
+    public Slice<ReviewByCenterDto> findByCenter(Long centerId, Pageable pageable) {
         // getParent 지연 로딩 쿼리 막음
         Slice<Review> reviews = reviewRepository.findByCenter(centerId, pageable);
 
-        Slice<ReviewByCenterDto.ReviewCenterDto> dtos = reviews.map(review -> {
+        Slice<ReviewByCenterDto> reviewByCenterDtos = reviews.map(review -> {
+
             Integer like = review.getReviewHearts().size();
-//            String imagePath = imageService.getUserProfileDir();
-//            String encodedProfileImage = imageService.getEncodedProfileImage(imagePath, review.getParent().getId());
             Long teacherId = review.getTeacher() == null ? null : review.getTeacher().getId();
-            return new ReviewByCenterDto.ReviewCenterDto(
+
+            return new ReviewByCenterDto(
                     review.getId(), review.getParent().getId(), review.getParent().getNickName(), review.getContent(), review.getScore(),
                     review.getCreateDate(), review.getCreateTime(), review.getUpdateDate(), review.getUpdateTime(),
                     teacherId, review.getAnswer(), review.getAnswerCreateDate(), review.getAnswerCreateTime(),
@@ -115,7 +115,7 @@ public class ReviewService {
             );
         });
 
-        return new ReviewByCenterDto(dtos);
+        return reviewByCenterDtos;
     }
 
     public Long saveComment(Long reviewId, String comment, Long teacherId) {

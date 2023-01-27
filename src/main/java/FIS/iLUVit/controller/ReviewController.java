@@ -5,6 +5,7 @@ import FIS.iLUVit.controller.dto.*;
 import FIS.iLUVit.service.ReviewService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Slice;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -61,8 +62,8 @@ public class ReviewController {
         내용: 센터에 올라온 리뷰들 조회
     */
     @GetMapping("center/{centerId}")
-    public ReviewByCenterDto searchByCenter(@PathVariable(name = "centerId") Long centerId,
-                                            Pageable pageable) {
+    public Slice<ReviewByCenterDto> searchByCenter(@PathVariable(name = "centerId") Long centerId,
+                                                   Pageable pageable) {
         return reviewService.findByCenter(centerId, pageable);
     }
 

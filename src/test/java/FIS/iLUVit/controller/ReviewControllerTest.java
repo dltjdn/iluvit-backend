@@ -73,7 +73,7 @@ class ReviewControllerTest {
     ReviewDetailDto reviewCreateDTO = new ReviewDetailDto();
     ReviewDto reviewDTO = new ReviewDto();
     ReviewCommentDto reviewCommentDTO = new ReviewCommentDto();
-    ReviewByCenterDto reviewByCenterDTO = new ReviewByCenterDto();
+
 
     @BeforeEach
     public void init() {
@@ -490,8 +490,8 @@ class ReviewControllerTest {
     }
 
     @NotNull
-    private ReviewByCenterDto.ReviewCenterDto getReviewCenterDto(Review review, String imagePath, Long teacherId) {
-        return new ReviewByCenterDto.ReviewCenterDto(review.getId(), review.getParent().getId(),
+    private ReviewByCenterDto getReviewCenterDto(Review review, String imagePath, Long teacherId) {
+        return new ReviewByCenterDto(review.getId(), review.getParent().getId(),
                 review.getParent().getNickName(), review.getContent(), review.getScore(),
                 review.getCreateDate(), review.getCreateTime(), review.getUpdateDate(),
                 review.getUpdateTime(), teacherId, review.getAnswer(),
@@ -502,14 +502,13 @@ class ReviewControllerTest {
     public void 센터에_올라온_리뷰들_조회() throws Exception {
         //given
         String imagePath = "/Desktop/User";
-        ReviewByCenterDto.ReviewCenterDto reviewCenterDto1 = getReviewCenterDto(review1, imagePath, teacher1.getId());
-        ReviewByCenterDto.ReviewCenterDto reviewCenterDto2 = getReviewCenterDto(review2, imagePath, null);
-        ReviewByCenterDto.ReviewCenterDto reviewCenterDto3 = getReviewCenterDto(review3, imagePath, null);
-        List<ReviewByCenterDto.ReviewCenterDto> reviewCenterDtos = Arrays.asList(reviewCenterDto1, reviewCenterDto2, reviewCenterDto3);
-        Slice<ReviewByCenterDto.ReviewCenterDto> dtoSlice = new SliceImpl<>(reviewCenterDtos);
-        reviewByCenterDTO.setReviews(dtoSlice);
+        ReviewByCenterDto reviewCenterDto1 = getReviewCenterDto(review1, imagePath, teacher1.getId());
+        ReviewByCenterDto reviewCenterDto2 = getReviewCenterDto(review2, imagePath, null);
+        ReviewByCenterDto reviewCenterDto3 = getReviewCenterDto(review3, imagePath, null);
+        List<ReviewByCenterDto> reviewCenterList = Arrays.asList(reviewCenterDto1, reviewCenterDto2, reviewCenterDto3);
+        Slice<ReviewByCenterDto> reviewByCenterDtos = new SliceImpl<>(reviewCenterList);
 
-        Mockito.doReturn(reviewByCenterDTO)
+        Mockito.doReturn(reviewByCenterDtos)
                 .when(reviewService)
                 .findByCenter(center1.getId(), PageRequest.of(0, 10));
 
@@ -525,7 +524,7 @@ class ReviewControllerTest {
         resultActions.andDo(print())
                 .andExpect(status().isOk())
                 .andExpect(MockMvcResultMatchers.content().json(
-                        objectMapper.writeValueAsString(reviewByCenterDTO)
+                        objectMapper.writeValueAsString(reviewByCenterDtos)
                 ));
 
     }
