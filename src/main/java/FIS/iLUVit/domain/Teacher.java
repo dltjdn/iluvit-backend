@@ -1,9 +1,9 @@
 package FIS.iLUVit.domain;
 
-import FIS.iLUVit.controller.dto.LoginTeacherResponse;
-import FIS.iLUVit.controller.dto.TeacherResponse;
-import FIS.iLUVit.controller.dto.TeacherDetailRequest;
-import FIS.iLUVit.controller.dto.UserResponse;
+import FIS.iLUVit.dto.teacher.LoginTeacherResponse;
+import FIS.iLUVit.dto.teacher.TeacherResponse;
+import FIS.iLUVit.dto.teacher.TeacherDetailRequest;
+import FIS.iLUVit.dto.user.UserResponse;
 import FIS.iLUVit.domain.enumtype.Approval;
 import FIS.iLUVit.domain.enumtype.Auth;
 import FIS.iLUVit.exception.CenterErrorResult;

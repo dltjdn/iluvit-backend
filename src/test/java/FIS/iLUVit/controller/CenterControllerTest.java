@@ -2,10 +2,10 @@ package FIS.iLUVit.controller;
 
 import FIS.iLUVit.Creator;
 import FIS.iLUVit.config.argumentResolver.LoginUserArgumentResolver;
-import FIS.iLUVit.controller.dto.CenterBannerResponse;
-import FIS.iLUVit.controller.dto.CenterDto;
-import FIS.iLUVit.controller.dto.CenterRequest;
-import FIS.iLUVit.controller.dto.CenterDetailRequest;
+import FIS.iLUVit.dto.center.CenterBannerResponse;
+import FIS.iLUVit.dto.center.CenterDto;
+import FIS.iLUVit.dto.center.CenterRequest;
+import FIS.iLUVit.dto.center.CenterDetailRequest;
 import FIS.iLUVit.controller.messagecreate.ResponseRequests;
 import FIS.iLUVit.domain.Center;
 import FIS.iLUVit.domain.Parent;

@@ -1,9 +1,9 @@
 package FIS.iLUVit.service;
 
 import FIS.iLUVit.Creator;
-import FIS.iLUVit.controller.dto.ReviewByCenterDto;
-import FIS.iLUVit.controller.dto.ReviewByParentDto;
-import FIS.iLUVit.controller.dto.ReviewDetailDto;
+import FIS.iLUVit.dto.review.ReviewByCenterDto;
+import FIS.iLUVit.dto.review.ReviewByParentDto;
+import FIS.iLUVit.dto.review.ReviewDetailDto;
 import FIS.iLUVit.domain.*;
 import FIS.iLUVit.domain.enumtype.Approval;
 import FIS.iLUVit.domain.enumtype.Auth;

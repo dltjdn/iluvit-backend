@@ -1,11 +1,12 @@
 package FIS.iLUVit.controller;
 
 import FIS.iLUVit.config.argumentResolver.Login;
-import FIS.iLUVit.controller.dto.*;
+import FIS.iLUVit.controller.dto.center.*;
+import FIS.iLUVit.dto.center.*;
 import FIS.iLUVit.exception.UserErrorResult;
 import FIS.iLUVit.exception.UserException;
-import FIS.iLUVit.repository.dto.CenterAndDistancePreviewDto;
-import FIS.iLUVit.repository.dto.CenterMapPreviewDto;
+import FIS.iLUVit.dto.center.CenterAndDistancePreviewDto;
+import FIS.iLUVit.dto.center.CenterMapPreviewDto;
 import FIS.iLUVit.service.CenterService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;

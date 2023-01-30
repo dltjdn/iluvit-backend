@@ -1,7 +1,12 @@
 package FIS.iLUVit.controller;
 
 import FIS.iLUVit.config.argumentResolver.Login;
-import FIS.iLUVit.controller.dto.*;
+import FIS.iLUVit.dto.center.CenterDto;
+import FIS.iLUVit.dto.center.CenterRequest;
+import FIS.iLUVit.dto.teacher.SignupTeacherRequest;
+import FIS.iLUVit.dto.teacher.TeacherDetailRequest;
+import FIS.iLUVit.dto.teacher.TeacherDetailResponse;
+import FIS.iLUVit.dto.teacher.TeacherInfoForAdminDto;
 import FIS.iLUVit.service.TeacherService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;

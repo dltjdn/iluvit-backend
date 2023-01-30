@@ -1,9 +1,9 @@
 package FIS.iLUVit.service;
 
 import FIS.iLUVit.Creator;
-import FIS.iLUVit.controller.dto.ParentDetailRequest;
-import FIS.iLUVit.controller.dto.ParentDetailResponse;
-import FIS.iLUVit.controller.dto.SignupParentRequest;
+import FIS.iLUVit.dto.parent.ParentDetailRequest;
+import FIS.iLUVit.dto.parent.ParentDetailResponse;
+import FIS.iLUVit.dto.parent.SignupParentRequest;
 import FIS.iLUVit.domain.Board;
 import FIS.iLUVit.domain.Center;
 import FIS.iLUVit.domain.Parent;

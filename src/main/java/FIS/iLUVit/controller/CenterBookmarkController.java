@@ -1,7 +1,7 @@
 package FIS.iLUVit.controller;
 
 import FIS.iLUVit.config.argumentResolver.Login;
-import FIS.iLUVit.repository.dto.CenterPreviewDto;
+import FIS.iLUVit.dto.center.CenterPreviewDto;
 import FIS.iLUVit.service.CenterBookmarkService;
 import FIS.iLUVit.service.ParentService;
 import lombok.RequiredArgsConstructor;

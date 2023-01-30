@@ -1,7 +1,7 @@
 package FIS.iLUVit.service;
 
 import FIS.iLUVit.Creator;
-import FIS.iLUVit.controller.dto.ReportRequest;
+import FIS.iLUVit.dto.report.ReportRequest;
 import FIS.iLUVit.domain.*;
 import FIS.iLUVit.domain.enumtype.ReportType;
 import FIS.iLUVit.domain.reports.Report;

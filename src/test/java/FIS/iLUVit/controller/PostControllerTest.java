@@ -2,7 +2,10 @@ package FIS.iLUVit.controller;
 
 import FIS.iLUVit.Creator;
 import FIS.iLUVit.config.argumentResolver.LoginUserArgumentResolver;
-import FIS.iLUVit.controller.dto.*;
+import FIS.iLUVit.dto.board.BoardPreviewDto;
+import FIS.iLUVit.dto.post.PostPreviewDto;
+import FIS.iLUVit.dto.post.PostRequest;
+import FIS.iLUVit.dto.post.PostResponse;
 import FIS.iLUVit.domain.*;
 import FIS.iLUVit.domain.enumtype.Approval;
 import FIS.iLUVit.domain.enumtype.Auth;

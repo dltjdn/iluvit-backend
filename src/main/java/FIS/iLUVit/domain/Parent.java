@@ -1,9 +1,9 @@
 package FIS.iLUVit.domain;
 
-import FIS.iLUVit.controller.dto.LoginParentResponse;
-import FIS.iLUVit.controller.dto.ParentDetailRequest;
-import FIS.iLUVit.controller.dto.ParentResponse;
-import FIS.iLUVit.controller.dto.UserResponse;
+import FIS.iLUVit.dto.parent.LoginParentResponse;
+import FIS.iLUVit.dto.parent.ParentDetailRequest;
+import FIS.iLUVit.dto.parent.ParentResponse;
+import FIS.iLUVit.dto.user.UserResponse;
 import FIS.iLUVit.domain.embeddable.Theme;
 import FIS.iLUVit.domain.enumtype.Auth;
 import FIS.iLUVit.security.LoginResponse;

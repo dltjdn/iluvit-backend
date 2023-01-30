@@ -1,12 +1,12 @@
 package FIS.iLUVit.repository;
 
 import FIS.iLUVit.config.argumentResolver.ForDB;
-import FIS.iLUVit.controller.dto.PresentationForUserResponse;
+import FIS.iLUVit.dto.presentation.PresentationForUserResponse;
 import FIS.iLUVit.domain.*;
 import FIS.iLUVit.domain.embeddable.Area;
 import FIS.iLUVit.domain.embeddable.Theme;
 import FIS.iLUVit.domain.enumtype.KindOf;
-import FIS.iLUVit.repository.dto.PresentationWithPtDatesDto;
+import FIS.iLUVit.dto.presentation.PresentationWithPtDatesDto;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;

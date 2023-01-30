@@ -1,8 +1,8 @@
 package FIS.iLUVit.controller;
 
 import FIS.iLUVit.config.argumentResolver.Login;
-import FIS.iLUVit.controller.dto.CommentDto;
-import FIS.iLUVit.controller.dto.CommentRequest;
+import FIS.iLUVit.dto.comment.CommentDto;
+import FIS.iLUVit.dto.comment.CommentRequest;
 import FIS.iLUVit.service.CommentService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;

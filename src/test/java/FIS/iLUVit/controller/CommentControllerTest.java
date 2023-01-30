@@ -2,8 +2,8 @@ package FIS.iLUVit.controller;
 
 import FIS.iLUVit.Creator;
 import FIS.iLUVit.config.argumentResolver.LoginUserArgumentResolver;
-import FIS.iLUVit.controller.dto.CommentDto;
-import FIS.iLUVit.controller.dto.CommentRequest;
+import FIS.iLUVit.dto.comment.CommentDto;
+import FIS.iLUVit.dto.comment.CommentRequest;
 import FIS.iLUVit.domain.*;
 import FIS.iLUVit.domain.enumtype.Auth;
 import FIS.iLUVit.domain.enumtype.BoardKind;

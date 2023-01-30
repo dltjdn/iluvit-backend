@@ -2,7 +2,7 @@ package FIS.iLUVit.controller;
 
 import FIS.iLUVit.Creator;
 import FIS.iLUVit.config.argumentResolver.LoginUserArgumentResolver;
-import FIS.iLUVit.controller.dto.ChildDto;
+import FIS.iLUVit.dto.child.ChildDto;
 import FIS.iLUVit.domain.Center;
 import FIS.iLUVit.domain.Child;
 import FIS.iLUVit.domain.Parent;

@@ -1,8 +1,8 @@
 package FIS.iLUVit.controller;
 
 import FIS.iLUVit.config.argumentResolver.Login;
-import FIS.iLUVit.controller.dto.WaitingCancelDto;
-import FIS.iLUVit.controller.dto.WaitingRegisterDto;
+import FIS.iLUVit.dto.waiting.WaitingCancelDto;
+import FIS.iLUVit.dto.waiting.WaitingRegisterDto;
 import FIS.iLUVit.exception.UserErrorResult;
 import FIS.iLUVit.exception.UserException;
 import FIS.iLUVit.service.WaitingService;

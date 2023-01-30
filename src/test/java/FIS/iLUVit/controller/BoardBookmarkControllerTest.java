@@ -1,7 +1,7 @@
 package FIS.iLUVit.controller;
 
 import FIS.iLUVit.config.argumentResolver.LoginUserArgumentResolver;
-import FIS.iLUVit.controller.dto.StoryDto;
+import FIS.iLUVit.dto.board.StoryDto;
 import FIS.iLUVit.domain.Board;
 import FIS.iLUVit.domain.Bookmark;
 import FIS.iLUVit.domain.Parent;

@@ -1,10 +1,11 @@
 package FIS.iLUVit.service;
 
-import FIS.iLUVit.controller.dto.*;
+import FIS.iLUVit.controller.dto.scrap.*;
 import FIS.iLUVit.domain.Post;
 import FIS.iLUVit.domain.Scrap;
 import FIS.iLUVit.domain.ScrapPost;
 import FIS.iLUVit.domain.User;
+import FIS.iLUVit.dto.scrap.*;
 import FIS.iLUVit.exception.ScrapErrorResult;
 import FIS.iLUVit.exception.ScrapException;
 import FIS.iLUVit.repository.PostRepository;

@@ -1,8 +1,8 @@
 package FIS.iLUVit.controller;
 
 import FIS.iLUVit.config.argumentResolver.Login;
-import FIS.iLUVit.controller.dto.AuthNumRequest;
-import FIS.iLUVit.controller.dto.FindPasswordRequest;
+import FIS.iLUVit.dto.auth.AuthNumRequest;
+import FIS.iLUVit.dto.auth.FindPasswordRequest;
 import FIS.iLUVit.service.AuthService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;

@@ -1,8 +1,8 @@
 package FIS.iLUVit.service;
 
-import FIS.iLUVit.controller.dto.BoardListDto;
-import FIS.iLUVit.controller.dto.BoardRequest;
-import FIS.iLUVit.controller.dto.StoryPreviewDto;
+import FIS.iLUVit.dto.board.BoardListDto;
+import FIS.iLUVit.dto.board.BoardRequest;
+import FIS.iLUVit.dto.board.StoryPreviewDto;
 import FIS.iLUVit.domain.*;
 import FIS.iLUVit.domain.enumtype.Approval;
 import FIS.iLUVit.domain.enumtype.Auth;

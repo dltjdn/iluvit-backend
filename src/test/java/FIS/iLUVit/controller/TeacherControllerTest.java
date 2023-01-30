@@ -2,10 +2,10 @@ package FIS.iLUVit.controller;
 
 import FIS.iLUVit.Creator;
 import FIS.iLUVit.config.argumentResolver.LoginUserArgumentResolver;
-import FIS.iLUVit.controller.dto.SignupTeacherRequest;
-import FIS.iLUVit.controller.dto.TeacherDetailResponse;
-import FIS.iLUVit.controller.dto.TeacherDetailRequest;
-import FIS.iLUVit.controller.dto.TeacherInfoForAdminDto;
+import FIS.iLUVit.dto.teacher.SignupTeacherRequest;
+import FIS.iLUVit.dto.teacher.TeacherDetailResponse;
+import FIS.iLUVit.dto.teacher.TeacherDetailRequest;
+import FIS.iLUVit.dto.teacher.TeacherInfoForAdminDto;
 import FIS.iLUVit.domain.Center;
 import FIS.iLUVit.domain.Teacher;
 import FIS.iLUVit.domain.enumtype.Approval;

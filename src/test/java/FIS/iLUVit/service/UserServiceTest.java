@@ -1,10 +1,10 @@
 package FIS.iLUVit.service;
 
 import FIS.iLUVit.Creator;
-import FIS.iLUVit.controller.dto.CheckLoginIdRequest;
-import FIS.iLUVit.controller.dto.CheckNicknameRequest;
-import FIS.iLUVit.controller.dto.PasswordRequest;
-import FIS.iLUVit.controller.dto.UserResponse;
+import FIS.iLUVit.dto.user.CheckLoginIdRequest;
+import FIS.iLUVit.dto.user.CheckNicknameRequest;
+import FIS.iLUVit.dto.user.PasswordRequest;
+import FIS.iLUVit.dto.user.UserResponse;
 import FIS.iLUVit.domain.AuthNumber;
 import FIS.iLUVit.domain.Parent;
 import FIS.iLUVit.domain.User;

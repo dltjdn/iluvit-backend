@@ -2,7 +2,7 @@ package FIS.iLUVit.controller;
 
 import FIS.iLUVit.config.argumentResolver.Login;
 //import FIS.iLUVit.controller.dto.BoardBookmarkDto;
-import FIS.iLUVit.controller.dto.StoryDto;
+import FIS.iLUVit.dto.board.StoryDto;
 import FIS.iLUVit.service.BoardBookmarkService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;

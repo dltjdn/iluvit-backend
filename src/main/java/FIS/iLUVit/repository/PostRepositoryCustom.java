@@ -1,6 +1,6 @@
 package FIS.iLUVit.repository;
 
-import FIS.iLUVit.controller.dto.PostPreviewDto;
+import FIS.iLUVit.dto.post.PostPreviewDto;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
 

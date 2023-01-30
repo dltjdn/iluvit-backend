@@ -1,10 +1,10 @@
 package FIS.iLUVit.repository;
 
-import FIS.iLUVit.controller.dto.PresentationForUserResponse;
+import FIS.iLUVit.dto.presentation.PresentationForUserResponse;
 import FIS.iLUVit.domain.embeddable.Area;
 import FIS.iLUVit.domain.embeddable.Theme;
 import FIS.iLUVit.domain.enumtype.KindOf;
-import FIS.iLUVit.repository.dto.PresentationForUserDto;
+import FIS.iLUVit.dto.presentation.PresentationForUserDto;
 import FIS.iLUVit.repository.dto.QPresentationForUserDto;
 import com.querydsl.core.types.OrderSpecifier;
 import com.querydsl.jpa.impl.JPAQueryFactory;

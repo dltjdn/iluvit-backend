@@ -1,7 +1,10 @@
 package FIS.iLUVit.service;
 
 import FIS.iLUVit.Creator;
-import FIS.iLUVit.controller.dto.*;
+import FIS.iLUVit.dto.teacher.SignupTeacherRequest;
+import FIS.iLUVit.dto.teacher.TeacherDetailRequest;
+import FIS.iLUVit.dto.teacher.TeacherDetailResponse;
+import FIS.iLUVit.dto.teacher.TeacherInfoForAdminDto;
 import FIS.iLUVit.domain.*;
 import FIS.iLUVit.domain.alarms.CenterApprovalAcceptedAlarm;
 import FIS.iLUVit.domain.alarms.CenterApprovalReceivedAlarm;

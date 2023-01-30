@@ -1,6 +1,6 @@
 package FIS.iLUVit.integration;
 
-import FIS.iLUVit.controller.dto.TokenRefreshRequest;
+import FIS.iLUVit.dto.user.TokenRefreshRequest;
 import FIS.iLUVit.domain.Parent;
 import FIS.iLUVit.domain.TokenPair;
 import FIS.iLUVit.domain.User;

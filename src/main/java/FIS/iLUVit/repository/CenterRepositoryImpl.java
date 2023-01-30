@@ -1,7 +1,6 @@
 package FIS.iLUVit.repository;
 
-import FIS.iLUVit.controller.dto.CenterDto;
-import FIS.iLUVit.controller.dto.CenterRecommendDto;
+import FIS.iLUVit.dto.center.*;
 import FIS.iLUVit.controller.dto.QCenterDto;
 import FIS.iLUVit.controller.dto.QCenterRecommendDto;
 import FIS.iLUVit.domain.Location;

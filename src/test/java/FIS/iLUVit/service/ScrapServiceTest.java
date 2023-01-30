@@ -1,8 +1,9 @@
 package FIS.iLUVit.service;
 
 import FIS.iLUVit.Creator;
-import FIS.iLUVit.controller.dto.*;
+import FIS.iLUVit.controller.dto.scrap.*;
 import FIS.iLUVit.domain.*;
+import FIS.iLUVit.dto.scrap.*;
 import FIS.iLUVit.exception.ScrapErrorResult;
 import FIS.iLUVit.exception.ScrapException;
 import FIS.iLUVit.repository.PostRepository;
@@ -24,7 +25,7 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 
-import static FIS.iLUVit.controller.dto.ScrapByPostRequest.*;
+import static FIS.iLUVit.dto.scrap.ScrapByPostRequest.*;
 import static org.assertj.core.api.Assertions.*;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;

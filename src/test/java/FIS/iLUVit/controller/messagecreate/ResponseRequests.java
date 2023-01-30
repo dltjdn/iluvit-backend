@@ -1,23 +1,23 @@
 package FIS.iLUVit.controller.messagecreate;
 
-import FIS.iLUVit.controller.dto.CenterSearchFilterDto;
-import FIS.iLUVit.controller.dto.CenterSearchMapFilterDto;
+import FIS.iLUVit.dto.center.CenterRecommendDto;
+import FIS.iLUVit.dto.center.CenterSearchMapFilterDto;
 import FIS.iLUVit.domain.embeddable.Area;
 import FIS.iLUVit.domain.embeddable.Theme;
 import FIS.iLUVit.domain.enumtype.KindOf;
-import FIS.iLUVit.repository.dto.CenterAndDistancePreviewDto;
-import FIS.iLUVit.repository.dto.CenterPreviewDto;
+import FIS.iLUVit.dto.center.CenterAndDistancePreviewDto;
+import FIS.iLUVit.dto.center.CenterPreviewDto;
 
 import java.util.Arrays;
 import java.util.List;
 
 public class ResponseRequests {
 
-    public CenterSearchFilterDto centerSearchFilterRequest(List<Area> areas){
+    public CenterRecommendDto.CenterSearchFilterDto centerSearchFilterRequest(List<Area> areas){
 
         Theme theme = new Theme(true, false, true, false, true, true, false, false, false, false, true, false, false, false, false, true, false);
 
-        return CenterSearchFilterDto.builder()
+        return CenterRecommendDto.CenterSearchFilterDto.builder()
                 .areas(areas)
                 .interestedAge(4)
                 .kindOf(KindOf.Kindergarten)

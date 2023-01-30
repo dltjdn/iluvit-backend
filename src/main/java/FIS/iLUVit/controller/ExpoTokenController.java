@@ -1,8 +1,8 @@
 package FIS.iLUVit.controller;
 
 import FIS.iLUVit.config.argumentResolver.Login;
-import FIS.iLUVit.controller.dto.ExpoTokenDto;
-import FIS.iLUVit.controller.dto.ExpoTokenRequest;
+import FIS.iLUVit.dto.expoToken.ExpoTokenDto;
+import FIS.iLUVit.dto.expoToken.ExpoTokenRequest;
 import FIS.iLUVit.service.ExpoTokenService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
