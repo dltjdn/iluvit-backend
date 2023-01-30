@@ -1,13 +1,10 @@
 package FIS.iLUVit.repository;
 
 import FIS.iLUVit.dto.center.*;
-import FIS.iLUVit.controller.dto.QCenterDto;
-import FIS.iLUVit.controller.dto.QCenterRecommendDto;
 import FIS.iLUVit.domain.Location;
 import FIS.iLUVit.domain.embeddable.Area;
 import FIS.iLUVit.domain.embeddable.Theme;
 import FIS.iLUVit.domain.enumtype.KindOf;
-import FIS.iLUVit.repository.dto.*;
 import com.querydsl.core.types.Expression;
 import com.querydsl.core.types.dsl.Expressions;
 import com.querydsl.core.types.dsl.NumberExpression;

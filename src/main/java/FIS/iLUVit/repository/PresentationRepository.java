@@ -16,7 +16,7 @@ import java.util.Optional;
 @Repository
 public interface PresentationRepository extends JpaRepository<Presentation, Long>, PresentationRepositoryCustom {
 
-    @Query("select new FIS.iLUVit.repository.dto.PresentationWithPtDatesDto" +
+    @Query("select new FIS.iLUVit.dto.presentation.PresentationWithPtDatesDto" +
             "(p.id, p.startDate, p.endDate, p.place, p.content, p.imgCnt, p.videoCnt, p.infoImagePath, pd.id, pd.date, pd.time, pd.ablePersonNum, pd.participantCnt, pd.waitingCnt) " +
             "from Presentation p " +
             "join p.ptDates as pd " +
@@ -24,7 +24,7 @@ public interface PresentationRepository extends JpaRepository<Presentation, Long
             "and :date <= p.endDate")
     List<PresentationWithPtDatesDto> findByCenterAndDateWithPtDates(@Param("centerId") Long centerId, @Param("date") LocalDate date);
 
-    @Query("select new FIS.iLUVit.repository.dto.PresentationWithPtDatesDto" +
+    @Query("select new FIS.iLUVit.dto.presentation.PresentationWithPtDatesDto" +
             "(p.id, p.startDate, p.endDate, p.place, p.content, p.imgCnt, p.videoCnt, p.infoImagePath, pd.id, pd.date, pd.time, pd.ablePersonNum, pd.participantCnt, pd.waitingCnt, participation.id ,waiting.id) " +
             "from Presentation p " +
             "join p.ptDates as pd " +
@@ -35,7 +35,7 @@ public interface PresentationRepository extends JpaRepository<Presentation, Long
             "and :date <= p.endDate")
     List<PresentationWithPtDatesDto> findByCenterAndDateWithPtDates(@Param("centerId") Long centerId, @Param("date") LocalDate date, @Param("userId") Long userId);
 
-    @Query("select new FIS.iLUVit.repository.dto.PresentationForTeacherDto(p.id, p.startDate, p.endDate, p.place, p.content, p.infoImagePath) " +
+    @Query("select new FIS.iLUVit.dto.presentation.PresentationForTeacherDto(p.id, p.startDate, p.endDate, p.place, p.content, p.infoImagePath) " +
             "from Presentation p " +
             "where p.center.id = :centerId")
     List<PresentationForTeacherDto> findByCenterId(@Param("centerId") Long centerId, Pageable pageable);

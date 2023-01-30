@@ -1,7 +1,6 @@
 package FIS.iLUVit.controller;
 
 import FIS.iLUVit.config.argumentResolver.Login;
-import FIS.iLUVit.controller.dto.review.*;
 import FIS.iLUVit.dto.review.*;
 import FIS.iLUVit.service.ReviewService;
 import lombok.RequiredArgsConstructor;

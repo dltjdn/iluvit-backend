@@ -5,7 +5,7 @@ import FIS.iLUVit.domain.embeddable.Area;
 import FIS.iLUVit.domain.embeddable.Theme;
 import FIS.iLUVit.domain.enumtype.KindOf;
 import FIS.iLUVit.dto.presentation.PresentationForUserDto;
-import FIS.iLUVit.repository.dto.QPresentationForUserDto;
+import FIS.iLUVit.dto.presentation.QPresentationForUserDto;
 import com.querydsl.core.types.OrderSpecifier;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.AllArgsConstructor;

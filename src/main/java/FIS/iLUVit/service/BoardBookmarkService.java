@@ -133,14 +133,13 @@ public class BoardBookmarkService {
     }
 
     public List<StoryDto> searchByDefault() {
-        //BoardBookmarkDto dto = new BoardBookmarkDto();
         List<StoryDto> storyDtos = new ArrayList<>();
         List<Board> defaultBoards = boardRepository.findDefaultByModu();
 
         StoryDto storyDto = new StoryDto(null, "모두의 이야기");
         Map<Board, List<Post>> boardPostMap = boardRepository.findPostByDefault()
                 .stream()
-                .collect(Collectors.groupingBy(p -> p.getBoard()));
+                .collect(Collectors.groupingBy(post -> post.getBoard()));
         updateStoryDto(defaultBoards, boardPostMap, storyDto);
         storyDtos.add(storyDto);
         return storyDtos;

@@ -1,13 +1,12 @@
 package FIS.iLUVit.service;
 
-import FIS.iLUVit.controller.dto.presentation.*;
+import FIS.iLUVit.dto.presentation.*;
 import FIS.iLUVit.domain.*;
 import FIS.iLUVit.domain.alarms.PresentationCreatedAlarm;
 import FIS.iLUVit.domain.embeddable.Area;
 import FIS.iLUVit.domain.embeddable.Theme;
 import FIS.iLUVit.domain.enumtype.KindOf;
 import FIS.iLUVit.domain.enumtype.Status;
-import FIS.iLUVit.dto.presentation.*;
 import FIS.iLUVit.exception.PresentationErrorResult;
 import FIS.iLUVit.exception.PresentationException;
 import FIS.iLUVit.exception.UserErrorResult;

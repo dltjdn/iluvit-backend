@@ -1,7 +1,7 @@
 package FIS.iLUVit.controller;
 
 import FIS.iLUVit.config.argumentResolver.Login;
-import FIS.iLUVit.controller.dto.scrap.*;
+import FIS.iLUVit.dto.scrap.*;
 import FIS.iLUVit.dto.scrap.*;
 import FIS.iLUVit.service.ScrapService;
 import lombok.RequiredArgsConstructor;
