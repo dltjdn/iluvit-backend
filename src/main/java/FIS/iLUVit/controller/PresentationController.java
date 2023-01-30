@@ -81,9 +81,9 @@ public class PresentationController {
      * 리액트 네이티브용 이미지 저장
      */
     @Transactional
-    @PostMapping("{presentationdId}/image")
+    @PostMapping("{presentationId}/image")
     @ResponseStatus(HttpStatus.CREATED)
-    public PresentationResponse registerPresentationImage(@RequestParam Long presentationId,
+    public PresentationResponse registerPresentationImage(@PathVariable("presentationId") Long presentationId,
                                                           @RequestPart(required = false) List<MultipartFile> images,
                                                           @Login Long userId) {
         if (userId == null)
@@ -100,7 +100,7 @@ public class PresentationController {
     @Transactional
     @PatchMapping("{presentationId}/image")
     @ResponseStatus(HttpStatus.ACCEPTED)
-    public PresentationResponse modifyPresentationImage(@RequestParam Long presentationId,
+    public PresentationResponse modifyPresentationImage(@PathVariable("presentationId") Long presentationId,
                                                         @RequestPart(required = false) List<MultipartFile> images,
                                                         @Login Long userId){
         return new PresentationResponse(presentationService.modifyImageWithPtDate(presentationId, images, userId));
