@@ -1,10 +1,7 @@
 package FIS.iLUVit.service;
 
 import FIS.iLUVit.Creator;
-import FIS.iLUVit.controller.dto.SignupTeacherRequest;
-import FIS.iLUVit.controller.dto.TeacherApprovalListResponse;
-import FIS.iLUVit.controller.dto.TeacherDetailResponse;
-import FIS.iLUVit.controller.dto.TeacherDetailRequest;
+import FIS.iLUVit.controller.dto.*;
 import FIS.iLUVit.domain.*;
 import FIS.iLUVit.domain.alarms.CenterApprovalAcceptedAlarm;
 import FIS.iLUVit.domain.alarms.CenterApprovalReceivedAlarm;
@@ -475,10 +472,10 @@ public class TeacherServiceTest {
                     .when(teacherRepository)
                     .findDirectorByIdWithCenterWithTeacher(teacher1.getId());
             // when
-            TeacherApprovalListResponse result = target.findTeacherApprovalList(teacher1.getId());
+            List<TeacherInfoForAdminDto> result = target.findTeacherApprovalList(teacher1.getId());
             // then
             assertThat(result).isNotNull();
-            assertThat(result.getData().size()).isEqualTo(3);
+            assertThat(result.size()).isEqualTo(3);
         }
 
     }
