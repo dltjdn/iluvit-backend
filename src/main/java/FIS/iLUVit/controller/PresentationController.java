@@ -42,7 +42,7 @@ public class PresentationController {
      * 현재날짜에 맞춰서 설명회 기간에 있으면 반환 그렇지 않으면 반환 하지않음 <p>
      * 내용 - 신청기간, 내용, 사진, 동영상, 신청할 수 있는 설명회 목록?
      */
-    @GetMapping("info/centerId/{centerId}")
+    @GetMapping("info/center/{centerId}")
     @ResponseStatus(HttpStatus.ACCEPTED)
     public List<PresentationDetailResponse> findPresentationByCenterId(@PathVariable("centerId") Long centerId, @Login Long userId){
         return presentationService.findPresentationByCenterIdAndDate(centerId, userId);
@@ -82,9 +82,9 @@ public class PresentationController {
      * 리액트 네이티브용 이미지 저장
      */
     @Transactional
-    @PostMapping("{presentationdId}/image")
+    @PostMapping("{presentationId}/image")
     @ResponseStatus(HttpStatus.CREATED)
-    public PresentationResponse registerPresentationImage(@RequestParam Long presentationId,
+    public PresentationResponse registerPresentationImage(@PathVariable("presentationId") Long presentationId,
                                                           @RequestPart(required = false) List<MultipartFile> images,
                                                           @Login Long userId) {
         if (userId == null)
@@ -101,7 +101,7 @@ public class PresentationController {
     @Transactional
     @PatchMapping("{presentationId}/image")
     @ResponseStatus(HttpStatus.ACCEPTED)
-    public PresentationResponse modifyPresentationImage(@RequestParam Long presentationId,
+    public PresentationResponse modifyPresentationImage(@PathVariable("presentationId") Long presentationId,
                                                         @RequestPart(required = false) List<MultipartFile> images,
                                                         @Login Long userId){
         return new PresentationResponse(presentationService.modifyImageWithPtDate(presentationId, images, userId));

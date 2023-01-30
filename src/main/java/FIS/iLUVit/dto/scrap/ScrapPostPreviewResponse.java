@@ -23,6 +23,7 @@ public class ScrapPostPreviewResponse {
     private int imgCnt;
 
     private String previewImage;
+    private Long board_id;
     private String board_name;
 
     private LocalDate date;
@@ -44,6 +45,7 @@ public class ScrapPostPreviewResponse {
         this.commentCnt = sp.getPost().getCommentCnt();
         this.heartCnt = sp.getPost().getHeartCnt();
         this.imgCnt = sp.getPost().getImgCnt();
+        this.board_id = sp.getPost().getBoard().getId();
         this.board_name = sp.getPost().getBoard().getName();
         this.date = sp.getPost().getDate();
         this.time = sp.getPost().getTime();
