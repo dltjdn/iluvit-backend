@@ -123,7 +123,7 @@ public class PostService {
     }
 
     // [모두의 이야기 + 유저가 속한 센터의 이야기] 에서 통합 검색
-    public Slice<PostPreviewResponse> searchByKeyword(String input, Long userId, Pageable pageable) {
+    public Slice<PostPreviewDto> searchByKeyword(String input, Long userId, Pageable pageable) {
         log.info("input : " + input);
 
         if (userId == null) {
@@ -150,13 +150,13 @@ public class PostService {
         }
 
         // 센터의 게시판 + 모두의 게시판(centerId == null) 키워드 검색
-        Slice<PostPreviewResponse> posts = postRepository.findInCenterByKeyword(centerIds, input, pageable);
+        Slice<PostPreviewDto> posts = postRepository.findInCenterByKeyword(centerIds, input, pageable);
         // 끌어온 게시글에 이미지 있으면 프리뷰용 이미지 넣어줌
         posts.forEach(g -> setPreviewImage(g));
         return posts;
     }
 
-    public Slice<PostPreviewResponse> searchByKeywordAndCenter(Long centerId, String input, Auth auth, Long userId, Pageable pageable) {
+    public Slice<PostPreviewDto> searchByKeywordAndCenter(Long centerId, String input, Auth auth, Long userId, Pageable pageable) {
         if (centerId != null) {
             if (auth == Auth.PARENT) {
                 // 학부모 유저일 때 아이와 연관된 센터의 아이디를 모두 가져옴
@@ -177,13 +177,13 @@ public class PostService {
             }
         }
         // 센터 아이디 null 인 경우 모두의 이야기 안에서 검색됨
-        Slice<PostPreviewResponse> posts = postRepository.findByCenterAndKeyword(centerId, input, pageable);
+        Slice<PostPreviewDto> posts = postRepository.findByCenterAndKeyword(centerId, input, pageable);
         posts.forEach(g -> setPreviewImage(g));
         return posts;
     }
 
-    public Slice<PostPreviewResponse> searchByKeywordAndBoard(Long boardId, String input, Pageable pageable) {
-        Slice<PostPreviewResponse> posts = postRepository.findByBoardAndKeyword(boardId, input, pageable);
+    public Slice<PostPreviewDto> searchByKeywordAndBoard(Long boardId, String input, Pageable pageable) {
+        Slice<PostPreviewDto> posts = postRepository.findByBoardAndKeyword(boardId, input, pageable);
         posts.forEach(g -> setPreviewImage(g));
         return posts;
     }
@@ -196,17 +196,17 @@ public class PostService {
         return new PostResponse(post, imageService.getInfoImages(post), imageService.getProfileImage(post.getUser()), userId);
     }
 
-    public void setPreviewImage(PostPreviewResponse preview) {
+    public void setPreviewImage(PostPreviewDto preview) {
 //        String postDir = imageService.getPostDir(preview.getPost_id());
 //        List<String> encodedInfoImage = imageService.getEncodedInfoImage(postDir, preview.getImgCnt());
         List<String> infoImages = imageService.getInfoImages(preview.getPreviewImage());
         preview.updatePreviewImage(infoImages);
     }
 
-    public PostListDto searchByUser(Long userId, Pageable pageable) {
+    public Slice<PostPreviewDto> searchByUser(Long userId, Pageable pageable) {
         Slice<Post> posts = postRepository.findByUser(userId, pageable);
-        Slice<PostPreviewResponse> preview = posts.map(p -> new PostPreviewResponse(p));
-        return new PostListDto(preview);
+        Slice<PostPreviewDto> preview = posts.map(post -> new PostPreviewDto(post));
+        return preview;
     }
 
     public List<BoardPreviewDto> searchMainPreview(Long userId) {
@@ -339,7 +339,7 @@ public class PostService {
         findPost.updateTime(LocalDateTime.now());
     }
 
-    public Slice<PostPreviewResponse> findByHeartCnt(Long centerId, Pageable pageable) {
+    public Slice<PostPreviewDto> findByHeartCnt(Long centerId, Pageable pageable) {
         // heartCnt 가 n 개 이상이면 HOT 게시판에 넣어줍니다.
         return postRepository.findHotPosts(centerId, Criteria.HOT_POST_HEART_CNT, pageable);
     }

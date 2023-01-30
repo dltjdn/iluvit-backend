@@ -20,11 +20,10 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
-
-import static FIS.iLUVit.controller.dto.TeacherApprovalListResponse.TeacherInfoForAdmin;
 
 @Slf4j
 @Service
@@ -216,22 +215,22 @@ public class TeacherService {
      * 작성자: 이승범
      * 작성내용: 교사관리 페이지에 필요한 교사들 정보 조회
      */
-    public TeacherApprovalListResponse findTeacherApprovalList(Long userId) {
+    public List<TeacherInfoForAdminDto> findTeacherApprovalList(Long userId) {
 
         // 로그인한 사용자가 원장인지 확인 및 원장으로 등록되어있는 시설에 모든 교사들 갖오기
         Teacher director = teacherRepository.findDirectorByIdWithCenterWithTeacher(userId)
                 .orElseThrow(() -> new UserException(UserErrorResult.HAVE_NOT_AUTHORIZATION));
 
-        TeacherApprovalListResponse response = new TeacherApprovalListResponse();
+        List<TeacherInfoForAdminDto> response = new ArrayList<>();
 
         director.getCenter().getTeachers().forEach(teacher -> {
             // 요청한 원장은 빼고 시설에 연관된 교사들 보여주기
             if (!Objects.equals(teacher.getId(), userId)) {
-                TeacherInfoForAdmin teacherInfoForAdmin =
-                        new TeacherInfoForAdmin(teacher.getId(), teacher.getName(), teacher.getApproval(), teacher.getAuth());
+                TeacherInfoForAdminDto teacherInfoForAdmin =
+                        new TeacherInfoForAdminDto(teacher.getId(), teacher.getName(), teacher.getApproval(), teacher.getAuth());
 
                 teacherInfoForAdmin.setProfileImg(imageService.getProfileImage(teacher));
-                response.getData().add(teacherInfoForAdmin);
+                response.add(teacherInfoForAdmin);
             }
         });
         return response;

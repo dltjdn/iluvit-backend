@@ -72,7 +72,7 @@ public class ReviewServiceTest {
     Review review3;
 
     ReviewDetailDto reviewCreateDTO = new ReviewDetailDto();
-    ReviewByCenterDto reviewByCenterDTO = new ReviewByCenterDto();
+
 
     @BeforeEach
     public void init() {
@@ -128,12 +128,9 @@ public class ReviewServiceTest {
     @Test
     public void 학부모로_리뷰_찾기() throws Exception {
         //given
-        ReviewByParentDto expected = new ReviewByParentDto();
-        ReviewByParentDto.ReviewDto reviewDto = new ReviewByParentDto.ReviewDto(review1);
-        System.out.println("reviewDto = " + reviewDto);
-        List<ReviewByParentDto.ReviewDto> reviewDtos = List.of(reviewDto);
-        SliceImpl<ReviewByParentDto.ReviewDto> reviewDtoSlice = new SliceImpl<>(reviewDtos, PageRequest.of(0, 10), false);
-        expected.setReviews(reviewDtoSlice);
+        ReviewByParentDto reviewDto = new ReviewByParentDto(review1);
+        List<ReviewByParentDto> reviewDtos = List.of(reviewDto);
+        SliceImpl<ReviewByParentDto> reviewDtoSlice = new SliceImpl<>(reviewDtos, PageRequest.of(0, 10), false);
 
         List<Review> reviewList = List.of(review1);
         SliceImpl<Review> reviewSlice = new SliceImpl<>(reviewList, PageRequest.of(0, 10), false);
@@ -141,10 +138,10 @@ public class ReviewServiceTest {
                 .when(reviewRepository)
                 .findByParent(parent1.getId(), PageRequest.of(0, 10));
         //when
-        ReviewByParentDto result = reviewService.findByParent(parent1.getId(), PageRequest.of(0, 10));
+        Slice<ReviewByParentDto> result = reviewService.findByParent(parent1.getId(), PageRequest.of(0, 10));
         //then
         assertThat(objectMapper.writeValueAsString(result))
-                .isEqualTo(objectMapper.writeValueAsString(expected));
+                .isEqualTo(objectMapper.writeValueAsString(reviewDtoSlice));
     }
     
     @Test
@@ -400,15 +397,15 @@ public class ReviewServiceTest {
     public void 센터로_리뷰_리스트_조회() throws Exception {
         //given
         String imagePath = "/Desktop/User";
-        ReviewByCenterDto.ReviewCenterDto reviewCenterDto1 = getReviewCenterDto(review1, imagePath, teacher1.getId());
-        ReviewByCenterDto.ReviewCenterDto reviewCenterDto2 = getReviewCenterDto(review2, imagePath, null);
-        ReviewByCenterDto.ReviewCenterDto reviewCenterDto3 = getReviewCenterDto(review3, imagePath, null);
-        List<ReviewByCenterDto.ReviewCenterDto> reviewCenterDtos = Arrays.asList(reviewCenterDto1, reviewCenterDto2, reviewCenterDto3);
-        Slice<ReviewByCenterDto.ReviewCenterDto> dtoSlice = new SliceImpl<>(reviewCenterDtos);
-        reviewByCenterDTO.setReviews(dtoSlice);
+        ReviewByCenterDto reviewCenterDto1 = getReviewCenterDto(review1, imagePath, teacher1.getId());
+        ReviewByCenterDto reviewCenterDto2 = getReviewCenterDto(review2, imagePath, null);
+        ReviewByCenterDto reviewCenterDto3 = getReviewCenterDto(review3, imagePath, null);
+        List<ReviewByCenterDto> reviewCenterList = Arrays.asList(reviewCenterDto1, reviewCenterDto2, reviewCenterDto3);
+        Slice<ReviewByCenterDto> reviewByCenterSlice = new SliceImpl<>(reviewCenterList);
 
         List<Review> reviewList = Arrays.asList(review1, review2, review3);
         Slice<Review> reviewSlice = new SliceImpl<>(reviewList);
+
         Mockito.doReturn(reviewSlice)
                 .when(reviewRepository)
                 .findByCenter(center1.getId(), PageRequest.of(0, 10));
@@ -418,17 +415,17 @@ public class ReviewServiceTest {
                 .getProfileImage(any(BaseImageEntity.class));
 
         //when
-        ReviewByCenterDto result = reviewService
+        Slice<ReviewByCenterDto> result = reviewService
                 .findByCenter(center1.getId(), PageRequest.of(0, 10));
 
         //then
         assertThat(objectMapper.writeValueAsString(result))
-                .isEqualTo(objectMapper.writeValueAsString(reviewByCenterDTO));
+                .isEqualTo(objectMapper.writeValueAsString(reviewByCenterSlice));
     }
 
     @NotNull
-    private ReviewByCenterDto.ReviewCenterDto getReviewCenterDto(Review review, String imagePath, Long teacherId) {
-        return new ReviewByCenterDto.ReviewCenterDto(review.getId(), review.getParent().getId(),
+    private ReviewByCenterDto getReviewCenterDto(Review review, String imagePath, Long teacherId) {
+        return new ReviewByCenterDto(review.getId(), review.getParent().getId(),
                 review.getParent().getNickName(), review.getContent(), review.getScore(),
                 review.getCreateDate(), review.getCreateTime(), review.getUpdateDate(),
                 review.getUpdateTime(), teacherId, review.getAnswer(),

@@ -1,7 +1,7 @@
 package FIS.iLUVit.controller;
 
 import FIS.iLUVit.config.argumentResolver.Login;
-import FIS.iLUVit.controller.dto.AlarmDto;
+import FIS.iLUVit.controller.dto.AlarmRequest;
 import FIS.iLUVit.controller.dto.AlarmDetailDto;
 import FIS.iLUVit.exception.UserErrorResult;
 import FIS.iLUVit.exception.UserException;
@@ -21,14 +21,14 @@ public class AlarmController {
 
     private final AlarmService alarmService;
 
+    @GetMapping("read")
+    public void readAlarm(@Login Long userId){
+        if(userId == null)
+            throw new UserException(UserErrorResult.NOT_LOGIN);
+        alarmService.readAlarm(userId);
+    }
 
-//    public void readAlarm(@Login Long userId){
-//        if(userId == null)
-//            throw new UserException(UserErrorResult.NOT_LOGIN);
-//        alarmService.readAlarm(userId);
-//    }
-
-    @GetMapping("")
+    @GetMapping("active")
     public Slice<AlarmDetailDto> getActiveAlarm(@Login Long userId, Pageable pageable){
         return alarmService.findUserActiveAlarm(userId, pageable);
     }
@@ -39,7 +39,7 @@ public class AlarmController {
     }
 
     @DeleteMapping("")
-    public Integer deleteAlarm(@Login Long userId, @RequestBody AlarmDto request) {
+    public Integer deleteAlarm(@Login Long userId, @RequestBody AlarmRequest request) {
         if(userId == null)
             throw new UserException(UserErrorResult.NOT_LOGIN);
         return alarmService.deleteUserAlarm(userId, request.getAlarmIds());

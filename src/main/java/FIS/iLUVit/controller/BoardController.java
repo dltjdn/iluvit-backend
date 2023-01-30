@@ -3,12 +3,13 @@ package FIS.iLUVit.controller;
 import FIS.iLUVit.config.argumentResolver.Login;
 import FIS.iLUVit.controller.dto.BoardListDto;
 import FIS.iLUVit.controller.dto.BoardRequest;
-import FIS.iLUVit.controller.dto.StoryHomeDto;
+import FIS.iLUVit.controller.dto.StoryPreviewDto;
 import FIS.iLUVit.service.BoardService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
@@ -65,7 +66,7 @@ public class BoardController {
      * 내용: 이야기 홈에서 센터의 게시판 띄워주기
      */
     @GetMapping("home")
-    public StoryHomeDto homeDTO(@Login Long userId) {
+    public List<StoryPreviewDto> getStoryHome(@Login Long userId) {
         return boardService.findCenterStory(userId);
     }
 }

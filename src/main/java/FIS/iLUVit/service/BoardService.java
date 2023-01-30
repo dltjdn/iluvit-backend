@@ -2,7 +2,8 @@ package FIS.iLUVit.service;
 
 import FIS.iLUVit.controller.dto.BoardListDto;
 import FIS.iLUVit.controller.dto.BoardRequest;
-import FIS.iLUVit.controller.dto.StoryHomeDto;
+
+import FIS.iLUVit.controller.dto.StoryPreviewDto;
 import FIS.iLUVit.domain.*;
 import FIS.iLUVit.domain.enumtype.Approval;
 import FIS.iLUVit.domain.enumtype.Auth;
@@ -169,31 +170,30 @@ public class BoardService {
         }
     }
 
-    public StoryHomeDto findCenterStory(Long userId) {
-        List<StoryHomeDto.CenterStoryDTO> result = new ArrayList<>();
-        result.add(new StoryHomeDto.CenterStoryDTO(null));
+    public List<StoryPreviewDto> findCenterStory(Long userId) {
+        List<StoryPreviewDto> result = new ArrayList<>();
+        result.add(new StoryPreviewDto(null));
         if (userId == null) {
-            return new StoryHomeDto(result);
+            return result;
         }
         User findUser = userRepository.findById(userId)
                 .orElseThrow(() -> new UserException(UserErrorResult.USER_NOT_EXIST));
         log.info("findUser = {}", findUser.getAuth());
         if (findUser.getAuth() == Auth.PARENT) {
             List<Child> children = userRepository.findChildrenWithCenter(userId);
-            List<StoryHomeDto.CenterStoryDTO> centerStoryDTOList = children.stream()
-                    .filter(c -> c.getCenter() != null && c.getApproval() == Approval.ACCEPT)
-                    .map(c -> new StoryHomeDto.CenterStoryDTO(c.getCenter()))
+            List<StoryPreviewDto> storyPreviewDtoList = children.stream()
+                    .filter(child -> child.getCenter() != null && child.getApproval() == Approval.ACCEPT)
+                    .map(child -> new StoryPreviewDto(child.getCenter()))
                     .collect(Collectors.toList());
-            result.addAll(centerStoryDTOList);
+            result.addAll(storyPreviewDtoList);
         } else {
             Center findCenter = ((Teacher) findUser).getCenter();
             Approval approval = ((Teacher) findUser).getApproval();
             if (findCenter != null && approval == Approval.ACCEPT) {
-                StoryHomeDto.CenterStoryDTO centerStoryDTO = new StoryHomeDto
-                        .CenterStoryDTO(findCenter);
-                result.add(centerStoryDTO);
+               StoryPreviewDto storyPreviewDto = new StoryPreviewDto(findCenter);
+                result.add(storyPreviewDto);
             }
         }
-        return new StoryHomeDto(result);
+        return result;
     }
 }

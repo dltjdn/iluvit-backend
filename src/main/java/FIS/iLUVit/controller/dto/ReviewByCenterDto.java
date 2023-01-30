@@ -12,33 +12,26 @@ import java.time.LocalTime;
 @NoArgsConstructor
 @AllArgsConstructor
 public class ReviewByCenterDto {
-    private Slice<ReviewCenterDto> reviews;
+    private Long id;
+    private Long parentId;
+    private String username;
+    private String content;
+    private Integer score;
 
-    @Data
-    @NoArgsConstructor
-    @AllArgsConstructor
-    public static class ReviewCenterDto {
-        private Long id;
-        private Long parentId;
-        private String username;
-        private String content;
-        private Integer score;
+    private LocalDate createDate;
+    private LocalTime createTime;
+    private LocalDate updateDate;
+    private LocalTime updateTime;
 
-        private LocalDate createDate;
-        private LocalTime createTime;
-        private LocalDate updateDate;
-        private LocalTime updateTime;
+    private Long teacherId;
+    private String answer;
+    private LocalDate answerCreateDate;
+    private LocalTime answerCreateTime;
 
-        private Long teacherId;
-        private String answer;
-        private LocalDate answerCreateDate;
-        private LocalTime answerCreateTime;
+    private Boolean anonymous;
 
-        private Boolean anonymous;
+    private Integer like; // 좋아요 수
 
-        private Integer like; // 좋아요 수
+    private String profileImage;
 
-        private String profileImage;
-
-    }
 }

@@ -83,7 +83,7 @@ public class ChildControllerTest {
         String url = "/parent/childInfo";
         doReturn(new ChildDto())
                 .when(childService)
-                .childrenInfo(any());
+                .childInfo(any());
         // when
         ResultActions result = mockMvc.perform(
                 MockMvcRequestBuilders.get(url)
