@@ -10,6 +10,7 @@ import org.springframework.data.domain.Slice;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+import java.util.List;
 
 @Slf4j
 @RestController
@@ -25,7 +26,7 @@ public class ScrapController {
      * 작성내용: 스크랩 폴더 목록
      */
     @GetMapping("dir")
-    public ScrapListResponse ScrapListInfo(@Login Long id) {
+    public List<ScrapInfoDto> ScrapListInfo(@Login Long id) {
         return scrapService.findScrapDirListInfo(id);
     }
 
@@ -35,7 +36,7 @@ public class ScrapController {
      * 작성내용: 스크랩 폴더 생성
      */
     @PostMapping("dir")
-    public ScrapListResponse addScrap(@Login Long id, @Valid @RequestBody ScrapDirRequest request) {
+    public List<ScrapInfoDto>  addScrap(@Login Long id, @Valid @RequestBody ScrapDirRequest request) {
         return scrapService.addScrapDir(id, request);
     }
 
@@ -45,7 +46,7 @@ public class ScrapController {
      * 작성내용: 스크랩 폴더 삭제
      */
     @DeleteMapping("dir")
-    public ScrapListResponse deleteScrap(@Login Long userId, @RequestParam Long scrapId) {
+    public List<ScrapInfoDto>  deleteScrap(@Login Long userId, @RequestParam Long scrapId) {
         return scrapService.deleteScrapDir(userId, scrapId);
     }
 
@@ -75,7 +76,7 @@ public class ScrapController {
      *   작성내용: 게시물 관련 스크랩 폴더 목록
      */
     @GetMapping("post/dir")
-    public ScrapListByPostResponse ScrapListByPost(@Login Long userId, @RequestParam Long postId) {
+    public List<ScrapInfoByPostDto> ScrapListByPost(@Login Long userId, @RequestParam Long postId) {
         return scrapService.findScrapListByPost(userId, postId);
     }
 

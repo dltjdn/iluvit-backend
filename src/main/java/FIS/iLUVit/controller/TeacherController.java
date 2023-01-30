@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 import java.io.IOException;
+import java.util.List;
 
 @Slf4j
 @RestController
@@ -76,7 +77,7 @@ public class TeacherController {
      * 작성내용: 교사 관리 페이지
      */
     @GetMapping("approval")
-    public TeacherApprovalListResponse teacherApprovalList(@Login Long userId) {
+    public List<TeacherInfoForAdminDto> teacherApprovalList(@Login Long userId) {
         return teacherService.findTeacherApprovalList(userId);
     }
 

@@ -3,7 +3,7 @@ package FIS.iLUVit.controller;
 import FIS.iLUVit.config.argumentResolver.LoginUserArgumentResolver;
 import FIS.iLUVit.controller.dto.BoardListDto;
 import FIS.iLUVit.controller.dto.BoardRequest;
-import FIS.iLUVit.controller.dto.StoryHomeDto;
+import FIS.iLUVit.controller.dto.StoryPreviewDto;
 import FIS.iLUVit.domain.Board;
 import FIS.iLUVit.domain.Center;
 import FIS.iLUVit.domain.Parent;
@@ -199,13 +199,13 @@ class BoardControllerTest {
     @Test
     public void 이야기_홈에서_센터_게시판_띄워주기_비회원() throws Exception {
         //given
-        List<StoryHomeDto.CenterStoryDTO> storyDTOList = new ArrayList<>();
-        storyDTOList.add(new StoryHomeDto.CenterStoryDTO(null));
-        StoryHomeDto storyHomeDTO = new StoryHomeDto(storyDTOList);
+        List<StoryPreviewDto> storyPreviewDtoList = new ArrayList<>();
+        storyPreviewDtoList.add(new StoryPreviewDto(null));
 
-        String url = "/story/home";
 
-        Mockito.doReturn(storyHomeDTO)
+        String url = "/baord/home";
+
+        Mockito.doReturn(storyPreviewDtoList)
                 .when(boardService)
                 .findCenterStory(null);
         //when
@@ -217,7 +217,7 @@ class BoardControllerTest {
 
         resultActions.andDo(print())
                 .andExpect(content().json(objectMapper.writeValueAsString(
-                        storyHomeDTO
+                        storyPreviewDtoList
                 )));
     }
 
@@ -225,7 +225,7 @@ class BoardControllerTest {
     public void 이야기_홈에서_센터_게시판_띄워주기_유저X() throws Exception {
         //given
 
-        String url = "/story/home";
+        String url = "/board/home";
         UserErrorResult error = UserErrorResult.USER_NOT_EXIST;
         Mockito.doThrow(new UserException(error))
                 .when(boardService)
@@ -247,13 +247,12 @@ class BoardControllerTest {
     @Test
     public void 이야기_홈에서_센터_게시판_띄워주기_성공() throws Exception {
         //given
-        List<StoryHomeDto.CenterStoryDTO> storyDTOList = new ArrayList<>();
-        storyDTOList.add(new StoryHomeDto.CenterStoryDTO(null));
-        storyDTOList.add(new StoryHomeDto.CenterStoryDTO(center1));
-        StoryHomeDto storyHomeDTO = new StoryHomeDto(storyDTOList);
+        List<StoryPreviewDto> storyPreviewDtoList = new ArrayList<>();
+        storyPreviewDtoList.add(new StoryPreviewDto(null));
+        storyPreviewDtoList.add(new StoryPreviewDto(center1));
 
-        String url = "/story/home";
-        Mockito.doReturn(storyHomeDTO)
+        String url = "/board/home";
+        Mockito.doReturn(storyPreviewDtoList)
                 .when(boardService)
                 .findCenterStory(any(Long.class));
         //when
@@ -265,7 +264,7 @@ class BoardControllerTest {
 
         resultActions.andDo(print())
                 .andExpect(content().json(objectMapper.writeValueAsString(
-                        storyHomeDTO
+                        storyPreviewDtoList
                 )));
 
     }

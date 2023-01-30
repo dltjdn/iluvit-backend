@@ -73,7 +73,7 @@ class ReviewControllerTest {
     ReviewDetailDto reviewCreateDTO = new ReviewDetailDto();
     ReviewDto reviewDTO = new ReviewDto();
     ReviewCommentDto reviewCommentDTO = new ReviewCommentDto();
-    ReviewByCenterDto reviewByCenterDTO = new ReviewByCenterDto();
+
 
     @BeforeEach
     public void init() {
@@ -144,18 +144,16 @@ class ReviewControllerTest {
     @Test
     public void 학부모가_작성한_리뷰_조회() throws Exception {
         //given
-        ReviewByParentDto expected = new ReviewByParentDto();
-        ReviewByParentDto.ReviewDto reviewDto = new ReviewByParentDto.ReviewDto(review1);
-        System.out.println("reviewDto = " + reviewDto);
-        List<ReviewByParentDto.ReviewDto> reviewDtos = List.of(reviewDto);
-        SliceImpl<ReviewByParentDto.ReviewDto> reviewDtoSlice = new SliceImpl<>(reviewDtos, PageRequest.of(0, 10), false);
-        expected.setReviews(reviewDtoSlice);
+        ReviewByParentDto reviewDto = new ReviewByParentDto(review1);
+        List<ReviewByParentDto> reviewDtos = List.of(reviewDto);
+        SliceImpl<ReviewByParentDto> reviewByParentSlice = new SliceImpl<>(reviewDtos, PageRequest.of(0, 10), false);
 
-        Mockito.doReturn(expected)
+
+        Mockito.doReturn(reviewByParentSlice)
                 .when(reviewService)
                 .findByParent(parent1.getId(), PageRequest.of(0, 10));
 
-        final String url = "/parent/review";
+        final String url = "/review";
         //when
         ResultActions resultActions = mockMvc.perform(
                 MockMvcRequestBuilders.get(url)
@@ -167,7 +165,7 @@ class ReviewControllerTest {
         //then
         resultActions.andDo(print())
                 .andExpect(content().json(
-                        objectMapper.writeValueAsString(expected)
+                        objectMapper.writeValueAsString(reviewByParentSlice)
                 ));
     }
 
@@ -490,8 +488,8 @@ class ReviewControllerTest {
     }
 
     @NotNull
-    private ReviewByCenterDto.ReviewCenterDto getReviewCenterDto(Review review, String imagePath, Long teacherId) {
-        return new ReviewByCenterDto.ReviewCenterDto(review.getId(), review.getParent().getId(),
+    private ReviewByCenterDto getReviewCenterDto(Review review, String imagePath, Long teacherId) {
+        return new ReviewByCenterDto(review.getId(), review.getParent().getId(),
                 review.getParent().getNickName(), review.getContent(), review.getScore(),
                 review.getCreateDate(), review.getCreateTime(), review.getUpdateDate(),
                 review.getUpdateTime(), teacherId, review.getAnswer(),
@@ -502,14 +500,13 @@ class ReviewControllerTest {
     public void 센터에_올라온_리뷰들_조회() throws Exception {
         //given
         String imagePath = "/Desktop/User";
-        ReviewByCenterDto.ReviewCenterDto reviewCenterDto1 = getReviewCenterDto(review1, imagePath, teacher1.getId());
-        ReviewByCenterDto.ReviewCenterDto reviewCenterDto2 = getReviewCenterDto(review2, imagePath, null);
-        ReviewByCenterDto.ReviewCenterDto reviewCenterDto3 = getReviewCenterDto(review3, imagePath, null);
-        List<ReviewByCenterDto.ReviewCenterDto> reviewCenterDtos = Arrays.asList(reviewCenterDto1, reviewCenterDto2, reviewCenterDto3);
-        Slice<ReviewByCenterDto.ReviewCenterDto> dtoSlice = new SliceImpl<>(reviewCenterDtos);
-        reviewByCenterDTO.setReviews(dtoSlice);
+        ReviewByCenterDto reviewCenterDto1 = getReviewCenterDto(review1, imagePath, teacher1.getId());
+        ReviewByCenterDto reviewCenterDto2 = getReviewCenterDto(review2, imagePath, null);
+        ReviewByCenterDto reviewCenterDto3 = getReviewCenterDto(review3, imagePath, null);
+        List<ReviewByCenterDto> reviewCenterList = Arrays.asList(reviewCenterDto1, reviewCenterDto2, reviewCenterDto3);
+        Slice<ReviewByCenterDto> reviewByCenterDtos = new SliceImpl<>(reviewCenterList);
 
-        Mockito.doReturn(reviewByCenterDTO)
+        Mockito.doReturn(reviewByCenterDtos)
                 .when(reviewService)
                 .findByCenter(center1.getId(), PageRequest.of(0, 10));
 
@@ -525,7 +522,7 @@ class ReviewControllerTest {
         resultActions.andDo(print())
                 .andExpect(status().isOk())
                 .andExpect(MockMvcResultMatchers.content().json(
-                        objectMapper.writeValueAsString(reviewByCenterDTO)
+                        objectMapper.writeValueAsString(reviewByCenterDtos)
                 ));
 
     }

@@ -18,6 +18,7 @@ import org.springframework.data.domain.Slice;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
@@ -38,14 +39,14 @@ public class ScrapService {
      * 작성자: 이승범
      * 작성내용: 스크랩 폴더 목록 가져오기
      */
-    public ScrapListResponse findScrapDirListInfo(Long id) {
+    public List<ScrapInfoDto>  findScrapDirListInfo(Long id) {
         List<Scrap> scraps = scrapRepository.findScrapsByUserWithScrapPosts(id);
-        ScrapListResponse response = new ScrapListResponse();
+        List<ScrapInfoDto> scrapInfoDtoList = new ArrayList<>();
 
         scraps.forEach(scrap -> {
-            response.getData().add(new ScrapListResponse.ScrapInfo(scrap));
+            scrapInfoDtoList.add(new ScrapInfoDto(scrap));
         });
-        return response;
+        return scrapInfoDtoList;
     }
 
     /**
@@ -53,7 +54,7 @@ public class ScrapService {
      * 작성자: 이승범
      * 작성내용: 스크랩 폴더 추가하기
      */
-    public ScrapListResponse addScrapDir(Long id, ScrapDirRequest request) {
+    public List<ScrapInfoDto>  addScrapDir(Long id, ScrapDirRequest request) {
         User user = userRepository.getById(id);
         Scrap newScrap = Scrap.createScrap(user, request.getName());
         scrapRepository.save(newScrap);
@@ -66,7 +67,7 @@ public class ScrapService {
      * 작성자: 이승범
      * 작성내용: 스크랩 폴더 삭제하기
      */
-    public ScrapListResponse deleteScrapDir(Long userId, Long scrapId) {
+    public List<ScrapInfoDto>  deleteScrapDir(Long userId, Long scrapId) {
 
         Scrap deletedScrap = scrapRepository.findScrapByIdAndUserId(scrapId, userId)
                 .orElseThrow(() -> new ScrapException(ScrapErrorResult.NOT_VALID_SCRAP));
@@ -152,11 +153,11 @@ public class ScrapService {
      * 작성자: 이승범
      * 작성내용: 해당 게시물에 대한 스크랩폴더 상태 목록 보여주기
      */
-    public ScrapListByPostResponse findScrapListByPost(Long userId, Long postId) {
+    public List<ScrapInfoByPostDto> findScrapListByPost(Long userId, Long postId) {
         List<Scrap> scrapListByUser = scrapRepository.findScrapsByUserWithScrapPosts(userId);
-        return new ScrapListByPostResponse(scrapListByUser.stream()
-                .map(s -> new ScrapListByPostResponse.ScrapInfoByPost(s, postId))
-                .collect(Collectors.toList()));
+        return scrapListByUser.stream()
+                .map(scrap -> new ScrapInfoByPostDto(scrap, postId))
+                .collect(Collectors.toList());
     }
     /**
      *   작성날짜: 2022/06/22 4:54 PM

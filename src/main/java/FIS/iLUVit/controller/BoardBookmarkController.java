@@ -1,10 +1,13 @@
 package FIS.iLUVit.controller;
 
 import FIS.iLUVit.config.argumentResolver.Login;
-import FIS.iLUVit.controller.dto.BoardBookmarkDto;
+//import FIS.iLUVit.controller.dto.BoardBookmarkDto;
+import FIS.iLUVit.controller.dto.StoryDto;
 import FIS.iLUVit.service.BoardBookmarkService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
@@ -20,7 +23,7 @@ public class BoardBookmarkController {
             + 게시글 목록 한번에 불러오기 (비회원 전용)
     */
     @GetMapping("main")
-    public BoardBookmarkDto search(@Login Long userId) {
+    public List<StoryDto> search(@Login Long userId) {
         if (userId == null) {
             return boardBookmarkService.searchByDefault();
         }

@@ -3,9 +3,9 @@ package FIS.iLUVit.controller;
 import FIS.iLUVit.Creator;
 import FIS.iLUVit.config.argumentResolver.LoginUserArgumentResolver;
 import FIS.iLUVit.controller.dto.SignupTeacherRequest;
-import FIS.iLUVit.controller.dto.TeacherApprovalListResponse;
 import FIS.iLUVit.controller.dto.TeacherDetailResponse;
 import FIS.iLUVit.controller.dto.TeacherDetailRequest;
+import FIS.iLUVit.controller.dto.TeacherInfoForAdminDto;
 import FIS.iLUVit.domain.Center;
 import FIS.iLUVit.domain.Teacher;
 import FIS.iLUVit.domain.enumtype.Approval;
@@ -37,6 +37,8 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.ArrayList;
+import java.util.List;
 
 import static FIS.iLUVit.Creator.*;
 import static org.mockito.ArgumentMatchers.any;
@@ -402,8 +404,9 @@ public class TeacherControllerTest {
         @DisplayName("[success] 정상적인 요청")
         public void 정상적인요청() throws Exception {
             // given
-            String url = "/director/teacher/approval";
-            doReturn(new TeacherApprovalListResponse())
+            List<TeacherInfoForAdminDto> teacherInfoForAdmin = new ArrayList<>();
+            String url = "/teacher/approval";
+            doReturn(teacherInfoForAdmin)
                     .when(teacherService)
                     .findTeacherApprovalList(director.getId());
             // when

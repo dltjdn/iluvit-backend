@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 import java.io.IOException;
+import java.util.List;
 
 @Slf4j
 @RestController
@@ -26,8 +27,8 @@ public class ChildController {
      * 작성내용: 부모의 메인페이지에 필요한 아이들 정보 반환
      */
     @GetMapping("info")
-    public ChildDto childInfo(@Login Long id) {
-        return childService.childrenInfo(id);
+    public List<ChildDto> childInfo(@Login Long id) {
+        return childService.childInfo(id);
     }
 
     /**
@@ -67,7 +68,7 @@ public class ChildController {
      * 작성내용: 아이삭제
      */
     @DeleteMapping("{childId}")
-    public ChildDto deleteChild(@Login Long userId, @PathVariable("childId") Long childId) {
+    public List<ChildDto> deleteChild(@Login Long userId, @PathVariable("childId") Long childId) {
         return childService.deleteChild(userId, childId);
     }
 
@@ -98,7 +99,7 @@ public class ChildController {
      * 작성내용: 아이 승인 페이지를 위한 시설에 등록된 아이들 정보 조회
      */
     @GetMapping("approval")
-    public ChildApprovalListResponse approvalList(@Login Long userId) {
+    public List<ChildInfoForAdminDto> approvalList(@Login Long userId) {
         return childService.findChildApprovalInfoList(userId);
     }
 

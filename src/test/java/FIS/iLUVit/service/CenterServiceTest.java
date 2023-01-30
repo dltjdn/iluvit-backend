@@ -239,7 +239,7 @@ public class CenterServiceTest {
                     .when(userRepository).findTeacherById(1L);
             //when
             UserException result = Assertions.assertThrows(UserException.class,
-                    () -> target.modifyCenter(1L, 1L, new CenterDetailRequest(), multipartFileList, multipartFile));
+                    () -> target.modifyCenterInfo(1L, 1L, new CenterDetailRequest()));
 
             //then
             assertThat(result.getErrorResult()).isEqualTo(UserErrorResult.USER_NOT_EXIST);
@@ -250,11 +250,11 @@ public class CenterServiceTest {
         @DisplayName("[error] 시설을 수정하려는 권한 없음")
         public void 시설수정권한없음() throws Exception {
             //given
-            Mockito.doReturn(Optional.of(waitingTeacher))
+            doReturn(Optional.of(waitingTeacher))
                     .when(userRepository).findTeacherById(1L);
             //when
             CenterException result = Assertions.assertThrows(CenterException.class,
-                    () -> target.modifyCenter(1L, 1L, new CenterDetailRequest(), multipartFileList, multipartFile));
+                    () -> target.modifyCenterInfo(1L, 1L, new CenterDetailRequest()));
 
             //then
             assertThat(result.getErrorResult()).isEqualTo(CenterErrorResult.AUTHENTICATION_FAILED);
@@ -273,7 +273,7 @@ public class CenterServiceTest {
 
             //when
             CenterException result = Assertions.assertThrows(CenterException.class,
-                    () -> target.modifyCenter(1L, 1L, request, multipartFileList, multipartFile));
+                    () -> target.modifyCenterInfo(1L, 1L, request));
             //then
             assertThat(result.getErrorResult()).isEqualTo(CenterErrorResult.CENTER_WRONG_ADDRESS);
         }
@@ -282,17 +282,17 @@ public class CenterServiceTest {
         @DisplayName("[success] 센터 수정 성공")
         public void 센터수정성공() throws Exception {
             //given
-            Mockito.doReturn(Optional.of(acceptTeacher))
+            doReturn(Optional.of(acceptTeacher))
                     .when(userRepository).findTeacherById(1L);
             CenterDetailRequest request = new CenterDetailRequest();
             request.setAddress("서울특별시 금천구 가산디지털2로 108 뉴티캐슬");
             //when
-            Mockito.doReturn(Pair.of(126.8806602, 37.4778951))
+            doReturn(Pair.of(126.8806602, 37.4778951))
                     .when(mapService).convertAddressToLocation("서울특별시 금천구 가산디지털2로 108 뉴티캐슬");
-            Mockito.doReturn(Pair.of("서울특별시", "금천구"))
+            doReturn(Pair.of("서울특별시", "금천구"))
                     .when(mapService).getSidoSigunguByLocation(126.8806602, 37.4778951);
 
-            target.modifyCenter(1L, 1L, request, multipartFileList, multipartFile);
+            target.modifyCenterInfo(1L, 1L, request);
 
             //then
             assertThat(center.getLongitude()).isEqualTo(126.8806602);

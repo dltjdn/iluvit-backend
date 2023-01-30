@@ -42,11 +42,11 @@ public class AlarmService {
                 pageable, alarmSlice.hasNext());
     }
 
-//    public void readAlarm(Long userId) {
-//        userRepository.findById(userId)
-//                .orElseThrow(() -> new UserException(UserErrorResult.USER_NOT_EXIST))
-//                .updateReadAlarm(Boolean.TRUE);
-//    }
+    public void readAlarm(Long userId) {
+        userRepository.findById(userId)
+                .orElseThrow(() -> new UserException(UserErrorResult.USER_NOT_EXIST))
+                .updateReadAlarm(Boolean.TRUE);
+    }
 
     public Boolean hasRead(Long userId) {
         return userRepository.findById(userId)
