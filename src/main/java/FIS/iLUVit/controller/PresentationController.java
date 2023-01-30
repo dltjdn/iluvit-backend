@@ -1,12 +1,13 @@
 package FIS.iLUVit.controller;
 
 import FIS.iLUVit.config.argumentResolver.Login;
-import FIS.iLUVit.controller.dto.*;
+import FIS.iLUVit.controller.dto.presentation.*;
+import FIS.iLUVit.dto.presentation.*;
 import FIS.iLUVit.exception.UserErrorResult;
 import FIS.iLUVit.exception.UserException;
 import FIS.iLUVit.service.PresentationService;
 import FIS.iLUVit.service.UserService;
-import FIS.iLUVit.service.dto.ParentDto;
+import FIS.iLUVit.dto.parent.ParentDto;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Pageable;

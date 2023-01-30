@@ -1,9 +1,9 @@
 package FIS.iLUVit.controller;
 
 import FIS.iLUVit.config.argumentResolver.LoginUserArgumentResolver;
-import FIS.iLUVit.controller.dto.PresentationDetailRequest;
-import FIS.iLUVit.controller.dto.PtDateDetailRequest;
-import FIS.iLUVit.controller.dto.PresentationResponse;
+import FIS.iLUVit.dto.presentation.PresentationDetailRequest;
+import FIS.iLUVit.dto.presentation.PtDateDetailRequest;
+import FIS.iLUVit.dto.presentation.PresentationResponse;
 import FIS.iLUVit.domain.Parent;
 import FIS.iLUVit.domain.Presentation;
 import FIS.iLUVit.domain.PtDate;

@@ -1,8 +1,8 @@
 package FIS.iLUVit.repository;
 
 import FIS.iLUVit.domain.Presentation;
-import FIS.iLUVit.repository.dto.PresentationForTeacherDto;
-import FIS.iLUVit.repository.dto.PresentationWithPtDatesDto;
+import FIS.iLUVit.dto.presentation.PresentationForTeacherDto;
+import FIS.iLUVit.dto.presentation.PresentationWithPtDatesDto;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;

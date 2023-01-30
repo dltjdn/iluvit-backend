@@ -8,7 +8,7 @@ import FIS.iLUVit.exception.PreferException;
 import FIS.iLUVit.repository.CenterRepository;
 import FIS.iLUVit.repository.ParentRepository;
 import FIS.iLUVit.repository.CenterBookmarkRepository;
-import FIS.iLUVit.repository.dto.CenterPreviewDto;
+import FIS.iLUVit.dto.center.CenterPreviewDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.data.domain.Pageable;

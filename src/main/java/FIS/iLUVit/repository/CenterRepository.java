@@ -1,7 +1,7 @@
 package FIS.iLUVit.repository;
 
 import FIS.iLUVit.domain.Center;
-import FIS.iLUVit.repository.dto.CenterBannerDto;
+import FIS.iLUVit.dto.center.CenterBannerDto;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;

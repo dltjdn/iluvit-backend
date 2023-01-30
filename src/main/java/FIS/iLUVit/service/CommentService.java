@@ -1,7 +1,7 @@
 package FIS.iLUVit.service;
 
-import FIS.iLUVit.controller.dto.CommentDto;
-import FIS.iLUVit.controller.dto.CommentRequest;
+import FIS.iLUVit.dto.comment.CommentDto;
+import FIS.iLUVit.dto.comment.CommentRequest;
 import FIS.iLUVit.domain.Comment;
 import FIS.iLUVit.domain.Post;
 import FIS.iLUVit.domain.User;

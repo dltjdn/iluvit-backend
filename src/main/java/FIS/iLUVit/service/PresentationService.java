@@ -1,21 +1,22 @@
 package FIS.iLUVit.service;
 
-import FIS.iLUVit.controller.dto.*;
+import FIS.iLUVit.controller.dto.presentation.*;
 import FIS.iLUVit.domain.*;
 import FIS.iLUVit.domain.alarms.PresentationCreatedAlarm;
 import FIS.iLUVit.domain.embeddable.Area;
 import FIS.iLUVit.domain.embeddable.Theme;
 import FIS.iLUVit.domain.enumtype.KindOf;
 import FIS.iLUVit.domain.enumtype.Status;
+import FIS.iLUVit.dto.presentation.*;
 import FIS.iLUVit.exception.PresentationErrorResult;
 import FIS.iLUVit.exception.PresentationException;
 import FIS.iLUVit.exception.UserErrorResult;
 import FIS.iLUVit.exception.UserException;
 import FIS.iLUVit.repository.*;
-import FIS.iLUVit.repository.dto.PresentationWithPtDatesDto;
-import FIS.iLUVit.service.dto.ParentDto;
-import FIS.iLUVit.service.dto.PresentationQueryDto;
-import FIS.iLUVit.service.dto.PtDateDto;
+import FIS.iLUVit.dto.presentation.PresentationWithPtDatesDto;
+import FIS.iLUVit.dto.parent.ParentDto;
+import FIS.iLUVit.dto.presentation.PresentationQueryDto;
+import FIS.iLUVit.dto.presentation.PtDateDetailDto;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Pageable;
@@ -53,7 +54,7 @@ public class PresentationService {
                         : presentationRepository.findByCenterAndDateWithPtDates(centerId, LocalDate.now(), userId);
         return queryDtos.stream().collect(
                         groupingBy(PresentationQueryDto::new,
-                                mapping(PtDateDto::new, toList())
+                                mapping(PtDateDetailDto::new, toList())
                         ))
                 .entrySet().stream()
                 .map(e -> {

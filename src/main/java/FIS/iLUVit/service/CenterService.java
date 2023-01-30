@@ -1,6 +1,9 @@
 package FIS.iLUVit.service;
 
-import FIS.iLUVit.controller.dto.*;
+import FIS.iLUVit.dto.center.CenterBannerResponse;
+import FIS.iLUVit.dto.center.CenterDetailRequest;
+import FIS.iLUVit.dto.center.CenterRecommendDto;
+import FIS.iLUVit.dto.center.CenterResponse;
 import FIS.iLUVit.domain.Center;
 import FIS.iLUVit.domain.Location;
 import FIS.iLUVit.domain.Parent;
@@ -14,9 +17,9 @@ import FIS.iLUVit.exception.UserException;
 import FIS.iLUVit.repository.CenterRepository;
 import FIS.iLUVit.repository.ParentRepository;
 import FIS.iLUVit.repository.UserRepository;
-import FIS.iLUVit.repository.dto.CenterAndDistancePreviewDto;
-import FIS.iLUVit.repository.dto.CenterBannerDto;
-import FIS.iLUVit.repository.dto.CenterMapPreviewDto;
+import FIS.iLUVit.dto.center.CenterAndDistancePreviewDto;
+import FIS.iLUVit.dto.center.CenterBannerDto;
+import FIS.iLUVit.dto.center.CenterMapPreviewDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.*;
 import org.springframework.data.util.Pair;

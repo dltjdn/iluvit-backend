@@ -1,6 +1,6 @@
 package FIS.iLUVit.repository;
 
-import FIS.iLUVit.controller.dto.PostPreviewDto;
+import FIS.iLUVit.dto.post.PostPreviewDto;
 import FIS.iLUVit.controller.dto.QPostPreviewDto;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.AllArgsConstructor;

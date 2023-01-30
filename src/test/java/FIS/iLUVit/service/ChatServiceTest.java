@@ -1,10 +1,10 @@
 package FIS.iLUVit.service;
 
 import FIS.iLUVit.Creator;
-import FIS.iLUVit.controller.dto.ChatDto;
-import FIS.iLUVit.controller.dto.ChatListDto;
-import FIS.iLUVit.controller.dto.ChatRequest;
-import FIS.iLUVit.controller.dto.ChatRoomRequest;
+import FIS.iLUVit.dto.chat.ChatDto;
+import FIS.iLUVit.dto.chat.ChatListDto;
+import FIS.iLUVit.dto.chat.ChatRequest;
+import FIS.iLUVit.dto.chat.ChatRoomRequest;
 import FIS.iLUVit.domain.*;
 import FIS.iLUVit.domain.alarms.Alarm;
 import FIS.iLUVit.domain.alarms.ChatAlarm;

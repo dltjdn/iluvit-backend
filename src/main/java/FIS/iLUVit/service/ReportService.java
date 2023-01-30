@@ -1,6 +1,6 @@
 package FIS.iLUVit.service;
 
-import FIS.iLUVit.controller.dto.ReportRequest;
+import FIS.iLUVit.dto.report.ReportRequest;
 import FIS.iLUVit.domain.Comment;
 import FIS.iLUVit.domain.Post;
 import FIS.iLUVit.domain.User;

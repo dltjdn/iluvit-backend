@@ -1,7 +1,7 @@
 package FIS.iLUVit.service;
 
 import FIS.iLUVit.Creator;
-import FIS.iLUVit.controller.dto.StoryDto;
+import FIS.iLUVit.dto.board.StoryDto;
 import FIS.iLUVit.domain.*;
 import FIS.iLUVit.domain.enumtype.Auth;
 import FIS.iLUVit.domain.enumtype.BoardKind;

@@ -1,6 +1,6 @@
 package FIS.iLUVit.domain;
 
-import FIS.iLUVit.controller.dto.PtDateDto;
+import FIS.iLUVit.dto.presentation.PtDateDto;
 import FIS.iLUVit.exception.PresentationErrorResult;
 import FIS.iLUVit.exception.PresentationException;
 import lombok.Builder;

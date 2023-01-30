@@ -1,7 +1,7 @@
 package FIS.iLUVit.controller;
 
 import FIS.iLUVit.config.argumentResolver.Login;
-import FIS.iLUVit.controller.dto.ReportRequest;
+import FIS.iLUVit.dto.report.ReportRequest;
 import FIS.iLUVit.service.ReportService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.PostMapping;

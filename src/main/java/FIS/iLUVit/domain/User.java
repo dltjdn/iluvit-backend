@@ -1,6 +1,6 @@
 package FIS.iLUVit.domain;
 
-import FIS.iLUVit.controller.dto.UserResponse;
+import FIS.iLUVit.dto.user.UserResponse;
 import FIS.iLUVit.domain.enumtype.Auth;
 import FIS.iLUVit.security.LoginResponse;
 import lombok.AccessLevel;

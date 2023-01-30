@@ -1,9 +1,9 @@
 package FIS.iLUVit.controller;
 
 import FIS.iLUVit.config.argumentResolver.Login;
-import FIS.iLUVit.controller.dto.BoardListDto;
-import FIS.iLUVit.controller.dto.BoardRequest;
-import FIS.iLUVit.controller.dto.StoryPreviewDto;
+import FIS.iLUVit.dto.board.BoardListDto;
+import FIS.iLUVit.dto.board.BoardRequest;
+import FIS.iLUVit.dto.board.StoryPreviewDto;
 import FIS.iLUVit.service.BoardService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;

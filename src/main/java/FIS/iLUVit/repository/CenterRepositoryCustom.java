@@ -1,14 +1,14 @@
 package FIS.iLUVit.repository;
 
-import FIS.iLUVit.controller.dto.CenterDto;
-import FIS.iLUVit.controller.dto.CenterRecommendDto;
+import FIS.iLUVit.dto.center.CenterDto;
+import FIS.iLUVit.dto.center.CenterRecommendDto;
 import FIS.iLUVit.domain.Location;
 import FIS.iLUVit.domain.embeddable.Area;
 import FIS.iLUVit.domain.embeddable.Theme;
 import FIS.iLUVit.domain.enumtype.KindOf;
-import FIS.iLUVit.repository.dto.CenterAndDistancePreviewDto;
-import FIS.iLUVit.repository.dto.CenterMapPreviewDto;
-import FIS.iLUVit.repository.dto.CenterPreviewDto;
+import FIS.iLUVit.dto.center.CenterAndDistancePreviewDto;
+import FIS.iLUVit.dto.center.CenterMapPreviewDto;
+import FIS.iLUVit.dto.center.CenterPreviewDto;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
 import org.springframework.data.domain.SliceImpl;

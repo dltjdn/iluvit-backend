@@ -1,9 +1,9 @@
 package FIS.iLUVit.controller;
 
 import FIS.iLUVit.config.argumentResolver.LoginUserArgumentResolver;
-import FIS.iLUVit.controller.dto.ParticipationRequest;
-import FIS.iLUVit.controller.dto.PtDateRequest;
-import FIS.iLUVit.controller.dto.WaitingRegisterDto;
+import FIS.iLUVit.dto.parent.ParticipationRequest;
+import FIS.iLUVit.dto.presentation.PtDateRequest;
+import FIS.iLUVit.dto.waiting.WaitingRegisterDto;
 import FIS.iLUVit.domain.Parent;
 import FIS.iLUVit.domain.User;
 import FIS.iLUVit.domain.enumtype.Auth;

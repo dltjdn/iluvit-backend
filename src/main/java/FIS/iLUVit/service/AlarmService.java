@@ -1,6 +1,6 @@
 package FIS.iLUVit.service;
 
-import FIS.iLUVit.controller.dto.AlarmDetailDto;
+import FIS.iLUVit.dto.alarm.AlarmDetailDto;
 import FIS.iLUVit.domain.alarms.Alarm;
 import FIS.iLUVit.exception.UserErrorResult;
 import FIS.iLUVit.exception.UserException;

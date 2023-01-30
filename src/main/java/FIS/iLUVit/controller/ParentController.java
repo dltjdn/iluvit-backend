@@ -1,7 +1,9 @@
 package FIS.iLUVit.controller;
 
 import FIS.iLUVit.config.argumentResolver.Login;
-import FIS.iLUVit.controller.dto.*;
+import FIS.iLUVit.dto.parent.ParentDetailRequest;
+import FIS.iLUVit.dto.parent.ParentDetailResponse;
+import FIS.iLUVit.dto.parent.SignupParentRequest;
 import FIS.iLUVit.service.ParentService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;

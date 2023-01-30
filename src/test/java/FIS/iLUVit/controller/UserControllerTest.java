@@ -2,9 +2,9 @@ package FIS.iLUVit.controller;
 
 import FIS.iLUVit.Creator;
 import FIS.iLUVit.config.argumentResolver.LoginUserArgumentResolver;
-import FIS.iLUVit.controller.dto.CheckNicknameRequest;
-import FIS.iLUVit.controller.dto.PasswordRequest;
-import FIS.iLUVit.controller.dto.UserResponse;
+import FIS.iLUVit.dto.user.CheckNicknameRequest;
+import FIS.iLUVit.dto.user.PasswordRequest;
+import FIS.iLUVit.dto.user.UserResponse;
 import FIS.iLUVit.domain.Parent;
 import FIS.iLUVit.exception.SignupErrorResult;
 import FIS.iLUVit.exception.SignupException;

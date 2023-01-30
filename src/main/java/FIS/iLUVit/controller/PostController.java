@@ -1,7 +1,11 @@
 package FIS.iLUVit.controller;
 
 import FIS.iLUVit.config.argumentResolver.Login;
-import FIS.iLUVit.controller.dto.*;
+import FIS.iLUVit.dto.board.BoardPreviewDto;
+import FIS.iLUVit.dto.post.PostPreviewDto;
+import FIS.iLUVit.dto.post.PostRequest;
+import FIS.iLUVit.dto.post.PostResponse;
+import FIS.iLUVit.dto.post.PostSearchRequest;
 import FIS.iLUVit.service.PostService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;

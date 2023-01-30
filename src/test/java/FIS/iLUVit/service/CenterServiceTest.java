@@ -1,7 +1,7 @@
 package FIS.iLUVit.service;
 
-import FIS.iLUVit.controller.dto.CenterBannerResponse;
-import FIS.iLUVit.controller.dto.CenterDetailRequest;
+import FIS.iLUVit.dto.center.CenterBannerResponse;
+import FIS.iLUVit.dto.center.CenterDetailRequest;
 import FIS.iLUVit.domain.Center;
 import FIS.iLUVit.domain.Teacher;
 import FIS.iLUVit.domain.embeddable.Theme;
@@ -14,8 +14,8 @@ import FIS.iLUVit.exception.UserErrorResult;
 import FIS.iLUVit.exception.UserException;
 import FIS.iLUVit.repository.CenterRepository;
 import FIS.iLUVit.repository.UserRepository;
-import FIS.iLUVit.repository.dto.CenterAndDistancePreviewDto;
-import FIS.iLUVit.repository.dto.CenterBannerDto;
+import FIS.iLUVit.dto.center.CenterAndDistancePreviewDto;
+import FIS.iLUVit.dto.center.CenterBannerDto;
 import org.junit.jupiter.api.*;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;

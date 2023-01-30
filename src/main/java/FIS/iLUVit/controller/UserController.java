@@ -1,7 +1,7 @@
 package FIS.iLUVit.controller;
 
 import FIS.iLUVit.config.argumentResolver.Login;
-import FIS.iLUVit.controller.dto.*;
+import FIS.iLUVit.dto.user.*;
 import FIS.iLUVit.security.LoginRequest;
 import FIS.iLUVit.security.LoginResponse;
 import FIS.iLUVit.service.UserService;

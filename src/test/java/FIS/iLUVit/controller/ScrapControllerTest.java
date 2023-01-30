@@ -2,10 +2,10 @@ package FIS.iLUVit.controller;
 
 import FIS.iLUVit.Creator;
 import FIS.iLUVit.config.argumentResolver.LoginUserArgumentResolver;
-import FIS.iLUVit.controller.dto.ScrapDirRequest;
-import FIS.iLUVit.controller.dto.ScrapByPostRequest;
-import FIS.iLUVit.controller.dto.ScrapDirDetailRequest;
-import FIS.iLUVit.controller.dto.ScrapInfoDto;
+import FIS.iLUVit.dto.scrap.ScrapDirRequest;
+import FIS.iLUVit.dto.scrap.ScrapByPostRequest;
+import FIS.iLUVit.dto.scrap.ScrapDirDetailRequest;
+import FIS.iLUVit.dto.scrap.ScrapInfoDto;
 import FIS.iLUVit.domain.User;
 import FIS.iLUVit.exception.ScrapErrorResult;
 import FIS.iLUVit.exception.ScrapException;
@@ -32,7 +32,7 @@ import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import java.util.ArrayList;
 import java.util.List;
 
-import static FIS.iLUVit.controller.dto.ScrapByPostRequest.*;
+import static FIS.iLUVit.dto.scrap.ScrapByPostRequest.*;
 import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;

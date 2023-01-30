@@ -2,7 +2,7 @@ package FIS.iLUVit.repository;
 
 import FIS.iLUVit.Creator;
 import FIS.iLUVit.config.argumentResolver.ForDB;
-import FIS.iLUVit.controller.dto.PostPreviewDto;
+import FIS.iLUVit.dto.post.PostPreviewDto;
 import FIS.iLUVit.domain.*;
 import FIS.iLUVit.domain.enumtype.Approval;
 import FIS.iLUVit.domain.enumtype.Auth;

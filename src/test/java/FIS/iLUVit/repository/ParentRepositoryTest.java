@@ -2,7 +2,7 @@ package FIS.iLUVit.repository;
 
 import FIS.iLUVit.Creator;
 import FIS.iLUVit.config.argumentResolver.ForDB;
-import FIS.iLUVit.controller.dto.ParticipationListDto;
+import FIS.iLUVit.dto.parent.ParticipationListDto;
 import FIS.iLUVit.domain.*;
 import FIS.iLUVit.domain.enumtype.Approval;
 import org.junit.jupiter.api.BeforeEach;

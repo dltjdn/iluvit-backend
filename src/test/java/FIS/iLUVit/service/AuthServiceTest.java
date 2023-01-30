@@ -1,8 +1,8 @@
 package FIS.iLUVit.service;
 
 import FIS.iLUVit.Creator;
-import FIS.iLUVit.controller.dto.AuthNumRequest;
-import FIS.iLUVit.controller.dto.FindPasswordRequest;
+import FIS.iLUVit.dto.auth.AuthNumRequest;
+import FIS.iLUVit.dto.auth.FindPasswordRequest;
 import FIS.iLUVit.domain.AuthNumber;
 import FIS.iLUVit.domain.Parent;
 import FIS.iLUVit.domain.Teacher;

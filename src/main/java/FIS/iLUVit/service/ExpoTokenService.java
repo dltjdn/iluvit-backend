@@ -1,7 +1,7 @@
 package FIS.iLUVit.service;
 
-import FIS.iLUVit.controller.dto.ExpoTokenDto;
-import FIS.iLUVit.controller.dto.ExpoTokenRequest;
+import FIS.iLUVit.dto.expoToken.ExpoTokenDto;
+import FIS.iLUVit.dto.expoToken.ExpoTokenRequest;
 import FIS.iLUVit.domain.ExpoToken;
 import FIS.iLUVit.domain.User;
 import FIS.iLUVit.exception.UserErrorResult;

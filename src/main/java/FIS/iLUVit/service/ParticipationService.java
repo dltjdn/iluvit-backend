@@ -1,6 +1,6 @@
 package FIS.iLUVit.service;
 
-import FIS.iLUVit.controller.dto.ParticipationListDto;
+import FIS.iLUVit.dto.parent.ParticipationListDto;
 import FIS.iLUVit.domain.Parent;
 import FIS.iLUVit.domain.Participation;
 import FIS.iLUVit.domain.Presentation;

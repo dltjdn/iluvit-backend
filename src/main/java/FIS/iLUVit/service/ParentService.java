@@ -1,18 +1,17 @@
 package FIS.iLUVit.service;
 
-import FIS.iLUVit.controller.dto.*;
+import FIS.iLUVit.dto.parent.ParentDetailRequest;
+import FIS.iLUVit.dto.parent.ParentDetailResponse;
+import FIS.iLUVit.dto.parent.SignupParentRequest;
 import FIS.iLUVit.domain.*;
 import FIS.iLUVit.domain.embeddable.Theme;
 import FIS.iLUVit.domain.enumtype.AuthKind;
-import FIS.iLUVit.exception.PreferErrorResult;
-import FIS.iLUVit.exception.PreferException;
 import FIS.iLUVit.exception.UserErrorResult;
 import FIS.iLUVit.exception.UserException;
 import FIS.iLUVit.repository.*;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.data.util.Pair;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;

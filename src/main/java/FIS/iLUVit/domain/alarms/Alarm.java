@@ -1,6 +1,6 @@
 package FIS.iLUVit.domain.alarms;
 
-import FIS.iLUVit.controller.dto.AlarmDetailDto;
+import FIS.iLUVit.dto.alarm.AlarmDetailDto;
 import FIS.iLUVit.domain.BaseEntity;
 import FIS.iLUVit.domain.User;
 import lombok.Getter;

@@ -1,6 +1,6 @@
 package FIS.iLUVit.repository;
 
-import FIS.iLUVit.controller.dto.ParticipationListDto;
+import FIS.iLUVit.dto.parent.ParticipationListDto;
 import FIS.iLUVit.domain.Parent;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;

@@ -1,17 +1,17 @@
 package FIS.iLUVit.service;
 
-import FIS.iLUVit.Creator;
-import FIS.iLUVit.controller.dto.*;
+import FIS.iLUVit.controller.dto.presentation.*;
 import FIS.iLUVit.domain.*;
 import FIS.iLUVit.domain.alarms.Alarm;
 import FIS.iLUVit.domain.alarms.PresentationFullAlarm;
 import FIS.iLUVit.domain.enumtype.Approval;
 import FIS.iLUVit.domain.enumtype.Auth;
 import FIS.iLUVit.domain.enumtype.Status;
+import FIS.iLUVit.dto.presentation.*;
 import FIS.iLUVit.event.AlarmEvent;
 import FIS.iLUVit.exception.*;
 import FIS.iLUVit.repository.*;
-import FIS.iLUVit.repository.dto.PresentationWithPtDatesDto;
+import FIS.iLUVit.dto.presentation.PresentationWithPtDatesDto;
 import org.junit.jupiter.api.*;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.*;
@@ -186,7 +186,7 @@ class PresentationServiceTest {
 
             //then
             assertThat(result.size()).isEqualTo(2);
-            assertThat(result.get(1).getPtDateDtos().size()).isEqualTo(2);
+            assertThat(result.get(1).getPtDateDetailDtos().size()).isEqualTo(2);
             assertThat(result.get(0).getPlace()).isEqualTo("test place");
         }
 
@@ -211,7 +211,7 @@ class PresentationServiceTest {
 
             //then
             assertThat(result.size()).isEqualTo(2);
-            assertThat(result.get(1).getPtDateDtos().size()).isEqualTo(2);
+            assertThat(result.get(1).getPtDateDetailDtos().size()).isEqualTo(2);
             assertThat(result.get(0).getPlace()).isEqualTo("test place");
         }
     }

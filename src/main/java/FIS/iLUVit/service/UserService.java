@@ -1,6 +1,6 @@
 package FIS.iLUVit.service;
 
-import FIS.iLUVit.controller.dto.*;
+import FIS.iLUVit.dto.user.*;
 import FIS.iLUVit.domain.AuthNumber;
 import FIS.iLUVit.domain.TokenPair;
 import FIS.iLUVit.domain.User;

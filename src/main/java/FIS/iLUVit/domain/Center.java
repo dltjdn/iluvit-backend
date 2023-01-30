@@ -1,6 +1,6 @@
 package FIS.iLUVit.domain;
 
-import FIS.iLUVit.controller.dto.CenterDetailRequest;
+import FIS.iLUVit.dto.center.CenterDetailRequest;
 import FIS.iLUVit.domain.embeddable.*;
 import FIS.iLUVit.domain.enumtype.KindOf;
 import lombok.*;
