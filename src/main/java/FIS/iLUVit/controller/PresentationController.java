@@ -41,7 +41,7 @@ public class PresentationController {
      * 현재날짜에 맞춰서 설명회 기간에 있으면 반환 그렇지 않으면 반환 하지않음 <p>
      * 내용 - 신청기간, 내용, 사진, 동영상, 신청할 수 있는 설명회 목록?
      */
-    @GetMapping("info/centerId/{centerId}")
+    @GetMapping("info/center/{centerId}")
     @ResponseStatus(HttpStatus.ACCEPTED)
     public List<PresentationDetailResponse> findPresentationByCenterId(@PathVariable("centerId") Long centerId, @Login Long userId){
         return presentationService.findPresentationByCenterIdAndDate(centerId, userId);
