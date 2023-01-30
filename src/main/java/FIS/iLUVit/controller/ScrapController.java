@@ -10,6 +10,7 @@ import org.springframework.data.domain.Slice;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+import java.util.List;
 
 @Slf4j
 @RestController
@@ -75,7 +76,7 @@ public class ScrapController {
      *   작성내용: 게시물 관련 스크랩 폴더 목록
      */
     @GetMapping("post/dir")
-    public ScrapListByPostResponse ScrapListByPost(@Login Long userId, @RequestParam Long postId) {
+    public List<ScrapInfoByPostDto> ScrapListByPost(@Login Long userId, @RequestParam Long postId) {
         return scrapService.findScrapListByPost(userId, postId);
     }
 

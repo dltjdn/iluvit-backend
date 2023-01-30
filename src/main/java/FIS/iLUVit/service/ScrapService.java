@@ -152,11 +152,11 @@ public class ScrapService {
      * 작성자: 이승범
      * 작성내용: 해당 게시물에 대한 스크랩폴더 상태 목록 보여주기
      */
-    public ScrapListByPostResponse findScrapListByPost(Long userId, Long postId) {
+    public List<ScrapInfoByPostDto> findScrapListByPost(Long userId, Long postId) {
         List<Scrap> scrapListByUser = scrapRepository.findScrapsByUserWithScrapPosts(userId);
-        return new ScrapListByPostResponse(scrapListByUser.stream()
-                .map(s -> new ScrapListByPostResponse.ScrapInfoByPost(s, postId))
-                .collect(Collectors.toList()));
+        return scrapListByUser.stream()
+                .map(scrap -> new ScrapInfoByPostDto(scrap, postId))
+                .collect(Collectors.toList());
     }
     /**
      *   작성날짜: 2022/06/22 4:54 PM

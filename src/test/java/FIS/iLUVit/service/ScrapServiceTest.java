@@ -339,10 +339,10 @@ public class ScrapServiceTest {
                 .when(scrapRepository)
                 .findScrapsByUserWithScrapPosts(any());
         // when
-        ScrapListByPostResponse result = target.findScrapListByPost(parent1.getId(), post1.getId());
+        List<ScrapInfoByPostDto> result = target.findScrapListByPost(parent1.getId(), post1.getId());
         // then
-        assertThat(result.getData().size()).isEqualTo(2);
-        result.getData().forEach(scrapInfo -> {
+        assertThat(result.size()).isEqualTo(2);
+        result.forEach(scrapInfo -> {
             if (Objects.equals(scrapInfo.getScrapId(), scrap1.getId())) {
                 assertThat(scrapInfo.getHasPost()).isTrue();
             } else {
