@@ -39,7 +39,7 @@ public interface ParentRepository extends JpaRepository<Parent, Long> {
             "where parent.id = :userId")
     Parent findMyWaiting(@Param("userId") Long userId);
 
-    @Query("select new FIS.iLUVit.controller.dto.ParticipationListDto(" +
+    @Query("select new FIS.iLUVit.dto.parent.ParticipationListDto(" +
             "parent.id, participation.id, ptDate.id, presentation.id, center.id, ptDate.date, ptDate.time, center.profileImagePath, presentation.place, presentation.content, center.name, center.tel, center.address, center.addressDetail, ptDate.ablePersonNum, ptDate.participantCnt, participation.status" +
             ") " +
             "from Parent parent " +
@@ -50,7 +50,7 @@ public interface ParentRepository extends JpaRepository<Parent, Long> {
             "where parent.id = :userId and participation.status = FIS.iLUVit.domain.enumtype.Status.JOINED")
     Slice<ParticipationListDto> findMyJoinParticipation(@Param("userId") Long userId, Pageable pageable);
 
-    @Query("select new FIS.iLUVit.controller.dto.ParticipationListDto(" +
+    @Query("select new FIS.iLUVit.dto.parent.ParticipationListDto(" +
             "parent.id, participation.id, ptDate.id, presentation.id, center.id, ptDate.date, ptDate.time, center.profileImagePath, presentation.place, presentation.content, center.name, center.tel, center.address, center.addressDetail, ptDate.ablePersonNum, ptDate.participantCnt, participation.status" +
             ") " +
             "from Parent parent " +
@@ -61,7 +61,7 @@ public interface ParentRepository extends JpaRepository<Parent, Long> {
             "where parent.id = :userId and participation.status = FIS.iLUVit.domain.enumtype.Status.CANCELED")
     Slice<ParticipationListDto> findMyCancelParticipation(@Param("userId") Long userId, Pageable pageable);
 
-    @Query("select new FIS.iLUVit.controller.dto.ParticipationListDto(" +
+    @Query("select new FIS.iLUVit.dto.parent.ParticipationListDto(" +
             "parent.id, waiting.id, ptDate.id, presentation.id, center.id, ptDate.date, ptDate.time, center.profileImagePath, presentation.place, presentation.content, center.name, center.tel, center.address, center.addressDetail, ptDate.ablePersonNum, ptDate.participantCnt" +
             ") " +
             "from Parent parent " +
