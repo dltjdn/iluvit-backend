@@ -154,8 +154,8 @@ public class ScrapControllerTest {
         @DisplayName("[success] 스크랩폴더삭제성공")
         public void 스크랩폴더삭제성공() throws Exception {
             // given
-            String url = "/user/scrap/dir";
-            ScrapListResponse response = new ScrapListResponse();
+            String url = "/scrap/dir";
+            List<ScrapInfoDto> response = new ArrayList<>();
             doReturn(response)
                     .when(scrapService)
                     .deleteScrapDir(any(), any());
