@@ -1,6 +1,6 @@
 package FIS.iLUVit.service;
 
-import FIS.iLUVit.controller.dto.AuthenticateAuthNumRequest;
+import FIS.iLUVit.controller.dto.AuthNumRequest;
 import FIS.iLUVit.controller.dto.FindPasswordRequest;
 import FIS.iLUVit.domain.AuthNumber;
 import FIS.iLUVit.domain.User;
@@ -106,7 +106,7 @@ public class AuthService {
      * 작성자: 이승범
      * 작성내용: 인증번호 인증
      */
-    public AuthNumber authenticateAuthNum(Long userId, AuthenticateAuthNumRequest request) {
+    public AuthNumber authenticateAuthNum(Long userId, AuthNumRequest request) {
 
         AuthNumber authNumber;
 
@@ -134,7 +134,7 @@ public class AuthService {
      * 작성자: 이승범
      * 작성내용: 로그인 아이디 찾기
      */
-    public String findLoginId(AuthenticateAuthNumRequest request) {
+    public String findLoginId(AuthNumRequest request) {
 
         // request와 일치하는 유효한 인증번호가 있는지 검공
         AuthNumber authNumber = authenticateAuthNum(null, request);

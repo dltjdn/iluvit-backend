@@ -1,8 +1,8 @@
 package FIS.iLUVit.service;
 
-import FIS.iLUVit.controller.dto.BoardListDTO;
-import FIS.iLUVit.controller.dto.CreateBoardRequest;
-import FIS.iLUVit.controller.dto.StoryHomeDTO;
+import FIS.iLUVit.controller.dto.BoardListDto;
+import FIS.iLUVit.controller.dto.BoardRequest;
+import FIS.iLUVit.controller.dto.StoryHomeDto;
 import FIS.iLUVit.domain.*;
 import FIS.iLUVit.domain.enumtype.Approval;
 import FIS.iLUVit.domain.enumtype.Auth;
@@ -31,8 +31,8 @@ public class BoardService {
     private final UserRepository userRepository;
     private final ChildRepository childRepository;
 
-    public BoardListDTO findAllWithBookmark(Long userId) {
-        BoardListDTO dto = new BoardListDTO(null, "모두의 이야기");
+    public BoardListDto findAllWithBookmark(Long userId) {
+        BoardListDto dto = new BoardListDto(null, "모두의 이야기");
         // 모두의 이야기 내 유저의 북마크 정보
         List<Bookmark> bookmarks = boardBookmarkRepository.findBoardByUser(userId);
         // 모두의 이야기 내 모든 게시판
@@ -43,10 +43,10 @@ public class BoardService {
         return dto;
     }
 
-    public BoardListDTO findAllWithBookmarkInCenter(Long userId, Long centerId) {
+    public BoardListDto findAllWithBookmarkInCenter(Long userId, Long centerId) {
         Center findCenter = centerRepository.findById(centerId)
                 .orElseThrow(() -> new CenterException(CenterErrorResult.CENTER_NOT_EXIST));
-        BoardListDTO dto = new BoardListDTO(centerId, findCenter.getName());
+        BoardListDto dto = new BoardListDto(centerId, findCenter.getName());
         // 시설(유치원)의 이야기 내 유저의 북마크 정보
         List<Bookmark> bookmarks = boardBookmarkRepository.findBoardByUserAndCenter(userId, centerId);
         // 시설(유치원)의 이야기 모든 게시판
@@ -57,7 +57,7 @@ public class BoardService {
         return dto;
     }
 
-    private void createDTO(List<Bookmark> bookmarks, List<Board> boards, BoardListDTO dto) {
+    private void createDTO(List<Bookmark> bookmarks, List<Board> boards, BoardListDto dto) {
         // 북마크 정보를 게시판 id 으로 그루핑
         Map<Long, List<Bookmark>> bookmarkMap = bookmarks.stream()
                 .collect(Collectors.groupingBy(b -> b.getBoard().getId()));
@@ -66,16 +66,16 @@ public class BoardService {
         boards.forEach(b -> {
             List<Bookmark> bookmarkList = bookmarkMap.get(b.getId());
             if (bookmarkList == null) { // 즐찾 안한 게시판들은 보드 리스트에 넣음
-                dto.getBoardList().add(new BoardListDTO.BookmarkDTO(b));
+                dto.getBoardList().add(new BoardListDto.BookmarkDTO(b));
             } else { // 즐찾한 게시판들은 북마크 리스트에 넣음
-                BoardListDTO.BookmarkDTO bookmarkDTO = new BoardListDTO.BookmarkDTO(b);
+                BoardListDto.BookmarkDTO bookmarkDTO = new BoardListDto.BookmarkDTO(b);
                 bookmarkDTO.setBookmark_id(bookmarkList.get(0).getId());
                 dto.getBookmarkList().add(bookmarkDTO);
             }
         });
     }
 
-    public Long create(Long userId, Long center_id, CreateBoardRequest request) {
+    public Long create(Long userId, Long center_id, BoardRequest request) {
         // userId 가 null 인 경우 게시판 생성 제한
         if (userId == null) {
             throw new BoardException(BoardErrorResult.UNAUTHORIZED_USER_ACCESS);
@@ -169,31 +169,31 @@ public class BoardService {
         }
     }
 
-    public StoryHomeDTO findCenterStory(Long userId) {
-        List<StoryHomeDTO.CenterStoryDTO> result = new ArrayList<>();
-        result.add(new StoryHomeDTO.CenterStoryDTO(null));
+    public StoryHomeDto findCenterStory(Long userId) {
+        List<StoryHomeDto.CenterStoryDTO> result = new ArrayList<>();
+        result.add(new StoryHomeDto.CenterStoryDTO(null));
         if (userId == null) {
-            return new StoryHomeDTO(result);
+            return new StoryHomeDto(result);
         }
         User findUser = userRepository.findById(userId)
                 .orElseThrow(() -> new UserException(UserErrorResult.USER_NOT_EXIST));
         log.info("findUser = {}", findUser.getAuth());
         if (findUser.getAuth() == Auth.PARENT) {
             List<Child> children = userRepository.findChildrenWithCenter(userId);
-            List<StoryHomeDTO.CenterStoryDTO> centerStoryDTOList = children.stream()
+            List<StoryHomeDto.CenterStoryDTO> centerStoryDTOList = children.stream()
                     .filter(c -> c.getCenter() != null && c.getApproval() == Approval.ACCEPT)
-                    .map(c -> new StoryHomeDTO.CenterStoryDTO(c.getCenter()))
+                    .map(c -> new StoryHomeDto.CenterStoryDTO(c.getCenter()))
                     .collect(Collectors.toList());
             result.addAll(centerStoryDTOList);
         } else {
             Center findCenter = ((Teacher) findUser).getCenter();
             Approval approval = ((Teacher) findUser).getApproval();
             if (findCenter != null && approval == Approval.ACCEPT) {
-                StoryHomeDTO.CenterStoryDTO centerStoryDTO = new StoryHomeDTO
+                StoryHomeDto.CenterStoryDTO centerStoryDTO = new StoryHomeDto
                         .CenterStoryDTO(findCenter);
                 result.add(centerStoryDTO);
             }
         }
-        return new StoryHomeDTO(result);
+        return new StoryHomeDto(result);
     }
 }

@@ -2,7 +2,6 @@ package FIS.iLUVit.controller;
 
 import FIS.iLUVit.config.argumentResolver.Login;
 import FIS.iLUVit.controller.dto.*;
-import FIS.iLUVit.service.CenterService;
 import FIS.iLUVit.service.TeacherService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -37,7 +36,7 @@ public class TeacherController {
      * 작성내용: 선생의 프로필 정보 update
      */
     @PostMapping("")
-    public TeacherDetailResponse updateTeacherDetail(@Login Long id, @Valid @ModelAttribute UpdateTeacherDetailRequest request) throws IOException {
+    public TeacherDetailResponse updateTeacherDetail(@Login Long id, @Valid @ModelAttribute TeacherDetailRequest request) throws IOException {
         return teacherService.updateDetail(id, request);
     }
 
@@ -127,7 +126,7 @@ public class TeacherController {
      *   작성내용: 회원가입, 이직 과정에서 center 정보 가져오기
      */
     @GetMapping("search/center")
-    public Slice<CenterInfoDto> centerInfoForSignup(@ModelAttribute CenterInfoRequest request, Pageable pageable) {
+    public Slice<CenterDto> centerInfoForSignup(@ModelAttribute CenterRequest request, Pageable pageable) {
         return teacherService.findCenterForSignup(request, pageable);
     }
 }

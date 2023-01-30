@@ -1,6 +1,6 @@
 package FIS.iLUVit.domain.alarms;
 
-import FIS.iLUVit.controller.dto.AlarmDto;
+import FIS.iLUVit.controller.dto.AlarmDetailDto;
 import FIS.iLUVit.domain.User;
 import FIS.iLUVit.service.AlarmUtils;
 import lombok.Getter;
@@ -31,13 +31,13 @@ public class ChatAlarm extends Alarm{
     }
 
     @Override
-    public AlarmDto exportAlarm() {
+    public AlarmDetailDto exportAlarm() {
         return anonymous ? new ChatAlarmDto(id, createdDate, message, dtype, null, true, profileImage)
         : new ChatAlarmDto(id, createdDate, message, dtype, senderId, false, profileImage);
     }
 
     @Getter
-    public static class ChatAlarmDto extends AlarmDto{
+    public static class ChatAlarmDto extends AlarmDetailDto {
 
         protected Long senderId;
         protected Boolean anonymous;

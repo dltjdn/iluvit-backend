@@ -2,10 +2,10 @@ package FIS.iLUVit.controller;
 
 import FIS.iLUVit.Creator;
 import FIS.iLUVit.config.argumentResolver.LoginUserArgumentResolver;
-import FIS.iLUVit.controller.dto.CenterBannerResponseDto;
-import FIS.iLUVit.controller.dto.CenterInfoDto;
-import FIS.iLUVit.controller.dto.CenterInfoRequest;
-import FIS.iLUVit.controller.dto.CenterModifyRequestDto;
+import FIS.iLUVit.controller.dto.CenterBannerResponse;
+import FIS.iLUVit.controller.dto.CenterDto;
+import FIS.iLUVit.controller.dto.CenterRequest;
+import FIS.iLUVit.controller.dto.CenterDetailRequest;
 import FIS.iLUVit.controller.messagecreate.ResponseRequests;
 import FIS.iLUVit.domain.Center;
 import FIS.iLUVit.domain.Parent;
@@ -106,17 +106,17 @@ class CenterControllerTest extends ResponseRequests {
     public void 회원가입과정에서center정보가져오기() throws Exception {
         // given
         String url = "/center/signup?page=0&size=5";
-        CenterInfoRequest request = CenterInfoRequest.builder()
+        CenterRequest request = CenterRequest.builder()
                 .sido("서울시")
                 .sigungu("금천구")
                 .build();
-        List<CenterInfoDto> content = List.of(CenterInfoDto.builder()
+        List<CenterDto> content = List.of(CenterDto.builder()
                 .id(1L)
                 .name("name")
                 .address("address")
                 .build());
         PageRequest pageable = PageRequest.of(0, 5);
-        SliceImpl<CenterInfoDto> response = new SliceImpl<>(content, pageable, false);
+        SliceImpl<CenterDto> response = new SliceImpl<>(content, pageable, false);
         doReturn(response)
                 .when(teacherService)
                 .findCenterForSignup(request, pageable);
@@ -140,7 +140,7 @@ class CenterControllerTest extends ResponseRequests {
         @Test
         public void 센터_정보_검색_배너() throws Exception {
             //given
-            CenterBannerResponseDto response = new CenterBannerResponseDto(1L, "test", true, true, 4.5, null,"testLocation", List.of(new String[]{"dfd", "fsdfs"}));
+            CenterBannerResponse response = new CenterBannerResponse(1L, "test", true, true, 4.5, null,"testLocation", List.of(new String[]{"dfd", "fsdfs"}));
             Parent parent = createParent(1L);
             String jwtToken = createJwtToken(parent);
 
@@ -166,7 +166,7 @@ class CenterControllerTest extends ResponseRequests {
         @Test
         public void 베너_검색_성공_선생님으로_검색() throws Exception {
             //given
-            CenterBannerResponseDto response = new CenterBannerResponseDto(1L, "test", true, true, 4.5, null,"testLocation", List.of(new String[]{"dfd", "fsdfs"}));
+            CenterBannerResponse response = new CenterBannerResponse(1L, "test", true, true, 4.5, null,"testLocation", List.of(new String[]{"dfd", "fsdfs"}));
             Teacher teacher = createTeacher(1L);
             String jwtToken = createJwtToken(teacher);
 
@@ -191,7 +191,7 @@ class CenterControllerTest extends ResponseRequests {
         @Test
         public void 센터_베너_정보_검색_비회원() throws Exception {
             //given
-            CenterBannerResponseDto response = new CenterBannerResponseDto(1L, "test", true, true, 4.5, null,"testLocation", List.of(new String[]{"dfd", "fsdfs"}));
+            CenterBannerResponse response = new CenterBannerResponse(1L, "test", true, true, 4.5, null,"testLocation", List.of(new String[]{"dfd", "fsdfs"}));
 //            Teacher teacher = createTeacher(1L);
 //            String jwtToken = createJwtToken(teacher);
 
@@ -232,8 +232,8 @@ class CenterControllerTest extends ResponseRequests {
     @DisplayName("시설 수정")
     class 시설수정{
 
-        CenterModifyRequestDto wrongRequest;
-        CenterModifyRequestDto rightRequest;
+        CenterDetailRequest wrongRequest;
+        CenterDetailRequest rightRequest;
         MockMultipartFile multipartFile;
         List<MockMultipartFile> multipartFileList = new ArrayList<>();
         Center center;
@@ -251,8 +251,8 @@ class CenterControllerTest extends ResponseRequests {
 
             waitingTeacher = createTeacher(1L, center, Auth.TEACHER, Approval.WAITING);
             acceptTeacher = createTeacher(1L, center, Auth.TEACHER, Approval.ACCEPT);
-            wrongRequest = new CenterModifyRequestDto();
-            rightRequest = CenterModifyRequestDto.builder()
+            wrongRequest = new CenterDetailRequest();
+            rightRequest = CenterDetailRequest.builder()
                     .name("test")
                     .director("test 원장")
                     .tel("test 전번")
@@ -345,7 +345,7 @@ class CenterControllerTest extends ResponseRequests {
             });
 
             Mockito.doThrow(new UserException(UserErrorResult.USER_NOT_EXIST))
-                    .when(centerService).modifyCenter(any(Long.class), any(Long.class), any(CenterModifyRequestDto.class), anyList(), any(MultipartFile.class));
+                    .when(centerService).modifyCenter(any(Long.class), any(Long.class), any(CenterDetailRequest.class), anyList(), any(MultipartFile.class));
 
             MockMultipartFile requestDto = new MockMultipartFile("requestDto", null,
                     "application/json", objectMapper.writeValueAsString(rightRequest).getBytes());
@@ -383,7 +383,7 @@ class CenterControllerTest extends ResponseRequests {
             });
 
             Mockito.doThrow(new CenterException(CenterErrorResult.AUTHENTICATION_FAILED))
-                    .when(centerService).modifyCenter(any(Long.class), any(Long.class), any(CenterModifyRequestDto.class), anyList(), any(MultipartFile.class));
+                    .when(centerService).modifyCenter(any(Long.class), any(Long.class), any(CenterDetailRequest.class), anyList(), any(MultipartFile.class));
 
             MockMultipartFile requestDto = new MockMultipartFile("requestDto", null,
                     "application/json", objectMapper.writeValueAsString(rightRequest).getBytes());
@@ -421,7 +421,7 @@ class CenterControllerTest extends ResponseRequests {
             });
 
             Mockito.doThrow(new CenterException(CenterErrorResult.CENTER_WRONG_ADDRESS))
-                    .when(centerService).modifyCenter(any(Long.class), any(Long.class), any(CenterModifyRequestDto.class), anyList(), any(MultipartFile.class));
+                    .when(centerService).modifyCenter(any(Long.class), any(Long.class), any(CenterDetailRequest.class), anyList(), any(MultipartFile.class));
 
             MockMultipartFile requestDto = new MockMultipartFile("requestDto", null,
                     "application/json", objectMapper.writeValueAsString(rightRequest).getBytes());
@@ -459,7 +459,7 @@ class CenterControllerTest extends ResponseRequests {
             });
 
             Mockito.doReturn(1L)
-                    .when(centerService).modifyCenter(any(Long.class), any(Long.class), any(CenterModifyRequestDto.class), anyList(), any(MultipartFile.class));
+                    .when(centerService).modifyCenter(any(Long.class), any(Long.class), any(CenterDetailRequest.class), anyList(), any(MultipartFile.class));
 
             MockMultipartFile requestDto = new MockMultipartFile("requestDto", null,
                     "application/json", objectMapper.writeValueAsString(rightRequest).getBytes());
@@ -531,7 +531,7 @@ class CenterControllerTest extends ResponseRequests {
             });
 
             Mockito.doReturn(1L)
-                    .when(centerService).modifyCenterInfo(any(Long.class), any(Long.class), any(CenterModifyRequestDto.class));
+                    .when(centerService).modifyCenterInfo(any(Long.class), any(Long.class), any(CenterDetailRequest.class));
 
             //when
             ResultActions result = mockMvc.perform(
@@ -554,10 +554,10 @@ class CenterControllerTest extends ResponseRequests {
     public void 아이추가센터정보조회() throws Exception {
         // given
         String url = "/center/child/add?page=0&size=10";
-        List<CenterInfoDto> content = List.of(CenterInfoDto.builder().build());
-        CenterInfoRequest request = CenterInfoRequest.builder().build();
+        List<CenterDto> content = List.of(CenterDto.builder().build());
+        CenterRequest request = CenterRequest.builder().build();
         Pageable pageable = PageRequest.of(0, 10);
-        SliceImpl<CenterInfoDto> response = new SliceImpl<>(content, pageable, false);
+        SliceImpl<CenterDto> response = new SliceImpl<>(content, pageable, false);
         doReturn(response)
                 .when(childService)
                 .findCenterForAddChild(any(), any());

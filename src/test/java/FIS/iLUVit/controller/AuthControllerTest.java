@@ -2,7 +2,7 @@ package FIS.iLUVit.controller;
 
 import FIS.iLUVit.Creator;
 import FIS.iLUVit.config.argumentResolver.LoginUserArgumentResolver;
-import FIS.iLUVit.controller.dto.AuthenticateAuthNumRequest;
+import FIS.iLUVit.controller.dto.AuthNumRequest;
 import FIS.iLUVit.controller.dto.FindPasswordRequest;
 import FIS.iLUVit.domain.Parent;
 import FIS.iLUVit.domain.User;
@@ -142,7 +142,7 @@ public class AuthControllerTest {
     public void 인증번호인증_실패_인증정보불일치() throws Exception {
         // given
         final String url = "/authNumber";
-        AuthenticateAuthNumRequest request = new AuthenticateAuthNumRequest(phoneNum, authNum, AuthKind.signup);
+        AuthNumRequest request = new AuthNumRequest(phoneNum, authNum, AuthKind.signup);
         AuthNumberErrorResult error = AuthNumberErrorResult.AUTHENTICATION_FAIL;
         doThrow(new AuthNumberException(error))
                 .when(authService)
@@ -166,7 +166,7 @@ public class AuthControllerTest {
     public void 인증번호인증_실패_인증번호만료() throws Exception {
         // given
         final String url = "/authNumber";
-        AuthenticateAuthNumRequest request = new AuthenticateAuthNumRequest(phoneNum, authNum, AuthKind.signup);
+        AuthNumRequest request = new AuthNumRequest(phoneNum, authNum, AuthKind.signup);
         AuthNumberErrorResult error = AuthNumberErrorResult.EXPIRED;
         doThrow(new AuthNumberException(error))
                 .when(authService)
@@ -191,7 +191,7 @@ public class AuthControllerTest {
     public void 인증번호인증_성공() throws Exception {
         // given
         final String url = "/authNumber";
-        AuthenticateAuthNumRequest request = new AuthenticateAuthNumRequest(phoneNum, authNum, AuthKind.signup);
+        AuthNumRequest request = new AuthNumRequest(phoneNum, authNum, AuthKind.signup);
 
         // when
         ResultActions resultActions = mockMvc.perform(
@@ -208,7 +208,7 @@ public class AuthControllerTest {
     public void 인증번호인증_성공_핸드폰변경() throws Exception {
         // given
         final String url = "/authNumber";
-        AuthenticateAuthNumRequest request = new AuthenticateAuthNumRequest(phoneNum, authNum, AuthKind.updatePhoneNum);
+        AuthNumRequest request = new AuthNumRequest(phoneNum, authNum, AuthKind.updatePhoneNum);
 
         // when
         ResultActions resultActions = mockMvc.perform(
@@ -263,7 +263,7 @@ public class AuthControllerTest {
         Gson gson = new Gson();
         String url = "/findLoginId";
         String loginId = "lo***Id";
-        AuthenticateAuthNumRequest request = new AuthenticateAuthNumRequest(phoneNum, authNum, AuthKind.findLoginId);
+        AuthNumRequest request = new AuthNumRequest(phoneNum, authNum, AuthKind.findLoginId);
         doReturn(loginId)
                 .when(authService)
                 .findLoginId(request);

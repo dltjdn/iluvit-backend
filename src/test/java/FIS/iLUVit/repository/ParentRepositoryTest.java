@@ -2,7 +2,7 @@ package FIS.iLUVit.repository;
 
 import FIS.iLUVit.Creator;
 import FIS.iLUVit.config.argumentResolver.ForDB;
-import FIS.iLUVit.controller.dto.MyParticipationsDto;
+import FIS.iLUVit.controller.dto.ParticipationListDto;
 import FIS.iLUVit.domain.*;
 import FIS.iLUVit.domain.enumtype.Approval;
 import org.junit.jupiter.api.BeforeEach;
@@ -14,15 +14,10 @@ import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Slice;
-import org.springframework.mock.web.MockMultipartFile;
 
 import javax.persistence.EntityManager;
 
-import java.io.File;
 import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 
 import static FIS.iLUVit.Creator.*;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -157,7 +152,7 @@ class ParentRepositoryTest {
             em.clear();
 
             //when
-            Slice<MyParticipationsDto> result = parentRepository.findMyJoinParticipation(parent.getId(), PageRequest.of(0, 2));
+            Slice<ParticipationListDto> result = parentRepository.findMyJoinParticipation(parent.getId(), PageRequest.of(0, 2));
 
             //then
             assertThat(result.getContent().size()).isEqualTo(1);
@@ -192,7 +187,7 @@ class ParentRepositoryTest {
             em.clear();
 
             //when
-            Slice<MyParticipationsDto> result = parentRepository.findMyCancelParticipation(parent.getId(), PageRequest.of(0, 2));
+            Slice<ParticipationListDto> result = parentRepository.findMyCancelParticipation(parent.getId(), PageRequest.of(0, 2));
 
             //then
             assertThat(result.getContent().size()).isEqualTo(1);
@@ -225,7 +220,7 @@ class ParentRepositoryTest {
             em.flush();
             em.clear();
             //when
-            Slice<MyParticipationsDto> result = parentRepository.findMyWaiting(parent.getId(), PageRequest.of(0, 2));
+            Slice<ParticipationListDto> result = parentRepository.findMyWaiting(parent.getId(), PageRequest.of(0, 2));
 
             //then
             assertThat(result.getContent().size()).isEqualTo(1);

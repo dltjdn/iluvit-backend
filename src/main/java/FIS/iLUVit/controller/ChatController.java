@@ -2,10 +2,10 @@
 package FIS.iLUVit.controller;
 
 import FIS.iLUVit.config.argumentResolver.Login;
-import FIS.iLUVit.controller.dto.ChatDTO;
-import FIS.iLUVit.controller.dto.ChatListDTO;
-import FIS.iLUVit.controller.dto.CreateChatRequest;
-import FIS.iLUVit.controller.dto.CreateChatRoomRequest;
+import FIS.iLUVit.controller.dto.ChatDto;
+import FIS.iLUVit.controller.dto.ChatListDto;
+import FIS.iLUVit.controller.dto.ChatRequest;
+import FIS.iLUVit.controller.dto.ChatRoomRequest;
 import FIS.iLUVit.service.ChatService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
@@ -25,7 +25,7 @@ public class ChatController {
      내용: 쪽지 작성 ( 대화방 생성 )
      */
     @PostMapping("")
-    public Long createChat(@Login Long userId, @RequestBody CreateChatRequest request) {
+    public Long createChat(@Login Long userId, @RequestBody ChatRequest request) {
         return chatService.saveChat(userId, request);
     }
 
@@ -35,7 +35,7 @@ public class ChatController {
      내용: 쪽지 작성 ( 대화방 생성 후 쪽지 작성 )
      */
     @PostMapping("in-room")
-    public Long createChatInRoom(@Login Long userId, @RequestBody CreateChatRoomRequest request) {
+    public Long createChatInRoom(@Login Long userId, @RequestBody ChatRoomRequest request) {
         return chatService.saveChatInRoom(userId, request);
     }
 
@@ -45,7 +45,7 @@ public class ChatController {
      내용: 나의 쪽지함 (대화 상대 목록)
      */
     @GetMapping("")
-    public Slice<ChatListDTO> findAll(@Login Long userId, Pageable pageable) {
+    public Slice<ChatListDto> findAll(@Login Long userId, Pageable pageable) {
         return chatService.findAll(userId, pageable);
     }
 
@@ -55,8 +55,8 @@ public class ChatController {
         내용: 쪽지 자세히 보기
     */
     @GetMapping("{roomId}")
-    public ChatDTO searchByPost(@Login Long userId, @PathVariable("roomId") Long roomId,
-                                           Pageable pageable) {
+    public ChatDto searchByPost(@Login Long userId, @PathVariable("roomId") Long roomId,
+                                Pageable pageable) {
         return chatService.findByOpponent(userId, roomId, pageable);
     }
 

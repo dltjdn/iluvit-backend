@@ -26,7 +26,7 @@ public class LocalImageService implements ImageService {
     private String prefix;
 
     @PostConstruct
-    public void post(){
+    public void post() {
         System.out.println("path = " + path);
         System.out.println("prefix = " + prefix);
     }
@@ -38,7 +38,7 @@ public class LocalImageService implements ImageService {
         try {
             Class<?> clazz = entity.getClass();
             Field[] declaredFields = clazz.getDeclaredFields();
-            while(true) {
+            while (true) {
                 for (Field field : declaredFields) {
                     Annotation annotation = field.getAnnotation(Id.class);
                     if (annotation != null) {
@@ -58,7 +58,7 @@ public class LocalImageService implements ImageService {
     /**
      * 엔티티 class 이름 추출
      */
-    protected String abstractEntityName(Class<? extends BaseImageEntity> clazz){
+    protected String abstractEntityName(Class<? extends BaseImageEntity> clazz) {
         String absoluteName = clazz.getName();
         String[] split = absoluteName.split("[.]");
         String entityName = split[split.length - 1];
@@ -68,7 +68,7 @@ public class LocalImageService implements ImageService {
     /**
      * 이미지 폴더 완성 시키기
      */
-    protected String getInfoFolder(BaseImageEntity entity){
+    protected String getInfoFolder(BaseImageEntity entity) {
         String className = abstractEntityName(entity.getClass());
         Long entityId = abstractEntityId(entity);
         String folder = path + '/' + className + "Info" + '/' + entityId + '/';
@@ -77,18 +77,18 @@ public class LocalImageService implements ImageService {
         return folder;
     }
 
-    protected String getProfileFolder(BaseImageEntity entity){
+    protected String getProfileFolder(BaseImageEntity entity) {
         String className = abstractEntityName(entity.getClass());
         String folder = path + '/' + className + '/';
         mkDir(folder);
         return folder;
     }
 
-    public List<String> getInfoDestPath(List<MultipartFile> multipartFiles ,BaseImageEntity entity){
+    public List<String> getInfoDestPath(List<MultipartFile> multipartFiles, BaseImageEntity entity) {
         String infoFolderPath = getInfoFolder(entity);
         int size = multipartFiles.size();
         List<String> infoDestPath = new ArrayList<>();
-        for(int i = 1; i<= size; i++){
+        for (int i = 1; i <= size; i++) {
             MultipartFile multipartFile = multipartFiles.get(i - 1);
             String ext = extractExt(multipartFile.getOriginalFilename());
             infoDestPath.add(infoFolderPath + i + '.' + ext);
@@ -96,7 +96,7 @@ public class LocalImageService implements ImageService {
         return infoDestPath;
     }
 
-    public String getProfileDestPath(MultipartFile multipartFile, BaseImageEntity entity){
+    public String getProfileDestPath(MultipartFile multipartFile, BaseImageEntity entity) {
         String profileFolderPath = getProfileFolder(entity);
         Long entityId = abstractEntityId(entity);
         String ext = extractExt(multipartFile.getOriginalFilename());
@@ -104,22 +104,23 @@ public class LocalImageService implements ImageService {
     }
 
 
-    public String saveInfoImages(List<MultipartFile> images, BaseImageEntity entity) {
+    public void saveInfoImages(List<MultipartFile> images, BaseImageEntity entity) {
         // null 이거나 비어있다면 return
-        if(images == null || images.size() == 0)
-            return null;
+        if (images == null || images.size() == 0) {
+            return;
+        }
+
         // 이미지 분석 단계
         List<String> destPaths = getInfoDestPath(images, entity);
 
         // 이미지 저장 로직 + entity 업데이트 추가
-        for(int i = 0; i < images.size(); i++){
+        for (int i = 0; i < images.size(); i++) {
             MultipartFile image = images.get(i);
             String destPath = destPaths.get(i);
             saveImage(image, destPath);
         }
         updateInfoImagePath(entity, destPaths);
 
-        return null;
     }
 
     private void updateInfoImagePath(BaseImageEntity entity, List<String> destPaths) {
@@ -140,9 +141,9 @@ public class LocalImageService implements ImageService {
 
     public void saveProfileImage(MultipartFile image, BaseImageEntity entity) {
         // null 이거나 비어있다면 return
-        if(image == null || image.isEmpty()){
+        if (image == null || image.isEmpty()) {
             entity.updateProfileImagePath("basic");
-        }else{
+        } else {
             // image fullpath 완성
             String destPath = getProfileDestPath(image, entity);
 
@@ -166,18 +167,18 @@ public class LocalImageService implements ImageService {
         }
     }
 
-    public void mkDir(String destPath){
+    public void mkDir(String destPath) {
         String[] names = destPath.split("/");
         String temp = "/";
-        for(int i = 1; i < names.length; i++) {
+        for (int i = 1; i < names.length; i++) {
             temp += names[i] + "/";
             System.out.println("temp 폴더 접근= " + temp);
             File folder = new File(temp);
-            if(!folder.exists()){
+            if (!folder.exists()) {
                 try {
                     folder.mkdir();
                     System.out.println("현재 폴더 생성 완료 " + temp);
-                } catch (Exception exception){
+                } catch (Exception exception) {
                     exception.printStackTrace();
                     throw new ImageException(ImageErrorResult.IMAGE_DIRECTORY_CREATE_FAILED);
                 }
@@ -190,21 +191,21 @@ public class LocalImageService implements ImageService {
         return originalFilename.substring(pos + 1);
     }
 
-    private String extractFileName(String originalFilename){
+    private String extractFileName(String originalFilename) {
         int pos = originalFilename.lastIndexOf(".");
         return originalFilename.substring(0, pos);
     }
 
     public String getProfileImage(BaseImageEntity entity) {
         String profileImagePath = entity.getProfileImagePath();
-        if(profileImagePath == null)
+        if (profileImagePath == null)
             return null;
         return profileImagePath;
     }
 
-    public List<String> getInfoImages(BaseImageEntity entity){
+    public List<String> getInfoImages(BaseImageEntity entity) {
         String infoImagePath = entity.getInfoImagePath();
-        if(infoImagePath == null || infoImagePath.equals(""))
+        if (infoImagePath == null || infoImagePath.equals(""))
             return new ArrayList<>();
         return List.of(infoImagePath.split(","));
     }
@@ -212,21 +213,21 @@ public class LocalImageService implements ImageService {
     private void clear(String destDir) {
         File file = new File(destDir);
         File[] files = file.listFiles();
-        if(files != null && files.length != 0){
-            for(File temp : files){
+        if (files != null && files.length != 0) {
+            for (File temp : files) {
                 temp.delete();
             }
         }
     }
 
     public String getProfileImage(String profileImagePath) {
-        if(profileImagePath == null)
+        if (profileImagePath == null)
             return null;
         return profileImagePath;
     }
 
-    public List<String> getInfoImages(String infoImagePath){
-        if(infoImagePath == null || infoImagePath.equals(""))
+    public List<String> getInfoImages(String infoImagePath) {
+        if (infoImagePath == null || infoImagePath.equals(""))
             return new ArrayList<>();
         return List.of(infoImagePath.split(","));
     }

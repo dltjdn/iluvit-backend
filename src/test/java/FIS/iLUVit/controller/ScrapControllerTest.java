@@ -2,10 +2,10 @@ package FIS.iLUVit.controller;
 
 import FIS.iLUVit.Creator;
 import FIS.iLUVit.config.argumentResolver.LoginUserArgumentResolver;
-import FIS.iLUVit.controller.dto.AddScrapRequest;
-import FIS.iLUVit.controller.dto.ScrapListInfoResponse;
-import FIS.iLUVit.controller.dto.UpdateScrapByPostRequest;
-import FIS.iLUVit.controller.dto.UpdateScrapDirNameRequest;
+import FIS.iLUVit.controller.dto.ScrapDirRequest;
+import FIS.iLUVit.controller.dto.ScrapListResponse;
+import FIS.iLUVit.controller.dto.ScrapByPostRequest;
+import FIS.iLUVit.controller.dto.ScrapDirDetailRequest;
 import FIS.iLUVit.domain.User;
 import FIS.iLUVit.exception.ScrapErrorResult;
 import FIS.iLUVit.exception.ScrapException;
@@ -31,7 +31,7 @@ import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
 import java.util.List;
 
-import static FIS.iLUVit.controller.dto.UpdateScrapByPostRequest.*;
+import static FIS.iLUVit.controller.dto.ScrapByPostRequest.*;
 import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
@@ -62,7 +62,7 @@ public class ScrapControllerTest {
     public void 스크랩폴더목록정보가져오기_성공() throws Exception {
         // given
         String url = "/user/scrap/dir";
-        ScrapListInfoResponse response = new ScrapListInfoResponse();
+        ScrapListResponse response = new ScrapListResponse();
         doReturn(response)
                 .when(scrapService)
                 .findScrapDirListInfo(user.getId());
@@ -74,7 +74,7 @@ public class ScrapControllerTest {
         // then
         result.andExpect(status().isOk())
                 .andExpect(content().json(
-                        objectMapper.writeValueAsString(new ScrapListInfoResponse())
+                        objectMapper.writeValueAsString(new ScrapListResponse())
                 ));
     }
 
@@ -85,8 +85,8 @@ public class ScrapControllerTest {
         public void 스크랩폴더추가하기_성공() throws Exception {
             // given
             String url = "/user/scrap/dir";
-            ScrapListInfoResponse response = new ScrapListInfoResponse();
-            AddScrapRequest request = new AddScrapRequest("name");
+            ScrapListResponse response = new ScrapListResponse();
+            ScrapDirRequest request = new ScrapDirRequest("name");
             doReturn(response)
                     .when(scrapService)
                     .addScrapDir(user.getId(), request);
@@ -108,7 +108,7 @@ public class ScrapControllerTest {
         public void 스크랩폴더추가하기_실패_불완전한요청() throws Exception {
             // given
             String url = "/user/scrap/dir";
-            AddScrapRequest request = new AddScrapRequest();
+            ScrapDirRequest request = new ScrapDirRequest();
             // when
             ResultActions result = mockMvc.perform(
                     MockMvcRequestBuilders.post(url)
@@ -154,7 +154,7 @@ public class ScrapControllerTest {
         public void 스크랩폴더삭제성공() throws Exception {
             // given
             String url = "/user/scrap/dir";
-            ScrapListInfoResponse response = new ScrapListInfoResponse();
+            ScrapListResponse response = new ScrapListResponse();
             doReturn(response)
                     .when(scrapService)
                     .deleteScrapDir(any(), any());
@@ -177,7 +177,7 @@ public class ScrapControllerTest {
         public void 불완전한요청() throws Exception {
             // given
             String url = "/user/scrap/dir/name";
-            UpdateScrapDirNameRequest request = new UpdateScrapDirNameRequest(1L, "");
+            ScrapDirDetailRequest request = new ScrapDirDetailRequest(1L, "");
             // when
             ResultActions result = mockMvc.perform(
                     MockMvcRequestBuilders.put(url)
@@ -194,7 +194,7 @@ public class ScrapControllerTest {
         public void 잘못된스크랩아이디() throws Exception {
             // given
             String url = "/user/scrap/dir/name";
-            UpdateScrapDirNameRequest request = new UpdateScrapDirNameRequest(1L, "scrapName");
+            ScrapDirDetailRequest request = new ScrapDirDetailRequest(1L, "scrapName");
             ScrapErrorResult error = ScrapErrorResult.NOT_VALID_SCRAP;
             doThrow(new ScrapException(error))
                     .when(scrapService)
@@ -218,7 +218,7 @@ public class ScrapControllerTest {
         public void 이름바꾸기성공() throws Exception {
             // given
             String url = "/user/scrap/dir/name";
-            UpdateScrapDirNameRequest request = new UpdateScrapDirNameRequest(1L, "scrapName");
+            ScrapDirDetailRequest request = new ScrapDirDetailRequest(1L, "scrapName");
             // when
             ResultActions result = mockMvc.perform(
                     MockMvcRequestBuilders.put(url)
@@ -240,7 +240,7 @@ public class ScrapControllerTest {
             // given
             String url = "/user/scrap/post";
             ScrapInfoForUpdate scrapInfo = new ScrapInfoForUpdate();
-            UpdateScrapByPostRequest request = new UpdateScrapByPostRequest(1L, List.of(scrapInfo));
+            ScrapByPostRequest request = new ScrapByPostRequest(1L, List.of(scrapInfo));
             // when
             ResultActions result = mockMvc.perform(
                     MockMvcRequestBuilders.put(url)
@@ -260,7 +260,7 @@ public class ScrapControllerTest {
             String url = "/user/scrap/post";
             ScrapErrorResult error = ScrapErrorResult.NOT_VALID_POST;
             ScrapInfoForUpdate scrapInfo = new ScrapInfoForUpdate(1L, true);
-            UpdateScrapByPostRequest request = new UpdateScrapByPostRequest(1L, List.of(scrapInfo));
+            ScrapByPostRequest request = new ScrapByPostRequest(1L, List.of(scrapInfo));
             doThrow(new ScrapException(error))
                     .when(scrapService)
                     .scrapPost(any(), any());
@@ -285,7 +285,7 @@ public class ScrapControllerTest {
             String url = "/user/scrap/post";
             ScrapErrorResult error = ScrapErrorResult.NOT_VALID_SCRAP;
             ScrapInfoForUpdate scrapInfo = new ScrapInfoForUpdate(1L, true);
-            UpdateScrapByPostRequest request = new UpdateScrapByPostRequest(1L, List.of(scrapInfo));
+            ScrapByPostRequest request = new ScrapByPostRequest(1L, List.of(scrapInfo));
             doThrow(new ScrapException(error))
                     .when(scrapService)
                     .scrapPost(any(), any());
@@ -309,7 +309,7 @@ public class ScrapControllerTest {
             // given
             String url = "/user/scrap/post";
             ScrapInfoForUpdate scrapInfo = new ScrapInfoForUpdate(1L, true);
-            UpdateScrapByPostRequest request = new UpdateScrapByPostRequest(1L, List.of(scrapInfo));
+            ScrapByPostRequest request = new ScrapByPostRequest(1L, List.of(scrapInfo));
             // when
             ResultActions result = mockMvc.perform(
                     MockMvcRequestBuilders.put(url)

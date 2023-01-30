@@ -1,7 +1,7 @@
 package FIS.iLUVit.repository;
 
 import FIS.iLUVit.config.argumentResolver.ForDB;
-import FIS.iLUVit.controller.dto.PresentationPreviewForUsersResponse;
+import FIS.iLUVit.controller.dto.PresentationForUserResponse;
 import FIS.iLUVit.domain.*;
 import FIS.iLUVit.domain.embeddable.Area;
 import FIS.iLUVit.domain.embeddable.Theme;
@@ -68,7 +68,7 @@ public class PresentationRepositoryTest {
             em.flush();
 
             //when
-            SliceImpl<PresentationPreviewForUsersResponse> results = target.findByFilter(areas, coding(), 3, KindOf.ALL, "",PageRequest.of(0, 4));
+            SliceImpl<PresentationForUserResponse> results = target.findByFilter(areas, coding(), 3, KindOf.ALL, "",PageRequest.of(0, 4));
 
             //then
             assertThat(results.getContent().size())
@@ -76,7 +76,7 @@ public class PresentationRepositoryTest {
             assertThat(results.hasNext())
                     .isFalse();
             int i = 0;
-            for (PresentationPreviewForUsersResponse result : results) {
+            for (PresentationForUserResponse result : results) {
                 assertThat(result.getEndDate()).isEqualTo(presentations.get(i).getEndDate());
                 i++;
             }
@@ -117,7 +117,7 @@ public class PresentationRepositoryTest {
             em.flush();
 
             //when
-            SliceImpl<PresentationPreviewForUsersResponse> results = target.findByFilter(areas, coding(), 3, KindOf.ALL, "te", PageRequest.of(0, 4));
+            SliceImpl<PresentationForUserResponse> results = target.findByFilter(areas, coding(), 3, KindOf.ALL, "te", PageRequest.of(0, 4));
 
             //then
             assertThat(results.getContent().size())
@@ -125,7 +125,7 @@ public class PresentationRepositoryTest {
             assertThat(results.hasNext())
                     .isFalse();
             int i = 0;
-            for (PresentationPreviewForUsersResponse result : results) {
+            for (PresentationForUserResponse result : results) {
                 assertThat(result.getEndDate()).isEqualTo(presentations.get(i).getEndDate());
                 i++;
             }

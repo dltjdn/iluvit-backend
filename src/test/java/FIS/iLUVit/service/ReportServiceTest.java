@@ -1,7 +1,7 @@
 package FIS.iLUVit.service;
 
 import FIS.iLUVit.Creator;
-import FIS.iLUVit.controller.dto.ReportCreateRequest;
+import FIS.iLUVit.controller.dto.ReportRequest;
 import FIS.iLUVit.domain.*;
 import FIS.iLUVit.domain.enumtype.ReportType;
 import FIS.iLUVit.domain.reports.Report;
@@ -39,7 +39,7 @@ class ReportServiceTest {
     @Mock
     private UserRepository userRepository;
 
-    ReportCreateRequest reportCreateRequest = new ReportCreateRequest();
+    ReportRequest reportRequest = new ReportRequest();
     Center center;
     Board board;
     Teacher targetUser, user;
@@ -72,7 +72,7 @@ class ReportServiceTest {
         Long userId = null;
         //when
         UserException result = assertThrows(UserException.class,
-                () -> target.registerReport(userId, reportCreateRequest));
+                () -> target.registerReport(userId, reportRequest));
         //then
         assertThat(result.getErrorResult()).isEqualTo(UserErrorResult.NOT_VALID_TOKEN);
     }
@@ -85,7 +85,7 @@ class ReportServiceTest {
                 .findById(user.getId());
         //when
         UserException result = assertThrows(UserException.class,
-                () -> target.registerReport(user.getId(), reportCreateRequest));
+                () -> target.registerReport(user.getId(), reportRequest));
         //then
         assertThat(result.getErrorResult()).isEqualTo(UserErrorResult.USER_NOT_EXIST);
     }
@@ -93,8 +93,8 @@ class ReportServiceTest {
     @Test
     public void 게시글신고_실패_게시글존재안함(){
         //given
-        reportCreateRequest.setType(ReportType.POST);
-        reportCreateRequest.setTargetId(post.getId());
+        reportRequest.setType(ReportType.POST);
+        reportRequest.setTargetId(post.getId());
 
         doReturn(Optional.of(user))
                 .when(userRepository)
@@ -102,11 +102,11 @@ class ReportServiceTest {
 
         doReturn(Optional.empty())
                 .when(postRepository)
-                .findById(reportCreateRequest.getTargetId());
+                .findById(reportRequest.getTargetId());
 
         //when
         PostException result = assertThrows(PostException.class,
-                () -> target.registerReport(user.getId(), reportCreateRequest));
+                () -> target.registerReport(user.getId(), reportRequest));
         //then
         assertThat(result.getErrorResult()).isEqualTo(PostErrorResult.POST_NOT_EXIST);
     }
@@ -114,8 +114,8 @@ class ReportServiceTest {
     @Test
     public void 게시글신고_실패_중복신고(){
         //given
-        reportCreateRequest.setType(ReportType.POST);
-        reportCreateRequest.setTargetId(post.getId());
+        reportRequest.setType(ReportType.POST);
+        reportRequest.setTargetId(post.getId());
 
         doReturn(Optional.of(user))
                 .when(userRepository)
@@ -127,15 +127,15 @@ class ReportServiceTest {
 
         doReturn(Optional.of(post))
                 .when(postRepository)
-                .findById(reportCreateRequest.getTargetId());
+                .findById(reportRequest.getTargetId());
 
         doReturn(Optional.of(reportDetailPost))
                 .when(reportDetailRepository)
-                .findByUserIdAndTargetPostId(user.getId(), reportCreateRequest.getTargetId());
+                .findByUserIdAndTargetPostId(user.getId(), reportRequest.getTargetId());
 
         //when
         ReportException result = assertThrows(ReportException.class,
-                () -> target.registerReport(user.getId(), reportCreateRequest));
+                () -> target.registerReport(user.getId(), reportRequest));
         //then
         assertThat(result.getErrorResult()).isEqualTo(ReportErrorResult.ALREADY_EXIST_POST_REPORT);
     }
@@ -143,8 +143,8 @@ class ReportServiceTest {
     @Test
     public void 게시글신고_성공_최초신고일때(){
         //given
-        reportCreateRequest.setType(ReportType.POST);
-        reportCreateRequest.setTargetId(post.getId());
+        reportRequest.setType(ReportType.POST);
+        reportRequest.setTargetId(post.getId());
 
         doReturn(Optional.of(user))
                 .when(userRepository)
@@ -156,16 +156,16 @@ class ReportServiceTest {
 
         doReturn(Optional.of(post))
                 .when(postRepository)
-                .findById(reportCreateRequest.getTargetId());
+                .findById(reportRequest.getTargetId());
 
         doReturn(Optional.empty())
                 .when(reportDetailRepository)
-                .findByUserIdAndTargetPostId(user.getId(), reportCreateRequest.getTargetId());
+                .findByUserIdAndTargetPostId(user.getId(), reportRequest.getTargetId());
 
         // 최초 신고면 null 반환
         doReturn(Optional.empty())
                 .when(reportRepository)
-                .findByTargetId(reportCreateRequest.getTargetId());
+                .findByTargetId(reportRequest.getTargetId());
 
         // 최최 신고면 Report, ReportDetail 저장
         doReturn(reportPost)
@@ -177,7 +177,7 @@ class ReportServiceTest {
                 .save(any());
 
         //when
-        Long savedReportId = target.registerReport(user.getId(), reportCreateRequest);
+        Long savedReportId = target.registerReport(user.getId(), reportRequest);
 
         //then
         assertThat(savedReportId).isEqualTo(reportDetailPost.getId());
@@ -186,8 +186,8 @@ class ReportServiceTest {
     @Test
     public void 게시글신고_성공_최초신고아닐때(){
         //given
-        reportCreateRequest.setType(ReportType.POST);
-        reportCreateRequest.setTargetId(post.getId());
+        reportRequest.setType(ReportType.POST);
+        reportRequest.setTargetId(post.getId());
 
         doReturn(Optional.of(user))
                 .when(userRepository)
@@ -199,16 +199,16 @@ class ReportServiceTest {
 
         doReturn(Optional.of(post))
                 .when(postRepository)
-                .findById(reportCreateRequest.getTargetId());
+                .findById(reportRequest.getTargetId());
 
         doReturn(Optional.empty())
                 .when(reportDetailRepository)
-                .findByUserIdAndTargetPostId(user.getId(), reportCreateRequest.getTargetId());
+                .findByUserIdAndTargetPostId(user.getId(), reportRequest.getTargetId());
 
         // 최초 신고가 아니면 report 반환
         doReturn(Optional.of(reportPost))
                 .when(reportRepository)
-                .findByTargetId(reportCreateRequest.getTargetId());
+                .findByTargetId(reportRequest.getTargetId());
 
         // 최초 신고가 아니면 ReportDetail만 저장
         doReturn(reportDetailPost)
@@ -216,7 +216,7 @@ class ReportServiceTest {
                 .save(any());
 
         //when
-        Long savedReportId = target.registerReport(user.getId(), reportCreateRequest);
+        Long savedReportId = target.registerReport(user.getId(), reportRequest);
 
         //then
         assertThat(savedReportId).isEqualTo(reportDetailPost.getId());
@@ -225,8 +225,8 @@ class ReportServiceTest {
     @Test
     public void 댓글신고_실패_댓글존재안함(){
         //given
-        reportCreateRequest.setType(ReportType.COMMENT);
-        reportCreateRequest.setTargetId(comment.getId());
+        reportRequest.setType(ReportType.COMMENT);
+        reportRequest.setTargetId(comment.getId());
 
         doReturn(Optional.of(user))
                 .when(userRepository)
@@ -234,11 +234,11 @@ class ReportServiceTest {
 
         doReturn(Optional.empty())
                 .when(commentRepository)
-                .findById(reportCreateRequest.getTargetId());
+                .findById(reportRequest.getTargetId());
 
         //when
         CommentException result = assertThrows(CommentException.class,
-                () -> target.registerReport(user.getId(), reportCreateRequest));
+                () -> target.registerReport(user.getId(), reportRequest));
         //then
         assertThat(result.getErrorResult()).isEqualTo(CommentErrorResult.NO_EXIST_COMMENT);
     }
@@ -246,8 +246,8 @@ class ReportServiceTest {
     @Test
     public void 댓글신고_실패_중복신고(){
         //given
-        reportCreateRequest.setType(ReportType.COMMENT);
-        reportCreateRequest.setTargetId(comment.getId());
+        reportRequest.setType(ReportType.COMMENT);
+        reportRequest.setTargetId(comment.getId());
 
         doReturn(Optional.of(user))
                 .when(userRepository)
@@ -259,15 +259,15 @@ class ReportServiceTest {
 
         doReturn(Optional.of(comment))
                 .when(commentRepository)
-                .findById(reportCreateRequest.getTargetId());
+                .findById(reportRequest.getTargetId());
 
         doReturn(Optional.of(reportDetailComment))
                 .when(reportDetailRepository)
-                .findByUserIdAndTargetCommentId(user.getId(), reportCreateRequest.getTargetId());
+                .findByUserIdAndTargetCommentId(user.getId(), reportRequest.getTargetId());
 
         //when
         ReportException result = assertThrows(ReportException.class,
-                () -> target.registerReport(user.getId(), reportCreateRequest));
+                () -> target.registerReport(user.getId(), reportRequest));
         //then
         assertThat(result.getErrorResult()).isEqualTo(ReportErrorResult.ALREADY_EXIST_COMMENT_REPORT);
 
@@ -276,8 +276,8 @@ class ReportServiceTest {
     @Test
     public void 댓글신고_성공_최초신고일때(){
         //given
-        reportCreateRequest.setType(ReportType.COMMENT);
-        reportCreateRequest.setTargetId(comment.getId());
+        reportRequest.setType(ReportType.COMMENT);
+        reportRequest.setTargetId(comment.getId());
 
         doReturn(Optional.of(user))
                 .when(userRepository)
@@ -289,16 +289,16 @@ class ReportServiceTest {
 
         doReturn(Optional.of(comment))
                 .when(commentRepository)
-                .findById(reportCreateRequest.getTargetId());
+                .findById(reportRequest.getTargetId());
 
         doReturn(Optional.empty())
                 .when(reportDetailRepository)
-                .findByUserIdAndTargetCommentId(user.getId(), reportCreateRequest.getTargetId());
+                .findByUserIdAndTargetCommentId(user.getId(), reportRequest.getTargetId());
 
         // 최초 신고 이면 null 반환
         doReturn(Optional.empty())
                 .when(reportRepository)
-                .findByTargetId(reportCreateRequest.getTargetId());
+                .findByTargetId(reportRequest.getTargetId());
 
         doReturn(reportComment)
                 .when(reportRepository)
@@ -309,7 +309,7 @@ class ReportServiceTest {
                 .save(any());
 
         //when
-        Long savedReportId = target.registerReport(user.getId(), reportCreateRequest);
+        Long savedReportId = target.registerReport(user.getId(), reportRequest);
 
         //then
         assertThat(savedReportId).isEqualTo(reportDetailComment.getId());
@@ -318,8 +318,8 @@ class ReportServiceTest {
     @Test
     public void 댓글신고_성공_최초신고아닐때(){
         //given
-        reportCreateRequest.setType(ReportType.COMMENT);
-        reportCreateRequest.setTargetId(comment.getId());
+        reportRequest.setType(ReportType.COMMENT);
+        reportRequest.setTargetId(comment.getId());
 
         doReturn(Optional.of(user))
                 .when(userRepository)
@@ -331,16 +331,16 @@ class ReportServiceTest {
 
         doReturn(Optional.of(comment))
                 .when(commentRepository)
-                .findById(reportCreateRequest.getTargetId());
+                .findById(reportRequest.getTargetId());
 
         doReturn(Optional.empty())
                 .when(reportDetailRepository)
-                .findByUserIdAndTargetCommentId(user.getId(), reportCreateRequest.getTargetId());
+                .findByUserIdAndTargetCommentId(user.getId(), reportRequest.getTargetId());
 
         // 최초 신고가 아니면 report 반환
         doReturn(Optional.of(reportComment))
                 .when(reportRepository)
-                .findByTargetId(reportCreateRequest.getTargetId());
+                .findByTargetId(reportRequest.getTargetId());
 
         // 최초 신고가 아니면 ReportDetail만 저장
         doReturn(reportDetailComment)
@@ -348,7 +348,7 @@ class ReportServiceTest {
                 .save(any());
 
         //when
-        Long savedReportId = target.registerReport(user.getId(), reportCreateRequest);
+        Long savedReportId = target.registerReport(user.getId(), reportRequest);
 
         //then
         assertThat(savedReportId).isEqualTo(reportDetailComment.getId()); }

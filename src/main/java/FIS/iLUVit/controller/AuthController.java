@@ -1,7 +1,7 @@
 package FIS.iLUVit.controller;
 
 import FIS.iLUVit.config.argumentResolver.Login;
-import FIS.iLUVit.controller.dto.AuthenticateAuthNumRequest;
+import FIS.iLUVit.controller.dto.AuthNumRequest;
 import FIS.iLUVit.controller.dto.FindPasswordRequest;
 import FIS.iLUVit.service.AuthService;
 import lombok.RequiredArgsConstructor;
@@ -42,7 +42,7 @@ public class AuthController {
      * 작성내용: 인증번호를 통한 로그인 아이디 찾기
      */
     @PostMapping("loginid")
-    public String findLoginId(@RequestBody AuthenticateAuthNumRequest request) {
+    public String findLoginId(@RequestBody AuthNumRequest request) {
         return authService.findLoginId(request);
     }
 
@@ -82,7 +82,7 @@ public class AuthController {
      * 작성내용: 인증번호를 통한 핸드폰 인증 (회원가입, 비밀번호 찾기, 핸드폰번호 변경)
      */
     @PostMapping("")
-    public void authenticateAuthNum(@Login Long userId, @RequestBody AuthenticateAuthNumRequest request) {
+    public void authenticateAuthNum(@Login Long userId, @RequestBody AuthNumRequest request) {
         authService.authenticateAuthNum(userId, request);
     }
 

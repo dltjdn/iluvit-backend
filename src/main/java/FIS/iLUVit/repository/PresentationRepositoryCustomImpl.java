@@ -1,11 +1,11 @@
 package FIS.iLUVit.repository;
 
-import FIS.iLUVit.controller.dto.PresentationPreviewForUsersResponse;
+import FIS.iLUVit.controller.dto.PresentationForUserResponse;
 import FIS.iLUVit.domain.embeddable.Area;
 import FIS.iLUVit.domain.embeddable.Theme;
 import FIS.iLUVit.domain.enumtype.KindOf;
-import FIS.iLUVit.repository.dto.PresentationPreviewForUsers;
-import FIS.iLUVit.repository.dto.QPresentationPreviewForUsers;
+import FIS.iLUVit.repository.dto.PresentationForUserDto;
+import FIS.iLUVit.repository.dto.QPresentationForUserDto;
 import com.querydsl.core.types.OrderSpecifier;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.AllArgsConstructor;
@@ -28,11 +28,11 @@ public class PresentationRepositoryCustomImpl extends CenterQueryMethod implemen
     private final JPAQueryFactory jpaQueryFactory;
 
     @Override
-    public SliceImpl<PresentationPreviewForUsersResponse> findByFilter(List<Area> areas, Theme theme, Integer interestedAge, KindOf kindOf, String searchContent, Pageable pageable) {
+    public SliceImpl<PresentationForUserResponse> findByFilter(List<Area> areas, Theme theme, Integer interestedAge, KindOf kindOf, String searchContent, Pageable pageable) {
 
         LocalDate now = LocalDate.now();
 
-        List<PresentationPreviewForUsers> content = jpaQueryFactory.select(new QPresentationPreviewForUsers(presentation, center))
+        List<PresentationForUserDto> content = jpaQueryFactory.select(new QPresentationForUserDto(presentation, center))
                 .from(presentation)
                 .join(presentation.center, center)
                 .where(areasIn(areas)
@@ -53,8 +53,8 @@ public class PresentationRepositoryCustomImpl extends CenterQueryMethod implemen
             hasNext = true;
         }
 
-        List<PresentationPreviewForUsersResponse> collect = content.stream().map(c -> {
-            PresentationPreviewForUsersResponse temp = new PresentationPreviewForUsersResponse(c);
+        List<PresentationForUserResponse> collect = content.stream().map(c -> {
+            PresentationForUserResponse temp = new PresentationForUserResponse(c);
             String infoImagePath = c.getInfoImages();
             List<String> infoImages;
             if(infoImagePath == null || infoImagePath.equals(""))

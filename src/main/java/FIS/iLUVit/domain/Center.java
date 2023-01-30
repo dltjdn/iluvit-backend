@@ -1,6 +1,6 @@
 package FIS.iLUVit.domain;
 
-import FIS.iLUVit.controller.dto.CenterModifyRequestDto;
+import FIS.iLUVit.controller.dto.CenterDetailRequest;
 import FIS.iLUVit.domain.embeddable.*;
 import FIS.iLUVit.domain.enumtype.KindOf;
 import lombok.*;
@@ -132,7 +132,7 @@ public class Center extends BaseImageEntity {
         this.infoImagePath = infoImagePath;
     }
 
-    public void update(CenterModifyRequestDto requestDto, Double longitude, Double latitude, String sido, String sigungu) {
+    public void update(CenterDetailRequest requestDto, Double longitude, Double latitude, String sido, String sigungu) {
         this.name = requestDto.getName();
         this.owner = requestDto.getOwner();
         this.director = requestDto.getDirector();

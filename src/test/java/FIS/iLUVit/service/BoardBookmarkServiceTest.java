@@ -1,7 +1,7 @@
 package FIS.iLUVit.service;
 
 import FIS.iLUVit.Creator;
-import FIS.iLUVit.controller.dto.BookmarkMainDTO;
+import FIS.iLUVit.controller.dto.BoardBookmarkDto;
 import FIS.iLUVit.domain.*;
 import FIS.iLUVit.domain.enumtype.Auth;
 import FIS.iLUVit.domain.enumtype.BoardKind;
@@ -136,9 +136,9 @@ class BoardBookmarkServiceTest {
                 .when(boardBookmarkRepository)
                 .findPostByBoard(parent1.getId());
         //when
-        BookmarkMainDTO dto = boardBookmarkService.search(parent1.getId());
+        BoardBookmarkDto dto = boardBookmarkService.search(parent1.getId());
         //then
-        List<BookmarkMainDTO.StoryDTO> stories = dto.getStories();
+        List<BoardBookmarkDto.StoryDTO> stories = dto.getStories();
 
         assertThat(stories).extracting("story_name")
                 .contains("모두의 게시판", "떡잎유치원", "팡팡어린이집");
@@ -151,10 +151,10 @@ class BoardBookmarkServiceTest {
                 .when(boardRepository)
                 .findPostByDefault();
         //when
-        BookmarkMainDTO dto = boardBookmarkService.searchByDefault();
+        BoardBookmarkDto dto = boardBookmarkService.searchByDefault();
         //then
-        List<BookmarkMainDTO.StoryDTO> stories = dto.getStories();
-        List<BookmarkMainDTO.BoardDTO> boardDTOList = stories.get(0).getBoardDTOList();
+        List<BoardBookmarkDto.StoryDTO> stories = dto.getStories();
+        List<BoardBookmarkDto.BoardDTO> boardDTOList = stories.get(0).getBoardDTOList();
         assertThat(stories).extracting("story_name")
                 .containsExactly("모두의 이야기");
         assertThat(boardDTOList).extracting("board_name")

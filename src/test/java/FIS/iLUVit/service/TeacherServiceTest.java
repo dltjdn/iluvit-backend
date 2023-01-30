@@ -4,7 +4,7 @@ import FIS.iLUVit.Creator;
 import FIS.iLUVit.controller.dto.SignupTeacherRequest;
 import FIS.iLUVit.controller.dto.TeacherApprovalListResponse;
 import FIS.iLUVit.controller.dto.TeacherDetailResponse;
-import FIS.iLUVit.controller.dto.UpdateTeacherDetailRequest;
+import FIS.iLUVit.controller.dto.TeacherDetailRequest;
 import FIS.iLUVit.domain.*;
 import FIS.iLUVit.domain.alarms.CenterApprovalAcceptedAlarm;
 import FIS.iLUVit.domain.alarms.CenterApprovalReceivedAlarm;
@@ -244,7 +244,7 @@ public class TeacherServiceTest {
     @Test
     public void 교사프로필수정_실패_닉네임중복() {
         // given
-        UpdateTeacherDetailRequest request = UpdateTeacherDetailRequest.builder()
+        TeacherDetailRequest request = TeacherDetailRequest.builder()
                 .nickname("중복닉네임")
                 .build();
         doReturn(Optional.of(teacher1))
@@ -263,7 +263,7 @@ public class TeacherServiceTest {
     @Test
     public void 교사프로필수정_실패_핸드폰변경시미인증() {
         // given
-        UpdateTeacherDetailRequest request = UpdateTeacherDetailRequest.builder()
+        TeacherDetailRequest request = TeacherDetailRequest.builder()
                 .name(teacher1.getName())
                 .nickname(teacher1.getNickName())
                 .changePhoneNum(true)
@@ -290,7 +290,7 @@ public class TeacherServiceTest {
     @Test
     public void 교사프로필수정_성공_핸드폰포함() throws IOException {
         // given
-        UpdateTeacherDetailRequest request = UpdateTeacherDetailRequest.builder()
+        TeacherDetailRequest request = TeacherDetailRequest.builder()
                 .name(teacher1.getName())
                 .nickname(teacher1.getNickName())
                 .changePhoneNum(true)
@@ -316,7 +316,7 @@ public class TeacherServiceTest {
     @Test
     public void 교사프로필수정_성공_핸드폰미포함() throws IOException {
         // given
-        UpdateTeacherDetailRequest request = UpdateTeacherDetailRequest.builder()
+        TeacherDetailRequest request = TeacherDetailRequest.builder()
                 .name("updatedName")
                 .nickname(teacher1.getNickName())
                 .changePhoneNum(false)

@@ -1,9 +1,9 @@
 package FIS.iLUVit.service;
 
 import FIS.iLUVit.Creator;
-import FIS.iLUVit.controller.dto.ReviewByCenterDTO;
-import FIS.iLUVit.controller.dto.ReviewByParentDTO;
-import FIS.iLUVit.controller.dto.ReviewCreateDTO;
+import FIS.iLUVit.controller.dto.ReviewByCenterDto;
+import FIS.iLUVit.controller.dto.ReviewByParentDto;
+import FIS.iLUVit.controller.dto.ReviewDetailDto;
 import FIS.iLUVit.domain.*;
 import FIS.iLUVit.domain.enumtype.Approval;
 import FIS.iLUVit.domain.enumtype.Auth;
@@ -71,8 +71,8 @@ public class ReviewServiceTest {
     Review review2;
     Review review3;
 
-    ReviewCreateDTO reviewCreateDTO = new ReviewCreateDTO();
-    ReviewByCenterDTO reviewByCenterDTO = new ReviewByCenterDTO();
+    ReviewDetailDto reviewCreateDTO = new ReviewDetailDto();
+    ReviewByCenterDto reviewByCenterDTO = new ReviewByCenterDto();
 
     @BeforeEach
     public void init() {
@@ -128,11 +128,11 @@ public class ReviewServiceTest {
     @Test
     public void 학부모로_리뷰_찾기() throws Exception {
         //given
-        ReviewByParentDTO expected = new ReviewByParentDTO();
-        ReviewByParentDTO.ReviewDto reviewDto = new ReviewByParentDTO.ReviewDto(review1);
+        ReviewByParentDto expected = new ReviewByParentDto();
+        ReviewByParentDto.ReviewDto reviewDto = new ReviewByParentDto.ReviewDto(review1);
         System.out.println("reviewDto = " + reviewDto);
-        List<ReviewByParentDTO.ReviewDto> reviewDtos = List.of(reviewDto);
-        SliceImpl<ReviewByParentDTO.ReviewDto> reviewDtoSlice = new SliceImpl<>(reviewDtos, PageRequest.of(0, 10), false);
+        List<ReviewByParentDto.ReviewDto> reviewDtos = List.of(reviewDto);
+        SliceImpl<ReviewByParentDto.ReviewDto> reviewDtoSlice = new SliceImpl<>(reviewDtos, PageRequest.of(0, 10), false);
         expected.setReviews(reviewDtoSlice);
 
         List<Review> reviewList = List.of(review1);
@@ -141,7 +141,7 @@ public class ReviewServiceTest {
                 .when(reviewRepository)
                 .findByParent(parent1.getId(), PageRequest.of(0, 10));
         //when
-        ReviewByParentDTO result = reviewService.findByParent(parent1.getId(), PageRequest.of(0, 10));
+        ReviewByParentDto result = reviewService.findByParent(parent1.getId(), PageRequest.of(0, 10));
         //then
         assertThat(objectMapper.writeValueAsString(result))
                 .isEqualTo(objectMapper.writeValueAsString(expected));
@@ -400,11 +400,11 @@ public class ReviewServiceTest {
     public void 센터로_리뷰_리스트_조회() throws Exception {
         //given
         String imagePath = "/Desktop/User";
-        ReviewByCenterDTO.ReviewCenterDto reviewCenterDto1 = getReviewCenterDto(review1, imagePath, teacher1.getId());
-        ReviewByCenterDTO.ReviewCenterDto reviewCenterDto2 = getReviewCenterDto(review2, imagePath, null);
-        ReviewByCenterDTO.ReviewCenterDto reviewCenterDto3 = getReviewCenterDto(review3, imagePath, null);
-        List<ReviewByCenterDTO.ReviewCenterDto> reviewCenterDtos = Arrays.asList(reviewCenterDto1, reviewCenterDto2, reviewCenterDto3);
-        Slice<ReviewByCenterDTO.ReviewCenterDto> dtoSlice = new SliceImpl<>(reviewCenterDtos);
+        ReviewByCenterDto.ReviewCenterDto reviewCenterDto1 = getReviewCenterDto(review1, imagePath, teacher1.getId());
+        ReviewByCenterDto.ReviewCenterDto reviewCenterDto2 = getReviewCenterDto(review2, imagePath, null);
+        ReviewByCenterDto.ReviewCenterDto reviewCenterDto3 = getReviewCenterDto(review3, imagePath, null);
+        List<ReviewByCenterDto.ReviewCenterDto> reviewCenterDtos = Arrays.asList(reviewCenterDto1, reviewCenterDto2, reviewCenterDto3);
+        Slice<ReviewByCenterDto.ReviewCenterDto> dtoSlice = new SliceImpl<>(reviewCenterDtos);
         reviewByCenterDTO.setReviews(dtoSlice);
 
         List<Review> reviewList = Arrays.asList(review1, review2, review3);
@@ -418,7 +418,7 @@ public class ReviewServiceTest {
                 .getProfileImage(any(BaseImageEntity.class));
 
         //when
-        ReviewByCenterDTO result = reviewService
+        ReviewByCenterDto result = reviewService
                 .findByCenter(center1.getId(), PageRequest.of(0, 10));
 
         //then
@@ -427,8 +427,8 @@ public class ReviewServiceTest {
     }
 
     @NotNull
-    private ReviewByCenterDTO.ReviewCenterDto getReviewCenterDto(Review review, String imagePath, Long teacherId) {
-        return new ReviewByCenterDTO.ReviewCenterDto(review.getId(), review.getParent().getId(),
+    private ReviewByCenterDto.ReviewCenterDto getReviewCenterDto(Review review, String imagePath, Long teacherId) {
+        return new ReviewByCenterDto.ReviewCenterDto(review.getId(), review.getParent().getId(),
                 review.getParent().getNickName(), review.getContent(), review.getScore(),
                 review.getCreateDate(), review.getCreateTime(), review.getUpdateDate(),
                 review.getUpdateTime(), teacherId, review.getAnswer(),

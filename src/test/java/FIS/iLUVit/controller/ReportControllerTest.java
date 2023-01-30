@@ -2,7 +2,7 @@ package FIS.iLUVit.controller;
 
 import FIS.iLUVit.Creator;
 import FIS.iLUVit.config.argumentResolver.LoginUserArgumentResolver;
-import FIS.iLUVit.controller.dto.ReportCreateRequest;
+import FIS.iLUVit.controller.dto.ReportRequest;
 import FIS.iLUVit.domain.Comment;
 import FIS.iLUVit.domain.Post;
 import FIS.iLUVit.domain.Teacher;
@@ -57,8 +57,8 @@ class ReportControllerTest {
     Report reportPost, reportComment;
     ReportDetail reportDetailPost, reportDetailComment;
 
-    ReportCreateRequest reportCreateRequestPost = new ReportCreateRequest();
-    ReportCreateRequest reportCreateRequestComment = new ReportCreateRequest();
+    ReportRequest reportRequestPost = new ReportRequest();
+    ReportRequest reportRequestComment = new ReportRequest();
 
     @BeforeEach
     public void init(){
@@ -81,13 +81,13 @@ class ReportControllerTest {
         reportDetailPost = Creator.createReportDetailPost(7L, user, post);
         reportDetailComment = Creator.createReportDetailComment(8L, user, comment);
 
-        reportCreateRequestPost.setType(ReportType.POST);
-        reportCreateRequestPost.setTargetId(post.getId());
-        reportCreateRequestPost.setReason(ReportReason.REPORT_A);
+        reportRequestPost.setType(ReportType.POST);
+        reportRequestPost.setTargetId(post.getId());
+        reportRequestPost.setReason(ReportReason.REPORT_A);
 
-        reportCreateRequestComment.setType(ReportType.COMMENT);
-        reportCreateRequestComment.setTargetId(comment.getId());
-        reportCreateRequestComment.setReason(ReportReason.REPORT_A);
+        reportRequestComment.setType(ReportType.COMMENT);
+        reportRequestComment.setTargetId(comment.getId());
+        reportRequestComment.setReason(ReportReason.REPORT_A);
     }
 
 
@@ -108,12 +108,12 @@ class ReportControllerTest {
 
         doThrow(new UserException(errorResult))
                 .when(reportService)
-                .registerReport(null, reportCreateRequestPost);
+                .registerReport(null, reportRequestPost);
 
         //when
         ResultActions result = mockMvc.perform(
                 MockMvcRequestBuilders.post(url)
-                        .content(objectMapper.writeValueAsString(reportCreateRequestPost))
+                        .content(objectMapper.writeValueAsString(reportRequestPost))
                         .contentType(MediaType.APPLICATION_JSON)
         );
 
@@ -134,11 +134,11 @@ class ReportControllerTest {
 
         doThrow(new UserException(errorResult))
                 .when(reportService)
-                .registerReport(user.getId(), reportCreateRequestPost);
+                .registerReport(user.getId(), reportRequestPost);
         //when
         ResultActions result = mockMvc.perform(
                 MockMvcRequestBuilders.post(url)
-                        .content(objectMapper.writeValueAsString(reportCreateRequestPost))
+                        .content(objectMapper.writeValueAsString(reportRequestPost))
                         .contentType(MediaType.APPLICATION_JSON)
                         .header("Authorization", createJwtToken(user))
         );
@@ -161,12 +161,12 @@ class ReportControllerTest {
 
         doThrow(new PostException(errorResult))
                 .when(reportService)
-                .registerReport(user.getId(), reportCreateRequestPost);
+                .registerReport(user.getId(), reportRequestPost);
 
         //when
         ResultActions result = mockMvc.perform(
                 MockMvcRequestBuilders.post(url)
-                        .content(objectMapper.writeValueAsString(reportCreateRequestPost))
+                        .content(objectMapper.writeValueAsString(reportRequestPost))
                         .contentType(MediaType.APPLICATION_JSON)
                         .header("Authorization", createJwtToken(user))
         );
@@ -187,12 +187,12 @@ class ReportControllerTest {
 
         doThrow(new ReportException(errorResult))
                 .when(reportService)
-                .registerReport(user.getId(), reportCreateRequestPost);
+                .registerReport(user.getId(), reportRequestPost);
 
         //when
         ResultActions result = mockMvc.perform(
                 MockMvcRequestBuilders.post(url)
-                        .content(objectMapper.writeValueAsString(reportCreateRequestPost))
+                        .content(objectMapper.writeValueAsString(reportRequestPost))
                         .contentType(MediaType.APPLICATION_JSON)
                         .header("Authorization", createJwtToken(user))
         );
@@ -212,12 +212,12 @@ class ReportControllerTest {
 
         doReturn(reportDetailPost.getId())
                 .when(reportService)
-                .registerReport(user.getId(), reportCreateRequestPost);
+                .registerReport(user.getId(), reportRequestPost);
 
         //when
         ResultActions result = mockMvc.perform(
                 MockMvcRequestBuilders.post(url)
-                        .content(objectMapper.writeValueAsString(reportCreateRequestPost))
+                        .content(objectMapper.writeValueAsString(reportRequestPost))
                         .contentType(MediaType.APPLICATION_JSON)
                         .header("Authorization", createJwtToken(user))
         );
@@ -238,12 +238,12 @@ class ReportControllerTest {
 
         doThrow(new CommentException(errorResult))
                 .when(reportService)
-                .registerReport(user.getId(), reportCreateRequestComment);
+                .registerReport(user.getId(), reportRequestComment);
 
         //when
         ResultActions result = mockMvc.perform(
                 MockMvcRequestBuilders.post(url)
-                        .content(objectMapper.writeValueAsString(reportCreateRequestComment))
+                        .content(objectMapper.writeValueAsString(reportRequestComment))
                         .contentType(MediaType.APPLICATION_JSON)
                         .header("Authorization", createJwtToken(user))
         );
@@ -264,12 +264,12 @@ class ReportControllerTest {
 
         doThrow(new ReportException(errorResult))
                 .when(reportService)
-                .registerReport(user.getId(), reportCreateRequestComment);
+                .registerReport(user.getId(), reportRequestComment);
 
         //when
         ResultActions result = mockMvc.perform(
                 MockMvcRequestBuilders.post(url)
-                        .content(objectMapper.writeValueAsString(reportCreateRequestComment))
+                        .content(objectMapper.writeValueAsString(reportRequestComment))
                         .contentType(MediaType.APPLICATION_JSON)
                         .header("Authorization", createJwtToken(user))
         );
@@ -288,12 +288,12 @@ class ReportControllerTest {
 
         doReturn(reportDetailComment.getId())
                 .when(reportService)
-                .registerReport(user.getId(), reportCreateRequestComment);
+                .registerReport(user.getId(), reportRequestComment);
 
         //when
         ResultActions result = mockMvc.perform(
                 MockMvcRequestBuilders.post(url)
-                        .content(objectMapper.writeValueAsString(reportCreateRequestComment))
+                        .content(objectMapper.writeValueAsString(reportRequestComment))
                         .contentType(MediaType.APPLICATION_JSON)
                         .header("Authorization", createJwtToken(user))
         );

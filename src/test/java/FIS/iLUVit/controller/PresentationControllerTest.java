@@ -1,9 +1,9 @@
 package FIS.iLUVit.controller;
 
 import FIS.iLUVit.config.argumentResolver.LoginUserArgumentResolver;
-import FIS.iLUVit.controller.dto.PresentationRequestRequestFormDto;
-import FIS.iLUVit.controller.dto.PresentationSaveResponseDto;
-import FIS.iLUVit.controller.dto.PtDateRequestDto;
+import FIS.iLUVit.controller.dto.PresentationDetailRequest;
+import FIS.iLUVit.controller.dto.PtDateDetailRequest;
+import FIS.iLUVit.controller.dto.PresentationResponse;
 import FIS.iLUVit.domain.Parent;
 import FIS.iLUVit.domain.Presentation;
 import FIS.iLUVit.domain.PtDate;
@@ -100,23 +100,23 @@ class PresentationControllerTest {
     @DisplayName("설명회 저장")
     class 설명회저장{
 
-        PtDateRequestDto ptDateRequestDto1;
-        PtDateRequestDto ptDateRequestDto2;
-        PtDateRequestDto ptDateRequestDto3;
-        List<PtDateRequestDto> dtoList = new ArrayList<>();
-        PresentationRequestRequestFormDto request;
+        PtDateDetailRequest ptDateRequest1;
+        PtDateDetailRequest ptDateRequest2;
+        PtDateDetailRequest ptDateRequest3;
+        List<PtDateDetailRequest> dtoList = new ArrayList<>();
+        PresentationDetailRequest request;
         MultipartFile multipartFile;
         List<MultipartFile> multipartFileList = new ArrayList<>();
 
         @BeforeEach
         void init() throws IOException {
-            ptDateRequestDto1 = new PtDateRequestDto(LocalDate.now(), "test time", 10);
-            ptDateRequestDto2 = new PtDateRequestDto(LocalDate.now(), "test time", 10);
-            ptDateRequestDto3 = new PtDateRequestDto(LocalDate.now(), "test time", 10);
-            dtoList.add(ptDateRequestDto1);
-            dtoList.add(ptDateRequestDto2);
-            dtoList.add(ptDateRequestDto3);
-            request = new PresentationRequestRequestFormDto(1L, LocalDate.now(), LocalDate.now(), "test place", "test content", dtoList);
+            ptDateRequest1 = new PtDateDetailRequest(LocalDate.now(), "test time", 10);
+            ptDateRequest2 = new PtDateDetailRequest(LocalDate.now(), "test time", 10);
+            ptDateRequest3 = new PtDateDetailRequest(LocalDate.now(), "test time", 10);
+            dtoList.add(ptDateRequest1);
+            dtoList.add(ptDateRequest2);
+            dtoList.add(ptDateRequest3);
+            request = new PresentationDetailRequest(1L, LocalDate.now(), LocalDate.now(), "test place", "test content", dtoList);
             String name = "162693895955046828.png";
             Path path1 = Paths.get(new File("").getAbsolutePath() + '/' + name);
             byte[] content = Files.readAllBytes(path1);
@@ -154,7 +154,7 @@ class PresentationControllerTest {
         @DisplayName("[error] 잘못된 요청")
         public void 잘못된요청() throws Exception {
             MockMultipartHttpServletRequestBuilder builder = MockMvcRequestBuilders.multipart("/presentation");
-            request = new PresentationRequestRequestFormDto();
+            request = new PresentationDetailRequest();
             MockMultipartFile requestDto = new MockMultipartFile("request", null,
                     "application/json", objectMapper.writeValueAsString(request).getBytes());
 
@@ -179,7 +179,7 @@ class PresentationControllerTest {
                     "application/json", objectMapper.writeValueAsString(request).getBytes());
 
             Mockito.doThrow(new UserException(UserErrorResult.USER_NOT_EXIST))
-                    .when(presentationService).saveWithPtDate(any(PresentationRequestRequestFormDto.class), anyList(), any(Long.class));
+                    .when(presentationService).saveWithPtDate(any(PresentationDetailRequest.class), anyList(), any(Long.class));
 
             //when
             ResultActions result = mockMvc.perform(
@@ -205,7 +205,7 @@ class PresentationControllerTest {
                     "application/json", objectMapper.writeValueAsString(request).getBytes());
 
             Mockito.doThrow(new PresentationException(PresentationErrorResult.ALREADY_PRESENTATION_EXIST))
-                    .when(presentationService).saveWithPtDate(any(PresentationRequestRequestFormDto.class), anyList(), any(Long.class));
+                    .when(presentationService).saveWithPtDate(any(PresentationDetailRequest.class), anyList(), any(Long.class));
 
             //when
             ResultActions result = mockMvc.perform(
@@ -237,7 +237,7 @@ class PresentationControllerTest {
                     "application/json", objectMapper.writeValueAsString(request).getBytes());
 
             Mockito.doReturn(presentation)
-                    .when(presentationService).saveWithPtDate(any(PresentationRequestRequestFormDto.class), anyList(), any(Long.class));
+                    .when(presentationService).saveWithPtDate(any(PresentationDetailRequest.class), anyList(), any(Long.class));
 
             //when
             ResultActions result = mockMvc.perform(
@@ -251,7 +251,7 @@ class PresentationControllerTest {
             result.andDo(print())
                     .andExpect(status().isCreated())
                     .andExpect(content().json(objectMapper.writeValueAsString(
-                            new PresentationSaveResponseDto(presentation)
+                            new PresentationResponse(presentation)
                     )));
         }
 
@@ -267,7 +267,7 @@ class PresentationControllerTest {
             presentation.getPtDates().add(ptDate2);
 
             Mockito.doReturn(presentation)
-                    .when(presentationService).saveInfoWithPtDate(any(PresentationRequestRequestFormDto.class), any(Long.class));
+                    .when(presentationService).saveInfoWithPtDate(any(PresentationDetailRequest.class), any(Long.class));
 
             //when
             ResultActions result = mockMvc.perform(
@@ -280,7 +280,7 @@ class PresentationControllerTest {
             result.andDo(print())
                     .andExpect(status().isCreated())
                     .andExpect(content().json(objectMapper.writeValueAsString(
-                            new PresentationSaveResponseDto(presentation)
+                            new PresentationResponse(presentation)
                     )));
         }
 
@@ -310,8 +310,9 @@ class PresentationControllerTest {
             result.andDo(print())
                     .andExpect(status().isCreated())
                     .andExpect(content().json(objectMapper.writeValueAsString(
-                            new PresentationSaveResponseDto(presentation)
+                            new PresentationResponse(presentation)
                     )));
+
         }
 
 

@@ -1,23 +1,23 @@
 package FIS.iLUVit.controller.messagecreate;
 
-import FIS.iLUVit.controller.dto.CenterSearchFilterDTO;
-import FIS.iLUVit.controller.dto.CenterSearchMapFilterDTO;
+import FIS.iLUVit.controller.dto.CenterSearchFilterDto;
+import FIS.iLUVit.controller.dto.CenterSearchMapFilterDto;
 import FIS.iLUVit.domain.embeddable.Area;
 import FIS.iLUVit.domain.embeddable.Theme;
 import FIS.iLUVit.domain.enumtype.KindOf;
-import FIS.iLUVit.repository.dto.CenterAndDistancePreview;
-import FIS.iLUVit.repository.dto.CenterPreview;
+import FIS.iLUVit.repository.dto.CenterAndDistancePreviewDto;
+import FIS.iLUVit.repository.dto.CenterPreviewDto;
 
 import java.util.Arrays;
 import java.util.List;
 
 public class ResponseRequests {
 
-    public CenterSearchFilterDTO centerSearchFilterRequest(List<Area> areas){
+    public CenterSearchFilterDto centerSearchFilterRequest(List<Area> areas){
 
         Theme theme = new Theme(true, false, true, false, true, true, false, false, false, false, true, false, false, false, false, true, false);
 
-        return CenterSearchFilterDTO.builder()
+        return CenterSearchFilterDto.builder()
                 .areas(areas)
                 .interestedAge(4)
                 .kindOf(KindOf.Kindergarten)
@@ -25,12 +25,12 @@ public class ResponseRequests {
                 .build();
     }
 
-    public List<CenterPreview> centerPreviewResponse(){
+    public List<CenterPreviewDto> centerPreviewResponse(){
 
         Area area = new Area("sido", "sigungu");
 
         Theme theme = new Theme(true, false, true, false, true, true, false, false, false, false, true, false, false, false, false, true, false);
-        return Arrays.asList(CenterPreview.builder()
+        return Arrays.asList(CenterPreviewDto.builder()
                 .id(1L)
                 .name("test")
                 .owner("test")
@@ -51,11 +51,11 @@ public class ResponseRequests {
                 .build());
     }
 
-    public CenterSearchMapFilterDTO centerSearchMapFilterDTO(double longitude, double latitude){
+    public CenterSearchMapFilterDto centerSearchMapFilterDTO(double longitude, double latitude){
 
         Theme theme = new Theme(true, false, true, false, true, true, false, false, false, false, true, false, false, false, false, true, false);
 
-        return CenterSearchMapFilterDTO.builder()
+        return CenterSearchMapFilterDto.builder()
                 .longitude(longitude)
                 .latitude(latitude)
                 .kindOf(KindOf.ALL)
@@ -63,11 +63,11 @@ public class ResponseRequests {
                 .build();
     }
 
-    public CenterAndDistancePreview centerAndDistancePreview(){
+    public CenterAndDistancePreviewDto centerAndDistancePreview(){
 
         Theme theme = new Theme(true, false, true, false, true, true, false, false, false, false, true, false, false, false, false, true, false);
 
-        return CenterAndDistancePreview.builder()
+        return CenterAndDistancePreviewDto.builder()
                 .id(3L)
                 .name("센터정보")
                 .estType("공립")

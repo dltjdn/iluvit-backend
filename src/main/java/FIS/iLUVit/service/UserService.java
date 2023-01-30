@@ -4,10 +4,8 @@ import FIS.iLUVit.controller.dto.*;
 import FIS.iLUVit.domain.AuthNumber;
 import FIS.iLUVit.domain.TokenPair;
 import FIS.iLUVit.domain.User;
-import FIS.iLUVit.domain.alarms.Alarm;
 import FIS.iLUVit.domain.enumtype.AuthKind;
 import FIS.iLUVit.exception.*;
-import FIS.iLUVit.repository.AlarmRepository;
 import FIS.iLUVit.repository.AuthRepository;
 import FIS.iLUVit.repository.TokenPairRepository;
 import FIS.iLUVit.repository.UserRepository;
@@ -17,9 +15,6 @@ import FIS.iLUVit.security.LoginResponse;
 import FIS.iLUVit.security.uesrdetails.PrincipalDetails;
 import com.auth0.jwt.exceptions.JWTVerificationException;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Slice;
-import org.springframework.data.domain.SliceImpl;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -29,8 +24,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.Duration;
 import java.time.LocalDateTime;
-import java.util.List;
-import java.util.stream.Collectors;
 
 @Service
 @Transactional
@@ -49,7 +42,7 @@ public class UserService {
     *   작성자: 이승범
     *   작성내용: 사용자 기본정보(id, nickname, auth) 반환
     */
-    public UserInfoResponse findUserInfo(Long id) {
+    public UserResponse findUserInfo(Long id) {
         User findUser = userRepository.findById(id)
                 .orElseThrow(() -> new UserException(UserErrorResult.NOT_VALID_TOKEN));
         return findUser.getUserInfo();
@@ -60,7 +53,7 @@ public class UserService {
     *   작성자: 이승범
     *   작성내용: 비밀번호 변경
     */
-    public User updatePassword(Long id, UpdatePasswordRequest request) {
+    public User updatePassword(Long id, PasswordRequest request) {
 
         User findUser = userRepository.findById(id)
                 .orElseThrow(() -> new UserException(UserErrorResult.NOT_VALID_TOKEN));

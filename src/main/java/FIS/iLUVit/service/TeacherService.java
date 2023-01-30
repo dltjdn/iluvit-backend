@@ -64,7 +64,7 @@ public class TeacherService {
      * 작성자: 이승범
      * 작성내용: 선생의 마이페이지에 정보 update
      */
-    public TeacherDetailResponse updateDetail(Long id, UpdateTeacherDetailRequest request) throws IOException {
+    public TeacherDetailResponse updateDetail(Long id, TeacherDetailRequest request) throws IOException {
 
         Teacher findTeacher = teacherRepository.findById(id)
                 .orElseThrow(() -> new UserException(UserErrorResult.NOT_VALID_TOKEN));
@@ -350,7 +350,7 @@ public class TeacherService {
      *   작성자: 이승범
      *   작성내용: 회원가입 과정에서 필요한 센터정보 가져오기
      */
-    public Slice<CenterInfoDto> findCenterForSignup(CenterInfoRequest request, Pageable pageable) {
+    public Slice<CenterDto> findCenterForSignup(CenterRequest request, Pageable pageable) {
         return centerRepository.findForSignup(request.getSido(), request.getSigungu(), request.getCenterName(), pageable);
     }
 }

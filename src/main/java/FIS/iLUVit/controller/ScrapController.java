@@ -25,7 +25,7 @@ public class ScrapController {
      * 작성내용: 스크랩 폴더 목록
      */
     @GetMapping("dir")
-    public ScrapListInfoResponse ScrapListInfo(@Login Long id) {
+    public ScrapListResponse ScrapListInfo(@Login Long id) {
         return scrapService.findScrapDirListInfo(id);
     }
 
@@ -35,7 +35,7 @@ public class ScrapController {
      * 작성내용: 스크랩 폴더 생성
      */
     @PostMapping("dir")
-    public ScrapListInfoResponse addScrap(@Login Long id, @Valid @RequestBody AddScrapRequest request) {
+    public ScrapListResponse addScrap(@Login Long id, @Valid @RequestBody ScrapDirRequest request) {
         return scrapService.addScrapDir(id, request);
     }
 
@@ -45,7 +45,7 @@ public class ScrapController {
      * 작성내용: 스크랩 폴더 삭제
      */
     @DeleteMapping("dir")
-    public ScrapListInfoResponse deleteScrap(@Login Long userId, @RequestParam Long scrapId) {
+    public ScrapListResponse deleteScrap(@Login Long userId, @RequestParam Long scrapId) {
         return scrapService.deleteScrapDir(userId, scrapId);
     }
 
@@ -55,7 +55,7 @@ public class ScrapController {
      * 작성내용: 스크랩 폴더 이름 바꾸기
      */
     @PutMapping("dir/name")
-    public void updateScrapDirName(@Login Long id, @Valid @RequestBody UpdateScrapDirNameRequest request) {
+    public void updateScrapDirName(@Login Long id, @Valid @RequestBody ScrapDirDetailRequest request) {
         scrapService.updateScrapDirName(id, request);
     }
 
@@ -85,7 +85,7 @@ public class ScrapController {
      * 작성내용: 게시물 관련 스크랩 상태 수정
      */
     @PutMapping("post")
-    public void scrapPost(@Login Long userId, @Valid @RequestBody UpdateScrapByPostRequest request) {
+    public void scrapPost(@Login Long userId, @Valid @RequestBody ScrapByPostRequest request) {
         scrapService.scrapPost(userId, request);
     }
 
@@ -95,7 +95,7 @@ public class ScrapController {
      *   작성내용: 스크랩 폴더별 게시물 리스트
      */
     @GetMapping("dir/post")
-    public Slice<GetScrapPostResponsePreview> searchPostsByScrap(@Login Long userId, @RequestParam Long scrapId, Pageable pageable) {
+    public Slice<ScrapPostPreviewResponse> searchPostsByScrap(@Login Long userId, @RequestParam Long scrapId, Pageable pageable) {
         return scrapService.searchByScrap(userId, scrapId, pageable);
     }
 }

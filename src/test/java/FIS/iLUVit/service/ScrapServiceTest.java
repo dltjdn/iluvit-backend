@@ -3,7 +3,6 @@ package FIS.iLUVit.service;
 import FIS.iLUVit.Creator;
 import FIS.iLUVit.controller.dto.*;
 import FIS.iLUVit.domain.*;
-import FIS.iLUVit.domain.enumtype.BoardKind;
 import FIS.iLUVit.exception.ScrapErrorResult;
 import FIS.iLUVit.exception.ScrapException;
 import FIS.iLUVit.repository.PostRepository;
@@ -25,7 +24,7 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 
-import static FIS.iLUVit.controller.dto.UpdateScrapByPostRequest.*;
+import static FIS.iLUVit.controller.dto.ScrapByPostRequest.*;
 import static org.assertj.core.api.Assertions.*;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
@@ -91,7 +90,7 @@ public class ScrapServiceTest {
                 .when(scrapRepository)
                 .findScrapsByUserWithScrapPosts(parent1.getId());
         // when
-        ScrapListInfoResponse result = target.findScrapDirListInfo(parent1.getId());
+        ScrapListResponse result = target.findScrapDirListInfo(parent1.getId());
         // then
         assertThat(result.getData().size()).isEqualTo(2);
         result.getData().forEach(scrapInfo -> {
@@ -113,9 +112,9 @@ public class ScrapServiceTest {
         doReturn(List.of(scrap1, scrap2, scrap))
                 .when(scrapRepository)
                 .findScrapsByUserWithScrapPosts(parent1.getId());
-        AddScrapRequest request = new AddScrapRequest("scrap");
+        ScrapDirRequest request = new ScrapDirRequest("scrap");
         // when
-        ScrapListInfoResponse result = target.addScrapDir(parent1.getId(), request);
+        ScrapListResponse result = target.addScrapDir(parent1.getId(), request);
         // then
         assertThat(result.getData().size()).isEqualTo(3);
     }
@@ -161,7 +160,7 @@ public class ScrapServiceTest {
                     .when(scrapRepository)
                     .findScrapsByUserWithScrapPosts(parent1.getId());
             // when
-            ScrapListInfoResponse result = target.deleteScrapDir(parent1.getId(), scrap2.getId());
+            ScrapListResponse result = target.deleteScrapDir(parent1.getId(), scrap2.getId());
             // then
             assertThat(result.getData().size()).isEqualTo(1);
             // verify
@@ -173,7 +172,7 @@ public class ScrapServiceTest {
     public void 스크랩폴더이름바꾸기_성공() {
         // given
         String name = "바뀌는스크랩폴더이름";
-        UpdateScrapDirNameRequest request = new UpdateScrapDirNameRequest(scrap1.getId(), name);
+        ScrapDirDetailRequest request = new ScrapDirDetailRequest(scrap1.getId(), name);
         doReturn(Optional.of(scrap1))
                 .when(scrapRepository)
                 .findScrapByIdAndUserId(any(), any());
@@ -195,7 +194,7 @@ public class ScrapServiceTest {
             ScrapInfoForUpdate info1 = new ScrapInfoForUpdate(scrap1.getId(), true);
             ScrapInfoForUpdate info2 = new ScrapInfoForUpdate(scrap2.getId(), false);
             ScrapInfoForUpdate info3 = new ScrapInfoForUpdate(scrap3.getId(), false);
-            UpdateScrapByPostRequest request = new UpdateScrapByPostRequest(post1.getId(), List.of(info1, info2, info3));
+            ScrapByPostRequest request = new ScrapByPostRequest(post1.getId(), List.of(info1, info2, info3));
             doReturn(List.of(scrap1, scrap2))
                     .when(scrapRepository)
                     .findScrapsByUserWithScrapPosts(any());
@@ -216,7 +215,7 @@ public class ScrapServiceTest {
             // given
             ScrapInfoForUpdate info1 = new ScrapInfoForUpdate(scrap1.getId(), true);
             ScrapInfoForUpdate info2 = new ScrapInfoForUpdate(scrap2.getId(), true);
-            UpdateScrapByPostRequest request = new UpdateScrapByPostRequest(post1.getId(), List.of(info1, info2));
+            ScrapByPostRequest request = new ScrapByPostRequest(post1.getId(), List.of(info1, info2));
             scrap1.getScrapPosts().add(scrapPost1);
             scrap1.getScrapPosts().add(scrapPost2);
             doReturn(List.of(scrap1, scrap2))
@@ -238,7 +237,7 @@ public class ScrapServiceTest {
             // given
             ScrapInfoForUpdate info1 = new ScrapInfoForUpdate(scrap1.getId(), true);
             ScrapInfoForUpdate info2 = new ScrapInfoForUpdate(scrap2.getId(), true);
-            UpdateScrapByPostRequest request = new UpdateScrapByPostRequest(post1.getId(), List.of(info1, info2));
+            ScrapByPostRequest request = new ScrapByPostRequest(post1.getId(), List.of(info1, info2));
             scrap1.getScrapPosts().add(scrapPost1);
             scrap1.getScrapPosts().add(scrapPost2);
             doReturn(List.of(scrap1, scrap2))
@@ -260,7 +259,7 @@ public class ScrapServiceTest {
             // given
             ScrapInfoForUpdate info1 = new ScrapInfoForUpdate(scrap1.getId(), false);
             ScrapInfoForUpdate info2 = new ScrapInfoForUpdate(scrap2.getId(), false);
-            UpdateScrapByPostRequest request = new UpdateScrapByPostRequest(post1.getId(), List.of(info1, info2));
+            ScrapByPostRequest request = new ScrapByPostRequest(post1.getId(), List.of(info1, info2));
             scrap1.getScrapPosts().add(scrapPost1);
             scrap1.getScrapPosts().add(scrapPost2);
             doReturn(List.of(scrap1, scrap2))
@@ -282,7 +281,7 @@ public class ScrapServiceTest {
             // given
             ScrapInfoForUpdate info1 = new ScrapInfoForUpdate(scrap1.getId(), false);
             ScrapInfoForUpdate info2 = new ScrapInfoForUpdate(scrap2.getId(), true);
-            UpdateScrapByPostRequest request = new UpdateScrapByPostRequest(post1.getId(), List.of(info1, info2));
+            ScrapByPostRequest request = new ScrapByPostRequest(post1.getId(), List.of(info1, info2));
             scrap1.getScrapPosts().add(scrapPost1);
             scrap1.getScrapPosts().add(scrapPost2);
             doReturn(List.of(scrap1, scrap2))
@@ -361,7 +360,7 @@ public class ScrapServiceTest {
                 .findByScrapWithPost(parent1.getId(), scrap1.getId(), PageRequest.of(0, 5));
 
         // when
-        Slice<GetScrapPostResponsePreview> result =
+        Slice<ScrapPostPreviewResponse> result =
                 target.searchByScrap(parent1.getId(), scrap1.getId(), PageRequest.of(0, 5));
         // then
         assertThat(result.getContent().size()).isEqualTo(2);

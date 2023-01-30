@@ -38,12 +38,12 @@ public class ScrapService {
      * 작성자: 이승범
      * 작성내용: 스크랩 폴더 목록 가져오기
      */
-    public ScrapListInfoResponse findScrapDirListInfo(Long id) {
+    public ScrapListResponse findScrapDirListInfo(Long id) {
         List<Scrap> scraps = scrapRepository.findScrapsByUserWithScrapPosts(id);
-        ScrapListInfoResponse response = new ScrapListInfoResponse();
+        ScrapListResponse response = new ScrapListResponse();
 
         scraps.forEach(scrap -> {
-            response.getData().add(new ScrapListInfoResponse.ScrapInfo(scrap));
+            response.getData().add(new ScrapListResponse.ScrapInfo(scrap));
         });
         return response;
     }
@@ -53,7 +53,7 @@ public class ScrapService {
      * 작성자: 이승범
      * 작성내용: 스크랩 폴더 추가하기
      */
-    public ScrapListInfoResponse addScrapDir(Long id, AddScrapRequest request) {
+    public ScrapListResponse addScrapDir(Long id, ScrapDirRequest request) {
         User user = userRepository.getById(id);
         Scrap newScrap = Scrap.createScrap(user, request.getName());
         scrapRepository.save(newScrap);
@@ -66,7 +66,7 @@ public class ScrapService {
      * 작성자: 이승범
      * 작성내용: 스크랩 폴더 삭제하기
      */
-    public ScrapListInfoResponse deleteScrapDir(Long userId, Long scrapId) {
+    public ScrapListResponse deleteScrapDir(Long userId, Long scrapId) {
 
         Scrap deletedScrap = scrapRepository.findScrapByIdAndUserId(scrapId, userId)
                 .orElseThrow(() -> new ScrapException(ScrapErrorResult.NOT_VALID_SCRAP));
@@ -84,7 +84,7 @@ public class ScrapService {
      * 작성자: 이승범
      * 작성내용: 스크랩 폴더 이름 바꾸기
      */
-    public Scrap updateScrapDirName(Long id, UpdateScrapDirNameRequest request) {
+    public Scrap updateScrapDirName(Long id, ScrapDirDetailRequest request) {
         Scrap findScrap = scrapRepository.findScrapByIdAndUserId(request.getScrapId(), id)
                 .orElseThrow(() -> new ScrapException(ScrapErrorResult.NOT_VALID_SCRAP));
         findScrap.updateScrapDirName(request.getDirName());
@@ -96,7 +96,7 @@ public class ScrapService {
      * 작성자: 이승범
      * 작성내용: 게시물 스크랩하기
      */
-    public List<Scrap> scrapPost(Long userId, UpdateScrapByPostRequest request) {
+    public List<Scrap> scrapPost(Long userId, ScrapByPostRequest request) {
         // 사용자의 스크랩폴더 목록을 가져온다.
         List<Scrap> scraps = scrapRepository.findScrapsByUserWithScrapPosts(userId);
         // 게시물 정보가져오기
@@ -163,8 +163,8 @@ public class ScrapService {
      *   작성자: 이승범
      *   작성내용: 해당 스크랩 폴더의 게시물들 preview 보여주기
      */
-    public Slice<GetScrapPostResponsePreview> searchByScrap(Long userId, Long scrapId, Pageable pageable) {
+    public Slice<ScrapPostPreviewResponse> searchByScrap(Long userId, Long scrapId, Pageable pageable) {
         Slice<ScrapPost> scrapPosts = scrapPostRepository.findByScrapWithPost(userId, scrapId, pageable);
-        return scrapPosts.map(GetScrapPostResponsePreview::new);
+        return scrapPosts.map(ScrapPostPreviewResponse::new);
     }
 }

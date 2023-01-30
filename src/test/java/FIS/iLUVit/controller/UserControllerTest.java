@@ -2,10 +2,9 @@ package FIS.iLUVit.controller;
 
 import FIS.iLUVit.Creator;
 import FIS.iLUVit.config.argumentResolver.LoginUserArgumentResolver;
-import FIS.iLUVit.controller.dto.CheckLoginIdRequest;
 import FIS.iLUVit.controller.dto.CheckNicknameRequest;
-import FIS.iLUVit.controller.dto.UpdatePasswordRequest;
-import FIS.iLUVit.controller.dto.UserInfoResponse;
+import FIS.iLUVit.controller.dto.PasswordRequest;
+import FIS.iLUVit.controller.dto.UserResponse;
 import FIS.iLUVit.domain.Parent;
 import FIS.iLUVit.exception.SignupErrorResult;
 import FIS.iLUVit.exception.SignupException;
@@ -13,7 +12,6 @@ import FIS.iLUVit.exception.UserErrorResult;
 import FIS.iLUVit.exception.UserException;
 import FIS.iLUVit.exception.exceptionHandler.ErrorResponse;
 import FIS.iLUVit.exception.exceptionHandler.controllerAdvice.GlobalControllerAdvice;
-import FIS.iLUVit.security.LoginResponse;
 import FIS.iLUVit.service.UserService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.BeforeEach;
@@ -28,7 +26,6 @@ import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
-import org.springframework.test.web.servlet.result.MockMvcResultHandlers;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
 import java.io.IOException;
@@ -63,7 +60,7 @@ public class UserControllerTest {
     public void 사용자기본정보_성공() throws Exception {
         // given
         String url = "/user/info";
-        doReturn(new UserInfoResponse())
+        doReturn(new UserResponse())
                 .when(userService)
                 .findUserInfo(any());
         // when
@@ -74,7 +71,7 @@ public class UserControllerTest {
         // then
         result.andExpect(status().isOk())
                 .andExpect(content().json(
-                        objectMapper.writeValueAsString(new UserInfoResponse())
+                        objectMapper.writeValueAsString(new UserResponse())
                 ));
     }
 
@@ -82,7 +79,7 @@ public class UserControllerTest {
     public void 비밀번호변경_실패_비밀번호틀림() throws Exception {
         // given
         String url = "/user/password";
-        UpdatePasswordRequest request = UpdatePasswordRequest
+        PasswordRequest request = PasswordRequest
                 .builder()
                 .originPwd("originPwd")
                 .newPwd("asd123!@#")
@@ -110,7 +107,7 @@ public class UserControllerTest {
     public void 비밀번호변경_실패_비밀번호확인틀림() throws Exception {
         // given
         String url = "/user/password";
-        UpdatePasswordRequest request = UpdatePasswordRequest
+        PasswordRequest request = PasswordRequest
                 .builder()
                 .originPwd("originPwd")
                 .newPwd("asd123!@#")
@@ -138,7 +135,7 @@ public class UserControllerTest {
     public void 비밀번호변경_성공() throws Exception {
         // given
         String url = "/user/password";
-        UpdatePasswordRequest request = UpdatePasswordRequest
+        PasswordRequest request = PasswordRequest
                 .builder()
                 .originPwd("originPwd")
                 .newPwd("asd123!@#")

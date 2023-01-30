@@ -110,7 +110,7 @@ class PostServiceTest {
 
     MultipartFile multipartFile;
     List<MultipartFile> multipartFileList = new ArrayList<>();
-    PostRegisterRequest postRegisterRequest = new PostRegisterRequest();
+    PostRequest postRequest = new PostRequest();
 
     @BeforeEach
     public void init() throws IOException {
@@ -207,14 +207,14 @@ class PostServiceTest {
     @Test
     public void 게시글_저장_비회원() throws Exception {
         //given
-        postRegisterRequest.setAnonymous(true);
-        postRegisterRequest.setBoard_id(board1.getId());
-        postRegisterRequest.setContent("게시글 저장 내용");
-        postRegisterRequest.setTitle("게시글 저장 제목");
+        postRequest.setAnonymous(true);
+        postRequest.setBoard_id(board1.getId());
+        postRequest.setContent("게시글 저장 내용");
+        postRequest.setTitle("게시글 저장 제목");
 
         //when
         UserException result = assertThrows(UserException.class,
-                () -> postService.savePost(postRegisterRequest, new ArrayList<>(), null));
+                () -> postService.savePost(postRequest, new ArrayList<>(), null));
 
         //then
         assertThat(result.getErrorResult())
@@ -224,10 +224,10 @@ class PostServiceTest {
     @Test
     public void 게시글_저장_유저X() throws Exception {
         //given
-        postRegisterRequest.setAnonymous(true);
-        postRegisterRequest.setBoard_id(board1.getId());
-        postRegisterRequest.setContent("게시글 저장 내용");
-        postRegisterRequest.setTitle("게시글 저장 제목");
+        postRequest.setAnonymous(true);
+        postRequest.setBoard_id(board1.getId());
+        postRequest.setContent("게시글 저장 내용");
+        postRequest.setTitle("게시글 저장 제목");
 
         Mockito.doReturn(Optional.empty())
                 .when(userRepository)
@@ -235,7 +235,7 @@ class PostServiceTest {
 
         //when
         UserException result = assertThrows(UserException.class,
-                () -> postService.savePost(postRegisterRequest, new ArrayList<>(), parent1.getId()));
+                () -> postService.savePost(postRequest, new ArrayList<>(), parent1.getId()));
 
         //then
         assertThat(result.getErrorResult())
@@ -245,10 +245,10 @@ class PostServiceTest {
     @Test
     public void 게시글_저장_게시판X() throws Exception {
         //given
-        postRegisterRequest.setAnonymous(true);
-        postRegisterRequest.setBoard_id(board1.getId());
-        postRegisterRequest.setContent("게시글 저장 내용");
-        postRegisterRequest.setTitle("게시글 저장 제목");
+        postRequest.setAnonymous(true);
+        postRequest.setBoard_id(board1.getId());
+        postRequest.setContent("게시글 저장 내용");
+        postRequest.setTitle("게시글 저장 제목");
 
         Mockito.doReturn(Optional.of(parent1))
                 .when(userRepository)
@@ -260,7 +260,7 @@ class PostServiceTest {
 
         //when
         BoardException result = assertThrows(BoardException.class,
-                () -> postService.savePost(postRegisterRequest, new ArrayList<>(), parent1.getId()));
+                () -> postService.savePost(postRequest, new ArrayList<>(), parent1.getId()));
 
         //then
         assertThat(result.getErrorResult())
@@ -270,10 +270,10 @@ class PostServiceTest {
     @Test
     public void 게시글_저장_학부모가_공지_게시판_접근() throws Exception {
         //given
-        postRegisterRequest.setAnonymous(true);
-        postRegisterRequest.setBoard_id(board1.getId());
-        postRegisterRequest.setContent("게시글 저장 내용");
-        postRegisterRequest.setTitle("게시글 저장 제목");
+        postRequest.setAnonymous(true);
+        postRequest.setBoard_id(board1.getId());
+        postRequest.setContent("게시글 저장 내용");
+        postRequest.setTitle("게시글 저장 제목");
 
         Mockito.doReturn(Optional.of(parent1))
                 .when(userRepository)
@@ -285,7 +285,7 @@ class PostServiceTest {
 
         //when
         PostException result = assertThrows(PostException.class,
-                () -> postService.savePost(postRegisterRequest, new ArrayList<>(), parent1.getId()));
+                () -> postService.savePost(postRequest, new ArrayList<>(), parent1.getId()));
 
         //then
         assertThat(result.getErrorResult())
@@ -295,10 +295,10 @@ class PostServiceTest {
     @Test
     public void 게시글_저장_성공() throws Exception {
         //given
-        postRegisterRequest.setAnonymous(true);
-        postRegisterRequest.setBoard_id(board2.getId());
-        postRegisterRequest.setContent("게시글 저장 내용");
-        postRegisterRequest.setTitle("게시글 저장 제목");
+        postRequest.setAnonymous(true);
+        postRequest.setBoard_id(board2.getId());
+        postRequest.setContent("게시글 저장 내용");
+        postRequest.setTitle("게시글 저장 제목");
 
         Mockito.doReturn(Optional.of(parent1))
                 .when(userRepository)
@@ -317,7 +317,7 @@ class PostServiceTest {
                 .saveInfoImages(any(), any());
 
         //when
-        Long savedId = postService.savePost(postRegisterRequest, multipartFileList, parent1.getId());
+        Long savedId = postService.savePost(postRequest, multipartFileList, parent1.getId());
         //then
         assertThat(savedId).isEqualTo(post1.getId());
     }
@@ -407,14 +407,14 @@ class PostServiceTest {
     @Test
     public void 게시글_1개_조회() throws Exception {
         //given
-        GetPostResponse getPostResponse = new GetPostResponse(post1, new ArrayList<>(), null, null);
+        PostResponse getPostResponse = new PostResponse(post1, new ArrayList<>(), null, null);
 
         Mockito.doReturn(Optional.of(post1))
                 .when(postRepository)
                 .findByIdWithUserAndBoardAndCenter(post1.getId());
 
         //when
-        GetPostResponse resultDTO = postService.findById(null, post1.getId());
+        PostResponse resultDTO = postService.findById(null, post1.getId());
 
         //then
         assertThat(objectMapper.writeValueAsString(resultDTO))
@@ -460,14 +460,14 @@ class PostServiceTest {
                 .when(userRepository)
                 .findById(parent1.getId());
 
-        List<GetPostResponsePreview> previewList = Arrays.asList(
-                new GetPostResponsePreview(post1),
-                new GetPostResponsePreview(post10),
-                new GetPostResponsePreview(post11),
-                new GetPostResponsePreview(post12),
-                new GetPostResponsePreview(post13)
+        List<PostPreviewResponse> previewList = Arrays.asList(
+                new PostPreviewResponse(post1),
+                new PostPreviewResponse(post10),
+                new PostPreviewResponse(post11),
+                new PostPreviewResponse(post12),
+                new PostPreviewResponse(post13)
         );
-        Slice<GetPostResponsePreview> previewSlice = new SliceImpl<>
+        Slice<PostPreviewResponse> previewSlice = new SliceImpl<>
                 (previewList, PageRequest.of(0, 10), false);
 
         List<Child> children = Arrays.asList(child1, child2, child3);
@@ -482,7 +482,7 @@ class PostServiceTest {
                 .findInCenterByKeyword(centerIds, keyword, PageRequest.of(0, 10));
 
         //when
-        Slice<GetPostResponsePreview> result = postService
+        Slice<PostPreviewResponse> result = postService
                 .searchByKeyword(keyword, parent1.getId(), PageRequest.of(0, 10));
         //then
 
@@ -498,8 +498,8 @@ class PostServiceTest {
                 .when(userRepository)
                 .findById(teacher2.getId());
 
-        List<GetPostResponsePreview> previewList = new ArrayList<>();
-        Slice<GetPostResponsePreview> previewSlice = new SliceImpl<>
+        List<PostPreviewResponse> previewList = new ArrayList<>();
+        Slice<PostPreviewResponse> previewSlice = new SliceImpl<>
                 (previewList, PageRequest.of(0, 10), false);
 
         Set<Long> centerIds = new HashSet<>();
@@ -509,7 +509,7 @@ class PostServiceTest {
                 .findInCenterByKeyword(centerIds, keyword, PageRequest.of(0, 10));
 
         //when
-        Slice<GetPostResponsePreview> result = postService
+        Slice<PostPreviewResponse> result = postService
                 .searchByKeyword(keyword, teacher2.getId(), PageRequest.of(0, 10));
         //then
 
@@ -526,12 +526,12 @@ class PostServiceTest {
                 .when(userRepository)
                 .findById(teacher2.getId());
 
-        List<GetPostResponsePreview> previewList = Arrays.asList(
-                new GetPostResponsePreview(post12),
-                new GetPostResponsePreview(post13)
+        List<PostPreviewResponse> previewList = Arrays.asList(
+                new PostPreviewResponse(post12),
+                new PostPreviewResponse(post13)
         );
 
-        Slice<GetPostResponsePreview> previewSlice = new SliceImpl<>
+        Slice<PostPreviewResponse> previewSlice = new SliceImpl<>
                 (previewList, PageRequest.of(0, 10), false);
 
         Set<Long> centerIds = Set.of(center3.getId());
@@ -541,7 +541,7 @@ class PostServiceTest {
                 .findInCenterByKeyword(centerIds, keyword, PageRequest.of(0, 10));
 
         //when
-        Slice<GetPostResponsePreview> result = postService
+        Slice<PostPreviewResponse> result = postService
                 .searchByKeyword(keyword, teacher2.getId(), PageRequest.of(0, 10));
         //then
 
@@ -574,14 +574,14 @@ class PostServiceTest {
                 .when(userRepository)
                 .findChildren(parent1.getId());
 
-        List<GetPostResponsePreview> previewList = Arrays.asList(
-                new GetPostResponsePreview(post1),
-                new GetPostResponsePreview(post10),
-                new GetPostResponsePreview(post11),
-                new GetPostResponsePreview(post12),
-                new GetPostResponsePreview(post13)
+        List<PostPreviewResponse> previewList = Arrays.asList(
+                new PostPreviewResponse(post1),
+                new PostPreviewResponse(post10),
+                new PostPreviewResponse(post11),
+                new PostPreviewResponse(post12),
+                new PostPreviewResponse(post13)
         );
-        Slice<GetPostResponsePreview> previewSlice = new SliceImpl<>
+        Slice<PostPreviewResponse> previewSlice = new SliceImpl<>
                 (previewList, PageRequest.of(0, 10), false);
 
         Mockito.doReturn(previewSlice)
@@ -590,7 +590,7 @@ class PostServiceTest {
 
 
         //when
-        Slice<GetPostResponsePreview> result = postService.searchByKeywordAndCenter(
+        Slice<PostPreviewResponse> result = postService.searchByKeywordAndCenter(
                 center1.getId(), "1", Auth.PARENT, parent1.getId(), PageRequest.of(0, 10));
         //then
         assertThat(objectMapper.writeValueAsString(result))
@@ -620,10 +620,10 @@ class PostServiceTest {
                 .when(userRepository)
                 .findTeacherById(teacher1.getId());
 
-        List<GetPostResponsePreview> previewList = Arrays.asList(
-                new GetPostResponsePreview(post1)
+        List<PostPreviewResponse> previewList = Arrays.asList(
+                new PostPreviewResponse(post1)
         );
-        Slice<GetPostResponsePreview> previewSlice = new SliceImpl<>
+        Slice<PostPreviewResponse> previewSlice = new SliceImpl<>
                 (previewList, PageRequest.of(0, 10), false);
 
         Mockito.doReturn(previewSlice)
@@ -631,7 +631,7 @@ class PostServiceTest {
                 .findByCenterAndKeyword(center1.getId(), "1", PageRequest.of(0, 10));
 
         //when
-        Slice<GetPostResponsePreview> result = postService.searchByKeywordAndCenter(
+        Slice<PostPreviewResponse> result = postService.searchByKeywordAndCenter(
                 center1.getId(), "1", Auth.TEACHER, teacher1.getId(), PageRequest.of(0, 10));
 
         //then
@@ -642,20 +642,20 @@ class PostServiceTest {
     @Test
     public void 게시판_내_검색_성공() throws Exception {
         //given
-        List<GetPostResponsePreview> previewList = Arrays.asList(
-                new GetPostResponsePreview(post1),
-                new GetPostResponsePreview(post2),
-                new GetPostResponsePreview(post3),
-                new GetPostResponsePreview(post4)
+        List<PostPreviewResponse> previewList = Arrays.asList(
+                new PostPreviewResponse(post1),
+                new PostPreviewResponse(post2),
+                new PostPreviewResponse(post3),
+                new PostPreviewResponse(post4)
         );
-        Slice<GetPostResponsePreview> previewSlice = new SliceImpl<>
+        Slice<PostPreviewResponse> previewSlice = new SliceImpl<>
                 (previewList, PageRequest.of(0, 10), false);
 
         Mockito.doReturn(previewSlice)
                 .when(postRepository)
                 .findByBoardAndKeyword(board1.getId(), "제목", PageRequest.of(0, 10));
         //when
-        Slice<GetPostResponsePreview> result = postService
+        Slice<PostPreviewResponse> result = postService
                 .searchByKeywordAndBoard(board1.getId(), "제목", PageRequest.of(0, 10));
         //then
         assertThat(objectMapper.writeValueAsString(result))
@@ -667,14 +667,14 @@ class PostServiceTest {
         //given
         List<Post> postList = Arrays.asList(post1, post2, post3, post4);
         Slice<Post> postSlice = new SliceImpl<>(postList, PageRequest.of(0, 10), false);
-        Slice<GetPostResponsePreview> dtoSlice = postSlice.map(p -> new GetPostResponsePreview(p));
-        PostList postListDTO = new PostList(dtoSlice);
+        Slice<PostPreviewResponse> dtoSlice = postSlice.map(p -> new PostPreviewResponse(p));
+        PostListDto postListDTO = new PostListDto(dtoSlice);
 
         Mockito.doReturn(postSlice)
                 .when(postRepository)
                 .findByUser(parent1.getId(), PageRequest.of(0, 10));
         //when
-        PostList result = postService.searchByUser(parent1.getId(), PageRequest.of(0, 10));
+        PostListDto result = postService.searchByUser(parent1.getId(), PageRequest.of(0, 10));
         //then
         assertThat(objectMapper.writeValueAsString(result))
                 .isEqualTo(objectMapper.writeValueAsString(postListDTO));
@@ -696,24 +696,24 @@ class PostServiceTest {
         Post post95 = Creator.createPost(107L, "제목95", "내용95", true, board8, parent1);
         Post post96 = Creator.createPost(108L, "제목96", "내용96", true, board8, parent1);
 
-        BoardPreview boardPreview1 = new BoardPreview(board6.getId(), board6.getName(),
-                Arrays.asList(new BoardPreview.PostInfo(post90), new BoardPreview.PostInfo(post91)),
+        BoardPreviewDto boardPreview1 = new BoardPreviewDto(board6.getId(), board6.getName(),
+                Arrays.asList(new BoardPreviewDto.PostInfo(post90), new BoardPreviewDto.PostInfo(post91)),
                 board6.getBoardKind());
 
-        BoardPreview boardPreview2 = new BoardPreview(board7.getId(), board7.getName(),
-                Arrays.asList(new BoardPreview.PostInfo(post92)),
+        BoardPreviewDto boardPreview2 = new BoardPreviewDto(board7.getId(), board7.getName(),
+                Arrays.asList(new BoardPreviewDto.PostInfo(post92)),
                 board6.getBoardKind());
 
-        BoardPreview boardPreview3 = new BoardPreview(board8.getId(), board8.getName(),
-                Arrays.asList(new BoardPreview.PostInfo(post93), new BoardPreview.PostInfo(post94)),
+        BoardPreviewDto boardPreview3 = new BoardPreviewDto(board8.getId(), board8.getName(),
+                Arrays.asList(new BoardPreviewDto.PostInfo(post93), new BoardPreviewDto.PostInfo(post94)),
                 board6.getBoardKind());
 
 
-        BoardPreview hots = new BoardPreview(null, "HOT 게시판",
-                Arrays.asList(new BoardPreview.PostInfo(post95), new BoardPreview.PostInfo(post96)),
+        BoardPreviewDto hots = new BoardPreviewDto(null, "HOT 게시판",
+                Arrays.asList(new BoardPreviewDto.PostInfo(post95), new BoardPreviewDto.PostInfo(post96)),
                 BoardKind.NORMAL);
 
-        List<BoardPreview> boardPreviews = Arrays.asList(hots, boardPreview1, boardPreview2, boardPreview3);
+        List<BoardPreviewDto> boardPreviews = Arrays.asList(hots, boardPreview1, boardPreview2, boardPreview3);
 
 
         Mockito.doReturn(Arrays.asList(board6, board7, board8))
@@ -728,7 +728,7 @@ class PostServiceTest {
                 .when(postRepository)
                 .findTop3ByHeartCnt(any(Integer.class), eq(PageRequest.of(0, 3)));
         //when
-        List<BoardPreview> result = postService.searchMainPreview(null);
+        List<BoardPreviewDto> result = postService.searchMainPreview(null);
         //then
         System.out.println("result = " + objectMapper.writeValueAsString(result));
         System.out.println("boardPreviews = " + objectMapper.writeValueAsString(boardPreviews));
@@ -781,37 +781,37 @@ class PostServiceTest {
     @Test
     public void 센터의_이야기_메인_화면_조회_학부모_성공() throws Exception {
         //given
-        List<BoardPreview.PostInfo> postInfoList1 = Arrays.asList(
-                new BoardPreview.PostInfo(post1),
-                new BoardPreview.PostInfo(post3),
-                new BoardPreview.PostInfo(post5),
-                new BoardPreview.PostInfo(post7)
+        List<BoardPreviewDto.PostInfo> postInfoList1 = Arrays.asList(
+                new BoardPreviewDto.PostInfo(post1),
+                new BoardPreviewDto.PostInfo(post3),
+                new BoardPreviewDto.PostInfo(post5),
+                new BoardPreviewDto.PostInfo(post7)
         );
 
-        BoardPreview boardPreview1 = new BoardPreview(null, "HOT 게시판", postInfoList1, BoardKind.NORMAL);
+        BoardPreviewDto boardPreview1 = new BoardPreviewDto(null, "HOT 게시판", postInfoList1, BoardKind.NORMAL);
 
-        List<BoardPreview.PostInfo> postInfoList2 = Arrays.asList(
-                new BoardPreview.PostInfo(post1),
-                new BoardPreview.PostInfo(post3)
+        List<BoardPreviewDto.PostInfo> postInfoList2 = Arrays.asList(
+                new BoardPreviewDto.PostInfo(post1),
+                new BoardPreviewDto.PostInfo(post3)
         );
 
-        BoardPreview boardPreview2 = new BoardPreview(board1.getId(), board1.getName(), postInfoList2, board1.getBoardKind());
+        BoardPreviewDto boardPreview2 = new BoardPreviewDto(board1.getId(), board1.getName(), postInfoList2, board1.getBoardKind());
 
-        List<BoardPreview.PostInfo> postInfoList3 = Arrays.asList(
-                new BoardPreview.PostInfo(post5),
-                new BoardPreview.PostInfo(post7)
+        List<BoardPreviewDto.PostInfo> postInfoList3 = Arrays.asList(
+                new BoardPreviewDto.PostInfo(post5),
+                new BoardPreviewDto.PostInfo(post7)
         );
 
-        BoardPreview boardPreview3 = new BoardPreview(board2.getId(), board2.getName(), postInfoList3, board2.getBoardKind());
+        BoardPreviewDto boardPreview3 = new BoardPreviewDto(board2.getId(), board2.getName(), postInfoList3, board2.getBoardKind());
 
-        List<BoardPreview.PostInfo> postInfoList4 = Arrays.asList(
-                new BoardPreview.PostInfo(post9),
-                new BoardPreview.PostInfo(post10)
+        List<BoardPreviewDto.PostInfo> postInfoList4 = Arrays.asList(
+                new BoardPreviewDto.PostInfo(post9),
+                new BoardPreviewDto.PostInfo(post10)
         );
 
-        BoardPreview boardPreview4 = new BoardPreview(board3.getId(), board3.getName(), postInfoList4, board3.getBoardKind());
+        BoardPreviewDto boardPreview4 = new BoardPreviewDto(board3.getId(), board3.getName(), postInfoList4, board3.getBoardKind());
 
-        List<BoardPreview> boardPreviewList = Arrays.asList(
+        List<BoardPreviewDto> boardPreviewList = Arrays.asList(
                 boardPreview1, boardPreview2, boardPreview3, boardPreview4);
 
         Bookmark bookmark1 = new Bookmark(50L, board1, parent1);
@@ -834,7 +834,7 @@ class PostServiceTest {
                 .when(postRepository)
                 .findTop3(any());
 
-        List<BoardPreview> result = postService
+        List<BoardPreviewDto> result = postService
                 .searchCenterMainPreview(parent1.getId(), center1.getId());
         //then
         System.out.println("result = " + objectMapper.writeValueAsString(result));
@@ -863,37 +863,37 @@ class PostServiceTest {
     @Test
     public void 센터의_이야기_메인_화면_조회_학부모_교사_성공() throws Exception {
         //given
-        List<BoardPreview.PostInfo> postInfoList1 = Arrays.asList(
-                new BoardPreview.PostInfo(post1),
-                new BoardPreview.PostInfo(post3),
-                new BoardPreview.PostInfo(post5),
-                new BoardPreview.PostInfo(post7)
+        List<BoardPreviewDto.PostInfo> postInfoList1 = Arrays.asList(
+                new BoardPreviewDto.PostInfo(post1),
+                new BoardPreviewDto.PostInfo(post3),
+                new BoardPreviewDto.PostInfo(post5),
+                new BoardPreviewDto.PostInfo(post7)
         );
 
-        BoardPreview boardPreview1 = new BoardPreview(null, "HOT 게시판", postInfoList1, BoardKind.NORMAL);
+        BoardPreviewDto boardPreview1 = new BoardPreviewDto(null, "HOT 게시판", postInfoList1, BoardKind.NORMAL);
 
-        List<BoardPreview.PostInfo> postInfoList2 = Arrays.asList(
-                new BoardPreview.PostInfo(post1),
-                new BoardPreview.PostInfo(post3)
+        List<BoardPreviewDto.PostInfo> postInfoList2 = Arrays.asList(
+                new BoardPreviewDto.PostInfo(post1),
+                new BoardPreviewDto.PostInfo(post3)
         );
 
-        BoardPreview boardPreview2 = new BoardPreview(board1.getId(), board1.getName(), postInfoList2, board1.getBoardKind());
+        BoardPreviewDto boardPreview2 = new BoardPreviewDto(board1.getId(), board1.getName(), postInfoList2, board1.getBoardKind());
 
-        List<BoardPreview.PostInfo> postInfoList3 = Arrays.asList(
-                new BoardPreview.PostInfo(post5),
-                new BoardPreview.PostInfo(post7)
+        List<BoardPreviewDto.PostInfo> postInfoList3 = Arrays.asList(
+                new BoardPreviewDto.PostInfo(post5),
+                new BoardPreviewDto.PostInfo(post7)
         );
 
-        BoardPreview boardPreview3 = new BoardPreview(board2.getId(), board2.getName(), postInfoList3, board2.getBoardKind());
+        BoardPreviewDto boardPreview3 = new BoardPreviewDto(board2.getId(), board2.getName(), postInfoList3, board2.getBoardKind());
 
-        List<BoardPreview.PostInfo> postInfoList4 = Arrays.asList(
-                new BoardPreview.PostInfo(post9),
-                new BoardPreview.PostInfo(post10)
+        List<BoardPreviewDto.PostInfo> postInfoList4 = Arrays.asList(
+                new BoardPreviewDto.PostInfo(post9),
+                new BoardPreviewDto.PostInfo(post10)
         );
 
-        BoardPreview boardPreview4 = new BoardPreview(board3.getId(), board3.getName(), postInfoList4, board3.getBoardKind());
+        BoardPreviewDto boardPreview4 = new BoardPreviewDto(board3.getId(), board3.getName(), postInfoList4, board3.getBoardKind());
 
-        List<BoardPreview> boardPreviewList = Arrays.asList(
+        List<BoardPreviewDto> boardPreviewList = Arrays.asList(
                 boardPreview1, boardPreview2, boardPreview3, boardPreview4);
 
         Mockito.doReturn(Optional.of(teacher1))
@@ -917,7 +917,7 @@ class PostServiceTest {
                 .findTop3(any());
         //when
 
-        List<BoardPreview> result = postService.searchCenterMainPreview(teacher1.getId(), center1.getId());
+        List<BoardPreviewDto> result = postService.searchCenterMainPreview(teacher1.getId(), center1.getId());
         //then
         System.out.println("result = " + objectMapper.writeValueAsString(result));
         System.out.println("result = " + objectMapper.writeValueAsString(boardPreviewList));
@@ -1004,17 +1004,17 @@ class PostServiceTest {
         PostHeart postHeart4 = new PostHeart(parent1, post91);
         PostHeart postHeart5 = new PostHeart(parent1, post91);
 
-        GetPostResponsePreview preview1 = new GetPostResponsePreview(post90);
-        GetPostResponsePreview preview2 = new GetPostResponsePreview(post91);
+        PostPreviewResponse preview1 = new PostPreviewResponse(post90);
+        PostPreviewResponse preview2 = new PostPreviewResponse(post91);
 
-        SliceImpl<GetPostResponsePreview> previewSlice = new SliceImpl<>
+        SliceImpl<PostPreviewResponse> previewSlice = new SliceImpl<>
                 (Arrays.asList(preview1, preview2), PageRequest.of(0, 10), false);
 
         Mockito.doReturn(previewSlice)
                 .when(postRepository)
                 .findHotPosts(null, Criteria.HOT_POST_HEART_CNT, PageRequest.of(0, 10));
         //when
-        Slice<GetPostResponsePreview> result = postService
+        Slice<PostPreviewResponse> result = postService
                 .findByHeartCnt(null, PageRequest.of(0, 10));
 
         //then
