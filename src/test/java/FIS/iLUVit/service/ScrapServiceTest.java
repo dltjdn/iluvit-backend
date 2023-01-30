@@ -90,10 +90,10 @@ public class ScrapServiceTest {
                 .when(scrapRepository)
                 .findScrapsByUserWithScrapPosts(parent1.getId());
         // when
-        ScrapListResponse result = target.findScrapDirListInfo(parent1.getId());
+        List<ScrapInfoDto>  result = target.findScrapDirListInfo(parent1.getId());
         // then
-        assertThat(result.getData().size()).isEqualTo(2);
-        result.getData().forEach(scrapInfo -> {
+        assertThat(result.size()).isEqualTo(2);
+        result.forEach(scrapInfo -> {
             if (Objects.equals(scrapInfo.getScrapId(), scrap1.getId())) {
                 assertThat(scrapInfo.getPostsNum()).isEqualTo(2);
             }
@@ -114,9 +114,9 @@ public class ScrapServiceTest {
                 .findScrapsByUserWithScrapPosts(parent1.getId());
         ScrapDirRequest request = new ScrapDirRequest("scrap");
         // when
-        ScrapListResponse result = target.addScrapDir(parent1.getId(), request);
+        List<ScrapInfoDto>  result = target.addScrapDir(parent1.getId(), request);
         // then
-        assertThat(result.getData().size()).isEqualTo(3);
+        assertThat(result.size()).isEqualTo(3);
     }
 
     @Nested
@@ -160,9 +160,9 @@ public class ScrapServiceTest {
                     .when(scrapRepository)
                     .findScrapsByUserWithScrapPosts(parent1.getId());
             // when
-            ScrapListResponse result = target.deleteScrapDir(parent1.getId(), scrap2.getId());
+            List<ScrapInfoDto> result = target.deleteScrapDir(parent1.getId(), scrap2.getId());
             // then
-            assertThat(result.getData().size()).isEqualTo(1);
+            assertThat(result.size()).isEqualTo(1);
             // verify
             verify(scrapRepository, times(1)).delete(scrap2);
         }

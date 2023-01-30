@@ -5,26 +5,18 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.util.ArrayList;
-import java.util.List;
-
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class ScrapListResponse {
+public class ScrapInfoDto {
 
-    List<ScrapInfo> data = new ArrayList<>();
-
-    @Data
-    public static class ScrapInfo {
         private Long scrapId;
         private String name;
         private Integer postsNum;
 
-        public ScrapInfo(Scrap scrap) {
+        public ScrapInfoDto(Scrap scrap) {
             scrapId = scrap.getId();
             name = scrap.getName();
             postsNum = scrap.getScrapPosts().size();
         }
-    }
 }

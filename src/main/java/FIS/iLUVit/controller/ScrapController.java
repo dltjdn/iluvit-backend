@@ -26,7 +26,7 @@ public class ScrapController {
      * 작성내용: 스크랩 폴더 목록
      */
     @GetMapping("dir")
-    public ScrapListResponse ScrapListInfo(@Login Long id) {
+    public List<ScrapInfoDto> ScrapListInfo(@Login Long id) {
         return scrapService.findScrapDirListInfo(id);
     }
 
@@ -36,7 +36,7 @@ public class ScrapController {
      * 작성내용: 스크랩 폴더 생성
      */
     @PostMapping("dir")
-    public ScrapListResponse addScrap(@Login Long id, @Valid @RequestBody ScrapDirRequest request) {
+    public List<ScrapInfoDto>  addScrap(@Login Long id, @Valid @RequestBody ScrapDirRequest request) {
         return scrapService.addScrapDir(id, request);
     }
 
@@ -46,7 +46,7 @@ public class ScrapController {
      * 작성내용: 스크랩 폴더 삭제
      */
     @DeleteMapping("dir")
-    public ScrapListResponse deleteScrap(@Login Long userId, @RequestParam Long scrapId) {
+    public List<ScrapInfoDto>  deleteScrap(@Login Long userId, @RequestParam Long scrapId) {
         return scrapService.deleteScrapDir(userId, scrapId);
     }
 

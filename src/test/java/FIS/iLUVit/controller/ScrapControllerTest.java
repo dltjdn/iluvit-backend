@@ -3,9 +3,9 @@ package FIS.iLUVit.controller;
 import FIS.iLUVit.Creator;
 import FIS.iLUVit.config.argumentResolver.LoginUserArgumentResolver;
 import FIS.iLUVit.controller.dto.ScrapDirRequest;
-import FIS.iLUVit.controller.dto.ScrapListResponse;
 import FIS.iLUVit.controller.dto.ScrapByPostRequest;
 import FIS.iLUVit.controller.dto.ScrapDirDetailRequest;
+import FIS.iLUVit.controller.dto.ScrapInfoDto;
 import FIS.iLUVit.domain.User;
 import FIS.iLUVit.exception.ScrapErrorResult;
 import FIS.iLUVit.exception.ScrapException;
@@ -29,6 +29,7 @@ import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
 
+import java.util.ArrayList;
 import java.util.List;
 
 import static FIS.iLUVit.controller.dto.ScrapByPostRequest.*;
@@ -61,8 +62,8 @@ public class ScrapControllerTest {
     @Test
     public void 스크랩폴더목록정보가져오기_성공() throws Exception {
         // given
-        String url = "/user/scrap/dir";
-        ScrapListResponse response = new ScrapListResponse();
+        String url = "/scrap/dir";
+        List<ScrapInfoDto>  response = new ArrayList<>();
         doReturn(response)
                 .when(scrapService)
                 .findScrapDirListInfo(user.getId());
@@ -74,7 +75,7 @@ public class ScrapControllerTest {
         // then
         result.andExpect(status().isOk())
                 .andExpect(content().json(
-                        objectMapper.writeValueAsString(new ScrapListResponse())
+                        objectMapper.writeValueAsString(response)
                 ));
     }
 
@@ -84,8 +85,8 @@ public class ScrapControllerTest {
         @Test
         public void 스크랩폴더추가하기_성공() throws Exception {
             // given
-            String url = "/user/scrap/dir";
-            ScrapListResponse response = new ScrapListResponse();
+            String url = "/scrap/dir";
+            List<ScrapInfoDto> response = new ArrayList<>();
             ScrapDirRequest request = new ScrapDirRequest("name");
             doReturn(response)
                     .when(scrapService)
@@ -107,7 +108,7 @@ public class ScrapControllerTest {
         @Test
         public void 스크랩폴더추가하기_실패_불완전한요청() throws Exception {
             // given
-            String url = "/user/scrap/dir";
+            String url = "/scrap/dir";
             ScrapDirRequest request = new ScrapDirRequest();
             // when
             ResultActions result = mockMvc.perform(
