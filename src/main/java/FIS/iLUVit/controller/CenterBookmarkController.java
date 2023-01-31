@@ -20,6 +20,9 @@ public class CenterBookmarkController {
     private final CenterBookmarkService centerBookmarkService;
 
     /**
+     * PARENT
+     */
+    /**
      *   작성날짜: 2022/07/04 2:26 PM
      *   작성자: 이승범
      *   작성내용: 내가 즐겨찾기한 시설
