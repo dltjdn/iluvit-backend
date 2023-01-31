@@ -21,6 +21,10 @@ public class ParentController {
     private final ParentService parentService;
 
     /**
+     * PARENT
+     */
+
+    /**
      * 작성날짜: 2022/05/13 4:43 PM
      * 작성자: 이승범
      * 작성내용: 학부모 프로필 조회
