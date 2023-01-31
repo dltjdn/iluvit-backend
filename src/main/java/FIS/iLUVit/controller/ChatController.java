@@ -20,6 +20,10 @@ public class ChatController {
     private final ChatService chatService;
 
     /**
+     * COMMON
+     */
+
+    /**
      작성자: 이창윤
      작성시간: 2022/06/24 3:11 PM
      내용: 쪽지 작성 ( 대화방 생성 )
@@ -69,4 +73,5 @@ public class ChatController {
     public Long deleteChatRoom(@Login Long userId, @PathVariable("roomId") Long roomId) {
         return chatService.deleteChatRoom(userId, roomId);
     }
+
 }
