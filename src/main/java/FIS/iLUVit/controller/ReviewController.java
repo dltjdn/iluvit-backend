@@ -16,10 +16,30 @@ public class ReviewController {
     private final ReviewService reviewService;
 
     /**
-        작성자: 이창윤
-        작성시간: 2022/06/27 1:42 PM
-        내용: 학부모가 작성한 리뷰 조회
-    */
+     * COMMON
+     */
+
+    /**
+     작성자: 이창윤
+     작성시간: 2022/06/27 1:49 PM
+     내용: 시설 별 리뷰 조회
+     */
+    @GetMapping("center/{centerId}")
+    public Slice<ReviewByCenterDto> searchByCenter(@PathVariable(name = "centerId") Long centerId,
+                                                   Pageable pageable) {
+        return reviewService.findByCenter(centerId, pageable);
+    }
+
+
+    /**
+     * PARENT
+     */
+
+    /**
+     작성자: 이창윤
+     작성시간: 2022/06/27 1:42 PM
+     내용: 학부모가 쓴 리뷰 조회
+     */
     @GetMapping("")
     public Slice<ReviewByParentDto> searchByParent(@Login Long userId, Pageable pageable) { // @Login 어노테이션 달아야됨.
         return reviewService.findByParent(userId, pageable);
@@ -28,7 +48,7 @@ public class ReviewController {
     /**
         작성자: 이창윤
         작성시간: 2022/06/27 1:49 PM
-        내용: 학부모가 쓴 리뷰 등록
+        내용: 리뷰 등록
     */
     @PostMapping("")
     public Long registerReview(@Login Long userId, @RequestBody ReviewDetailDto reviewCreateDTO) {
@@ -56,16 +76,10 @@ public class ReviewController {
         reviewService.deleteReview(reviewId, userId);
     }
 
+
     /**
-        작성자: 이창윤
-        작성시간: 2022/06/27 1:49 PM
-        내용: 센터에 올라온 리뷰들 조회
-    */
-    @GetMapping("center/{centerId}")
-    public Slice<ReviewByCenterDto> searchByCenter(@PathVariable(name = "centerId") Long centerId,
-                                                   Pageable pageable) {
-        return reviewService.findByCenter(centerId, pageable);
-    }
+     * TEACHER
+     */
 
     /**
         작성자: 이창윤
@@ -87,4 +101,5 @@ public class ReviewController {
     public void deleteComment(@Login Long teacherId, @PathVariable("reviewId") Long reviewId) {
         reviewService.deleteComment(reviewId, teacherId);
     }
+
 }
