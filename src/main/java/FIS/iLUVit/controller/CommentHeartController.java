@@ -13,6 +13,10 @@ public class CommentHeartController {
     private final CommentHeartService commentHeartService;
 
     /**
+     * COMMON
+     */
+
+    /**
      작성자: 이창윤
      작성시간: 2022/06/27 10:16 AM
      내용: 댓글 좋아요
@@ -31,4 +35,5 @@ public class CommentHeartController {
     public Long cancel(@Login Long userId, @PathVariable Long commentId) {
         return commentHeartService.delete(userId, commentId);
     }
+
 }
