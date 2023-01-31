@@ -89,21 +89,6 @@ public class CenterController {
 
     /**
      * 작성자: 이창윤
-     * 리액트 네이티브용 시설 정보 이미지 수정
-     */
-    @PatchMapping("{centerId}/image")
-    @ResponseStatus(HttpStatus.ACCEPTED)
-    public Long modifyCenterImage(@PathVariable("centerId") Long centerId,
-                             @Login Long userId,
-                             @RequestPart(required = false) List<MultipartFile> infoImages,
-                             @RequestPart(required = false) MultipartFile profileImage){
-        if(userId == null)
-            throw new UserException(UserErrorResult.NOT_LOGIN);
-        return centerService.modifyCenterImage(centerId, userId, infoImages, profileImage);
-    }
-
-    /**
-     * 작성자: 이창윤
      * 리액트 네이티브용 시설 정보 수정
      */
     @PatchMapping("{centerId}")
@@ -115,6 +100,21 @@ public class CenterController {
             throw new UserException(UserErrorResult.NOT_LOGIN);
         log.info("requestDto = {}", requestDto);
         return centerService.modifyCenterInfo(centerId, userId, requestDto);
+    }
+
+    /**
+     * 작성자: 이창윤
+     * 리액트 네이티브용 시설 정보 이미지 수정
+     */
+    @PatchMapping("{centerId}/image")
+    @ResponseStatus(HttpStatus.ACCEPTED)
+    public Long modifyCenterImage(@PathVariable("centerId") Long centerId,
+                             @Login Long userId,
+                             @RequestPart(required = false) List<MultipartFile> infoImages,
+                             @RequestPart(required = false) MultipartFile profileImage){
+        if(userId == null)
+            throw new UserException(UserErrorResult.NOT_LOGIN);
+        return centerService.modifyCenterImage(centerId, userId, infoImages, profileImage);
     }
 
 }
