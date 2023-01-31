@@ -24,9 +24,13 @@ public class UserController {
     private final Environment env;
 
     /**
+     * COMMON
+     */
+
+    /**
      * 작성날짜: 2022/05/16 11:58 AM
      * 작성자: 이승범
-     * 작성내용: 사용자 기본정보(id, nickname, auth)반환
+     * 작성내용: 사용자 기본정보(id, nickname, auth) 조회
      */
     @GetMapping("user")
     public UserResponse findUserInfo(@Login Long id) {
@@ -97,7 +101,5 @@ public class UserController {
     public String profile() {
         return env.getProperty("spring.profiles.active");
     }
-
-
 
 }
