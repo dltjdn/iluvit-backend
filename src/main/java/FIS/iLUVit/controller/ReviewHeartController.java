@@ -13,6 +13,10 @@ public class ReviewHeartController {
     private final ReviewHeartService reviewHeartService;
 
     /**
+     * COMMON
+     */
+
+    /**
         작성자: 이창윤
         작성시간: 2022/06/27 2:21 PM
         내용: 리뷰 좋아요
