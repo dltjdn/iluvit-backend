@@ -21,23 +21,13 @@ public class AlarmController {
 
     private final AlarmService alarmService;
 
-    @GetMapping("read")
-    public void readAlarm(@Login Long userId){
-        if(userId == null)
-            throw new UserException(UserErrorResult.NOT_LOGIN);
-        alarmService.readAlarm(userId);
-    }
+    /**
+     * COMMON
+     */
 
-    @GetMapping("active")
-    public Slice<AlarmDetailDto> getActiveAlarm(@Login Long userId, Pageable pageable){
-        return alarmService.findUserActiveAlarm(userId, pageable);
-    }
-
-    @GetMapping("presentation")
-    public Slice<AlarmDetailDto> getPresentationAlarm(@Login Long userId, Pageable pageable){
-        return alarmService.findPresentationActiveAlarm(userId, pageable);
-    }
-
+    /**
+     * 알림 목록 삭제
+     */
     @DeleteMapping("")
     public Integer deleteAlarm(@Login Long userId, @RequestBody AlarmRequest request) {
         if(userId == null)
@@ -45,10 +35,40 @@ public class AlarmController {
         return alarmService.deleteUserAlarm(userId, request.getAlarmIds());
     }
 
+    /**
+     * 활동 알림 조회
+     */
+    @GetMapping("active")
+    public Slice<AlarmDetailDto> getActiveAlarm(@Login Long userId, Pageable pageable){
+        return alarmService.findUserActiveAlarm(userId, pageable);
+    }
+
+    /**
+     * 설명회 알림 조회
+     */
+    @GetMapping("presentation")
+    public Slice<AlarmDetailDto> getPresentationAlarm(@Login Long userId, Pageable pageable){
+        return alarmService.findPresentationActiveAlarm(userId, pageable);
+    }
+
+    /**
+     * 전체 알림 읽었는지 안 읽었는지 받아오기
+     */
     @GetMapping("is-read")
     public Boolean hasRead(@Login Long userId){
         if(userId == null)
             throw new UserException(UserErrorResult.NOT_LOGIN);
         return alarmService.hasRead(userId);
     }
+
+    /**
+     * 전체 알림 읽었다고 처리하기
+     */
+    @GetMapping("read")
+    public void readAlarm(@Login Long userId){
+        if(userId == null)
+            throw new UserException(UserErrorResult.NOT_LOGIN);
+        alarmService.readAlarm(userId);
+    }
+
 }
