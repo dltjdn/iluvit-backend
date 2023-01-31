@@ -22,6 +22,7 @@ public class CenterBookmarkController {
     /**
      * PARENT
      */
+
     /**
      *   작성날짜: 2022/07/04 2:26 PM
      *   작성자: 이승범
