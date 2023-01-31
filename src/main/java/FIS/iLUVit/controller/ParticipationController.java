@@ -28,9 +28,11 @@ public class ParticipationController {
     private final ParticipationService participationService;
 
     /**
+     * PARENT
+     */
+
+    /**
      * 설명회 신청
-     *
-     * @return
      */
     @PostMapping("")
     @ResponseStatus(HttpStatus.CREATED)
@@ -42,6 +44,7 @@ public class ParticipationController {
 
     /**
      * 설명회 취소
+     * 대가자 있을 경우 자동 합류
      */
     @PatchMapping("")
     @ResponseStatus(HttpStatus.ACCEPTED)
@@ -51,6 +54,10 @@ public class ParticipationController {
         return participationService.cancel(userId, dto.getParticipationId());
     }
 
+    /**
+     * 내 설명회 신청 내역 조회
+     * 내가 신청한 혹은 취소한 설명회 내역
+     */
     @GetMapping("")
     @ResponseStatus(HttpStatus.ACCEPTED)
     public Map<Status, List<ParticipationListDto>> getMyParticipation(@Login Long userId){
@@ -59,6 +66,9 @@ public class ParticipationController {
         return participationService.getMyParticipation(userId);
     }
 
+    /**
+     * 내가 신청한 설명회 목록 조회
+     */
     @GetMapping("join")
     @ResponseStatus(HttpStatus.ACCEPTED)
     public Slice<ParticipationListDto> getMyJoinParticipation(@Login Long userId, Pageable pageable){
@@ -67,6 +77,9 @@ public class ParticipationController {
         return participationService.getMyJoinParticipation(userId, pageable);
     }
 
+    /**
+     * 내가 신청을 취소한 설명회 목록 조회
+     */
     @GetMapping("cancel")
     @ResponseStatus(HttpStatus.ACCEPTED)
     public Slice<ParticipationListDto> getMyCancelParticipation(@Login Long userId, Pageable pageable){
@@ -75,6 +88,9 @@ public class ParticipationController {
         return participationService.getMyCancelParticipation(userId, pageable);
     }
 
+    /**
+     * 내가 대기를 신청한 설명회 목록 조회
+     */
     @GetMapping("waiting")
     @ResponseStatus(HttpStatus.ACCEPTED)
     public Slice<ParticipationListDto> getMyWaiting(@Login Long userId, Pageable pageable){
