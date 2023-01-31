@@ -18,6 +18,10 @@ public class ExpoTokenController {
     private final ExpoTokenService expoTokenService;
 
     /**
+     * COMMON
+     */
+
+    /**
      * 작성자: 이창윤
      * 앱 최초 접속 시 푸쉬 알림을 위한 [Token]을 받아야 합니다.
      */
