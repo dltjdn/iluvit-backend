@@ -17,6 +17,11 @@ public class AuthController {
     private final AuthService authService;
 
     /**
+     * COMMON
+     */
+
+    /**
+     * 회원가입 인증번호 받기
      * 작성날짜: 2022/05/24 10:39 AM
      * 작성자: 이승범
      * 작성내용: 회원가입 위한 인증번호 전송
@@ -27,6 +32,7 @@ public class AuthController {
     }
 
     /**
+     * 아이디 찾기 인증번호 받기
      * 작성날짜: 2022/05/25 10:45 AM
      * 작성자: 이승범
      * 작성내용: 로그인 아이디를 찾기위한 인증번호 전송
@@ -37,6 +43,7 @@ public class AuthController {
     }
 
     /**
+     * 아이디 찾기 인증번호 인증
      * 작성날짜: 2022/05/25 3:39 PM
      * 작성자: 이승범
      * 작성내용: 인증번호를 통한 로그인 아이디 찾기
@@ -47,6 +54,7 @@ public class AuthController {
     }
 
     /**
+     * 비밀번호 찾기 인증번호 받기
      * 작성날짜: 2022/05/25 2:47 PM
      * 작성자: 이승범
      * 작성내용: 비밀번호 찾기 인증번호 전송
@@ -57,6 +65,7 @@ public class AuthController {
     }
 
     /**
+     * 비밀번호 찾기 인증번호 인증
      *   작성날짜: 2022/05/25 4:15 PM
      *   작성자: 이승범
      *   작성내용: 비밀번호 찾기 근데 이제 변경을 곁들인
@@ -67,6 +76,7 @@ public class AuthController {
     }
 
     /**
+     * 핸드폰번호 변경 인증 번호 받기
     *   작성날짜: 2022/06/20 11:08 AM
     *   작성자: 이승범
     *   작성내용: 핸드폰번호 변경을 위한 인증번호 전송
@@ -77,6 +87,7 @@ public class AuthController {
     }
 
     /**
+     * 핸드폰 인증번호 인증
      * 작성날짜: 2022/05/24 3:24 PM
      * 작성자: 이승범
      * 작성내용: 인증번호를 통한 핸드폰 인증 (회원가입, 비밀번호 찾기, 핸드폰번호 변경)
@@ -85,7 +96,5 @@ public class AuthController {
     public void authenticateAuthNum(@Login Long userId, @RequestBody AuthNumRequest request) {
         authService.authenticateAuthNum(userId, request);
     }
-
-
 
 }

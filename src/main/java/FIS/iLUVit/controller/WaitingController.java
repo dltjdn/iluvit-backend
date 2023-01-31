@@ -22,6 +22,13 @@ public class WaitingController {
 
     private final WaitingService waitingService;
 
+    /**
+     * PARENT
+     */
+
+    /**
+     * 설명회 대기 신청
+     */
     @PostMapping("")
     @ResponseStatus(HttpStatus.CREATED)
     public Long register(@Login Long userId, @RequestBody @Validated WaitingRegisterDto dto){
@@ -31,6 +38,9 @@ public class WaitingController {
         return waitingService.register(userId, ptDateId).getId();
     }
 
+    /**
+     * 설명회 대기 신청 취소
+     */
     @DeleteMapping("")
     @ResponseStatus(HttpStatus.ACCEPTED)
     public Long cancel(@Login Long userId, @RequestBody @Validated WaitingCancelDto dto){

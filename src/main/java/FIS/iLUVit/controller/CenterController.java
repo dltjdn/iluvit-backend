@@ -26,6 +26,13 @@ public class CenterController {
 
     private final CenterService centerService;
 
+    /**
+     * COMMON
+     */
+
+    /**
+     * 주변 시설 검색
+     */
     @GetMapping("search/all")
     public List<CenterMapPreviewDto> searchByFilterForMap(@ModelAttribute @Validated CenterSearchMapDto dto){
         return centerService.findByFilterForMap(dto.getLongitude(), dto.getLatitude(), dto.getDistance(), dto.getSearchContent());
@@ -36,6 +43,7 @@ public class CenterController {
      */
 
     /**
+     * 필터 기반 시설 검색
      * center 검색 정보 반환 front 검색인자 값 - 위도 경도 지도와 관련하여 api 던져준다
      */
     @PostMapping("search")
@@ -45,8 +53,8 @@ public class CenterController {
         return centerService.findByFilterForMapList(dto.getLongitude(), dto.getLatitude(), dto.getCenterIds(), userId, dto.getKindOf(), pageable);
     }
 
-
     /**
+     * 모달창의 시설 상세 정보 조회
      * Id 기반 center 정보값 반환하기 기본정보 + 프로그램 + 기본시설 + 부가시설 반환 <p>
      * 개발 추가 사항 - 사진, 영상 정보 반환할 것 추가하기
      */
@@ -56,6 +64,7 @@ public class CenterController {
     }
 
     /**
+     * 시설 클릭 시 나올 모달창의 배너 정보 조회
      * id 기반 으로 센터 클릭시 배너로 나올 center 이름, 모집 상황 반환할 api
      */
     @GetMapping("{centerId}/recruit")
@@ -64,6 +73,7 @@ public class CenterController {
     }
 
     /**
+     * 메인 페이지용 시설 배너 정보 조회
      * 메인 화면에서 띄워 줄 센터 Banner에 대한 내용 기본적으로 Login이 되어 있어야하는 상태이며 관심 테마 설정이 되어있어야한다.
      * 회원로직 완료후에 작업 시작
      */
@@ -72,20 +82,10 @@ public class CenterController {
         return centerService.findCenterForParent(userId);
     }
 
+
     /**
-     * 작성자: 이창윤
-     * 리액트 네이티브용 시설 정보 이미지 수정
+     * TEACHER
      */
-    @PatchMapping("{centerId}/image")
-    @ResponseStatus(HttpStatus.ACCEPTED)
-    public Long modifyCenterImage(@PathVariable("centerId") Long centerId,
-                             @Login Long userId,
-                             @RequestPart(required = false) List<MultipartFile> infoImages,
-                             @RequestPart(required = false) MultipartFile profileImage){
-        if(userId == null)
-            throw new UserException(UserErrorResult.NOT_LOGIN);
-        return centerService.modifyCenterImage(centerId, userId, infoImages, profileImage);
-    }
 
     /**
      * 작성자: 이창윤
@@ -102,5 +102,19 @@ public class CenterController {
         return centerService.modifyCenterInfo(centerId, userId, requestDto);
     }
 
+    /**
+     * 작성자: 이창윤
+     * 리액트 네이티브용 시설 정보 이미지 수정
+     */
+    @PatchMapping("{centerId}/image")
+    @ResponseStatus(HttpStatus.ACCEPTED)
+    public Long modifyCenterImage(@PathVariable("centerId") Long centerId,
+                             @Login Long userId,
+                             @RequestPart(required = false) List<MultipartFile> infoImages,
+                             @RequestPart(required = false) MultipartFile profileImage){
+        if(userId == null)
+            throw new UserException(UserErrorResult.NOT_LOGIN);
+        return centerService.modifyCenterImage(centerId, userId, infoImages, profileImage);
+    }
 
 }

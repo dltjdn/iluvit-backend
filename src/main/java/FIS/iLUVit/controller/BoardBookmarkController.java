@@ -17,6 +17,10 @@ public class BoardBookmarkController {
     private final BoardBookmarkService boardBookmarkService;
 
     /**
+     * COMMON
+     */
+
+    /**
         작성자: 이창윤
         작성시간: 2022/06/24 2:57 PM
         내용: 게시글 목록 한번에 불러오기. 메인 페이지에서 유저의 모든 이야기에서 즐겨찾는 게시판에서 최신 글 하나씩 엮어서 보여줌.
@@ -49,4 +53,5 @@ public class BoardBookmarkController {
     public Long deleteBookmark(@Login Long userId, @PathVariable("bookmarkId") Long bookmarkId) {
         return boardBookmarkService.delete(userId, bookmarkId);
     }
+
 }
