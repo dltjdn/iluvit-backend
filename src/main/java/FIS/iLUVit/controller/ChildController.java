@@ -24,6 +24,10 @@ public class ChildController {
     private final ChildService childService;
 
     /**
+     * PARENT
+     */
+
+    /**
      * 작성날짜: 2022/05/13 4:43 PM
      * 작성자: 이승범
      * 작성내용: 부모의 메인페이지에 필요한 아이들 정보 반환
@@ -36,7 +40,7 @@ public class ChildController {
     /**
      * 작성날짜: 2022/06/23 5:24 PM
      * 작성자: 이승범
-     * 작성내용: 아이 추가
+     * 작성내용: 아이 추가 (아이 정보 저장)
      */
     @PostMapping("")
     public void saveChild(@Login Long userId, @Valid @ModelAttribute ChildDetailRequest request) throws IOException {
@@ -46,7 +50,7 @@ public class ChildController {
     /**
      * 작성날짜: 2022/06/27 4:57 PM
      * 작성자: 이승범
-     * 작성내용: 아이 프로필 조회
+     * 작성내용: 아이 정보 조회
      */
     @GetMapping("{childId}")
     public ChildDetailResponse findChildInfoDetail(@Login Long userId, @PathVariable("childId") Long childId) {
@@ -56,7 +60,7 @@ public class ChildController {
     /**
      * 작성날짜: 2022/06/27 5:47 PM
      * 작성자: 이승범
-     * 작성내용: 아이 프로필 수정
+     * 작성내용: 아이 정보 수정
      */
     @PutMapping("{childId}")
     public ChildDetailResponse updateChild(@Login Long userId, @PathVariable("childId") Long childId,
@@ -67,7 +71,7 @@ public class ChildController {
     /**
      * 작성날짜: 2022/06/28 3:17 PM
      * 작성자: 이승범
-     * 작성내용: 아이삭제
+     * 작성내용: 아이 정보 삭제
      */
     @DeleteMapping("{childId}")
     public List<ChildDto> deleteChild(@Login Long userId, @PathVariable("childId") Long childId) {
@@ -75,9 +79,19 @@ public class ChildController {
     }
 
     /**
+     *   작성날짜: 2022/06/24 10:29 AM
+     *   작성자: 이승범
+     *   작성내용: 아이 정보 저장 과정에서 필요한 시설 정보 가져오기
+     */
+    @GetMapping("search/center")
+    public Slice<CenterDto> centerInfoForAddChild(@ModelAttribute CenterRequest request, Pageable pageable) {
+        return childService.findCenterForAddChild(request, pageable);
+    }
+
+    /**
      * 작성날짜: 2022-08-09 오후 5:57
      * 작성자: 이승범
-     * 작성내용: 학부모/아이의 시설 승인 요청
+     * 작성내용: 학부모가 시설에 아이의 시설 승인을 요청
      */
     @PatchMapping("{childId}/center/{centerId}")
     public Long mappingCenter(@Login Long userId, @PathVariable("childId") Long childId, @PathVariable("centerId") Long centerId) {
@@ -96,6 +110,10 @@ public class ChildController {
 
 
     /**
+     * TEACHER
+     */
+
+    /**
      * 작성날짜: 2022/06/30 10:36 AM
      * 작성자: 이승범
      * 작성내용: 아이 승인 페이지를 위한 시설에 등록된 아이들 정보 조회
@@ -108,7 +126,7 @@ public class ChildController {
     /**
      * 작성날짜: 2022/06/30 2:54 PM
      * 작성자: 이승범
-     * 작성내용: 아이 시설에 승인
+     * 작성내용: 아이를 시설에 승인
      */
     @PatchMapping("{childId}/accept")
     public void acceptChild(@Login Long userId, @PathVariable("childId") Long childId) {
@@ -125,13 +143,4 @@ public class ChildController {
         childService.fireChild(userId, childId);
     }
 
-    /**
-     *   작성날짜: 2022/06/24 10:29 AM
-     *   작성자: 이승범
-     *   작성내용: 아이추가 과정에서 필요한 센터정보 가져오기
-     */
-    @GetMapping("search/center")
-    public Slice<CenterDto> centerInfoForAddChild(@ModelAttribute CenterRequest request, Pageable pageable) {
-        return childService.findCenterForAddChild(request, pageable);
-    }
 }

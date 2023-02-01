@@ -30,6 +30,10 @@ public class PresentationController {
     private final UserService userService;
 
     /**
+     * COMMON
+     */
+
+    /**
      * 필터 기반으로 presentation 검색
      */
     @PostMapping("search")
@@ -50,9 +54,14 @@ public class PresentationController {
 
 
     /**
+     * TEACHER
+     */
+
+    /**
+     * 설명회 정보 저장
      * 작성자: 이창윤
      * 원장/ 선생의 presentation 등록 PtDate 설정하기
-     * 리액트 네이티브용 정보 저장
+     * 리액트 네이티브용 설명회 정보 저장
      */
     @PostMapping("")
     @ResponseStatus(HttpStatus.CREATED)
@@ -65,9 +74,9 @@ public class PresentationController {
     }
 
     /**
+     * 설명회 정보 수정
      * 작성자: 이창윤
-     * 원장, 선생의 설명회 수정
-     * 리액트 네이티브용 정보 수정
+     * 리액트 네이티브용 설명회 정보 수정
      */
     @PatchMapping("")
     @ResponseStatus(HttpStatus.ACCEPTED)
@@ -77,9 +86,10 @@ public class PresentationController {
     }
 
     /**
+     * 설명회 이미지 저장
      * 작성자: 이창윤
      * 원장/ 선생의 presentation 등록 PtDate 설정하기
-     * 리액트 네이티브용 이미지 저장
+     * 리액트 네이티브용 설명회 이미지 저장
      */
     @Transactional
     @PostMapping("{presentationId}/image")
@@ -92,11 +102,10 @@ public class PresentationController {
         return new PresentationResponse(presentationService.saveImageWithPtDate(presentationId, images, userId));
     }
 
-
     /**
+     * 설명회 이미지 수정
      * 작성자: 이창윤
-     * 원장, 선생의 설명회 수정
-     * 리액트 네이티브용 이미지 수정
+     * 리액트 네이티브용 설명회 이미지 수정
      */
     @Transactional
     @PatchMapping("{presentationId}/image")
@@ -108,9 +117,7 @@ public class PresentationController {
     }
 
     /**
-     * 원장의 시설 설명회 내역
-     *
-     * @return
+     * 설명회 목록 조회
      */
     @GetMapping("center/{centerId}")
     public List<PresentationForTeacherResponse> findMyCenterPresentationList(@Login Long userId,
@@ -120,14 +127,12 @@ public class PresentationController {
     }
 
     /**
-     * 설명회 자세히 보기 기능
-     * @return
+     * 설명회 자세히 보기
      */
     @GetMapping("{presentationId}")
     public PresentationDetailResponse findMyCenterPresentation(@PathVariable("presentationId") Long presentationId){
         return presentationService.findPresentationDetail(presentationId);
     }
-
 
     /**
      * 설명회를 신청한 사람들의 목록 반환 이름, 전화번호

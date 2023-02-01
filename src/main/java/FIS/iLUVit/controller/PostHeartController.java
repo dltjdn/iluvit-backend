@@ -22,9 +22,13 @@ public class PostHeartController {
     private final PostService postService;
 
     /**
-        작성자: 이창윤
-        작성시간: 2022/06/27 1:35 PM
-        내용: 게시글 좋아요
+     * COMMON
+     */
+
+    /**
+     작성자: 이창윤
+     작성시간: 2022/06/27 1:35 PM
+     내용: 게시글 좋아요
     */
     @PostMapping("{postId}")
     public Long like(@Login Long userId, @PathVariable("postId") Long postId) {
@@ -32,9 +36,9 @@ public class PostHeartController {
     }
     
     /**
-        작성자: 이창윤
-        작성시간: 2022/06/27 1:39 PM
-        내용: 게시글 좋아요 취소, 기존에 좋아요 눌렀던 상태여야 취소 가능
+     작성자: 이창윤
+     작성시간: 2022/06/27 1:39 PM
+     내용: 게시글 좋아요 취소, 기존에 좋아요 눌렀던 상태여야 취소 가능
     */
     @DeleteMapping("{postId}")
     public void cancel(@Login Long userId, @PathVariable("postId") Long postId) {
@@ -42,4 +46,5 @@ public class PostHeartController {
                 .orElseThrow(() -> new PostException(PostErrorResult.POST_NOT_EXIST));
         postHeartRepository.delete(postHeart);
     }
+
 }

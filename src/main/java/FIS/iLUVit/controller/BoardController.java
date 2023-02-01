@@ -17,7 +17,22 @@ import java.util.List;
 public class BoardController {
 
     private final BoardService boardService;
-    
+
+    /**
+     * COMMON
+     */
+
+    /**
+     * 작성자: 이창윤
+     * 작성시간: 2022/07/29 2:47 PM
+     * 내용: 이야기 홈에서 센터의 게시판 띄워주기
+     */
+    @GetMapping("home")
+    public List<StoryPreviewDto> getStoryHome(@Login Long userId) {
+        return boardService.findCenterStory(userId);
+    }
+
+
     /**
         작성자: 이창윤
         작성시간: 2022/06/24 2:39 PM
@@ -60,13 +75,4 @@ public class BoardController {
         return boardService.remove(userId, boardId);
     }
 
-    /**
-     * 작성자: 이창윤
-     * 작성시간: 2022/07/29 2:47 PM
-     * 내용: 이야기 홈에서 센터의 게시판 띄워주기
-     */
-    @GetMapping("home")
-    public List<StoryPreviewDto> getStoryHome(@Login Long userId) {
-        return boardService.findCenterStory(userId);
-    }
 }
