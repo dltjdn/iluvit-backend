@@ -151,8 +151,8 @@ public class TeacherServiceTest {
                     .build();
             alarmUtils.when(() -> AlarmUtils.getMessage(any(String.class), any(Object[].class)))
                     .thenReturn("설명회가 가득 찼습니다");
-            AlarmEvent alarmEvent = new AlarmEvent(new CenterApprovalReceivedAlarm(Teacher.builder().build(), Auth.TEACHER));
-            alarmUtils.when(() -> AlarmUtils.publishAlarmEvent(new CenterApprovalReceivedAlarm(Teacher.builder().build(), Auth.TEACHER)))
+            AlarmEvent alarmEvent = new AlarmEvent(new CenterApprovalReceivedAlarm(Teacher.builder().build(), Auth.TEACHER, Center.builder().build()));
+            alarmUtils.when(() -> AlarmUtils.publishAlarmEvent(new CenterApprovalReceivedAlarm(Teacher.builder().build(), Auth.TEACHER, Center.builder().build())))
                     .thenReturn(alarmEvent);
             doReturn("hashedPwd")
                     .when(userService)
@@ -375,7 +375,7 @@ public class TeacherServiceTest {
                 alarmUtils.when(() -> AlarmUtils.getMessage(any(String.class), any(Object[].class)))
                         .thenReturn("설명회가 가득 찼습니다");
                 AlarmEvent alarmEvent = new AlarmEvent(new CenterApprovalAcceptedAlarm(Parent.builder().build(), Center.builder().build()));
-                alarmUtils.when(() -> AlarmUtils.publishAlarmEvent(new CenterApprovalReceivedAlarm(teacher1, Auth.TEACHER)))
+                alarmUtils.when(() -> AlarmUtils.publishAlarmEvent(new CenterApprovalReceivedAlarm(teacher1, Auth.TEACHER, teacher1.getCenter())))
                         .thenReturn(alarmEvent);
                 // when
                 Teacher result = target.assignCenter(teacher4.getId(), center1.getId());

@@ -132,7 +132,7 @@ public class TeacherService {
             // 시설에 원장들에게 알람보내기
             center.getTeachers().forEach(t -> {
                 if (t.getAuth() == Auth.DIRECTOR) {
-                    AlarmUtils.publishAlarmEvent(new CenterApprovalReceivedAlarm(t, Auth.TEACHER));
+                    AlarmUtils.publishAlarmEvent(new CenterApprovalReceivedAlarm(t, Auth.TEACHER, t.getCenter()));
                 }
             });
         } else {   // 센터를 선택하지 않은 경우
@@ -177,7 +177,7 @@ public class TeacherService {
         // 승인 요청 알람이 해당 시설의 원장들에게 감
         List<Teacher> directors = teacherRepository.findDirectorByCenter(centerId);
         directors.forEach(director -> {
-            AlarmUtils.publishAlarmEvent(new CenterApprovalReceivedAlarm(director, Auth.TEACHER));
+            AlarmUtils.publishAlarmEvent(new CenterApprovalReceivedAlarm(director, Auth.TEACHER, director.getCenter()));
         });
         return teacher;
     }
