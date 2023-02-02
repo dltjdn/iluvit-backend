@@ -78,7 +78,6 @@ public class ChildService {
 
         // 아이 등록
         Child newChild = request.createChild(center, parent);
-        childRepository.save(newChild);
 
         // 아이 승인 요청 알람이 해당 시설에 승인된 교사들에게 감
         center.getTeachers().forEach(teacher -> {
@@ -86,6 +85,8 @@ public class ChildService {
         });
 
         imageService.saveProfileImage(request.getProfileImg(), newChild);
+
+        childRepository.save(newChild);
 
         return newChild;
     }
