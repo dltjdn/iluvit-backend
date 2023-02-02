@@ -81,7 +81,7 @@ public class ChildService {
 
         // 아이 승인 요청 알람이 해당 시설에 승인된 교사들에게 감
         center.getTeachers().forEach(teacher -> {
-            AlarmUtils.publishAlarmEvent(new CenterApprovalReceivedAlarm(teacher, Auth.PARENT));
+            AlarmUtils.publishAlarmEvent(new CenterApprovalReceivedAlarm(teacher, Auth.PARENT, teacher.getCenter()));
         });
 
         imageService.saveProfileImage(request.getProfileImg(), newChild);
@@ -153,7 +153,7 @@ public class ChildService {
         mappedChild.mappingCenter(center);
 
         center.getTeachers().forEach(teacher -> {
-            AlarmUtils.publishAlarmEvent(new CenterApprovalReceivedAlarm(teacher, Auth.PARENT));
+            AlarmUtils.publishAlarmEvent(new CenterApprovalReceivedAlarm(teacher, Auth.PARENT, teacher.getCenter()));
         });
 
         return mappedChild;
