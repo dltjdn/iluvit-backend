@@ -64,52 +64,49 @@ public class ChatService {
             throw new ChatException(ChatErrorResult.NO_SEND_TO_SELF);
         }
 
-        Chat chat1 = new Chat(request.getMessage(), receiveUser, sendUser);
-        Chat chat2 = new Chat(request.getMessage(), receiveUser, sendUser);
+        Chat myChat = new Chat(request.getMessage(), receiveUser, sendUser);
+        Chat partnerChat = new Chat(request.getMessage(), receiveUser, sendUser);
 
-        ChatRoom chatRoom1 = validateChatRoom(sendUser, receiveUser, comment_id, findPost, chat1, anonymousInfo);
-        ChatRoom chatRoom2 = validateChatRoom(receiveUser, sendUser, comment_id, findPost, chat2, anonymousInfo);
-        chatRoom1.updatePartnerId(chatRoom2.getId());
-        chatRoom2.updatePartnerId(chatRoom1.getId());
+        ChatRoom myRoom = validateChatRoom(sendUser, receiveUser, comment_id, findPost, myChat, anonymousInfo);
+        ChatRoom partnerRoom = validateChatRoom(receiveUser, sendUser, comment_id, findPost, partnerChat, anonymousInfo);
+        myRoom.updatePartnerId(partnerRoom.getId());
+        partnerRoom.updatePartnerId(myRoom.getId());
 
         AlarmUtils.publishAlarmEvent(new ChatAlarm(receiveUser, sendUser, anonymousInfo));
 
 
-        chatRepository.save(chat1);
-        Chat savedChat = chatRepository.save(chat2);
+        chatRepository.save(myChat);
+        Chat savedChat = chatRepository.save(partnerChat);
 
         return savedChat.getId();
 
     }
 
     private ChatRoom validateChatRoom(User sendUser, User receiveUser, Long comment_id, Post post, Chat chat, Boolean anonymous) {
-        ChatRoom findRoom = chatRoomRepository.findByReceiverAndSenderAndPostAndAnonymous(
-                receiveUser, sendUser, post, anonymous)
+        ChatRoom chatRoom = chatRoomRepository.findByReceiverAndSenderAndPostAndAnonymous(
+                        receiveUser, sendUser, post, anonymous)
                 .orElse(null);
-        if (findRoom == null) {
+        if (chatRoom == null) {
             // 대화방 없으면 새로 생성
-            ChatRoom chatRoom = new ChatRoom(receiveUser, sendUser, post, anonymous);
+            chatRoom = new ChatRoom(receiveUser, sendUser, post, anonymous);
             // 댓글 작성자와 쪽지 교환이면 comment 정보도 엮여줌.
             if (comment_id != null) {
                 Comment findComment = commentRepository.getById(comment_id);
                 chatRoom.updateComment(findComment);
             }
             chatRoomRepository.save(chatRoom);
-            chat.updateChatRoom(chatRoom);
-            return chatRoom;
-        } else {
-            chat.updateChatRoom(findRoom);
-            return findRoom;
         }
+        chat.updateChatRoom(chatRoom);
+        return chatRoom;
     }
 
     public Slice<ChatListDto> findAll(Long userId, Pageable pageable) {
         Slice<ChatRoom> chatList = chatRoomRepository.findByUser(userId, pageable);
         return chatList.map(c -> {
-            ChatListDto chatListDTO = new ChatListDto(c);
+            ChatListDto chatListDto = new ChatListDto(c);
             String profileImage = imageService.getProfileImage(c.getSender());
-            chatListDTO.updateImage(profileImage);
-            return chatListDTO;
+            chatListDto.updateImage(profileImage);
+            return chatListDto;
         });
     }
 
@@ -120,10 +117,10 @@ public class ChatService {
         Slice<Chat> chatList = chatRepository.findByChatRoom(userId, roomId, pageable);
 
         Slice<ChatDto.ChatInfo> chatInfos = chatList.map(ChatDto.ChatInfo::new);
-        ChatDto chatDTO = new ChatDto(findRoom, chatInfos);
+        ChatDto chatDto = new ChatDto(findRoom, chatInfos);
         String profileImage = imageService.getProfileImage(findRoom.getSender());
-        chatDTO.updateImage(profileImage);
-        return chatDTO;
+        chatDto.updateImage(profileImage);
+        return chatDto;
     }
 
     public Long deleteChatRoom(Long userId, Long roomId) {
@@ -150,18 +147,19 @@ public class ChatService {
             throw new ChatException(ChatErrorResult.UNAUTHORIZED_USER_ACCESS);
         }
 
-        ChatRoom findRoom = chatRoomRepository.findById(request.getRoom_id())
+        ChatRoom myRoom = chatRoomRepository.findById(request.getRoom_id())
                 .orElseThrow(() -> new ChatException(ChatErrorResult.ROOM_NOT_EXIST));
 
-        if (findRoom.getReceiver() == null || findRoom.getSender() == null) {
+        if (myRoom.getReceiver() == null || myRoom.getSender() == null) {
             throw new ChatException(ChatErrorResult.WITHDRAWN_MEMBER);
         }
 
-        if (!Objects.equals(findRoom.getReceiver().getId(), userId)) {
+        if (!Objects.equals(myRoom.getReceiver().getId(), userId)) {
             throw new ChatException(ChatErrorResult.UNAUTHORIZED_USER_ACCESS);
         }
 
-        Long partnerUserId = findRoom.getSender().getId();
+        Long partnerUserId = myRoom.getSender().getId();
+
 
         if (Objects.equals(userId, partnerUserId)) {
             throw new ChatException(ChatErrorResult.NO_SEND_TO_SELF);
@@ -169,28 +167,30 @@ public class ChatService {
 
         User sendUser = userRepository.getById(userId);
         User receiveUser = userRepository.getById(partnerUserId);
-        Chat chat1 = new Chat(request.getMessage(), receiveUser, sendUser);
-        Chat chat2 = new Chat(request.getMessage(), receiveUser, sendUser);
+        Chat myChat = new Chat(request.getMessage(), receiveUser, sendUser);
+        Chat partnerChat = new Chat(request.getMessage(), receiveUser, sendUser);
 
-        chat1.updateChatRoom(findRoom);
+        myChat.updateChatRoom(myRoom);
 
         // 삭제된 대화방이면 새로 생성
-        ChatRoom chatRoom;
-        if (findRoom.getPartner_id() == null) {
-            chatRoom = new ChatRoom(receiveUser, sendUser, findRoom.getPost(), findRoom.getAnonymous());
-            chatRoomRepository.save(chatRoom);
+        ChatRoom partnerRoom;
+        if (myRoom.getPartner_id() == null) {
+            partnerRoom = new ChatRoom(receiveUser, sendUser, myRoom.getPost(), myRoom.getAnonymous());
+            chatRoomRepository.save(partnerRoom);
         } else {
-            chatRoom = chatRoomRepository.findById(findRoom.getPartner_id())
+            partnerRoom = chatRoomRepository.findById(myRoom.getPartner_id())
                     .orElseThrow(() -> new ChatException(ChatErrorResult.ROOM_NOT_EXIST));
         }
-        findRoom.updatePartnerId(chatRoom.getId());
-        chatRoom.updatePartnerId(findRoom.getId());
-        chat2.updateChatRoom(chatRoom);
+        myRoom.updatePartnerId(partnerRoom.getId());
+        partnerRoom.updatePartnerId(myRoom.getId());
+        partnerChat.updateChatRoom(partnerRoom);
 
-        Chat savedChat = chatRepository.save(chat1);
-        chatRepository.save(chat2);
+        userRepository.findById(partnerUserId)
+                .orElseThrow(() -> new UserException(UserErrorResult.USER_NOT_EXIST))
+                .updateReadAlarm(Boolean.FALSE);
 
-//        AlarmUtils.publishAlarmEvent(new ChatAlarm(receiveUser, sendUser, findRoom.getAnonymous()));
+        Chat savedChat = chatRepository.save(myChat);
+        chatRepository.save(partnerChat);
 
         return savedChat.getId();
     }
