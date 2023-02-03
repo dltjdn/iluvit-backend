@@ -10,15 +10,17 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 public class TeacherInfoForAdminDto {
-    private Long teacher_id;
+    private Long teacherId;
     private String name;
+    private String nickName;
     private Approval approval;
     private Auth auth;
     private String profileImg;
 
-    public TeacherInfoForAdminDto(Long id, String name, Approval approval, Auth auth) {
-        this.teacher_id = id;
+    public TeacherInfoForAdminDto(Long id, String name, String nickName, Approval approval, Auth auth) {
+        this.teacherId = id;
         this.name = name;
+        this.nickName=nickName;
         this.approval = approval;
         this.auth = auth;
     }

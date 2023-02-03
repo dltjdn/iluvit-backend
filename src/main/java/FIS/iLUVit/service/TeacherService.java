@@ -233,7 +233,7 @@ public class TeacherService {
             // 요청한 원장은 빼고 시설에 연관된 교사들 보여주기
             if (!Objects.equals(teacher.getId(), userId)) {
                 TeacherInfoForAdminDto teacherInfoForAdmin =
-                        new TeacherInfoForAdminDto(teacher.getId(), teacher.getName(), teacher.getApproval(), teacher.getAuth());
+                        new TeacherInfoForAdminDto(teacher.getId(), teacher.getName(),teacher.getNickName(), teacher.getApproval(), teacher.getAuth());
 
                 teacherInfoForAdmin.setProfileImg(imageService.getProfileImage(teacher));
                 response.add(teacherInfoForAdmin);
