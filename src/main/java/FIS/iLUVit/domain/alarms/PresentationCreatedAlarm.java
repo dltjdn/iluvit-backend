@@ -33,10 +33,14 @@ public class PresentationCreatedAlarm extends Alarm {
     @Column(name = "centerId")
     private Long centerId;
 
+    @Column(name = "centerName")
+    private String centerName;
+
     public PresentationCreatedAlarm(User user, Presentation presentation, Center center) {
         super(user);
         this.mode = AlarmUtils.PRESENTATION_CREATED_LIKED_CENTER;
         this.centerId = center.getId();
+        this.centerName = center.getName();
         this.presentationId = presentation.getId();
         String args[] = {center.getName()};
         message = AlarmUtils.getMessage(mode, args);
@@ -44,17 +48,19 @@ public class PresentationCreatedAlarm extends Alarm {
 
     @Override
     public AlarmDetailDto exportAlarm() {
-        return new PresentationCreatedAlarmDto(id, createdDate, message, dtype, centerId, presentationId);
+        return new PresentationCreatedAlarmDto(id, createdDate, message, dtype, centerId, centerName, presentationId);
     }
 
     @Getter
     public static class PresentationCreatedAlarmDto extends AlarmDetailDto {
         protected Long presentationId;
         protected Long centerId;
+        protected String centerName;
 
-        public PresentationCreatedAlarmDto(Long id, LocalDateTime createdDate, String message, String type, Long centerId, Long presentationId) {
+        public PresentationCreatedAlarmDto(Long id, LocalDateTime createdDate, String message, String type, Long centerId, String centerName, Long presentationId) {
             super(id, createdDate, message, type);
             this.centerId = centerId;
+            this.centerName = centerName;
             this.presentationId = presentationId;
         }
     }
