@@ -128,6 +128,7 @@ public class TeacherService {
             Pair<String, String> hangjung = mapService.getSidoSigunguByLocation(loAndLat.getFirst(), loAndLat.getSecond());
             Location location = new Location(loAndLat, hangjung);
             teacher.updateLocation(location);
+            imageService.saveProfileImage(null, teacher);
             teacherRepository.save(teacher);
             // 시설에 원장들에게 알람보내기
             center.getTeachers().forEach(t -> {

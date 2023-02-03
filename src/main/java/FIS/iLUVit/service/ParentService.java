@@ -117,6 +117,8 @@ public class ParentService {
         // default 스크랩 생성
         Scrap scrap = Scrap.createDefaultScrap(parent);
 
+        imageService.saveProfileImage(null, parent);
+
         parentRepository.save(parent);
         scrapRepository.save(scrap);
 
