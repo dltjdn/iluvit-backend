@@ -69,7 +69,7 @@ public class PresentationController {
                                                          @Login Long userId){
         if(userId == null)
             throw new UserException(UserErrorResult.NOT_LOGIN);
-        log.info("PresentationRequestRequestFormDto = {}", request);
+
         return new PresentationResponse(presentationService.saveInfoWithPtDate(request, userId));
     }
 
