@@ -20,7 +20,7 @@ public class PresentationDetailResponse {
     private Integer imgCnt;             // 설명회 이미지 개수 최대 __장
     private Integer videoCnt;           // 설명회 동영상 개수 최대 _개
     private List<String> images = new ArrayList<>();
-    List<PtDateDetailDto> ptDateDetailDtos = new ArrayList<>();
+    List<PtDateDetailDto> ptDateDtos = new ArrayList<>();
 
     public PresentationDetailResponse(PresentationQueryDto key, List<PtDateDetailDto> value){
         this.presentationId = key.getPresentationId();
@@ -30,7 +30,7 @@ public class PresentationDetailResponse {
         this.content = key.getContent();
         this.imgCnt = key.getImgCnt();
         this.videoCnt = key.getVideoCnt();
-        ptDateDetailDtos.addAll(value);
+        ptDateDtos.addAll(value);
     }
 
     public PresentationDetailResponse(Presentation presentation, List<String> encodedInfoImage){
@@ -42,6 +42,6 @@ public class PresentationDetailResponse {
         imgCnt = presentation.getImgCnt();
         videoCnt = presentation.getVideoCnt();
         images = encodedInfoImage;
-        presentation.getPtDates().forEach(ptDate -> ptDateDetailDtos.add(new PtDateDetailDto(ptDate)));
+        presentation.getPtDates().forEach(ptDate -> ptDateDtos.add(new PtDateDetailDto(ptDate)));
     }
 }

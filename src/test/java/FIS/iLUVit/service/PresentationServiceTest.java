@@ -186,7 +186,7 @@ class PresentationServiceTest {
 
             //then
             assertThat(result.size()).isEqualTo(2);
-            assertThat(result.get(1).getPtDateDetailDtos().size()).isEqualTo(2);
+            assertThat(result.get(1).getPtDateDtos().size()).isEqualTo(2);
             assertThat(result.get(0).getPlace()).isEqualTo("test place");
         }
 
@@ -211,7 +211,7 @@ class PresentationServiceTest {
 
             //then
             assertThat(result.size()).isEqualTo(2);
-            assertThat(result.get(1).getPtDateDetailDtos().size()).isEqualTo(2);
+            assertThat(result.get(1).getPtDateDtos().size()).isEqualTo(2);
             assertThat(result.get(0).getPlace()).isEqualTo("test place");
         }
     }
