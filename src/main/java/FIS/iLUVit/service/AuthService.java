@@ -34,8 +34,8 @@ public class AuthService {
     private final AuthRepository authRepository;
     private final BCryptPasswordEncoder encoder;
 
-    //@Value("${coolsms.fromNumber}")
-    private String fromNumber = "07078727748";
+    @Value("${coolsms.fromNumber}")
+    private String fromNumber;
 
     // 인증번호 제한시간(초)
     private final Integer authValidTime = 60;
@@ -221,7 +221,7 @@ public class AuthService {
 
     // CoolSMS 문자전송 요청
     private void requestCoolSMS(String toNumber, String authNumber) {
-
+        System.out.println("!!!!!!!!!!!!!!!!!!!!!!#########"+fromNumber);
         Message message = new Message();
         message.setFrom(fromNumber);
         message.setTo(toNumber);
