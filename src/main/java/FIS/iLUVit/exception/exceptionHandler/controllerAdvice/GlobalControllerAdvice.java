@@ -205,10 +205,11 @@ public class GlobalControllerAdvice extends ResponseEntityExceptionHandler {
         return makeErrorResponseEntity(e.getErrorResult());
     }
 
-    @ExceptionHandler(NurigoBadRequestException.class)
-    public ResponseEntity<Object> nurigoException(NurigoBadRequestException e) {
-        return makeErrorResponseEntity("핸드폰번호를 확인해주세요");
-    }
+//    @ExceptionHandler(NurigoBadRequestException.class)
+//    public ResponseEntity<Object> nurigoException(NurigoBadRequestException e) {
+//        System.out.println(e.getMessage());
+//        return makeErrorResponseEntity("핸드폰번호를 확인해주세요");
+//    }
 
     @ExceptionHandler(PreferException.class)
     public ResponseEntity<ErrorResponse> preferException(PreferException e) {
