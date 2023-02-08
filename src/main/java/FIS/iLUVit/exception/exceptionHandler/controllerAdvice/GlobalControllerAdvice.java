@@ -207,6 +207,7 @@ public class GlobalControllerAdvice extends ResponseEntityExceptionHandler {
 
     @ExceptionHandler(NurigoBadRequestException.class)
     public ResponseEntity<Object> nurigoException(NurigoBadRequestException e) {
+        log.error("[NurigoBadRequestExceptionHandler] {}", e);
         return makeErrorResponseEntity(e.getMessage());
     }
 
