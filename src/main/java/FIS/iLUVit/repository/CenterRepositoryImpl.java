@@ -227,8 +227,8 @@ public class CenterRepositoryImpl extends CenterQueryMethod implements CenterRep
         List<CenterDto> content = jpaQueryFactory.select(new QCenterDto(center.id, center.name, center.address))
                 .from(center)
                 .where(areaEq(sido, sigungu)
-                        ,(centerNameEq(centerName))
-                        ,(center.kindOf.isNotNull()))
+                        , (centerNameEq(centerName))
+                        , (center.kindOf.isNotNull()))
                 .offset(pageable.getOffset())
                 .limit(pageable.getPageSize() + 1)
                 .fetch();
