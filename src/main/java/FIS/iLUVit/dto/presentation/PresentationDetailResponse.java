@@ -1,14 +1,13 @@
 package FIS.iLUVit.dto.presentation;
 
 import FIS.iLUVit.domain.Presentation;
-import lombok.Data;
+import lombok.Getter;
 import org.springframework.format.annotation.DateTimeFormat;
-
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
-@Data
+@Getter
 public class PresentationDetailResponse {
     private Long presentationId;
     @DateTimeFormat(pattern = "yyyy-MM-dd", iso = DateTimeFormat.ISO.DATE)
@@ -22,7 +21,7 @@ public class PresentationDetailResponse {
     private List<String> images = new ArrayList<>();
     List<PtDateDetailDto> ptDateDtos = new ArrayList<>();
 
-    public PresentationDetailResponse(PresentationQueryDto key, List<PtDateDetailDto> value){
+    public PresentationDetailResponse(PresentationQueryDto key, List<String> images ,List<PtDateDetailDto> value){
         this.presentationId = key.getPresentationId();
         this.startDate = key.getStartDate();
         this.endDate = key.getEndDate();
@@ -30,6 +29,7 @@ public class PresentationDetailResponse {
         this.content = key.getContent();
         this.imgCnt = key.getImgCnt();
         this.videoCnt = key.getVideoCnt();
+        this.images = images;
         ptDateDtos.addAll(value);
     }
 

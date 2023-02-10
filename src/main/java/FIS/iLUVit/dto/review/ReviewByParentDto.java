@@ -2,14 +2,12 @@ package FIS.iLUVit.dto.review;
 
 import FIS.iLUVit.domain.Review;
 import lombok.AllArgsConstructor;
-import lombok.Data;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
-import org.springframework.data.domain.Slice;
-
 import java.time.LocalDate;
 import java.time.LocalTime;
 
-@Data
+@Getter
 @NoArgsConstructor
 @AllArgsConstructor
 public class ReviewByParentDto {
@@ -18,7 +16,6 @@ public class ReviewByParentDto {
     private String centerName;
     private Integer score;
     private String content;
-
     private LocalDate createDate;
     private LocalTime createTime;
     private LocalDate updateDate;

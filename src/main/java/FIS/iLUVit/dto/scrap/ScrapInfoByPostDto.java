@@ -2,13 +2,11 @@ package FIS.iLUVit.dto.scrap;
 
 import FIS.iLUVit.domain.Scrap;
 import lombok.AllArgsConstructor;
-import lombok.Data;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
-
 import java.util.Objects;
 
-
-@Data
+@Getter
 @AllArgsConstructor
 @NoArgsConstructor
 public class ScrapInfoByPostDto {

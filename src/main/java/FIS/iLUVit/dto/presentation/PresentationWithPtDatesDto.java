@@ -2,11 +2,10 @@ package FIS.iLUVit.dto.presentation;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
-import lombok.Data;
-
+import lombok.Getter;
 import java.time.LocalDate;
 
-@Data
+@Getter
 @AllArgsConstructor
 @Builder
 public class PresentationWithPtDatesDto {
@@ -18,7 +17,6 @@ public class PresentationWithPtDatesDto {
     private Integer imgCnt;             // 설명회 이미지 개수 최대 __장
     private Integer videoCnt;           // 설명회 동영상 개수 최대 _개
     private String infoImages;
-
     private Long ptDateId;              // 신청 아이디
     private LocalDate date;            // 설명회 날짜 시간
     private String time;
@@ -37,7 +35,6 @@ public class PresentationWithPtDatesDto {
         this.imgCnt = imgCnt;
         this.videoCnt = videoCnt;
         this.infoImages = infoImages;
-
         this.ptDateId = ptDateId;
         this.date = date;
         this.time = time;

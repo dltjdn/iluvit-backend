@@ -57,8 +57,7 @@ public class PresentationService {
                         ))
                 .entrySet().stream()
                 .map(e -> {
-                    PresentationDetailResponse presentationDetailResponse = new PresentationDetailResponse(e.getKey(), e.getValue());
-                    presentationDetailResponse.setImages(imageService.getInfoImages(e.getKey().getInfoImages()));
+                    PresentationDetailResponse presentationDetailResponse = new PresentationDetailResponse(e.getKey(), imageService.getInfoImages(e.getKey().getInfoImages()),e.getValue());
                     return presentationDetailResponse;
                 })
                 .collect(toList());
@@ -108,8 +107,7 @@ public class PresentationService {
                 .canRead(centerId);
         return presentationRepository.findByCenterId(centerId, pageable)
                 .stream().map(data -> {
-                    PresentationForTeacherResponse result = new PresentationForTeacherResponse(data);
-                    result.setPresentationInfoImage(imageService.getInfoImages(data.getPresentationInfoImage()));
+                    PresentationForTeacherResponse result = new PresentationForTeacherResponse(data,imageService.getInfoImages(data.getPresentationInfoImage()));
                     return result;
                 }).collect(toList());
     }
