@@ -7,29 +7,29 @@ import java.util.List;
 @Getter
 @NoArgsConstructor
 public class StoryDto {
-    private Long centerId;
-    private String storyName;
+    private Long center_id;
+    private String story_name;
     private List<BoardDto> boardDtoList;
 
     @Getter
     @NoArgsConstructor
     public static class BoardDto {
-        private Long boardId;
-        private String boardName;
-        private String postTitle;
-        private Long postId;
+        private Long board_id;
+        private String board_name;
+        private String post_title;
+        private Long post_id;
 
-        public BoardDto(Long boardId, String boardName, String postTitle, Long postId) {
-            this.boardId = boardId;
-            this.boardName = boardName;
-            this.postTitle = postTitle;
-            this.postId = postId;
+        public BoardDto(Long board_id, String board_name, String post_title, Long post_id) {
+            this.board_id = board_id;
+            this.board_name = board_name;
+            this.post_title = post_title;
+            this.post_id = post_id;
         }
     }
 
-    public StoryDto(Long centerId, String storyName) {
-        this.centerId = centerId;
-        this.storyName = storyName;
+    public StoryDto(Long center_id, String story_name) {
+        this.center_id = center_id;
+        this.story_name = story_name;
     }
 
     public void addBoardDtoList(List<BoardDto> boardDtoList){

@@ -345,8 +345,8 @@ class BoardServiceTest {
         //then
         BoardListDto.BoardBookmarkDto board = dto.getBoardList().get(0);
         List<BoardListDto.BoardBookmarkDto> bookmarkList = dto.getBookmarkList();
-        assertThat(board.getBoardName()).isEqualTo(board1.getName());
-        assertThat(board.getBookmarkId()).isNull();
+        assertThat(board.getBoard_name()).isEqualTo(board1.getName());
+        assertThat(board.getBookmark_id()).isNull();
         assertThat(bookmarkList).extracting("board_name")
                 .contains(
                         "맛집게시판"
@@ -375,8 +375,8 @@ class BoardServiceTest {
         //then
         BoardListDto.BoardBookmarkDto board = dto.getBoardList().get(0);
         List<BoardListDto.BoardBookmarkDto> bookmarkList = dto.getBookmarkList();
-        assertThat(board.getBoardName()).isEqualTo(board6.getName());
-        assertThat(board.getBookmarkId()).isNull();
+        assertThat(board.getBoard_name()).isEqualTo(board6.getName());
+        assertThat(board.getBookmark_id()).isNull();
         assertThat(bookmarkList).extracting("board_name")
                 .contains(
                         "공지게시판",
