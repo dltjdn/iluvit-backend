@@ -15,8 +15,6 @@ import org.springframework.data.domain.Slice;
 @RequiredArgsConstructor
 @RequestMapping("center-bookmark")
 public class CenterBookmarkController {
-
-    private final ParentService parentService;
     private final CenterBookmarkService centerBookmarkService;
 
     /**

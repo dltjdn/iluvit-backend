@@ -221,7 +221,6 @@ public class AuthService {
 
     // CoolSMS 문자전송 요청
     private void requestCoolSMS(String toNumber, String authNumber) {
-        System.out.println("!!!!!!!!!!!!!!!!!!!!!!#########"+fromNumber);
         Message message = new Message();
         message.setFrom(fromNumber);
         message.setTo(toNumber);

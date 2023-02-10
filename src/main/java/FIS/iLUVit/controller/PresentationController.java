@@ -27,7 +27,7 @@ import java.util.List;
 public class PresentationController {
 
     private final PresentationService presentationService;
-    private final UserService userService;
+
 
     /**
      * COMMON

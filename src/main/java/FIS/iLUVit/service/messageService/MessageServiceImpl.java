@@ -14,7 +14,6 @@ public class MessageServiceImpl implements MessageService{
 
     @Override
     public SingleMessageSentResponse sendOne(SingleMessageSendingRequest request) {
-        System.out.println("@@@@@@@@@@@@@@@@@@@"+ request);
         return defaultMessageService.sendOne(request);
     }
 }
