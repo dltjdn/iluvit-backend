@@ -24,7 +24,7 @@ public class BoardBookmarkService {
     private final BoardRepository boardRepository;
 
     public List<StoryDto> search(Long userId) {
-        List<StoryDto> boardBookmarkDto = new ArrayList<>();
+        List<StoryDto> storyDtos2 = new ArrayList<>();
         // stream groupingBy가 null 키 값을 허용하지 않아서 임시 값으로 생성한 센터 -> tmp = 모두의 이야기 센터
         Center tmp = new Center();
 
@@ -45,42 +45,41 @@ public class BoardBookmarkService {
         List<StoryDto> storyDtos = new ArrayList<>();
 
         // 센터(이야기)-게시글리스트 Map 루프 돌림.
-        centerPostMap.forEach((c, pl) -> {
-            StoryDto storyDto = new StoryDto();
+        centerPostMap.forEach((center, postList) -> {
+            StoryDto storyDto;
             // (~의 이야기안의 게시판 + 최신글 1개씩) DTO를 모아 리스트로 만듬.
-            Map<Board, List<Post>> boardPostMap = pl.stream()
+            Map<Board, List<Post>> boardPostMap = postList.stream()
                     .collect(Collectors.groupingBy(post -> post.getBoard()));
 
             // 센터의 게시판들을 가져옴. 없는 경우 null 반환됨.
-            List<Board> boardList = centerBoardMap.get(c);
+            List<Board> boardList = centerBoardMap.get(center);
 
             if (boardList == null) {
                 boardList = new ArrayList<>();
             }
             // storyDTO에 게시판 - 최신글 1개 매핑시킨 리스트를 넣어줌.
-            updateStoryDto(boardList, boardPostMap, storyDto);
+
             // 센터 아이디 널이면 모두, 아니면 시설 이야기
-            if (c.getId() == null) {
-                storyDto.setCenter_id(null);
-                storyDto.setStory_name("모두의 게시판");
-                boardBookmarkDto.add(storyDto);
+            if (center.getId() == null) {
+                storyDto = new StoryDto(null, "모두의 이야기");
+                storyDtos2.add(storyDto);
 
             } else {
-                storyDto.setCenter_id(c.getId());
-                storyDto.setStory_name(c.getName());
+                storyDto = new StoryDto(center.getId(),center.getName());
                 storyDtos.add(storyDto);
             }
+            updateStoryDto(boardList, boardPostMap, storyDto);
         });
 
         // 시설의 이야기 리스트는 아이디로 정렬 후
         List<StoryDto> sortedStoryDtos = storyDtos.stream()
-                .sorted(Comparator.comparing(StoryDto::getCenter_id))
+                .sorted(Comparator.comparing(StoryDto::getCenterId))
                 .collect(Collectors.toList());
 
         // 최종 결과 dto에 넣어서 반환함. center_id Null 은 stream 으로 정렬이 불가능..
 //        sortedStoryDTOS.forEach(s -> dto.getStories().add(s));
-        boardBookmarkDto.addAll(sortedStoryDtos);
-        return boardBookmarkDto;
+        storyDtos2.addAll(sortedStoryDtos);
+        return storyDtos2;
 
     }
 
@@ -111,25 +110,25 @@ public class BoardBookmarkService {
         List<StoryDto.BoardDto> boardDtos = new ArrayList<>();
 
         // 게시판 DTO 생성 -> boardDTOS 에 추가
-        boardPostMap.forEach((b, p) -> {
+        boardPostMap.forEach((board, postList) -> {
             String postTitle = null;
             Long postId = null;
-            if (!p.isEmpty()) {
-                Post gp = p.get(0);
+            if (!postList.isEmpty()) {
+                Post gp = postList.get(0);
                 postTitle = gp.getTitle();
                 postId = gp.getId();
             }
             StoryDto.BoardDto boardDto = new StoryDto.BoardDto(
-                    b.getId(), b.getName(), postTitle, postId);
+                    board.getId(), board.getName(), postTitle, postId);
             boardDtos.add(boardDto);
         });
 
         // 게시판 아이디 오름차순 정렬
         List<StoryDto.BoardDto> boardDtoAsc = boardDtos.stream()
-                .sorted(Comparator.comparing(b -> b.getBoard_id()))
+                .sorted(Comparator.comparing(board -> board.getBoardId()))
                 .collect(Collectors.toList());
         // ~의 이야기에 (게시판+최신글) DTO 리스트 넣어줌.
-        storyDto.setBoardDtoList(boardDtoAsc);
+        storyDto.addBoardDtoList(boardDtoAsc);
     }
 
     public List<StoryDto> searchByDefault() {

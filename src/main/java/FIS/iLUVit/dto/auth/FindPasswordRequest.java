@@ -3,11 +3,12 @@ package FIS.iLUVit.dto.auth;
 import FIS.iLUVit.domain.enumtype.AuthKind;
 import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import javax.validation.constraints.Pattern;
 
-@Data
+@Getter
 @AllArgsConstructor
 @NoArgsConstructor
 public class FindPasswordRequest {

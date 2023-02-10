@@ -2,33 +2,27 @@ package FIS.iLUVit.dto.board;
 
 import FIS.iLUVit.domain.Post;
 import FIS.iLUVit.domain.enumtype.BoardKind;
-import lombok.Data;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import java.util.ArrayList;
 import java.util.List;
 
-@Data
+@Getter
 @NoArgsConstructor
+@AllArgsConstructor
 public class BoardPreviewDto {
 
-    private Long board_id;
+    private Long boardId;
     private String boardName;
     private List<PostInfo> postInfoList;
     private BoardKind boardKind;
 
-    public BoardPreviewDto(Long board_id, String boardName, List<PostInfo> postInfoList, BoardKind boardKind) {
-        this.board_id = board_id;
-        this.boardName = boardName;
-        this.postInfoList = postInfoList;
-        this.boardKind = boardKind;
-    }
-
-    @Data
+    @Getter
     @NoArgsConstructor
     public static class PostInfo {
-
-        private Long post_id;
+        private Long postId;
         private String title;
         private String content;
         private String writerNickName;
@@ -37,20 +31,24 @@ public class BoardPreviewDto {
         private Integer commentCnt;
         private List<String> images = new ArrayList<>();
 
-        public PostInfo(Post p) {
-            this.post_id = p.getId();
-            this.title = p.getTitle();
-            this.content = p.getContent();
-            if (p.getUser() != null) {
-                if (p.getAnonymous()) {
+        public PostInfo(Post post) {
+            this.postId = post.getId();
+            this.title = post.getTitle();
+            this.content = post.getContent();
+            if (post.getUser() != null) {
+                if (post.getAnonymous()) {
                     this.writerNickName = "익명";
                 } else {
-                    this.writerNickName = p.getUser().getNickName();
+                    this.writerNickName = post.getUser().getNickName();
                 }
             }
-            this.anonymous = p.getAnonymous();
-            this.heartCnt = p.getHeartCnt();
-            this.commentCnt = p.getCommentCnt();
+            this.anonymous = post.getAnonymous();
+            this.heartCnt = post.getHeartCnt();
+            this.commentCnt = post.getCommentCnt();
+        }
+
+        public void addImagesInPostInfo(List<String> images){
+            this.images= images;
         }
     }
 

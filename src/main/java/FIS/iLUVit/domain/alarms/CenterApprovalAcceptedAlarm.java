@@ -15,7 +15,6 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 public class CenterApprovalAcceptedAlarm extends Alarm{
 
-    @Column(name = "centerId")
     private Long centerId;
     private String centerName;
 

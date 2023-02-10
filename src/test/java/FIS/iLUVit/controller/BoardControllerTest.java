@@ -150,11 +150,11 @@ class BoardControllerTest {
         //given
         Board board1 = Board.createBoard("자유게시판", BoardKind.NORMAL, null, true);
         Board board2 = Board.createBoard("장터게시판", BoardKind.NORMAL, null, true);
-        BoardListDto boardListDTO = new BoardListDto();
-        List<BoardListDto.BookmarkDTO> boardList = getBookmarkDTOS(board1, board2, boardListDTO);
-        boardListDTO.setBoardList(boardList);
+        BoardListDto boardListDto = new BoardListDto();
+        List<BoardListDto.BoardBookmarkDto> boardList = getBookmarkDTOS(board1, board2, boardListDto);
+        boardListDto.addBoardList(boardList);
         given(boardService.findAllWithBookmark(any()))
-                .willReturn(boardListDTO);
+                .willReturn(boardListDto);
         //when
 
         //then
@@ -172,11 +172,11 @@ class BoardControllerTest {
         ReflectionTestUtils.setField(center, "id", 1L);
         Board board1 = Board.createBoard("공지게시판", BoardKind.NORMAL, center, true);
         Board board2 = Board.createBoard("정보게시판", BoardKind.NORMAL, center, true);
-        BoardListDto boardListDTO = new BoardListDto();
-        List<BoardListDto.BookmarkDTO> boardList = getBookmarkDTOS(board1, board2, boardListDTO);
-        boardListDTO.setBoardList(boardList);
+        BoardListDto boardListDto = new BoardListDto();
+        List<BoardListDto.BoardBookmarkDto> boardList = getBookmarkDTOS(board1, board2, boardListDto);
+        boardListDto.addBoardList(boardList);
         given(boardService.findAllWithBookmarkInCenter(any(), any()))
-                .willReturn(boardListDTO);
+                .willReturn(boardListDto);
         //when
 
         //then
@@ -187,11 +187,11 @@ class BoardControllerTest {
     }
 
     @NotNull
-    public List<BoardListDto.BookmarkDTO> getBookmarkDTOS(Board board1, Board board2, BoardListDto boardListDTO) {
-        BoardListDto.BookmarkDTO bookmarkDTO1 = new BoardListDto.BookmarkDTO(board1);
-        BoardListDto.BookmarkDTO bookmarkDTO2 = new BoardListDto.BookmarkDTO(board2);
-        List<BoardListDto.BookmarkDTO> bookmarkList = Arrays.asList(bookmarkDTO1);
-        List<BoardListDto.BookmarkDTO> boardList = Arrays.asList(bookmarkDTO2);
+    public List<BoardListDto.BoardBookmarkDto> getBookmarkDTOS(Board board1, Board board2, BoardListDto boardListDTO) {
+        BoardListDto.BoardBookmarkDto boardBookmarkDTO1 = new BoardListDto.BoardBookmarkDto(board1);
+        BoardListDto.BoardBookmarkDto boardBookmarkDTO2 = new BoardListDto.BoardBookmarkDto(board2);
+        List<BoardListDto.BoardBookmarkDto> bookmarkList = Arrays.asList(boardBookmarkDTO1);
+        List<BoardListDto.BoardBookmarkDto> boardList = Arrays.asList(boardBookmarkDTO2);
         boardListDTO.setBookmarkList(bookmarkList);
         return boardList;
     }

@@ -1,37 +1,46 @@
 package FIS.iLUVit.dto.board;
 
 import FIS.iLUVit.domain.Board;
-import lombok.Data;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import java.util.ArrayList;
 import java.util.List;
 
-@Data
+@Getter
 @NoArgsConstructor
 public class BoardListDto {
 
-    private Long center_id;
-    private String center_name;
+    private Long centerId;
+    private String centerName;
 
-    private List<BookmarkDTO> bookmarkList = new ArrayList<>(); // 즐겨찾기한 게시판
-    private List<BookmarkDTO> boardList = new ArrayList<>(); // 나머지 게시판
+    private List<BoardBookmarkDto> bookmarkList = new ArrayList<>(); // 즐겨찾기한 게시판
+    private List<BoardBookmarkDto> boardList = new ArrayList<>(); // 나머지 게시판
 
-    @Data
+    @Getter
     @NoArgsConstructor
-    public static class BookmarkDTO {
-        private Long bookmark_id;
-        private Long board_id;
-        private String board_name;
+    public static class BoardBookmarkDto {
+        private Long bookmarkId;
+        private Long boardId;
+        private String boardName;
 
-        public BookmarkDTO(Board b) {
-            this.board_id = b.getId();
-            this.board_name = b.getName();
+        public BoardBookmarkDto(Board board) {
+            this.boardId = board.getId();
+            this.boardName = board.getName();
+        }
+        public BoardBookmarkDto(Board board, Long bookmarkId) {
+            this.bookmarkId = bookmarkId;
+            this.boardId = board.getId();
+            this.boardName = board.getName();
         }
     }
 
-    public BoardListDto(Long center_id, String center_name) {
-        this.center_id = center_id;
-        this.center_name = center_name;
+    public BoardListDto(Long centerId, String centerName) {
+        this.centerId = centerId;
+        this.centerName = centerName;
+    }
+
+    public void addBoardList(List<BoardBookmarkDto> boardList){
+        this.boardList = boardList;
     }
 }

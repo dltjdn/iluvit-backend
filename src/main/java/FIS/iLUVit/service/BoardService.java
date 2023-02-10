@@ -64,14 +64,13 @@ public class BoardService {
                 .collect(Collectors.groupingBy(b -> b.getBoard().getId()));
 
         // 모두의 이야기 내 모든 게시판에서
-        boards.forEach(b -> {
-            List<Bookmark> bookmarkList = bookmarkMap.get(b.getId());
+        boards.forEach(board -> {
+            List<Bookmark> bookmarkList = bookmarkMap.get(board.getId());
             if (bookmarkList == null) { // 즐찾 안한 게시판들은 보드 리스트에 넣음
-                dto.getBoardList().add(new BoardListDto.BookmarkDTO(b));
+                dto.getBoardList().add(new BoardListDto.BoardBookmarkDto(board));
             } else { // 즐찾한 게시판들은 북마크 리스트에 넣음
-                BoardListDto.BookmarkDTO bookmarkDTO = new BoardListDto.BookmarkDTO(b);
-                bookmarkDTO.setBookmark_id(bookmarkList.get(0).getId());
-                dto.getBookmarkList().add(bookmarkDTO);
+                BoardListDto.BoardBookmarkDto boardBookmarkDto = new BoardListDto.BoardBookmarkDto(board,bookmarkList.get(0).getId());
+                dto.getBookmarkList().add(boardBookmarkDto);
             }
         });
     }

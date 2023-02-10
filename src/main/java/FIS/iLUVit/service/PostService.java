@@ -295,28 +295,25 @@ public class PostService {
             }
         }
 
-        boardPostMap.forEach((k, v) -> {
-            List<BoardPreviewDto.PostInfo> postInfos = v.stream()
-                    .map(p -> {
-                        BoardPreviewDto.PostInfo postInfo = new BoardPreviewDto.PostInfo(p);
-//                        String postDir = imageService.getPostDir(p.getId());
-//                        List<String> images = imageService.getEncodedInfoImage(postDir, p.getImgCnt());
-//                        postInfo.setImages(images);
-                        postInfo.setImages(imageService.getInfoImages(p));
+        boardPostMap.forEach((board, postList) -> {
+            List<BoardPreviewDto.PostInfo> postInfos = postList.stream()
+                    .map(post -> {
+                        BoardPreviewDto.PostInfo postInfo = new BoardPreviewDto.PostInfo(post);
+                        postInfo.addImagesInPostInfo(imageService.getInfoImages(post));
                         return postInfo;
                     })
                     .collect(Collectors.toList());
 
-            boardPreviews.add(new BoardPreviewDto(k.getId(), k.getName(), postInfos, k.getBoardKind()));
+            boardPreviews.add(new BoardPreviewDto(board.getId(), board.getName(), postInfos, board.getBoardKind()));
         });
     }
 
     @NotNull
     private List<BoardPreviewDto> getPreivewResult(List<Post> hotPosts, List<BoardPreviewDto> results, List<BoardPreviewDto> boardPreviews) {
         List<BoardPreviewDto.PostInfo> postInfoList = hotPosts.stream()
-                .map((Post p) -> {
-                    BoardPreviewDto.PostInfo postInfo = new BoardPreviewDto.PostInfo(p);
-                    postInfo.setImages(imageService.getInfoImages(p));
+                .map((Post post) -> {
+                    BoardPreviewDto.PostInfo postInfo = new BoardPreviewDto.PostInfo(post);
+                    postInfo.addImagesInPostInfo(imageService.getInfoImages(post));
                     return postInfo;
                 })
                 .collect(Collectors.toList());
@@ -324,7 +321,7 @@ public class PostService {
         results.add(new BoardPreviewDto(null, "HOT 게시판", postInfoList, BoardKind.NORMAL));
 
         boardPreviews = boardPreviews.stream()
-                .sorted(Comparator.comparing(BoardPreviewDto::getBoard_id)).collect(Collectors.toList());
+                .sorted(Comparator.comparing(BoardPreviewDto::getBoardId)).collect(Collectors.toList());
         results.addAll(boardPreviews);
 
         return results;

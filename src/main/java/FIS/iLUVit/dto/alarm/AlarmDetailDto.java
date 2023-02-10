@@ -2,11 +2,12 @@ package FIS.iLUVit.dto.alarm;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.Getter;
 import org.springframework.format.annotation.DateTimeFormat;
 
 import java.time.LocalDateTime;
 
-@Data
+@Getter
 @AllArgsConstructor
 public class AlarmDetailDto {
     protected Long id;
