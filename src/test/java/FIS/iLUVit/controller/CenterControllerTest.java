@@ -63,6 +63,7 @@ import java.util.List;
 
 import static FIS.iLUVit.Creator.*;
 import static org.mockito.Mockito.*;
+import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -75,11 +76,6 @@ class CenterControllerTest extends ResponseRequests {
     CenterController target;
     @Mock
     CenterService centerService;
-    @Mock
-    TeacherService teacherService;
-
-    @Mock
-    ChildService childService;
     MockMvc mockMvc;
     ObjectMapper objectMapper;
 
@@ -99,9 +95,6 @@ class CenterControllerTest extends ResponseRequests {
                 .withClaim("id", user.getId())
                 .sign(Algorithm.HMAC512("secretKey"));
     }
-
-
-
 
     @Nested
     @DisplayName("센터_베너_정보_검색")
@@ -239,8 +232,6 @@ class CenterControllerTest extends ResponseRequests {
             MockMultipartFile requestDto = new MockMultipartFile("requestDto", null,
                     "application/json", objectMapper.writeValueAsString(wrongRequest).getBytes());
 
-
-
             //when
             ResultActions result = mockMvc.perform(
                     builder.file("infoImages", multipartFile.getBytes())
@@ -248,6 +239,7 @@ class CenterControllerTest extends ResponseRequests {
                             .file(requestDto)
                             .contentType(MediaType.APPLICATION_FORM_URLENCODED)
             );
+
             //then
             result.andDo(print())
                     .andExpect(status().isBadRequest());
@@ -266,17 +258,11 @@ class CenterControllerTest extends ResponseRequests {
                 }
             });
 
-            MockMultipartFile requestDto = new MockMultipartFile("requestDto", null,
-                    "application/json", objectMapper.writeValueAsString(rightRequest).getBytes());
-
-
-
             //when
             ResultActions result = mockMvc.perform(
-                    builder.file("infoImages", multipartFile.getBytes())
-                            .file("profileImage", multipartFile.getBytes())
-                            .file(requestDto)
-                            .contentType(MediaType.APPLICATION_FORM_URLENCODED)
+                    builder.content(objectMapper.writeValueAsString(rightRequest))
+                            .contentType(MediaType.APPLICATION_JSON)
+                            .with(csrf())
             );
 
             //then
@@ -303,18 +289,11 @@ class CenterControllerTest extends ResponseRequests {
             Mockito.doThrow(new UserException(UserErrorResult.USER_NOT_EXIST))
                     .when(centerService).modifyCenterInfo(any(Long.class), any(Long.class), any(CenterDetailRequest.class));
 
-            MockMultipartFile requestDto = new MockMultipartFile("requestDto", null,
-                    "application/json", objectMapper.writeValueAsString(rightRequest).getBytes());
-
-
-
             //when
             ResultActions result = mockMvc.perform(
-                    builder.file("infoImages", multipartFile.getBytes())
-                            .file("profileImage", multipartFile.getBytes())
-                            .file(requestDto)
+                    builder.content(objectMapper.writeValueAsString(rightRequest))
                             .header(HttpHeaders.AUTHORIZATION, createJwtToken(createParent(1L)))
-                            .contentType(MediaType.APPLICATION_FORM_URLENCODED)
+                            .contentType(MediaType.APPLICATION_JSON)
             );
 
             //then
@@ -341,18 +320,11 @@ class CenterControllerTest extends ResponseRequests {
             Mockito.doThrow(new CenterException(CenterErrorResult.AUTHENTICATION_FAILED))
                     .when(centerService).modifyCenterInfo(any(Long.class), any(Long.class), any(CenterDetailRequest.class));
 
-            MockMultipartFile requestDto = new MockMultipartFile("requestDto", null,
-                    "application/json", objectMapper.writeValueAsString(rightRequest).getBytes());
-
-
-
             //when
             ResultActions result = mockMvc.perform(
-                    builder.file("infoImages", multipartFile.getBytes())
-                            .file("profileImage", multipartFile.getBytes())
-                            .file(requestDto)
+                    builder.content(objectMapper.writeValueAsString(rightRequest))
                             .header(HttpHeaders.AUTHORIZATION, createJwtToken(createParent(1L)))
-                            .contentType(MediaType.APPLICATION_FORM_URLENCODED)
+                            .contentType(MediaType.APPLICATION_JSON)
             );
 
             //then
@@ -379,18 +351,11 @@ class CenterControllerTest extends ResponseRequests {
             Mockito.doThrow(new CenterException(CenterErrorResult.CENTER_WRONG_ADDRESS))
                     .when(centerService).modifyCenterInfo(any(Long.class), any(Long.class), any(CenterDetailRequest.class));
 
-            MockMultipartFile requestDto = new MockMultipartFile("requestDto", null,
-                    "application/json", objectMapper.writeValueAsString(rightRequest).getBytes());
-
-
-
             //when
             ResultActions result = mockMvc.perform(
-                    builder.file("infoImages", multipartFile.getBytes())
-                            .file("profileImage", multipartFile.getBytes())
-                            .file(requestDto)
+                    builder.content(objectMapper.writeValueAsString(rightRequest))
                             .header(HttpHeaders.AUTHORIZATION, createJwtToken(createParent(1L)))
-                            .contentType(MediaType.APPLICATION_FORM_URLENCODED)
+                            .contentType(MediaType.APPLICATION_JSON)
             );
 
             //then
@@ -402,42 +367,42 @@ class CenterControllerTest extends ResponseRequests {
                     )));
         }
 
-        @Test
-        @DisplayName("[success] 시설 수정 성공")
-        public void 시설수정성공() throws Exception {
-            MockMultipartHttpServletRequestBuilder builder = MockMvcRequestBuilders.multipart("/center/1");
-            builder.with(new RequestPostProcessor() {
-                @Override
-                public MockHttpServletRequest postProcessRequest(MockHttpServletRequest request) {
-                    request.setMethod(HttpMethod.PATCH.toString());
-                    return request;
-                }
-            });
-
-            Mockito.doReturn(1L)
-                    .when(centerService).modifyCenterInfo(any(Long.class), any(Long.class), any(CenterDetailRequest.class));
-
-            MockMultipartFile requestDto = new MockMultipartFile("requestDto", null,
-                    "application/json", objectMapper.writeValueAsString(rightRequest).getBytes());
-
-
-
-            //when
-            ResultActions result = mockMvc.perform(
-                    builder.file("infoImages", multipartFile.getBytes())
-                            .file("profileImage", multipartFile.getBytes())
-                            .file(requestDto)
-                            .header(HttpHeaders.AUTHORIZATION, createJwtToken(createParent(1L)))
-                            .contentType(MediaType.APPLICATION_FORM_URLENCODED)
-            );
-
-            //then
-            result.andDo(print())
-                    .andExpect(status().isAccepted())
-                    .andExpect(content().json(objectMapper.writeValueAsString(
-                            1L
-                    )));
-        }
+//        @Test
+//        @DisplayName("[success] 시설 수정 성공")
+//        public void 시설수정성공() throws Exception {
+//            MockMultipartHttpServletRequestBuilder builder = MockMvcRequestBuilders.multipart("/center/1");
+//            builder.with(new RequestPostProcessor() {
+//                @Override
+//                public MockHttpServletRequest postProcessRequest(MockHttpServletRequest request) {
+//                    request.setMethod(HttpMethod.PATCH.toString());
+//                    return request;
+//                }
+//            });
+//
+//            Mockito.doReturn(1L)
+//                    .when(centerService).modifyCenterInfo(any(Long.class), any(Long.class), any(CenterDetailRequest.class));
+//
+//            MockMultipartFile requestDto = new MockMultipartFile("requestDto", null,
+//                    "application/json", objectMapper.writeValueAsString(rightRequest).getBytes());
+//
+//
+//
+//            //when
+//            ResultActions result = mockMvc.perform(
+//                    builder.file("infoImages", multipartFile.getBytes())
+//                            .file("profileImage", multipartFile.getBytes())
+//                            .file(requestDto)
+//                            .header(HttpHeaders.AUTHORIZATION, createJwtToken(createParent(1L)))
+//                            .contentType(MediaType.APPLICATION_FORM_URLENCODED)
+//            );
+//
+//            //then
+//            result.andDo(print())
+//                    .andExpect(status().isAccepted())
+//                    .andExpect(content().json(objectMapper.writeValueAsString(
+//                            1L
+//                    )));
+//        }
 
         @Test
         @DisplayName("[success] 시설 수정 성공")
@@ -453,9 +418,6 @@ class CenterControllerTest extends ResponseRequests {
 
             Mockito.doReturn(1L)
                     .when(centerService).modifyCenterImage(any(Long.class), any(Long.class), anyList(), any(MultipartFile.class));
-
-            MockMultipartFile requestDto = new MockMultipartFile("requestDto", null,
-                    "application/json", objectMapper.writeValueAsString(rightRequest).getBytes());
 
 
             //when
@@ -477,7 +439,7 @@ class CenterControllerTest extends ResponseRequests {
         @Test
         @DisplayName("[success] 시설 수정 성공")
         public void 시설정보수정성공_APP() throws Exception {
-            MockMultipartHttpServletRequestBuilder builder = MockMvcRequestBuilders.multipart("/center/1/info");
+            MockMultipartHttpServletRequestBuilder builder = MockMvcRequestBuilders.multipart("/center/1");
             builder.with(new RequestPostProcessor() {
                 @Override
                 public MockHttpServletRequest postProcessRequest(MockHttpServletRequest request) {
