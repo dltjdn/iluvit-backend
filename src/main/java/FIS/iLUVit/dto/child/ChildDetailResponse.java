@@ -2,11 +2,10 @@ package FIS.iLUVit.dto.child;
 
 import FIS.iLUVit.domain.Child;
 import FIS.iLUVit.domain.enumtype.Approval;
-import lombok.Data;
-
+import lombok.Getter;
 import java.time.LocalDate;
 
-@Data
+@Getter
 public class ChildDetailResponse {
     private Long child_id;
     private String child_name;
@@ -15,10 +14,11 @@ public class ChildDetailResponse {
     private String center_name;
     private Approval approval;
 
-    public ChildDetailResponse(Child child) {
+    public ChildDetailResponse(Child child, String profileImage) {
         this.child_id = child.getId();
         this.child_name = child.getName();
         this.birthDate = child.getBirthDate();
+        this.profileImage = profileImage;
         if (child.getCenter() != null) {
             this.center_name = child.getCenter().getName();
         }

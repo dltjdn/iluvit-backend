@@ -1,11 +1,12 @@
 package FIS.iLUVit.dto.chat;
 
 import lombok.Data;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import javax.validation.constraints.NotBlank;
 
-@Data
+@Getter
 @NoArgsConstructor
 public class ChatRequest {
 

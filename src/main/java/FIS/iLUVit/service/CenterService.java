@@ -61,9 +61,7 @@ public class CenterService {
                 .orElseThrow(() -> new CenterException("해당 센터 존재하지 않음"));
         // Center 가 id 에 의해 조회 되었으므로 score에 1 추가
         center.addScore(Score.GET);
-        CenterResponse result = new CenterResponse(center);
-        result.setProfileImage(imageService.getProfileImage(center));
-        result.setInfoImages(imageService.getInfoImages(center));
+        CenterResponse result = new CenterResponse(center,imageService.getProfileImage(center),imageService.getInfoImages(center));
         return result;
     }
 

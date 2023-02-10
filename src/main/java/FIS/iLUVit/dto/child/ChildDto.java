@@ -3,13 +3,11 @@ package FIS.iLUVit.dto.child;
 import FIS.iLUVit.domain.Child;
 import FIS.iLUVit.domain.enumtype.Approval;
 import lombok.AllArgsConstructor;
-import lombok.Data;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
 
-import java.util.ArrayList;
-import java.util.List;
 
-@Data
+@Getter
 @NoArgsConstructor
 @AllArgsConstructor
 public class ChildDto {

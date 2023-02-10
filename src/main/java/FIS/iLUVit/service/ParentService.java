@@ -47,8 +47,7 @@ public class ParentService {
         Parent findParent = parentRepository.findById(id)
                 .orElseThrow(() -> new UserException("유효하지 않은 토큰으로의 사용자 접근입니다."));
 
-        ParentDetailResponse response = new ParentDetailResponse(findParent);
-        response.setProfileImg(imageService.getProfileImage(findParent));
+        ParentDetailResponse response = new ParentDetailResponse(findParent,imageService.getProfileImage(findParent));
         return response;
     }
 
@@ -91,11 +90,8 @@ public class ParentService {
         Location location = new Location(loAndLat, hangjung);
         findParent.updateLocation(location);
 
-        ParentDetailResponse response = new ParentDetailResponse(findParent);
-
+        ParentDetailResponse response = new ParentDetailResponse(findParent,imageService.getProfileImage(findParent));
         imageService.saveProfileImage(request.getProfileImg(), findParent);
-        response.setProfileImg(imageService.getProfileImage(findParent));
-
         return response;
     }
 

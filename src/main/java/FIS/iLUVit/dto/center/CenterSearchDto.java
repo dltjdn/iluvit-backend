@@ -1,11 +1,11 @@
 package FIS.iLUVit.dto.center;
 
 import lombok.AllArgsConstructor;
-import lombok.Data;
+import lombok.Getter;
 
 import java.util.List;
 
-@Data
+@Getter
 public class CenterSearchDto <T>{
     private Offset offset;
     private List<T> data;
@@ -15,7 +15,7 @@ public class CenterSearchDto <T>{
         this.offset = new Offset(startIndex, endIndex);
     }
 
-    @Data
+    @Getter
     @AllArgsConstructor
     private static class Offset {
         Integer startIndex;

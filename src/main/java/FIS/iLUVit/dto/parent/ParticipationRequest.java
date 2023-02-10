@@ -1,12 +1,12 @@
 package FIS.iLUVit.dto.parent;
 
 import lombok.AllArgsConstructor;
-import lombok.Data;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import javax.validation.constraints.Min;
 
-@Data
+@Getter
 @NoArgsConstructor
 @AllArgsConstructor
 public class ParticipationRequest {

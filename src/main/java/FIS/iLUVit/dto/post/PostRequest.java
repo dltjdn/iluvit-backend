@@ -1,13 +1,12 @@
 package FIS.iLUVit.dto.post;
 
-import lombok.Data;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
-
 import javax.persistence.Lob;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 
-@Data
+@Getter
 @NoArgsConstructor
 public class PostRequest {
     @NotBlank(message = "제목을 입력해주세요.")

@@ -5,14 +5,13 @@ import FIS.iLUVit.domain.embeddable.Theme;
 import FIS.iLUVit.domain.enumtype.KindOf;
 import com.querydsl.core.annotations.QueryProjection;
 import lombok.Builder;
-import lombok.Data;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
-
 import javax.validation.constraints.Size;
 import java.util.ArrayList;
 import java.util.List;
 
-@Data
+@Getter
 @NoArgsConstructor
 public class CenterRecommendDto {
     private Long centerId;
@@ -26,7 +25,7 @@ public class CenterRecommendDto {
         this.profileImage = profileImage;
     }
 
-    @Data
+    @Getter
     @NoArgsConstructor
     public static class CenterSearchFilterDto {
 

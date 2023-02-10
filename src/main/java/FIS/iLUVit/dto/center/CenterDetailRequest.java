@@ -1,17 +1,13 @@
 package FIS.iLUVit.dto.center;
 
 import FIS.iLUVit.domain.embeddable.*;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
-
+import lombok.*;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import java.util.ArrayList;
 import java.util.List;
 
-@Data
+@Getter
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
@@ -34,10 +30,6 @@ public class CenterDetailRequest {
     @NotNull(message = "시설 주소는 비어있지 않아야 합니다")
     private String address;                 // 주소
     private String addressDetail;
-//    @NotNull(message = "지역명은 비어있지 않아야 합니다")
-//    private String sido;
-//    @NotNull(message = "지역명은 비어있지 않아야 합니다")
-//    private String sigungu;
     private String zipcode;                 // 우편번호
     @NotNull(message = "제공 서비스는 null 값이 아니여야 합니다")
     private String offerService;            // 제공서비스 (, 로 구분)

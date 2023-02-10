@@ -3,14 +3,14 @@ package FIS.iLUVit.dto.post;
 import FIS.iLUVit.domain.Post;
 import com.querydsl.core.annotations.QueryProjection;
 import lombok.AllArgsConstructor;
-import lombok.Data;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.List;
 
-@Data
+@Getter
 @AllArgsConstructor
 @NoArgsConstructor
 public class PostPreviewDto {

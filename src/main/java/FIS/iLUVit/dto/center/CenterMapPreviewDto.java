@@ -1,10 +1,10 @@
 package FIS.iLUVit.dto.center;
 
 import com.querydsl.core.annotations.QueryProjection;
-import lombok.Data;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
 
-@Data
+@Getter
 @NoArgsConstructor
 public class CenterMapPreviewDto {
     private Long id;
