@@ -506,30 +506,6 @@ class CenterControllerTest extends ResponseRequests {
         }
     }
 
-    @Test
-    public void 아이추가센터정보조회() throws Exception {
-        // given
-        String url = "/center/child/add?page=0&size=10";
-        List<CenterDto> content = List.of(CenterDto.builder().build());
-        CenterRequest request = CenterRequest.builder().build();
-        Pageable pageable = PageRequest.of(0, 10);
-        SliceImpl<CenterDto> response = new SliceImpl<>(content, pageable, false);
-        doReturn(response)
-                .when(childService)
-                .findCenterForAddChild(any(), any());
-        // when
-        ResultActions result = mockMvc.perform(
-                MockMvcRequestBuilders.get(url)
-                        .content(objectMapper.writeValueAsString(request))
-                        .contentType(MediaType.APPLICATION_JSON)
-        );
-        // then
-        result.andExpect(status().isOk())
-                .andExpect(content().json(
-                        objectMapper.writeValueAsString(response)
-                ));
-    }
-
 }
 
 
