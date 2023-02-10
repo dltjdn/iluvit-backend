@@ -192,7 +192,7 @@ class BoardControllerTest {
         BoardListDto.BoardBookmarkDto boardBookmarkDTO2 = new BoardListDto.BoardBookmarkDto(board2);
         List<BoardListDto.BoardBookmarkDto> bookmarkList = Arrays.asList(boardBookmarkDTO1);
         List<BoardListDto.BoardBookmarkDto> boardList = Arrays.asList(boardBookmarkDTO2);
-        boardListDTO.setBookmarkList(bookmarkList);
+        boardListDTO.addBookmarkList(bookmarkList);
         return boardList;
     }
 
