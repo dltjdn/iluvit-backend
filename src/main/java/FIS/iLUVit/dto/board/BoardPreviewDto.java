@@ -14,7 +14,7 @@ import java.util.List;
 @AllArgsConstructor
 public class BoardPreviewDto {
 
-    private Long boardId;
+    private Long board_id;
     private String boardName;
     private List<PostInfo> postInfoList;
     private BoardKind boardKind;
@@ -22,7 +22,7 @@ public class BoardPreviewDto {
     @Getter
     @NoArgsConstructor
     public static class PostInfo {
-        private Long postId;
+        private Long post_id;
         private String title;
         private String content;
         private String writerNickName;
@@ -32,7 +32,7 @@ public class BoardPreviewDto {
         private List<String> images = new ArrayList<>();
 
         public PostInfo(Post post) {
-            this.postId = post.getId();
+            this.post_id = post.getId();
             this.title = post.getTitle();
             this.content = post.getContent();
             if (post.getUser() != null) {

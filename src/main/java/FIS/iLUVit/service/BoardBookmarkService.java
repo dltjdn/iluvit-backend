@@ -73,7 +73,7 @@ public class BoardBookmarkService {
 
         // 시설의 이야기 리스트는 아이디로 정렬 후
         List<StoryDto> sortedStoryDtos = storyDtos.stream()
-                .sorted(Comparator.comparing(StoryDto::getCenterId))
+                .sorted(Comparator.comparing(StoryDto::getCenter_id))
                 .collect(Collectors.toList());
 
         // 최종 결과 dto에 넣어서 반환함. center_id Null 은 stream 으로 정렬이 불가능..
@@ -125,7 +125,7 @@ public class BoardBookmarkService {
 
         // 게시판 아이디 오름차순 정렬
         List<StoryDto.BoardDto> boardDtoAsc = boardDtos.stream()
-                .sorted(Comparator.comparing(board -> board.getBoardId()))
+                .sorted(Comparator.comparing(board -> board.getBoard_id()))
                 .collect(Collectors.toList());
         // ~의 이야기에 (게시판+최신글) DTO 리스트 넣어줌.
         storyDto.addBoardDtoList(boardDtoAsc);
