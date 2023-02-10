@@ -92,7 +92,7 @@ public class TeacherControllerTest {
                 .detailAddress("detailAddress")
                 .centerId(1L)
                 .build();
-        String url = "/signup/teacher";
+        String url = "/teacher/signup";
         // when
         ResultActions result = mockMvc.perform(
                 MockMvcRequestBuilders.post(url)
@@ -119,7 +119,7 @@ public class TeacherControllerTest {
                 .detailAddress("detailAddress")
                 .centerId(1L)
                 .build();
-        String url = "/signup/teacher";
+        String url = "/teacher/signup";
         // when
         ResultActions result = mockMvc.perform(
                 MockMvcRequestBuilders.post(url)
@@ -145,7 +145,7 @@ public class TeacherControllerTest {
                 .detailAddress("detailAddress")
                 .centerId(1L)
                 .build();
-        String url = "/signup/teacher";
+        String url = "/teacher/signup";
         SignupErrorResult error = SignupErrorResult.NOT_EXIST_CENTER;
         doThrow(new SignupException(error))
                 .when(teacherService)
@@ -178,7 +178,7 @@ public class TeacherControllerTest {
                 .detailAddress("detailAddress")
                 .centerId(1L)
                 .build();
-        String url = "/signup/teacher";
+        String url = "/teacher/signup";
         // when
         ResultActions result = mockMvc.perform(
                 MockMvcRequestBuilders.post(url)
@@ -192,7 +192,7 @@ public class TeacherControllerTest {
     @Test
     public void 교사프로필정보조회_성공() throws Exception {
         // given
-        String url = "/teacher/detail";
+        String url = "/teacher";
         TeacherDetailResponse response = new TeacherDetailResponse(Teacher.builder().build());
         doReturn(response)
                 .when(teacherService)
@@ -212,7 +212,7 @@ public class TeacherControllerTest {
     @Test
     public void 교사프로필수정_실패_불완전한요청() throws Exception {
         // given
-        String url = "/teacher/detail";
+        String url = "/teacher";
         // when
         ResultActions result = mockMvc.perform(
                 MockMvcRequestBuilders
@@ -233,7 +233,7 @@ public class TeacherControllerTest {
     @Test
     public void 교사프로필수정_실패_닉네임중복() throws Exception {
         // given
-        String url = "/teacher/detail";
+        String url = "/teacher";
         SignupErrorResult error = SignupErrorResult.DUPLICATED_NICKNAME;
         doThrow(new SignupException(error))
                 .when(teacherService)
@@ -262,7 +262,7 @@ public class TeacherControllerTest {
     @Test
     public void 교사프로필수정_성공() throws Exception {
         // given
-        String url = "/teacher/detail";
+        String url = "/teacher";
         // when
         ResultActions result = mockMvc.perform(
                 MockMvcRequestBuilders
@@ -284,7 +284,7 @@ public class TeacherControllerTest {
     @Test
     public void 시설에등록신청_실패_이미시설에등록됨() throws Exception {
         // given
-        String url = "/teacher/{centerId}/assign";
+        String url = "/teacher/center/{centerId}";
         SignupErrorResult error = SignupErrorResult.ALREADY_BELONG_CENTER;
         doThrow(new SignupException(error))
                 .when(teacherService)
@@ -304,7 +304,7 @@ public class TeacherControllerTest {
     @Test
     public void 시설에틍록신청_성공() throws Exception {
         // given
-        String url = "/teacher/{centerId}/assign";
+        String url = "/teacher/center/{centerId}";
         // when
         ResultActions result = mockMvc.perform(
                 MockMvcRequestBuilders.patch(url, "123")
@@ -322,7 +322,7 @@ public class TeacherControllerTest {
         @DisplayName("[error] 속해있는시설이없는경우")
         public void 속해있는시설이없는경우() throws Exception {
             // given
-            String url = "/teacher/center/escape";
+            String url = "/teacher/center";
             SignupErrorResult error = SignupErrorResult.NOT_BELONG_CENTER;
             doThrow(new SignupException(error))
                     .when(teacherService)
@@ -343,7 +343,7 @@ public class TeacherControllerTest {
         @DisplayName("[error] 마지막원장의탈주실패")
         public void 마지막원장의탈주실패() throws Exception {
             // given
-            String url = "/teacher/center/escape";
+            String url = "/teacher/center";
             SignupErrorResult error = SignupErrorResult.HAVE_TO_MANDATE;
             doThrow(new SignupException(error))
                     .when(teacherService)
@@ -364,7 +364,7 @@ public class TeacherControllerTest {
         @DisplayName("[success] 시설탤주성공")
         public void 시설탈주성공() throws Exception {
             // given
-            String url = "/teacher/center/escape";
+            String url = "/teacher/center";
             // when
             ResultActions result = mockMvc.perform(
                     MockMvcRequestBuilders.patch(url)
@@ -383,7 +383,7 @@ public class TeacherControllerTest {
         @DisplayName("[error] 사용자가 원장이 아닌 경우")
         public void 사용자가원장이아닌경우() throws Exception {
             // given
-            String url = "/director/teacher/approval";
+            String url = "/teacher/approval";
             UserErrorResult error = UserErrorResult.HAVE_NOT_AUTHORIZATION;
             doThrow(new UserException(error))
                     .when(teacherService)
@@ -427,7 +427,7 @@ public class TeacherControllerTest {
         @DisplayName("[error] 원장이 아닌 사용자의 요청")
         public void 원장아닌요청() throws Exception {
             // given
-            String url = "/director/teacher/accept/{teacherId}";
+            String url = "/teacher/{teacherId}/accept";
             UserErrorResult error = UserErrorResult.HAVE_NOT_AUTHORIZATION;
             doThrow(new UserException(error))
                     .when(teacherService)
@@ -448,7 +448,7 @@ public class TeacherControllerTest {
         @DisplayName("[error] 올바르지 않은 교사 승인")
         public void 승인교사에러() throws Exception {
             // given
-            String url = "/director/teacher/accept/{teacherId}";
+            String url = "/teacher/{teacherId}/accept";
             UserErrorResult error = UserErrorResult.NOT_VALID_REQUEST;
             doThrow(new UserException(error))
                     .when(teacherService)
@@ -469,7 +469,7 @@ public class TeacherControllerTest {
         @DisplayName("[success] 교사승인 성공")
         public void 교사승인성공() throws Exception {
             // given
-            String url = "/director/teacher/accept/{teacherId}";
+            String url = "/teacher/{teacherId}/accept";
             // when
             ResultActions result = mockMvc.perform(
                     MockMvcRequestBuilders.patch(url, teacher.getId())
@@ -487,7 +487,7 @@ public class TeacherControllerTest {
         @DisplayName("[error] 원장아님")
         public void 원장아님() throws Exception {
             // given
-            String url = "/director/teacher/fire/{teacherId}";
+            String url = "/teacher/{teacherId}/reject";
             UserErrorResult error = UserErrorResult.HAVE_NOT_AUTHORIZATION;
             doThrow(new UserException(error))
                     .when(teacherService)
@@ -508,7 +508,7 @@ public class TeacherControllerTest {
         @DisplayName("[error] 잘못된교사아이디")
         public void 잘못된교사아이디() throws Exception {
             // given
-            String url = "/director/teacher/fire/{teacherId}";
+            String url = "/teacher/{teacherId}/reject";
             UserErrorResult error = UserErrorResult.NOT_VALID_REQUEST;
             doThrow(new UserException(error))
                     .when(teacherService)
@@ -529,7 +529,7 @@ public class TeacherControllerTest {
         @DisplayName("[error] 해당시설에속해있지않은교사")
         public void 속해있지않은교사() throws Exception {
             // given
-            String url = "/director/teacher/fire/{teacherId}";
+            String url = "/teacher/{teacherId}/reject";
             UserErrorResult error = UserErrorResult.NOT_VALID_REQUEST;
             doThrow(new UserException(error))
                     .when(teacherService)
@@ -550,7 +550,7 @@ public class TeacherControllerTest {
         @DisplayName("[success] 교사 삭제/거절 성공")
         public void 교사삭제성공() throws Exception {
             // given
-            String url = "/director/teacher/fire/{teacherId}";
+            String url = "/teacher/{teacherId}/reject";
             // when
             ResultActions result = mockMvc.perform(
                     MockMvcRequestBuilders.patch(url, director.getId())
@@ -568,7 +568,7 @@ public class TeacherControllerTest {
         @DisplayName("[error] 원장권한 없음")
         public void 원장권한없음() throws Exception {
             // given
-            String url = "/director/teacher/mandate/{teacherId}";
+            String url = "/teacher/{teacherId}/mandate";
             UserErrorResult error = UserErrorResult.HAVE_NOT_AUTHORIZATION;
             doThrow(new UserException(error))
                     .when(teacherService)
@@ -589,7 +589,7 @@ public class TeacherControllerTest {
         @DisplayName("[error] 잘못된 teacherId")
         public void teacherIdError() throws Exception {
             // given
-            String url = "/director/teacher/mandate/{teacherId}";
+            String url = "/teacher/{teacherId}/mandate";
             UserErrorResult error = UserErrorResult.NOT_VALID_REQUEST;
             doThrow(new UserException(error))
                     .when(teacherService)
@@ -609,7 +609,7 @@ public class TeacherControllerTest {
         @DisplayName("[success] 원장권한부여 성공")
         public void 원장권한부여성공() throws Exception {
             // given
-            String url = "/director/teacher/mandate/{teacherId}";
+            String url = "/teacher/{teacherId}/mandate";
             // when
             ResultActions result = mockMvc.perform(
                     MockMvcRequestBuilders.patch(url, teacher.getId())
@@ -627,7 +627,7 @@ public class TeacherControllerTest {
         @DisplayName("[error] 잘못된 교사 아이디")
         public void 잘못된교사아이디() throws Exception {
             // given
-            String url = "/director/teacher/demote/{teacherId}";
+            String url = "/teacher/{teacherId}/demote";
             UserErrorResult error = UserErrorResult.NOT_VALID_REQUEST;
             doThrow(new UserException(error))
                     .when(teacherService)
@@ -648,7 +648,7 @@ public class TeacherControllerTest {
         @DisplayName("[success] 원장권한 박탈 성공")
         public void 박탈성공() throws Exception {
             // given
-            String url = "/director/teacher/demote/{teacherId}";
+            String url = "/teacher/{teacherId}/demote";
             // when
             ResultActions result = mockMvc.perform(
                     MockMvcRequestBuilders.patch(url, teacher.getId())
