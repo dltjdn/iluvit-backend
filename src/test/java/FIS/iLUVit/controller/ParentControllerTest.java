@@ -91,7 +91,7 @@ public class ParentControllerTest {
                 .detailAddress("detailAddress")
                 .interestAge(3)
                 .build();
-        String url = "/signup/parent";
+        String url = "/parent/signup";
         // when
         ResultActions result = mockMvc.perform(
                 MockMvcRequestBuilders.post(url)
@@ -117,7 +117,7 @@ public class ParentControllerTest {
                 .detailAddress("detailAddress")
                 .interestAge(3)
                 .build();
-        String url = "/signup/parent";
+        String url = "/parent/signup";
 
         // when
         ResultActions result = mockMvc.perform(
@@ -145,7 +145,7 @@ public class ParentControllerTest {
                 .detailAddress("detailAddress")
                 .interestAge(3)
                 .build();
-        String url = "/signup/parent";
+        String url = "/parent/signup";
         SignupErrorResult errorResult = SignupErrorResult.NOT_MATCH_PWDCHECK;
         doThrow(new SignupException(errorResult))
                 .when(parentService)
@@ -178,7 +178,7 @@ public class ParentControllerTest {
                 .detailAddress("detailAddress")
                 .interestAge(3)
                 .build();
-        String url = "/signup/parent";
+        String url = "/parent/signup";
         SignupErrorResult errorResult = SignupErrorResult.DUPLICATED_NICKNAME;
         doThrow(new SignupException(errorResult))
                 .when(parentService)
@@ -212,7 +212,7 @@ public class ParentControllerTest {
                 .detailAddress("detailAddress")
                 .interestAge(3)
                 .build();
-        String url = "/signup/parent";
+        String url = "/parent/signup";
         AuthNumberErrorResult errorResult = AuthNumberErrorResult.NOT_AUTHENTICATION;
         doThrow(new AuthNumberException(errorResult))
                 .when(parentService)
@@ -246,7 +246,7 @@ public class ParentControllerTest {
                 .detailAddress("detailAddress")
                 .interestAge(3)
                 .build();
-        String url = "/signup/parent";
+        String url = "/parent/signup";
         AuthNumberErrorResult errorResult = AuthNumberErrorResult.EXPIRED;
         doThrow(new AuthNumberException(errorResult))
                 .when(parentService)
@@ -281,7 +281,7 @@ public class ParentControllerTest {
                 .detailAddress("detailAddress")
                 .interestAge(3)
                 .build();
-        String url = "/signup/parent";
+        String url = "/parent/signup";
         // when
         ResultActions result = mockMvc.perform(
                 MockMvcRequestBuilders.post(url)
@@ -295,7 +295,7 @@ public class ParentControllerTest {
     @Test
     public void 학부모프로필조회_성공() throws Exception {
         // given
-        String url = "/parent/detail";
+        String url = "/parent";
         ParentDetailResponse response = new ParentDetailResponse();
         doReturn(response)
                 .when(parentService)
@@ -314,7 +314,7 @@ public class ParentControllerTest {
     @Test
     public void 학부모프로필수정_실패_불완전한요청() throws Exception {
         // given
-        String url = "/parent/detail";
+        String url = "/parent";
         // when
         ResultActions result = mockMvc.perform(
                 MockMvcRequestBuilders
@@ -338,7 +338,7 @@ public class ParentControllerTest {
     @Test
     public void 학부모프로필수정_성공() throws Exception {
         // given
-        String url = "/parent/detail";
+        String url = "/parent";
         // when
         ResultActions result = mockMvc.perform(
                 MockMvcRequestBuilders
