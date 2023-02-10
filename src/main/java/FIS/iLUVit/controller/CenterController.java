@@ -33,8 +33,8 @@ public class CenterController {
     /**
      * 주변 시설 검색
      */
-    @GetMapping("search/all")
-    public List<CenterMapPreviewDto> searchByFilterForMap(@ModelAttribute @Validated CenterSearchMapDto dto){
+    @PostMapping("search/all")
+    public List<CenterMapPreviewDto> searchByFilterForMap(@RequestBody @Validated CenterSearchMapDto dto){
         return centerService.findByFilterForMap(dto.getLongitude(), dto.getLatitude(), dto.getDistance(), dto.getSearchContent());
     }
 
