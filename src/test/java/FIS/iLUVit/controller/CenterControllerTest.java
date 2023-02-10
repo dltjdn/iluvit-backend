@@ -102,37 +102,7 @@ class CenterControllerTest extends ResponseRequests {
 
 
 
-    @Test
-    public void 회원가입과정에서center정보가져오기() throws Exception {
-        // given
-        String url = "/center/signup?page=0&size=5";
-        CenterRequest request = CenterRequest.builder()
-                .sido("서울시")
-                .sigungu("금천구")
-                .build();
-        List<CenterDto> content = List.of(CenterDto.builder()
-                .id(1L)
-                .name("name")
-                .address("address")
-                .build());
-        PageRequest pageable = PageRequest.of(0, 5);
-        SliceImpl<CenterDto> response = new SliceImpl<>(content, pageable, false);
-        doReturn(response)
-                .when(teacherService)
-                .findCenterForSignup(request, pageable);
-        // when
-        ResultActions result = mockMvc.perform(
-                MockMvcRequestBuilders.get(url)
-                        .param("sido", request.getSido())
-                        .param("sigungu", request.getSigungu())
-                        .param("centerName", request.getCenterName())
-                        .contentType(MediaType.APPLICATION_JSON)
-        );
 
-        // then
-        result.andExpect(status().isOk())
-                .andExpect(content().json(objectMapper.writeValueAsString(response)));
-    }
     @Nested
     @DisplayName("센터_베너_정보_검색")
     class BannerControllerTest {

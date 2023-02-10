@@ -2,6 +2,8 @@ package FIS.iLUVit.controller;
 
 import FIS.iLUVit.Creator;
 import FIS.iLUVit.config.argumentResolver.LoginUserArgumentResolver;
+import FIS.iLUVit.dto.center.CenterDto;
+import FIS.iLUVit.dto.center.CenterRequest;
 import FIS.iLUVit.dto.teacher.SignupTeacherRequest;
 import FIS.iLUVit.dto.teacher.TeacherDetailResponse;
 import FIS.iLUVit.dto.teacher.TeacherDetailRequest;
@@ -26,6 +28,9 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.SliceImpl;
+import org.springframework.data.web.PageableHandlerMethodArgumentResolver;
 import org.springframework.http.MediaType;
 import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.test.web.servlet.MockMvc;
@@ -66,7 +71,7 @@ public class TeacherControllerTest {
     public void init() throws IOException {
         objectMapper = new ObjectMapper();
         mockMvc = MockMvcBuilders.standaloneSetup(target)
-                .setCustomArgumentResolvers(new LoginUserArgumentResolver("secretKey"))
+                .setCustomArgumentResolvers(new PageableHandlerMethodArgumentResolver(), new LoginUserArgumentResolver("secretKey"))
                 .setControllerAdvice(GlobalControllerAdvice.class)
                 .build();
         teacher = Creator.createTeacher(1L, "teacher", null, Auth.TEACHER, null);
@@ -75,6 +80,39 @@ public class TeacherControllerTest {
         Path path = Paths.get(new File("").getAbsolutePath() + '/' + name);
         byte[] content = Files.readAllBytes(path);
         multipartFile = new MockMultipartFile(name, name, "image", content);
+    }
+
+    @Test
+    public void 회원가입과정에서center정보가져오기() throws Exception {
+        // given
+        String url = "/teacher/search/center?page=0&size=5";
+        CenterRequest request = CenterRequest.builder()
+                .sido("서울시")
+                .sigungu("금천구")
+                .centerName("")
+                .build();
+        List<CenterDto> content = List.of(CenterDto.builder()
+                .id(1L)
+                .name("name")
+                .address("address")
+                .build());
+        PageRequest pageable = PageRequest.of(0, 5);
+        SliceImpl<CenterDto> response = new SliceImpl<>(content, pageable, false);
+        doReturn(response)
+                .when(teacherService)
+                .findCenterForSignup(request, pageable);
+        // when
+        ResultActions result = mockMvc.perform(
+                MockMvcRequestBuilders.get(url)
+                        .param("sido", request.getSido())
+                        .param("sigungu", request.getSigungu())
+                        .param("centerName", request.getCenterName())
+                        .contentType(MediaType.APPLICATION_JSON)
+        );
+
+        // then
+        result.andExpect(status().isOk())
+                .andExpect(content().json(objectMapper.writeValueAsString(response)));
     }
 
     @Test
