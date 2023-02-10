@@ -1,13 +1,11 @@
 package FIS.iLUVit.dto.teacher;
 
-import FIS.iLUVit.domain.Center;
 import FIS.iLUVit.domain.Teacher;
 import FIS.iLUVit.domain.enumtype.Approval;
-import FIS.iLUVit.domain.enumtype.Auth;
 import FIS.iLUVit.security.LoginResponse;
-import lombok.Data;
+import lombok.Getter;
 
-@Data
+@Getter
 public class LoginTeacherResponse extends LoginResponse {
 
     private Long center_id;

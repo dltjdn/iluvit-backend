@@ -2,14 +2,13 @@ package FIS.iLUVit.dto.teacher;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
-import lombok.Data;
+import lombok.Getter;
 import org.springframework.web.multipart.MultipartFile;
-
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
-@Data
+@Getter
 @Builder
 @AllArgsConstructor
 public class TeacherDetailRequest {

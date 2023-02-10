@@ -1,12 +1,11 @@
 package FIS.iLUVit.dto.user;
 
 import lombok.AllArgsConstructor;
-import lombok.Data;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
-
 import javax.validation.constraints.Size;
 
-@Data
+@Getter
 @AllArgsConstructor
 @NoArgsConstructor
 public class CheckLoginIdRequest {
