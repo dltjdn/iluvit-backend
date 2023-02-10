@@ -214,20 +214,6 @@ class CenterControllerTest extends ResponseRequests {
 
     }
 
-    @Test
-    public void 찜한시설리스트() throws Exception {
-        // given
-        String url = "/parent/prefer";
-        Parent parent = Creator.createParent();
-        // when
-        ResultActions result = mockMvc.perform(
-                MockMvcRequestBuilders.get(url)
-                        .header("Authorization", createJwtToken(parent))
-        );
-        // then
-        result.andExpect(status().isOk());
-    }
-
     @Nested
     @DisplayName("시설 수정")
     class 시설수정{
