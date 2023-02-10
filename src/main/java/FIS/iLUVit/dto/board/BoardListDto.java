@@ -11,8 +11,8 @@ import java.util.List;
 @NoArgsConstructor
 public class BoardListDto {
 
-    private Long centerId;
-    private String centerName;
+    private Long center_id;
+    private String center_name;
 
     private List<BoardBookmarkDto> bookmarkList = new ArrayList<>(); // 즐겨찾기한 게시판
     private List<BoardBookmarkDto> boardList = new ArrayList<>(); // 나머지 게시판
@@ -20,24 +20,24 @@ public class BoardListDto {
     @Getter
     @NoArgsConstructor
     public static class BoardBookmarkDto {
-        private Long bookmarkId;
-        private Long boardId;
-        private String boardName;
+        private Long bookmark_id;
+        private Long board_id;
+        private String board_name;
 
         public BoardBookmarkDto(Board board) {
-            this.boardId = board.getId();
-            this.boardName = board.getName();
+            this.board_id = board.getId();
+            this.board_name = board.getName();
         }
-        public BoardBookmarkDto(Board board, Long bookmarkId) {
-            this.bookmarkId = bookmarkId;
-            this.boardId = board.getId();
-            this.boardName = board.getName();
+        public BoardBookmarkDto(Board board, Long bookmark_id) {
+            this.bookmark_id = bookmark_id;
+            this.board_id = board.getId();
+            this.board_name = board.getName();
         }
     }
 
-    public BoardListDto(Long centerId, String centerName) {
-        this.centerId = centerId;
-        this.centerName = centerName;
+    public BoardListDto(Long center_id, String center_name) {
+        this.center_id = center_id;
+        this.center_name = center_name;
     }
 
     public void addBoardList(List<BoardBookmarkDto> boardList){

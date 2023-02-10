@@ -2,9 +2,10 @@ package FIS.iLUVit.dto.center;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
 
-@Data
+@Getter
 @AllArgsConstructor
 @NoArgsConstructor
 public class CenterBannerDto {
@@ -28,7 +29,7 @@ public class CenterBannerDto {
         this.prefer = preferId != null;
     }
 
-    public CenterBannerDto(Long centerId, String name, Boolean signed, Boolean recruit, Double starAverage, String profileImage, String infoImages) {
+    public CenterBannerDto(Long centerId, String name, Boolean signed, Boolean recruit, Double starAverage, String profileImage) {
         this.centerId = centerId;
         this.name = name;
         this.signed = signed;
@@ -37,4 +38,8 @@ public class CenterBannerDto {
         this.profileImage = profileImage;
         this.prefer = false;
     }
+
+
+
+
 }
