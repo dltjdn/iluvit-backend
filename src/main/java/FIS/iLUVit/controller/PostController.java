@@ -49,7 +49,6 @@ public class PostController {
      * 내용: 리액트 네이티브용 게시글 저장
      */
     @PostMapping(value = "react-native", consumes = {MediaType.APPLICATION_JSON_VALUE, MediaType.MULTIPART_FORM_DATA_VALUE})
-//    @ResponseStatus(HttpStatus.ACCEPTED)
     public Long registerPostTemp(@Login Long userId,
                                  @RequestPart(required = false) List<MultipartFile> images,
                                  @ModelAttribute("request") @Validated PostRequest request) {
@@ -110,10 +109,10 @@ public class PostController {
     @GetMapping("search/in-center")
     public Slice<PostPreviewDto> searchPostByCenter(
             @Login Long userId,
-            @ModelAttribute PostSearchRequest requestDTO,
+            @ModelAttribute PostSearchRequest requestDto,
             Pageable pageable) {
-        return postService.searchByKeywordAndCenter(requestDTO.getCenter_id(), requestDTO.getInput()
-                , requestDTO.getAuth(), userId, pageable);
+        return postService.searchByKeywordAndCenter(requestDto.getCenter_id(), requestDto.getInput()
+                , requestDto.getAuth(), userId, pageable);
     }
 
     /**

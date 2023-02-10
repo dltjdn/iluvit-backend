@@ -70,7 +70,6 @@ public class GlobalControllerAdvice extends ResponseEntityExceptionHandler {
         return this.makeErrorResponseEntity("HttpMessageNotReadable error");
     }
 
-    // param(@ModelAttribute) validation exception
     @Override
     protected ResponseEntity<Object> handleBindException(
             BindException ex,

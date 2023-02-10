@@ -3,6 +3,7 @@ package FIS.iLUVit.dto.center;
 import lombok.*;
 
 @Getter
+@Setter
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
