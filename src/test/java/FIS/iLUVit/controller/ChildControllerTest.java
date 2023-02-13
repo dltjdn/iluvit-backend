@@ -2,6 +2,8 @@ package FIS.iLUVit.controller;
 
 import FIS.iLUVit.Creator;
 import FIS.iLUVit.config.argumentResolver.LoginUserArgumentResolver;
+import FIS.iLUVit.dto.center.CenterDto;
+import FIS.iLUVit.dto.center.CenterRequest;
 import FIS.iLUVit.dto.child.ChildDto;
 import FIS.iLUVit.domain.Center;
 import FIS.iLUVit.domain.Child;
@@ -22,7 +24,11 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.SliceImpl;
 import org.springframework.data.web.PageableHandlerMethodArgumentResolver;
+import org.springframework.http.MediaType;
 import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
@@ -36,6 +42,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.time.LocalDate;
+import java.util.List;
 
 import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
@@ -91,6 +98,30 @@ public class ChildControllerTest {
         );
         // then
         result.andExpect(status().isOk());
+    }
+
+    @Test
+    public void 아이추가센터정보조회() throws Exception {
+        // given
+        String url = "/child/search/center?page=0&size=10";
+        List<CenterDto> content = List.of(CenterDto.builder().build());
+        CenterRequest request = CenterRequest.builder().build();
+        Pageable pageable = PageRequest.of(0, 10);
+        SliceImpl<CenterDto> response = new SliceImpl<>(content, pageable, false);
+        doReturn(response)
+                .when(childService)
+                .findCenterForAddChild(any(), any());
+        // when
+        ResultActions result = mockMvc.perform(
+                MockMvcRequestBuilders.get(url)
+                        .content(objectMapper.writeValueAsString(request))
+                        .contentType(MediaType.APPLICATION_JSON)
+        );
+        // then
+        result.andExpect(status().isOk())
+                .andExpect(content().json(
+                        objectMapper.writeValueAsString(response)
+                ));
     }
 
     @Nested
