@@ -30,8 +30,6 @@ public class AlarmController {
      */
     @DeleteMapping("")
     public Integer deleteAlarm(@Login Long userId, @RequestBody AlarmRequest request) {
-        if(userId == null)
-            throw new UserException(UserErrorResult.NOT_LOGIN);
         return alarmService.deleteUserAlarm(userId, request.getAlarmIds());
     }
 
@@ -56,8 +54,6 @@ public class AlarmController {
      */
     @GetMapping("is-read")
     public Boolean hasRead(@Login Long userId){
-        if(userId == null)
-            throw new UserException(UserErrorResult.NOT_LOGIN);
         return alarmService.hasRead(userId);
     }
 
@@ -66,8 +62,6 @@ public class AlarmController {
      */
     @GetMapping("read")
     public void readAlarm(@Login Long userId){
-        if(userId == null)
-            throw new UserException(UserErrorResult.NOT_LOGIN);
         alarmService.readAlarm(userId);
     }
 

@@ -31,10 +31,8 @@ public class WaitingController {
      */
     @PostMapping("")
     @ResponseStatus(HttpStatus.CREATED)
-    public Long register(@Login Long userId, @RequestBody @Validated WaitingRegisterDto dto){
-        if(userId == null)
-            throw new UserException(UserErrorResult.NOT_LOGIN);
-        Long ptDateId = dto.getPtDateId();
+    public Long register(@Login Long userId, @RequestBody @Validated WaitingRegisterDto waitingRegister){
+        Long ptDateId = waitingRegister.getPtDateId();
         return waitingService.register(userId, ptDateId).getId();
     }
 
@@ -43,10 +41,8 @@ public class WaitingController {
      */
     @DeleteMapping("")
     @ResponseStatus(HttpStatus.ACCEPTED)
-    public Long cancel(@Login Long userId, @RequestBody @Validated WaitingCancelDto dto){
-        if(userId == null)
-            throw new UserException(UserErrorResult.NOT_LOGIN);
-        Long waitingId = dto.getWaitingId();
+    public Long cancel(@Login Long userId, @RequestBody @Validated WaitingCancelDto waitingCancel){
+        Long waitingId = waitingCancel.getWaitingId();
         return waitingService.cancel(waitingId, userId);
     }
 

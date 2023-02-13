@@ -37,8 +37,6 @@ public class ParticipationController {
     @PostMapping("")
     @ResponseStatus(HttpStatus.CREATED)
     public Long register(@Login Long userId, @RequestBody @Validated PtDateRequest dto){
-        if(userId == null)
-            throw new UserException(UserErrorResult.NOT_LOGIN);
         return participationService.register(userId, dto.getPtDateId());
     }
 
@@ -49,8 +47,6 @@ public class ParticipationController {
     @PatchMapping("")
     @ResponseStatus(HttpStatus.ACCEPTED)
     public Long cancel(@Login Long userId, @RequestBody @Validated ParticipationRequest dto){
-        if(userId == null)
-            throw new UserException(UserErrorResult.NOT_LOGIN);
         return participationService.cancel(userId, dto.getParticipationId());
     }
 
@@ -61,8 +57,6 @@ public class ParticipationController {
     @GetMapping("")
     @ResponseStatus(HttpStatus.ACCEPTED)
     public Map<Status, List<ParticipationListDto>> getMyParticipation(@Login Long userId){
-        if(userId == null)
-            throw new UserException(UserErrorResult.NOT_LOGIN);
         return participationService.getMyParticipation(userId);
     }
 
@@ -72,8 +66,6 @@ public class ParticipationController {
     @GetMapping("join")
     @ResponseStatus(HttpStatus.ACCEPTED)
     public Slice<ParticipationListDto> getMyJoinParticipation(@Login Long userId, Pageable pageable){
-        if(userId == null)
-            throw new UserException(UserErrorResult.NOT_LOGIN);
         return participationService.getMyJoinParticipation(userId, pageable);
     }
 
@@ -83,8 +75,6 @@ public class ParticipationController {
     @GetMapping("cancel")
     @ResponseStatus(HttpStatus.ACCEPTED)
     public Slice<ParticipationListDto> getMyCancelParticipation(@Login Long userId, Pageable pageable){
-        if(userId == null)
-            throw new UserException(UserErrorResult.NOT_LOGIN);
         return participationService.getMyCancelParticipation(userId, pageable);
     }
 
@@ -94,8 +84,6 @@ public class ParticipationController {
     @GetMapping("waiting")
     @ResponseStatus(HttpStatus.ACCEPTED)
     public Slice<ParticipationListDto> getMyWaiting(@Login Long userId, Pageable pageable){
-        if(userId == null)
-            throw new UserException(UserErrorResult.NOT_LOGIN);
         return participationService.getMyWaiting(userId, pageable);
     }
 

@@ -96,9 +96,7 @@ public class CenterController {
     public Long modifyCenterInfo(@PathVariable("centerId") Long centerId,
                                  @Login Long userId,
                                  @RequestBody @Validated CenterDetailRequest requestDto){
-        if(userId == null)
-            throw new UserException(UserErrorResult.NOT_LOGIN);
-        log.info("requestDto = {}", requestDto);
+
         return centerService.modifyCenterInfo(centerId, userId, requestDto);
     }
 
@@ -112,8 +110,6 @@ public class CenterController {
                              @Login Long userId,
                              @RequestPart(required = false) List<MultipartFile> infoImages,
                              @RequestPart(required = false) MultipartFile profileImage){
-        if(userId == null)
-            throw new UserException(UserErrorResult.NOT_LOGIN);
         return centerService.modifyCenterImage(centerId, userId, infoImages, profileImage);
     }
 

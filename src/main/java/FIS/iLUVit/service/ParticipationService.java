@@ -8,10 +8,7 @@ import FIS.iLUVit.domain.PtDate;
 import FIS.iLUVit.domain.alarms.PresentationFullAlarm;
 import FIS.iLUVit.domain.enumtype.Status;
 import FIS.iLUVit.event.ParticipationCancelEvent;
-import FIS.iLUVit.exception.ParticipationErrorResult;
-import FIS.iLUVit.exception.ParticipationException;
-import FIS.iLUVit.exception.PresentationErrorResult;
-import FIS.iLUVit.exception.PresentationException;
+import FIS.iLUVit.exception.*;
 import FIS.iLUVit.repository.ParentRepository;
 import FIS.iLUVit.repository.ParticipationRepository;
 import FIS.iLUVit.repository.PtDateRepository;
@@ -43,7 +40,8 @@ public class ParticipationService {
     private final ImageService imageService;
 
     public Long register(Long userId, Long ptDateId) {
-
+        if(userId == null)
+            throw new UserException(UserErrorResult.NOT_LOGIN);
 
         // 잘못된 설명회 회차 id일 경우 error throw
         PtDate ptDate = ptDateRepository.findByIdAndJoinParticipation(ptDateId)
@@ -86,6 +84,8 @@ public class ParticipationService {
     }
 
     public Long cancel(Long userId, Long participationId) {
+        if(userId == null)
+            throw new UserException(UserErrorResult.NOT_LOGIN);
 
         Participation participation = participationRepository.findByIdAndStatusWithPtDate(participationId, userId)
                 .orElseThrow(() -> new ParticipationException(ParticipationErrorResult.WRONG_PARTICIPATIONID_REQUEST));
@@ -99,6 +99,8 @@ public class ParticipationService {
     }
 
     public Map<Status, List<ParticipationListDto>> getMyParticipation(Long userId) {
+        if(userId == null)
+            throw new UserException(UserErrorResult.NOT_LOGIN);
         // 학부모 조회
         Parent parent = parentRepository.findMyParticipation(userId);
         parentRepository.findMyWaiting(userId);
@@ -118,14 +120,20 @@ public class ParticipationService {
     }
 
     public Slice<ParticipationListDto> getMyJoinParticipation(Long userId, Pageable pageable){
+        if(userId == null)
+            throw new UserException(UserErrorResult.NOT_LOGIN);
         return parentRepository.findMyJoinParticipation(userId, pageable);
     }
 
     public Slice<ParticipationListDto> getMyCancelParticipation(Long userId, Pageable pageable){
+        if(userId == null)
+            throw new UserException(UserErrorResult.NOT_LOGIN);
         return parentRepository.findMyCancelParticipation(userId, pageable);
     }
 
     public Slice<ParticipationListDto> getMyWaiting(Long userId, Pageable pageable){
+        if(userId == null)
+            throw new UserException(UserErrorResult.NOT_LOGIN);
         return parentRepository.findMyWaiting(userId, pageable);
     }
 

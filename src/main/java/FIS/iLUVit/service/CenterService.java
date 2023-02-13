@@ -78,6 +78,9 @@ public class CenterService {
     }
 
     public Long modifyCenterImage(Long centerId, Long userId, List<MultipartFile> infoImages, MultipartFile profileImage) {
+        if(userId == null)
+            throw new UserException(UserErrorResult.NOT_LOGIN);
+
         Teacher teacher = userRepository.findTeacherById(userId)
                 .orElseThrow(() -> new UserException(UserErrorResult.USER_NOT_EXIST))
                 .canWrite(centerId);
@@ -89,6 +92,9 @@ public class CenterService {
     }
 
     public Long modifyCenterInfo(Long centerId, Long userId, CenterDetailRequest requestDto) {
+        if(userId == null)
+            throw new UserException(UserErrorResult.NOT_LOGIN);
+
         Teacher teacher = userRepository.findTeacherById(userId)
                 .orElseThrow(() -> new UserException(UserErrorResult.USER_NOT_EXIST))
                 .canWrite(centerId);

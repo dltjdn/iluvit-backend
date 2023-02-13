@@ -84,12 +84,7 @@ public class UserController {
      */
     @PostMapping("refresh")
     public LoginResponse refresh(@Valid @RequestBody TokenRefreshRequest request) throws IOException {
-        LoginResponse response = userService.refresh(request);
-        if (response != null) {
-            return response;
-        } else {
-            throw new JWTVerificationException("유효하지 않은 시도입니다.");
-        }
+        return userService.refresh(request);
     }
 
     /**

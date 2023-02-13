@@ -58,25 +58,19 @@ public class PresentationController {
      */
 
     /**
-     * 설명회 정보 저장
-     * 작성자: 이창윤
      * 원장/ 선생의 presentation 등록 PtDate 설정하기
-     * 리액트 네이티브용 설명회 정보 저장
+     * 설명회 정보 저장
      */
     @PostMapping("")
     @ResponseStatus(HttpStatus.CREATED)
     public PresentationResponse registerPresentationInfo(@RequestBody @Validated PresentationDetailRequest request,
                                                          @Login Long userId){
-        if(userId == null)
-            throw new UserException(UserErrorResult.NOT_LOGIN);
 
         return new PresentationResponse(presentationService.saveInfoWithPtDate(request, userId));
     }
 
     /**
      * 설명회 정보 수정
-     * 작성자: 이창윤
-     * 리액트 네이티브용 설명회 정보 수정
      */
     @PatchMapping("")
     @ResponseStatus(HttpStatus.ACCEPTED)
@@ -86,10 +80,8 @@ public class PresentationController {
     }
 
     /**
-     * 설명회 이미지 저장
-     * 작성자: 이창윤
      * 원장/ 선생의 presentation 등록 PtDate 설정하기
-     * 리액트 네이티브용 설명회 이미지 저장
+     * 설명회 이미지 저장
      */
     @Transactional
     @PostMapping("{presentationId}/image")
@@ -97,15 +89,11 @@ public class PresentationController {
     public PresentationResponse registerPresentationImage(@PathVariable("presentationId") Long presentationId,
                                                           @RequestPart(required = false) List<MultipartFile> images,
                                                           @Login Long userId) {
-        if (userId == null)
-            throw new UserException(UserErrorResult.NOT_LOGIN);
         return new PresentationResponse(presentationService.saveImageWithPtDate(presentationId, images, userId));
     }
 
     /**
      * 설명회 이미지 수정
-     * 작성자: 이창윤
-     * 리액트 네이티브용 설명회 이미지 수정
      */
     @Transactional
     @PatchMapping("{presentationId}/image")

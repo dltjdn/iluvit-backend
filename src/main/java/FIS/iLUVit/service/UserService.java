@@ -169,7 +169,7 @@ public class UserService {
         } else {
             // accessToken이 아직 만료되지 않은 상태 -> 토큰 탈취로 판단 -> delete tokenPair
             tokenPairRepository.delete(findTokenPair);
-            return null;
+            throw new JWTVerificationException("유효하지 않은 시도입니다.");
         }
     }
 

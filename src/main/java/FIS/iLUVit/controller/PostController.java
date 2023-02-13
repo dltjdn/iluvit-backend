@@ -135,7 +135,6 @@ public class PostController {
      */
     @GetMapping("public-main")
     public List<BoardPreviewDto> searchMainPreview(@Login Long userId) {
-
         return postService.searchMainPreview(userId);
     }
 

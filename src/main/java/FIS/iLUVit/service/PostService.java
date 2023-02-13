@@ -367,4 +367,13 @@ public class PostService {
         return postHeartRepository.save(postHeart).getId();
     }
 
+    public void deletePostHeart(Long userId, Long postId){
+        if (userId == null) {
+            throw new UserException(UserErrorResult.NOT_VALID_TOKEN);
+        }
+        PostHeart postHeart = postHeartRepository.findByPostAndUser(userId, postId)
+                .orElseThrow(() -> new PostException(PostErrorResult.POST_NOT_EXIST));
+        postHeartRepository.delete(postHeart);
+    }
+
 }
