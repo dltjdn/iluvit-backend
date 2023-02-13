@@ -4,13 +4,14 @@ import FIS.iLUVit.Creator;
 import FIS.iLUVit.config.argumentResolver.LoginUserArgumentResolver;
 import FIS.iLUVit.domain.Center;
 import FIS.iLUVit.domain.Parent;
+import FIS.iLUVit.domain.Prefer;
 import FIS.iLUVit.domain.User;
+import FIS.iLUVit.domain.enumtype.Auth;
 import FIS.iLUVit.exception.PreferErrorResult;
 import FIS.iLUVit.exception.PreferException;
 import FIS.iLUVit.exception.exceptionHandler.ErrorResponse;
 import FIS.iLUVit.exception.exceptionHandler.controllerAdvice.GlobalControllerAdvice;
 import FIS.iLUVit.service.CenterBookmarkService;
-import FIS.iLUVit.service.ParentService;
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.algorithms.Algorithm;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -18,8 +19,10 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.data.web.PageableHandlerMethodArgumentResolver;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
@@ -30,30 +33,39 @@ import java.util.Date;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.doThrow;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
-public class CenterBookmarkControllerTest {
+@ExtendWith(MockitoExtension.class)
+class CenterBookmarkControllerTest {
 
+    MockMvc mockMvc;
     @InjectMocks
-    CenterController target;
-    @Mock
-    private ParentService parentService;
+    CenterBookmarkController centerBookmarkController;
     @Mock
     private CenterBookmarkService centerBookmarkService;
-    MockMvc mockMvc;
     ObjectMapper objectMapper;
-    private Parent parent;
-    private Center center;
+    Parent parent;
+    Center center;
+    Prefer prefer;
 
 
     @BeforeEach
-    private void init(){
-        mockMvc = MockMvcBuilders.standaloneSetup(target)
+    public void init(){
+        mockMvc = MockMvcBuilders.standaloneSetup(centerBookmarkController)
                 .setCustomArgumentResolvers(new PageableHandlerMethodArgumentResolver(), new LoginUserArgumentResolver("secretKey"))
                 .setControllerAdvice(GlobalControllerAdvice.class)
                 .build();
+
         objectMapper = new ObjectMapper();
+
+        parent = Parent.builder()
+                .id(1L)
+                .auth(Auth.PARENT)
+                .build();
+
+        center = Creator.createCenter(2L, "아이러빗어린이집", true, true, null);
+
+        prefer = Creator.createPrefer(3L, parent, center);
     }
 
     public String createJwtToken(User user){
@@ -65,10 +77,10 @@ public class CenterBookmarkControllerTest {
     }
 
     @Test
-    public void 찜한시설리스트() throws Exception {
+    @DisplayName("[success] 즐겨찾기한 시설 목록 조회 성공")
+    public void 즐겨찾기한_시설_목록_조회() throws Exception {
         // given
         String url = "/center-bookmark";
-        Parent parent = Creator.createParent();
         // when
         ResultActions result = mockMvc.perform(
                 MockMvcRequestBuilders.get(url)
@@ -79,11 +91,11 @@ public class CenterBookmarkControllerTest {
     }
 
     @Nested
-    @DisplayName("시설찜하기")
+    @DisplayName("시설 즐겨찾기")
     class savePrefer{
         @Test
-        @DisplayName("[error] 이미 찜한 시설")
-        public void 이미찜한시설() throws Exception {
+        @DisplayName("[error] 이미 즐겨찾기한 시설")
+        public void 이미_즐겨찾기한_시설() throws Exception {
             // given
             String url = "/center-bookmark/{centerId}";
             PreferErrorResult error = PreferErrorResult.ALREADY_PREFER;
@@ -124,8 +136,8 @@ public class CenterBookmarkControllerTest {
         }
 
         @Test
-        @DisplayName("[success] 찜하기 성공")
-        public void 찜성공() throws Exception {
+        @DisplayName("[success] 시설 즐겨찾기 성공")
+        public void 시설_즐겨찾기_성공() throws Exception {
             // given
             String url = "/center-bookmark/{centerId}";
             // when
@@ -138,11 +150,11 @@ public class CenterBookmarkControllerTest {
     }
 
     @Nested
-    @DisplayName("시설 찜 해제")
+    @DisplayName("시설 즐겨찾기 해제")
     class deletePrefer{
         @Test
         @DisplayName("[error] 유효하지 않은 시설정보")
-        public void 시설정보오류() throws Exception {
+        public void 시설_정보_오류() throws Exception {
             // given
             String url = "/center-bookmark/{centerId}";
             PreferErrorResult error = PreferErrorResult.NOT_VALID_CENTER;
@@ -162,8 +174,8 @@ public class CenterBookmarkControllerTest {
         }
 
         @Test
-        @DisplayName("[success] 찜 해제 성공")
-        public void 찜해제성공() throws Exception {
+        @DisplayName("[success] 즐겨찾기 해제 성공")
+        public void 시설_즐겨찾기_해제성공() throws Exception {
             // given
             String url = "/center-bookmark/{centerId}";
             // when
