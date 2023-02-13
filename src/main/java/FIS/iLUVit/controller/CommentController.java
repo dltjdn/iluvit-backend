@@ -25,10 +25,10 @@ public class CommentController {
      작성시간: 2022/06/27 10:09 AM
      내용: comment_id 값이 null일 경우 댓글 작성, comment_id 값까지 보내는 경우 대댓글 작성
     */
-    @PostMapping("")
+    @PostMapping(value={"{postId}","{postId}/{commentId}"})
     public Long registerComment(@Login Long userId,
-                                @RequestParam("post_id") Long postId,
-                                @RequestParam(value = "comment_id", required = false) Long commentId,
+                                @PathVariable("postId") Long postId,
+                                @PathVariable(required = false, value="commentId") Long commentId,
                                 @RequestBody CommentRequest request) {
 
         return commentService.registerComment(userId, postId, commentId, request);
@@ -38,10 +38,10 @@ public class CommentController {
      작성자: 이창윤
      작성시간: 2022/06/27 10:14 AM
      내용: 댓글 삭제, 댓글 데이터 지우지 않고 내용(content), 작성자(user)만 null로 변경
-    */
-    @PatchMapping("")
+     */
+    @PatchMapping("{commentId}")
     public Long deleteComment(@Login Long userId,
-                              @RequestParam("comment_id") Long commentId) {
+                              @PathVariable("commentId") Long commentId) {
         return commentService.deleteComment(userId, commentId);
         // 삭제하면 그 대댓글까지 삭제? or 대댓글은 남김?
     }
