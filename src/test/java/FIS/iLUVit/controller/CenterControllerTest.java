@@ -1,10 +1,7 @@
 package FIS.iLUVit.controller;
 
-import FIS.iLUVit.Creator;
 import FIS.iLUVit.config.argumentResolver.LoginUserArgumentResolver;
 import FIS.iLUVit.dto.center.CenterBannerResponse;
-import FIS.iLUVit.dto.center.CenterDto;
-import FIS.iLUVit.dto.center.CenterRequest;
 import FIS.iLUVit.dto.center.CenterDetailRequest;
 import FIS.iLUVit.controller.messagecreate.ResponseRequests;
 import FIS.iLUVit.domain.Center;
@@ -20,8 +17,6 @@ import FIS.iLUVit.exception.UserException;
 import FIS.iLUVit.exception.exceptionHandler.ErrorResponse;
 import FIS.iLUVit.exception.exceptionHandler.controllerAdvice.GlobalControllerAdvice;
 import FIS.iLUVit.service.CenterService;
-import FIS.iLUVit.service.ChildService;
-import FIS.iLUVit.service.TeacherService;
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.algorithms.Algorithm;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -34,9 +29,6 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.SliceImpl;
 import org.springframework.data.web.PageableHandlerMethodArgumentResolver;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
@@ -367,42 +359,7 @@ class CenterControllerTest extends ResponseRequests {
                     )));
         }
 
-//        @Test
-//        @DisplayName("[success] 시설 수정 성공")
-//        public void 시설수정성공() throws Exception {
-//            MockMultipartHttpServletRequestBuilder builder = MockMvcRequestBuilders.multipart("/center/1");
-//            builder.with(new RequestPostProcessor() {
-//                @Override
-//                public MockHttpServletRequest postProcessRequest(MockHttpServletRequest request) {
-//                    request.setMethod(HttpMethod.PATCH.toString());
-//                    return request;
-//                }
-//            });
 //
-//            Mockito.doReturn(1L)
-//                    .when(centerService).modifyCenterInfo(any(Long.class), any(Long.class), any(CenterDetailRequest.class));
-//
-//            MockMultipartFile requestDto = new MockMultipartFile("requestDto", null,
-//                    "application/json", objectMapper.writeValueAsString(rightRequest).getBytes());
-//
-//
-//
-//            //when
-//            ResultActions result = mockMvc.perform(
-//                    builder.file("infoImages", multipartFile.getBytes())
-//                            .file("profileImage", multipartFile.getBytes())
-//                            .file(requestDto)
-//                            .header(HttpHeaders.AUTHORIZATION, createJwtToken(createParent(1L)))
-//                            .contentType(MediaType.APPLICATION_FORM_URLENCODED)
-//            );
-//
-//            //then
-//            result.andDo(print())
-//                    .andExpect(status().isAccepted())
-//                    .andExpect(content().json(objectMapper.writeValueAsString(
-//                            1L
-//                    )));
-//        }
 
         @Test
         @DisplayName("[success] 시설 수정 성공")
