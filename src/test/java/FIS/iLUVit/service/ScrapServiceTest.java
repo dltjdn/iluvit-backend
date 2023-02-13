@@ -1,7 +1,6 @@
 package FIS.iLUVit.service;
 
 import FIS.iLUVit.Creator;
-import FIS.iLUVit.controller.dto.scrap.*;
 import FIS.iLUVit.domain.*;
 import FIS.iLUVit.dto.scrap.*;
 import FIS.iLUVit.exception.ScrapErrorResult;
