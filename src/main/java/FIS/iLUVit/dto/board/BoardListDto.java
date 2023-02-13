@@ -35,8 +35,8 @@ public class BoardListDto {
         }
     }
 
-    public BoardListDto(Long center_id, String center_name) {
-        this.center_id = center_id;
+    public BoardListDto(Long centerId, String center_name) {
+        this.center_id = centerId;
         this.center_name = center_name;
     }
 

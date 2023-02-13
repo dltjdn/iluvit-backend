@@ -17,7 +17,7 @@ public class CenterSearchMapFilterDto {
     @NotNull
     private double latitude;
     @NotNull
-    private KindOf kindOf;                  // 시설 종류
+    private KindOf kindOf;                  // 시설종류
 
     private List<Long> centerIds = new ArrayList<>();
 

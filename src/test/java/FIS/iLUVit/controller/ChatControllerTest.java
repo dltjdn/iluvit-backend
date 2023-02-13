@@ -132,7 +132,7 @@ class ChatControllerTest {
         //given
         request.setMessage("안녕");
         request.setPost_id(post1.getId());
-        final String url = "/user/chat";
+        final String url = "/chat";
         final ChatErrorResult error = ChatErrorResult.UNAUTHORIZED_USER_ACCESS;
 
         Mockito.doThrow(new ChatException(error))
@@ -159,7 +159,7 @@ class ChatControllerTest {
         request.setMessage("안녕");
         request.setPost_id(post1.getId());
 
-        final String url = "/user/chat";
+        final String url = "/chat";
         final ChatErrorResult error = ChatErrorResult.NO_SEND_TO_SELF;
 
         Mockito.doThrow(new ChatException(error))
@@ -188,7 +188,7 @@ class ChatControllerTest {
         //given
         request.setMessage("안녕");
         request.setPost_id(post1.getId());
-        final String url = "/user/chat";
+        final String url = "/chat";
         final ChatErrorResult error = ChatErrorResult.USER_NOT_EXIST;
 
         Mockito.doThrow(new ChatException(error))
@@ -215,7 +215,7 @@ class ChatControllerTest {
         //given
         request.setMessage("안녕");
         request.setPost_id(post1.getId());
-        final String url = "/user/chat";
+        final String url = "/chat";
         final ChatErrorResult error = ChatErrorResult.POST_NOT_EXIST;
 
         Mockito.doThrow(new ChatException(error))
@@ -242,7 +242,7 @@ class ChatControllerTest {
         //given
         request.setMessage("안녕");
         request.setPost_id(post1.getId());
-        final String url = "/user/chat";
+        final String url = "/chat";
 
         Mockito.doReturn(chat2.getId())
                 .when(chatService)
@@ -269,7 +269,7 @@ class ChatControllerTest {
         roomRequest.setRoom_id(chatRoom1.getId());
         roomRequest.setMessage("안녕");
 
-        final String url = "/user/chat/inRoom";
+        final String url = "/chat/in-room";
         final ChatErrorResult error = ChatErrorResult.UNAUTHORIZED_USER_ACCESS;
         Mockito.doThrow(new ChatException(error))
                 .when(chatService)
@@ -295,7 +295,7 @@ class ChatControllerTest {
         roomRequest.setRoom_id(chatRoom1.getId());
         roomRequest.setMessage("안녕");
 
-        final String url = "/user/chat/inRoom";
+        final String url = "/chat/in-room";
         final ChatErrorResult error = ChatErrorResult.ROOM_NOT_EXIST;
         Mockito.doThrow(new ChatException(error))
                 .when(chatService)
@@ -322,7 +322,7 @@ class ChatControllerTest {
         roomRequest.setRoom_id(chatRoom1.getId());
         roomRequest.setMessage("안녕");
 
-        final String url = "/user/chat/inRoom";
+        final String url = "/chat/in-room";
         final ChatErrorResult error = ChatErrorResult.WITHDRAWN_MEMBER;
         Mockito.doThrow(new ChatException(error))
                 .when(chatService)
@@ -349,7 +349,7 @@ class ChatControllerTest {
         roomRequest.setRoom_id(chatRoom1.getId());
         roomRequest.setMessage("안녕");
 
-        final String url = "/user/chat/inRoom";
+        final String url = "/chat/in-room";
         final ChatErrorResult error = ChatErrorResult.NO_SEND_TO_SELF;
         Mockito.doThrow(new ChatException(error))
                 .when(chatService)
@@ -376,7 +376,7 @@ class ChatControllerTest {
         roomRequest.setRoom_id(chatRoom1.getId());
         roomRequest.setMessage("안녕");
 
-        final String url = "/user/chat/inRoom";
+        final String url = "/chat/in-room";
 
         Mockito.doReturn(chat1.getId())
                 .when(chatService)
@@ -404,7 +404,7 @@ class ChatControllerTest {
         List<ChatListDto> dtoList = List.of(chatListDTO);
         Slice<ChatListDto> chatListDTOSlice = new SliceImpl<>(dtoList);
 
-        final String url = "/user/chat/list";
+        final String url = "/chat";
 
         Mockito.doReturn(chatListDTOSlice)
                 .when(chatService)
@@ -436,7 +436,7 @@ class ChatControllerTest {
                 .findByOpponent(any(), any(), any());
 
         //when
-        final String url = "/user/chat/{room_id}";
+        final String url = "/chat/{roomId}";
         ResultActions resultActions = mockMvc.perform(
                 MockMvcRequestBuilders.get(url, chatRoom1.getId())
                         .param("page", "0")
@@ -452,7 +452,7 @@ class ChatControllerTest {
     @Test
     public void 대화방_삭제_탈퇴한_유저() throws Exception {
         //given
-        final String url = "/user/chat/{room_id}";
+        final String url = "/chat/{roomId}";
         ChatErrorResult error = ChatErrorResult.WITHDRAWN_MEMBER;
         Mockito.doThrow(new ChatException(error))
                 .when(chatService)
@@ -473,7 +473,7 @@ class ChatControllerTest {
     @Test
     public void 대화방_삭제_권한없는_유저() throws Exception {
         //given
-        final String url = "/user/chat/{room_id}";
+        final String url = "/chat/{roomId}";
         ChatErrorResult error = ChatErrorResult.UNAUTHORIZED_USER_ACCESS;
         Mockito.doThrow(new ChatException(error))
                 .when(chatService)
@@ -494,7 +494,7 @@ class ChatControllerTest {
     @Test
     public void 대화방_삭제_성공() throws Exception {
         //given
-        final String url = "/user/chat/{room_id}";
+        final String url = "/chat/{roomId}";
         Mockito.doReturn(chatRoom1.getId())
                 .when(chatService)
                 .deleteChatRoom(any(), any());
