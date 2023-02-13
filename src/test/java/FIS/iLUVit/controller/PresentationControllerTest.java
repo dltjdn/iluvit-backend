@@ -62,13 +62,11 @@ class PresentationControllerTest {
 
     @Mock
     PresentationService presentationService;
-
     @InjectMocks
     PresentationController target;
 
     MockMvc mockMvc;
     ObjectMapper objectMapper;
-
     User user;
 
     @BeforeEach
@@ -219,38 +217,6 @@ class PresentationControllerTest {
                     )));
         }
 
-//        @Test
-//        @DisplayName("[success] 설명회 저장 성공")
-//        public void 저장성공() throws Exception {
-//            MockMultipartHttpServletRequestBuilder builder = MockMvcRequestBuilders.multipart("/presentation");
-//
-//            Presentation presentation = createValidPresentation();
-//            PtDate ptDate1 = createPtDate(1L);
-//            PtDate ptDate2 = createPtDate(2L);
-//            presentation.getPtDates().add(ptDate1);
-//            presentation.getPtDates().add(ptDate2);
-//            MockMultipartFile requestDto = new MockMultipartFile("request", null,
-//                    "application/json", objectMapper.writeValueAsString(request).getBytes());
-//
-//            Mockito.doReturn(presentation)
-//                    .when(presentationService).saveInfoWithPtDate(any(PresentationDetailRequest.class), any(Long.class));
-//
-//            //when
-//            ResultActions result = mockMvc.perform(
-//                    builder.file("images", multipartFile.getBytes())
-//                            .file(requestDto)
-//                            .contentType(MediaType.APPLICATION_FORM_URLENCODED)
-//                            .header(HttpHeaders.AUTHORIZATION, createJwtToken())
-//            );
-//
-//            //then
-//            result.andDo(print())
-//                    .andExpect(status().isCreated())
-//                    .andExpect(content().json(objectMapper.writeValueAsString(
-//                            new PresentationResponse(presentation)
-//                    )));
-//        }
-
         @Test
         @DisplayName("[success] 설명회 정보 저장 성공")
         public void 정보저장성공_APP용() throws Exception {
@@ -307,9 +273,7 @@ class PresentationControllerTest {
                     .andExpect(content().json(objectMapper.writeValueAsString(
                             new PresentationResponse(presentation)
                     )));
-
         }
-
 
     }
 
