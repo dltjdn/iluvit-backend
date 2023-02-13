@@ -39,7 +39,7 @@ public class ParentController {
      * 작성자: 이승범
      * 작성내용: 학부모 정보 수정
      */
-    @PostMapping("")
+    @PatchMapping("")
     public ParentDetailResponse updateParentDetail(@Login Long id, @Valid @ModelAttribute ParentDetailRequest request) throws IOException {
         return parentService.updateDetail(id, request);
     }
