@@ -85,6 +85,9 @@ dependencies {
 	// 스프링 상태 검사
 	implementation 'org.springframework.boot:spring-boot-starter-actuator'
 
+	// spring-security-test가 제공하는 csrf() 옵션 추가
+	testImplementation 'org.springframework.security:spring-security-test'
+
 }
 
 // 서순이 중요하다 test -> jacocoTestReport -> jacocoTestCoverageVerification 순서로 task 진행
