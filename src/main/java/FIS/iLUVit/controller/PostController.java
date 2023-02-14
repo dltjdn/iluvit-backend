@@ -1,20 +1,18 @@
 package FIS.iLUVit.controller;
 
 import FIS.iLUVit.config.argumentResolver.Login;
+import FIS.iLUVit.domain.enumtype.Auth;
 import FIS.iLUVit.dto.board.BoardPreviewDto;
 import FIS.iLUVit.dto.post.PostPreviewDto;
 import FIS.iLUVit.dto.post.PostRequest;
 import FIS.iLUVit.dto.post.PostResponse;
-import FIS.iLUVit.dto.post.PostSearchRequest;
 import FIS.iLUVit.service.PostService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
-import org.springframework.http.MediaType;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 
@@ -93,9 +91,9 @@ public class PostController {
      */
     @GetMapping("search/all")
     public Slice<PostPreviewDto> searchPost(@Login Long userId,
-                                            @RequestParam("input") String input,
+                                            @RequestParam("input") String keyword,
                                             Pageable pageable) {
-        return postService.searchByKeyword(input, userId, pageable);
+        return postService.searchByKeyword(keyword, userId, pageable);
     }
 
     /**
@@ -106,10 +104,11 @@ public class PostController {
     @GetMapping("search/in-center")
     public Slice<PostPreviewDto> searchPostByCenter(
             @Login Long userId,
-            @ModelAttribute PostSearchRequest requestDto,
+            @RequestParam("center_id") Long centerId,
+            @RequestParam("input") String keyword,
+            @RequestParam("auth") Auth auth,
             Pageable pageable) {
-        return postService.searchByKeywordAndCenter(requestDto.getCenter_id(), requestDto.getInput()
-                , requestDto.getAuth(), userId, pageable);
+        return postService.searchByKeywordAndCenter(centerId, keyword, auth, userId, pageable);
     }
 
     /**
@@ -120,9 +119,9 @@ public class PostController {
     @GetMapping("search/in-board")
     public Slice<PostPreviewDto> searchPostByBoard(
             @RequestParam("board_id") Long boardId,
-            @RequestParam(value = "input", required = false) String input,
+            @RequestParam("input") String keyword,
             Pageable pageable) {
-        return postService.searchByKeywordAndBoard(boardId, input, pageable);
+        return postService.searchByKeywordAndBoard(boardId, keyword, pageable);
     }
 
     /**
