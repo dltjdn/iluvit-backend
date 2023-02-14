@@ -1,9 +1,7 @@
 package FIS.iLUVit.controller;
 
 import FIS.iLUVit.config.argumentResolver.LoginUserArgumentResolver;
-import FIS.iLUVit.dto.parent.ParticipationRequest;
 import FIS.iLUVit.dto.presentation.PtDateRequest;
-import FIS.iLUVit.dto.waiting.WaitingRegisterDto;
 import FIS.iLUVit.domain.Parent;
 import FIS.iLUVit.domain.User;
 import FIS.iLUVit.domain.enumtype.Auth;
@@ -240,11 +238,11 @@ class ParticipationControllerTest {
         @DisplayName("[error] 로그인 안함")
         public void 로그인X() throws Exception {
             //given
-            final String url = "/participation";
+            final Long participationId = 1L;
+            final String url = "/participation/{participationId}";
             //when
             ResultActions resultActions = mockMvc.perform(
-                    MockMvcRequestBuilders.patch(url)
-                            .content(objectMapper.writeValueAsString(new WaitingRegisterDto(1L)))
+                    MockMvcRequestBuilders.patch(url, participationId)
                             .contentType(MediaType.APPLICATION_JSON)
             );
 
@@ -258,39 +256,42 @@ class ParticipationControllerTest {
         }
         @Test
         @DisplayName("[error] 잘못 요청시 오류 발생")
-        public void 잘못된participationId요청() throws Exception {
+        public void 잘못된_participationId_요청() throws Exception {
             //given
-            final String url = "/participation";
+            final Long participationId = -1L;
+            final String url = "/participation/{participationId}";
             String jwtToken = createJwtToken();
+            Mockito.doThrow(new ParticipationException(ParticipationErrorResult.WRONG_PARTICIPATIONID_REQUEST))
+                    .when(participationService).cancel(1L, -1L);
+
             //when
             ResultActions resultActions = mockMvc.perform(
-                    MockMvcRequestBuilders.patch(url)
-                            .content(objectMapper.writeValueAsString(new ParticipationRequest(-1L)))
+                    MockMvcRequestBuilders.patch(url, participationId)
                             .header(HttpHeaders.AUTHORIZATION, jwtToken)
                             .contentType(MediaType.APPLICATION_JSON)
             );
 
             //then
             resultActions.andDo(print())
-                    .andExpect(status().isBadRequest())
+                    .andExpect(status().isIAmATeapot())
                     .andExpect(content().json(objectMapper.writeValueAsString(
-                            new ErrorResponse(HttpStatus.BAD_REQUEST
-                                    , "[올바르지 않은 participationId 입니다]")
+                            new ErrorResponse(HttpStatus.I_AM_A_TEAPOT
+                                    , "올바르지 않은 participationId 입니다")
                     )));
         }
 
         @Test
         @DisplayName("[error] 잘못된 요청으로 service 오류 발생")
-        public void 잘못된요청으로service오류발생() throws Exception {
+        public void 잘못된_요청으로_service_오류_발생() throws Exception {
             //given
-            final String url = "/participation";
+            final Long participationId = 1L;
+            final String url = "/participation/{participationId}";
             String jwtToken = createJwtToken();
-            Mockito.doThrow(new ParticipationException(ParticipationErrorResult.WRONG_PARTICIPATIONID_REQUEST))
+            Mockito.doThrow(new ParticipationException(ParticipationErrorResult.NO_RESULT))
                     .when(participationService).cancel(1L, 1L);
             //when
             ResultActions resultActions = mockMvc.perform(
-                    MockMvcRequestBuilders.patch(url)
-                            .content(objectMapper.writeValueAsString(new ParticipationRequest(1L)))
+                    MockMvcRequestBuilders.patch(url, participationId)
                             .header(HttpHeaders.AUTHORIZATION, jwtToken)
                             .contentType(MediaType.APPLICATION_JSON)
             );
@@ -306,16 +307,16 @@ class ParticipationControllerTest {
 
         @Test
         @DisplayName("[success] 설명회 취소 성공")
-        public void 설명회취소성공() throws Exception {
+        public void 설명회_취소_성공() throws Exception {
             //given
-            final String url = "/participation";
+            final Long participationId = 1L;
+            final String url = "/participation/{participationId}";
             String jwtToken = createJwtToken();
             Mockito.doReturn(1L)
                     .when(participationService).cancel(1L, 1L);
             //when
             ResultActions resultActions = mockMvc.perform(
-                    MockMvcRequestBuilders.patch(url)
-                            .content(objectMapper.writeValueAsString(new ParticipationRequest(1L)))
+                    MockMvcRequestBuilders.patch(url, participationId)
                             .header(HttpHeaders.AUTHORIZATION, jwtToken)
                             .contentType(MediaType.APPLICATION_JSON)
             );
