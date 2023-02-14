@@ -2,7 +2,6 @@ package FIS.iLUVit.controller;
 
 import FIS.iLUVit.config.argumentResolver.Login;
 import FIS.iLUVit.dto.parent.ParticipationListDto;
-import FIS.iLUVit.dto.parent.ParticipationRequest;
 import FIS.iLUVit.dto.presentation.PtDateRequest;
 import FIS.iLUVit.domain.enumtype.Status;
 import FIS.iLUVit.exception.UserErrorResult;
@@ -46,12 +45,12 @@ public class ParticipationController {
      * 설명회 취소
      * 대가자 있을 경우 자동 합류
      */
-    @PatchMapping("")
+    @PatchMapping("{participationId}")
     @ResponseStatus(HttpStatus.ACCEPTED)
-    public Long cancel(@Login Long userId, @RequestBody @Validated ParticipationRequest dto){
+    public Long cancel(@Login Long userId, @PathVariable("participationId") Long participationId){
         if(userId == null)
             throw new UserException(UserErrorResult.NOT_LOGIN);
-        return participationService.cancel(userId, dto.getParticipationId());
+        return participationService.cancel(userId, participationId);
     }
 
     /**

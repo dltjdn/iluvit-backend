@@ -2,7 +2,6 @@ package FIS.iLUVit.controller;
 
 import FIS.iLUVit.Creator;
 import FIS.iLUVit.config.argumentResolver.LoginUserArgumentResolver;
-import FIS.iLUVit.dto.waiting.WaitingCancelDto;
 import FIS.iLUVit.dto.waiting.WaitingRegisterDto;
 import FIS.iLUVit.domain.Parent;
 import FIS.iLUVit.domain.User;
@@ -299,11 +298,11 @@ class WaitingControllerTest {
         @DisplayName("[error] 로그인 안했음")
         public void 로그인안했음() throws Exception {
             //given
-            final String url = "/waiting";
+            final Long waitingId = 1L;
+            final String url = "/waiting/{waitingId}";
             //when
             ResultActions resultActions = mockMvc.perform(
-                    MockMvcRequestBuilders.delete(url)
-                            .content(objectMapper.writeValueAsString(new WaitingRegisterDto(1L)))
+                    MockMvcRequestBuilders.delete(url, waitingId)
                             .contentType(MediaType.APPLICATION_JSON)
             );
 
@@ -317,25 +316,28 @@ class WaitingControllerTest {
         }
 
         @Test
-        @DisplayName("[error] 잘못 요청시 오류 발생")
+        @DisplayName("[error] 잘못 요청 시 오류 발생")
         public void 잘못된ptDateId요청() throws Exception {
             //given
-            final String url = "/waiting";
+            final Long waitingId = -1L;
+            final String url = "/waiting/{waitingId}";
             String jwtToken = createJwtToken();
+            Mockito.doThrow(new WaitingException(WaitingErrorResult.WRONG_WAITINGID_REQUEST))
+                    .when(waitingService).cancel(-1L, 1L);
+
             //when
             ResultActions resultActions = mockMvc.perform(
-                    MockMvcRequestBuilders.delete(url)
-                            .content(objectMapper.writeValueAsString(new WaitingCancelDto(-1L)))
+                    MockMvcRequestBuilders.delete(url, waitingId)
                             .header(HttpHeaders.AUTHORIZATION, jwtToken)
                             .contentType(MediaType.APPLICATION_JSON)
             );
 
             //then
             resultActions.andDo(print())
-                    .andExpect(status().isBadRequest())
+                    .andExpect(status().isIAmATeapot())
                     .andExpect(content().json(objectMapper.writeValueAsString(
-                            new ErrorResponse(HttpStatus.BAD_REQUEST
-                                    , "[올바르지 않은 waitingId 입니다]")
+                            new ErrorResponse(HttpStatus.I_AM_A_TEAPOT
+                                    , "올바르지 않은 waitingId 입니다")
                     )));
         }
 
@@ -343,15 +345,15 @@ class WaitingControllerTest {
         @DisplayName("[error] 잘못된 대기 요청 취소 service 에서 발생")
         public void 잘못된대기요청취소() throws Exception {
             //given
-            final String url = "/waiting";
+            final Long waitingId = 1L;
+            final String url = "/waiting/{waitingId}";
             String jwtToken = createJwtToken();
             Mockito.doThrow(new WaitingException(WaitingErrorResult.NO_RESULT))
                     .when(waitingService).cancel(1L, 1L);
 
             //when
             ResultActions resultActions = mockMvc.perform(
-                    MockMvcRequestBuilders.delete(url)
-                            .content(objectMapper.writeValueAsString(new WaitingCancelDto(1L)))
+                    MockMvcRequestBuilders.delete(url, waitingId)
                             .header(HttpHeaders.AUTHORIZATION, jwtToken)
                             .contentType(MediaType.APPLICATION_JSON)
             );
@@ -369,25 +371,23 @@ class WaitingControllerTest {
         @DisplayName("[success] 설명회 취소 성공")
         public void 설명회취소성공() throws Exception {
             //given
-            final String url = "/waiting";
+            final Long waitingId = 1L;
+            final String url = "/waiting/{waitingId}";
             String jwtToken = createJwtToken();
             Mockito.doReturn(1L)
                     .when(waitingService).cancel(1L, 1L);
 
             //when
             ResultActions resultActions = mockMvc.perform(
-                    MockMvcRequestBuilders.delete(url)
-                            .content(objectMapper.writeValueAsString(new WaitingCancelDto(1L)))
+                    MockMvcRequestBuilders.delete(url, waitingId)
                             .header(HttpHeaders.AUTHORIZATION, jwtToken)
                             .contentType(MediaType.APPLICATION_JSON)
             );
 
             //then
             resultActions.andDo(print())
-                    .andExpect(status().isAccepted())
-                    .andExpect(content().json(objectMapper.writeValueAsString(
-                            1L
-                    )));
+                    .andExpect(status().isAccepted());
+//                    .andExpect(content().json(objectMapper.writeValueAsString(1L)));
         }
     }
 

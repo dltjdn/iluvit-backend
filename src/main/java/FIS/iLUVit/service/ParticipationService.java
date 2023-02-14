@@ -87,8 +87,11 @@ public class ParticipationService {
 
     public Long cancel(Long userId, Long participationId) {
 
+        if(participationId < 0)
+            throw new ParticipationException(ParticipationErrorResult.WRONG_PARTICIPATIONID_REQUEST);
+
         Participation participation = participationRepository.findByIdAndStatusWithPtDate(participationId, userId)
-                .orElseThrow(() -> new ParticipationException(ParticipationErrorResult.WRONG_PARTICIPATIONID_REQUEST));
+                .orElseThrow(() -> new ParticipationException(ParticipationErrorResult.NO_RESULT));
         // ptDate cnt 값을 1줄여야 한다.
         participation.cancel();
         PtDate ptDate = participation.getPtDate();
