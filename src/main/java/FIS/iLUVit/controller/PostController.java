@@ -30,30 +30,27 @@ public class PostController {
      * COMMON
      */
 
-    /**
-     * 작성자: 이창윤
-     * 작성시간: 2022/06/27 11:31 AM
-     * 내용: multipart/form-data 형식으로 변환된 request, 이미지 파일 리스트 images 파라미터로 게시글 저장
-     */
-    @PostMapping(value = "", consumes = {MediaType.APPLICATION_JSON_VALUE, MediaType.MULTIPART_FORM_DATA_VALUE})
-//    @ResponseStatus(HttpStatus.ACCEPTED)
-    public Long registerPost(@Login Long userId,
-                             @RequestPart(required = false) List<MultipartFile> images,
-                             @RequestPart @Validated PostRequest request) {
-        return postService.savePost(request, images, userId);
-    }
+//    /**
+//     * 작성자: 이창윤
+//     * 작성시간: 2022/06/27 11:31 AM
+//     * 내용: multipart/form-data 형식으로 변환된 request, 이미지 파일 리스트 images 파라미터로 게시글 저장
+//     */
+//    @PostMapping(value = "", consumes = {MediaType.APPLICATION_JSON_VALUE, MediaType.MULTIPART_FORM_DATA_VALUE})
+//    public Long registerPost(@Login Long userId,
+//                             @RequestPart(required = false) List<MultipartFile> images,
+//                             @RequestPart @Validated PostRequest request) {
+//        return postService.savePost(request, images, userId);
+//    }
 
     /**
      * 작성자: 이창윤
      * 작성시간: 2022/06/27 11:31 AM
-     * 내용: 리액트 네이티브용 게시글 저장
+     * 내용: 게시글 저장
      */
-    @PostMapping(value = "react-native", consumes = {MediaType.APPLICATION_JSON_VALUE, MediaType.MULTIPART_FORM_DATA_VALUE})
+    @PostMapping("")
     public Long registerPostTemp(@Login Long userId,
-                                 @RequestPart(required = false) List<MultipartFile> images,
-                                 @ModelAttribute("request") @Validated PostRequest request) {
-        log.info("PostRegisterRequest = {}", request);
-        return postService.savePost(request, images, userId);
+                                 @ModelAttribute @Validated PostRequest request) {
+        return postService.savePost(request, userId);
     }
 
     /**

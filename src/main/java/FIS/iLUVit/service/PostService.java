@@ -44,7 +44,7 @@ public class PostService {
 
 //    private final Integer heartCriteria = 2; // HOT 게시판 좋아요 기준
 
-    public Long savePost(PostRequest request, List<MultipartFile> images, Long userId) {
+    public Long savePost(PostRequest request, Long userId) {
         if (userId == null) {
             throw new UserException(UserErrorResult.NOT_VALID_TOKEN);
         }
@@ -59,18 +59,12 @@ public class PostService {
                 throw new PostException(PostErrorResult.PARENT_NOT_ACCESS_NOTICE);
             }
         }
-
-
+        List<MultipartFile> images = request.getImages();
         Integer imgSize = (images == null ? 0 : images.size());
         Post post = new Post(request.getTitle(), request.getContent(), request.getAnonymous(),
                 0, 0, 0, imgSize, 0, findBoard, findUser);
         Post savedPost = postRepository.save(post); // 게시글 저장 -> Id 생김
         imageService.saveInfoImages(images, post);
-
-//        if (imgSize > 0) {
-//            String imagePath = imageService.getPostDir(savedPost.getId()); // id로 경로얻어서 이미지 저장
-//            imageService.saveInfoImage(images, imagePath);
-//        }
 
         return savedPost.getId();
 
