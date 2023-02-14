@@ -62,13 +62,11 @@ class PresentationControllerTest {
 
     @Mock
     PresentationService presentationService;
-
     @InjectMocks
     PresentationController target;
 
     MockMvc mockMvc;
     ObjectMapper objectMapper;
-
     User user;
 
     @BeforeEach
@@ -136,9 +134,8 @@ class PresentationControllerTest {
 
             //when
             ResultActions result = mockMvc.perform(
-                    builder.file("images", multipartFile.getBytes())
-                            .file(requestDto)
-                            .contentType(MediaType.APPLICATION_FORM_URLENCODED)
+                    builder.content(objectMapper.writeValueAsString(request))
+                            .contentType(MediaType.APPLICATION_JSON)
             );
 
             //then
@@ -160,9 +157,8 @@ class PresentationControllerTest {
 
             //when
             ResultActions result = mockMvc.perform(
-                    builder.file("images", multipartFile.getBytes())
-                            .file(requestDto)
-                            .contentType(MediaType.APPLICATION_FORM_URLENCODED)
+                    builder.content(objectMapper.writeValueAsString(request))
+                            .contentType(MediaType.APPLICATION_JSON)
                             .header(HttpHeaders.AUTHORIZATION, createJwtToken())
             );
 
@@ -183,9 +179,8 @@ class PresentationControllerTest {
 
             //when
             ResultActions result = mockMvc.perform(
-                    builder.file("images", multipartFile.getBytes())
-                            .file(requestDto)
-                            .contentType(MediaType.APPLICATION_FORM_URLENCODED)
+                    builder.content(objectMapper.writeValueAsString(request))
+                            .contentType(MediaType.APPLICATION_JSON)
                             .header(HttpHeaders.AUTHORIZATION, createJwtToken())
             );
 
@@ -209,9 +204,8 @@ class PresentationControllerTest {
 
             //when
             ResultActions result = mockMvc.perform(
-                    builder.file("images", multipartFile.getBytes())
-                            .file(requestDto)
-                            .contentType(MediaType.APPLICATION_FORM_URLENCODED)
+                    builder.content(objectMapper.writeValueAsString(request))
+                            .contentType(MediaType.APPLICATION_JSON)
                             .header(HttpHeaders.AUTHORIZATION, createJwtToken())
             );
 
@@ -224,41 +218,9 @@ class PresentationControllerTest {
         }
 
         @Test
-        @DisplayName("[success] 설명회 저장 성공")
-        public void 저장성공() throws Exception {
-            MockMultipartHttpServletRequestBuilder builder = MockMvcRequestBuilders.multipart("/presentation");
-
-            Presentation presentation = createValidPresentation();
-            PtDate ptDate1 = createPtDate(1L);
-            PtDate ptDate2 = createPtDate(2L);
-            presentation.getPtDates().add(ptDate1);
-            presentation.getPtDates().add(ptDate2);
-            MockMultipartFile requestDto = new MockMultipartFile("request", null,
-                    "application/json", objectMapper.writeValueAsString(request).getBytes());
-
-            Mockito.doReturn(presentation)
-                    .when(presentationService).saveInfoWithPtDate(any(PresentationDetailRequest.class), any(Long.class));
-
-            //when
-            ResultActions result = mockMvc.perform(
-                    builder.file("images", multipartFile.getBytes())
-                            .file(requestDto)
-                            .contentType(MediaType.APPLICATION_FORM_URLENCODED)
-                            .header(HttpHeaders.AUTHORIZATION, createJwtToken())
-            );
-
-            //then
-            result.andDo(print())
-                    .andExpect(status().isCreated())
-                    .andExpect(content().json(objectMapper.writeValueAsString(
-                            new PresentationResponse(presentation)
-                    )));
-        }
-
-        @Test
         @DisplayName("[success] 설명회 정보 저장 성공")
         public void 정보저장성공_APP용() throws Exception {
-            MockMultipartHttpServletRequestBuilder builder = MockMvcRequestBuilders.multipart("/presentation/info");
+            MockMultipartHttpServletRequestBuilder builder = MockMvcRequestBuilders.multipart("/presentation");
 
             Presentation presentation = createValidPresentation();
             PtDate ptDate1 = createPtDate(1L);
@@ -287,7 +249,7 @@ class PresentationControllerTest {
         @Test
         @DisplayName("[success] 설명회 이미지 저장 성공")
         public void 이미지저장성공_APP용() throws Exception {
-            MockMultipartHttpServletRequestBuilder builder = MockMvcRequestBuilders.multipart("/presentation/images");
+            MockMultipartHttpServletRequestBuilder builder = MockMvcRequestBuilders.multipart("/presentation/1/image");
 
             Presentation presentation = createValidPresentation();
             PtDate ptDate1 = createPtDate(1L);
@@ -301,7 +263,6 @@ class PresentationControllerTest {
             //when
             ResultActions result = mockMvc.perform(
                     builder.file("images", multipartFile.getBytes())
-                            .param("presentationId", presentation.getId().toString())
                             .contentType(MediaType.MULTIPART_FORM_DATA)
                             .header(HttpHeaders.AUTHORIZATION, createJwtToken())
             );
@@ -312,9 +273,7 @@ class PresentationControllerTest {
                     .andExpect(content().json(objectMapper.writeValueAsString(
                             new PresentationResponse(presentation)
                     )));
-
         }
-
 
     }
 

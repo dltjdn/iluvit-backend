@@ -91,7 +91,7 @@ public class ParentControllerTest {
                 .detailAddress("detailAddress")
                 .interestAge(3)
                 .build();
-        String url = "/signup/parent";
+        String url = "/parent/signup";
         // when
         ResultActions result = mockMvc.perform(
                 MockMvcRequestBuilders.post(url)
@@ -117,7 +117,7 @@ public class ParentControllerTest {
                 .detailAddress("detailAddress")
                 .interestAge(3)
                 .build();
-        String url = "/signup/parent";
+        String url = "/parent/signup";
 
         // when
         ResultActions result = mockMvc.perform(
@@ -145,7 +145,7 @@ public class ParentControllerTest {
                 .detailAddress("detailAddress")
                 .interestAge(3)
                 .build();
-        String url = "/signup/parent";
+        String url = "/parent/signup";
         SignupErrorResult errorResult = SignupErrorResult.NOT_MATCH_PWDCHECK;
         doThrow(new SignupException(errorResult))
                 .when(parentService)
@@ -178,7 +178,7 @@ public class ParentControllerTest {
                 .detailAddress("detailAddress")
                 .interestAge(3)
                 .build();
-        String url = "/signup/parent";
+        String url = "/parent/signup";
         SignupErrorResult errorResult = SignupErrorResult.DUPLICATED_NICKNAME;
         doThrow(new SignupException(errorResult))
                 .when(parentService)
@@ -212,7 +212,7 @@ public class ParentControllerTest {
                 .detailAddress("detailAddress")
                 .interestAge(3)
                 .build();
-        String url = "/signup/parent";
+        String url = "/parent/signup";
         AuthNumberErrorResult errorResult = AuthNumberErrorResult.NOT_AUTHENTICATION;
         doThrow(new AuthNumberException(errorResult))
                 .when(parentService)
@@ -246,7 +246,7 @@ public class ParentControllerTest {
                 .detailAddress("detailAddress")
                 .interestAge(3)
                 .build();
-        String url = "/signup/parent";
+        String url = "/parent/signup";
         AuthNumberErrorResult errorResult = AuthNumberErrorResult.EXPIRED;
         doThrow(new AuthNumberException(errorResult))
                 .when(parentService)
@@ -281,7 +281,7 @@ public class ParentControllerTest {
                 .detailAddress("detailAddress")
                 .interestAge(3)
                 .build();
-        String url = "/signup/parent";
+        String url = "/parent/signup";
         // when
         ResultActions result = mockMvc.perform(
                 MockMvcRequestBuilders.post(url)
@@ -295,7 +295,7 @@ public class ParentControllerTest {
     @Test
     public void 학부모프로필조회_성공() throws Exception {
         // given
-        String url = "/parent/detail";
+        String url = "/parent";
         ParentDetailResponse response = new ParentDetailResponse();
         doReturn(response)
                 .when(parentService)
@@ -314,7 +314,7 @@ public class ParentControllerTest {
     @Test
     public void 학부모프로필수정_실패_불완전한요청() throws Exception {
         // given
-        String url = "/parent/detail";
+        String url = "/parent";
         // when
         ResultActions result = mockMvc.perform(
                 MockMvcRequestBuilders
@@ -338,7 +338,7 @@ public class ParentControllerTest {
     @Test
     public void 학부모프로필수정_성공() throws Exception {
         // given
-        String url = "/parent/detail";
+        String url = "/parent";
         // when
         ResultActions result = mockMvc.perform(
                 MockMvcRequestBuilders
@@ -356,104 +356,6 @@ public class ParentControllerTest {
                         .param("theme", objectMapper.writeValueAsString(Creator.createTheme())));
         // then
         result.andExpect(status().isOk());
-    }
-
-    @Nested
-    @DisplayName("시설찜하기")
-    class savePrefer{
-        @Test
-        @DisplayName("[error] 이미 찜한 시설")
-        public void 이미찜한시설() throws Exception {
-            // given
-            String url = "/parent/prefer/{centerId}";
-            PreferErrorResult error = PreferErrorResult.ALREADY_PREFER;
-            doThrow(new PreferException(error))
-                    .when(centerBookmarkService)
-                    .savePrefer(any(), any());
-            // when
-            ResultActions result = mockMvc.perform(
-                    MockMvcRequestBuilders.post(url, center.getId())
-                            .header("Authorization", Creator.createJwtToken(parent))
-            );
-            // then
-            result.andExpect(status().isBadRequest())
-                    .andExpect(content().json(
-                            objectMapper.writeValueAsString(new ErrorResponse(error.getHttpStatus(), error.getMessage()))
-                    ));
-        }
-
-        @Test
-        @DisplayName("[error] 잘못된 시설")
-        public void centerIdError() throws Exception {
-            // given
-            String url = "/parent/prefer/{centerId}";
-            PreferErrorResult error = PreferErrorResult.NOT_VALID_CENTER;
-            doThrow(new PreferException(error))
-                    .when(centerBookmarkService)
-                    .savePrefer(any(), any());
-            // when
-            ResultActions result = mockMvc.perform(
-                    MockMvcRequestBuilders.post(url, center.getId())
-                            .header("Authorization", parent.getId())
-            );
-            // then
-            result.andExpect(status().isIAmATeapot())
-                    .andExpect(content().json(
-                            objectMapper.writeValueAsString(new ErrorResponse(error.getHttpStatus(), error.getMessage()))
-                    ));
-        }
-
-        @Test
-        @DisplayName("[success] 찜하기 성공")
-        public void 찜성공() throws Exception {
-            // given
-            String url = "/parent/prefer/{centerId}";
-            // when
-            ResultActions result = mockMvc.perform(
-                    MockMvcRequestBuilders.post(url, center.getId())
-                            .header("Authorization", parent.getId()));
-            // then
-            result.andExpect(status().isOk());
-        }
-    }
-
-    @Nested
-    @DisplayName("시설 찜 해제")
-    class deletePrefer{
-        @Test
-        @DisplayName("[error] 유효하지 않은 시설정보")
-        public void 시설정보오류() throws Exception {
-            // given
-            String url = "/parent/prefer/{centerId}";
-            PreferErrorResult error = PreferErrorResult.NOT_VALID_CENTER;
-            doThrow(new PreferException(error))
-                    .when(centerBookmarkService)
-                    .deletePrefer(any(), any());
-            // when
-            ResultActions result = mockMvc.perform(
-                    MockMvcRequestBuilders.delete(url, center.getId())
-                            .header("Authorization", Creator.createJwtToken(parent))
-            );
-            // then
-            result.andExpect(status().isIAmATeapot())
-                    .andExpect(content().json(
-                            objectMapper.writeValueAsString(new ErrorResponse(error.getHttpStatus(), error.getMessage()))
-                    ));
-        }
-
-        @Test
-        @DisplayName("[success] 찜 해제 성공")
-        public void 찜해제성공() throws Exception {
-            // given
-            String url = "/parent/prefer/{centerId}";
-            // when
-            ResultActions result = mockMvc.perform(
-                    MockMvcRequestBuilders.delete(url, center.getId())
-                            .header("Authorization", Creator.createJwtToken(parent))
-            );
-            // then
-            result.andExpect(status().isOk());
-        }
     }
 
 }

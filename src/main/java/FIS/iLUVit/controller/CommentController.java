@@ -41,6 +41,7 @@ public class CommentController {
      작성시간: 2022/06/27 10:14 AM
      내용: 댓글 삭제, 댓글 데이터 지우지 않고 내용(content), 작성자(user)만 null로 변경
     */
+
     @PatchMapping("{commentId}")
     public Long deleteComment(@Login Long userId,
                               @PathVariable("commentId") Long commentId) {

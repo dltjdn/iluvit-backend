@@ -59,7 +59,7 @@ public class UserControllerTest {
     @Test
     public void 사용자기본정보_성공() throws Exception {
         // given
-        String url = "/user/info";
+        String url = "/user";
         doReturn(new UserResponse())
                 .when(userService)
                 .findUserInfo(any());
@@ -78,7 +78,7 @@ public class UserControllerTest {
     @Test
     public void 비밀번호변경_실패_비밀번호틀림() throws Exception {
         // given
-        String url = "/user/password";
+        String url = "/password";
         PasswordRequest request = PasswordRequest
                 .builder()
                 .originPwd("originPwd")
@@ -106,7 +106,7 @@ public class UserControllerTest {
     @Test
     public void 비밀번호변경_실패_비밀번호확인틀림() throws Exception {
         // given
-        String url = "/user/password";
+        String url = "/password";
         PasswordRequest request = PasswordRequest
                 .builder()
                 .originPwd("originPwd")
@@ -134,7 +134,7 @@ public class UserControllerTest {
     @Test
     public void 비밀번호변경_성공() throws Exception {
         // given
-        String url = "/user/password";
+        String url = "/password";
         PasswordRequest request = PasswordRequest
                 .builder()
                 .originPwd("originPwd")
@@ -160,7 +160,7 @@ public class UserControllerTest {
         @DisplayName("[error] 로그인 아이디 5자이상")
         public void 다섯자이상() throws Exception {
             // given
-            String url = "/loginid";
+            String url = "/check-loginid";
             // when
             ResultActions result = mockMvc.perform(
                     MockMvcRequestBuilders.get(url)
@@ -175,7 +175,7 @@ public class UserControllerTest {
         @DisplayName("[error] 로그인아이디 중복")
         public void 아이디중복() throws Exception {
             // given
-            String url = "/loginid";
+            String url = "/check-loginid";
             UserErrorResult error = UserErrorResult.ALREADY_LOGINID_EXIST;
             doThrow(new UserException(error))
                     .when(userService)
@@ -196,7 +196,7 @@ public class UserControllerTest {
         @DisplayName("[success] 로그인아이디 안중복")
         public void 안중복() throws Exception {
             // given
-            String url = "/loginid";
+            String url = "/check-loginid";
             // when
             ResultActions result = mockMvc.perform(
                     MockMvcRequestBuilders.get(url)
@@ -214,7 +214,7 @@ public class UserControllerTest {
         @DisplayName("[error] 닉네임 글자 수 2~10자")
         public void 닉네임글자수() throws Exception {
             // given
-            String url = "/nickname";
+            String url = "/check-nickname";
             // when
             ResultActions result = mockMvc.perform(
                     MockMvcRequestBuilders.get(url)
@@ -229,7 +229,7 @@ public class UserControllerTest {
         @DisplayName("[error] 닉네임 중복")
         public void 닉네임중복() throws Exception {
             // given
-            String url = "/nickname";
+            String url = "/check-nickname";
             UserErrorResult error = UserErrorResult.ALREADY_NICKNAME_EXIST;
             CheckNicknameRequest request = new CheckNicknameRequest("asd");
             doThrow(new UserException(error))
@@ -251,7 +251,7 @@ public class UserControllerTest {
         @DisplayName("[success] 닉네임 안중복")
         public void 닉네임안중복() throws Exception {
             // given
-            String url = "/nickname";
+            String url = "/check-nickname";
             // when
             ResultActions result = mockMvc.perform(
                     MockMvcRequestBuilders.get(url)
