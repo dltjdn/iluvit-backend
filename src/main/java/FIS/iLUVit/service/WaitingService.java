@@ -73,6 +73,10 @@ public class WaitingService {
 
     public Long cancel(Long waitingId, Long userId) {
 
+        // 잘못된 waitingId로 요청 시 오류 반환
+        if(waitingId < 0)
+            throw new WaitingException(WaitingErrorResult.WRONG_WAITINGID_REQUEST);
+
         // 검색 결과 없으면 오류 반환
         Waiting waiting = waitingRepository.findByIdWithPtDate(waitingId, userId)
                 .orElseThrow(() -> new WaitingException(WaitingErrorResult.NO_RESULT));
@@ -84,6 +88,5 @@ public class WaitingService {
 
         return waitingId;
     }
-
 
 }

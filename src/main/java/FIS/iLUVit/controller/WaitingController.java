@@ -41,12 +41,11 @@ public class WaitingController {
     /**
      * 설명회 대기 신청 취소
      */
-    @DeleteMapping("")
+    @DeleteMapping("{waitingId}")
     @ResponseStatus(HttpStatus.ACCEPTED)
-    public Long cancel(@Login Long userId, @RequestBody @Validated WaitingCancelDto dto){
+    public Long cancel(@Login Long userId, @PathVariable("waitingId") Long waitingId) {
         if(userId == null)
             throw new UserException(UserErrorResult.NOT_LOGIN);
-        Long waitingId = dto.getWaitingId();
         return waitingService.cancel(waitingId, userId);
     }
 
