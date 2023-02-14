@@ -136,17 +136,17 @@ public class UserService {
      */
     public LoginResponse refresh(TokenRefreshRequest request) {
 
-        String requestRefreshTokenToken = request.getRefreshToken().replace("Bearer ", "");
+        String requestRefreshToken = request.getRefreshToken().replace("Bearer ", "");
 
         // 요청으로 받은 refreshToken 유효한지 확인
-        jwtUtils.validateToken(requestRefreshTokenToken);
+        jwtUtils.validateToken(requestRefreshToken);
 
         // 이전에 받았던 refreshToken과 일치하는지 확인(tokenPair 유저당 하나로 유지)
-        Long userId = jwtUtils.getUserIdFromToken(requestRefreshTokenToken);
+        Long userId = jwtUtils.getUserIdFromToken(requestRefreshToken);
         TokenPair findTokenPair = tokenPairRepository.findByUserIdWithUser(userId)
                 .orElseThrow(() -> new JWTVerificationException("유효하지 않은 토큰입니다."));
 
-        if (!requestRefreshTokenToken.equals(findTokenPair.getRefreshToken())) {
+        if (!requestRefreshToken.equals(findTokenPair.getRefreshToken())) {
             throw new JWTVerificationException("중복 로그인 되었습니다.");
         }
 
