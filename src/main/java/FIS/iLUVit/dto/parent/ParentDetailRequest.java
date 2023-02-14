@@ -1,6 +1,5 @@
 package FIS.iLUVit.dto.parent;
 
-import FIS.iLUVit.domain.embeddable.Theme;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
