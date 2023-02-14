@@ -46,8 +46,6 @@ jobs:
           echo "${{ secrets.DATABASE_YML }}" > ./application-database.yml
           touch ./application-http.yml
           echo "${{ secrets.HTTP_YML }}" > ./application-http.yml
-          touch ./application-img.yml
-          echo "${{ secrets.IMG_YML }}" > ./application-img.yml
           touch ./application-map.yml
           echo "${{ secrets.MAP_YML }}" > ./application-map.yml
           touch ./application-s3.yml
@@ -58,6 +56,7 @@ jobs:
           echo "${{ secrets.SECURITY_YML }}" > ./application-security.yml
           touch ./application-ssl.yml
           echo "${{ secrets.SSL_YML }}" > ./application-ssl.yml
+
       # (4) Gradle build (Test 제외)
       - name: Build with Gradle
         run : ./gradlew clean build --exclude-task test
