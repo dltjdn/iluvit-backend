@@ -26,29 +26,26 @@ public class ScrapController {
      */
 
     /**
-     * 작성날짜: 2022/06/21 5:06 PM
      * 작성자: 이승범
-     * 작성내용: 게시물 관련 스크랩 상태 수정
+     * 작성내용: 게시물 별 폴더 내 스크랩 유무 수정
      */
-    @PutMapping("post")
-    public void scrapPost(@Login Long userId, @Valid @RequestBody ScrapByPostRequest request) {
-        scrapService.scrapPost(userId, request);
+    @PutMapping("post/{postId}")
+    public void scrapPost(@Login Long userId, @PathVariable("postId") Long postId, @Valid @RequestBody List<ScrapDirUpdateRequest> request) {
+        scrapService.scrapPost(userId, postId, request);
     }
 
     /**
-     *   작성날짜: 2022/06/22 2:13 PM
      *   작성자: 이승범
-     *   작성내용: 스크랩한 게시물 스크랩 취소
+     *   작성내용: 스크랩 삭제(취소)
      */
-    @DeleteMapping("post")
-    public void deleteScrapPost(@Login Long userId, @RequestParam Long scrapPostId) {
+    @DeleteMapping("post/{scrapPostId}")
+    public void deleteScrapPost(@Login Long userId, @PathVariable("scrapPostId") Long scrapPostId) {
         scrapService.deleteScrapPost(userId, scrapPostId);
     }
 
     /**
-     * 작성날짜: 2022/06/21 2:11 PM
      * 작성자: 이승범
-     * 작성내용: 스크랩 폴더 목록 조회
+     * 작성내용: 스크랩 폴더 전체 조회
      */
     @GetMapping("dir")
     public List<ScrapInfoDto> ScrapListInfo(@Login Long id) {
@@ -56,7 +53,6 @@ public class ScrapController {
     }
 
     /**
-     * 작성날짜: 2022/06/21 2:11 PM
      * 작성자: 이승범
      * 작성내용: 스크랩 폴더 생성
      */
@@ -66,9 +62,8 @@ public class ScrapController {
     }
 
     /**
-     * 작성날짜: 2022/06/22 10:24 AM
      * 작성자: 이승범
-     * 작성내용: 스크랩 폴더 이름 바꾸기
+     * 작성내용: 스크랩 폴더 이름 수정
      */
     @PutMapping("dir/name")
     public void updateScrapDirName(@Login Long id, @Valid @RequestBody ScrapDirDetailRequest request) {
@@ -80,29 +75,27 @@ public class ScrapController {
      * 작성자: 이승범
      * 작성내용: 스크랩 폴더 삭제
      */
-    @DeleteMapping("dir")
-    public List<ScrapInfoDto>  deleteScrap(@Login Long userId, @RequestParam Long scrapId) {
-        return scrapService.deleteScrapDir(userId, scrapId);
+    @DeleteMapping("dir/{scrapDirId}")
+    public List<ScrapInfoDto>  deleteScrap(@Login Long userId, @PathVariable("scrapDirId") Long scrapDirId) {
+        return scrapService.deleteScrapDir(userId, scrapDirId);
     }
 
     /**
-     *   작성날짜: 2022/06/22 4:51 PM
      *   작성자: 이승범
-     *   작성내용: 게시물 관련 스크랩 폴더 목록 조회
+     *   작성내용: 게시물 별 스크랩 폴더 전체 조회
      */
-    @GetMapping("post/dir")
-    public List<ScrapInfoByPostDto> ScrapListByPost(@Login Long userId, @RequestParam Long postId) {
+    @GetMapping("post/{postId}/dir")
+    public List<ScrapInfoByPostDto> ScrapListByPost(@Login Long userId, @PathVariable("postId") Long postId) {
         return scrapService.findScrapListByPost(userId, postId);
     }
 
     /**
-     *   작성날짜: 2022/06/22 4:54 PM
      *   작성자: 이승범
-     *   작성내용: 스크랩 폴더별 게시물 목록 조회
+     *   작성내용: 스크랩 폴더별 게시물 전체 조회
      */
-    @GetMapping("dir/post")
-    public Slice<ScrapPostPreviewResponse> searchPostsByScrap(@Login Long userId, @RequestParam Long scrapId, Pageable pageable) {
-        return scrapService.searchByScrap(userId, scrapId, pageable);
+    @GetMapping("dir/{scrapDirId}/post")
+    public Slice<ScrapPostPreviewResponse> searchPostsByScrap(@Login Long userId, @PathVariable("scrapDirId") Long scrapDirId, Pageable pageable) {
+        return scrapService.searchByScrap(userId, scrapDirId, pageable);
     }
 
 }

@@ -98,34 +98,34 @@ public class ScrapService {
      * 작성자: 이승범
      * 작성내용: 게시물 스크랩하기
      */
-    public List<Scrap> scrapPost(Long userId, ScrapByPostRequest request) {
+    public List<Scrap> scrapPost(Long userId, Long postId, List<ScrapDirUpdateRequest> scrapInfos) {
         // 사용자의 스크랩폴더 목록을 가져온다.
         List<Scrap> scraps = scrapRepository.findScrapsByUserWithScrapPosts(userId);
         // 게시물 정보가져오기
-        Post post = postRepository.findById(request.getPostId())
+        Post post = postRepository.findById(postId)
                 .orElseThrow(() -> new ScrapException(ScrapErrorResult.NOT_VALID_POST));
 
         // request 스크랩 폴더 목록들을 사용자의 스크랩 폴더 목록과 비교
-        request.getScrapList().forEach(requestScrap -> {
+        scrapInfos.forEach(scrapInfo -> {
             boolean isFindScrap = false;
-            for (Scrap s : scraps) {
+            for (Scrap scrap : scraps) {
                 // 사용자의 스크랩 폴더와 request의 스크랩 폴더를 매칭
-                if (Objects.equals(requestScrap.getScrapId(), s.getId())) {
+                if (Objects.equals(scrapInfo.getScrapId(), scrap.getId())) {
                     isFindScrap = true;
                     // 사용자의 스크랩 폴더에 해당 게시물이 존재하는지 검사
                     int scrapPostIndex = -1;
-                    for (int i = 0; i < s.getScrapPosts().size(); i++) {
-                        if (Objects.equals(s.getScrapPosts().get(i).getPost().getId(), post.getId())) {
+                    for (int i = 0; i < scrap.getScrapPosts().size(); i++) {
+                        if (Objects.equals(scrap.getScrapPosts().get(i).getPost().getId(), post.getId())) {
                             scrapPostIndex = i;
                         }
                     }
                     // 이전에 스크랩 폴더에 게시물을 스크랩 하지 않았고 스크랩 해야되는 경우
-                    if (scrapPostIndex == -1 && requestScrap.getHasPost()) {
-                        ScrapPost newScrapPost = ScrapPost.createScrapPost(post, s);
+                    if (scrapPostIndex == -1 && scrapInfo.getHasPost()) {
+                        ScrapPost newScrapPost = ScrapPost.createScrapPost(post, scrap);
                         scrapPostRepository.save(newScrapPost);
-                    } else if (scrapPostIndex != -1 && !requestScrap.getHasPost()) {
+                    } else if (scrapPostIndex != -1 && !scrapInfo.getHasPost()) {
                         // 이전에 해당 스크랩 폴더에 게시물을 스크랩 하였고 스크랩을 취소해야되는 경우
-                        scrapPostRepository.delete(s.getScrapPosts().get(scrapPostIndex));
+                        scrapPostRepository.delete(scrap.getScrapPosts().get(scrapPostIndex));
                     }
                     break;
                 }
