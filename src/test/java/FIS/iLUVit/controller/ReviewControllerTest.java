@@ -70,9 +70,9 @@ class ReviewControllerTest {
     Review review2;
     Review review3;
 
-    ReviewDetailDto reviewCreateDTO = new ReviewDetailDto();
-    ReviewDto reviewDTO = new ReviewDto();
-    ReviewCommentDto reviewCommentDTO = new ReviewCommentDto();
+    ReviewDetailDto reviewDetailDto;
+    ReviewDto reviewDto;
+    ReviewCommentDto reviewCommentDto;
 
 
     @BeforeEach
@@ -172,22 +172,19 @@ class ReviewControllerTest {
     @Test
     public void 리뷰_등록_토큰X() throws Exception {
         //given
-        reviewCreateDTO.setAnonymous(true);
-        reviewCreateDTO.setCenterId(center1.getId());
-        reviewCreateDTO.setContent("위생에 철저해요");
-        reviewCreateDTO.setScore(5);
+        reviewDetailDto = new ReviewDetailDto(center1.getId(),"위생에 철저해요",5, true);
 
         final String url = "/review";
 
         UserErrorResult error = UserErrorResult.NOT_VALID_TOKEN;
         Mockito.doThrow(new UserException(error))
                 .when(reviewService)
-                .saveReview(null, reviewCreateDTO);
+                .saveReview(null, reviewDetailDto);
         //when
         ResultActions resultActions = mockMvc.perform(
                 MockMvcRequestBuilders.post(url)
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(reviewCreateDTO))
+                        .content(objectMapper.writeValueAsString(reviewDetailDto))
         );
 
         //then
@@ -202,23 +199,20 @@ class ReviewControllerTest {
     @Test
     public void 리뷰_등록_유저X() throws Exception {
         //given
-        reviewCreateDTO.setAnonymous(true);
-        reviewCreateDTO.setCenterId(center1.getId());
-        reviewCreateDTO.setContent("위생에 철저해요");
-        reviewCreateDTO.setScore(5);
+        reviewDetailDto = new ReviewDetailDto(center1.getId(),"위생에 철저해요",5, true);
 
         final String url = "/review";
 
         UserErrorResult error = UserErrorResult.USER_NOT_EXIST;
         Mockito.doThrow(new UserException(error))
                 .when(reviewService)
-                .saveReview(parent1.getId(), reviewCreateDTO);
+                .saveReview(parent1.getId(), reviewDetailDto);
         //when
         ResultActions resultActions = mockMvc.perform(
                 MockMvcRequestBuilders.post(url)
                         .header("Authorization", createJwtToken(parent1))
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(reviewCreateDTO))
+                        .content(objectMapper.writeValueAsString(reviewDetailDto))
         );
         //then
         resultActions.andDo(print())
@@ -231,23 +225,19 @@ class ReviewControllerTest {
     @Test
     public void 리뷰_등록_권한X() throws Exception {
         //given
-        reviewCreateDTO.setAnonymous(true);
-        reviewCreateDTO.setCenterId(center1.getId());
-        reviewCreateDTO.setContent("위생에 철저해요");
-        reviewCreateDTO.setScore(5);
-
+        reviewDetailDto = new ReviewDetailDto(center1.getId(),"위생에 철저해요",5, true);
         final String url = "/review";
 
         ReviewErrorResult error = ReviewErrorResult.UNAUTHORIZED_USER_ACCESS;
         Mockito.doThrow(new ReviewException(error))
                 .when(reviewService)
-                .saveReview(parent1.getId(), reviewCreateDTO);
+                .saveReview(parent1.getId(), reviewDetailDto);
         //when
         ResultActions resultActions = mockMvc.perform(
                 MockMvcRequestBuilders.post(url)
                         .header("Authorization", createJwtToken(parent1))
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(reviewCreateDTO))
+                        .content(objectMapper.writeValueAsString(reviewDetailDto))
         );
         //then
         resultActions.andDo(print())
@@ -260,23 +250,20 @@ class ReviewControllerTest {
     @Test
     public void 리뷰_등록_센터X() throws Exception {
         //given
-        reviewCreateDTO.setAnonymous(true);
-        reviewCreateDTO.setCenterId(center1.getId());
-        reviewCreateDTO.setContent("위생에 철저해요");
-        reviewCreateDTO.setScore(5);
+        reviewDetailDto = new ReviewDetailDto(center1.getId(),"위생에 철저해요",5, true);
 
         final String url = "/review";
 
         CenterErrorResult error = CenterErrorResult.CENTER_NOT_EXIST;
         Mockito.doThrow(new CenterException(error))
                 .when(reviewService)
-                .saveReview(parent1.getId(), reviewCreateDTO);
+                .saveReview(parent1.getId(), reviewDetailDto);
         //when
         ResultActions resultActions = mockMvc.perform(
                 MockMvcRequestBuilders.post(url)
                         .header("Authorization", createJwtToken(parent1))
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(reviewCreateDTO))
+                        .content(objectMapper.writeValueAsString(reviewDetailDto))
         );
         //then
         resultActions.andDo(print())
@@ -289,23 +276,19 @@ class ReviewControllerTest {
     @Test
     public void 리뷰_등록_같은_센터에_2개_이상() throws Exception {
         //given
-        reviewCreateDTO.setAnonymous(true);
-        reviewCreateDTO.setCenterId(center1.getId());
-        reviewCreateDTO.setContent("위생에 철저해요");
-        reviewCreateDTO.setScore(5);
-
+        reviewDetailDto = new ReviewDetailDto(center1.getId(),"위생에 철저해요",5, true);
         final String url = "/review";
 
         ReviewErrorResult error = ReviewErrorResult.NO_MORE_THAN_ONE_REVIEW;
         Mockito.doThrow(new ReviewException(error))
                 .when(reviewService)
-                .saveReview(parent1.getId(), reviewCreateDTO);
+                .saveReview(parent1.getId(), reviewDetailDto);
         //when
         ResultActions resultActions = mockMvc.perform(
                 MockMvcRequestBuilders.post(url)
                         .header("Authorization", createJwtToken(parent1))
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(reviewCreateDTO))
+                        .content(objectMapper.writeValueAsString(reviewDetailDto))
         );
         //then
         resultActions.andDo(print())
@@ -318,22 +301,19 @@ class ReviewControllerTest {
     @Test
     public void 리뷰_등록_성공() throws Exception {
         //given
-        reviewCreateDTO.setAnonymous(true);
-        reviewCreateDTO.setCenterId(center1.getId());
-        reviewCreateDTO.setContent("위생에 철저해요");
-        reviewCreateDTO.setScore(5);
+        reviewDetailDto = new ReviewDetailDto(center1.getId(),"위생에 철저해요",5, true);
 
         final String url = "/review";
 
         Mockito.doReturn(review1.getId())
                 .when(reviewService)
-                .saveReview(parent1.getId(), reviewCreateDTO);
+                .saveReview(parent1.getId(), reviewDetailDto);
         //when
         ResultActions resultActions = mockMvc.perform(
                 MockMvcRequestBuilders.post(url)
                         .header("Authorization", createJwtToken(parent1))
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(reviewCreateDTO))
+                        .content(objectMapper.writeValueAsString(reviewDetailDto))
         );
         //then
         resultActions.andDo(print())
@@ -351,13 +331,13 @@ class ReviewControllerTest {
         Mockito.doThrow(new ReviewException(error))
                 .when(reviewService)
                 .updateReview(review1.getId(), parent1.getId(), "수정했어요");
-        reviewDTO.setContent("수정했어요");
+        reviewDto = new ReviewDto("수정했어요");
         //when
 
         ResultActions resultActions = mockMvc.perform(
                 MockMvcRequestBuilders.patch(url, review1.getId())
                         .header("Authorization", createJwtToken(parent1))
-                        .content(objectMapper.writeValueAsString(reviewDTO))
+                        .content(objectMapper.writeValueAsString(reviewDto))
                         .contentType(MediaType.APPLICATION_JSON)
         );
         //then
@@ -376,13 +356,13 @@ class ReviewControllerTest {
         Mockito.doThrow(new ReviewException(error))
                 .when(reviewService)
                 .updateReview(review1.getId(), parent1.getId(), "수정했어요");
-        reviewDTO.setContent("수정했어요");
+        reviewDto = new ReviewDto("수정했어요");
         //when
 
         ResultActions resultActions = mockMvc.perform(
                 MockMvcRequestBuilders.patch(url, review1.getId())
                         .header("Authorization", createJwtToken(parent1))
-                        .content(objectMapper.writeValueAsString(reviewDTO))
+                        .content(objectMapper.writeValueAsString(reviewDto))
                         .contentType(MediaType.APPLICATION_JSON)
         );
         //then
@@ -401,13 +381,13 @@ class ReviewControllerTest {
         Mockito.doNothing()
                 .when(reviewService)
                 .updateReview(review1.getId(), parent1.getId(), "수정했어요");
-        reviewDTO.setContent("수정했어요");
+        reviewDto = new ReviewDto("수정했어요");
         //when
 
         ResultActions resultActions = mockMvc.perform(
                 MockMvcRequestBuilders.patch(url, review1.getId())
                         .header("Authorization", createJwtToken(parent1))
-                        .content(objectMapper.writeValueAsString(reviewDTO))
+                        .content(objectMapper.writeValueAsString(reviewDto))
                         .contentType(MediaType.APPLICATION_JSON)
         );
         //then
@@ -423,13 +403,13 @@ class ReviewControllerTest {
         Mockito.doThrow(new ReviewException(error))
                 .when(reviewService)
                 .deleteReview(review1.getId(), parent1.getId());
-        reviewDTO.setContent("수정했어요");
+        reviewDto = new ReviewDto("수정했어요");
         //when
 
         ResultActions resultActions = mockMvc.perform(
                 MockMvcRequestBuilders.delete(url, review1.getId())
                         .header("Authorization", createJwtToken(parent1))
-                        .content(objectMapper.writeValueAsString(reviewDTO))
+                        .content(objectMapper.writeValueAsString(reviewDto))
                         .contentType(MediaType.APPLICATION_JSON)
         );
         //then
@@ -448,13 +428,13 @@ class ReviewControllerTest {
         Mockito.doThrow(new ReviewException(error))
                 .when(reviewService)
                 .deleteReview(review1.getId(), parent1.getId());
-        reviewDTO.setContent("수정했어요");
+        reviewDto = new ReviewDto("수정했어요");
         //when
 
         ResultActions resultActions = mockMvc.perform(
                 MockMvcRequestBuilders.delete(url, review1.getId())
                         .header("Authorization", createJwtToken(parent1))
-                        .content(objectMapper.writeValueAsString(reviewDTO))
+                        .content(objectMapper.writeValueAsString(reviewDto))
                         .contentType(MediaType.APPLICATION_JSON)
         );
         //then
@@ -473,13 +453,13 @@ class ReviewControllerTest {
         Mockito.doNothing()
                 .when(reviewService)
                 .deleteReview(review1.getId(), parent1.getId());
-        reviewDTO.setContent("수정했어요");
+        reviewDto = new ReviewDto("수정했어요");
         //when
 
         ResultActions resultActions = mockMvc.perform(
                 MockMvcRequestBuilders.delete(url, review1.getId())
                         .header("Authorization", createJwtToken(parent1))
-                        .content(objectMapper.writeValueAsString(reviewDTO))
+                        .content(objectMapper.writeValueAsString(reviewDto))
                         .contentType(MediaType.APPLICATION_JSON)
         );
         //then
@@ -530,7 +510,7 @@ class ReviewControllerTest {
     @Test
     public void 시설_리뷰_답글_등록_수정_리뷰X() throws Exception {
         //given
-        reviewCommentDTO.setComment("리뷰를 남겨주셔서 감사해요");
+        reviewCommentDto = new ReviewCommentDto("리뷰를 남겨주셔서 감사해요");
 
         final String url = "/review/{reviewId}/comment";
         ReviewErrorResult error = ReviewErrorResult.REVIEW_NOT_EXIST;
@@ -545,7 +525,7 @@ class ReviewControllerTest {
                 MockMvcRequestBuilders.post(url, review1.getId())
                         .header("Authorization", createJwtToken(teacher1))
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(reviewCommentDTO))
+                        .content(objectMapper.writeValueAsString(reviewCommentDto))
         );
         //then
 
@@ -559,7 +539,7 @@ class ReviewControllerTest {
     @Test
     public void 시설_리뷰_답글_등록_수정_유저X() throws Exception {
         //given
-        reviewCommentDTO.setComment("리뷰를 남겨주셔서 감사해요");
+        reviewCommentDto = new ReviewCommentDto("리뷰를 남겨주셔서 감사해요");
 
         final String url = "/review/{reviewId}/comment";
         UserErrorResult error = UserErrorResult.USER_NOT_EXIST;
@@ -574,7 +554,7 @@ class ReviewControllerTest {
                 MockMvcRequestBuilders.post(url, review1.getId())
                         .header("Authorization", createJwtToken(teacher1))
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(reviewCommentDTO))
+                        .content(objectMapper.writeValueAsString(reviewCommentDto))
         );
         //then
 
@@ -588,7 +568,7 @@ class ReviewControllerTest {
     @Test
     public void 시설_리뷰_답글_등록_수정_승인X() throws Exception {
         //given
-        reviewCommentDTO.setComment("리뷰를 남겨주셔서 감사해요");
+        reviewCommentDto = new ReviewCommentDto("리뷰를 남겨주셔서 감사해요");
 
         final String url = "/review/{reviewId}/comment";
         ReviewErrorResult error = ReviewErrorResult.APPROVAL_INCOMPLETE;
@@ -603,7 +583,7 @@ class ReviewControllerTest {
                 MockMvcRequestBuilders.post(url, review1.getId())
                         .header("Authorization", createJwtToken(teacher1))
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(reviewCommentDTO))
+                        .content(objectMapper.writeValueAsString(reviewCommentDto))
         );
         //then
 
@@ -617,7 +597,7 @@ class ReviewControllerTest {
     @Test
     public void 시설_리뷰_답글_등록_수정_권한X() throws Exception {
         //given
-        reviewCommentDTO.setComment("리뷰를 남겨주셔서 감사해요");
+        reviewCommentDto = new ReviewCommentDto("리뷰를 남겨주셔서 감사해요");
 
         final String url = "/review/{reviewId}/comment";
         ReviewErrorResult error = ReviewErrorResult.UNAUTHORIZED_USER_ACCESS;
@@ -632,7 +612,7 @@ class ReviewControllerTest {
                 MockMvcRequestBuilders.post(url, review1.getId())
                         .header("Authorization", createJwtToken(teacher1))
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(reviewCommentDTO))
+                        .content(objectMapper.writeValueAsString(reviewCommentDto))
         );
         //then
 
@@ -646,7 +626,7 @@ class ReviewControllerTest {
     @Test
     public void 시설_리뷰_답글_등록_수정_성공() throws Exception {
         //given
-        reviewCommentDTO.setComment("리뷰를 남겨주셔서 감사해요");
+        reviewCommentDto = new ReviewCommentDto("리뷰를 남겨주셔서 감사해요");
 
         final String url = "/review/{reviewId}/comment";
 
@@ -660,7 +640,7 @@ class ReviewControllerTest {
                 MockMvcRequestBuilders.post(url, review1.getId())
                         .header("Authorization", createJwtToken(teacher1))
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(reviewCommentDTO))
+                        .content(objectMapper.writeValueAsString(reviewCommentDto))
         );
         //then
 
@@ -674,7 +654,7 @@ class ReviewControllerTest {
     @Test
     public void 시설_리뷰_답글_삭제_리뷰X() throws Exception {
         //given
-        reviewCommentDTO.setComment("리뷰를 남겨주셔서 감사해요");
+        reviewCommentDto = new ReviewCommentDto("리뷰를 남겨주셔서 감사해요");
 
         final String url = "/review/{reviewId}/comment";
 
@@ -702,7 +682,7 @@ class ReviewControllerTest {
     @Test
     public void 시설_리뷰_답글_삭제_권한X() throws Exception {
         //given
-        reviewCommentDTO.setComment("리뷰를 남겨주셔서 감사해요");
+        reviewCommentDto = new ReviewCommentDto("리뷰를 남겨주셔서 감사해요");
 
         final String url = "/review/{reviewId}/comment";
 
@@ -730,7 +710,7 @@ class ReviewControllerTest {
     @Test
     public void 시설_리뷰_답글_삭제_성공() throws Exception {
         //given
-        reviewCommentDTO.setComment("리뷰를 남겨주셔서 감사해요");
+        reviewCommentDto = new ReviewCommentDto("리뷰를 남겨주셔서 감사해요");
 
         final String url = "/review/{reviewId}/comment";
 
