@@ -4,13 +4,11 @@ import FIS.iLUVit.domain.Center;
 import FIS.iLUVit.domain.embeddable.Theme;
 import FIS.iLUVit.domain.enumtype.KindOf;
 import com.querydsl.core.annotations.QueryProjection;
-import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
-import lombok.Getter;
 
 
-@Getter
+@Data
 public class CenterAndDistancePreviewDto {
     private Long id;
     private String name;                    // 시설명

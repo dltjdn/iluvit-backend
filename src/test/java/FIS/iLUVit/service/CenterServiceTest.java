@@ -100,7 +100,7 @@ public class CenterServiceTest {
         @Test
         public void 센터_배너_서비스_테스트_로그인_X() throws Exception {
             //given
-            CenterBannerDto centerBannerDto = new CenterBannerDto(1L, "test", true, true, 4.5,"testLocation");
+            CenterBannerDto centerBannerDto = new CenterBannerDto(1L, "test", true, true, 4.5, null,"testLocation");
             doReturn(centerBannerDto)
                     .when(centerRepository).findBannerById(any(Long.class));
 
