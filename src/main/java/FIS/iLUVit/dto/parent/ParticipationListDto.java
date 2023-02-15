@@ -2,15 +2,11 @@ package FIS.iLUVit.dto.parent;
 
 import FIS.iLUVit.domain.*;
 import FIS.iLUVit.domain.enumtype.Status;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import org.springframework.format.annotation.DateTimeFormat;
-
 import java.time.LocalDate;
 
-@Data
+@Getter
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder

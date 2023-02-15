@@ -8,6 +8,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 
 @RestController
@@ -49,10 +50,10 @@ public class ExpoTokenController {
      * 현재 알림 수신 OX 상태 들어있음
      * O --> True, X --> False 로 응답
      */
-    @GetMapping("{token}")
-    public ExpoTokenDto findById(@Login Long userId,
-                                 @PathVariable String token) {
-        return expoTokenService.findById(userId, token);
+    @GetMapping("")
+    public ExpoTokenDto findById(@Login Long userId,HttpServletRequest request) {
+        String expoToken = request.getHeader("ExpoToken");
+        return expoTokenService.findById(userId, expoToken);
     }
 
     /**
@@ -60,11 +61,12 @@ public class ExpoTokenController {
      * 엑스포 토큰 삭제
      * 유저 로그아웃 시 토큰 삭제하기
      */
-    @DeleteMapping("{token}")
+    @DeleteMapping("")
     @ResponseStatus(HttpStatus.OK)
     public void remove(@Login Long userId,
-                                  @PathVariable String token) {
-        expoTokenService.deleteById(userId, token);
+                       HttpServletRequest request) {
+        String expoToken = request.getHeader("ExpoToken");
+        expoTokenService.deleteById(userId, expoToken);
     }
 
 }

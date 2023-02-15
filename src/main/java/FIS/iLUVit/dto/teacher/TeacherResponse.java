@@ -4,11 +4,10 @@ import FIS.iLUVit.dto.user.UserResponse;
 import FIS.iLUVit.domain.Center;
 import FIS.iLUVit.domain.enumtype.Approval;
 import FIS.iLUVit.domain.enumtype.Auth;
-import lombok.Data;
+import lombok.Getter;
 
-@Data
+@Getter
 public class TeacherResponse extends UserResponse {
-
     private Long centerId;
     private Approval approval;
 

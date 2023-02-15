@@ -1,12 +1,11 @@
 package FIS.iLUVit.dto.presentation;
 
 import lombok.AllArgsConstructor;
-import lombok.Data;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
-
 import javax.validation.constraints.Min;
 
-@Data
+@Getter
 @AllArgsConstructor
 @NoArgsConstructor
 public class PtDateRequest {

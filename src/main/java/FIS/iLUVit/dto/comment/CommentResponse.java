@@ -3,16 +3,15 @@ package FIS.iLUVit.dto.comment;
 import FIS.iLUVit.domain.Comment;
 import FIS.iLUVit.domain.User;
 import lombok.AllArgsConstructor;
-import lombok.Data;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
-
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
-@Data
+@Getter
 @AllArgsConstructor
 @NoArgsConstructor
 public class CommentResponse {

@@ -3,10 +3,7 @@ package FIS.iLUVit.service;
 import FIS.iLUVit.domain.Participation;
 import FIS.iLUVit.domain.PtDate;
 import FIS.iLUVit.domain.Waiting;
-import FIS.iLUVit.exception.PresentationErrorResult;
-import FIS.iLUVit.exception.PresentationException;
-import FIS.iLUVit.exception.WaitingErrorResult;
-import FIS.iLUVit.exception.WaitingException;
+import FIS.iLUVit.exception.*;
 import FIS.iLUVit.repository.ParentRepository;
 import FIS.iLUVit.repository.ParticipationRepository;
 import FIS.iLUVit.repository.PtDateRepository;
@@ -31,6 +28,8 @@ public class WaitingService {
     private final ParticipationRepository participationRepository;
 
     public Waiting register(Long userId, Long ptDateId) {
+        if(userId == null)
+            throw new UserException(UserErrorResult.NOT_LOGIN);
         // 학부모 조회
         PtDate ptDate = ptDateRepository.findByIdWith(ptDateId)
                 .orElseThrow(() -> new PresentationException(PresentationErrorResult.WRONG_PTDATE_ID_REQUEST));
@@ -72,6 +71,8 @@ public class WaitingService {
     }
 
     public Long cancel(Long waitingId, Long userId) {
+        if(userId == null)
+            throw new UserException(UserErrorResult.NOT_LOGIN);
 
         // 잘못된 waitingId로 요청 시 오류 반환
         if(waitingId < 0)

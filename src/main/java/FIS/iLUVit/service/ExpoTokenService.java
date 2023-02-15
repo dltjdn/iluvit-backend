@@ -40,9 +40,9 @@ public class ExpoTokenService {
         expoToken.modifyAcceptStatus(request.getAccept());
     }
 
-    public ExpoTokenDto findById(Long userId, String token) {
-        ExpoToken expoToken = getExpoTokenWithUserException(token, userId);
-        return new ExpoTokenDto(expoToken.getId(), expoToken.getToken(), expoToken.getAccept());
+    public ExpoTokenDto findById(Long userId, String expoToken) {
+        ExpoToken token = getExpoTokenWithUserException(expoToken, userId);
+        return new ExpoTokenDto(token.getId(), token.getToken(), token.getAccept());
     }
 
     @NotNull
@@ -57,8 +57,8 @@ public class ExpoTokenService {
         return expoToken;
     }
 
-    public void deleteById(Long userId, String token) {
+    public void deleteById(Long userId, String expoToken) {
         User user = userRepository.getById(userId);
-        expoTokenRepository.deleteByTokenAndUser(token, user);
+        expoTokenRepository.deleteByTokenAndUser(expoToken, user);
     }
 }

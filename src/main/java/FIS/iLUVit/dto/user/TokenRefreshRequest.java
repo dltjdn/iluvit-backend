@@ -1,12 +1,11 @@
 package FIS.iLUVit.dto.user;
 
 import lombok.AllArgsConstructor;
-import lombok.Data;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
-
 import javax.validation.constraints.NotBlank;
 
-@Data
+@Getter
 @NoArgsConstructor
 @AllArgsConstructor
 public class TokenRefreshRequest {

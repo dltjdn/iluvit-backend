@@ -24,6 +24,9 @@ public class BoardBookmarkService {
     private final BoardRepository boardRepository;
 
     public List<StoryDto> search(Long userId) {
+        if (userId == null) {
+            return searchByDefault();
+        }
         List<StoryDto> storyDtos2 = new ArrayList<>();
         // stream groupingBy가 null 키 값을 허용하지 않아서 임시 값으로 생성한 센터 -> tmp = 모두의 이야기 센터
         Center tmp = new Center();

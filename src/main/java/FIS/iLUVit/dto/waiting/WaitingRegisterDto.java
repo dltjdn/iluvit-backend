@@ -1,12 +1,11 @@
 package FIS.iLUVit.dto.waiting;
 
 import lombok.AllArgsConstructor;
-import lombok.Data;
+import lombok.Getter;
 import lombok.RequiredArgsConstructor;
-
 import javax.validation.constraints.Min;
 
-@Data
+@Getter
 @RequiredArgsConstructor
 @AllArgsConstructor
 public class WaitingRegisterDto {

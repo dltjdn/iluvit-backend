@@ -2,14 +2,13 @@ package FIS.iLUVit.dto.presentation;
 
 import FIS.iLUVit.domain.embeddable.Theme;
 import lombok.AllArgsConstructor;
-import lombok.Data;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
-
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
-@Data
+@Getter
 @NoArgsConstructor
 @AllArgsConstructor
 public class PresentationForUserResponse {
@@ -23,7 +22,7 @@ public class PresentationForUserResponse {
     private Theme theme;
     private List<String> infoImages = new ArrayList<>();
 
-    public PresentationForUserResponse(PresentationForUserDto dto){
+    public PresentationForUserResponse(PresentationForUserDto dto,List<String> infoImages){
         this.centerId = dto.getCenterId();
         this.centerName = dto.getCenterName();
         this.presentationId = dto.getPresentationId();
@@ -32,5 +31,6 @@ public class PresentationForUserResponse {
         this.place = dto.getPlace();
         this.content = dto.getContent();
         this.theme = dto.getTheme();
+        this.infoImages = infoImages;
     }
 }

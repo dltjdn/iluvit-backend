@@ -101,9 +101,7 @@ public class ChildService {
         Child child = childRepository.findByIdAndParentWithCenter(userId, childId)
                 .orElseThrow(() -> new UserException(UserErrorResult.NOT_VALID_REQUEST));
 
-        ChildDetailResponse response = new ChildDetailResponse(child);
-
-        response.setProfileImage(imageService.getProfileImage(child));
+        ChildDetailResponse response = new ChildDetailResponse(child,imageService.getProfileImage(child));
 
         return response;
     }
@@ -121,11 +119,10 @@ public class ChildService {
         // 프로필 수정
         updatedChild.update(request.getName(), request.getBirthDate());
 
-        ChildDetailResponse response = new ChildDetailResponse(updatedChild);
+        ChildDetailResponse response = new ChildDetailResponse(updatedChild, imageService.getProfileImage(updatedChild));
 
         // 프로필 이미지 수정
         imageService.saveProfileImage(request.getProfileImg(), updatedChild);
-        response.setProfileImage(imageService.getProfileImage(updatedChild));
 
         return response;
     }
@@ -222,11 +219,8 @@ public class ChildService {
         teacher.getCenter().getChildren().forEach(child -> {
             // 해당시설에 대해 거절/삭제 당하지 않은 아이들만 보여주기
             if (child.getApproval() != Approval.REJECT) {
-
                 ChildInfoForAdminDto childInfo =
-                        new ChildInfoForAdminDto(child);
-
-                childInfo.setChild_profileImg(imageService.getProfileImage(child));
+                        new ChildInfoForAdminDto(child, imageService.getProfileImage(child));
 
                 response.add(childInfo);
             }

@@ -1,11 +1,13 @@
 package FIS.iLUVit.dto.chat;
 
 import lombok.Data;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.RequiredArgsConstructor;
 
 import javax.validation.constraints.NotBlank;
 
-@Data
+@Getter
 @NoArgsConstructor
 public class ChatRequest {
 
@@ -16,5 +18,14 @@ public class ChatRequest {
     private Long post_id;
 
     private Long comment_id; // 댓글 작성자한테 쪽지 보낸 경우 comment_id도 필요
+
+    public void addMessage(String message){
+        this.message = message;
+    }
+
+    public void addPostId(Long postId){
+        this.post_id = postId;
+    }
+
 
 }

@@ -1,9 +1,9 @@
 package FIS.iLUVit.dto.teacher;
 
 import FIS.iLUVit.domain.Teacher;
-import lombok.Data;
+import lombok.Getter;
 
-@Data
+@Getter
 public class TeacherDetailResponse {
     private String name;
     private String nickname;
@@ -13,12 +13,13 @@ public class TeacherDetailResponse {
     private String detailAddress;
     private String profileImg;
 
-    public TeacherDetailResponse(Teacher teacher) {
+    public TeacherDetailResponse(Teacher teacher, String profileImg) {
         this.name = teacher.getName();
         this.nickname = teacher.getNickName();
         this.phoneNumber = teacher.getPhoneNumber();
         this.emailAddress = teacher.getEmailAddress();
         this.address = teacher.getAddress();
         this.detailAddress = teacher.getDetailAddress();
+        this.profileImg = profileImg;
     }
 }

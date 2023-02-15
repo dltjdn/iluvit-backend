@@ -1,20 +1,18 @@
 package FIS.iLUVit.controller;
 
 import FIS.iLUVit.config.argumentResolver.Login;
+import FIS.iLUVit.domain.enumtype.Auth;
 import FIS.iLUVit.dto.board.BoardPreviewDto;
 import FIS.iLUVit.dto.post.PostPreviewDto;
 import FIS.iLUVit.dto.post.PostRequest;
 import FIS.iLUVit.dto.post.PostResponse;
-import FIS.iLUVit.dto.post.PostSearchRequest;
 import FIS.iLUVit.service.PostService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
-import org.springframework.http.MediaType;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 
@@ -30,31 +28,27 @@ public class PostController {
      * COMMON
      */
 
-    /**
-     * 작성자: 이창윤
-     * 작성시간: 2022/06/27 11:31 AM
-     * 내용: multipart/form-data 형식으로 변환된 request, 이미지 파일 리스트 images 파라미터로 게시글 저장
-     */
-    @PostMapping(value = "", consumes = {MediaType.APPLICATION_JSON_VALUE, MediaType.MULTIPART_FORM_DATA_VALUE})
-//    @ResponseStatus(HttpStatus.ACCEPTED)
-    public Long registerPost(@Login Long userId,
-                             @RequestPart(required = false) List<MultipartFile> images,
-                             @RequestPart @Validated PostRequest request) {
-        return postService.savePost(request, images, userId);
-    }
+//    /**
+//     * 작성자: 이창윤
+//     * 작성시간: 2022/06/27 11:31 AM
+//     * 내용: multipart/form-data 형식으로 변환된 request, 이미지 파일 리스트 images 파라미터로 게시글 저장
+//     */
+//    @PostMapping(value = "", consumes = {MediaType.APPLICATION_JSON_VALUE, MediaType.MULTIPART_FORM_DATA_VALUE})
+//    public Long registerPost(@Login Long userId,
+//                             @RequestPart(required = false) List<MultipartFile> images,
+//                             @RequestPart @Validated PostRequest request) {
+//        return postService.savePost(request, images, userId);
+//    }
 
     /**
      * 작성자: 이창윤
      * 작성시간: 2022/06/27 11:31 AM
-     * 내용: 리액트 네이티브용 게시글 저장
+     * 내용: 게시글 저장
      */
-    @PostMapping(value = "react-native", consumes = {MediaType.APPLICATION_JSON_VALUE, MediaType.MULTIPART_FORM_DATA_VALUE})
-//    @ResponseStatus(HttpStatus.ACCEPTED)
+    @PostMapping("")
     public Long registerPostTemp(@Login Long userId,
-                                 @RequestPart(required = false) List<MultipartFile> images,
-                                 @ModelAttribute("request") @Validated PostRequest request) {
-        log.info("PostRegisterRequest = {}", request);
-        return postService.savePost(request, images, userId);
+                                 @ModelAttribute @Validated PostRequest request) {
+        return postService.savePost(request, userId);
     }
 
     /**
@@ -97,9 +91,9 @@ public class PostController {
      */
     @GetMapping("search/all")
     public Slice<PostPreviewDto> searchPost(@Login Long userId,
-                                            @RequestParam("input") String input,
+                                            @RequestParam("input") String keyword,
                                             Pageable pageable) {
-        return postService.searchByKeyword(input, userId, pageable);
+        return postService.searchByKeyword(keyword, userId, pageable);
     }
 
     /**
@@ -110,10 +104,11 @@ public class PostController {
     @GetMapping("search/in-center")
     public Slice<PostPreviewDto> searchPostByCenter(
             @Login Long userId,
-            @ModelAttribute PostSearchRequest requestDTO,
+            @RequestParam("center_id") Long centerId,
+            @RequestParam("input") String keyword,
+            @RequestParam("auth") Auth auth,
             Pageable pageable) {
-        return postService.searchByKeywordAndCenter(requestDTO.getCenter_id(), requestDTO.getInput()
-                , requestDTO.getAuth(), userId, pageable);
+        return postService.searchByKeywordAndCenter(centerId, keyword, auth, userId, pageable);
     }
 
     /**
@@ -124,9 +119,9 @@ public class PostController {
     @GetMapping("search/in-board")
     public Slice<PostPreviewDto> searchPostByBoard(
             @RequestParam("board_id") Long boardId,
-            @RequestParam(value = "input", required = false) String input,
+            @RequestParam("input") String keyword,
             Pageable pageable) {
-        return postService.searchByKeywordAndBoard(boardId, input, pageable);
+        return postService.searchByKeywordAndBoard(boardId, keyword, pageable);
     }
 
     /**
@@ -136,7 +131,6 @@ public class PostController {
      */
     @GetMapping("public-main")
     public List<BoardPreviewDto> searchMainPreview(@Login Long userId) {
-
         return postService.searchMainPreview(userId);
     }
 

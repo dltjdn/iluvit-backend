@@ -1,9 +1,10 @@
 package FIS.iLUVit.dto.parent;
 
 import FIS.iLUVit.domain.Parent;
-import lombok.Data;
+import lombok.Getter;
 
-@Data
+
+@Getter
 public class ParentDto {
 
     private String phoneNumber;         // 핸드폰 번호

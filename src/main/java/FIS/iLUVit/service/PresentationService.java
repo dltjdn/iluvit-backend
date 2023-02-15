@@ -57,8 +57,7 @@ public class PresentationService {
                         ))
                 .entrySet().stream()
                 .map(e -> {
-                    PresentationDetailResponse presentationDetailResponse = new PresentationDetailResponse(e.getKey(), e.getValue());
-                    presentationDetailResponse.setImages(imageService.getInfoImages(e.getKey().getInfoImages()));
+                    PresentationDetailResponse presentationDetailResponse = new PresentationDetailResponse(e.getKey(), imageService.getInfoImages(e.getKey().getInfoImages()),e.getValue());
                     return presentationDetailResponse;
                 })
                 .collect(toList());
@@ -66,6 +65,9 @@ public class PresentationService {
 
 
     public Presentation saveInfoWithPtDate(PresentationDetailRequest request, Long userId) {
+        if(userId == null)
+            throw new UserException(UserErrorResult.NOT_LOGIN);
+
         // 리펙터링 필요 findById 를 통해서 그냥 canWrite 와 canRead 를 override 하기
         userRepository.findTeacherById(userId)
                 .orElseThrow(() -> new UserException(UserErrorResult.USER_NOT_EXIST))
@@ -93,6 +95,8 @@ public class PresentationService {
     }
 
     public Presentation saveImageWithPtDate(Long presentationId, List<MultipartFile> images, Long userId) {
+        if (userId == null)
+            throw new UserException(UserErrorResult.NOT_LOGIN);
         Presentation presentation = presentationRepository.findById(presentationId)
                 .orElseThrow(() -> new PresentationException(PresentationErrorResult.NO_RESULT));
 
@@ -108,8 +112,7 @@ public class PresentationService {
                 .canRead(centerId);
         return presentationRepository.findByCenterId(centerId, pageable)
                 .stream().map(data -> {
-                    PresentationForTeacherResponse result = new PresentationForTeacherResponse(data);
-                    result.setPresentationInfoImage(imageService.getInfoImages(data.getPresentationInfoImage()));
+                    PresentationForTeacherResponse result = new PresentationForTeacherResponse(data,imageService.getInfoImages(data.getPresentationInfoImage()));
                     return result;
                 }).collect(toList());
     }

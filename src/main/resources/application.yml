@@ -25,7 +25,7 @@ spring:
 
 # 현승구 : yml 분리 작업을 위해서 spring.config.import , profiles.active , group 활용
   config:
-    import: application-database.yml, application-img.yml
+    import: application-database.yml
   profiles:
     include:
       - secret

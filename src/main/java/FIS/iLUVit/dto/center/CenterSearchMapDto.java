@@ -1,12 +1,12 @@
 package FIS.iLUVit.dto.center;
 
 import lombok.Builder;
-import lombok.Data;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import javax.validation.constraints.NotNull;
 
-@Data
+@Getter
 @NoArgsConstructor
 public class CenterSearchMapDto {
     @NotNull

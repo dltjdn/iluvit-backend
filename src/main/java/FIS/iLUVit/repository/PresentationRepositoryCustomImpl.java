@@ -32,7 +32,7 @@ public class PresentationRepositoryCustomImpl extends CenterQueryMethod implemen
 
         LocalDate now = LocalDate.now();
 
-        List<PresentationForUserDto> content = jpaQueryFactory.select(new QPresentationForUserDto(presentation, center))
+        List<PresentationForUserDto> presentations = jpaQueryFactory.select(new QPresentationForUserDto(presentation, center))
                 .from(presentation)
                 .join(presentation.center, center)
                 .where(areasIn(areas)
@@ -48,21 +48,20 @@ public class PresentationRepositoryCustomImpl extends CenterQueryMethod implemen
                 .fetch();
 
         boolean hasNext = false;
-        if(content.size() > pageable.getPageSize()){
-            content.remove(pageable.getPageSize());
+        if(presentations.size() > pageable.getPageSize()){
+            presentations.remove(pageable.getPageSize());
             hasNext = true;
         }
 
-        List<PresentationForUserResponse> collect = content.stream().map(c -> {
-            PresentationForUserResponse temp = new PresentationForUserResponse(c);
-            String infoImagePath = c.getInfoImages();
+        List<PresentationForUserResponse> collect = presentations.stream().map(presentation -> {
+            String infoImagePath = presentation.getInfoImages();
             List<String> infoImages;
             if(infoImagePath == null || infoImagePath.equals(""))
                 infoImages = new ArrayList<>();
             else
                 infoImages = List.of(infoImagePath.split(","));
-            temp.setInfoImages(infoImages);
-            return temp;
+            PresentationForUserResponse presentationResponse = new PresentationForUserResponse(presentation, infoImages);
+            return presentationResponse;
         }).collect(Collectors.toList());
 
         return new SliceImpl<>(collect, pageable, hasNext);
