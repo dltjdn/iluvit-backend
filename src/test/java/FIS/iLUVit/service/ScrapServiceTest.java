@@ -19,12 +19,8 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
 import org.springframework.data.domain.SliceImpl;
 
-import java.util.Arrays;
-import java.util.List;
-import java.util.Objects;
-import java.util.Optional;
+import java.util.*;
 
-import static FIS.iLUVit.dto.scrap.ScrapByPostRequest.*;
 import static org.assertj.core.api.Assertions.*;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
@@ -191,19 +187,25 @@ public class ScrapServiceTest {
         @DisplayName("[error] db와 요청이 일치하지않음")
         public void db와요청다름() {
             // given
-            ScrapInfoForUpdate info1 = new ScrapInfoForUpdate(scrap1.getId(), true);
-            ScrapInfoForUpdate info2 = new ScrapInfoForUpdate(scrap2.getId(), false);
-            ScrapInfoForUpdate info3 = new ScrapInfoForUpdate(scrap3.getId(), false);
-            ScrapByPostRequest request = new ScrapByPostRequest(post1.getId(), List.of(info1, info2, info3));
+            ScrapDirUpdateRequest info1 = new ScrapDirUpdateRequest(scrap1.getId(), true);
+            ScrapDirUpdateRequest info2 = new ScrapDirUpdateRequest(scrap2.getId(), false);
+            ScrapDirUpdateRequest info3 = new ScrapDirUpdateRequest(scrap3.getId(), false);
+            List<ScrapDirUpdateRequest> scrapDirInfos = new ArrayList<>();
+            scrapDirInfos.add(info1);
+            scrapDirInfos.add(info2);
+            scrapDirInfos.add(info3);
+
+
+
             doReturn(List.of(scrap1, scrap2))
                     .when(scrapRepository)
                     .findScrapsByUserWithScrapPosts(any());
             doReturn(Optional.of(post1))
                     .when(postRepository)
-                    .findById(request.getPostId());
+                    .findById(post1.getId());
             // when
             ScrapException result = assertThrows(ScrapException.class,
-                    () -> target.scrapPost(parent1.getId(), request));
+                    () -> target.scrapPost(parent1.getId(),post1.getId(), scrapDirInfos));
 
             // then
             assertThat(result.getErrorResult()).isEqualTo(ScrapErrorResult.NOT_VALID_SCRAP);
@@ -213,9 +215,12 @@ public class ScrapServiceTest {
         @DisplayName("[error] 잘못된 postId")
         public void 잘못된게시물아이디() {
             // given
-            ScrapInfoForUpdate info1 = new ScrapInfoForUpdate(scrap1.getId(), true);
-            ScrapInfoForUpdate info2 = new ScrapInfoForUpdate(scrap2.getId(), true);
-            ScrapByPostRequest request = new ScrapByPostRequest(post1.getId(), List.of(info1, info2));
+            ScrapDirUpdateRequest info1 = new ScrapDirUpdateRequest(scrap1.getId(), true);
+            ScrapDirUpdateRequest info2 = new ScrapDirUpdateRequest(scrap2.getId(), true);
+            List<ScrapDirUpdateRequest> scrapDirInfos = new ArrayList<>();
+            scrapDirInfos.add(info1);
+            scrapDirInfos.add(info2);
+
             scrap1.getScrapPosts().add(scrapPost1);
             scrap1.getScrapPosts().add(scrapPost2);
             doReturn(List.of(scrap1, scrap2))
@@ -223,10 +228,10 @@ public class ScrapServiceTest {
                     .findScrapsByUserWithScrapPosts(parent1.getId());
             doReturn(Optional.empty())
                     .when(postRepository)
-                    .findById(request.getPostId());
+                    .findById(post1.getId());
             // when
             ScrapException result = assertThrows(ScrapException.class,
-                    () -> target.scrapPost(parent1.getId(), request));
+                    () -> target.scrapPost(parent1.getId(),post1.getId(), scrapDirInfos));
             // then
             assertThat(result.getErrorResult()).isEqualTo(ScrapErrorResult.NOT_VALID_POST);
         }
@@ -235,9 +240,12 @@ public class ScrapServiceTest {
         @DisplayName("[success] 새로 스크랩을 해야되는경우")
         public void 새로운스크랩() {
             // given
-            ScrapInfoForUpdate info1 = new ScrapInfoForUpdate(scrap1.getId(), true);
-            ScrapInfoForUpdate info2 = new ScrapInfoForUpdate(scrap2.getId(), true);
-            ScrapByPostRequest request = new ScrapByPostRequest(post1.getId(), List.of(info1, info2));
+            ScrapDirUpdateRequest info1 = new ScrapDirUpdateRequest(scrap1.getId(), true);
+            ScrapDirUpdateRequest info2 = new ScrapDirUpdateRequest(scrap2.getId(), true);
+            List<ScrapDirUpdateRequest> scrapDirInfos = new ArrayList<>();
+            scrapDirInfos.add(info1);
+            scrapDirInfos.add(info2);
+
             scrap1.getScrapPosts().add(scrapPost1);
             scrap1.getScrapPosts().add(scrapPost2);
             doReturn(List.of(scrap1, scrap2))
@@ -245,9 +253,9 @@ public class ScrapServiceTest {
                     .findScrapsByUserWithScrapPosts(parent1.getId());
             doReturn(Optional.of(post1))
                     .when(postRepository)
-                    .findById(request.getPostId());
+                    .findById(post1.getId());
             // when
-            List<Scrap> result = target.scrapPost(parent1.getId(), request);
+            List<Scrap> result = target.scrapPost(parent1.getId(),post1.getId(), scrapDirInfos);
             // verify
             verify(scrapPostRepository, times(1)).save(any());
             verify(scrapRepository, times(0)).delete(any());
@@ -257,9 +265,12 @@ public class ScrapServiceTest {
         @DisplayName("[success] 기존스크랩을 취소하는경우")
         public void 기존스크랩취소() {
             // given
-            ScrapInfoForUpdate info1 = new ScrapInfoForUpdate(scrap1.getId(), false);
-            ScrapInfoForUpdate info2 = new ScrapInfoForUpdate(scrap2.getId(), false);
-            ScrapByPostRequest request = new ScrapByPostRequest(post1.getId(), List.of(info1, info2));
+            ScrapDirUpdateRequest info1 = new ScrapDirUpdateRequest(scrap1.getId(), true);
+            ScrapDirUpdateRequest info2 = new ScrapDirUpdateRequest(scrap2.getId(), true);
+            List<ScrapDirUpdateRequest> scrapDirInfos = new ArrayList<>();
+            scrapDirInfos.add(info1);
+            scrapDirInfos.add(info2);
+
             scrap1.getScrapPosts().add(scrapPost1);
             scrap1.getScrapPosts().add(scrapPost2);
             doReturn(List.of(scrap1, scrap2))
@@ -267,9 +278,9 @@ public class ScrapServiceTest {
                     .findScrapsByUserWithScrapPosts(parent1.getId());
             doReturn(Optional.of(post1))
                     .when(postRepository)
-                    .findById(request.getPostId());
+                    .findById(post1.getId());
             // when
-            target.scrapPost(parent1.getId(), request);
+            target.scrapPost(parent1.getId(),post1.getId(), scrapDirInfos);
             // verify
             verify(scrapPostRepository, times(0)).save(any());
             verify(scrapPostRepository, times(1)).delete(any());
@@ -279,9 +290,12 @@ public class ScrapServiceTest {
         @DisplayName("[success] 스크랩 등록과 취소를 동시에")
         public void 취소및스크랩동시발생() {
             // given
-            ScrapInfoForUpdate info1 = new ScrapInfoForUpdate(scrap1.getId(), false);
-            ScrapInfoForUpdate info2 = new ScrapInfoForUpdate(scrap2.getId(), true);
-            ScrapByPostRequest request = new ScrapByPostRequest(post1.getId(), List.of(info1, info2));
+            ScrapDirUpdateRequest info1 = new ScrapDirUpdateRequest(scrap1.getId(), true);
+            ScrapDirUpdateRequest info2 = new ScrapDirUpdateRequest(scrap2.getId(), true);
+            List<ScrapDirUpdateRequest> scrapDirInfos = new ArrayList<>();
+            scrapDirInfos.add(info1);
+            scrapDirInfos.add(info2);
+
             scrap1.getScrapPosts().add(scrapPost1);
             scrap1.getScrapPosts().add(scrapPost2);
             doReturn(List.of(scrap1, scrap2))
@@ -289,9 +303,9 @@ public class ScrapServiceTest {
                     .findScrapsByUserWithScrapPosts(parent1.getId());
             doReturn(Optional.of(post1))
                     .when(postRepository)
-                    .findById(request.getPostId());
+                    .findById(post1.getId());
             // when
-            target.scrapPost(parent1.getId(), request);
+            target.scrapPost(parent1.getId(), post1.getId(), scrapDirInfos);
             // then
             verify(scrapPostRepository, times(1)).save(any());
             verify(scrapPostRepository, times(1)).delete(any());
