@@ -45,13 +45,11 @@ class PresentationServiceTest {
     @Mock
     private PresentationRepository presentationRepository;
     @Mock
-    private ParticipationRepository participationRepository;
-    @Mock
     private PtDateRepository ptDateRepository;
     @Mock
     private CenterRepository centerRepository;
     @Spy
-    private LocalImageService imageService;
+    private S3ImageService imageService;
     @Mock
     private UserRepository userRepository;
     @Mock
@@ -73,11 +71,6 @@ class PresentationServiceTest {
 
     @BeforeEach
     void init() throws IOException {
-
-        //String fileName = "testCustomerUpload";
-        //String contentType = "xls";
-        //String filePath = "src/test/resources/excel/testCustomerUpload.xls";
-        //mockMultipartFile = getMockMultipartFile(fileName, contentType, filePath);
 
         center = Center.builder()
                 .id(1L)
