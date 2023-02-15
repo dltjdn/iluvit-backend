@@ -103,7 +103,7 @@ class BoardControllerTest {
 
 
         //then
-        MvcResult resultOnCenter = mockMvc.perform(post("/user/board")
+        MvcResult resultOnCenter = mockMvc.perform(post("/board")
                         .contentType(MediaType.APPLICATION_JSON)
                         .accept(MediaType.APPLICATION_JSON)
                         .characterEncoding("UTF-8")
@@ -117,7 +117,7 @@ class BoardControllerTest {
         String responseBody1 = resultOnCenter.getResponse().getContentAsString();
         assertThat(responseBody1).isEqualTo("2");
 
-        MvcResult resultOnNull = mockMvc.perform(post("/user/board")
+        MvcResult resultOnNull = mockMvc.perform(post("/board")
                         .contentType(MediaType.APPLICATION_JSON)
                         .accept(MediaType.APPLICATION_JSON)
                         .characterEncoding("UTF-8")
@@ -141,7 +141,7 @@ class BoardControllerTest {
         //when
 
         //then
-        mockMvc.perform(delete("/user/board/{board_id}", 1L))
+        mockMvc.perform(delete("/board/{boardId}", 1L))
                 .andExpect(content().string("1"));
     }
 
@@ -158,7 +158,7 @@ class BoardControllerTest {
         //when
 
         //then
-        mockMvc.perform(get("/board/modu")
+        mockMvc.perform(get("/board/public")
                         .header("Authorization", "Bearer (accessToken)"))
                 .andExpect(jsonPath("$.bookmarkList[0].board_name").value("자유게시판"))
                 .andExpect(jsonPath("$.boardList[0].board_name").value("장터게시판"));
@@ -180,7 +180,7 @@ class BoardControllerTest {
         //when
 
         //then
-        mockMvc.perform(get("/user/board/inCenter/{center_id}", "1")
+        mockMvc.perform(get("/board/in-center/{centerId}", "1")
                         .header("Authorization", "Bearer (accessToken)"))
                 .andExpect(jsonPath("$.bookmarkList[0].board_name").value("공지게시판"))
                 .andExpect(jsonPath("$.boardList[0].board_name").value("정보게시판"));
@@ -192,7 +192,7 @@ class BoardControllerTest {
         BoardListDto.BoardBookmarkDto boardBookmarkDTO2 = new BoardListDto.BoardBookmarkDto(board2);
         List<BoardListDto.BoardBookmarkDto> bookmarkList = Arrays.asList(boardBookmarkDTO1);
         List<BoardListDto.BoardBookmarkDto> boardList = Arrays.asList(boardBookmarkDTO2);
-        boardListDTO.setBookmarkList(bookmarkList);
+        boardListDTO.addBookmarkList(bookmarkList);
         return boardList;
     }
 
