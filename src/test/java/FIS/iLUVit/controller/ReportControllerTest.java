@@ -57,8 +57,8 @@ class ReportControllerTest {
     Report reportPost, reportComment;
     ReportDetail reportDetailPost, reportDetailComment;
 
-    ReportRequest reportRequestPost = new ReportRequest();
-    ReportRequest reportRequestComment = new ReportRequest();
+    ReportRequest reportRequestPost;
+    ReportRequest reportRequestComment;
 
     @BeforeEach
     public void init(){
@@ -81,13 +81,9 @@ class ReportControllerTest {
         reportDetailPost = Creator.createReportDetailPost(7L, user, post);
         reportDetailComment = Creator.createReportDetailComment(8L, user, comment);
 
-        reportRequestPost.setType(ReportType.POST);
-        reportRequestPost.setTargetId(post.getId());
-        reportRequestPost.setReason(ReportReason.REPORT_A);
+        reportRequestPost = new ReportRequest(post.getId(),ReportType.POST,ReportReason.REPORT_A);
+        reportRequestComment = new ReportRequest(comment.getId(),ReportType.COMMENT,ReportReason.REPORT_A);
 
-        reportRequestComment.setType(ReportType.COMMENT);
-        reportRequestComment.setTargetId(comment.getId());
-        reportRequestComment.setReason(ReportReason.REPORT_A);
     }
 
 
