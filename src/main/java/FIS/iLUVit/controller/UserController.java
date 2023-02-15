@@ -92,14 +92,14 @@ public class UserController {
         }
     }
 
-    /**
-     *   작성날짜: 2022/08/12 10:39 AM
-     *   작성자: 이승범
-     *   작성내용: healthCheck test
-     */
-    @GetMapping("profile")
-    public String profile() {
-        return env.getProperty("spring.profiles.active");
-    }
+//    /**
+//     *   작성날짜: 2022/08/12 10:39 AM
+//     *   작성자: 이승범
+//     *   작성내용: healthCheck test
+//     */
+//    @GetMapping("profile")
+//    public String profile() {
+//        return env.getProperty("spring.profiles.active");
+//    }
 
 }
