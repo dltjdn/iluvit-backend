@@ -2,11 +2,8 @@ package FIS.iLUVit.controller;
 
 import FIS.iLUVit.config.argumentResolver.Login;
 import FIS.iLUVit.dto.parent.ParticipationListDto;
-import FIS.iLUVit.dto.parent.ParticipationRequest;
 import FIS.iLUVit.dto.presentation.PtDateRequest;
 import FIS.iLUVit.domain.enumtype.Status;
-import FIS.iLUVit.exception.UserErrorResult;
-import FIS.iLUVit.exception.UserException;
 import FIS.iLUVit.service.ParticipationService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -44,10 +41,10 @@ public class ParticipationController {
      * 설명회 취소
      * 대가자 있을 경우 자동 합류
      */
-    @PatchMapping("")
+    @PatchMapping("{participationId}")
     @ResponseStatus(HttpStatus.ACCEPTED)
-    public Long cancel(@Login Long userId, @RequestBody @Validated ParticipationRequest dto){
-        return participationService.cancel(userId, dto.getParticipationId());
+    public Long cancel(@Login Long userId, @PathVariable("participationId") Long participationId){
+        return participationService.cancel(userId, participationId);
     }
 
     /**
