@@ -205,13 +205,14 @@ class PostControllerTest {
         MockMultipartFile multipartFile2 = new MockMultipartFile("images", name, "image", content);
         MockMultipartFile jsonFile = new MockMultipartFile("request", "", "application/json", request);
         List<MultipartFile> fileList = Arrays.asList(multipartFile1, multipartFile2);
+        postRequest.setImages(fileList);
 
         String url = "/user/post";
         UserErrorResult error = UserErrorResult.NOT_VALID_TOKEN;
 
         Mockito.doThrow(new UserException(error))
                 .when(postService)
-                .savePost(postRequest, fileList, null);
+                .savePost(postRequest, null);
         //when
 
 
@@ -245,13 +246,14 @@ class PostControllerTest {
         MockMultipartFile multipartFile2 = new MockMultipartFile("images", name, "image", content);
         MockMultipartFile jsonFile = new MockMultipartFile("request", "", "application/json", request);
         List<MultipartFile> fileList = Arrays.asList(multipartFile1, multipartFile2);
+        postRequest.setImages(fileList);
 
         String url = "/user/post";
         UserErrorResult error = UserErrorResult.USER_NOT_EXIST;
 
         Mockito.doThrow(new UserException(error))
                 .when(postService)
-                .savePost(postRequest, fileList, parent1.getId());
+                .savePost(postRequest, parent1.getId());
         //when
 
 
@@ -285,13 +287,14 @@ class PostControllerTest {
         MockMultipartFile jsonFile = new MockMultipartFile("request", "", "application/json", request);
 
         List<MultipartFile> fileList = Arrays.asList(multipartFile1, multipartFile2);
+        postRequest.setImages(fileList);
 
         String url = "/user/post";
         BoardErrorResult error = BoardErrorResult.BOARD_NOT_EXIST;
 
         Mockito.doThrow(new BoardException(error))
                 .when(postService)
-                .savePost(postRequest, fileList, parent1.getId());
+                .savePost(postRequest, parent1.getId());
         //when
 
 
@@ -325,13 +328,14 @@ class PostControllerTest {
         MockMultipartFile jsonFile = new MockMultipartFile("request", "", "application/json", request);
 
         List<MultipartFile> fileList = Arrays.asList(multipartFile1, multipartFile2);
+        postRequest.setImages(fileList);
 
         String url = "/user/post";
         PostErrorResult error = PostErrorResult.PARENT_NOT_ACCESS_NOTICE;
 
         Mockito.doThrow(new PostException(error))
                 .when(postService)
-                .savePost(postRequest, fileList, parent1.getId());
+                .savePost(postRequest, parent1.getId());
         //when
 
 
@@ -365,12 +369,13 @@ class PostControllerTest {
         MockMultipartFile jsonFile = new MockMultipartFile("request", "", "application/json", request);
 
         List<MultipartFile> fileList = Arrays.asList(multipartFile1, multipartFile2);
+        postRequest.setImages(fileList);
 
         String url = "/user/post";
 
         Mockito.doReturn(post1.getId())
                 .when(postService)
-                .savePost(postRequest, fileList, parent1.getId());
+                .savePost(postRequest,parent1.getId());
         //when
 
 
@@ -404,12 +409,13 @@ class PostControllerTest {
         MockMultipartFile jsonFile = new MockMultipartFile("request", "", "application/json", request);
 
         List<MultipartFile> fileList = Arrays.asList(multipartFile1, multipartFile2);
+        postRequest.setImages(fileList);
 
         String url = "/user/post/react-native";
 
         Mockito.doReturn(post1.getId())
                 .when(postService)
-                .savePost(postRequest, fileList, parent1.getId());
+                .savePost(postRequest, parent1.getId());
         //when
 
 
