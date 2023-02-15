@@ -152,7 +152,7 @@ class BoardControllerTest {
         Board board2 = Board.createBoard("장터게시판", BoardKind.NORMAL, null, true);
         BoardListDto boardListDto = new BoardListDto();
         List<BoardListDto.BoardBookmarkDto> boardList = getBookmarkDTOS(board1, board2, boardListDto);
-        boardListDto.addBookmarkList(boardList);
+        boardListDto.addBoardList(boardList);
         given(boardService.findAllWithBookmark(any()))
                 .willReturn(boardListDto);
         //when
@@ -174,7 +174,7 @@ class BoardControllerTest {
         Board board2 = Board.createBoard("정보게시판", BoardKind.NORMAL, center, true);
         BoardListDto boardListDto = new BoardListDto();
         List<BoardListDto.BoardBookmarkDto> boardList = getBookmarkDTOS(board1, board2, boardListDto);
-        boardListDto.addBookmarkList(boardList);
+        boardListDto.addBoardList(boardList);
         given(boardService.findAllWithBookmarkInCenter(any(), any()))
                 .willReturn(boardListDto);
         //when
