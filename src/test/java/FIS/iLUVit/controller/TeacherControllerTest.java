@@ -231,7 +231,7 @@ public class TeacherControllerTest {
     public void 교사프로필정보조회_성공() throws Exception {
         // given
         String url = "/teacher";
-        TeacherDetailResponse response = new TeacherDetailResponse(Teacher.builder().build());
+        TeacherDetailResponse response = new TeacherDetailResponse(Teacher.builder().build(),Teacher.builder().build().getProfileImagePath());
         doReturn(response)
                 .when(teacherService)
                 .findDetail(teacher.getId());
