@@ -125,7 +125,7 @@ class BoardBookmarkControllerTest {
     @Test
     public void 북마크_추가_비회원() throws Exception {
         //given
-        final String url = "/board-bookmark/{boardId}";
+        final String url = "/user/bookmark/{board_id}";
         BookmarkErrorResult error = BookmarkErrorResult.UNAUTHORIZED_USER_ACCESS;
         Mockito.doThrow(new BookmarkException(error))
                 .when(boardBookmarkService)
@@ -145,7 +145,7 @@ class BoardBookmarkControllerTest {
     @Test
     public void 북마크_추가_회원X() throws Exception {
         //given
-        final String url = "/board-bookmark/{boardId}";
+        final String url = "/user/bookmark/{board_id}";
         BookmarkErrorResult error = BookmarkErrorResult.USER_NOT_EXIST;
         Mockito.doThrow(new BookmarkException(error))
                 .when(boardBookmarkService)
@@ -166,7 +166,7 @@ class BoardBookmarkControllerTest {
     @Test
     public void 북마크_추가_게시판X() throws Exception {
         //given
-        final String url = "/board-bookmark/{boardId}";
+        final String url = "/user/bookmark/{board_id}";
         BookmarkErrorResult error = BookmarkErrorResult.BOARD_NOT_EXIST;
         Mockito.doThrow(new BookmarkException(error))
                 .when(boardBookmarkService)
@@ -187,7 +187,7 @@ class BoardBookmarkControllerTest {
     @Test
     public void 북마크_추가_회원() throws Exception {
         //given
-        final String url = "/board-bookmark/{boardId}";
+        final String url = "/user/bookmark/{board_id}";
         Mockito.doReturn(2L)
                 .when(boardBookmarkService)
                 .create(any(), any());
@@ -206,7 +206,7 @@ class BoardBookmarkControllerTest {
     @Test
     public void 북마크_삭제_비회원() throws Exception {
         //given
-        final String url = "/board-bookmark/{bookmarkId}";
+        final String url = "/user/bookmark/{bookmark_id}";
         BookmarkErrorResult error = BookmarkErrorResult.UNAUTHORIZED_USER_ACCESS;
         Mockito.doThrow(new BookmarkException(error))
                 .when(boardBookmarkService)
@@ -225,7 +225,7 @@ class BoardBookmarkControllerTest {
     @Test
     public void 북마크_삭제_북마크X() throws Exception {
         //given
-        final String url = "/board-bookmark/{bookmarkId}";
+        final String url = "/user/bookmark/{bookmark_id}";
         BookmarkErrorResult error = BookmarkErrorResult.BOOKMARK_NOT_EXIST;
         Mockito.doThrow(new BookmarkException(error))
                 .when(boardBookmarkService)
@@ -245,7 +245,7 @@ class BoardBookmarkControllerTest {
     @Test
     public void 북마크_삭제_회원권한X() throws Exception {
         //given
-        final String url = "/board-bookmark/{bookmarkId}";
+        final String url = "/user/bookmark/{bookmark_id}";
         BookmarkErrorResult error = BookmarkErrorResult.UNAUTHORIZED_USER_ACCESS;
         Mockito.doThrow(new BookmarkException(error))
                 .when(boardBookmarkService)
@@ -266,7 +266,7 @@ class BoardBookmarkControllerTest {
     @Test
     public void 북마크_삭제_회원() throws Exception {
         //given
-        final String url = "/board-bookmark/{bookmarkId}";
+        final String url = "/user/bookmark/{bookmark_id}";
         Mockito.doReturn(2L)
                 .when(boardBookmarkService)
                 .delete(any(), any());

@@ -75,7 +75,7 @@ public class AuthControllerTest {
     @Test
     public void 회원가입인증번호받기_실패_이미가입된번호() throws Exception {
         // given
-        final String url = "/auth/signup";
+        final String url = "/authNumber/signup";
         AuthNumberErrorResult error = AuthNumberErrorResult.ALREADY_PHONENUMBER_REGISTER;
 
         doThrow(new AuthNumberException(error))
@@ -101,7 +101,7 @@ public class AuthControllerTest {
     @Test
     public void 인증번호받기_실패_유효시간남음() throws Exception {
         // given
-        final String url = "/auth/signup";
+        final String url = "/authNumber/signup";
         AuthNumberErrorResult error = AuthNumberErrorResult.YET_AUTHNUMBER_VALID;
 
         doThrow(new AuthNumberException(error))
@@ -126,7 +126,7 @@ public class AuthControllerTest {
     @Test
     public void 인증번호받기_성공() throws Exception {
         // given
-        final String url = "/auth/signup";
+        final String url = "/authNumber/signup";
 
         // when
         ResultActions resultActions = mockMvc.perform(
@@ -141,7 +141,7 @@ public class AuthControllerTest {
     @Test
     public void 인증번호인증_실패_인증정보불일치() throws Exception {
         // given
-        final String url = "/auth";
+        final String url = "/authNumber";
         AuthNumRequest request = new AuthNumRequest(phoneNum, authNum, AuthKind.signup);
         AuthNumberErrorResult error = AuthNumberErrorResult.AUTHENTICATION_FAIL;
         doThrow(new AuthNumberException(error))
@@ -165,7 +165,7 @@ public class AuthControllerTest {
     @Test
     public void 인증번호인증_실패_인증번호만료() throws Exception {
         // given
-        final String url = "/auth";
+        final String url = "/authNumber";
         AuthNumRequest request = new AuthNumRequest(phoneNum, authNum, AuthKind.signup);
         AuthNumberErrorResult error = AuthNumberErrorResult.EXPIRED;
         doThrow(new AuthNumberException(error))
@@ -190,7 +190,7 @@ public class AuthControllerTest {
     @Test
     public void 인증번호인증_성공() throws Exception {
         // given
-        final String url = "/auth";
+        final String url = "/authNumber";
         AuthNumRequest request = new AuthNumRequest(phoneNum, authNum, AuthKind.signup);
 
         // when
@@ -207,7 +207,7 @@ public class AuthControllerTest {
     @Test
     public void 인증번호인증_성공_핸드폰변경() throws Exception {
         // given
-        final String url = "/auth";
+        final String url = "/authNumber";
         AuthNumRequest request = new AuthNumRequest(phoneNum, authNum, AuthKind.updatePhoneNum);
 
         // when
@@ -224,7 +224,7 @@ public class AuthControllerTest {
     @Test
     public void 아이디찾기인증번호받기_실패_가입하지않은핸드폰() throws Exception {
         // given
-        final String url = "/auth/loginid";
+        final String url = "/authNumber/loginId";
         AuthNumberErrorResult error = AuthNumberErrorResult.NOT_SIGNUP_PHONE;
         doThrow(new AuthNumberException(error))
                 .when(authService)
@@ -246,7 +246,7 @@ public class AuthControllerTest {
     @Test
     public void 아이디찾기인증번호받기_성공() throws Exception {
         // given
-        final String url = "/auth/loginid";
+        final String url = "/authNumber/loginId";
         // when
         ResultActions resultActions = mockMvc.perform(
                 MockMvcRequestBuilders.get(url)
@@ -261,7 +261,7 @@ public class AuthControllerTest {
     public void 아이디찾기_성공() throws Exception {
         // given
         Gson gson = new Gson();
-        String url = "/auth/loginid";
+        String url = "/findLoginId";
         String loginId = "lo***Id";
         AuthNumRequest request = new AuthNumRequest(phoneNum, authNum, AuthKind.findLoginId);
         doReturn(loginId)
@@ -282,7 +282,7 @@ public class AuthControllerTest {
     @Test
     public void 비밀번호찾기인증번호받기_실패_아이디휴대폰불일치() throws Exception {
         // given
-        String url = "/auth/password";
+        String url = "/authNumber/password";
         AuthNumberErrorResult error = AuthNumberErrorResult.NOT_MATCH_INFO;
         doThrow(new AuthNumberException(error))
                 .when(authService)
@@ -306,7 +306,7 @@ public class AuthControllerTest {
     @Test
     public void 비밀번호찾기인증번호받기_성공() throws Exception {
         // given
-        String url = "/auth/password";
+        String url = "/authNumber/password";
         // when
         ResultActions resultActions = mockMvc.perform(
                 MockMvcRequestBuilders.get(url)
@@ -321,7 +321,7 @@ public class AuthControllerTest {
     @Test
     public void 핸드폰변경을위한인증번호받기_실패_토큰없음() throws Exception {
         // given
-        String url = "/auth/phonenumber";
+        String url = "/user/authNumber/phoneNumber";
         AuthNumberErrorResult error = AuthNumberErrorResult.AUTHENTICATION_FAIL;
         doThrow(new AuthNumberException(error))
                 .when(authService)
@@ -342,7 +342,7 @@ public class AuthControllerTest {
     @Test
     public void 핸드폰변경을위한인증번호받기_성공() throws Exception {
         // given
-        String url = "/auth/phonenumber";
+        String url = "/user/authNumber/phoneNumber";
         // when
         ResultActions resultActions = mockMvc.perform(
                 MockMvcRequestBuilders.get(url)
@@ -361,7 +361,7 @@ public class AuthControllerTest {
         @DisplayName("[error] 비밀번호 조건 불만족")
         public void 비번확인틀림() throws Exception {
             // given
-            String url = "/auth/password";
+            String url = "/findPassword";
             FindPasswordRequest request = new FindPasswordRequest(user.getLoginId(), user.getPhoneNumber(), "1234", "asd", "asd");
             // when
             ResultActions result = mockMvc.perform(
@@ -379,7 +379,7 @@ public class AuthControllerTest {
         @DisplayName("[error] 비밀번호확인 불일치")
         public void 비번확인불일치() throws Exception {
             // given
-            String url = "/auth/password";
+            String url = "/findPassword";
             AuthNumberErrorResult error = AuthNumberErrorResult.NOT_MATCH_CHECKPWD;
             FindPasswordRequest request = new FindPasswordRequest(user.getLoginId(), user.getPhoneNumber(), "1234", "asdf1234!", "asdf12345!");
             doThrow(new AuthNumberException(error))
@@ -402,7 +402,7 @@ public class AuthControllerTest {
         @DisplayName("[error] 사용자 정보 불일치")
         public void 사용자정보불일치() throws Exception {
             // given
-            String url = "/auth/password";
+            String url = "/findPassword";
             AuthNumberErrorResult error = AuthNumberErrorResult.NOT_MATCH_INFO;
             FindPasswordRequest request = new FindPasswordRequest(user.getLoginId(), user.getPhoneNumber(), "1234", "asdf1234!", "asdf1234!");
             doThrow(new AuthNumberException(error))
@@ -426,7 +426,7 @@ public class AuthControllerTest {
         @DisplayName("[success] 비밀번호찾기 완료")
         public void 비번찾기완료() throws Exception {
             // given
-            String url = "/auth/password";
+            String url = "/findPassword";
             FindPasswordRequest request = new FindPasswordRequest(user.getLoginId(), user.getPhoneNumber(), "1234", "asdf1234!", "asdf1234!");
             // when
             ResultActions result = mockMvc.perform(

@@ -87,7 +87,7 @@ public class ChildControllerTest {
     @Test
     public void 아이들정보반환() throws Exception {
         // given
-        String url = "/child/info";
+        String url = "/parent/childInfo";
         doReturn(new ChildDto())
                 .when(childService)
                 .childInfo(any());
@@ -132,7 +132,7 @@ public class ChildControllerTest {
         @DisplayName("[error] 승인받지않은교사요청")
         public void 승인받지않은교사요청() throws Exception {
             // given
-            String url = "/child/{childId}/accept";
+            String url = "/teacher/child/accept/{childId}";
             UserErrorResult error = UserErrorResult.HAVE_NOT_AUTHORIZATION;
             doThrow(new UserException(error))
                     .when(childService)
@@ -153,7 +153,7 @@ public class ChildControllerTest {
         @DisplayName("[error] 아이 아이디 에러")
         public void 아이아이디에러() throws Exception {
             // given
-            String url = "/child/{childId}/accept";
+            String url = "/teacher/child/accept/{childId}";
             UserErrorResult error = UserErrorResult.NOT_VALID_REQUEST;
             doThrow(new UserException(error))
                     .when(childService)
@@ -174,7 +174,7 @@ public class ChildControllerTest {
         @DisplayName("[success] 아이승인성공")
         public void 아이승인성공() throws Exception {
             // given
-            String url = "/child/{childId}/accept";
+            String url = "/teacher/child/accept/{childId}";
             // when
             ResultActions result = mockMvc.perform(
                     MockMvcRequestBuilders.patch(url, child.getId())
@@ -194,7 +194,7 @@ public class ChildControllerTest {
         @DisplayName("[error] 승인받지 않은 교사")
         public void 승인받지않은교사() throws Exception {
             // given
-            String url = "/child/{childId}/reject";
+            String url = "/teacher/child/fire/{childId}";
             UserErrorResult error = UserErrorResult.HAVE_NOT_AUTHORIZATION;
             doThrow(new UserException(error))
                     .when(childService)
@@ -215,7 +215,7 @@ public class ChildControllerTest {
         @DisplayName("[error] 아이 아이디 에러")
         public void 아이아이디에러() throws Exception {
             // given
-            String url = "/child/{childId}/reject";
+            String url = "/teacher/child/fire/{childId}";
             UserErrorResult error = UserErrorResult.NOT_VALID_REQUEST;
             doThrow(new UserException(error))
                     .when(childService)
@@ -236,7 +236,7 @@ public class ChildControllerTest {
         @DisplayName("[success] 아이삭제성공")
         public void 아이삭제성공() throws Exception {
             // given
-            String url = "/child/{childId}/reject";
+            String url = "/teacher/child/fire/{childId}";
             // when
             ResultActions result = mockMvc.perform(
                     MockMvcRequestBuilders.patch(url, child.getId())
@@ -256,7 +256,7 @@ public class ChildControllerTest {
         public void 식별자에러() throws Exception {
             // given
             MockMultipartHttpServletRequestBuilder builder =
-                    MockMvcRequestBuilders.multipart("/child/{childId}?page=0&size=10", child.getId());
+                    MockMvcRequestBuilders.multipart("/parent/child/{childId}?page=0&size=10", child.getId());
             builder.with(request -> {
                 request.setMethod("PUT");
                 return request;
@@ -284,7 +284,7 @@ public class ChildControllerTest {
         public void validationError() throws Exception {
             // given
             MockMultipartHttpServletRequestBuilder builder =
-                    MockMvcRequestBuilders.multipart("/child/{childId}?page=0&size=10", child.getId());
+                    MockMvcRequestBuilders.multipart("/parent/child/{childId}?page=0&size=10", child.getId());
             builder.with(request -> {
                 request.setMethod("PUT");
                 return request;
@@ -305,7 +305,7 @@ public class ChildControllerTest {
         public void 수정성공() throws Exception {
             // given
             MockMultipartHttpServletRequestBuilder builder =
-                    MockMvcRequestBuilders.multipart("/child/{childId}?page=0&size=10", child.getId());
+                    MockMvcRequestBuilders.multipart("/parent/child/{childId}?page=0&size=10", child.getId());
             builder.with(request -> {
                 request.setMethod("PUT");
                 return request;
@@ -328,7 +328,7 @@ public class ChildControllerTest {
         @Test
         public void 잘못된아이정보() throws Exception {
             //given
-            String url = "/child/{childId}/center/{centerId}";
+            String url = "/parent/child/center/{childId}/{centerId}";
             UserErrorResult error = UserErrorResult.NOT_VALID_REQUEST;
             doThrow(new UserException(error))
                     .when(childService)
@@ -348,7 +348,7 @@ public class ChildControllerTest {
         @Test
         public void 아이가시설에속해있는경우() throws Exception {
             //given
-            String url = "/child/{childId}/center/{centerId}";
+            String url = "/parent/child/center/{childId}/{centerId}";
             SignupErrorResult error = SignupErrorResult.ALREADY_BELONG_CENTER;
             doThrow(new SignupException(error))
                     .when(childService)
@@ -368,7 +368,7 @@ public class ChildControllerTest {
         @Test
         public void 잘못된시설정보() throws Exception {
             //given
-            String url = "/child/{childId}/center/{centerId}";
+            String url = "/parent/child/center/{childId}/{centerId}";
             CenterErrorResult error = CenterErrorResult.CENTER_NOT_EXIST;
             doThrow(new CenterException(error))
                     .when(childService)
@@ -387,7 +387,7 @@ public class ChildControllerTest {
         @Test
         public void 승인요청성공() throws Exception {
             //given
-            String url = "/child/{childId}/center/{centerId}";
+            String url = "/parent/child/center/{childId}/{centerId}";
             doReturn(child)
                     .when(childService)
                     .mappingCenter(any(), any(), any());
@@ -409,7 +409,7 @@ public class ChildControllerTest {
         @Test
         public void 잘못된요청() throws Exception {
             //given
-            String url = "/child/{childId}/center";
+            String url = "/parent/child/center/{childId}";
             UserErrorResult error = UserErrorResult.NOT_VALID_REQUEST;
             doThrow(new UserException(error))
                     .when(childService)
@@ -429,7 +429,7 @@ public class ChildControllerTest {
         @Test
         public void 정상요청() throws Exception {
             //given
-            String url = "/child/{childId}/center";
+            String url = "/parent/child/center/{childId}";
             //when
             ResultActions result = mockMvc.perform(
                     MockMvcRequestBuilders.patch(url, child.getId())
@@ -447,7 +447,7 @@ public class ChildControllerTest {
         @DisplayName("[error] 잘못된 childId")
         public void childIdError() throws Exception {
             // given
-            String url = "/child/{childId}";
+            String url = "/parent/child/{childId}";
             UserErrorResult error = UserErrorResult.NOT_VALID_REQUEST;
             doThrow(new UserException(error))
                     .when(childService)
@@ -467,7 +467,7 @@ public class ChildControllerTest {
         @DisplayName("[success] 아이 삭제 성공")
         public void 아이삭제성공() throws Exception {
             // given
-            String url = "/child/{childId}";
+            String url = "/parent/child/{childId}";
             // when
             ResultActions result = mockMvc.perform(
                     MockMvcRequestBuilders.delete(url, child.getId())
@@ -485,7 +485,7 @@ public class ChildControllerTest {
         @DisplayName("[error] 불완전한 요청")
         public void 불완전한요청() throws Exception {
             // given
-            String url = "/child";
+            String url = "/parent/child";
             // when
             ResultActions result = mockMvc.perform(
                     MockMvcRequestBuilders
@@ -504,7 +504,7 @@ public class ChildControllerTest {
         @DisplayName("[error] 잘못된 센터로의 접근")
         public void 잘못된요청() throws Exception {
             // given
-            String url = "/child";
+            String url = "/parent/child";
             UserErrorResult error = UserErrorResult.NOT_VALID_REQUEST;
             doThrow(new UserException(error))
                     .when(childService)
@@ -529,7 +529,7 @@ public class ChildControllerTest {
         @DisplayName("[success] 아이추가 성공")
         public void 아이추가성공() throws Exception {
             // given
-            String url = "/child";
+            String url = "/parent/child";
             // when
             ResultActions result = mockMvc.perform(
                     MockMvcRequestBuilders
@@ -552,7 +552,7 @@ public class ChildControllerTest {
         @DisplayName("[error] 잘못된 아이 ID")
         public void 잘못된아이정보() throws Exception {
             // given
-            String url = "/child/{childId}";
+            String url = "/parent/child/{childId}";
             UserErrorResult error = UserErrorResult.NOT_VALID_REQUEST;
             doThrow(new UserException(error))
                     .when(childService)
@@ -573,7 +573,7 @@ public class ChildControllerTest {
         @DisplayName("[success] 아이 프로필 조회 성공")
         public void 프로필조회성공() throws Exception {
             // given
-            String url = "/child/{childId}";
+            String url = "/parent/child/{childId}";
             // when
             ResultActions result = mockMvc.perform(
                     MockMvcRequestBuilders.get(url, child.getId())
@@ -591,7 +591,7 @@ public class ChildControllerTest {
         @DisplayName("[error] 승인되지않은 교사의 요청")
         public void 승인되지않은교사() throws Exception {
             // given
-            String url = "/child/approval";
+            String url = "/teacher/child/approval";
             UserErrorResult error = UserErrorResult.HAVE_NOT_AUTHORIZATION;
             doThrow(new UserException(error))
                     .when(childService)
@@ -612,7 +612,7 @@ public class ChildControllerTest {
         @DisplayName("[success] 아이들정보 조회 성공")
         public void 아이들정보조회성공() throws Exception {
             // given
-            String url = "/child/approval";
+            String url = "/teacher/child/approval";
             // when
             ResultActions result = mockMvc.perform(
                     MockMvcRequestBuilders.get(url)
