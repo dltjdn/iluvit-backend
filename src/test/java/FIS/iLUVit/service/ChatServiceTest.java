@@ -79,8 +79,8 @@ class ChatServiceTest {
     Chat chat5;
     Chat chat6;
 
-    ChatRequest request = new ChatRequest();
-    ChatRoomRequest roomRequest = new ChatRoomRequest();
+    ChatRequest request;
+    ChatRoomRequest roomRequest;
 
     @BeforeEach
     public void init() {
@@ -122,8 +122,7 @@ class ChatServiceTest {
     @Test
     public void 쪽지_작성_비회원() throws Exception {
         //given
-        request.setMessage("안녕");
-        request.setPost_id(post1.getId());
+        request = new ChatRequest("안녕",post1.getId());
         //when
         ChatException result = assertThrows(ChatException.class,
                 () -> chatService.saveChat(null, request));
@@ -135,8 +134,7 @@ class ChatServiceTest {
     @Test
     public void 쪽지_작성_발신자X() throws Exception {
         //given
-        request.setMessage("안녕");
-        request.setPost_id(post1.getId());
+        request = new ChatRequest("안녕",post1.getId());
 
         Mockito.doReturn(Optional.empty())
                 .when(userRepository)
@@ -152,9 +150,7 @@ class ChatServiceTest {
     @Test
     public void 쪽지_작성_게시글X() throws Exception {
         //given
-        request.setMessage("안녕");
-        request.setPost_id(post1.getId());
-        request.setComment_id(comment1.getId());
+        request = new ChatRequest("안녕",post1.getId(),comment1.getId());
 
         Mockito.doReturn(Optional.of(receiver))
                 .when(userRepository)
@@ -175,9 +171,7 @@ class ChatServiceTest {
     @Test
     public void 쪽지_작성_댓글X() throws Exception {
         //given
-        request.setMessage("안녕");
-        request.setPost_id(post1.getId());
-        request.setComment_id(comment1.getId());
+        request = new ChatRequest("안녕",post1.getId(),comment1.getId());
 
         Mockito.doReturn(Optional.of(receiver))
                 .when(userRepository)
@@ -203,9 +197,7 @@ class ChatServiceTest {
     @Test
     public void 쪽지_작성_댓글O_자신에게_보냄() throws Exception {
         //given
-        request.setMessage("안녕");
-        request.setPost_id(post1.getId());
-        request.setComment_id(comment1.getId());
+        request = new ChatRequest("안녕",post1.getId(),comment1.getId());
 
         Mockito.doReturn(Optional.of(receiver))
                 .when(userRepository)
@@ -230,8 +222,7 @@ class ChatServiceTest {
     @Test
     public void 쪽지_작성_댓글X_자신에게_보냄() throws Exception {
         //given
-        request.setMessage("안녕");
-        request.setPost_id(post1.getId());
+        request = new ChatRequest("안녕",post1.getId());
 
         Mockito.doReturn(Optional.of(receiver))
                 .when(userRepository)
@@ -254,8 +245,7 @@ class ChatServiceTest {
         //given
         try (MockedStatic<AlarmUtils> alarmUtils = Mockito.mockStatic(AlarmUtils.class)) {
 
-            request.setMessage("안녕");
-            request.setPost_id(post2.getId());
+            request = new ChatRequest("안녕",post2.getId());
 
             Mockito.doReturn(Optional.of(receiver))
                     .when(userRepository)
@@ -288,9 +278,7 @@ class ChatServiceTest {
         //given
         try (MockedStatic<AlarmUtils> alarmUtils = Mockito.mockStatic(AlarmUtils.class)) {
 
-            request.setMessage("안녕");
-            request.setPost_id(post2.getId());
-            request.setComment_id(comment2.getId());
+            request = new ChatRequest("안녕",post2.getId(), comment2.getId());
 
             Mockito.doReturn(Optional.of(receiver))
                     .when(userRepository)
@@ -351,8 +339,7 @@ class ChatServiceTest {
     @Test
     public void 채팅방아이디로_대화방내_쪽지작성_채팅방_아이디X() throws Exception {
         //given
-        roomRequest.setRoom_id(chatRoom1.getId());
-        roomRequest.setMessage("안녕");
+        roomRequest = new ChatRoomRequest("안녕",chatRoom1.getId());
 
         Mockito.doReturn(Optional.empty())
                 .when(chatRoomRepository)
@@ -370,8 +357,7 @@ class ChatServiceTest {
         //given
         ChatRoom chatRoom3 = Creator.createChatRoom(999L, null, sender, post1);
 
-        roomRequest.setRoom_id(chatRoom3.getId());
-        roomRequest.setMessage("안녕");
+        roomRequest = new ChatRoomRequest("안녕",chatRoom3.getId());
 
         Mockito.doReturn(Optional.of(chatRoom3))
                 .when(chatRoomRepository)
@@ -390,8 +376,7 @@ class ChatServiceTest {
         //given
         ChatRoom chatRoom3 = Creator.createChatRoom(999L, receiver, null, post1);
 
-        roomRequest.setRoom_id(chatRoom3.getId());
-        roomRequest.setMessage("안녕");
+        roomRequest = new ChatRoomRequest("안녕",chatRoom3.getId());
 
         Mockito.doReturn(Optional.of(chatRoom3))
                 .when(chatRoomRepository)
@@ -408,8 +393,7 @@ class ChatServiceTest {
     @Test
     public void 채팅방아이디로_대화방내_쪽지작성_채팅방_유저아님_권한X() throws Exception {
         //given
-        roomRequest.setRoom_id(chatRoom1.getId());
-        roomRequest.setMessage("안녕");
+        roomRequest = new ChatRoomRequest("안녕",chatRoom1.getId());
 
         Mockito.doReturn(Optional.of(chatRoom1))
                 .when(chatRoomRepository)
@@ -426,9 +410,7 @@ class ChatServiceTest {
     public void 채팅방아이디로_대화방내_쪽지작성_자신에게_보냄() throws Exception {
         //given
         ChatRoom chatRoom3 = Creator.createChatRoom(999L, receiver, receiver, post1);
-
-        roomRequest.setRoom_id(999L);
-        roomRequest.setMessage("안녕");
+        roomRequest = new ChatRoomRequest("안녕",999L);
 
         Mockito.doReturn(Optional.of(chatRoom3))
                 .when(chatRoomRepository)
@@ -452,8 +434,7 @@ class ChatServiceTest {
                 .post(post1)
                 .build();
 
-        roomRequest.setRoom_id(999L);
-        roomRequest.setMessage("안녕");
+        roomRequest = new ChatRoomRequest("안녕",999L);
 
         Mockito.doReturn(Optional.of(chatRoom3))
                 .when(chatRoomRepository)
@@ -489,8 +470,8 @@ class ChatServiceTest {
                 .partner_id(1000L)
                 .build();
 
-        roomRequest.setRoom_id(999L);
-        roomRequest.setMessage("안녕");
+        roomRequest = new ChatRoomRequest("안녕",999L);
+
 
         Mockito.doReturn(Optional.of(chatRoom3))
                 .when(chatRoomRepository)
@@ -539,8 +520,7 @@ class ChatServiceTest {
                 .partner_id(999L)
                 .build();
 
-        roomRequest.setRoom_id(999L);
-        roomRequest.setMessage("안녕");
+        roomRequest = new ChatRoomRequest("안녕",999L);
 
         Mockito.doReturn(Optional.of(chatRoom3))
                 .when(chatRoomRepository)
