@@ -34,7 +34,6 @@ public class BoardController {
 
     /**
         작성자: 이창윤
-        작성시간: 2022/06/24 2:39 PM
         내용: 모두의 이야기 게시판 목록 조회
     */
     @GetMapping("public")
