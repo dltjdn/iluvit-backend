@@ -267,7 +267,7 @@ public class CenterServiceTest {
             Mockito.doReturn(Optional.of(acceptTeacher))
                     .when(userRepository).findTeacherById(1L);
             CenterDetailRequest request = new CenterDetailRequest();
-            request.setAddress("잘못된 주소");
+            request.addCenterAddress("잘못된 주소");
             Mockito.doThrow(new CenterException(CenterErrorResult.CENTER_WRONG_ADDRESS))
                     .when(mapService).convertAddressToLocation("잘못된 주소");
 
@@ -285,7 +285,7 @@ public class CenterServiceTest {
             doReturn(Optional.of(acceptTeacher))
                     .when(userRepository).findTeacherById(1L);
             CenterDetailRequest request = new CenterDetailRequest();
-            request.setAddress("서울특별시 금천구 가산디지털2로 108 뉴티캐슬");
+            request.addCenterAddress("서울특별시 금천구 가산디지털2로 108 뉴티캐슬");
             //when
             doReturn(Pair.of(126.8806602, 37.4778951))
                     .when(mapService).convertAddressToLocation("서울특별시 금천구 가산디지털2로 108 뉴티캐슬");

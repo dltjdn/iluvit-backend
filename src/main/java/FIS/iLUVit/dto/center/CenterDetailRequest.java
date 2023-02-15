@@ -46,4 +46,8 @@ public class CenterDetailRequest {
     private Theme theme;                    // 테마
     private List<String> programs = new ArrayList<>();
     private List<String> addInfos = new ArrayList<>();
+
+    public void addCenterAddress( String address){
+        this.address=address;
+    }
 }
