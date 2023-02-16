@@ -66,7 +66,7 @@ public class TeacherController {
      *   작성내용: 회원가입, 이직 과정에서 center 정보 가져오기
      */
     @GetMapping("search/center")
-    public Slice<CenterDto> centerInfoForSignup(@ModelAttribute CenterRequest request, Pageable pageable) {
+    public Slice<CenterDto> getCenterForTeacher(@ModelAttribute CenterRequest request, Pageable pageable) {
         return teacherService.findCenterForSignup(request, pageable);
     }
 
@@ -76,7 +76,7 @@ public class TeacherController {
      * 작성내용: 시설에 교사 시설 승인 요청하기
      */
     @PatchMapping("center/{centerId}")
-    public void assignCenter(@Login Long userId, @PathVariable("centerId") Long centerId) {
+    public void assignCenterForTeacher(@Login Long userId, @PathVariable("centerId") Long centerId) {
         teacherService.assignCenter(userId, centerId);
     }
 
@@ -86,7 +86,7 @@ public class TeacherController {
      * 작성내용: 교사의 시설 탈퇴하기
      */
     @PatchMapping("center")
-    public void escapeCenter(@Login Long userId) {
+    public void leaveCenterForTeacher(@Login Long userId) {
         teacherService.escapeCenter(userId);
     }
 
@@ -101,7 +101,7 @@ public class TeacherController {
      * 작성내용: 교사 시설 승인 페이지용 교사 정보 조회
      */
     @GetMapping("approval")
-    public List<TeacherInfoForAdminDto> teacherApprovalList(@Login Long userId) {
+    public List<TeacherInfoForAdminDto> getTeacherForApproval(@Login Long userId) {
         return teacherService.findTeacherApprovalList(userId);
     }
 
@@ -121,7 +121,7 @@ public class TeacherController {
      * 작성내용: 교사 삭제/승인거절
      */
     @PatchMapping("{teacherId}/reject")
-    public void fireTeacher(@Login Long userId, @PathVariable("teacherId") Long teacherId) {
+    public void rejectTeacher(@Login Long userId, @PathVariable("teacherId") Long teacherId) {
         teacherService.fireTeacher(userId, teacherId);
     }
 

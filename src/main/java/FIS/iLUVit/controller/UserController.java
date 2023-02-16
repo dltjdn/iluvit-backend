@@ -28,7 +28,6 @@ public class UserController {
      */
 
     /**
-     * 작성날짜: 2022/05/16 11:58 AM
      * 작성자: 이승범
      * 작성내용: 사용자 기본정보(id, nickname, auth) 조회
      */
@@ -38,7 +37,6 @@ public class UserController {
     }
 
     /**
-    *   작성날짜: 2022/07/29 5:04 PM
     *   작성자: 이승범
     *   작성내용: 아이디 중복 확인
     */
@@ -48,7 +46,6 @@ public class UserController {
     }
 
     /**
-    *   작성날짜: 2022/07/29 5:04 PM
     *   작성자: 이승범
     *   작성내용: 닉네임 중복 확인
     */
@@ -58,7 +55,6 @@ public class UserController {
     }
 
     /**
-     * 작성날짜: 2022/05/16 11:58 AM
      * 작성자: 이승범
      * 작성내용: 비밀번호 변경
      */
@@ -68,7 +64,6 @@ public class UserController {
     }
 
     /**
-     *   작성날짜: 2022/07/29 01:32 AM
      *   작성자: 이승범
      *   작성내용: login기능 security filter에서 옮김
      */
@@ -78,7 +73,6 @@ public class UserController {
     }
 
     /**
-     *   작성날짜: 2022/07/29 01:32 AM
      *   작성자: 이승범
      *   작성내용: refreshToken으로 AccessToken발급
      */

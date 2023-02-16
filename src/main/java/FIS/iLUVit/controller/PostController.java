@@ -32,7 +32,6 @@ public class PostController {
 
     /**
      * 작성자: 이창윤
-     * 작성시간: 2022/06/27 11:31 AM
      * 내용: multipart/form-data 형식으로 변환된 request, 이미지 파일 리스트 images 파라미터로 게시글 저장
      */
     @PostMapping(value = "", consumes = {MediaType.APPLICATION_JSON_VALUE, MediaType.MULTIPART_FORM_DATA_VALUE})
@@ -45,7 +44,6 @@ public class PostController {
 
     /**
      * 작성자: 이창윤
-     * 작성시간: 2022/06/27 11:31 AM
      * 내용: 리액트 네이티브용 게시글 저장
      */
     @PostMapping(value = "react-native", consumes = {MediaType.APPLICATION_JSON_VALUE, MediaType.MULTIPART_FORM_DATA_VALUE})
@@ -59,7 +57,6 @@ public class PostController {
 
     /**
      작성자: 이창윤
-     작성시간: 2022/06/27 1:14 PM
      내용: 게시글 삭제
      */
     @DeleteMapping("{postId}")
@@ -69,7 +66,6 @@ public class PostController {
 
     /**
      작성자: 이창윤
-     작성시간: 2022/06/27 1:32 PM
      내용: 내가 쓴 게시글 목록
      */
     @GetMapping("mypage")
@@ -80,7 +76,6 @@ public class PostController {
 
     /**
      작성자: 이창윤
-     작성시간: 2022/06/27 1:34 PM
      내용: 장터글 끌어올리기
      */
     @PutMapping("{postId}/update")
@@ -90,7 +85,6 @@ public class PostController {
 
     /**
      작성자: 이창윤
-     작성시간: 2022/06/27 1:18 PM
      내용: 게시글 제목+내용 검색(전체 게시판[모게 + 속한 시설] 검색)
      input -> 제목 + 내용 검색 키워드
      auth -> 유저 권한
@@ -104,7 +98,6 @@ public class PostController {
 
     /**
      작성자: 이창윤
-     작성시간: 2022/06/27 1:24 PM
      내용: 게시글 제목+내용+시설 검색 (각 시설 별 검색)
      */
     @GetMapping("search/in-center")
@@ -118,7 +111,6 @@ public class PostController {
 
     /**
      작성자: 이창윤
-     작성시간: 2022/06/27 1:25 PM
      내용: 게시글 제목+내용+보드 검색 (각 게시판 별 검색)
      */
     @GetMapping("search/in-board")
@@ -131,7 +123,6 @@ public class PostController {
 
     /**
      작성자: 이창윤
-     작성시간: 2022/06/27 1:32 PM
      내용: 모두의 이야기 게시글 목록 조회
      */
     @GetMapping("public-main")
@@ -142,7 +133,6 @@ public class PostController {
 
     /**
      작성자: 이창윤
-     작성시간: 2022/06/27 1:33 PM
      내용: 유치원별 이야기 게시글 목록 조회
      */
     @GetMapping("center-main")
@@ -152,7 +142,6 @@ public class PostController {
 
     /**
      작성자: 이창윤
-     작성시간: 2022/06/27 1:30 PM
      내용: HOT 게시판 게시글 목록 조회
      */
     @GetMapping("search/hot-board")
@@ -164,7 +153,6 @@ public class PostController {
 
     /**
      작성자: 이창윤
-     작성시간: 2022/06/27 1:14 PM
      내용: 게시글 1개 조회(게시글 자세히 보기)
      */
     @GetMapping("{postId}")
