@@ -207,7 +207,7 @@ class PostControllerTest {
         List<MultipartFile> fileList = Arrays.asList(multipartFile1, multipartFile2);
         postRequest.setImages(fileList);
 
-        String url = "/user/post";
+        String url = "/post";
         UserErrorResult error = UserErrorResult.NOT_VALID_TOKEN;
 
         Mockito.doThrow(new UserException(error))
@@ -248,7 +248,7 @@ class PostControllerTest {
         List<MultipartFile> fileList = Arrays.asList(multipartFile1, multipartFile2);
         postRequest.setImages(fileList);
 
-        String url = "/user/post";
+        String url = "/post";
         UserErrorResult error = UserErrorResult.USER_NOT_EXIST;
 
         Mockito.doThrow(new UserException(error))
@@ -289,7 +289,7 @@ class PostControllerTest {
         List<MultipartFile> fileList = Arrays.asList(multipartFile1, multipartFile2);
         postRequest.setImages(fileList);
 
-        String url = "/user/post";
+        String url = "/post";
         BoardErrorResult error = BoardErrorResult.BOARD_NOT_EXIST;
 
         Mockito.doThrow(new BoardException(error))
@@ -330,7 +330,7 @@ class PostControllerTest {
         List<MultipartFile> fileList = Arrays.asList(multipartFile1, multipartFile2);
         postRequest.setImages(fileList);
 
-        String url = "/user/post";
+        String url = "/post";
         PostErrorResult error = PostErrorResult.PARENT_NOT_ACCESS_NOTICE;
 
         Mockito.doThrow(new PostException(error))
@@ -371,7 +371,7 @@ class PostControllerTest {
         List<MultipartFile> fileList = Arrays.asList(multipartFile1, multipartFile2);
         postRequest.setImages(fileList);
 
-        String url = "/user/post";
+        String url = "/post";
 
         Mockito.doReturn(post1.getId())
                 .when(postService)
@@ -411,7 +411,7 @@ class PostControllerTest {
         List<MultipartFile> fileList = Arrays.asList(multipartFile1, multipartFile2);
         postRequest.setImages(fileList);
 
-        String url = "/user/post/react-native";
+        String url = "/post/react-native";
 
         Mockito.doReturn(post1.getId())
                 .when(postService)
@@ -440,7 +440,7 @@ class PostControllerTest {
     public void 게시글_삭제_비회원() throws Exception {
         //given
 
-        String url = "/user/post/{post_id}";
+        String url = "/post/{postId}";
         UserErrorResult error = UserErrorResult.NOT_VALID_TOKEN;
 
         Mockito.doThrow(new UserException(error))
@@ -463,7 +463,7 @@ class PostControllerTest {
     public void 게시글_삭제_유저X() throws Exception {
         //given
 
-        String url = "/user/post/{post_id}";
+        String url = "/post/{postId}";
         UserErrorResult error = UserErrorResult.USER_NOT_EXIST;
 
         Mockito.doThrow(new UserException(error))
@@ -487,7 +487,7 @@ class PostControllerTest {
     public void 게시글_삭제_게시글X() throws Exception {
         //given
 
-        String url = "/user/post/{post_id}";
+        String url = "/post/{postId}";
         PostErrorResult error = PostErrorResult.POST_NOT_EXIST;
 
         Mockito.doThrow(new PostException(error))
@@ -511,7 +511,7 @@ class PostControllerTest {
     public void 게시글_삭제_권한X() throws Exception {
         //given
 
-        String url = "/user/post/{post_id}";
+        String url = "/post/{postId}";
         PostErrorResult error = PostErrorResult.UNAUTHORIZED_USER_ACCESS;
 
         Mockito.doThrow(new PostException(error))
@@ -534,7 +534,7 @@ class PostControllerTest {
     @Test
     public void 게시글_삭제_성공() throws Exception {
         //given
-        String url = "/user/post/{post_id}";
+        String url = "/post/{postId}";
         Mockito.doReturn(post1.getId())
                 .when(postService)
                 .deleteById(post1.getId(), parent1.getId());
@@ -602,7 +602,7 @@ class PostControllerTest {
     @Test
     public void 게시글_제목_내용_검색_비회원() throws Exception {
         //given
-        String url = "/user/post/all/search";
+        String url = "/post/search/all";
 
         UserErrorResult error = UserErrorResult.NOT_VALID_TOKEN;
         Mockito.doThrow(new UserException(error))
@@ -628,7 +628,7 @@ class PostControllerTest {
     @Test
     public void 게시글_제목_내용_검색_유저X() throws Exception {
         //given
-        String url = "/user/post/all/search";
+        String url = "/post/search/all";
 
         UserErrorResult error = UserErrorResult.USER_NOT_EXIST;
         Mockito.doThrow(new UserException(error))
@@ -655,7 +655,7 @@ class PostControllerTest {
     @Test
     public void 게시글_제목_내용_검색_성공() throws Exception {
         //given
-        String url = "/user/post/all/search";
+        String url = "/post/search/all";
 
         List<PostPreviewDto> previewList = Arrays.asList(
                 new PostPreviewDto(post1),
@@ -691,7 +691,7 @@ class PostControllerTest {
     @Test
     public void 센터에서_게시글_제목_내용_검색_해당_센터에_권한없음() throws Exception {
         //given
-        String url = "/post/search/inCenter";
+        String url = "/post/search/in-center";
         PostErrorResult error = PostErrorResult.UNAUTHORIZED_USER_ACCESS;
 
         Mockito.doThrow(new PostException(error))
@@ -722,7 +722,7 @@ class PostControllerTest {
     @Test
     public void 보드에서_게시글_제목_내용_검색() throws Exception {
         //given
-        String url = "/post/search/inBoard";
+        String url = "/post/search/in-board";
 
         List<PostPreviewDto> previewList = Arrays.asList(
                 new PostPreviewDto(post1),
@@ -758,7 +758,7 @@ class PostControllerTest {
     @Test
     public void HOT_게시판_글_목록_조회() throws Exception {
         //given
-        String url = "/post/search/hotBoard";
+        String url = "/post/search/hot-board";
 
         List<PostPreviewDto> previewList = Arrays.asList(
                 new PostPreviewDto(post1),
@@ -793,7 +793,7 @@ class PostControllerTest {
     @Test
     public void 내가_쓴_글_리스트() throws Exception {
         //given
-        String url = "/user/post/mypage";
+        String url = "/post/mypage";
 
         List<PostPreviewDto> previewList = Arrays.asList(
                 new PostPreviewDto(post1),
@@ -827,7 +827,7 @@ class PostControllerTest {
     @Test
     public void 모두의_이야기_글_리스트_불러오기_비회원() throws Exception {
         //given
-        String url = "/post/modu-main";
+        String url = "/post/public-main";
         Board board6 = CreateTest.createBoard(99L, "자유게시판", BoardKind.NORMAL, null, true);
         Board board7 = CreateTest.createBoard(100L, "정보게시판", BoardKind.NORMAL, null, true);
         Board board8 = CreateTest.createBoard(101L, "홍보게시판", BoardKind.NORMAL, null, true);
@@ -880,7 +880,7 @@ class PostControllerTest {
     @Test
     public void 모두의_이야기_글_리스트_불러오기_회원() throws Exception {
         //given
-        String url = "/post/modu-main";
+        String url = "/post/public-main";
         Board board6 = CreateTest.createBoard(99L, "자유게시판", BoardKind.NORMAL, null, true);
         Board board7 = CreateTest.createBoard(100L, "정보게시판", BoardKind.NORMAL, null, true);
         Board board8 = CreateTest.createBoard(101L, "홍보게시판", BoardKind.NORMAL, null, true);
@@ -933,7 +933,7 @@ class PostControllerTest {
     @Test
     public void 유치원별_이야기_글_리스트_불러오기_비회원() throws Exception {
         //given
-        String url = "/user/post/center-main";
+        String url = "/post/center-main";
         UserErrorResult error = UserErrorResult.NOT_VALID_TOKEN;
 
         Mockito.doThrow(new UserException(error))
@@ -958,7 +958,7 @@ class PostControllerTest {
     @Test
     public void 유치원별_이야기_글_리스트_불러오기_유저X() throws Exception {
         //given
-        String url = "/user/post/center-main";
+        String url = "/post/center-main";
         UserErrorResult error = UserErrorResult.USER_NOT_EXIST;
 
         Mockito.doThrow(new UserException(error))
@@ -983,7 +983,7 @@ class PostControllerTest {
     @Test
     public void 유치원별_이야기_글_리스트_불러오기_권한X() throws Exception {
         //given
-        String url = "/user/post/center-main";
+        String url = "/post/center-main";
         PostErrorResult error = PostErrorResult.UNAUTHORIZED_USER_ACCESS;
 
         Mockito.doThrow(new PostException(error))
@@ -1008,7 +1008,7 @@ class PostControllerTest {
     @Test
     public void 유치원별_이야기_글_리스트_불러오기_성공() throws Exception {
         //given
-        String url = "/user/post/center-main";
+        String url = "/post/center-main";
 
         List<BoardPreviewDto.PostInfo> postInfoList1 = Arrays.asList(
                 new BoardPreviewDto.PostInfo(post1),
@@ -1064,7 +1064,7 @@ class PostControllerTest {
     @Test
     public void 장터글_끌어올리기_비회원() throws Exception {
         //given
-        String url = "/post/update/{post_id}";
+        String url = "/post/{postId}/update";
         UserErrorResult error = UserErrorResult.NOT_VALID_TOKEN;
 
         Mockito.doThrow(new UserException(error))
@@ -1087,7 +1087,7 @@ class PostControllerTest {
     @Test
     public void 장터글_끌어올리기_게시글X() throws Exception {
         //given
-        String url = "/post/update/{post_id}";
+        String url = "/post/{postId}/update";
         PostErrorResult error = PostErrorResult.POST_NOT_EXIST;
 
         Mockito.doThrow(new PostException(error))
@@ -1110,7 +1110,7 @@ class PostControllerTest {
     @Test
     public void 장터글_끌어올리기_권한X() throws Exception {
         //given
-        String url = "/post/update/{post_id}";
+        String url = "/post/{postId}/update";
         PostErrorResult error = PostErrorResult.UNAUTHORIZED_USER_ACCESS;
 
         Mockito.doThrow(new PostException(error))
@@ -1133,7 +1133,7 @@ class PostControllerTest {
     @Test
     public void 장터글_끌어올리기_성공() throws Exception {
         //given
-        String url = "/post/update/{post_id}";
+        String url = "/post/{postId}/update";
 
         Mockito.doNothing()
                 .when(postService)
