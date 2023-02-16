@@ -37,7 +37,7 @@ public class BoardController {
      * 작성내용: 모두의 이야기 게시판 전체 조회
      */
     @GetMapping("public")
-    public BoardListDto getPublicBoard(@Login Long userId) {
+    public BoardListDto getAllBoardByPublic(@Login Long userId) {
         return boardService.findAllWithBookmark(userId);
     }
 
@@ -46,7 +46,7 @@ public class BoardController {
      * 작성내용: 시설 이야기 게시판 전체 조회
      */
     @GetMapping("in-center/{centerId}")
-    public BoardListDto getCenterStory(@Login Long userId, @PathVariable("centerId") Long centerId) {
+    public BoardListDto getAllBoardByCenter(@Login Long userId, @PathVariable("centerId") Long centerId) {
         return boardService.findAllWithBookmarkInCenter(userId, centerId);
     }
 

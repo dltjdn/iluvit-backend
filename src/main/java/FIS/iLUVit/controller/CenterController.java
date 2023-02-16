@@ -72,7 +72,7 @@ public class CenterController {
      * 비고: id 기반 으로 센터 클릭시 배너로 나올 center 이름, 모집 상황 반환할 api
      */
     @GetMapping("{centerId}/recruit")
-    public CenterBannerResponse getCenterForBanner(@PathVariable("centerId") Long id, @Login Long userId){
+    public CenterBannerResponse getCenterDetailsForBanner(@PathVariable("centerId") Long id, @Login Long userId){
         return centerService.findBannerById(id, userId);
     }
 
@@ -87,7 +87,7 @@ public class CenterController {
      * 비고: 메인 화면에서 띄워 줄 센터 Banner에 대한 내용 기본적으로 Login이 되어 있어야하는 상태이며 관심 테마 설정이 되어있어야한다
      */
     @GetMapping("theme")
-    public List<CenterRecommendDto> getCenterByTheme(@Login Long userId){
+    public List<CenterRecommendDto> getAllCenterByTheme(@Login Long userId){
         return centerService.findCenterForParent(userId);
     }
 

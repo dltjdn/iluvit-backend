@@ -74,8 +74,6 @@ public class AuthController {
         return authService.findLoginId(request);
     }
 
-
-
     /**
      * 작성자: 이승범
      * 작성내용: (비밀번호 변경용 비밀번호찾기) 인증번호 인증
@@ -84,7 +82,5 @@ public class AuthController {
     public void authenticateAuthNumForChangePwd(@RequestBody @Valid FindPasswordRequest request) {
         authService.changePassword(request);
     }
-
-
 
 }

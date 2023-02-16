@@ -23,11 +23,12 @@ public class ExpoTokenController {
 
     /**
      * 작성자: 이창윤
+     * 작성내용: expoToken 등록
      * 앱 최초 접속 시 푸쉬 알림을 위한 [Token]을 받아야 합니다.
      */
     @PostMapping("")
     @ResponseStatus(HttpStatus.CREATED)
-    public Long save(@Login Long userId,
+    public Long createExpoToken(@Login Long userId,
             @RequestBody @Valid ExpoTokenRequest request) {
         return expoTokenService.saveToken(userId, request);
     }
@@ -45,24 +46,22 @@ public class ExpoTokenController {
 
     /**
      * 작성자: 이창윤
-     * 엑스포 토큰 정보 조회
-     * 현재 알림 수신 OX 상태 들어있음
-     * O --> True, X --> False 로 응답
+     * 작성내용: expoToken 조회
+     * 비고: 현재 알림 수신 OX 상태 들어있음, O --> True, X --> False 로 응답
      */
     @GetMapping("{token}")
-    public ExpoTokenDto findById(@Login Long userId,
+    public ExpoTokenDto getExpoToken(@Login Long userId,
                                  @PathVariable String token) {
         return expoTokenService.findById(userId, token);
     }
 
     /**
      * 작성자: 이창윤
-     * 엑스포 토큰 삭제
-     * 유저 로그아웃 시 토큰 삭제하기
+     * 작성내용: expoToken 삭제
      */
     @DeleteMapping("{token}")
     @ResponseStatus(HttpStatus.OK)
-    public void remove(@Login Long userId,
+    public void deleteExpoToken(@Login Long userId,
                                   @PathVariable String token) {
         expoTokenService.deleteById(userId, token);
     }

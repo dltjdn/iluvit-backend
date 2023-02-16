@@ -25,7 +25,7 @@ public class ReportController {
      * 작성내용: 신고하기
      */
     @PostMapping("")
-    public Long registerReport(@Login Long userId, @RequestBody ReportRequest request){
+    public Long createReport(@Login Long userId, @RequestBody ReportRequest request){
         return reportService.registerReport(userId, request);
     }
 

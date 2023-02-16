@@ -138,7 +138,7 @@ public class PresentationController {
      * 작성내용: 설명회 예약 학부모 전체 조회(예약명단)
      */
     @GetMapping("pt-date/{ptDateId}/participating")
-    public List<ParentDto> getParentByParticipate(@Login Long userId, @PathVariable("ptDateId") Long ptDateId){
+    public List<ParentDto> getParentParticipate(@Login Long userId, @PathVariable("ptDateId") Long ptDateId){
         return presentationService.findPtDateParticipatingParents(userId, ptDateId);
     }
 

@@ -26,6 +26,15 @@ public class ParentController {
 
     /**
      * 작성자: 이승범
+     * 작성내용: 학부모 정보 저장(학부모 회원가입)
+     */
+    @PostMapping("signup")
+    public void createParent(@RequestBody @Valid SignupParentRequest request) {
+        parentService.signup(request);
+    }
+
+    /**
+     * 작성자: 이승범
      * 작성내용: 학부모 정보 상세 조회
      */
     @GetMapping("")
@@ -40,15 +49,6 @@ public class ParentController {
     @PostMapping("")
     public ParentDetailResponse updateParent(@Login Long id, @Valid @ModelAttribute ParentDetailRequest request) throws IOException {
         return parentService.updateDetail(id, request);
-    }
-
-    /**
-     * 작성자: 이승범
-     * 작성내용: 학부모 생성(회원가입)
-     */
-    @PostMapping("signup")
-    public void createParent(@RequestBody @Valid SignupParentRequest request) {
-        parentService.signup(request);
     }
 
 }

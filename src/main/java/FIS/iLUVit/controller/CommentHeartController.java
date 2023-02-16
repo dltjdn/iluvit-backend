@@ -17,20 +17,20 @@ public class CommentHeartController {
      */
 
     /**
-     작성자: 이창윤
-     내용: 댓글 좋아요
+     * 작성자: 이창윤
+     * 작성내용: 댓글 좋아요 등록
      */
     @PostMapping("{commentId}")
-    public Long like(@Login Long userId, @PathVariable Long commentId) {
+    public Long createCommentHeart(@Login Long userId, @PathVariable Long commentId) {
         return commentHeartService.save(userId, commentId);
     }
 
     /**
-     작성자: 이창윤
-     내용: 댓글 좋아요 취소
+     * 작성자: 이창윤
+     * 작성내용: 댓글 좋아요 취소
      */
     @DeleteMapping("{commentId}")
-    public Long cancel(@Login Long userId, @PathVariable Long commentId) {
+    public Long deleteCommentHeart(@Login Long userId, @PathVariable Long commentId) {
         return commentHeartService.delete(userId, commentId);
     }
 
