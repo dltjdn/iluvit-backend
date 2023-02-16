@@ -1,20 +1,18 @@
 package FIS.iLUVit.controller;
 
 import FIS.iLUVit.config.argumentResolver.Login;
+import FIS.iLUVit.domain.enumtype.Auth;
 import FIS.iLUVit.dto.board.BoardPreviewDto;
 import FIS.iLUVit.dto.post.PostPreviewDto;
 import FIS.iLUVit.dto.post.PostRequest;
 import FIS.iLUVit.dto.post.PostResponse;
-import FIS.iLUVit.dto.post.PostSearchRequest;
 import FIS.iLUVit.service.PostService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
-import org.springframework.http.MediaType;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 
@@ -32,12 +30,11 @@ public class PostController {
 
 //    /**
 //     * 작성자: 이창윤
-//     * 작성내용: 게시글 저장
-//     * 비고: multipart/form-data 형식으로 변환된 request, 이미지 파일 리스트 images 파라미터로 게시글 저장
+//     * 작성시간: 2022/06/27 11:31 AM
+//     * 내용: multipart/form-data 형식으로 변환된 request, 이미지 파일 리스트 images 파라미터로 게시글 저장
 //     */
 //    @PostMapping(value = "", consumes = {MediaType.APPLICATION_JSON_VALUE, MediaType.MULTIPART_FORM_DATA_VALUE})
-////    @ResponseStatus(HttpStatus.ACCEPTED)
-//    public Long createPost(@Login Long userId,
+//    public Long registerPost(@Login Long userId,
 //                             @RequestPart(required = false) List<MultipartFile> images,
 //                             @RequestPart @Validated PostRequest request) {
 //        return postService.savePost(request, images, userId);
@@ -45,14 +42,12 @@ public class PostController {
 
     /**
      * 작성자: 이창윤
-     * 작성내용: 게시글 저장
+     * 내용: 게시글 저장
      */
-    @PostMapping(value = "", consumes = {MediaType.APPLICATION_JSON_VALUE, MediaType.MULTIPART_FORM_DATA_VALUE})
-//    @ResponseStatus(HttpStatus.ACCEPTED)
-    public Long createPost(@Login Long userId, @RequestPart(required = false) List<MultipartFile> images,
-                                 @ModelAttribute("request") @Validated PostRequest request) {
-        log.info("PostRegisterRequest = {}", request);
-        return postService.savePost(request, images, userId);
+    @PostMapping("")
+    public Long createPost(@Login Long userId,
+                                 @ModelAttribute @Validated PostRequest request) {
+        return postService.savePost(request, userId);
     }
 
     /**
@@ -90,9 +85,9 @@ public class PostController {
      */
     @GetMapping("search/all")
     public Slice<PostPreviewDto> getPost(@Login Long userId,
-                                            @RequestParam("input") String input,
+                                            @RequestParam("input") String keyword,
                                             Pageable pageable) {
-        return postService.searchByKeyword(input, userId, pageable);
+        return postService.searchByKeyword(keyword, userId, pageable);
     }
 
     /**
@@ -102,10 +97,11 @@ public class PostController {
     @GetMapping("search/in-center")
     public Slice<PostPreviewDto> getPostByCenter(
             @Login Long userId,
-            @ModelAttribute PostSearchRequest requestDTO,
+            @RequestParam("center_id") Long centerId,
+            @RequestParam("input") String keyword,
+            @RequestParam("auth") Auth auth,
             Pageable pageable) {
-        return postService.searchByKeywordAndCenter(requestDTO.getCenter_id(), requestDTO.getInput()
-                , requestDTO.getAuth(), userId, pageable);
+        return postService.searchByKeywordAndCenter(centerId, keyword, auth, userId, pageable);
     }
 
     /**
@@ -115,9 +111,9 @@ public class PostController {
     @GetMapping("search/in-board")
     public Slice<PostPreviewDto> getPostByBoard(
             @RequestParam("board_id") Long boardId,
-            @RequestParam(value = "input", required = false) String input,
+            @RequestParam("input") String keyword,
             Pageable pageable) {
-        return postService.searchByKeywordAndBoard(boardId, input, pageable);
+        return postService.searchByKeywordAndBoard(boardId, keyword, pageable);
     }
 
     /**
@@ -126,7 +122,6 @@ public class PostController {
      */
     @GetMapping("public-main")
     public List<BoardPreviewDto> getBoardDetailsByPublic(@Login Long userId) {
-
         return postService.searchMainPreview(userId);
     }
 

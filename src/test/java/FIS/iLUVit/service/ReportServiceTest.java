@@ -1,6 +1,7 @@
 package FIS.iLUVit.service;
 
 import FIS.iLUVit.Creator;
+import FIS.iLUVit.domain.enumtype.ReportReason;
 import FIS.iLUVit.dto.report.ReportRequest;
 import FIS.iLUVit.domain.*;
 import FIS.iLUVit.domain.enumtype.ReportType;
@@ -39,7 +40,7 @@ class ReportServiceTest {
     @Mock
     private UserRepository userRepository;
 
-    ReportRequest reportRequest = new ReportRequest();
+    ReportRequest reportRequest;
     Center center;
     Board board;
     Teacher targetUser, user;
@@ -93,8 +94,7 @@ class ReportServiceTest {
     @Test
     public void 게시글신고_실패_게시글존재안함(){
         //given
-        reportRequest.setType(ReportType.POST);
-        reportRequest.setTargetId(post.getId());
+        reportRequest = new ReportRequest(post.getId(),ReportType.POST, ReportReason.REPORT_A);
 
         doReturn(Optional.of(user))
                 .when(userRepository)
@@ -114,8 +114,7 @@ class ReportServiceTest {
     @Test
     public void 게시글신고_실패_중복신고(){
         //given
-        reportRequest.setType(ReportType.POST);
-        reportRequest.setTargetId(post.getId());
+        reportRequest = new ReportRequest(post.getId(),ReportType.POST, ReportReason.REPORT_A);
 
         doReturn(Optional.of(user))
                 .when(userRepository)
@@ -143,8 +142,7 @@ class ReportServiceTest {
     @Test
     public void 게시글신고_성공_최초신고일때(){
         //given
-        reportRequest.setType(ReportType.POST);
-        reportRequest.setTargetId(post.getId());
+        reportRequest = new ReportRequest(post.getId(),ReportType.POST, ReportReason.REPORT_A);
 
         doReturn(Optional.of(user))
                 .when(userRepository)
@@ -186,8 +184,7 @@ class ReportServiceTest {
     @Test
     public void 게시글신고_성공_최초신고아닐때(){
         //given
-        reportRequest.setType(ReportType.POST);
-        reportRequest.setTargetId(post.getId());
+        reportRequest = new ReportRequest(post.getId(),ReportType.POST, ReportReason.REPORT_A);
 
         doReturn(Optional.of(user))
                 .when(userRepository)
@@ -225,8 +222,7 @@ class ReportServiceTest {
     @Test
     public void 댓글신고_실패_댓글존재안함(){
         //given
-        reportRequest.setType(ReportType.COMMENT);
-        reportRequest.setTargetId(comment.getId());
+        reportRequest = new ReportRequest(comment.getId(),ReportType.COMMENT, ReportReason.REPORT_A);
 
         doReturn(Optional.of(user))
                 .when(userRepository)
@@ -246,8 +242,7 @@ class ReportServiceTest {
     @Test
     public void 댓글신고_실패_중복신고(){
         //given
-        reportRequest.setType(ReportType.COMMENT);
-        reportRequest.setTargetId(comment.getId());
+        reportRequest = new ReportRequest(comment.getId(),ReportType.COMMENT, ReportReason.REPORT_A);
 
         doReturn(Optional.of(user))
                 .when(userRepository)
@@ -276,8 +271,7 @@ class ReportServiceTest {
     @Test
     public void 댓글신고_성공_최초신고일때(){
         //given
-        reportRequest.setType(ReportType.COMMENT);
-        reportRequest.setTargetId(comment.getId());
+        reportRequest = new ReportRequest(comment.getId(),ReportType.COMMENT, ReportReason.REPORT_A);
 
         doReturn(Optional.of(user))
                 .when(userRepository)
@@ -318,8 +312,7 @@ class ReportServiceTest {
     @Test
     public void 댓글신고_성공_최초신고아닐때(){
         //given
-        reportRequest.setType(ReportType.COMMENT);
-        reportRequest.setTargetId(comment.getId());
+        reportRequest = new ReportRequest(comment.getId(),ReportType.COMMENT, ReportReason.REPORT_A);
 
         doReturn(Optional.of(user))
                 .when(userRepository)

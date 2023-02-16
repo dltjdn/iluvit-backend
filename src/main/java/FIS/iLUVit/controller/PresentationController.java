@@ -67,8 +67,6 @@ public class PresentationController {
     @ResponseStatus(HttpStatus.CREATED)
     public PresentationResponse createPresentationInfo(@RequestBody @Validated PresentationDetailRequest request,
                                                          @Login Long userId){
-        if(userId == null)
-            throw new UserException(UserErrorResult.NOT_LOGIN);
 
         return new PresentationResponse(presentationService.saveInfoWithPtDate(request, userId));
     }
@@ -95,8 +93,6 @@ public class PresentationController {
     public PresentationResponse createPresentationImage(@PathVariable("presentationId") Long presentationId,
                                                           @RequestPart(required = false) List<MultipartFile> images,
                                                           @Login Long userId) {
-        if (userId == null)
-            throw new UserException(UserErrorResult.NOT_LOGIN);
         return new PresentationResponse(presentationService.saveImageWithPtDate(presentationId, images, userId));
     }
 

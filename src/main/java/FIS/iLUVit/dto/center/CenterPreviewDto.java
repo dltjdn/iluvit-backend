@@ -5,9 +5,9 @@ import FIS.iLUVit.domain.embeddable.Area;
 import FIS.iLUVit.domain.embeddable.Theme;
 import com.querydsl.core.annotations.QueryProjection;
 import lombok.Builder;
-import lombok.Data;
+import lombok.Getter;
 
-@Data
+@Getter
 public class CenterPreviewDto {
     private Long id;
     private String name;                    // 시설명

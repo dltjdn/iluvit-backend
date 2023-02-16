@@ -23,6 +23,8 @@ public class AlarmService {
     private final AlarmRepository alarmRepository;
     private final UserRepository userRepository;
     public Integer deleteUserAlarm(Long userId, List<Long> alarmIds) {
+        if(userId == null)
+            throw new UserException(UserErrorResult.NOT_LOGIN);
         return alarmRepository.deleteByIds(userId, alarmIds);
     }
 
@@ -43,12 +45,16 @@ public class AlarmService {
     }
 
     public void readAlarm(Long userId) {
+        if(userId == null)
+            throw new UserException(UserErrorResult.NOT_LOGIN);
         userRepository.findById(userId)
                 .orElseThrow(() -> new UserException(UserErrorResult.USER_NOT_EXIST))
                 .updateReadAlarm(Boolean.TRUE);
     }
 
     public Boolean hasRead(Long userId) {
+        if(userId == null)
+            throw new UserException(UserErrorResult.NOT_LOGIN);
         return userRepository.findById(userId)
                 .orElseThrow(() -> new UserException(UserErrorResult.USER_NOT_EXIST))
                 .getReadAlarm();

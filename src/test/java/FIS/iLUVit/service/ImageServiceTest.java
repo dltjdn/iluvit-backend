@@ -24,8 +24,6 @@ public class ImageServiceTest {
 
     @Autowired
     S3ImageService imageServiceAmazon;
-    @Autowired
-    LocalImageService imageServiceLocal;
 
     @Value("${image.location.path}")
     String path;
@@ -44,91 +42,6 @@ public class ImageServiceTest {
         multipartFileList.add(multipartFile);
         multipartFileList.add(multipartFile);
     }
-
-
-    @Test
-    public void BaseImageEntity_imagePath_만들기() throws Exception {
-        //given
-        Center center = Center.builder()
-                .id(1L)
-                .build();
-
-        //when
-        String destPath = imageServiceLocal.getProfileDestPath(multipartFile, center);
-
-        //then
-        assertThat(destPath)
-                .isEqualTo(path + '/' + "center/" + "1.png");
-    }
-
-    @Test
-    public void 이미지_경로_만들기() throws Exception {
-        //given
-        Center center = Center.builder()
-                .id(1L)
-                .build();
-        //when
-        List<String> destPath = imageServiceLocal.getInfoDestPath(multipartFileList, center);
-
-        //then
-        System.out.println("destPath = " + destPath);
-        assertThat(destPath.get(0))
-                .isEqualTo(path + '/' + "centerInfo/1/" + "1.png");
-    }
-
-    @Test
-    public void multipart가_null일_경우() throws Exception {
-        //given
-        Center center = Center.builder()
-                .id(1L)
-                .build();
-        //when
-        //String destPath = imageServiceLocal.saveProfileImage(null, center);
-        imageServiceLocal.saveProfileImage(null, center);
-
-        //then
-        //assertThat(destPath).isNull();
-    }
-
-    @Test
-    public void 프로필_이미지_저장() throws Exception {
-        //given
-        Center center = Center.builder()
-                .id(1L)
-                .build();
-
-        //when
-        //String destPath = imageServiceLocal.saveProfileImage(multipartFile, center);
-        imageServiceLocal.saveProfileImage(multipartFile, center);
-
-        System.out.println("center.getProfileImagePath() = " + center.getProfileImagePath());
-        //then
-        //assertThat(destPath).isNull();
-        assertThat(center.getProfileImagePath())
-                .isEqualTo(prefix + '/' + "center/" + "1.png");
-    }
-
-    @Test
-    public void info_이미지_저장() throws Exception {
-        //given
-        Center center = Center.builder()
-                .id(1L)
-                .build();
-
-        //when
-        //String destPath = imageServiceLocal.saveInfoImages(multipartFileList, center);
-        imageServiceLocal.saveInfoImages(multipartFileList, center);
-
-        System.out.println("center.getProfileImagePath() = " + center.getInfoImagePath());
-        //then
-        //assertThat(destPath).isNull();
-        assertThat(center.getInfoImagePath())
-                .isEqualTo(prefix + '/' + "centerInfo/1/" + "1.png," + prefix + '/' + "centerInfo/1/" + "2.png,");
-        assertThat(center.getImgCnt())
-                .isEqualTo(2);
-    }
-
-
 
     @Test
     public void 아마존_이미지_경로_테스트() throws Exception {

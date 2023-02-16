@@ -1,13 +1,13 @@
 package FIS.iLUVit.dto.presentation;
 
 import lombok.AllArgsConstructor;
-import lombok.Data;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDate;
 import java.util.List;
 
-@Data
+@Getter
 @AllArgsConstructor
 @NoArgsConstructor
 public class PresentationForTeacherResponse {
@@ -19,12 +19,13 @@ public class PresentationForTeacherResponse {
     private List<String> presentationInfoImage;
     private boolean periodValid;
 
-    public PresentationForTeacherResponse(PresentationForTeacherDto dto) {
+    public PresentationForTeacherResponse(PresentationForTeacherDto dto,List<String> presentationInfoImage) {
         this.presentationId = dto.getPresentationId();
         this.startDate = dto.getStartDate();
         this.endDate = dto.getEndDate();
         this.place = dto.getPlace();
         this.content = dto.getContent();
-        periodValid = !LocalDate.now().isAfter(endDate);
+        this.periodValid = !LocalDate.now().isAfter(endDate);
+        this.presentationInfoImage=presentationInfoImage;
     }
 }

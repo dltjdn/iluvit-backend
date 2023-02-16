@@ -1,14 +1,11 @@
 package FIS.iLUVit.dto.presentation;
 
 import FIS.iLUVit.domain.PtDate;
-import FIS.iLUVit.dto.presentation.PresentationWithPtDatesDto;
-import lombok.Data;
-
+import lombok.Getter;
 import java.time.LocalDate;
 
-@Data
+@Getter
 public class PtDateDetailDto {
-
     private Long ptDateId;              // 신청 아이디
     private LocalDate date;            // 설명회 날짜 시간
     private String time;

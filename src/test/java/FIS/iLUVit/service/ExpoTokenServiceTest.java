@@ -31,8 +31,7 @@ class ExpoTokenServiceTest {
     @DisplayName("엑스포 토큰 서버에 저장")
     public void save() throws Exception {
         //given
-        ExpoTokenRequest request = new ExpoTokenRequest();
-        request.setToken("ExponentPushToken[FeQrt0GvJiT-1i1ClIgINc]");
+        ExpoTokenRequest request = new ExpoTokenRequest("ExponentPushToken[FeQrt0GvJiT-1i1ClIgINc]", true);
 
         ExpoToken token = ExpoToken.builder()
                 .id(2L)

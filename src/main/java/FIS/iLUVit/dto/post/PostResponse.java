@@ -3,7 +3,7 @@ package FIS.iLUVit.dto.post;
 import FIS.iLUVit.dto.comment.CommentResponse;
 import FIS.iLUVit.domain.Post;
 import lombok.AllArgsConstructor;
-import lombok.Data;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.Lob;
@@ -13,7 +13,7 @@ import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
-@Data
+@Getter
 @NoArgsConstructor
 @AllArgsConstructor
 public class PostResponse {

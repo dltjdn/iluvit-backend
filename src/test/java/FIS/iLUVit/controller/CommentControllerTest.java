@@ -67,7 +67,7 @@ class CommentControllerTest {
     Comment comment3;
     Comment comment4;
     CommentHeart commentHeart1;
-    CommentRequest request = new CommentRequest();
+    CommentRequest commentRequest;
 
     @BeforeEach
     public void init() {
@@ -104,21 +104,20 @@ class CommentControllerTest {
     @Test
     public void 댓글_작성_비회원_접근() throws Exception {
         //given
-        request.setAnonymous(true);
-        request.setContent("하이");
+        commentRequest = new CommentRequest("하이",true);
 
         final String url = "/user/comment";
         final CommentErrorResult error = CommentErrorResult.UNAUTHORIZED_USER_ACCESS;
 
         Mockito.doThrow(new CommentException(error))
                 .when(commentService)
-                .registerComment(null, post1.getId(), null, request);
+                .registerComment(null, post1.getId(), null, commentRequest);
         //when
         ResultActions resultActions = mockMvc.perform(
                 MockMvcRequestBuilders.post(url)
                         .param("post_id", post1.getId().toString())
                         .param("comment_id", (String) null)
-                        .content(objectMapper.writeValueAsString(request))
+                        .content(objectMapper.writeValueAsString(commentRequest))
                         .contentType(MediaType.APPLICATION_JSON)
         );
 
@@ -142,22 +141,21 @@ class CommentControllerTest {
     @Test
     public void 댓글_작성_게시글X() throws Exception {
         //given
-        request.setAnonymous(true);
-        request.setContent("하이");
+        commentRequest = new CommentRequest("하이",true);
 
         final String url = "/user/comment";
         final PostErrorResult error = PostErrorResult.POST_NOT_EXIST;
 
         Mockito.doThrow(new PostException(error))
                 .when(commentService)
-                .registerComment(user1.getId(), post1.getId(), null, request);
+                .registerComment(user1.getId(), post1.getId(), null, commentRequest);
         //when
         ResultActions resultActions = mockMvc.perform(
                 MockMvcRequestBuilders.post(url)
                         .header("Authorization", createJwtToken())
                         .param("post_id", post1.getId().toString())
                         .param("comment_id", (String) null)
-                        .content(objectMapper.writeValueAsString(request))
+                        .content(objectMapper.writeValueAsString(commentRequest))
                         .contentType(MediaType.APPLICATION_JSON)
         );
 
@@ -172,14 +170,13 @@ class CommentControllerTest {
     @Test
     public void 댓글_작성_성공() throws Exception {
         //given
-        request.setAnonymous(true);
-        request.setContent("안녕");
+        commentRequest = new CommentRequest("하이",true);
 
         final String url = "/user/comment";
 
         Mockito.doReturn(comment1.getId())
                 .when(commentService)
-                .registerComment(user1.getId(), post1.getId(), null, request);
+                .registerComment(user1.getId(), post1.getId(), null, commentRequest);
 
         //when
         ResultActions resultActions = mockMvc.perform(
@@ -187,7 +184,7 @@ class CommentControllerTest {
                         .header("Authorization", createJwtToken())
                         .param("post_id", post1.getId().toString())
                         .param("comment_id", (String) null)
-                        .content(objectMapper.writeValueAsString(request))
+                        .content(objectMapper.writeValueAsString(commentRequest))
                         .contentType(MediaType.APPLICATION_JSON)
         );
         //then
@@ -201,14 +198,13 @@ class CommentControllerTest {
     @Test
     public void 대댓글_작성_성공() throws Exception {
         //given
-        request.setAnonymous(true);
-        request.setContent("안녕");
+        commentRequest = new CommentRequest("하이",true);
 
         final String url = "/user/comment";
 
         Mockito.doReturn(comment1.getId())
                 .when(commentService)
-                .registerComment(user1.getId(), post1.getId(), comment2.getId(), request);
+                .registerComment(user1.getId(), post1.getId(), comment2.getId(), commentRequest);
 
         //when
         ResultActions resultActions = mockMvc.perform(
@@ -216,7 +212,7 @@ class CommentControllerTest {
                         .header("Authorization", createJwtToken())
                         .param("post_id", post1.getId().toString())
                         .param("comment_id", comment2.getId().toString())
-                        .content(objectMapper.writeValueAsString(request))
+                        .content(objectMapper.writeValueAsString(commentRequest))
                         .contentType(MediaType.APPLICATION_JSON)
         );
         //then
@@ -242,7 +238,7 @@ class CommentControllerTest {
                 MockMvcRequestBuilders.patch(url)
                         .param("post_id", post1.getId().toString())
                         .param("comment_id", comment1.getId().toString())
-                        .content(objectMapper.writeValueAsString(request))
+                        .content(objectMapper.writeValueAsString(commentRequest))
                         .contentType(MediaType.APPLICATION_JSON)
         );
 
@@ -270,7 +266,7 @@ class CommentControllerTest {
                         .header("Authorization", createJwtToken())
                         .param("post_id", post1.getId().toString())
                         .param("comment_id", comment1.getId().toString())
-                        .content(objectMapper.writeValueAsString(request))
+                        .content(objectMapper.writeValueAsString(commentRequest))
                         .contentType(MediaType.APPLICATION_JSON)
         );
 
@@ -297,7 +293,7 @@ class CommentControllerTest {
                         .header("Authorization", createJwtToken())
                         .param("post_id", post1.getId().toString())
                         .param("comment_id", comment1.getId().toString())
-                        .content(objectMapper.writeValueAsString(request))
+                        .content(objectMapper.writeValueAsString(commentRequest))
                         .contentType(MediaType.APPLICATION_JSON)
         );
 

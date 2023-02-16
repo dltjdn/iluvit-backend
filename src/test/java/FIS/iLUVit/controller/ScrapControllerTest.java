@@ -3,8 +3,8 @@ package FIS.iLUVit.controller;
 import FIS.iLUVit.Creator;
 import FIS.iLUVit.config.argumentResolver.LoginUserArgumentResolver;
 import FIS.iLUVit.dto.scrap.ScrapDirRequest;
-import FIS.iLUVit.dto.scrap.ScrapByPostRequest;
 import FIS.iLUVit.dto.scrap.ScrapDirDetailRequest;
+import FIS.iLUVit.dto.scrap.ScrapDirUpdateRequest;
 import FIS.iLUVit.dto.scrap.ScrapInfoDto;
 import FIS.iLUVit.domain.User;
 import FIS.iLUVit.exception.ScrapErrorResult;
@@ -27,12 +27,8 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
-
-
 import java.util.ArrayList;
 import java.util.List;
-
-import static FIS.iLUVit.dto.scrap.ScrapByPostRequest.*;
 import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
@@ -240,13 +236,17 @@ public class ScrapControllerTest {
         public void 블완전한요청() throws Exception {
             // given
             String url = "/user/scrap/post";
-            ScrapInfoForUpdate scrapInfo = new ScrapInfoForUpdate();
-            ScrapByPostRequest request = new ScrapByPostRequest(1L, List.of(scrapInfo));
+           // ScrapInfoForUpdate scrapInfo = new ScrapInfoForUpdate();
+           // ScrapByPostRequest request = new ScrapByPostRequest(1L, List.of(scrapInfo));
+            ScrapDirUpdateRequest scrapInfo = new ScrapDirUpdateRequest();
+            List<ScrapDirUpdateRequest> scrapInfoList = new ArrayList<>();
+            scrapInfoList.add(scrapInfo);
+
             // when
             ResultActions result = mockMvc.perform(
                     MockMvcRequestBuilders.put(url)
                             .header("Authorization", Creator.createJwtToken(user))
-                            .content(objectMapper.writeValueAsString(request))
+                            .content(objectMapper.writeValueAsString(scrapInfoList))
                             .contentType(MediaType.APPLICATION_JSON)
             );
             // then
@@ -260,16 +260,19 @@ public class ScrapControllerTest {
             // given
             String url = "/user/scrap/post";
             ScrapErrorResult error = ScrapErrorResult.NOT_VALID_POST;
-            ScrapInfoForUpdate scrapInfo = new ScrapInfoForUpdate(1L, true);
-            ScrapByPostRequest request = new ScrapByPostRequest(1L, List.of(scrapInfo));
+            ScrapDirUpdateRequest scrapInfo = new ScrapDirUpdateRequest(1L, true);
+            List<ScrapDirUpdateRequest> scrapInfoList = new ArrayList<>();
+            scrapInfoList.add(scrapInfo);
+
+
             doThrow(new ScrapException(error))
                     .when(scrapService)
-                    .scrapPost(any(), any());
+                    .scrapPost(any(), any(), any());
             // when
             ResultActions result = mockMvc.perform(
                     MockMvcRequestBuilders.put(url)
                             .header("Authorization", Creator.createJwtToken(user))
-                            .content(objectMapper.writeValueAsString(request))
+                            .content(objectMapper.writeValueAsString(scrapInfoList))
                             .contentType(MediaType.APPLICATION_JSON)
             );
             // then
@@ -285,16 +288,18 @@ public class ScrapControllerTest {
             // given
             String url = "/user/scrap/post";
             ScrapErrorResult error = ScrapErrorResult.NOT_VALID_SCRAP;
-            ScrapInfoForUpdate scrapInfo = new ScrapInfoForUpdate(1L, true);
-            ScrapByPostRequest request = new ScrapByPostRequest(1L, List.of(scrapInfo));
+            ScrapDirUpdateRequest scrapInfo = new ScrapDirUpdateRequest(1L, true);
+            List<ScrapDirUpdateRequest> scrapInfoList = new ArrayList<>();
+            scrapInfoList.add(scrapInfo);
+
             doThrow(new ScrapException(error))
                     .when(scrapService)
-                    .scrapPost(any(), any());
+                    .scrapPost(any(), any(), any());
             // when
             ResultActions result = mockMvc.perform(
                     MockMvcRequestBuilders.put(url)
                             .header("Authorization", Creator.createJwtToken(user))
-                            .content(objectMapper.writeValueAsString(request))
+                            .content(objectMapper.writeValueAsString(scrapInfoList))
                             .contentType(MediaType.APPLICATION_JSON)
             );
             // then
@@ -309,13 +314,15 @@ public class ScrapControllerTest {
         public void 게시물스크랩성공() throws Exception {
             // given
             String url = "/user/scrap/post";
-            ScrapInfoForUpdate scrapInfo = new ScrapInfoForUpdate(1L, true);
-            ScrapByPostRequest request = new ScrapByPostRequest(1L, List.of(scrapInfo));
+            ScrapDirUpdateRequest scrapInfo = new ScrapDirUpdateRequest(1L, true);
+            List<ScrapDirUpdateRequest> scrapInfoList = new ArrayList<>();
+            scrapInfoList.add(scrapInfo);
+
             // when
             ResultActions result = mockMvc.perform(
                     MockMvcRequestBuilders.put(url)
                             .header("Authorization", Creator.createJwtToken(user))
-                            .content(objectMapper.writeValueAsString(request))
+                            .content(objectMapper.writeValueAsString(scrapInfoList))
                             .contentType(MediaType.APPLICATION_JSON)
             );
             // then

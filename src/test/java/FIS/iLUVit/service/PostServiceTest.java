@@ -214,10 +214,11 @@ class PostServiceTest {
         postRequest.setBoard_id(board1.getId());
         postRequest.setContent("게시글 저장 내용");
         postRequest.setTitle("게시글 저장 제목");
+        postRequest.setImages(new ArrayList<>());
 
         //when
         UserException result = assertThrows(UserException.class,
-                () -> postService.savePost(postRequest, new ArrayList<>(), null));
+                () -> postService.savePost(postRequest, null));
 
         //then
         assertThat(result.getErrorResult())
@@ -231,6 +232,7 @@ class PostServiceTest {
         postRequest.setBoard_id(board1.getId());
         postRequest.setContent("게시글 저장 내용");
         postRequest.setTitle("게시글 저장 제목");
+        postRequest.setImages(new ArrayList<>());
 
         Mockito.doReturn(Optional.empty())
                 .when(userRepository)
@@ -238,7 +240,7 @@ class PostServiceTest {
 
         //when
         UserException result = assertThrows(UserException.class,
-                () -> postService.savePost(postRequest, new ArrayList<>(), parent1.getId()));
+                () -> postService.savePost(postRequest, parent1.getId()));
 
         //then
         assertThat(result.getErrorResult())
@@ -252,6 +254,7 @@ class PostServiceTest {
         postRequest.setBoard_id(board1.getId());
         postRequest.setContent("게시글 저장 내용");
         postRequest.setTitle("게시글 저장 제목");
+        postRequest.setImages(new ArrayList<>());
 
         Mockito.doReturn(Optional.of(parent1))
                 .when(userRepository)
@@ -263,7 +266,7 @@ class PostServiceTest {
 
         //when
         BoardException result = assertThrows(BoardException.class,
-                () -> postService.savePost(postRequest, new ArrayList<>(), parent1.getId()));
+                () -> postService.savePost(postRequest, parent1.getId()));
 
         //then
         assertThat(result.getErrorResult())
@@ -277,6 +280,7 @@ class PostServiceTest {
         postRequest.setBoard_id(board1.getId());
         postRequest.setContent("게시글 저장 내용");
         postRequest.setTitle("게시글 저장 제목");
+        postRequest.setImages(new ArrayList<>());
 
         Mockito.doReturn(Optional.of(parent1))
                 .when(userRepository)
@@ -288,7 +292,7 @@ class PostServiceTest {
 
         //when
         PostException result = assertThrows(PostException.class,
-                () -> postService.savePost(postRequest, new ArrayList<>(), parent1.getId()));
+                () -> postService.savePost(postRequest, parent1.getId()));
 
         //then
         assertThat(result.getErrorResult())
@@ -302,6 +306,7 @@ class PostServiceTest {
         postRequest.setBoard_id(board2.getId());
         postRequest.setContent("게시글 저장 내용");
         postRequest.setTitle("게시글 저장 제목");
+        postRequest.setImages(multipartFileList);
 
         Mockito.doReturn(Optional.of(parent1))
                 .when(userRepository)
@@ -320,7 +325,7 @@ class PostServiceTest {
                 .saveInfoImages(any(), any());
 
         //when
-        Long savedId = postService.savePost(postRequest, multipartFileList, parent1.getId());
+        Long savedId = postService.savePost(postRequest, parent1.getId());
         //then
         assertThat(savedId).isEqualTo(post1.getId());
     }

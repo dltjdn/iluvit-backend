@@ -1,13 +1,12 @@
 package FIS.iLUVit.dto.comment;
 
 import FIS.iLUVit.domain.Comment;
-import lombok.Data;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
-
 import java.time.LocalDate;
 import java.time.LocalTime;
 
-@Data
+@Getter
 @NoArgsConstructor
 public class CommentDto {
     private Long id;

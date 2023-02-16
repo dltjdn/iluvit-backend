@@ -1,12 +1,13 @@
 package FIS.iLUVit.dto.review;
 
-import lombok.Data;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
-
 import javax.persistence.Lob;
 
-@Data
+@Getter
 @NoArgsConstructor
+@AllArgsConstructor
 public class ReviewCommentDto {
 
     @Lob

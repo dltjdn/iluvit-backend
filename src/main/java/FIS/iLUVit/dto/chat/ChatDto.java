@@ -2,13 +2,14 @@ package FIS.iLUVit.dto.chat;
 
 import FIS.iLUVit.domain.*;
 import lombok.Data;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.springframework.data.domain.Slice;
 
 import java.time.LocalDate;
 import java.time.LocalTime;
 
-@Data
+@Getter
 @NoArgsConstructor
 public class ChatDto {
 
@@ -31,7 +32,7 @@ public class ChatDto {
     private String opponent_nickname;
     private String opponent_image;
 
-    @Data
+    @Getter
     @NoArgsConstructor
     public static class ChatInfo {
         private Long chat_id;

@@ -46,9 +46,19 @@ public class ParentController {
      * 작성자: 이승범
      * 작성내용: 학부모 정보 수정
      */
-    @PostMapping("")
+    @PatchMapping("")
     public ParentDetailResponse updateParent(@Login Long id, @Valid @ModelAttribute ParentDetailRequest request) throws IOException {
         return parentService.updateDetail(id, request);
+    }
+
+    /**
+     * 작성날짜: 2022/06/23 4:46 PM
+     * 작성자: 이승범
+     * 작성내용: 학부모 회원가입
+     */
+    @PostMapping("signup")
+    public void signupParent(@RequestBody @Valid SignupParentRequest request) {
+        parentService.signup(request);
     }
 
 }

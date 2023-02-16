@@ -40,10 +40,8 @@ public class PostHeartController {
      * 비고: 기존에 좋아요 눌렀던 상태여야 취소 가능
     */
     @DeleteMapping("{postId}")
-    public void deletePostHeart(@Login Long userId, @PathVariable("postId") Long postId) {
-        PostHeart postHeart = postHeartRepository.findByPostAndUser(userId, postId)
-                .orElseThrow(() -> new PostException(PostErrorResult.POST_NOT_EXIST));
-        postHeartRepository.delete(postHeart);
+    public void deletePostHeart(@Login Long userId, @PathVariable("postId") Long postId){
+        postService.deletePostHeart(userId,postId);
     }
 
 }

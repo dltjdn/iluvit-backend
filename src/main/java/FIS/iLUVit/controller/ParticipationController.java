@@ -4,8 +4,6 @@ import FIS.iLUVit.config.argumentResolver.Login;
 import FIS.iLUVit.dto.parent.ParticipationListDto;
 import FIS.iLUVit.dto.presentation.PtDateRequest;
 import FIS.iLUVit.domain.enumtype.Status;
-import FIS.iLUVit.exception.UserErrorResult;
-import FIS.iLUVit.exception.UserException;
 import FIS.iLUVit.service.ParticipationService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -37,8 +35,6 @@ public class ParticipationController {
     @PostMapping("")
     @ResponseStatus(HttpStatus.CREATED)
     public Long registerParticipation(@Login Long userId, @RequestBody @Validated PtDateRequest dto){
-        if(userId == null)
-            throw new UserException(UserErrorResult.NOT_LOGIN);
         return participationService.register(userId, dto.getPtDateId());
     }
 
@@ -50,8 +46,6 @@ public class ParticipationController {
     @PatchMapping("{participationId}")
     @ResponseStatus(HttpStatus.ACCEPTED)
     public Long cancelParticipation(@Login Long userId, @PathVariable("participationId") Long participationId){
-        if(userId == null)
-            throw new UserException(UserErrorResult.NOT_LOGIN);
         return participationService.cancel(userId, participationId);
     }
 
@@ -62,8 +56,6 @@ public class ParticipationController {
     @GetMapping("")
     @ResponseStatus(HttpStatus.ACCEPTED)
     public Map<Status, List<ParticipationListDto>> getAllParticipation(@Login Long userId){
-        if(userId == null)
-            throw new UserException(UserErrorResult.NOT_LOGIN);
         return participationService.getMyParticipation(userId);
     }
 
@@ -74,8 +66,6 @@ public class ParticipationController {
     @GetMapping("join")
     @ResponseStatus(HttpStatus.ACCEPTED)
     public Slice<ParticipationListDto> getRegisterParticipation(@Login Long userId, Pageable pageable){
-        if(userId == null)
-            throw new UserException(UserErrorResult.NOT_LOGIN);
         return participationService.getMyJoinParticipation(userId, pageable);
     }
 
@@ -86,8 +76,6 @@ public class ParticipationController {
     @GetMapping("cancel")
     @ResponseStatus(HttpStatus.ACCEPTED)
     public Slice<ParticipationListDto> getCancelParticipation(@Login Long userId, Pageable pageable){
-        if(userId == null)
-            throw new UserException(UserErrorResult.NOT_LOGIN);
         return participationService.getMyCancelParticipation(userId, pageable);
     }
 
@@ -98,8 +86,6 @@ public class ParticipationController {
     @GetMapping("waiting")
     @ResponseStatus(HttpStatus.ACCEPTED)
     public Slice<ParticipationListDto> getWaitingParticipation(@Login Long userId, Pageable pageable){
-        if(userId == null)
-            throw new UserException(UserErrorResult.NOT_LOGIN);
         return participationService.getMyWaiting(userId, pageable);
     }
 

@@ -230,7 +230,7 @@ public class TeacherServiceTest {
         doReturn(Optional.of(teacher1))
                 .when(teacherRepository)
                 .findById(teacher1.getId());
-        TeacherDetailResponse response = new TeacherDetailResponse(teacher1);
+        TeacherDetailResponse response = new TeacherDetailResponse(teacher1,teacher1.getProfileImagePath());
         doReturn("imagePath")
                 .when(imageService)
                 .getProfileImage(teacher1);

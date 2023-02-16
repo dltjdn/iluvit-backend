@@ -4,12 +4,13 @@ import FIS.iLUVit.domain.Center;
 import FIS.iLUVit.domain.ChatRoom;
 import FIS.iLUVit.domain.Post;
 import lombok.Data;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDate;
 import java.time.LocalTime;
 
-@Data
+@Getter
 @NoArgsConstructor
 public class ChatListDto {
 

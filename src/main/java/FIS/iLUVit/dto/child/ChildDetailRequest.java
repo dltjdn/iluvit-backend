@@ -5,15 +5,16 @@ import FIS.iLUVit.domain.Child;
 import FIS.iLUVit.domain.Parent;
 import FIS.iLUVit.domain.enumtype.Approval;
 import lombok.AllArgsConstructor;
-import lombok.Data;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.web.multipart.MultipartFile;
-
 import javax.validation.constraints.NotBlank;
 import java.time.LocalDate;
 
-@Data
+@Getter
+@Setter
 @AllArgsConstructor
 @NoArgsConstructor
 public class ChildDetailRequest {
@@ -23,6 +24,7 @@ public class ChildDetailRequest {
     @DateTimeFormat(pattern = "yyyy-MM-dd")
     private LocalDate birthDate;
     private MultipartFile profileImg;
+
 
     public Child createChild(Center center, Parent parent) {
         return Child.builder()

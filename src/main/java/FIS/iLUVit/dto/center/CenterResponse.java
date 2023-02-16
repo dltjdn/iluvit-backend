@@ -4,13 +4,13 @@ import FIS.iLUVit.domain.Center;
 import FIS.iLUVit.domain.embeddable.*;
 import FIS.iLUVit.domain.enumtype.KindOf;
 import lombok.AllArgsConstructor;
-import lombok.Data;
+import lombok.Getter;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
-@Data
+@Getter
 @AllArgsConstructor
 public class CenterResponse {
     private Long id;
@@ -49,7 +49,7 @@ public class CenterResponse {
     private List<String> programs = new ArrayList<>();
     private List<String> addInfos = new ArrayList<>();
 
-    public CenterResponse(Center center){
+    public CenterResponse(Center center,String profileImage,List<String> infoImages){
         this.id = center.getId();
         this.name = center.getName();
         this.estType = center.getEstType();
@@ -83,5 +83,7 @@ public class CenterResponse {
         this.theme = center.getTheme();
         this.programs = Center.decodeString(center.getProgram());
         this.addInfos = Center.decodeString(center.getAddInfo());
+        this.profileImage = profileImage;
+        this.infoImages = infoImages;
     }
 }

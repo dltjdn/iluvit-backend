@@ -1,16 +1,15 @@
 package FIS.iLUVit.dto.center;
 
 import lombok.AllArgsConstructor;
-import lombok.Data;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import java.util.List;
 
-@Data
+@Getter
 @NoArgsConstructor
 @AllArgsConstructor
 public class CenterBannerResponse {
-
     private Long centerId;
     private String name;                    // 시설명
     private Boolean signed;                 // 원장의 가입 유무

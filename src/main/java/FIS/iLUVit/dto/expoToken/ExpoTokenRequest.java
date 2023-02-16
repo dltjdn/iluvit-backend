@@ -1,12 +1,13 @@
 package FIS.iLUVit.dto.expoToken;
 
-import lombok.Data;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
-
 import javax.validation.constraints.NotNull;
 
-@Data
+@Getter
 @NoArgsConstructor
+@AllArgsConstructor
 public class ExpoTokenRequest {
 
     @NotNull(message = "토큰 값을 정확히 넣어주세요.")

@@ -43,4 +43,10 @@ public class BoardListDto {
     public void addBoardList(List<BoardBookmarkDto> boardList){
         this.boardList = boardList;
     }
+
+    public void addBookmarkList(List<BoardBookmarkDto> bookmarkList){
+        this.bookmarkList = bookmarkList;
+    }
+
 }
+

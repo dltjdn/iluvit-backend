@@ -76,7 +76,7 @@ class ChatControllerTest {
     Chat chat5;
     Chat chat6;
 
-    ChatRequest request = new ChatRequest();
+    ChatRequest chatRequest = new ChatRequest();
     ChatRoomRequest roomRequest = new ChatRoomRequest();
 
     @BeforeEach
@@ -130,8 +130,8 @@ class ChatControllerTest {
     @Test
     public void 쪽지_작성_대화방_생성_비회원_접근() throws Exception {
         //given
-        request.setMessage("안녕");
-        request.setPost_id(post1.getId());
+        chatRequest.addMessage("안녕");
+        chatRequest.addPostId(post1.getId());
         final String url = "/user/chat";
         final ChatErrorResult error = ChatErrorResult.UNAUTHORIZED_USER_ACCESS;
 
@@ -141,7 +141,7 @@ class ChatControllerTest {
         //when
         ResultActions resultActions = mockMvc.perform(
                 MockMvcRequestBuilders.post(url)
-                        .content(objectMapper.writeValueAsString(request))
+                        .content(objectMapper.writeValueAsString(chatRequest))
                         .contentType(MediaType.APPLICATION_JSON));
         //then
         resultActions.andDo(print())
@@ -156,8 +156,8 @@ class ChatControllerTest {
     @Test
     public void 쪽지_작성_대화방_생성_자신에게_보냄() throws Exception {
         //given
-        request.setMessage("안녕");
-        request.setPost_id(post1.getId());
+        chatRequest.addMessage("안녕");
+        chatRequest.addPostId(post1.getId());
 
         final String url = "/user/chat";
         final ChatErrorResult error = ChatErrorResult.NO_SEND_TO_SELF;
@@ -170,7 +170,7 @@ class ChatControllerTest {
         ResultActions resultActions = mockMvc.perform(
                 MockMvcRequestBuilders.post(url)
                         .header("Authorization", createJwtToken())
-                        .content(objectMapper.writeValueAsString(request))
+                        .content(objectMapper.writeValueAsString(chatRequest))
                         .contentType(MediaType.APPLICATION_JSON));
 
         //then
@@ -186,8 +186,8 @@ class ChatControllerTest {
     @Test
     public void 쪽지_작성_대화방_생성_유저X() throws Exception {
         //given
-        request.setMessage("안녕");
-        request.setPost_id(post1.getId());
+        chatRequest.addMessage("안녕");
+        chatRequest.addPostId(post1.getId());
         final String url = "/user/chat";
         final ChatErrorResult error = ChatErrorResult.USER_NOT_EXIST;
 
@@ -198,7 +198,7 @@ class ChatControllerTest {
         ResultActions resultActions = mockMvc.perform(
                 MockMvcRequestBuilders.post(url)
                         .header("Authorization", createJwtToken())
-                        .content(objectMapper.writeValueAsString(request))
+                        .content(objectMapper.writeValueAsString(chatRequest))
                         .contentType(MediaType.APPLICATION_JSON));
         //then
         resultActions.andDo(print())
@@ -213,8 +213,8 @@ class ChatControllerTest {
     @Test
     public void 쪽지_작성_대화방_생성_게시글X() throws Exception {
         //given
-        request.setMessage("안녕");
-        request.setPost_id(post1.getId());
+        chatRequest.addMessage("안녕");
+        chatRequest.addPostId(post1.getId());
         final String url = "/user/chat";
         final ChatErrorResult error = ChatErrorResult.POST_NOT_EXIST;
 
@@ -225,7 +225,7 @@ class ChatControllerTest {
         ResultActions resultActions = mockMvc.perform(
                 MockMvcRequestBuilders.post(url)
                         .header("Authorization", createJwtToken())
-                        .content(objectMapper.writeValueAsString(request))
+                        .content(objectMapper.writeValueAsString(chatRequest))
                         .contentType(MediaType.APPLICATION_JSON));
         //then
         resultActions.andDo(print())
@@ -240,8 +240,8 @@ class ChatControllerTest {
     @Test
     public void 쪽지_작성_대화방_생성_성공() throws Exception {
         //given
-        request.setMessage("안녕");
-        request.setPost_id(post1.getId());
+        chatRequest.addMessage("안녕");
+        chatRequest.addPostId(post1.getId());
         final String url = "/user/chat";
 
         Mockito.doReturn(chat2.getId())
@@ -251,7 +251,7 @@ class ChatControllerTest {
         ResultActions resultActions = mockMvc.perform(
                 MockMvcRequestBuilders.post(url)
                         .header("Authorization", createJwtToken())
-                        .content(objectMapper.writeValueAsString(request))
+                        .content(objectMapper.writeValueAsString(chatRequest))
                         .contentType(MediaType.APPLICATION_JSON));
         //then
         resultActions.andDo(print())
@@ -266,8 +266,8 @@ class ChatControllerTest {
     @Test
     public void 쪽지_작성_대화방_생성_후_비회원_혹은_권한X() throws Exception {
         //given
-        roomRequest.setRoom_id(chatRoom1.getId());
-        roomRequest.setMessage("안녕");
+        roomRequest.addRoomId(chatRoom1.getId());
+        roomRequest.addMessage("안녕");
 
         final String url = "/user/chat/inRoom";
         final ChatErrorResult error = ChatErrorResult.UNAUTHORIZED_USER_ACCESS;
@@ -292,8 +292,8 @@ class ChatControllerTest {
     @Test
     public void 쪽지_작성_대화방_생성_후_채팅방_아이디X() throws Exception {
         //given
-        roomRequest.setRoom_id(chatRoom1.getId());
-        roomRequest.setMessage("안녕");
+        roomRequest.addRoomId(chatRoom1.getId());
+        roomRequest.addMessage("안녕");
 
         final String url = "/user/chat/inRoom";
         final ChatErrorResult error = ChatErrorResult.ROOM_NOT_EXIST;
@@ -319,8 +319,8 @@ class ChatControllerTest {
     @Test
     public void 쪽지_작성_대화방_생성_후_탈퇴한_회원끼리_대화() throws Exception {
         //given
-        roomRequest.setRoom_id(chatRoom1.getId());
-        roomRequest.setMessage("안녕");
+        roomRequest.addRoomId(chatRoom1.getId());
+        roomRequest.addMessage("안녕");
 
         final String url = "/user/chat/inRoom";
         final ChatErrorResult error = ChatErrorResult.WITHDRAWN_MEMBER;
@@ -346,8 +346,8 @@ class ChatControllerTest {
     @Test
     public void 쪽지_작성_대화방_생성_후_자신에게_쪽지작성() throws Exception {
         //given
-        roomRequest.setRoom_id(chatRoom1.getId());
-        roomRequest.setMessage("안녕");
+        roomRequest.addRoomId(chatRoom1.getId());
+        roomRequest.addMessage("안녕");
 
         final String url = "/user/chat/inRoom";
         final ChatErrorResult error = ChatErrorResult.NO_SEND_TO_SELF;
@@ -373,8 +373,8 @@ class ChatControllerTest {
     @Test
     public void 쪽지_작성_대화방_생성_후_성공() throws Exception {
         //given
-        roomRequest.setRoom_id(chatRoom1.getId());
-        roomRequest.setMessage("안녕");
+        roomRequest.addRoomId(chatRoom1.getId());
+        roomRequest.addMessage("안녕");
 
         final String url = "/user/chat/inRoom";
 

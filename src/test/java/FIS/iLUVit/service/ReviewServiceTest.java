@@ -71,7 +71,7 @@ public class ReviewServiceTest {
     Review review2;
     Review review3;
 
-    ReviewDetailDto reviewCreateDTO = new ReviewDetailDto();
+    ReviewDetailDto reviewCreateDto;
 
 
     @BeforeEach
@@ -159,10 +159,7 @@ public class ReviewServiceTest {
     @Test
     public void 리뷰_등록_학부모X() throws Exception {
         //given
-        reviewCreateDTO.setAnonymous(true);
-        reviewCreateDTO.setCenterId(center1.getId());
-        reviewCreateDTO.setContent("위생에 철저해요");
-        reviewCreateDTO.setScore(5);
+        reviewCreateDto = new ReviewDetailDto(center1.getId(),"위생에 철저해요",5,true);
 
         Mockito.doReturn(Optional.empty())
                 .when(parentRepository)
@@ -170,24 +167,21 @@ public class ReviewServiceTest {
         //when
         //then
         assertThatThrownBy(
-                () -> reviewService.saveReview(parent1.getId(), reviewCreateDTO)
+                () -> reviewService.saveReview(parent1.getId(), reviewCreateDto)
         ).isInstanceOf(UserException.class);
     }
 
     @Test
     public void 리뷰_등록_학부모의_아이가_센터에_속해있지_않음() throws Exception {
         //given
-        reviewCreateDTO.setAnonymous(true);
-        reviewCreateDTO.setCenterId(center1.getId());
-        reviewCreateDTO.setContent("위생에 철저해요");
-        reviewCreateDTO.setScore(5);
+        reviewCreateDto = new ReviewDetailDto(center1.getId(),"위생에 철저해요",5,true);
 
         Mockito.doReturn(Optional.of(parent2))
                 .when(parentRepository)
                 .findWithChildren(parent2.getId());
         //when
         ReviewException result = assertThrows(ReviewException.class,
-                () -> reviewService.saveReview(parent2.getId(), reviewCreateDTO));
+                () -> reviewService.saveReview(parent2.getId(), reviewCreateDto));
         //then
         assertThat(result.getErrorResult())
                 .isEqualTo(ReviewErrorResult.UNAUTHORIZED_USER_ACCESS);
@@ -196,10 +190,7 @@ public class ReviewServiceTest {
     @Test
     public void 리뷰_등록_센터X() throws Exception {
         //given
-        reviewCreateDTO.setAnonymous(true);
-        reviewCreateDTO.setCenterId(center1.getId());
-        reviewCreateDTO.setContent("위생에 철저해요");
-        reviewCreateDTO.setScore(5);
+        reviewCreateDto = new ReviewDetailDto(center1.getId(),"위생에 철저해요",5,true);
 
         Mockito.doReturn(Optional.of(parent1))
                 .when(parentRepository)
@@ -211,7 +202,7 @@ public class ReviewServiceTest {
         //when
 
         CenterException result = assertThrows(CenterException.class,
-                () -> reviewService.saveReview(parent1.getId(), reviewCreateDTO));
+                () -> reviewService.saveReview(parent1.getId(), reviewCreateDto));
         //then
         assertThat(result.getErrorResult())
                 .isEqualTo(CenterErrorResult.CENTER_NOT_EXIST);
@@ -220,10 +211,7 @@ public class ReviewServiceTest {
     @Test
     public void 리뷰_등록_2개_이상_시도() throws Exception {
         //given
-        reviewCreateDTO.setAnonymous(true);
-        reviewCreateDTO.setCenterId(center1.getId());
-        reviewCreateDTO.setContent("위생에 철저해요");
-        reviewCreateDTO.setScore(5);
+        reviewCreateDto = new ReviewDetailDto(center1.getId(),"위생에 철저해요",5,true);
 
         Mockito.doReturn(Optional.of(parent1))
                 .when(parentRepository)
@@ -235,11 +223,11 @@ public class ReviewServiceTest {
 
         Mockito.doReturn(Optional.of(review1))
                 .when(reviewRepository)
-                .findByUserAndCenter(parent1.getId(), reviewCreateDTO.getCenterId());
+                .findByUserAndCenter(parent1.getId(), reviewCreateDto.getCenterId());
         //when
 
         ReviewException result = assertThrows(ReviewException.class,
-                () -> reviewService.saveReview(parent1.getId(), reviewCreateDTO));
+                () -> reviewService.saveReview(parent1.getId(), reviewCreateDto));
         //then
         assertThat(result.getErrorResult())
                 .isEqualTo(ReviewErrorResult.NO_MORE_THAN_ONE_REVIEW);
@@ -248,10 +236,7 @@ public class ReviewServiceTest {
     @Test
     public void 리뷰_등록_성공() throws Exception {
         //given
-        reviewCreateDTO.setAnonymous(true);
-        reviewCreateDTO.setCenterId(center1.getId());
-        reviewCreateDTO.setContent("위생에 철저해요");
-        reviewCreateDTO.setScore(5);
+        reviewCreateDto = new ReviewDetailDto(center1.getId(),"위생에 철저해요",5,true);
 
         Mockito.doReturn(Optional.of(parent1))
                 .when(parentRepository)
@@ -263,14 +248,14 @@ public class ReviewServiceTest {
 
         Mockito.doReturn(Optional.empty())
                 .when(reviewRepository)
-                .findByUserAndCenter(parent1.getId(), reviewCreateDTO.getCenterId());
+                .findByUserAndCenter(parent1.getId(), reviewCreateDto.getCenterId());
 
         Mockito.doReturn(review1)
                 .when(reviewRepository)
                 .save(any());
         //when
 
-        Long savedId = reviewService.saveReview(parent1.getId(), reviewCreateDTO);
+        Long savedId = reviewService.saveReview(parent1.getId(), reviewCreateDto);
         //then
         assertThat(savedId)
                 .isEqualTo(review1.getId());

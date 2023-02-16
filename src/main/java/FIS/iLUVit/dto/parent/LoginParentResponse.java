@@ -5,8 +5,9 @@ import FIS.iLUVit.domain.enumtype.Auth;
 import FIS.iLUVit.security.LoginResponse;
 import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.Getter;
 
-@Data
+@Getter
 @AllArgsConstructor
 public class LoginParentResponse extends LoginResponse {
 

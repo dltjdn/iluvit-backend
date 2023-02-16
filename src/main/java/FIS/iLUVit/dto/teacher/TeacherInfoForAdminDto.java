@@ -1,12 +1,13 @@
 package FIS.iLUVit.dto.teacher;
 
+import FIS.iLUVit.domain.Teacher;
 import FIS.iLUVit.domain.enumtype.Approval;
 import FIS.iLUVit.domain.enumtype.Auth;
 import lombok.AllArgsConstructor;
-import lombok.Data;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
 
-@Data
+@Getter
 @NoArgsConstructor
 @AllArgsConstructor
 public class TeacherInfoForAdminDto {
@@ -17,11 +18,12 @@ public class TeacherInfoForAdminDto {
     private Auth auth;
     private String profileImg;
 
-    public TeacherInfoForAdminDto(Long id, String name, String nickName, Approval approval, Auth auth) {
-        this.teacherId = id;
-        this.name = name;
-        this.nickName=nickName;
-        this.approval = approval;
-        this.auth = auth;
+    public TeacherInfoForAdminDto(Teacher teacher, String profileImg) {
+        this.teacherId =teacher.getId();
+        this.name = teacher.getName();
+        this.nickName=teacher.getNickName();
+        this.approval = teacher.getApproval();
+        this.auth = teacher.getAuth();
+        this.profileImg = profileImg;
     }
 }

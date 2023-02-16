@@ -57,7 +57,7 @@ class CommentServiceTest {
     Comment comment2;
     Comment comment3;
     Comment comment4;
-    CommentRequest request = new CommentRequest();
+    CommentRequest request;
 
     @BeforeEach
     public void init() {
@@ -82,8 +82,7 @@ class CommentServiceTest {
     @Test
     public void 댓글_등록_비회원() throws Exception {
         //given
-        request.setAnonymous(true);
-        request.setContent("하이");
+        request = new CommentRequest("하이", true);
         //when
         CommentException result = assertThrows(CommentException.class,
                 () -> commentService.registerComment(null, post1.getId(), null, request));
@@ -95,8 +94,7 @@ class CommentServiceTest {
     @Test
     public void 댓글_등록_유저X() throws Exception {
         //given
-        request.setAnonymous(true);
-        request.setContent("하이");
+        request = new CommentRequest("하이", true);
 
         Mockito.doReturn(Optional.empty())
                 .when(userRepository)
@@ -112,8 +110,7 @@ class CommentServiceTest {
     @Test
     public void 댓글_등록_게시글X() throws Exception {
         //given
-        request.setAnonymous(true);
-        request.setContent("하이");
+        request = new CommentRequest("하이", true);
 
         Mockito.doReturn(Optional.of(user1))
                 .when(userRepository)
@@ -135,8 +132,7 @@ class CommentServiceTest {
         //given
         try (MockedStatic<AlarmUtils> alarmUtils = Mockito.mockStatic(AlarmUtils.class)) {
 
-            request.setAnonymous(false);
-            request.setContent("하이");
+            request = new CommentRequest("하이", false);
 
             Mockito.doReturn(Optional.of(user1))
                     .when(userRepository)
@@ -169,8 +165,7 @@ class CommentServiceTest {
         //given
         try (MockedStatic<AlarmUtils> alarmUtils = Mockito.mockStatic(AlarmUtils.class)) {
 
-            request.setAnonymous(true);
-            request.setContent("하이");
+            request = new CommentRequest("하이", true);
 
             Mockito.doReturn(Optional.of(user1))
                     .when(userRepository)
@@ -203,8 +198,7 @@ class CommentServiceTest {
         //given
         try (MockedStatic<AlarmUtils> alarmUtils = Mockito.mockStatic(AlarmUtils.class)) {
 
-            request.setAnonymous(true);
-            request.setContent("하이");
+            request = new CommentRequest("하이", true);
 
             Mockito.doReturn(Optional.of(user2))
                     .when(userRepository)
@@ -240,10 +234,7 @@ class CommentServiceTest {
     public void 댓글_등록_익명_새로_작성() throws Exception {
         //given
         try (MockedStatic<AlarmUtils> alarmUtils = Mockito.mockStatic(AlarmUtils.class)) {
-
-            request.setAnonymous(true);
-            request.setContent("하이");
-
+            request = new CommentRequest("하이", true);
             Mockito.doReturn(Optional.of(user2))
                     .when(userRepository)
                     .findById(user2.getId());
@@ -278,9 +269,7 @@ class CommentServiceTest {
     public void 대댓글_등록_성공() throws Exception {
         //given
         try (MockedStatic<AlarmUtils> alarmUtils = Mockito.mockStatic(AlarmUtils.class)) {
-
-            request.setAnonymous(true);
-            request.setContent("하이");
+            request = new CommentRequest("하이", true);
 
             Mockito.doReturn(Optional.of(user1))
                     .when(userRepository)

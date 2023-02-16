@@ -53,11 +53,10 @@ class ExpoTokenControllerTest {
     public void save() throws Exception {
         //given
         String url = "/expoTokens";
-        ExpoTokenRequest request = new ExpoTokenRequest();
+        ExpoTokenRequest request = new ExpoTokenRequest("ExponentPushToken[FeQrt0GvJiT-1i1ClIgINc]",true);
         User user = Parent.builder()
                 .id(1L)
                 .build();
-        request.setToken("ExponentPushToken[FeQrt0GvJiT-1i1ClIgINc]");
 
         given(expoTokenService.saveToken(user.getId(), request))
                 .willReturn(2L);

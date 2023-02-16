@@ -2,10 +2,10 @@ package FIS.iLUVit.dto.user;
 
 import FIS.iLUVit.domain.enumtype.Auth;
 import lombok.AllArgsConstructor;
-import lombok.Data;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
 
-@Data
+@Getter
 @NoArgsConstructor
 @AllArgsConstructor
 public class UserResponse {

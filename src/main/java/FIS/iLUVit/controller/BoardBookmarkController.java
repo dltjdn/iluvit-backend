@@ -28,9 +28,6 @@ public class BoardBookmarkController {
     */
     @GetMapping("main")
     public List<StoryDto> getAllBoardBookmark(@Login Long userId) {
-        if (userId == null) {
-            return boardBookmarkService.searchByDefault();
-        }
         return boardBookmarkService.search(userId);
     }
 
