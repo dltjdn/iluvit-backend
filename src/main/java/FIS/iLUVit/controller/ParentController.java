@@ -26,15 +26,6 @@ public class ParentController {
 
     /**
      * 작성자: 이승범
-     * 작성내용: 학부모 정보 저장(학부모 회원가입)
-     */
-    @PostMapping("signup")
-    public void createParent(@RequestBody @Valid SignupParentRequest request) {
-        parentService.signup(request);
-    }
-
-    /**
-     * 작성자: 이승범
      * 작성내용: 학부모 정보 상세 조회
      */
     @GetMapping("")
@@ -52,12 +43,11 @@ public class ParentController {
     }
 
     /**
-     * 작성날짜: 2022/06/23 4:46 PM
      * 작성자: 이승범
-     * 작성내용: 학부모 회원가입
+     * 작성내용: 학부모 생성 (학부모 회원가입)
      */
     @PostMapping("signup")
-    public void signupParent(@RequestBody @Valid SignupParentRequest request) {
+    public void createParent(@RequestBody @Valid SignupParentRequest request) {
         parentService.signup(request);
     }
 
