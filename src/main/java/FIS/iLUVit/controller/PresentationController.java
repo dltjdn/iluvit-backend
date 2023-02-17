@@ -71,10 +71,7 @@ public class PresentationController {
         return new PresentationResponse(presentationService.saveInfoWithPtDate(request, userId));
     }
 
-    /**
-     * 작성자: 이창윤
-     * 작성내용: 설명회 이미지 저장
-     */
+
     /**
      * 작성자: 이창윤
      * 작성내용: 설명회 정보 수정
