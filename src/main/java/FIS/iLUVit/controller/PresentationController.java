@@ -75,6 +75,11 @@ public class PresentationController {
      * 작성자: 이창윤
      * 작성내용: 설명회 이미지 저장
      */
+    /**
+     * 작성자: 이창윤
+     * 작성내용: 설명회 정보 수정
+     * 비고: 설명회 회차 정보 수정 포함
+     */
     @PatchMapping("")
     @ResponseStatus(HttpStatus.ACCEPTED)
     public PresentationResponse updatePresentationInfo(@RequestBody @Validated PresentationRequest request,
@@ -84,8 +89,7 @@ public class PresentationController {
 
     /**
      * 작성자: 이창윤
-     * 작성내용: 설명회 정보 수정
-     * 비고: 설명회 회차 정보 수정 포함
+     * 작성내용: 설명회 이미지 저장
      */
     @Transactional
     @PostMapping("{presentationId}/image")
