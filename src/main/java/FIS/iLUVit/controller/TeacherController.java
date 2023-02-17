@@ -41,7 +41,7 @@ public class TeacherController {
 
     /**
      * 작성자: 이승범
-     * 작성내용: 교사 정보 저장(교사 회원가입)
+     * 작성내용: 교사 생성 (교사 회원가입)
      */
     @PostMapping("signup")
     public void createTeacher(@RequestBody @Valid SignupTeacherRequest request) {
