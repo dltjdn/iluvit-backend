@@ -25,22 +25,29 @@ public class ParentController {
      */
 
     /**
-     * 작성날짜: 2022/05/13 4:43 PM
      * 작성자: 이승범
-     * 작성내용: 학부모 프로필 조회
+     * 작성내용: 학부모 정보 저장(학부모 회원가입)
+     */
+    @PostMapping("signup")
+    public void createParent(@RequestBody @Valid SignupParentRequest request) {
+        parentService.signup(request);
+    }
+
+    /**
+     * 작성자: 이승범
+     * 작성내용: 학부모 정보 상세 조회
      */
     @GetMapping("")
-    public ParentDetailResponse findParentDetail(@Login Long id) throws IOException {
+    public ParentDetailResponse getParentDetails(@Login Long id) throws IOException {
         return parentService.findDetail(id);
     }
 
     /**
-     * 작성날짜: 2022/05/16 10:18 AM
      * 작성자: 이승범
      * 작성내용: 학부모 정보 수정
      */
     @PatchMapping("")
-    public ParentDetailResponse updateParentDetail(@Login Long id, @Valid @ModelAttribute ParentDetailRequest request) throws IOException {
+    public ParentDetailResponse updateParent(@Login Long id, @Valid @ModelAttribute ParentDetailRequest request) throws IOException {
         return parentService.updateDetail(id, request);
     }
 

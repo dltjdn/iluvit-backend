@@ -22,32 +22,29 @@ public class CenterBookmarkController {
      */
 
     /**
-     *   작성날짜: 2022/07/04 2:26 PM
-     *   작성자: 이승범
-     *   작성내용: 내가 즐겨찾기한 시설
+     * 작성자: 이승범
+     * 작성내용: 즐겨찾는 시설 전체 조회
      */
     @GetMapping("")
-    public Slice<CenterPreviewDto> findCentersByPrefer(@Login Long userId, Pageable pageable) {
+    public Slice<CenterPreviewDto> getAllCenterBookmark(@Login Long userId, Pageable pageable) {
         return centerBookmarkService.findCentersByPrefer(userId, pageable);
     }
 
     /**
-     * 작성날짜: 2022/07/01 5:08 PM
      * 작성자: 이승범
      * 작성내용: 시설 즐겨찾기 등록
      */
     @PostMapping("{centerId}")
-    public void savePrefer(@Login Long userId, @PathVariable("centerId") Long centerId) {
+    public void createCenterBookmark(@Login Long userId, @PathVariable("centerId") Long centerId) {
         centerBookmarkService.savePrefer(userId, centerId);
     }
 
     /**
-     * 작성날짜: 2022/07/04 2:16 PM
      * 작성자: 이승범
      * 작성내용: 시설 즐겨찾기 해제
      */
     @DeleteMapping("{centerId}")
-    public void deletePrefer(@Login Long userId, @PathVariable("centerId") Long centerId) {
+    public void deleteCenterBookmark(@Login Long userId, @PathVariable("centerId") Long centerId) {
         centerBookmarkService.deletePrefer(userId, centerId);
     }
 

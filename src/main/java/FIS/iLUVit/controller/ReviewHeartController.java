@@ -17,12 +17,11 @@ public class ReviewHeartController {
      */
 
     /**
-        작성자: 이창윤
-        작성시간: 2022/06/27 2:21 PM
-        내용: 리뷰 좋아요
+     * 작성자: 이창윤
+     * 내용: 리뷰 좋아요 등록
     */
     @PostMapping("{reviewId}")
-    public Long like(@PathVariable("reviewId") Long reviewId,
+    public Long createReviewHeart(@PathVariable("reviewId") Long reviewId,
                      @Login Long userId) {
         return reviewHeartService.saveReviewHeart(reviewId, userId);
     }
@@ -33,7 +32,7 @@ public class ReviewHeartController {
         내용: 리뷰 좋아요 취소
     */
     @DeleteMapping("{reviewId}")
-    public void cancel(@PathVariable("reviewId") Long reviewId,
+    public void deleteReviewHeart(@PathVariable("reviewId") Long reviewId,
                        @Login Long userId) {
         reviewHeartService.deleteReviewHeart(reviewId, userId);
     }

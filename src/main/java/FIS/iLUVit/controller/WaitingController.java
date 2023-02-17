@@ -26,21 +26,23 @@ public class WaitingController {
      */
 
     /**
-     * 설명회 대기 신청
+     * 작성자: 현승구
+     * 작성내용: 설명회 대기 신청
      */
     @PostMapping("")
     @ResponseStatus(HttpStatus.CREATED)
-    public Long register(@Login Long userId, @RequestBody @Validated WaitingRegisterDto waitingRegister){
+    public Long registerWaiting(@Login Long userId, @RequestBody @Validated WaitingRegisterDto waitingRegister){
         Long ptDateId = waitingRegister.getPtDateId();
         return waitingService.register(userId, ptDateId).getId();
     }
 
     /**
-     * 설명회 대기 신청 취소
+     * 작성자: 현승구
+     * 작성내용: 설명회 대기 신청 취소
      */
     @DeleteMapping("{waitingId}")
     @ResponseStatus(HttpStatus.ACCEPTED)
-    public Long cancel(@Login Long userId, @PathVariable("waitingId") Long waitingId) {
+    public Long cancelWaiting(@Login Long userId, @PathVariable("waitingId") Long waitingId) {
         return waitingService.cancel(waitingId, userId);
     }
 
