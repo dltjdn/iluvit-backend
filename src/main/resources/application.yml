@@ -63,3 +63,9 @@ spring:
 logging:
   level:
     org.hibernate.SQL: info
+
+
+management:
+  endpoints:
+    web:
+      base-path: /management
