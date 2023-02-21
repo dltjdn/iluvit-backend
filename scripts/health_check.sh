@@ -17,7 +17,7 @@ fi
 
 # 위 커맨드들을 통해 현재 타겟포트 가져오기
 
-echo "> Start health check of WAS at 'http://127.0.0.1:${TARGET_PORT}' ..."
+echo "> Start health check of WAS at 'http://52.79.160.33:${TARGET_PORT}' ..."
 
 # 아래 커맨드들을 새로 열린 서버가 정상적으로 작동하는지 확인
 
@@ -26,7 +26,7 @@ for RETRY_COUNT in 1 2 3 4 5 6 7 8 9 10
 do
     echo "> #${RETRY_COUNT} trying..."
     # 테스트할 API 주소를 통해 http 상태 코드 가져오기
-    RESPONSE_CODE=$(curl -s -o /dev/null -w "%{http_code}"  http://127.0.0.1:${TARGET_PORT}/actuator/health)
+    RESPONSE_CODE=$(curl -s -o /dev/null -w "%{http_code}"  http://52.79.160.33:${TARGET_PORT}/actuator/health)
 
 	# RESPONSE_CODE의 http 상태가 200번인 경우
     if [ ${RESPONSE_CODE} -eq 200 ]; then
