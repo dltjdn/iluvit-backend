@@ -40,13 +40,13 @@ public class CommentController {
      * 작성자: 이창윤
      * 작성내용: 댓글 삭제
      * 비고: 댓글 데이터 지우지 않고 내용(content), 작성자(user)만 null로 변경
+     * 삭제하면 그 대댓글까지 삭제? or 대댓글은 남김?
     */
 
     @PatchMapping("{commentId}")
     public Long deleteComment(@Login Long userId,
                               @PathVariable("commentId") Long commentId) {
         return commentService.deleteComment(userId, commentId);
-        // 삭제하면 그 대댓글까지 삭제? or 대댓글은 남김?
     }
 
     /**
