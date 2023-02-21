@@ -68,5 +68,4 @@ logging:
 management:
   endpoints:
     web:
-      path-mapping:
-        health : health_check
+      base-path: /management
