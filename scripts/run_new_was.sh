@@ -3,7 +3,7 @@
 #!/bin/bash
 
 PROJECT_ROOT="/home/ubuntu/app" # 프로젝트 루트
-JAR_FILE="$PROJECT_ROOT/build/libs/*" # JAR_FILE (어쩌구저쩌구.jar)
+JAR_FILE="$PROJECT_ROOT/build/libs/iLUVit-0.0.1-SNAPSHOT.jar" # JAR_FILE (어쩌구저쩌구.jar)
 
 # service_url.inc 에서 현재 서비스를 하고 있는 WAS의 포트 번호 가져오기
 CURRENT_PORT=$(cat /home/ubuntu/service_url.inc | grep -Po '[0-9]+' | tail -1)
