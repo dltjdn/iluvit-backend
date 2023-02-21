@@ -63,3 +63,10 @@ spring:
 logging:
   level:
     org.hibernate.SQL: info
+
+
+management:
+  endpoints:
+    web:
+      path-mapping:
+        health : health_check
