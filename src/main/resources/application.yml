@@ -63,12 +63,13 @@ spring:
 logging:
   level:
     org.hibernate.SQL: info
----
-version:
-  aos: 1.0.0
-  ios: 1.0.0
 
 management:
   endpoints:
     web:
       base-path: /management
+---
+version:
+  aos: 1.0.0
+  ios: 1.0.0
+
