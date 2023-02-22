@@ -13,6 +13,7 @@ import FIS.iLUVit.exception.PostErrorResult;
 import FIS.iLUVit.exception.PostException;
 import FIS.iLUVit.exception.exceptionHandler.ErrorResponse;
 import FIS.iLUVit.exception.exceptionHandler.controllerAdvice.GlobalControllerAdvice;
+import FIS.iLUVit.service.CommentHeartService;
 import FIS.iLUVit.service.CommentService;
 import FIS.iLUVit.service.createmethod.CreateTest;
 import com.auth0.jwt.JWT;
@@ -55,6 +56,8 @@ class CommentControllerTest {
 
     @Mock
     CommentService commentService;
+    @Mock
+    CommentHeartService commentHeartService;
 
     Board board1;
     Post post1;
@@ -103,7 +106,7 @@ class CommentControllerTest {
         //given
         commentRequest = new CommentRequest("하이",true);
 
-        final String url = "/comment/{postId}";
+        final String url = "/user/comment";
         final CommentErrorResult error = CommentErrorResult.UNAUTHORIZED_USER_ACCESS;
 
         Mockito.doThrow(new CommentException(error))
@@ -140,7 +143,7 @@ class CommentControllerTest {
         //given
         commentRequest = new CommentRequest("하이",true);
 
-        final String url = "/comment/{postId}";
+        final String url = "/user/comment";
         final PostErrorResult error = PostErrorResult.POST_NOT_EXIST;
 
         Mockito.doThrow(new PostException(error))
@@ -169,7 +172,7 @@ class CommentControllerTest {
         //given
         commentRequest = new CommentRequest("하이",true);
 
-        final String url = "/comment/{postId}";
+        final String url = "/user/comment";
 
         Mockito.doReturn(comment1.getId())
                 .when(commentService)
@@ -197,7 +200,7 @@ class CommentControllerTest {
         //given
         commentRequest = new CommentRequest("하이",true);
 
-        final String url = "/comment/{postId}/{commentId}";
+        final String url = "/user/comment";
 
         Mockito.doReturn(comment1.getId())
                 .when(commentService)
@@ -224,7 +227,7 @@ class CommentControllerTest {
     public void 댓글_삭제_비회원_혹은_접근_권한_제한() throws Exception {
         //given
 
-        final String url = "/comment/{commentId}";
+        final String url = "/user/comment";
         final CommentErrorResult error = CommentErrorResult.UNAUTHORIZED_USER_ACCESS;
 
         Mockito.doThrow(new CommentException(error))
@@ -251,7 +254,7 @@ class CommentControllerTest {
     public void 댓글_삭제_댓글X() throws Exception {
         //given
 
-        final String url = "/comment/{commentId}";
+        final String url = "/user/comment";
         final CommentErrorResult error = CommentErrorResult.NO_EXIST_COMMENT;
 
         Mockito.doThrow(new CommentException(error))
@@ -279,7 +282,7 @@ class CommentControllerTest {
     public void 댓글_삭제_성공() throws Exception {
         //given
 
-        final String url = "/comment/{commentId}";
+        final String url = "/user/comment";
 
         Mockito.doReturn(comment1.getId())
                 .when(commentService)
@@ -303,9 +306,158 @@ class CommentControllerTest {
     }
 
     @Test
+    public void 댓글_좋아요_비회원() throws Exception {
+        //given
+        final String url = "/user/commentHeart/comment/{comment_id}";
+        final CommentErrorResult error = CommentErrorResult.UNAUTHORIZED_USER_ACCESS_HEART;
+
+        Mockito.doThrow(new CommentException(error))
+                .when(commentHeartService)
+                .save(null, comment1.getId());
+        //when
+        ResultActions resultActions = mockMvc.perform(
+                MockMvcRequestBuilders.post(url, comment1.getId())
+                        .contentType(MediaType.APPLICATION_JSON)
+        );
+
+        //then
+        resultActions.andDo(print())
+                .andExpect(status().isForbidden())
+                .andExpect(content().json(objectMapper.writeValueAsString(
+                        new ErrorResponse(error.getHttpStatus(), error.getMessage())
+                )));
+
+    }
+
+    @Test
+    public void 댓글_좋아요_이미_존재() throws Exception {
+        //given
+        final String url = "/user/commentHeart/comment/{comment_id}";
+        final CommentErrorResult error = CommentErrorResult.ALREADY_EXIST_HEART;
+
+        Mockito.doThrow(new CommentException(error))
+                .when(commentHeartService)
+                .save(user1.getId(), comment1.getId());
+        //when
+        ResultActions resultActions = mockMvc.perform(
+                MockMvcRequestBuilders.post(url, comment1.getId())
+                        .header("Authorization", createJwtToken())
+                        .contentType(MediaType.APPLICATION_JSON)
+        );
+
+        //then
+        resultActions.andDo(print())
+                .andExpect(status().isBadRequest())
+                .andExpect(content().json(objectMapper.writeValueAsString(
+                        new ErrorResponse(error.getHttpStatus(), error.getMessage())
+                )));
+
+    }
+
+    @Test
+    public void 댓글_좋아요_성공() throws Exception {
+        //given
+        final String url = "/user/commentHeart/comment/{comment_id}";
+
+        Mockito.doReturn(commentHeart1.getId())
+                .when(commentHeartService)
+                .save(user1.getId(), comment1.getId());
+        //when
+        ResultActions resultActions = mockMvc.perform(
+                MockMvcRequestBuilders.post(url, comment1.getId())
+                        .header("Authorization", createJwtToken())
+                        .contentType(MediaType.APPLICATION_JSON)
+        );
+
+        //then
+        resultActions.andDo(print())
+                .andExpect(status().isOk())
+                .andExpect(content().json(objectMapper.writeValueAsString(
+                        commentHeart1.getId()
+                )));
+
+    }
+
+    @Test
+    public void 댓글_좋아요_취소_비회원_혹은_권한X() throws Exception {
+        //given
+        final String url = "/user/commentHeart/comment/{comment_id}";
+
+
+        CommentErrorResult error = CommentErrorResult.UNAUTHORIZED_USER_ACCESS_HEART;
+        Mockito.doThrow(new CommentException(error))
+                .when(commentHeartService)
+                .delete(null, comment1.getId());
+        //when
+        ResultActions resultActions = mockMvc.perform(
+                MockMvcRequestBuilders.delete(url, comment1.getId())
+//                        .header("Authorization", createJwtToken())
+                        .contentType(MediaType.APPLICATION_JSON)
+        );
+
+        //then
+        resultActions.andDo(print())
+                .andExpect(status().isForbidden())
+                .andExpect(content().json(objectMapper.writeValueAsString(
+                        new ErrorResponse(error.getHttpStatus(), error.getMessage())
+                )));
+
+    }
+
+    @Test
+    public void 댓글_좋아요_취소_좋아요X() throws Exception {
+        //given
+        final String url = "/user/commentHeart/comment/{comment_id}";
+
+
+        CommentErrorResult error = CommentErrorResult.NO_EXIST_COMMENT_HEART;
+        Mockito.doThrow(new CommentException(error))
+                .when(commentHeartService)
+                .delete(user1.getId(), comment1.getId());
+        //when
+        ResultActions resultActions = mockMvc.perform(
+                MockMvcRequestBuilders.delete(url, comment1.getId())
+                        .header("Authorization", createJwtToken())
+                        .contentType(MediaType.APPLICATION_JSON)
+        );
+
+        //then
+        resultActions.andDo(print())
+                .andExpect(status().isIAmATeapot())
+                .andExpect(content().json(objectMapper.writeValueAsString(
+                        new ErrorResponse(error.getHttpStatus(), error.getMessage())
+                )));
+
+    }
+
+    @Test
+    public void 댓글_좋아요_취소_성공() throws Exception {
+        //given
+        final String url = "/user/commentHeart/comment/{comment_id}";
+
+        Mockito.doReturn(commentHeart1.getId())
+                .when(commentHeartService)
+                .delete(user1.getId(), comment1.getId());
+        //when
+        ResultActions resultActions = mockMvc.perform(
+                MockMvcRequestBuilders.delete(url, comment1.getId())
+                        .header("Authorization", createJwtToken())
+                        .contentType(MediaType.APPLICATION_JSON)
+        );
+
+        //then
+        resultActions.andDo(print())
+                .andExpect(status().isOk())
+                .andExpect(content().json(objectMapper.writeValueAsString(
+                        commentHeart1.getId()
+                )));
+
+    }
+
+    @Test
     public void 댓글_단_리스트_조회() throws Exception {
         //given
-        final String url = "/comment/mypage";
+        final String url = "/user/comment/mypage";
 
         CommentDto commentDto1 = new CommentDto(comment1);
         CommentDto commentDto2 = new CommentDto(comment2);
