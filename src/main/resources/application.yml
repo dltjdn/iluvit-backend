@@ -69,4 +69,3 @@ management:
     web:
       base-path: /management
 
-
