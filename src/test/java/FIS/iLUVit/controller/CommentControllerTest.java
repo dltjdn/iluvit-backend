@@ -103,7 +103,7 @@ class CommentControllerTest {
         //given
         commentRequest = new CommentRequest("하이",true);
 
-        final String url = "/comment/{postId}/{commentId}";
+        final String url = "/comment/{postId}";
         final CommentErrorResult error = CommentErrorResult.UNAUTHORIZED_USER_ACCESS;
 
         Mockito.doThrow(new CommentException(error))
@@ -140,7 +140,7 @@ class CommentControllerTest {
         //given
         commentRequest = new CommentRequest("하이",true);
 
-        final String url = "/comment/{postId}/{commentId}";
+        final String url = "/comment/{postId}";
         final PostErrorResult error = PostErrorResult.POST_NOT_EXIST;
 
         Mockito.doThrow(new PostException(error))
@@ -169,7 +169,7 @@ class CommentControllerTest {
         //given
         commentRequest = new CommentRequest("하이",true);
 
-        final String url = "/comment/{postId}/{commentId}";
+        final String url = "/comment/{postId}";
 
         Mockito.doReturn(comment1.getId())
                 .when(commentService)

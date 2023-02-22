@@ -235,7 +235,7 @@ public class ScrapControllerTest {
         @DisplayName("[error] 불완전한요청")
         public void 블완전한요청() throws Exception {
             // given
-            String url = "/scrap/dir";
+            String url = "/scrap/post/{postId}";
            // ScrapInfoForUpdate scrapInfo = new ScrapInfoForUpdate();
            // ScrapByPostRequest request = new ScrapByPostRequest(1L, List.of(scrapInfo));
             ScrapDirUpdateRequest scrapInfo = new ScrapDirUpdateRequest();
@@ -374,7 +374,7 @@ public class ScrapControllerTest {
     @Test
     public void 게시물에대한스크랩목록조회_성공() throws Exception {
         // given
-        String url = "/scrap/post/{postId}/dir";
+        String url = "/scrap/dir";
         // when
         ResultActions result = mockMvc.perform(
                 MockMvcRequestBuilders.get(url)
@@ -388,7 +388,7 @@ public class ScrapControllerTest {
     @Test
     public void 스크램게시물프리뷰_성공() throws Exception {
         // given
-        String url = "/scrap/dir/{scrapDirId}/post?page={page}&size={size}";
+        String url = "/scrap/dir";
         // when
         ResultActions result = mockMvc.perform(
                 MockMvcRequestBuilders.get(url)
