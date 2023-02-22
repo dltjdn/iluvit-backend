@@ -23,9 +23,9 @@ spring:
           enabled: true
     open-in-view: false
 
-# 현승구 : yml 분리 작업을 위해서 spring.config.import , profiles.active , group 활용
+  # 현승구 : yml 분리 작업을 위해서 spring.config.import , profiles.active , group 활용
   config:
-    import: application-database.yml
+    import: application-database.yml, application-img.yml
   profiles:
     include:
       - secret
@@ -36,7 +36,7 @@ spring:
     active: develop
     group:
       # 그룹별 묶을 설정 파일 grouping
-      develop: iluvit-develop, test, local-image, http
+      develop: iluvit-develop, h2, local-image, http
 
       # 배포작업을 취한 acitve 설정
       release1: iluvit-release, mysql, server-image, ssl
@@ -63,10 +63,12 @@ spring:
 logging:
   level:
     org.hibernate.SQL: info
+---
+version:
+  aos: 1.0.0
+  ios: 1.0.0
 
 management:
   endpoints:
     web:
       base-path: /management
-
-
