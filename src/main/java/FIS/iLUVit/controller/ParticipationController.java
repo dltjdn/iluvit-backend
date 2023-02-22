@@ -29,58 +29,63 @@ public class ParticipationController {
      */
 
     /**
-     * 설명회 신청
+     * 작성자: 현승구
+     * 작성내용: 설명회 신청
      */
     @PostMapping("")
     @ResponseStatus(HttpStatus.CREATED)
-    public Long register(@Login Long userId, @RequestBody @Validated PtDateRequest dto){
+    public Long registerParticipation(@Login Long userId, @RequestBody @Validated PtDateRequest dto){
         return participationService.register(userId, dto.getPtDateId());
     }
 
     /**
-     * 설명회 취소
-     * 대가자 있을 경우 자동 합류
+     * 작성자: 현승구
+     * 작성내용: 설명회 취소
+     * 비고: 대가자 있을 경우 자동 합류
      */
     @PatchMapping("{participationId}")
     @ResponseStatus(HttpStatus.ACCEPTED)
-    public Long cancel(@Login Long userId, @PathVariable("participationId") Long participationId){
+    public Long cancelParticipation(@Login Long userId, @PathVariable("participationId") Long participationId){
         return participationService.cancel(userId, participationId);
     }
 
     /**
-     * 내 설명회 신청 내역 조회
-     * 내가 신청한 혹은 취소한 설명회 내역
+     * 작성자: 현승구
+     * 작성내용: 신청한/취소한 설명회 전체 조회
      */
     @GetMapping("")
     @ResponseStatus(HttpStatus.ACCEPTED)
-    public Map<Status, List<ParticipationListDto>> getMyParticipation(@Login Long userId){
+    public Map<Status, List<ParticipationListDto>> getAllParticipation(@Login Long userId){
         return participationService.getMyParticipation(userId);
     }
 
     /**
-     * 내가 신청한 설명회 목록 조회
+     * 작성자: 현승구
+     * 작성내용: 신청한 설명회 전체 조회
      */
     @GetMapping("join")
     @ResponseStatus(HttpStatus.ACCEPTED)
-    public Slice<ParticipationListDto> getMyJoinParticipation(@Login Long userId, Pageable pageable){
+    public Slice<ParticipationListDto> getRegisterParticipation(@Login Long userId, Pageable pageable){
         return participationService.getMyJoinParticipation(userId, pageable);
     }
 
     /**
-     * 내가 신청을 취소한 설명회 목록 조회
+     * 작성자: 현승구
+     * 작성내용: 신청을 취소한 설명회 전체 조회
      */
     @GetMapping("cancel")
     @ResponseStatus(HttpStatus.ACCEPTED)
-    public Slice<ParticipationListDto> getMyCancelParticipation(@Login Long userId, Pageable pageable){
+    public Slice<ParticipationListDto> getCancelParticipation(@Login Long userId, Pageable pageable){
         return participationService.getMyCancelParticipation(userId, pageable);
     }
 
     /**
-     * 내가 대기를 신청한 설명회 목록 조회
+     * 작성자: 현승구
+     * 작성내용: 대기를 신청한 설명회 전체 조회
      */
     @GetMapping("waiting")
     @ResponseStatus(HttpStatus.ACCEPTED)
-    public Slice<ParticipationListDto> getMyWaiting(@Login Long userId, Pageable pageable){
+    public Slice<ParticipationListDto> getWaitingParticipation(@Login Long userId, Pageable pageable){
         return participationService.getMyWaiting(userId, pageable);
     }
 

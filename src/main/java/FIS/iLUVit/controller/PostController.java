@@ -42,19 +42,17 @@ public class PostController {
 
     /**
      * 작성자: 이창윤
-     * 작성시간: 2022/06/27 11:31 AM
      * 내용: 게시글 저장
      */
     @PostMapping("")
-    public Long registerPostTemp(@Login Long userId,
+    public Long createPost(@Login Long userId,
                                  @ModelAttribute @Validated PostRequest request) {
         return postService.savePost(request, userId);
     }
 
     /**
-     작성자: 이창윤
-     작성시간: 2022/06/27 1:14 PM
-     내용: 게시글 삭제
+     * 작성자: 이창윤
+     * 작성내용: 게시글 삭제
      */
     @DeleteMapping("{postId}")
     public Long deletePost(@Login Long userId, @PathVariable("postId") Long postId) {
@@ -62,20 +60,18 @@ public class PostController {
     }
 
     /**
-     작성자: 이창윤
-     작성시간: 2022/06/27 1:32 PM
-     내용: 내가 쓴 게시글 목록
+     * 작성자: 이창윤
+     * 작성내용: 내가 쓴 게시글 전체 조회
      */
     @GetMapping("mypage")
-    public Slice<PostPreviewDto> searchPostByUser(@Login Long userId,
-                                                  Pageable pageable) {
+    public Slice<PostPreviewDto> getPostByUser(@Login Long userId, Pageable pageable) {
         return postService.searchByUser(userId, pageable);
     }
 
     /**
-     작성자: 이창윤
-     작성시간: 2022/06/27 1:34 PM
-     내용: 장터글 끌어올리기
+     * 작성자: 이창윤
+     * 내용: 장터글 끌어올리기
+     * 비고: 현재 시간으로 업데이트
      */
     @PutMapping("{postId}/update")
     public void pullUp(@Login Long userId, @PathVariable("postId") Long postId) {
@@ -83,26 +79,23 @@ public class PostController {
     }
 
     /**
-     작성자: 이창윤
-     작성시간: 2022/06/27 1:18 PM
-     내용: 게시글 제목+내용 검색(전체 게시판[모게 + 속한 시설] 검색)
-     input -> 제목 + 내용 검색 키워드
-     auth -> 유저 권한
+     * 작성자: 이창윤
+     * 작성내용: 게시글 제목+내용 검색(전체 게시판[모게 + 속한 시설] 검색)
+     * 비고: input -> 제목 + 내용 검색 키워드, auth -> 유저 권한
      */
     @GetMapping("search/all")
-    public Slice<PostPreviewDto> searchPost(@Login Long userId,
+    public Slice<PostPreviewDto> getPost(@Login Long userId,
                                             @RequestParam("input") String keyword,
                                             Pageable pageable) {
         return postService.searchByKeyword(keyword, userId, pageable);
     }
 
     /**
-     작성자: 이창윤
-     작성시간: 2022/06/27 1:24 PM
-     내용: 게시글 제목+내용+시설 검색 (각 시설 별 검색)
+     * 작성자: 이창윤
+     * 작성내용: 게시글 제목+내용+시설 검색 (각 시설 별 검색)
      */
     @GetMapping("search/in-center")
-    public Slice<PostPreviewDto> searchPostByCenter(
+    public Slice<PostPreviewDto> getPostByCenter(
             @Login Long userId,
             @RequestParam("center_id") Long centerId,
             @RequestParam("input") String keyword,
@@ -112,12 +105,11 @@ public class PostController {
     }
 
     /**
-     작성자: 이창윤
-     작성시간: 2022/06/27 1:25 PM
-     내용: 게시글 제목+내용+보드 검색 (각 게시판 별 검색)
+     * 작성자: 이창윤
+     * 작성내용: 게시글 제목+내용+보드 검색 (각 게시판 별 검색)
      */
     @GetMapping("search/in-board")
-    public Slice<PostPreviewDto> searchPostByBoard(
+    public Slice<PostPreviewDto> getPostByBoard(
             @RequestParam("board_id") Long boardId,
             @RequestParam("input") String keyword,
             Pageable pageable) {
@@ -125,44 +117,38 @@ public class PostController {
     }
 
     /**
-     작성자: 이창윤
-     작성시간: 2022/06/27 1:32 PM
-     내용: 모두의 이야기 게시글 목록 조회
+     * 작성자: 이창윤
+     * 작성내용: 모두의 이야기 게시판 전체 조회
      */
     @GetMapping("public-main")
-    public List<BoardPreviewDto> searchMainPreview(@Login Long userId) {
+    public List<BoardPreviewDto> getBoardDetailsByPublic(@Login Long userId) {
         return postService.searchMainPreview(userId);
     }
 
     /**
-     작성자: 이창윤
-     작성시간: 2022/06/27 1:33 PM
-     내용: 유치원별 이야기 게시글 목록 조회
+     * 작성자: 이창윤
+     * 직성내용: 시설별 이야기 게시판 전체 조회
      */
     @GetMapping("center-main")
-    public List<BoardPreviewDto> searchCenterMainPreview(@Login Long userId, @RequestParam("center_id") Long centerId) {
+    public List<BoardPreviewDto> getBoardDetailsByCenter(@Login Long userId, @RequestParam("center_id") Long centerId) {
         return postService.searchCenterMainPreview(userId, centerId);
     }
 
     /**
-     작성자: 이창윤
-     작성시간: 2022/06/27 1:30 PM
-     내용: HOT 게시판 게시글 목록 조회
+     * 작성자: 이창윤
+     * 작성내용: HOT 게시판 게시글 전체 조회
      */
     @GetMapping("search/hot-board")
-    public Slice<PostPreviewDto> searchHotPosts(
-            @RequestParam(value = "center_id", required = false) Long centerId,
-            Pageable pageable) {
+    public Slice<PostPreviewDto> getPostByHotBoard(@RequestParam(value = "center_id", required = false) Long centerId, Pageable pageable) {
         return postService.findByHeartCnt(centerId, pageable);
     }
 
     /**
-     작성자: 이창윤
-     작성시간: 2022/06/27 1:14 PM
-     내용: 게시글 1개 조회(게시글 자세히 보기)
+     * 작성자: 이창윤
+     * 작성내용: 게시글 상세 조회
      */
     @GetMapping("{postId}")
-    public PostResponse getPost(@Login Long userId, @PathVariable("postId") Long postId) {
+    public PostResponse getPostDetails(@Login Long userId, @PathVariable("postId") Long postId) {
         return postService.findById(userId, postId);
     }
 

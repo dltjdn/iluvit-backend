@@ -88,6 +88,8 @@ dependencies {
 	// spring-security-test가 제공하는 csrf() 옵션 추가
 	testImplementation 'org.springframework.security:spring-security-test'
 
+	implementation 'org.springframework.boot:spring-boot-starter-actuator'
+
 }
 
 // 서순이 중요하다 test -> jacocoTestReport -> jacocoTestCoverageVerification 순서로 task 진행

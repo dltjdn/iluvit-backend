@@ -27,19 +27,17 @@ public class UserController {
      */
 
     /**
-     * 작성날짜: 2022/05/16 11:58 AM
      * 작성자: 이승범
-     * 작성내용: 사용자 기본정보(id, nickname, auth) 조회
+     * 작성내용: 유저 상세 조회
      */
     @GetMapping("user")
-    public UserResponse findUserInfo(@Login Long id) {
+    public UserResponse getUserDetails(@Login Long id) {
         return userService.findUserInfo(id);
     }
 
     /**
-    *   작성날짜: 2022/07/29 5:04 PM
-    *   작성자: 이승범
-    *   작성내용: 아이디 중복 확인
+    * 작성자: 이승범
+    * 작성내용: 아이디 중복 조회
     */
     @GetMapping("check-loginid")
     public void checkLoginId(@Valid @ModelAttribute CheckLoginIdRequest request) {
@@ -47,9 +45,8 @@ public class UserController {
     }
 
     /**
-    *   작성날짜: 2022/07/29 5:04 PM
     *   작성자: 이승범
-    *   작성내용: 닉네임 중복 확인
+    *   작성내용: 닉네임 중복 조회
     */
     @GetMapping("check-nickname")
     public void checkNickname(@Valid @ModelAttribute CheckNicknameRequest request) {
@@ -57,7 +54,6 @@ public class UserController {
     }
 
     /**
-     * 작성날짜: 2022/05/16 11:58 AM
      * 작성자: 이승범
      * 작성내용: 비밀번호 변경
      */
@@ -67,9 +63,8 @@ public class UserController {
     }
 
     /**
-     *   작성날짜: 2022/07/29 01:32 AM
-     *   작성자: 이승범
-     *   작성내용: login기능 security filter에서 옮김
+     * 작성자: 이승범
+     * 작성내용: 유저 로그인
      */
     @PostMapping("login")
     public LoginResponse login(@RequestBody LoginRequest request) {
@@ -77,24 +72,23 @@ public class UserController {
     }
 
     /**
-     *   작성날짜: 2022/07/29 01:32 AM
-     *   작성자: 이승범
-     *   작성내용: refreshToken으로 AccessToken발급
+     * 작성자: 이승범
+     * 작성내용: 토큰 재발급
      */
     @PostMapping("refresh")
-    public LoginResponse refresh(@Valid @RequestBody TokenRefreshRequest request) throws IOException {
+    public LoginResponse refreshToken(@Valid @RequestBody TokenRefreshRequest request) throws IOException {
         return userService.refresh(request);
     }
 
-    /**
-     *   작성날짜: 2022/08/12 10:39 AM
-     *   작성자: 이승범
-     *   작성내용: healthCheck test
-     */
-    @GetMapping("profile")
-    public String profile() {
-        return env.getProperty("spring.profiles.active");
-    }
+//    /**
+//     *   작성날짜: 2022/08/12 10:39 AM
+//     *   작성자: 이승범
+//     *   작성내용: healthCheck test
+//     */
+//    @GetMapping("profile")
+//    public String profile() {
+//        return env.getProperty("spring.profiles.active");
+//    }
 
 
     /**

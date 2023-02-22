@@ -26,22 +26,21 @@ public class PostHeartController {
      */
 
     /**
-     작성자: 이창윤
-     작성시간: 2022/06/27 1:35 PM
-     내용: 게시글 좋아요
+     * 작성자: 이창윤
+     * 작성내용: 게시글 좋아요 등록
     */
     @PostMapping("{postId}")
-    public Long like(@Login Long userId, @PathVariable("postId") Long postId) {
+    public Long createPostHeart(@Login Long userId, @PathVariable("postId") Long postId) {
         return postService.savePostHeart(userId, postId);
     }
     
     /**
-     작성자: 이창윤
-     작성시간: 2022/06/27 1:39 PM
-     내용: 게시글 좋아요 취소, 기존에 좋아요 눌렀던 상태여야 취소 가능
+     * 작성자: 이창윤
+     * 작성내용: 게시글 좋아요 취소
+     * 비고: 기존에 좋아요 눌렀던 상태여야 취소 가능
     */
     @DeleteMapping("{postId}")
-    public void cancel(@Login Long userId, @PathVariable("postId") Long postId){
+    public void deletePostHeart(@Login Long userId, @PathVariable("postId") Long postId){
         postService.deletePostHeart(userId,postId);
     }
 

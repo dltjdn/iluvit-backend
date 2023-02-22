@@ -21,12 +21,11 @@ public class ReportController {
      */
 
     /**
-     * 작성날짜: 2022/08/25
      * 작성자: 최민아
      * 작성내용: 신고하기
      */
     @PostMapping("")
-    public Long registerReport(@Login Long userId, @RequestBody ReportRequest request){
+    public Long createReport(@Login Long userId, @RequestBody ReportRequest request){
         return reportService.registerReport(userId, request);
     }
 
