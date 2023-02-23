@@ -91,4 +91,24 @@ public class UserController {
 //        return env.getProperty("spring.profiles.active");
 //    }
 
+    /**
+     *   작성날짜: 2023/02/16 5:52 PM
+     *   작성자: 박찬희
+     *   작성내용: ios 앱 버전 확인용 api
+     */
+    @GetMapping("version/ios")
+    public String iosVersion() {
+        return env.getProperty("version.ios");
+    }
+
+
+    /**
+     *   작성날짜: 2023/02/16 5:52 PM
+     *   작성자: 박찬희
+     *   작성내용: aos 앱 버전 확인용 api
+     */
+    @GetMapping("version/aos")
+    public String aosVersion() {
+        return env.getProperty("version.aos");
+    }
 }
