@@ -52,7 +52,7 @@ class ExpoTokenControllerTest {
     @Test
     public void save() throws Exception {
         //given
-        String url = "/expoTokens";
+        String url = "/expo-tokens";
         ExpoTokenRequest request = new ExpoTokenRequest("ExponentPushToken[FeQrt0GvJiT-1i1ClIgINc]",true);
         User user = Parent.builder()
                 .id(1L)

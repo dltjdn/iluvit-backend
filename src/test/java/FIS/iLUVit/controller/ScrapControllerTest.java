@@ -127,7 +127,7 @@ public class ScrapControllerTest {
         @DisplayName("[error] 잘못된스크랩아이디")
         public void 잘못된스크랩아이디() throws Exception {
             // given
-            String url = "/user/scrap/dir";
+            String url = "/scrap/dir/{scrapDirId}";
             ScrapErrorResult errorResult = ScrapErrorResult.NOT_VALID_SCRAP;
             doThrow(new ScrapException(ScrapErrorResult.NOT_VALID_SCRAP))
                     .when(scrapService)
@@ -150,7 +150,7 @@ public class ScrapControllerTest {
         @DisplayName("[success] 스크랩폴더삭제성공")
         public void 스크랩폴더삭제성공() throws Exception {
             // given
-            String url = "/scrap/dir";
+            String url = "/scrap/dir/{scrapDirId}";
             List<ScrapInfoDto> response = new ArrayList<>();
             doReturn(response)
                     .when(scrapService)
@@ -173,7 +173,7 @@ public class ScrapControllerTest {
         @DisplayName("[error] 불완전한요청")
         public void 불완전한요청() throws Exception {
             // given
-            String url = "/user/scrap/dir/name";
+            String url = "/scrap/dir/name";
             ScrapDirDetailRequest request = new ScrapDirDetailRequest(1L, "");
             // when
             ResultActions result = mockMvc.perform(
@@ -190,7 +190,7 @@ public class ScrapControllerTest {
         @DisplayName("[error] 잘못된스크랩아이디")
         public void 잘못된스크랩아이디() throws Exception {
             // given
-            String url = "/user/scrap/dir/name";
+            String url = "/scrap/dir/name";
             ScrapDirDetailRequest request = new ScrapDirDetailRequest(1L, "scrapName");
             ScrapErrorResult error = ScrapErrorResult.NOT_VALID_SCRAP;
             doThrow(new ScrapException(error))
@@ -214,7 +214,7 @@ public class ScrapControllerTest {
         @DisplayName("[success] 이름바꾸기성공")
         public void 이름바꾸기성공() throws Exception {
             // given
-            String url = "/user/scrap/dir/name";
+            String url = "/scrap/dir/name";
             ScrapDirDetailRequest request = new ScrapDirDetailRequest(1L, "scrapName");
             // when
             ResultActions result = mockMvc.perform(
@@ -235,9 +235,9 @@ public class ScrapControllerTest {
         @DisplayName("[error] 불완전한요청")
         public void 블완전한요청() throws Exception {
             // given
-            String url = "/user/scrap/post";
-           // ScrapInfoForUpdate scrapInfo = new ScrapInfoForUpdate();
-           // ScrapByPostRequest request = new ScrapByPostRequest(1L, List.of(scrapInfo));
+            String url = "/scrap/post/{postId}";
+            // ScrapInfoForUpdate scrapInfo = new ScrapInfoForUpdate();
+            // ScrapByPostRequest request = new ScrapByPostRequest(1L, List.of(scrapInfo));
             ScrapDirUpdateRequest scrapInfo = new ScrapDirUpdateRequest();
             List<ScrapDirUpdateRequest> scrapInfoList = new ArrayList<>();
             scrapInfoList.add(scrapInfo);
@@ -256,9 +256,9 @@ public class ScrapControllerTest {
 
         @Test
         @DisplayName("[error] 게시물아이디 오류")
-       public void 게시물아이디오류() throws Exception {
+        public void 게시물아이디오류() throws Exception {
             // given
-            String url = "/user/scrap/post";
+            String url = "/scrap/post/{postId}";
             ScrapErrorResult error = ScrapErrorResult.NOT_VALID_POST;
             ScrapDirUpdateRequest scrapInfo = new ScrapDirUpdateRequest(1L, true);
             List<ScrapDirUpdateRequest> scrapInfoList = new ArrayList<>();
@@ -286,7 +286,7 @@ public class ScrapControllerTest {
         @DisplayName("[error] 스크랩아이디 오류")
         public void 스크랩아이디오류() throws Exception {
             // given
-            String url = "/user/scrap/post";
+            String url = "/scrap/post/{postId}";
             ScrapErrorResult error = ScrapErrorResult.NOT_VALID_SCRAP;
             ScrapDirUpdateRequest scrapInfo = new ScrapDirUpdateRequest(1L, true);
             List<ScrapDirUpdateRequest> scrapInfoList = new ArrayList<>();
@@ -313,7 +313,7 @@ public class ScrapControllerTest {
         @DisplayName("[success] 게시물스크랩성공")
         public void 게시물스크랩성공() throws Exception {
             // given
-            String url = "/user/scrap/post";
+            String url = "/scrap/post/{postId}";
             ScrapDirUpdateRequest scrapInfo = new ScrapDirUpdateRequest(1L, true);
             List<ScrapDirUpdateRequest> scrapInfoList = new ArrayList<>();
             scrapInfoList.add(scrapInfo);
@@ -337,7 +337,7 @@ public class ScrapControllerTest {
         @DisplayName("[error] 잘못된 scrapPost")
         public void 잘못된scrapPost() throws Exception {
             // given
-            String url = "/user/scrap/post";
+            String url = "/scrap/post/{scrapPostId}";
             ScrapErrorResult error = ScrapErrorResult.NOT_VALID_SCRAPPOST;
             doThrow(new ScrapException(error))
                     .when(scrapService)
@@ -359,7 +359,7 @@ public class ScrapControllerTest {
         @DisplayName("[success] 스크랩취소성공")
         public void 스크랩취소성공() throws Exception {
             // given
-            String url = "/user/scrap/post";
+            String url = "/scrap/post/{scrapPostId}";
             // when
             ResultActions result = mockMvc.perform(
                     MockMvcRequestBuilders.delete(url)
@@ -374,7 +374,7 @@ public class ScrapControllerTest {
     @Test
     public void 게시물에대한스크랩목록조회_성공() throws Exception {
         // given
-        String url = "/user/scrap/post";
+        String url = "/scrap/dir";
         // when
         ResultActions result = mockMvc.perform(
                 MockMvcRequestBuilders.get(url)
@@ -388,7 +388,7 @@ public class ScrapControllerTest {
     @Test
     public void 스크램게시물프리뷰_성공() throws Exception {
         // given
-        String url = "/user/post/scrap?page=0&size=5";
+        String url = "/scrap/dir";
         // when
         ResultActions result = mockMvc.perform(
                 MockMvcRequestBuilders.get(url)
