@@ -22,7 +22,7 @@ public class CenterBannerDto {
         this.name = name;
         this.signed = signed;
         this.recruit = recruit;
-        this.starAverage = starAverage;
+        this.starAverage = (Math.round(starAverage * 10) / 10.0);
         this.infoImages = infoImages;
         this.profileImage = profileImage;
         this.prefer = preferId != null;
@@ -33,7 +33,7 @@ public class CenterBannerDto {
         this.name = name;
         this.signed = signed;
         this.recruit = recruit;
-        this.starAverage = starAverage;
+        this.starAverage = (Math.round(starAverage * 10) / 10.0);
         this.profileImage = profileImage;
         this.prefer = false;
     }
