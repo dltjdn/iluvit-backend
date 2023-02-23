@@ -41,10 +41,6 @@ spring:
       # 배포작업을 취한 acitve 설정
       release1: iluvit-release, mysql, server-image, ssl
       release2: iluvit-release, mysql, server-image, ssl
-
-version:
-  aos: 1.0.0
-  ios: 1.0.0
 ---
 spring:
   config.activate.on-profile: iluvit-develop
