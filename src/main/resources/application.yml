@@ -36,11 +36,11 @@ spring:
     active: develop
     group:
       # 그룹별 묶을 설정 파일 grouping
-      develop: iluvit-develop, test, local-image, http
+      develop: iluvit-develop, test, http
 
       # 배포작업을 취한 acitve 설정
-      release1: iluvit-release, mysql, server-image, ssl
-      release2: iluvit-release, mysql, server-image, ssl
+      release1: iluvit-release, mysql, ssl
+      release2: iluvit-release, mysql, ssl
 ---
 spring:
   config.activate.on-profile: iluvit-develop
