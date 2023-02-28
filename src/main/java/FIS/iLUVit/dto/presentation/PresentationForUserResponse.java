@@ -22,6 +22,8 @@ public class PresentationForUserResponse {
     private Theme theme;
     private List<String> infoImages = new ArrayList<>();
 
+    private boolean periodValid;
+
     public PresentationForUserResponse(PresentationForUserDto dto,List<String> infoImages){
         this.centerId = dto.getCenterId();
         this.centerName = dto.getCenterName();
@@ -32,5 +34,6 @@ public class PresentationForUserResponse {
         this.content = dto.getContent();
         this.theme = dto.getTheme();
         this.infoImages = infoImages;
+        this.periodValid = !LocalDate.now().isAfter(endDate);
     }
 }
