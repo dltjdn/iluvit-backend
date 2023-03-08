@@ -8,6 +8,6 @@ import java.util.List;
 @NoArgsConstructor
 public class ExpoServerResponse {
 
-    private List<ExpoResponse> data;
+    private List<ExpoResponse> expoResponseList;
 
 }

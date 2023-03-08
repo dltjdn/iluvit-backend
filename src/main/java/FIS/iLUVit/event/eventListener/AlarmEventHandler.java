@@ -63,13 +63,13 @@ public class AlarmEventHandler {
      * 내용: 엑스포 토큰 전송 결과에 에러 발생한 경우 해당 토큰을 삭제함
      */
     private void handleTokenSendingError(ExpoServerResponse response) {
-        if (response != null) {
+        if (response.getExpoResponseList() != null) {
             removeInvalidToken(response);
         }
     }
 
     private void removeInvalidToken(ExpoServerResponse response) {
-        List<String> invalidTokens = response.getData()
+        List<String> invalidTokens = response.getExpoResponseList()
                 .stream()
                 .filter(i -> Objects.equals(i.getStatus(), "error"))
                 .map(i -> i.getExpoDetailDto().getExpoPushToken())
