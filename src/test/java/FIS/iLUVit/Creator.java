@@ -6,12 +6,10 @@ import FIS.iLUVit.domain.embeddable.BasicInfra;
 import FIS.iLUVit.domain.embeddable.Theme;
 import FIS.iLUVit.domain.enumtype.*;
 import FIS.iLUVit.domain.reports.Report;
-import FIS.iLUVit.domain.reports.ReportDetail;
 import FIS.iLUVit.domain.reports.ReportDetailComment;
 import FIS.iLUVit.domain.reports.ReportDetailPost;
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.algorithms.Algorithm;
-import org.springframework.security.core.parameters.P;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
