@@ -38,6 +38,9 @@ public class AlarmController {
      */
     @GetMapping("active")
     public Slice<AlarmDetailDto> getActiveAlarm(@Login Long userId, Pageable pageable){
+        log.error("Gyunny Spring Study");
+        log.info("Bobae is Babo");
+        log.debug("MARU Server");
         return alarmService.findUserActiveAlarm(userId, pageable);
     }
 

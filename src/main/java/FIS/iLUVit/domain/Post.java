@@ -57,27 +57,27 @@ public class Post extends BaseImageEntity {
     @OneToMany(mappedBy = "post", cascade = CascadeType.ALL)
     private List<ScrapPost> scrapPosts = new ArrayList<>();
 
-//    @Builder(toBuilder = true)
-//    public Post(Long id, String title, String content, Boolean anonymous, LocalDate date, LocalTime time, Integer commentCnt, Integer heartCnt, Integer imgCnt, Integer videoCnt, LocalDateTime postCreateDate, LocalDateTime postUpdateDate, Board board, User user, List<PostHeart> postHearts, List<Comment> comments, List<ScrapPost> scrapPosts, Integer anonymousOrder) {
-//        this.id = id; /
-//        this.title = title; /
-//        this.content = content; /
-//        this.anonymous = anonymous;/
-//        this.date = date; /
-//        this.time = time; /
-//        this.commentCnt = commentCnt; /
-//        this.heartCnt = heartCnt; /
-//        this.imgCnt = imgCnt; /
-//        this.videoCnt = videoCnt; /
-//        this.postCreateDate = postCreateDate; /
-//        this.postUpdateDate = postUpdateDate; /
-//        this.board = board; /
-//        this.user = user; /
-//        this.postHearts = postHearts;
-//        this.comments = comments;
-//        this.scrapPosts = scrapPosts;
-//        this.anonymousOrder = anonymousOrder; /
-//    }
+    @Builder(toBuilder = true)
+    public Post(Long id, String title, String content, Boolean anonymous, LocalDate date, LocalTime time, Integer commentCnt, Integer heartCnt, Integer imgCnt, Integer videoCnt, LocalDateTime postCreateDate, LocalDateTime postUpdateDate, Board board, User user, List<PostHeart> postHearts, List<Comment> comments, List<ScrapPost> scrapPosts, Integer anonymousOrder) {
+        this.id = id;
+        this.title = title;
+        this.content = content;
+        this.anonymous = anonymous;
+        this.date = date;
+        this.time = time;
+        this.commentCnt = commentCnt;
+        this.heartCnt = heartCnt;
+        this.imgCnt = imgCnt;
+        this.videoCnt = videoCnt;
+        this.postCreateDate = postCreateDate;
+        this.postUpdateDate = postUpdateDate;
+        this.board = board;
+        this.user = user;
+        this.postHearts = postHearts;
+        this.comments = comments;
+        this.scrapPosts = scrapPosts;
+        this.anonymousOrder = anonymousOrder;
+    }
 
     public Post(String title, String content, Boolean anonymous, Integer commentCnt, Integer anonymousOrder, Integer heartCnt, Integer imgCnt, Integer videoCnt, Board board, User user) {
         this.title = title;

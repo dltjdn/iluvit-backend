@@ -42,6 +42,10 @@ spring:
       # 배포작업을 취한 acitve 설정
       release1: iluvit-release, mysql, ssl
       release2: iluvit-release, mysql, ssl
+
+  version:
+    aos: 1.0.0
+    ios: 1.0.0
 ---
 spring:
   config.activate.on-profile: iluvit-develop
@@ -68,3 +72,8 @@ management:
   endpoints:
     web:
       base-path: /management
+---
+logging:
+  slack:
+    webhook-uri: https://hooks.slack.com/services/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
+  config: classpath:logback-spring.xml
