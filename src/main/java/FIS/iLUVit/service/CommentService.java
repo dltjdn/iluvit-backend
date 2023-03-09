@@ -70,13 +70,11 @@ public class CommentService {
             }
         }
 
-        log.info("anonymousOrder = {}", anonymousOrder);
         Comment comment = new Comment(request.getAnonymous(), request.getContent(), findPost, findUser, anonymousOrder);
         if (p_commentId != null) {
             Comment parentComment = commentRepository.getById(p_commentId);
             comment.updateParentComment(parentComment);
         }
-
         if (!userId.equals(findPost.getUser().getId())) // 본인 게시글에 댓글단 건 알림 X
             AlarmUtils.publishAlarmEvent(new PostAlarm(findPost.getUser(), findPost, comment));
         return commentRepository.save(comment).getId();
@@ -88,12 +86,10 @@ public class CommentService {
         }
         commentRepository.findById(commentId)
                 .ifPresentOrElse(c -> {
-                    log.info("댓글 작성자 아이디 = {}, 접속 중인 유저 아이디 = {}", c.getUser().getId(), userId);
                     // 내용 -> 삭제된 댓글입니다. + 작성자 -> null
                     if (Objects.equals(c.getUser().getId(), userId)) {
                         //c.deleteComment();
 
-                        // 2022-09-20 최민아
                         // 댓글과 연관된 모든 신고내역의 target_id 를 null 값으로 만들어줘야함.
                         reportRepository.setTargetIsNullAndStatusIsDelete(c.getId());
                         // 댓글과 연관된 모든 신고상세내역의 target_comment_id(fk) 를 null 값으로 만들어줘야함.

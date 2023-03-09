@@ -7,7 +7,5 @@ import java.util.List;
 @Getter
 @NoArgsConstructor
 public class ExpoServerResponse {
-
     private List<ExpoResponse> expoResponseList;
-
 }

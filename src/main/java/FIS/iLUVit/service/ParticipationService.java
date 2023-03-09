@@ -36,8 +36,7 @@ public class ParticipationService {
     private final PtDateRepository ptDateRepository;
     private final ParentRepository parentRepository;
     private final UserRepository userRepository;
-    private final ApplicationEventPublisher publisher;
-    private final ImageService imageService;
+    private final ApplicationEventPublisher eventPublisher;
 
     public Long register(Long userId, Long ptDateId) {
         if(userId == null)
@@ -96,7 +95,7 @@ public class ParticipationService {
         participation.cancel();
         PtDate ptDate = participation.getPtDate();
         if(ptDate.hasWaiting()){
-            publisher.publishEvent(new ParticipationCancelEvent(ptDate.getPresentation(), ptDate)); // 이벤트 리스너 호출
+            eventPublisher.publishEvent(new ParticipationCancelEvent(ptDate.getPresentation(), ptDate)); // 이벤트 리스너 호출
         }
         return participationId;
     }

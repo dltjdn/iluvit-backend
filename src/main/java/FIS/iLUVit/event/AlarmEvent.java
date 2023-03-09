@@ -13,8 +13,4 @@ public class AlarmEvent {
     public AlarmEvent(Alarm alarm) {
         this.alarm = alarm;
     }
-
-    public static AlarmEvent createAlarmEvent(Alarm alarm){
-        return new AlarmEvent(alarm);
-    }
 }
