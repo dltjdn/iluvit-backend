@@ -1,7 +1,10 @@
 package FIS.iLUVit.controller;
 
 import FIS.iLUVit.config.argumentResolver.Login;
+import FIS.iLUVit.domain.User;
 import FIS.iLUVit.dto.user.*;
+import FIS.iLUVit.exception.UserErrorResult;
+import FIS.iLUVit.exception.UserException;
 import FIS.iLUVit.security.LoginRequest;
 import FIS.iLUVit.security.LoginResponse;
 import FIS.iLUVit.service.UserService;
@@ -77,24 +80,13 @@ public class UserController {
      * 작성내용: 토큰 재발급
      */
     @PostMapping("refresh")
-    public LoginResponse refreshToken(@Valid @RequestBody TokenRefreshRequest request) throws IOException {
+    public LoginResponse refreshToken(@Valid @RequestBody TokenRefreshRequest request) {
         return userService.refresh(request);
     }
 
-//    /**
-//     *   작성날짜: 2022/08/12 10:39 AM
-//     *   작성자: 이승범
-//     *   작성내용: healthCheck test
-//     */
-//    @GetMapping("profile")
-//    public String profile() {
-//        return env.getProperty("spring.profiles.active");
-//    }
-
     /**
-     *   작성날짜: 2023/02/16 5:52 PM
      *   작성자: 박찬희
-     *   작성내용: ios 앱 버전 확인용 api
+     *   작성내용: ios 앱 버전 확인
      */
     @GetMapping("version/ios")
     public String iosVersion() {
@@ -103,12 +95,29 @@ public class UserController {
 
 
     /**
-     *   작성날짜: 2023/02/16 5:52 PM
      *   작성자: 박찬희
-     *   작성내용: aos 앱 버전 확인용 api
+     *   작성내용: aos 앱 버전 확인
      */
     @GetMapping("version/aos")
     public String aosVersion() {
         return env.getProperty("version.aos");
+    }
+
+    /**
+     *   작성자: 이서우
+     *   작성내용: 교사 회원 탈퇴
+     */
+    @DeleteMapping("withdraw/teacher")
+    public Long deleteTeacher(@Login Long userId){
+        return userService.withdrawTeacher(userId);
+    }
+
+    /**
+     *   작성자: 이서우
+     *   작성내용: 학부모 회원 탈퇴
+     */
+    @DeleteMapping("withdraw/parent")
+    public Long deleteParent(@Login Long userId){
+        return userService.withdrawParent(userId);
     }
 }

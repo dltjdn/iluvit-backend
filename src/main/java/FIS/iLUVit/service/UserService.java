@@ -38,7 +38,6 @@ public class UserService {
     private final TokenPairRepository tokenPairRepository;
 
     /**
-    *   작성날짜: 2022/05/16 11:57 AM
     *   작성자: 이승범
     *   작성내용: 사용자 기본정보(id, nickname, auth) 반환
     */
@@ -49,7 +48,6 @@ public class UserService {
     }
 
     /**
-    *   작성날짜: 2022/05/16 11:57 AM
     *   작성자: 이승범
     *   작성내용: 비밀번호 변경
     */
@@ -97,7 +95,6 @@ public class UserService {
 
 
     /**
-     *   작성날짜: 2022/07/29 01:32 AM
      *   작성자: 이승범
      *   작성내용: login service layer로 옮김
      */
@@ -130,7 +127,6 @@ public class UserService {
     }
 
     /**
-     *   작성날짜: 2022/07/29 01:32 AM
      *   작성자: 이승범
      *   작성내용: refreshToken으로 accessToken를 재발급
      */
@@ -174,7 +170,6 @@ public class UserService {
     }
 
     /**
-    *   작성날짜: 2022/07/29 1:50 PM
     *   작성자: 이승범
     *   작성내용: 로그인아이디 중복 확인
     */
@@ -186,7 +181,6 @@ public class UserService {
     }
 
     /**
-    *   작성날짜: 2022/07/29 5:05 PM
     *   작성자: 이승범
     *   작성내용: 닉네임 중복 확인
     */
@@ -197,5 +191,22 @@ public class UserService {
                 });
     }
 
+    /**
+     *   작성자: 이서우
+     *   작성내용: 교사 회원 탈퇴
+     */
+    //TODO!
+    public long withdrawTeacher(Long userId){
+
+    }
+
+    /**
+     *   작성자: 이서우
+     *   작성내용: 학부모 회원 탈퇴
+     */
+    //TODO!
+    public long withdrawParent(Long userId){
+
+    }
 
 }
