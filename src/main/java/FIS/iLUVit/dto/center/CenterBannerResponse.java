@@ -19,12 +19,12 @@ public class CenterBannerResponse {
     private Double starAverage;
     private Boolean prefer;
 
-    public CenterBannerResponse(CenterBannerDto banner, List<String> infoImages) {
+    public CenterBannerResponse(CenterBannerDto banner, Double starAverage,List<String> infoImages) {
         this.centerId = banner.getCenterId();
         this.name = banner.getName();
         this.signed = banner.getSigned();
         this.recruit = banner.getRecruit();
-        this.starAverage = banner.getStarAverage();
+        this.starAverage = starAverage;
         this.profileImage = banner.getProfileImage();
         this.infoImages = infoImages;
         this.prefer = banner.getPrefer();
