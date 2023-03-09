@@ -6,6 +6,7 @@ import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.client.RestTemplate;
 
+
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -37,12 +38,12 @@ public class ExpoServerUtils {
         body.setTitle(title);
         body.setBody(message);
 
-        String url = "https://exp.host/--/api/v2/push/send";
+        String url = "https://exp.host/--/api/v2/push/send"; // 엑스포 서버 주소
 
-        log.info("PUSH 알림 전송");
         RestTemplate restTemplate = new RestTemplate();
+
         ExpoServerResponse response = restTemplate.postForObject(url, body, ExpoServerResponse.class);
-        log.info("PUSH 전송 완료, response = {}", response);
+
         return response;
     }
 }
