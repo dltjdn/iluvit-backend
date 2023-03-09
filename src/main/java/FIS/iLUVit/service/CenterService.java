@@ -73,8 +73,14 @@ public class CenterService {
         if(data == null)
             return null;
 
+        Double starAverage = data.getStarAverage();
+        if(data.getStarAverage() != null) {
+            starAverage = (Math.round(starAverage * 10) / 10.0);
+        }
+
         List<String> infoImages = imageService.getInfoImages(data.getInfoImages());
-        return new CenterBannerResponse(data, infoImages);
+        return new CenterBannerResponse(data, starAverage, infoImages);
+
     }
 
     public Long modifyCenterImage(Long centerId, Long userId, List<MultipartFile> infoImages, MultipartFile profileImage) {
