@@ -121,7 +121,6 @@ public class PostService {
 
     // [모두의 이야기 + 유저가 속한 센터의 이야기] 에서 통합 검색
     public Slice<PostPreviewDto> searchByKeyword(String input, Long userId, Pageable pageable) {
-        log.info("input : " + input);
 
         if (userId == null) {
             throw new UserException(UserErrorResult.NOT_VALID_TOKEN);

@@ -1,12 +1,13 @@
 package FIS.iLUVit.service;
 
-import FIS.iLUVit.dto.user.*;
 import FIS.iLUVit.domain.AuthNumber;
 import FIS.iLUVit.domain.TokenPair;
 import FIS.iLUVit.domain.User;
 import FIS.iLUVit.domain.enumtype.AuthKind;
+import FIS.iLUVit.dto.user.*;
 import FIS.iLUVit.exception.*;
 import FIS.iLUVit.repository.AuthRepository;
+import FIS.iLUVit.repository.ScrapRepository;
 import FIS.iLUVit.repository.TokenPairRepository;
 import FIS.iLUVit.repository.UserRepository;
 import FIS.iLUVit.security.JwtUtils;
@@ -25,6 +26,8 @@ import org.springframework.transaction.annotation.Transactional;
 import java.time.Duration;
 import java.time.LocalDateTime;
 
+import static java.util.stream.Collectors.toList;
+
 @Service
 @Transactional
 @RequiredArgsConstructor
@@ -37,10 +40,14 @@ public class UserService {
     private final JwtUtils jwtUtils;
     private final TokenPairRepository tokenPairRepository;
 
+    private final ScrapRepository scrapRepository;
+    private final ScrapService scrapService;
+
+
     /**
-    *   작성자: 이승범
-    *   작성내용: 사용자 기본정보(id, nickname, auth) 반환
-    */
+     * 작성자: 이승범
+     * 작성내용: 사용자 기본정보(id, nickname, auth) 반환
+     */
     public UserResponse findUserInfo(Long id) {
         User findUser = userRepository.findById(id)
                 .orElseThrow(() -> new UserException(UserErrorResult.NOT_VALID_TOKEN));
@@ -197,13 +204,19 @@ public class UserService {
      */
     //TODO!
     public long withdrawUser(Long userId){
-        // 유저 정보 삭제
+        // 유저 정보 삭제 & 게시글, 댓글, 채팅, 시설리뷰 작성자 '알 수 없음'
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new UserException(UserErrorResult.NOT_VALID_TOKEN));
 
         user.deletePersonalInfo();
 
-        // 게시글 스크랩 폴더 지우기
+        // 스크랩 폴더 삭제 -> 스크랩한 포스트 casecade 됨
+        scrapRepository.findAllByUser(user).stream().map(scrapDir -> {
+            return scrapService.deleteScrapDir(userId, scrapDir.getId());
+        });
+
+
+
 
 
         return userId;

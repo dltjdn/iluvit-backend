@@ -95,7 +95,7 @@ public class User extends BaseImageEntity {
     }
 
     public void deletePersonalInfo(){
-        this.nickName = null;
+        this.nickName = "알 수 없음";
         this.loginId = null;
         this.password = null;
         this.phoneNumber = null;

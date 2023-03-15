@@ -22,6 +22,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
 @Slf4j
@@ -36,7 +37,6 @@ public class ScrapService {
     private final ScrapPostRepository scrapPostRepository;
 
     /**
-     * 작성날짜: 2022/06/21 2:03 PM
      * 작성자: 이승범
      * 작성내용: 스크랩 폴더 목록 가져오기
      */
@@ -51,7 +51,6 @@ public class ScrapService {
     }
 
     /**
-     * 작성날짜: 2022/06/21 2:11 PM
      * 작성자: 이승범
      * 작성내용: 스크랩 폴더 추가하기
      */
@@ -64,25 +63,23 @@ public class ScrapService {
     }
 
     /**
-     * 작성날짜: 2022/06/21 2:59 PM
      * 작성자: 이승범
      * 작성내용: 스크랩 폴더 삭제하기
      */
     public List<ScrapInfoDto>  deleteScrapDir(Long userId, Long scrapId) {
 
-        Scrap deletedScrap = scrapRepository.findScrapByIdAndUserId(scrapId, userId)
+        Scrap scrapDir = scrapRepository.findScrapByIdAndUserId(scrapId, userId)
                 .orElseThrow(() -> new ScrapException(ScrapErrorResult.NOT_VALID_SCRAP));
 
-        if (deletedScrap.getIsDefault()) {
+        if (scrapDir.getIsDefault()) {
             throw new ScrapException(ScrapErrorResult.CANT_DELETE_DEFAULT);
         }
-        scrapRepository.delete(deletedScrap);
+        scrapRepository.delete(scrapDir);
 
         return findScrapDirListInfo(userId);
     }
 
     /**
-     * 작성날짜: 2022/06/22 10:24 AM
      * 작성자: 이승범
      * 작성내용: 스크랩 폴더 이름 바꾸기
      */
@@ -94,7 +91,6 @@ public class ScrapService {
     }
 
     /**
-     * 작성날짜: 2022/06/21 5:06 PM
      * 작성자: 이승범
      * 작성내용: 게시물 스크랩하기
      */
@@ -138,7 +134,6 @@ public class ScrapService {
     }
 
     /**
-     * 작성날짜: 2022/06/22 4:50 PM
      * 작성자: 이승범
      * 작성내용: 스크랩한 게시물 스크랩 폴더에서 삭제
      */
@@ -150,7 +145,6 @@ public class ScrapService {
     }
 
     /**
-     * 작성날짜: 2022/06/22 4:51 PM
      * 작성자: 이승범
      * 작성내용: 해당 게시물에 대한 스크랩폴더 상태 목록 보여주기
      */
@@ -161,7 +155,6 @@ public class ScrapService {
                 .collect(Collectors.toList());
     }
     /**
-     *   작성날짜: 2022/06/22 4:54 PM
      *   작성자: 이승범
      *   작성내용: 해당 스크랩 폴더의 게시물들 preview 보여주기
      */
