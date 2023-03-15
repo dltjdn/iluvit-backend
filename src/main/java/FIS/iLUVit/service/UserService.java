@@ -29,7 +29,6 @@ import static java.util.stream.Collectors.toList;
 @Transactional
 @RequiredArgsConstructor
 public class UserService {
-
     private final UserRepository userRepository;
     private final BCryptPasswordEncoder encoder;
     private final AuthRepository authRepository;
@@ -39,15 +38,15 @@ public class UserService {
     private final ScrapRepository scrapRepository;
     private final ScrapService scrapService;
     private final TeacherService teacherService;
-
     private final ChildService childService;
     private final ChildRepository childRepository;
     private final ParentRepository parentRepository;
-
     private final CenterBookmarkService centerBookmarkService;
     private final CenterBookmarkRepository centerBookmarkRepository;
-
-
+    private final ParticipationService participationService;
+    private final ParticipationRepository participationRepository;
+    private final WaitingService waitingService;
+    private final WaitingRepository waitingRepository;
 
     /**
      * 작성자: 이승범
@@ -221,16 +220,12 @@ public class UserService {
         });
 
         return userId;
-
-
     }
-
 
     /**
      *   작성자: 이서우
      *   작성내용: 교사 회원 탈퇴 ( 공통 제외 교사만 가지고 있는 탈퇴 플로우 )
      */
-
     public long withdrawTeacher(Long userId){
         withdrawUser(userId);
         // 연결된 시설 끊기 ( 해당 시설과 연관된 bookmark 삭제 )
@@ -243,7 +238,6 @@ public class UserService {
      *   작성자: 이서우
      *   작성내용: 학부모 회원 탈퇴 ( 공통 제외 학부모만 가지고 있는 탈퇴 플로우)
      */
-    //TODO!
     public long withdrawParent(Long userId){
         withdrawUser(userId);
 
@@ -265,7 +259,17 @@ public class UserService {
         });
 
 
-        // 신청되어있는 설명회 신청, 대기 목록에서 빠지게 하기
+        // 신청되어있는 설명회 신청 목록에서 빠지게 하기 ( 설명회 신청 취소 )
+        participationRepository.findByParent(parent).stream().map(participation -> {
+            participationService.cancel(userId, participation.getId());
+            return null;
+        });
+
+        // 신청되어있는 설명회 대기 목록에서 빠지게 하기 ( 설명회 대기 취소 )
+        waitingRepository.findByParent(parent).stream().map(waiting-> {
+            waitingService.cancel(waiting.getId(), userId);
+            return null;
+        });
 
         return userId;
     }

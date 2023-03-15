@@ -1,5 +1,6 @@
 package FIS.iLUVit.repository;
 
+import FIS.iLUVit.domain.Parent;
 import FIS.iLUVit.domain.Participation;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
@@ -26,4 +27,5 @@ public interface ParticipationRepository extends JpaRepository<Participation, Lo
             "and participation.parent.id = :parentId")
     Optional<Participation> findByIdAndStatusWithPtDate(@Param("participationId") Long participantId, @Param("parentId") Long parentId);
 
+    List<Participation> findByParent(Parent parent);
 }
