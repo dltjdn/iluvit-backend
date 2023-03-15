@@ -22,10 +22,9 @@ import org.springframework.transaction.annotation.Transactional;
 public class CenterBookmarkService {
     private final CenterRepository centerRepository;
     private final CenterBookmarkRepository centerBookmarkRepository;
-
     private final ParentRepository parentRepository;
+
     /**
-     *   작성날짜: 2022/07/04 3:04 PM
      *   작성자: 이승범
      *   작성내용: 찜한 시설 리스트
      */
@@ -35,7 +34,6 @@ public class CenterBookmarkService {
 
 
     /**
-     *   작성날짜: 2022/07/01 5:09 PM
      *   작성자: 이승범
      *   작성내용: 시설 찜하기
      */
@@ -58,9 +56,8 @@ public class CenterBookmarkService {
     }
 
     /**
-     *   작성날짜: 2022/07/04 2:17 PM
      *   작성자: 이승범
-     *   작성내용: 시설 찜 해제하기
+     *   작성내용: 찜한 시설 삭제
      */
     public void deletePrefer(Long userId, Long centerId) {
         Prefer deletedPrefer = centerBookmarkRepository.findByUserIdAndCenterId(userId, centerId)

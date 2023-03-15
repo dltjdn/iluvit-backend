@@ -1,9 +1,6 @@
 package FIS.iLUVit.service;
 
-import FIS.iLUVit.domain.AuthNumber;
-import FIS.iLUVit.domain.Parent;
-import FIS.iLUVit.domain.TokenPair;
-import FIS.iLUVit.domain.User;
+import FIS.iLUVit.domain.*;
 import FIS.iLUVit.domain.enumtype.AuthKind;
 import FIS.iLUVit.dto.user.*;
 import FIS.iLUVit.exception.*;
@@ -23,6 +20,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.Duration;
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Optional;
 
 import static java.util.stream.Collectors.toList;
@@ -38,15 +36,16 @@ public class UserService {
     private final AuthenticationManager authenticationManager;
     private final JwtUtils jwtUtils;
     private final TokenPairRepository tokenPairRepository;
-
     private final ScrapRepository scrapRepository;
     private final ScrapService scrapService;
     private final TeacherService teacherService;
 
     private final ChildService childService;
     private final ChildRepository childRepository;
-
     private final ParentRepository parentRepository;
+
+    private final CenterBookmarkService centerBookmarkService;
+    private final CenterBookmarkRepository centerBookmarkRepository;
 
 
 
@@ -247,12 +246,18 @@ public class UserService {
     //TODO!
     public long withdrawParent(Long userId){
         withdrawUser(userId);
-        // 유치원 찜한 목록 삭제
 
-        // 아이가 연관된 유치원 연관관계 끊기(해당 시설과 관련된 bookmark 모두 삭제) & 아이 삭제
         Parent parent = parentRepository.findById(userId)
                 .orElseThrow(() -> new UserException(UserErrorResult.NOT_VALID_TOKEN));
 
+        // 찜한 시설 리스트 삭제
+        centerBookmarkRepository.findByParent(parent).stream().map(centerBookmark -> {
+            centerBookmarkService.deletePrefer(userId, centerBookmark.getId());
+            return null;
+        });
+
+
+        // 아이가 연관된 유치원 연관관계 끊기(해당 시설과 관련된 bookmark 모두 삭제) & 아이 삭제
         childRepository.findByParent(parent).stream().map(child -> {
             childService.exitCenter(userId, child.getId());
             childService.deleteChild(userId, child.getId());
@@ -261,6 +266,7 @@ public class UserService {
 
 
         // 신청되어있는 설명회 신청, 대기 목록에서 빠지게 하기
+
         return userId;
     }
 
