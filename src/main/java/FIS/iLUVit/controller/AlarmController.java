@@ -3,8 +3,6 @@ package FIS.iLUVit.controller;
 import FIS.iLUVit.config.argumentResolver.Login;
 import FIS.iLUVit.dto.alarm.AlarmRequest;
 import FIS.iLUVit.dto.alarm.AlarmDetailDto;
-import FIS.iLUVit.exception.UserErrorResult;
-import FIS.iLUVit.exception.UserException;
 import FIS.iLUVit.service.AlarmService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
