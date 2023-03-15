@@ -11,6 +11,7 @@ import FIS.iLUVit.security.LoginResponse;
 import FIS.iLUVit.security.uesrdetails.PrincipalDetails;
 import com.auth0.jwt.exceptions.JWTVerificationException;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -37,7 +38,6 @@ public class UserService {
     private final TokenPairRepository tokenPairRepository;
     private final ScrapRepository scrapRepository;
     private final ScrapService scrapService;
-    private final TeacherService teacherService;
     private final ChildService childService;
     private final ChildRepository childRepository;
     private final ParentRepository parentRepository;
@@ -222,56 +222,5 @@ public class UserService {
         return userId;
     }
 
-    /**
-     *   작성자: 이서우
-     *   작성내용: 교사 회원 탈퇴 ( 공통 제외 교사만 가지고 있는 탈퇴 플로우 )
-     */
-    public long withdrawTeacher(Long userId){
-        withdrawUser(userId);
-        // 연결된 시설 끊기 ( 해당 시설과 연관된 bookmark 삭제 )
-        teacherService.escapeCenter(userId);
-
-        return userId;
-    }
-
-    /**
-     *   작성자: 이서우
-     *   작성내용: 학부모 회원 탈퇴 ( 공통 제외 학부모만 가지고 있는 탈퇴 플로우)
-     */
-    public long withdrawParent(Long userId){
-        withdrawUser(userId);
-
-        Parent parent = parentRepository.findById(userId)
-                .orElseThrow(() -> new UserException(UserErrorResult.NOT_VALID_TOKEN));
-
-        // 찜한 시설 리스트 삭제
-        centerBookmarkRepository.findByParent(parent).stream().map(centerBookmark -> {
-            centerBookmarkService.deletePrefer(userId, centerBookmark.getId());
-            return null;
-        });
-
-
-        // 아이가 연관된 유치원 연관관계 끊기(해당 시설과 관련된 bookmark 모두 삭제) & 아이 삭제
-        childRepository.findByParent(parent).stream().map(child -> {
-            childService.exitCenter(userId, child.getId());
-            childService.deleteChild(userId, child.getId());
-            return null;
-        });
-
-
-        // 신청되어있는 설명회 신청 목록에서 빠지게 하기 ( 설명회 신청 취소 )
-        participationRepository.findByParent(parent).stream().map(participation -> {
-            participationService.cancel(userId, participation.getId());
-            return null;
-        });
-
-        // 신청되어있는 설명회 대기 목록에서 빠지게 하기 ( 설명회 대기 취소 )
-        waitingRepository.findByParent(parent).stream().map(waiting-> {
-            waitingService.cancel(waiting.getId(), userId);
-            return null;
-        });
-
-        return userId;
-    }
 
 }

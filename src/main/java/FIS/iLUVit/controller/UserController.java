@@ -103,21 +103,4 @@ public class UserController {
         return env.getProperty("version.aos");
     }
 
-    /**
-     *   작성자: 이서우
-     *   작성내용: 교사 회원 탈퇴
-     */
-    @DeleteMapping("withdraw/teacher")
-    public Long deleteTeacher(@Login Long userId){
-        return userService.withdrawTeacher(userId);
-    }
-
-    /**
-     *   작성자: 이서우
-     *   작성내용: 학부모 회원 탈퇴
-     */
-    @DeleteMapping("withdraw/parent")
-    public Long deleteParent(@Login Long userId){
-        return userService.withdrawParent(userId);
-    }
 }

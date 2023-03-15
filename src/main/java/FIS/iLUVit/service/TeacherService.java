@@ -18,6 +18,7 @@ import FIS.iLUVit.exception.UserException;
 import FIS.iLUVit.repository.*;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
 import org.springframework.data.util.Pair;
@@ -38,7 +39,11 @@ public class TeacherService {
 
     private final ImageService imageService;
     private final AuthService authService;
-    private final UserService userService;
+    private UserService userService;
+    @Autowired
+    public void setUserService(UserService userService){
+        this.userService = userService;
+    }
     private final CenterRepository centerRepository;
     private final TeacherRepository teacherRepository;
     private final AuthRepository authRepository;
@@ -344,4 +349,15 @@ public class TeacherService {
     public Slice<CenterDto> findCenterForSignup(CenterRequest request, Pageable pageable) {
         return centerRepository.findForSignup(request.getSido(), request.getSigungu(), request.getCenterName(), pageable);
     }
+
+    /**
+     *   작성자: 이서우
+     *   작성내용: 교사 회원 탈퇴 ( 공통 제외 교사만 가지고 있는 탈퇴 플로우 )
+     */
+    public long withdrawTeacher(Long userId){
+        userService.withdrawUser(userId); // 교사, 학부모 공톤 탈퇴 로직
+        escapeCenter(userId); // 연결된 시설 끊기 ( 해당 시설과 연관된 bookmark 삭제 )
+        return userId;
+    }
+
 }

@@ -134,4 +134,13 @@ public class TeacherController {
         teacherService.demoteTeacher(userId, teacherId);
     }
 
+    /**
+     *   작성자: 이서우
+     *   작성내용: 교사 회원 탈퇴
+     */
+    @DeleteMapping("withdraw")
+    public Long deleteTeacher(@Login Long userId){
+        return teacherService.withdrawTeacher(userId);
+    }
+
 }

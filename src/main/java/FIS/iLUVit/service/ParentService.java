@@ -36,6 +36,16 @@ public class ParentService {
     private final BoardBookmarkRepository boardBookmarkRepository;
     private final MapService mapService;
 
+    private final ChildRepository childRepository;
+    private final ChildService childService;
+    private final CenterBookmarkRepository centerBookmarkRepository;
+    private final CenterBookmarkService centerBookmarkService;
+    private final ParticipationRepository participationRepository;
+    private  final  ParticipationService participationService;
+    private final WaitingRepository waitingRepository;
+    private final WaitingService waitingService;
+
+
 
     /**
      * 작성자: 이승범
@@ -127,5 +137,44 @@ public class ParentService {
         return parent;
     }
 
+    /**
+     *   작성자: 이서우
+     *   작성내용: 학부모 회원 탈퇴 ( 공통 제외 학부모만 가지고 있는 탈퇴 플로우)
+     */
+    public long withdrawParent(Long userId){
+        userService.withdrawUser(userId);  // 교사, 학부모 공톤 탈퇴 로직
+
+        Parent parent = parentRepository.findById(userId)
+                .orElseThrow(() -> new UserException(UserErrorResult.NOT_VALID_TOKEN));
+
+        // 찜한 시설 리스트 삭제
+        centerBookmarkRepository.findByParent(parent).stream().map(centerBookmark -> {
+            centerBookmarkService.deletePrefer(userId, centerBookmark.getId());
+            return null;
+        });
+
+
+        // 아이가 연관된 유치원 연관관계 끊기(해당 시설과 관련된 bookmark 모두 삭제) & 아이 삭제
+        childRepository.findByParent(parent).stream().map(child -> {
+            childService.exitCenter(userId, child.getId());
+            childService.deleteChild(userId, child.getId());
+            return null;
+        });
+
+
+        // 신청되어있는 설명회 신청 목록에서 빠지게 하기 ( 설명회 신청 취소 )
+        participationRepository.findByParent(parent).stream().map(participation -> {
+            participationService.cancel(userId, participation.getId());
+            return null;
+        });
+
+        // 신청되어있는 설명회 대기 목록에서 빠지게 하기 ( 설명회 대기 취소 )
+        waitingRepository.findByParent(parent).stream().map(waiting-> {
+            waitingService.cancel(waiting.getId(), userId);
+            return null;
+        });
+
+        return userId;
+    }
 
 }
