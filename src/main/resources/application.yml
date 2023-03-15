@@ -75,5 +75,5 @@ management:
 ---
 logging:
   slack:
-    webhook-uri: https://hooks.slack.com/services/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
+    webhook-uri: https://hooks.slack.com/services/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
   config: classpath:logback-spring.xml
