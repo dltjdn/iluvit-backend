@@ -1,15 +1,13 @@
 package FIS.iLUVit.service;
 
 import FIS.iLUVit.domain.AuthNumber;
+import FIS.iLUVit.domain.Parent;
 import FIS.iLUVit.domain.TokenPair;
 import FIS.iLUVit.domain.User;
 import FIS.iLUVit.domain.enumtype.AuthKind;
 import FIS.iLUVit.dto.user.*;
 import FIS.iLUVit.exception.*;
-import FIS.iLUVit.repository.AuthRepository;
-import FIS.iLUVit.repository.ScrapRepository;
-import FIS.iLUVit.repository.TokenPairRepository;
-import FIS.iLUVit.repository.UserRepository;
+import FIS.iLUVit.repository.*;
 import FIS.iLUVit.security.JwtUtils;
 import FIS.iLUVit.security.LoginRequest;
 import FIS.iLUVit.security.LoginResponse;
@@ -25,6 +23,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.Duration;
 import java.time.LocalDateTime;
+import java.util.Optional;
 
 import static java.util.stream.Collectors.toList;
 
@@ -42,6 +41,13 @@ public class UserService {
 
     private final ScrapRepository scrapRepository;
     private final ScrapService scrapService;
+    private final TeacherService teacherService;
+
+    private final ChildService childService;
+    private final ChildRepository childRepository;
+
+    private final ParentRepository parentRepository;
+
 
 
     /**
@@ -202,7 +208,6 @@ public class UserService {
      *   작성자: 이서우
      *   작성내용: 회원 탈퇴 ( 교사, 학부모 공통 )
      */
-    //TODO!
     public long withdrawUser(Long userId){
         // 유저 정보 삭제 & 게시글, 댓글, 채팅, 시설리뷰 작성자 '알 수 없음'
         User user = userRepository.findById(userId)
@@ -212,12 +217,9 @@ public class UserService {
 
         // 스크랩 폴더 삭제 -> 스크랩한 포스트 casecade 됨
         scrapRepository.findAllByUser(user).stream().map(scrapDir -> {
-            return scrapService.deleteScrapDir(userId, scrapDir.getId());
+            scrapService.deleteScrapDir(userId, scrapDir.getId());
+            return null;
         });
-
-
-
-
 
         return userId;
 
@@ -231,8 +233,10 @@ public class UserService {
      */
 
     public long withdrawTeacher(Long userId){
-        //TODO!
         withdrawUser(userId);
+        // 연결된 시설 끊기 ( 해당 시설과 연관된 bookmark 삭제 )
+        teacherService.escapeCenter(userId);
+
         return userId;
     }
 
@@ -243,6 +247,20 @@ public class UserService {
     //TODO!
     public long withdrawParent(Long userId){
         withdrawUser(userId);
+        // 유치원 찜한 목록 삭제
+
+        // 아이가 연관된 유치원 연관관계 끊기(해당 시설과 관련된 bookmark 모두 삭제) & 아이 삭제
+        Parent parent = parentRepository.findById(userId)
+                .orElseThrow(() -> new UserException(UserErrorResult.NOT_VALID_TOKEN));
+
+        childRepository.findByParent(parent).stream().map(child -> {
+            childService.exitCenter(userId, child.getId());
+            childService.deleteChild(userId, child.getId());
+            return null;
+        });
+
+
+        // 신청되어있는 설명회 신청, 대기 목록에서 빠지게 하기
         return userId;
     }
 
