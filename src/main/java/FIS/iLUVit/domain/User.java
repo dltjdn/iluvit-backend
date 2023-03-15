@@ -93,4 +93,24 @@ public class User extends BaseImageEntity {
             this.updatedDate = LocalDateTime.now();
         }
     }
+
+    public void deletePersonalInfo(){
+        this.nickName = null;
+        this.loginId = null;
+        this.password = null;
+        this.phoneNumber = null;
+        this.emailAddress = null;
+        this.address = null;
+        this.name=null;
+        this.detailAddress = null;
+        this.profileImagePath = null;
+        this.infoImagePath = null;
+        this.imgCnt = null;
+        this.location.latitude = null;
+        this.location.sido=null;
+        this.location.longitude=null;
+        this.location.sigungu=null;
+        this.auth=null;
+        this.dtype=null;
+    }
 }

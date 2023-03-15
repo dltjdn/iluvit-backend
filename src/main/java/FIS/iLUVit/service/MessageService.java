@@ -1,4 +1,4 @@
-package FIS.iLUVit.service.messageService;
+package FIS.iLUVit.service;
 
 import net.nurigo.sdk.message.request.SingleMessageSendingRequest;
 import net.nurigo.sdk.message.response.SingleMessageSentResponse;

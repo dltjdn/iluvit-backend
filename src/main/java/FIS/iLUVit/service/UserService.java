@@ -193,20 +193,44 @@ public class UserService {
 
     /**
      *   작성자: 이서우
-     *   작성내용: 교사 회원 탈퇴
+     *   작성내용: 회원 탈퇴 ( 교사, 학부모 공통 )
      */
     //TODO!
-    public long withdrawTeacher(Long userId){
+    public long withdrawUser(Long userId){
+        // 유저 정보 삭제
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new UserException(UserErrorResult.NOT_VALID_TOKEN));
 
+        user.deletePersonalInfo();
+
+        // 게시글 스크랩 폴더 지우기
+
+
+        return userId;
+
+
+    }
+
+
+    /**
+     *   작성자: 이서우
+     *   작성내용: 교사 회원 탈퇴 ( 공통 제외 교사만 가지고 있는 탈퇴 플로우 )
+     */
+
+    public long withdrawTeacher(Long userId){
+        //TODO!
+        withdrawUser(userId);
+        return userId;
     }
 
     /**
      *   작성자: 이서우
-     *   작성내용: 학부모 회원 탈퇴
+     *   작성내용: 학부모 회원 탈퇴 ( 공통 제외 학부모만 가지고 있는 탈퇴 플로우)
      */
     //TODO!
     public long withdrawParent(Long userId){
-
+        withdrawUser(userId);
+        return userId;
     }
 
 }

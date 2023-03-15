@@ -9,7 +9,6 @@ import FIS.iLUVit.exception.AuthNumberErrorResult;
 import FIS.iLUVit.exception.AuthNumberException;
 import FIS.iLUVit.repository.AuthRepository;
 import FIS.iLUVit.repository.UserRepository;
-import FIS.iLUVit.service.messageService.MessageService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import net.nurigo.sdk.message.model.Message;

@@ -23,7 +23,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 public class ImageServiceTest {
 
     @Autowired
-    S3ImageService imageServiceAmazon;
+    ImageServiceImpl imageServiceAmazon;
 
     @Value("${image.location.path}")
     String path;

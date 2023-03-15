@@ -344,6 +344,8 @@ public class TeacherService {
                     .collect(Collectors.toList());
             boardBookmarkRepository.deleteAllByBoardAndUser(escapedTeacher.getId(), boardIds);
         }
+        // TODO!
+        // scrap 없애는 코드 추가
     }
 
     /**

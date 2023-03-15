@@ -8,6 +8,7 @@ import lombok.Getter;
 public class ParentResponse extends UserResponse {
 
     public ParentResponse(Long id, String nickName, Auth auth) {
+
         super(id, nickName, auth);
     }
 }

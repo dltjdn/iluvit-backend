@@ -7,7 +7,6 @@ import com.amazonaws.services.s3.AmazonS3Client;
 import com.amazonaws.services.s3.model.DeleteObjectRequest;
 import com.amazonaws.services.s3.model.ObjectMetadata;
 import com.amazonaws.services.s3.model.PutObjectRequest;
-import com.amazonaws.util.StringUtils;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Primary;
@@ -25,7 +24,7 @@ import java.util.*;
 @RequiredArgsConstructor
 @Service
 @Primary
-public class S3ImageService implements ImageService {
+public class ImageServiceImpl implements ImageService {
 
     @Value("${cloud.aws.s3.bucket}")
     private String bucket;
