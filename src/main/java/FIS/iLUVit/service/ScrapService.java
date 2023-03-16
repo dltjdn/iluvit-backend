@@ -67,13 +67,13 @@ public class ScrapService {
      * 작성내용: 스크랩 폴더 삭제하기
      */
     public List<ScrapInfoDto>  deleteScrapDir(Long userId, Long scrapId) {
-
         Scrap scrapDir = scrapRepository.findScrapByIdAndUserId(scrapId, userId)
                 .orElseThrow(() -> new ScrapException(ScrapErrorResult.NOT_VALID_SCRAP));
 
         if (scrapDir.getIsDefault()) {
             throw new ScrapException(ScrapErrorResult.CANT_DELETE_DEFAULT);
         }
+
         scrapRepository.delete(scrapDir);
 
         return findScrapDirListInfo(userId);

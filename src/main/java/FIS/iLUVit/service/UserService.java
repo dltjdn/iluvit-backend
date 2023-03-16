@@ -38,15 +38,7 @@ public class UserService {
     private final TokenPairRepository tokenPairRepository;
     private final ScrapRepository scrapRepository;
     private final ScrapService scrapService;
-    private final ChildService childService;
-    private final ChildRepository childRepository;
-    private final ParentRepository parentRepository;
-    private final CenterBookmarkService centerBookmarkService;
-    private final CenterBookmarkRepository centerBookmarkRepository;
-    private final ParticipationService participationService;
-    private final ParticipationRepository participationRepository;
-    private final WaitingService waitingService;
-    private final WaitingRepository waitingRepository;
+
 
     /**
      * 작성자: 이승범
@@ -213,10 +205,14 @@ public class UserService {
 
         user.deletePersonalInfo();
 
+
+        List<Scrap> scrapDirs = scrapRepository.findByUser(user);
+
         // 스크랩 폴더 삭제 -> 스크랩한 포스트 casecade 됨
-        scrapRepository.findAllByUser(user).stream().map(scrapDir -> {
-            scrapService.deleteScrapDir(userId, scrapDir.getId());
-            return null;
+        scrapDirs.forEach(scrapDir -> {
+            if(scrapDir.getIsDefault() == false){
+                scrapService.deleteScrapDir(userId, scrapDir.getId());
+            };
         });
 
         return userId;

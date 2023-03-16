@@ -24,8 +24,9 @@ public class User extends BaseImageEntity {
 
     @GeneratedValue @Id
     protected Long id;
-    @Column(unique = true)
+
     protected String nickName;            // 닉네임
+
     @Column(unique = true)
     protected String loginId;             // 로그인 할때 입력할 아이디
     protected String password;            // 비밀번호
@@ -103,7 +104,7 @@ public class User extends BaseImageEntity {
         this.address = null;
         this.name=null;
         this.detailAddress = null;
-        this.profileImagePath = null;
+        this.profileImagePath = "";
         this.infoImagePath = null;
         this.imgCnt = null;
         this.location.latitude = null;

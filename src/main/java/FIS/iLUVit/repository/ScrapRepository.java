@@ -24,6 +24,6 @@ public interface ScrapRepository extends JpaRepository<Scrap, Long> {
             "and s.user.id = :userId")
     Optional<Scrap> findScrapByIdAndUserId(@Param("scrapId") Long scrapId, @Param("userId") Long userId);
 
-    List<Scrap> findAllByUser(User user);
+    List<Scrap> findByUser(User user);
 
 }

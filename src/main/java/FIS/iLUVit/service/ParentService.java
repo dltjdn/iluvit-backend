@@ -148,30 +148,25 @@ public class ParentService {
                 .orElseThrow(() -> new UserException(UserErrorResult.NOT_VALID_TOKEN));
 
         // 찜한 시설 리스트 삭제
-        centerBookmarkRepository.findByParent(parent).stream().map(centerBookmark -> {
-            centerBookmarkService.deletePrefer(userId, centerBookmark.getId());
-            return null;
+        centerBookmarkRepository.findByParent(parent).forEach(centerBookmark -> {
+            centerBookmarkService.deletePrefer(userId, centerBookmark.getCenter().getId());
         });
 
 
         // 아이가 연관된 유치원 연관관계 끊기(해당 시설과 관련된 bookmark 모두 삭제) & 아이 삭제
-        childRepository.findByParent(parent).stream().map(child -> {
-            childService.exitCenter(userId, child.getId());
+        childRepository.findByParent(parent).forEach(child -> {
             childService.deleteChild(userId, child.getId());
-            return null;
         });
 
 
-        // 신청되어있는 설명회 신청 목록에서 빠지게 하기 ( 설명회 신청 취소 )
-        participationRepository.findByParent(parent).stream().map(participation -> {
-            participationService.cancel(userId, participation.getId());
-            return null;
+        // 신청되어있는 설명회 신청 목록에서 빠지게 하기 ( 설명회 신청 삭제 )
+        participationRepository.findByParent(parent).forEach(participation -> {
+            participationRepository.deleteById(participation.getId());
         });
 
         // 신청되어있는 설명회 대기 목록에서 빠지게 하기 ( 설명회 대기 취소 )
-        waitingRepository.findByParent(parent).stream().map(waiting-> {
+        waitingRepository.findByParent(parent).forEach(waiting-> {
             waitingService.cancel(waiting.getId(), userId);
-            return null;
         });
 
         return userId;
