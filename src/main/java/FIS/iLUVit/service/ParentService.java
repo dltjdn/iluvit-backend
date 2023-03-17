@@ -153,7 +153,7 @@ public class ParentService {
         });
 
 
-        // 아이가 연관된 유치원 연관관계 끊기(해당 시설과 관련된 bookmark 모두 삭제) & 아이 삭제
+        // 아이 삭제 & 아이가 연관된 유치원 연관관계 끊기(해당 시설과 관련된 bookmark 모두 삭제)
         childRepository.findByParent(parent).forEach(child -> {
             childService.deleteChild(userId, child.getId());
         });

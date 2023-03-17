@@ -60,6 +60,10 @@ public class ChatService {
             receiveUser = findPost.getUser();
         }
 
+        if(receiveUser.getNickName() == "알 수 없음"){
+            throw new ChatException(ChatErrorResult.WITHDRAWN_MEMBER);
+        }
+
         if (Objects.equals(userId, receiveUser.getId())) {
             throw new ChatException(ChatErrorResult.NO_SEND_TO_SELF);
         }
@@ -150,7 +154,7 @@ public class ChatService {
         ChatRoom myRoom = chatRoomRepository.findById(request.getRoom_id())
                 .orElseThrow(() -> new ChatException(ChatErrorResult.ROOM_NOT_EXIST));
 
-        if (myRoom.getReceiver() == null || myRoom.getSender() == null) {
+        if (myRoom.getReceiver() == null || myRoom.getSender() == null || myRoom.getSender().getNickName() == "알 수 없음") {
             throw new ChatException(ChatErrorResult.WITHDRAWN_MEMBER);
         }
 
