@@ -4,15 +4,22 @@ import FIS.iLUVit.domain.ExpoToken;
 import FIS.iLUVit.event.dto.ExpoServerResponse;
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
 
 
 import java.util.List;
 import java.util.stream.Collectors;
 
-@Slf4j
+@Component
 public class ExpoServerUtils {
+    private static String expoUrl;
 
+    @Value("${expo.domain}")
+    private void setExpoUrl(String expoUrl){
+        this.expoUrl = expoUrl;
+    }
     @Data
     static class RequestBody {
         private List<String> to;
@@ -38,11 +45,9 @@ public class ExpoServerUtils {
         body.setTitle(title);
         body.setBody(message);
 
-        String url = "https://exp.host/--/api/v2/push/send"; // 엑스포 서버 주소
-
         RestTemplate restTemplate = new RestTemplate();
 
-        ExpoServerResponse response = restTemplate.postForObject(url, body, ExpoServerResponse.class);
+        ExpoServerResponse response = restTemplate.postForObject(expoUrl, body, ExpoServerResponse.class);
 
         return response;
     }
