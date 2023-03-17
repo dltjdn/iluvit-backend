@@ -1,20 +1,17 @@
 package FIS.iLUVit.service;
 
-import FIS.iLUVit.dto.user.*;
-import FIS.iLUVit.domain.AuthNumber;
-import FIS.iLUVit.domain.TokenPair;
-import FIS.iLUVit.domain.User;
+import FIS.iLUVit.domain.*;
 import FIS.iLUVit.domain.enumtype.AuthKind;
+import FIS.iLUVit.dto.user.*;
 import FIS.iLUVit.exception.*;
-import FIS.iLUVit.repository.AuthRepository;
-import FIS.iLUVit.repository.TokenPairRepository;
-import FIS.iLUVit.repository.UserRepository;
+import FIS.iLUVit.repository.*;
 import FIS.iLUVit.security.JwtUtils;
 import FIS.iLUVit.security.LoginRequest;
 import FIS.iLUVit.security.LoginResponse;
 import FIS.iLUVit.security.uesrdetails.PrincipalDetails;
 import com.auth0.jwt.exceptions.JWTVerificationException;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -24,24 +21,29 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.Duration;
 import java.time.LocalDateTime;
+import java.util.List;
+import java.util.Optional;
+
+import static java.util.stream.Collectors.toList;
 
 @Service
 @Transactional
 @RequiredArgsConstructor
 public class UserService {
-
     private final UserRepository userRepository;
     private final BCryptPasswordEncoder encoder;
     private final AuthRepository authRepository;
     private final AuthenticationManager authenticationManager;
     private final JwtUtils jwtUtils;
     private final TokenPairRepository tokenPairRepository;
+    private final ScrapRepository scrapRepository;
+    private final ScrapService scrapService;
+
 
     /**
-    *   작성날짜: 2022/05/16 11:57 AM
-    *   작성자: 이승범
-    *   작성내용: 사용자 기본정보(id, nickname, auth) 반환
-    */
+     * 작성자: 이승범
+     * 작성내용: 사용자 기본정보(id, nickname, auth) 반환
+     */
     public UserResponse findUserInfo(Long id) {
         User findUser = userRepository.findById(id)
                 .orElseThrow(() -> new UserException(UserErrorResult.NOT_VALID_TOKEN));
@@ -49,7 +51,6 @@ public class UserService {
     }
 
     /**
-    *   작성날짜: 2022/05/16 11:57 AM
     *   작성자: 이승범
     *   작성내용: 비밀번호 변경
     */
@@ -97,7 +98,6 @@ public class UserService {
 
 
     /**
-     *   작성날짜: 2022/07/29 01:32 AM
      *   작성자: 이승범
      *   작성내용: login service layer로 옮김
      */
@@ -130,7 +130,6 @@ public class UserService {
     }
 
     /**
-     *   작성날짜: 2022/07/29 01:32 AM
      *   작성자: 이승범
      *   작성내용: refreshToken으로 accessToken를 재발급
      */
@@ -174,7 +173,6 @@ public class UserService {
     }
 
     /**
-    *   작성날짜: 2022/07/29 1:50 PM
     *   작성자: 이승범
     *   작성내용: 로그인아이디 중복 확인
     */
@@ -186,7 +184,6 @@ public class UserService {
     }
 
     /**
-    *   작성날짜: 2022/07/29 5:05 PM
     *   작성자: 이승범
     *   작성내용: 닉네임 중복 확인
     */
@@ -195,6 +192,30 @@ public class UserService {
                 .ifPresent((user)->{
                     throw new UserException(UserErrorResult.ALREADY_NICKNAME_EXIST);
                 });
+    }
+
+    /**
+     *   작성자: 이서우
+     *   작성내용: 회원 탈퇴 ( 교사, 학부모 공통 )
+     */
+    public long withdrawUser(Long userId){
+        // 유저 정보 삭제 & 게시글, 댓글, 채팅, 시설리뷰 작성자 '알 수 없음'
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new UserException(UserErrorResult.NOT_VALID_TOKEN));
+
+        user.deletePersonalInfo();
+
+
+        List<Scrap> scrapDirs = scrapRepository.findByUser(user);
+
+        // 스크랩 폴더 삭제 -> 스크랩한 포스트 casecade 됨
+        scrapDirs.forEach(scrapDir -> {
+            if(scrapDir.getIsDefault() == false){
+                scrapService.deleteScrapDir(userId, scrapDir.getId());
+            };
+        });
+
+        return userId;
     }
 
 

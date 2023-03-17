@@ -1,6 +1,7 @@
 package FIS.iLUVit.repository;
 
 import FIS.iLUVit.domain.Center;
+import FIS.iLUVit.domain.User;
 import FIS.iLUVit.dto.center.CenterBannerDto;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
@@ -45,5 +46,6 @@ public interface CenterRepository extends JpaRepository<Center, Long>, CenterRep
             "and t.approval = 'ACCEPT' " +
             "and c.signed = true")
     Optional<Center> findByIdAndSignedWithTeacher(@Param("centerId") Long center_id);
+
 
 }

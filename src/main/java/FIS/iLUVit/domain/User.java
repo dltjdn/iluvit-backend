@@ -24,8 +24,9 @@ public class User extends BaseImageEntity {
 
     @GeneratedValue @Id
     protected Long id;
-    @Column(unique = true)
+
     protected String nickName;            // 닉네임
+
     @Column(unique = true)
     protected String loginId;             // 로그인 할때 입력할 아이디
     protected String password;            // 비밀번호
@@ -92,5 +93,25 @@ public class User extends BaseImageEntity {
         if (this.createdDate.equals(this.updatedDate)) {
             this.updatedDate = LocalDateTime.now();
         }
+    }
+
+    public void deletePersonalInfo(){
+        this.nickName = "알 수 없음";
+        this.loginId = null;
+        this.password = null;
+        this.phoneNumber = null;
+        this.emailAddress = null;
+        this.address = null;
+        this.name=null;
+        this.detailAddress = null;
+        this.profileImagePath = "";
+        this.infoImagePath = null;
+        this.imgCnt = null;
+        this.location.latitude = null;
+        this.location.sido=null;
+        this.location.longitude=null;
+        this.location.sigungu=null;
+        this.auth=null;
+        this.dtype=null;
     }
 }

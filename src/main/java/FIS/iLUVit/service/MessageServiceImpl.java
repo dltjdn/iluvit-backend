@@ -1,5 +1,6 @@
-package FIS.iLUVit.service.messageService;
+package FIS.iLUVit.service;
 
+import FIS.iLUVit.service.MessageService;
 import lombok.RequiredArgsConstructor;
 import net.nurigo.sdk.message.request.SingleMessageSendingRequest;
 import net.nurigo.sdk.message.response.SingleMessageSentResponse;
@@ -8,7 +9,7 @@ import org.springframework.stereotype.Service;
 
 @Service
 @RequiredArgsConstructor
-public class MessageServiceImpl implements MessageService{
+public class MessageServiceImpl implements MessageService {
 
     private final DefaultMessageService defaultMessageService;
 

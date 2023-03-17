@@ -18,6 +18,7 @@ import FIS.iLUVit.exception.UserException;
 import FIS.iLUVit.repository.*;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
 import org.springframework.data.util.Pair;
@@ -38,7 +39,11 @@ public class TeacherService {
 
     private final ImageService imageService;
     private final AuthService authService;
-    private final UserService userService;
+    private UserService userService;
+    @Autowired
+    public void setUserService(UserService userService){
+        this.userService = userService;
+    }
     private final CenterRepository centerRepository;
     private final TeacherRepository teacherRepository;
     private final AuthRepository authRepository;
@@ -48,7 +53,6 @@ public class TeacherService {
     private final MapService mapService;
 
     /**
-     * 작성날짜: 2022/05/20 4:43 PM
      * 작성자: 이승범
      * 작성내용: 선생의 마이페이지에 정보 조회
      */
@@ -63,7 +67,6 @@ public class TeacherService {
     }
 
     /**
-     * 작성날짜: 2022/05/20 4:43 PM
      * 작성자: 이승범
      * 작성내용: 선생의 마이페이지에 정보 update
      */
@@ -105,7 +108,6 @@ public class TeacherService {
     }
 
     /**
-     * 작성날짜: 2022/06/15 1:03 PM
      * 작성자: 이승범
      * 작성내용: 교사 회원가입
      */
@@ -161,7 +163,6 @@ public class TeacherService {
     }
 
     /**
-     * 작성날짜: 2022/06/30 12:04 PM
      * 작성자: 이승범
      * 작성내용: 시설에 등록신청
      */
@@ -182,9 +183,8 @@ public class TeacherService {
     }
 
     /**
-     * 작성날짜: 2022/06/30 11:43 AM
      * 작성자: 이승범
-     * 작성내용: 시설 스스로 탈주하기
+     * 작성내용: 시설 탈퇴하기
      */
     public Teacher escapeCenter(Long userId) {
 
@@ -206,7 +206,7 @@ public class TeacherService {
             throw new SignupException(SignupErrorResult.HAVE_TO_MANDATE);
         }
 
-        // 속해있는 시설과 연관된 bookmark 모두 지우기
+        // 속해있는 시설과 연관된 게시판 bookmark 모두 지우기
         deleteBookmarkByCenter(escapedTeacher);
 
         // 시설과의 연관관계 끊기
@@ -215,7 +215,6 @@ public class TeacherService {
     }
 
     /**
-     * 작성날짜: 2022/06/29 10:49 AM
      * 작성자: 이승범
      * 작성내용: 교사관리 페이지에 필요한 교사들 정보 조회
      */
@@ -239,7 +238,6 @@ public class TeacherService {
     }
 
     /**
-     * 작성날짜: 2022/06/29 11:31 AM
      * 작성자: 이승범
      * 작성내용: 교사 승인
      */
@@ -268,7 +266,6 @@ public class TeacherService {
     }
 
     /**
-     * 작성날짜: 2022/06/29 5:16 PM
      * 작성자: 이승범
      * 작성내용: 교사 삭제/승인거절
      */
@@ -286,7 +283,7 @@ public class TeacherService {
             throw new UserException(UserErrorResult.NOT_VALID_REQUEST);
         }
 
-        // 해당 시설과 연관된 bookmark 삭제
+        // 해당 시설과 연관된 게시판 bookmark 삭제
         deleteBookmarkByCenter(firedTeacher);
 
         // 시설과의 연관관계 끊기
@@ -295,7 +292,6 @@ public class TeacherService {
     }
 
     /**
-     * 작성날짜: 2022/07/01 3:09 PM
      * 작성자: 이승범
      * 작성내용: 원장권한 부여
      */
@@ -317,7 +313,6 @@ public class TeacherService {
     }
 
     /**
-     * 작성날짜: 2022/07/29 5:07 PM
      * 작성자: 이승범
      * 작성내용: 원장권한 박탈
      */
@@ -335,7 +330,7 @@ public class TeacherService {
         return demotedTeacher;
     }
 
-    // 해당 시설과 연관된 bookmark 삭제
+    // 해당 시설과 연관된 게시판 bookmark 삭제
     private void deleteBookmarkByCenter(Teacher escapedTeacher) {
         if (escapedTeacher.getApproval() == Approval.ACCEPT) {
             List<Board> boards = boardRepository.findByCenter(escapedTeacher.getCenter().getId());
@@ -344,14 +339,25 @@ public class TeacherService {
                     .collect(Collectors.toList());
             boardBookmarkRepository.deleteAllByBoardAndUser(escapedTeacher.getId(), boardIds);
         }
+        // scrap 없애는 코드 추가
     }
 
     /**
-     *   작성날짜: 2022/06/24 10:28 AM
      *   작성자: 이승범
      *   작성내용: 회원가입 과정에서 필요한 센터정보 가져오기
      */
     public Slice<CenterDto> findCenterForSignup(CenterRequest request, Pageable pageable) {
         return centerRepository.findForSignup(request.getSido(), request.getSigungu(), request.getCenterName(), pageable);
     }
+
+    /**
+     *   작성자: 이서우
+     *   작성내용: 교사 회원 탈퇴 ( 공통 제외 교사만 가지고 있는 탈퇴 플로우 )
+     */
+    public long withdrawTeacher(Long userId){
+        userService.withdrawUser(userId); // 교사, 학부모 공톤 탈퇴 로직
+        escapeCenter(userId); // 연결된 시설 끊기 ( 해당 시설과 연관된 bookmark 삭제 )
+        return userId;
+    }
+
 }

@@ -51,4 +51,12 @@ public class ParentController {
         parentService.signup(request);
     }
 
+    /**
+     *   작성자: 이서우
+     *   작성내용: 학부모 회원 탈퇴
+     */
+    @DeleteMapping("withdraw")
+    public Long deleteParent(@Login Long userId){
+        return parentService.withdrawParent(userId);
+    }
 }

@@ -1,9 +1,8 @@
 package FIS.iLUVit.stub;
 
-import FIS.iLUVit.service.messageService.MessageService;
+import FIS.iLUVit.service.MessageService;
 import net.nurigo.sdk.message.request.SingleMessageSendingRequest;
 import net.nurigo.sdk.message.response.SingleMessageSentResponse;
-import org.springframework.stereotype.Service;
 
 public class MessageServiceStub implements MessageService {
 

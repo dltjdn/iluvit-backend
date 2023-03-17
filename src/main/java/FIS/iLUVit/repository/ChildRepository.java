@@ -1,6 +1,7 @@
 package FIS.iLUVit.repository;
 
 import FIS.iLUVit.domain.Child;
+import FIS.iLUVit.domain.Parent;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
@@ -37,5 +38,8 @@ public interface ChildRepository extends JpaRepository<Child, Long> {
             "left join fetch c.center " +
             "where c.parent.id =:userId")
     List<Child> findByUserWithCenter(@Param("userId") Long userId);
+
+    List<Child> findByParent(Parent parent);
+
 
 }

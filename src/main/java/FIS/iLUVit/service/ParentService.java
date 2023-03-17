@@ -36,9 +36,18 @@ public class ParentService {
     private final BoardBookmarkRepository boardBookmarkRepository;
     private final MapService mapService;
 
+    private final ChildRepository childRepository;
+    private final ChildService childService;
+    private final CenterBookmarkRepository centerBookmarkRepository;
+    private final CenterBookmarkService centerBookmarkService;
+    private final ParticipationRepository participationRepository;
+    private  final  ParticipationService participationService;
+    private final WaitingRepository waitingRepository;
+    private final WaitingService waitingService;
+
+
 
     /**
-     * 작성날짜: 2022/05/13 4:44 PM
      * 작성자: 이승범
      * 작성내용: 부모의 마이페이지 정보 반환
      */
@@ -52,7 +61,6 @@ public class ParentService {
     }
 
     /**
-     * 작성날짜: 2022/05/16 11:42 AM
      * 작성자: 이승범
      * 작성내용: 부모의 마이페이지 정보 업데이트
      */
@@ -96,7 +104,6 @@ public class ParentService {
     }
 
     /**
-     * 작성날짜: 2022/05/24 11:40 AM
      * 작성자: 이승범
      * 작성내용: 학부모 회원가입
      */
@@ -130,5 +137,39 @@ public class ParentService {
         return parent;
     }
 
+    /**
+     *   작성자: 이서우
+     *   작성내용: 학부모 회원 탈퇴 ( 공통 제외 학부모만 가지고 있는 탈퇴 플로우)
+     */
+    public long withdrawParent(Long userId){
+        userService.withdrawUser(userId);  // 교사, 학부모 공톤 탈퇴 로직
+
+        Parent parent = parentRepository.findById(userId)
+                .orElseThrow(() -> new UserException(UserErrorResult.NOT_VALID_TOKEN));
+
+        // 찜한 시설 리스트 삭제
+        centerBookmarkRepository.findByParent(parent).forEach(centerBookmark -> {
+            centerBookmarkService.deletePrefer(userId, centerBookmark.getCenter().getId());
+        });
+
+
+        // 아이 삭제 & 아이가 연관된 유치원 연관관계 끊기(해당 시설과 관련된 bookmark 모두 삭제)
+        childRepository.findByParent(parent).forEach(child -> {
+            childService.deleteChild(userId, child.getId());
+        });
+
+
+        // 신청되어있는 설명회 신청 목록에서 빠지게 하기 ( 설명회 신청 삭제 )
+        participationRepository.findByParent(parent).forEach(participation -> {
+            participationRepository.deleteById(participation.getId());
+        });
+
+        // 신청되어있는 설명회 대기 목록에서 빠지게 하기 ( 설명회 대기 취소 )
+        waitingRepository.findByParent(parent).forEach(waiting-> {
+            waitingService.cancel(waiting.getId(), userId);
+        });
+
+        return userId;
+    }
 
 }

@@ -49,7 +49,7 @@ class PresentationServiceTest {
     @Mock
     private CenterRepository centerRepository;
     @Spy
-    private S3ImageService imageService;
+    private ImageServiceImpl imageService;
     @Mock
     private UserRepository userRepository;
     @Mock

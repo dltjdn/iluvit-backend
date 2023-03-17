@@ -1,6 +1,7 @@
 package FIS.iLUVit.repository;
 
 import FIS.iLUVit.domain.Scrap;
+import FIS.iLUVit.domain.User;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -22,5 +23,7 @@ public interface ScrapRepository extends JpaRepository<Scrap, Long> {
             "where s.id = :scrapId " +
             "and s.user.id = :userId")
     Optional<Scrap> findScrapByIdAndUserId(@Param("scrapId") Long scrapId, @Param("userId") Long userId);
+
+    List<Scrap> findByUser(User user);
 
 }

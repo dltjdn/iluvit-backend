@@ -1,5 +1,6 @@
 package FIS.iLUVit.repository;
 
+import FIS.iLUVit.domain.Parent;
 import FIS.iLUVit.domain.PtDate;
 import FIS.iLUVit.domain.Waiting;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -44,5 +45,7 @@ public interface WaitingRepository extends JpaRepository<Waiting, Long> {
             "set waiting.waitingOrder = waiting.waitingOrder - 1 " +
             "where waiting.waitingOrder > :waitingOrder and waiting.ptDate = :ptDate ")
     void updateWaitingOrder(@Param("ptDate")PtDate ptDate, @Param("waitingOrder") Integer waitingOrder);
+
+    List<Waiting> findByParent(Parent parent);
 
 }
