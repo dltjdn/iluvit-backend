@@ -1,5 +1,8 @@
 package FIS.iLUVit.service;
 
+import FIS.iLUVit.domain.alarms.Alarm;
+import FIS.iLUVit.domain.alarms.ConvertedToParticipateAlarm;
+import FIS.iLUVit.domain.alarms.PresentationFullAlarm;
 import FIS.iLUVit.dto.presentation.*;
 import FIS.iLUVit.domain.*;
 import FIS.iLUVit.domain.alarms.PresentationCreatedAlarm;
@@ -47,6 +50,8 @@ public class PresentationService {
     private final WaitingRepository waitingRepository;
     private final ParticipationRepository participationRepository;
 
+    private final AlarmRepository alarmRepository;
+
     public List<PresentationDetailResponse> findPresentationByCenterIdAndDate(Long centerId, Long userId) {
         List<PresentationWithPtDatesDto> queryDtos =
                 userId == null ? presentationRepository.findByCenterAndDateWithPtDates(centerId, LocalDate.now())
@@ -87,8 +92,9 @@ public class PresentationService {
         presentationRepository.save(presentation);
 
         userRepository.getUserPreferByCenterId(center).forEach(prefer -> {
-            log.info("알림 메시지 생성 {}", prefer.getParent().getId());
-            AlarmUtils.publishAlarmEvent(new PresentationCreatedAlarm(prefer.getParent(), presentation, center));
+            Alarm alarm = new PresentationCreatedAlarm(prefer.getParent(), presentation, center);
+            alarmRepository.save(alarm);
+            AlarmUtils.publishAlarmEvent(alarm);
         });
 
         return presentation;
@@ -165,6 +171,11 @@ public class PresentationService {
                     ptDate.updateWaitingCntForPtDateChange(waitingIds.size());
                     waitings.forEach(waiting -> {
                         Participation andRegisterForWaitings = Participation.createAndRegisterForWaitings(waiting.getParent(), presentation, ptDate, ptDate.getParticipations());
+
+                        Alarm alarm = new ConvertedToParticipateAlarm(waiting.getParent(), presentation, presentation.getCenter());
+                        alarmRepository.save(alarm);
+                        AlarmUtils.publishAlarmEvent(alarm);
+
                         participationRepository.save(andRegisterForWaitings);
                     });
                 }

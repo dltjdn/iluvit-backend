@@ -88,7 +88,7 @@ public class Participation extends BaseEntity {
 
         // 연관 관계 등록 및 participationCnt + 1
         ptDate.acceptParticipation(participation);
-        AlarmUtils.publishAlarmEvent(new ConvertedToParticipateAlarm(parent, presentation, presentation.getCenter()));
+
         return participation;
     }
 

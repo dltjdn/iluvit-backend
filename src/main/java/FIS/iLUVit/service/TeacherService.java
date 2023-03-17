@@ -1,5 +1,6 @@
 package FIS.iLUVit.service;
 
+import FIS.iLUVit.domain.alarms.Alarm;
 import FIS.iLUVit.dto.center.CenterDto;
 import FIS.iLUVit.dto.center.CenterRequest;
 import FIS.iLUVit.dto.teacher.SignupTeacherRequest;
@@ -51,6 +52,8 @@ public class TeacherService {
     private final BoardBookmarkRepository boardBookmarkRepository;
     private final ScrapRepository scrapRepository;
     private final MapService mapService;
+
+    private final AlarmRepository alarmRepository;
 
     /**
      * 작성자: 이승범
@@ -133,7 +136,9 @@ public class TeacherService {
             // 시설에 원장들에게 알람보내기
             center.getTeachers().forEach(t -> {
                 if (t.getAuth() == Auth.DIRECTOR) {
-                    AlarmUtils.publishAlarmEvent(new CenterApprovalReceivedAlarm(t, Auth.TEACHER, t.getCenter()));
+                    Alarm alarm = new CenterApprovalReceivedAlarm(t, Auth.TEACHER, t.getCenter());
+                    alarmRepository.save(alarm);
+                    AlarmUtils.publishAlarmEvent(alarm);
                 }
             });
         } else {   // 센터를 선택하지 않은 경우
@@ -177,7 +182,9 @@ public class TeacherService {
         // 승인 요청 알람이 해당 시설의 원장들에게 감
         List<Teacher> directors = teacherRepository.findDirectorByCenter(centerId);
         directors.forEach(director -> {
-            AlarmUtils.publishAlarmEvent(new CenterApprovalReceivedAlarm(director, Auth.TEACHER, director.getCenter()));
+            Alarm alarm = new CenterApprovalReceivedAlarm(director, Auth.TEACHER, director.getCenter());
+            alarmRepository.save(alarm);
+            AlarmUtils.publishAlarmEvent(alarm);
         });
         return teacher;
     }

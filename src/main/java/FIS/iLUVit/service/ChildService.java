@@ -1,5 +1,7 @@
 package FIS.iLUVit.service;
 
+import FIS.iLUVit.domain.alarms.Alarm;
+import FIS.iLUVit.domain.alarms.ChatAlarm;
 import FIS.iLUVit.dto.center.CenterDto;
 import FIS.iLUVit.dto.center.CenterRequest;
 import FIS.iLUVit.dto.child.*;
@@ -43,6 +45,8 @@ public class ChildService {
     private final BoardBookmarkRepository boardBookmarkRepository;
     private final TeacherRepository teacherRepository;
 
+    private final AlarmRepository alarmRepository;
+
     /**
      * 작성자: 이승범
      * 작성내용: 부모의 메인페이지에 필요한 아이들 정보 반환
@@ -79,7 +83,10 @@ public class ChildService {
 
         // 아이 승인 요청 알람이 해당 시설에 승인된 교사들에게 감
         center.getTeachers().forEach(teacher -> {
-            AlarmUtils.publishAlarmEvent(new CenterApprovalReceivedAlarm(teacher, Auth.PARENT, teacher.getCenter()));
+            Alarm alarm = new CenterApprovalReceivedAlarm(teacher, Auth.PARENT, teacher.getCenter());
+            alarmRepository.save(alarm);
+            AlarmUtils.publishAlarmEvent(alarm);
+
         });
 
         imageService.saveProfileImage(request.getProfileImg(), newChild);
@@ -145,7 +152,9 @@ public class ChildService {
         mappedChild.mappingCenter(center);
 
         center.getTeachers().forEach(teacher -> {
-            AlarmUtils.publishAlarmEvent(new CenterApprovalReceivedAlarm(teacher, Auth.PARENT, teacher.getCenter()));
+            Alarm alarm = new CenterApprovalReceivedAlarm(teacher, Auth.PARENT, teacher.getCenter());
+            alarmRepository.save(alarm);
+            AlarmUtils.publishAlarmEvent(alarm);
         });
 
         return mappedChild;
@@ -244,8 +253,9 @@ public class ChildService {
                 .orElseThrow(() -> new UserException(UserErrorResult.NOT_VALID_REQUEST));
 
         // 승인 완료 알람이 학부모에게로 감
-        AlarmUtils.publishAlarmEvent(new CenterApprovalAcceptedAlarm(acceptedParent, teacher.getCenter()));
-
+        Alarm alarm = new CenterApprovalAcceptedAlarm(acceptedParent, teacher.getCenter());
+        alarmRepository.save(alarm);
+        AlarmUtils.publishAlarmEvent(alarm);
         // bookmark 처리
         // 기존에 있던 아이들중에 현재 승인되는 아이와 같은 시설에 다니는 또 다른 아이가 있는지 검사
         Optional<Child> alreadySignedChild = acceptedParent.getChildren().stream()
