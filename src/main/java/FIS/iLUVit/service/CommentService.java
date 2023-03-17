@@ -1,5 +1,6 @@
 package FIS.iLUVit.service;
 
+import FIS.iLUVit.domain.alarms.Alarm;
 import FIS.iLUVit.dto.comment.CommentDto;
 import FIS.iLUVit.dto.comment.CommentRequest;
 import FIS.iLUVit.domain.Comment;
@@ -28,6 +29,8 @@ public class CommentService {
     private final UserRepository userRepository;
     private final ReportRepository reportRepository;
     private final ReportDetailRepository reportDetailRepository;
+
+    private final AlarmRepository alarmRepository;
 
     public Long registerComment(Long userId, Long postId, Long p_commentId, CommentRequest request) {
         if (userId == null) {
@@ -75,8 +78,11 @@ public class CommentService {
             Comment parentComment = commentRepository.getById(p_commentId);
             comment.updateParentComment(parentComment);
         }
-        if (!userId.equals(findPost.getUser().getId())) // 본인 게시글에 댓글단 건 알림 X
-            AlarmUtils.publishAlarmEvent(new PostAlarm(findPost.getUser(), findPost, comment));
+        if (!userId.equals(findPost.getUser().getId())) { // 본인 게시글에 댓글단 건 알림 X
+            Alarm alarm = new PostAlarm(findPost.getUser(), findPost, comment);
+            alarmRepository.save(alarm);
+            AlarmUtils.publishAlarmEvent(alarm);
+        }
         return commentRepository.save(comment).getId();
     }
 
