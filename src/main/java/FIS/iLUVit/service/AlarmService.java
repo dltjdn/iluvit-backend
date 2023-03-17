@@ -30,6 +30,7 @@ public class AlarmService {
     }
 
     public void deleteAllAlarm(Long userId){
+
         if(userId == null)
             throw new UserException(UserErrorResult.NOT_LOGIN);
         User user = userRepository.findById(userId)
