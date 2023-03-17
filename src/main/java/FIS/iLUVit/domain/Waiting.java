@@ -1,6 +1,9 @@
 package FIS.iLUVit.domain;
 
+import FIS.iLUVit.domain.alarms.Alarm;
+import FIS.iLUVit.domain.alarms.ConvertedToParticipateAlarm;
 import FIS.iLUVit.exception.PresentationException;
+import FIS.iLUVit.service.AlarmUtils;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -41,6 +44,7 @@ public class Waiting extends BaseEntity {
         PtDate ptDate = waiting.ptDate;
         ptDate.cancelWaitingForAcceptingParticipation();
         List<Participation> participations = ptDate.getParticipations();
+
         return Participation.createAndRegisterForWaitings(parent, presentation, ptDate, participations);
     }
 

@@ -4,12 +4,11 @@ import FIS.iLUVit.domain.ExpoToken;
 import FIS.iLUVit.domain.User;
 import FIS.iLUVit.domain.alarms.Alarm;
 import FIS.iLUVit.event.AlarmEvent;
-import FIS.iLUVit.event.dto.ExpoServerResponse;
 import FIS.iLUVit.event.ExpoServerUtils;
+import FIS.iLUVit.event.dto.ExpoServerResponse;
 import FIS.iLUVit.repository.AlarmRepository;
 import FIS.iLUVit.repository.ExpoTokenRepository;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.event.EventListener;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Component;
@@ -23,24 +22,19 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 @Transactional
 public class AlarmEventHandler {
-
-    private final AlarmRepository alarmRepository;
     private final ExpoTokenRepository expoTokenRepository;
 
     @Async
     @EventListener(AlarmEvent.class)
-    public void saveAlarm(AlarmEvent alarmEvent){
+    public void saveAlarm(AlarmEvent alarmEvent) {
         Alarm alarm = alarmEvent.getAlarm();
-
         User user = alarm.getUser();
-        alarmRepository.save(alarm);
 
         List<ExpoToken> expoTokens = expoTokenRepository.findByUser(user);
 
         ExpoServerResponse response = ExpoServerUtils.sendToExpoServer(expoTokens, alarm.getMessage());
 
         handleTokenSendingError(response);
-
     }
 
     /**

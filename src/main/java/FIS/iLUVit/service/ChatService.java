@@ -1,5 +1,6 @@
 package FIS.iLUVit.service;
 
+import FIS.iLUVit.domain.alarms.Alarm;
 import FIS.iLUVit.dto.chat.ChatDto;
 import FIS.iLUVit.dto.chat.ChatListDto;
 import FIS.iLUVit.dto.chat.ChatRequest;
@@ -27,6 +28,8 @@ public class ChatService {
     private final CommentRepository commentRepository;
     private final ChatRoomRepository chatRoomRepository;
     private final ImageService imageService;
+
+    private final AlarmRepository alarmRepository;
 
     public Long saveChat(Long userId, ChatRequest request) {
 
@@ -76,8 +79,9 @@ public class ChatService {
         myRoom.updatePartnerId(partnerRoom.getId());
         partnerRoom.updatePartnerId(myRoom.getId());
 
-        AlarmUtils.publishAlarmEvent(new ChatAlarm(receiveUser, sendUser, anonymousInfo));
-
+        Alarm alarm = new ChatAlarm(receiveUser, sendUser, anonymousInfo);
+        alarmRepository.save(alarm);
+        AlarmUtils.publishAlarmEvent(alarm);
 
         chatRepository.save(myChat);
         Chat savedChat = chatRepository.save(partnerChat);

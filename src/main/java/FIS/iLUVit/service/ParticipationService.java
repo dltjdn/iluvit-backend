@@ -1,5 +1,6 @@
 package FIS.iLUVit.service;
 
+import FIS.iLUVit.domain.alarms.Alarm;
 import FIS.iLUVit.dto.parent.ParticipationListDto;
 import FIS.iLUVit.domain.Parent;
 import FIS.iLUVit.domain.Participation;
@@ -9,10 +10,7 @@ import FIS.iLUVit.domain.alarms.PresentationFullAlarm;
 import FIS.iLUVit.domain.enumtype.Status;
 import FIS.iLUVit.event.ParticipationCancelEvent;
 import FIS.iLUVit.exception.*;
-import FIS.iLUVit.repository.ParentRepository;
-import FIS.iLUVit.repository.ParticipationRepository;
-import FIS.iLUVit.repository.PtDateRepository;
-import FIS.iLUVit.repository.UserRepository;
+import FIS.iLUVit.repository.*;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.ApplicationEventPublisher;
@@ -37,6 +35,8 @@ public class ParticipationService {
     private final ParentRepository parentRepository;
     private final UserRepository userRepository;
     private final ApplicationEventPublisher eventPublisher;
+
+    private final AlarmRepository alarmRepository;
 
     public Long register(Long userId, Long ptDateId) {
         if(userId == null)
@@ -75,7 +75,10 @@ public class ParticipationService {
 
         if(ptDate.getAblePersonNum() <= ptDate.getParticipantCnt()){
             userRepository.findTeacherByCenter(presentation.getCenter()).forEach((user) -> {
-                AlarmUtils.publishAlarmEvent(new PresentationFullAlarm(user, presentation, presentation.getCenter()));
+                Alarm alarm = new PresentationFullAlarm(user, presentation, presentation.getCenter());
+                alarmRepository.save(alarm);
+                AlarmUtils.publishAlarmEvent(alarm);
+
             });
         }
 
