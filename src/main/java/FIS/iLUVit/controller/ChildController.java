@@ -84,7 +84,7 @@ public class ChildController {
 
     /**
      * 작성자: 이승범
-     * 작성내용: 아이 시설 대기
+     * 작성내용: 아이 시설 대기 ( 아이 시설 승인 요청 )
      */
     @PatchMapping("{childId}/center/{centerId}")
     public Long assignCenterForChild(@Login Long userId, @PathVariable("childId") Long childId, @PathVariable("centerId") Long centerId) {

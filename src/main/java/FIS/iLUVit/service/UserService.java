@@ -38,6 +38,8 @@ public class UserService {
     private final TokenPairRepository tokenPairRepository;
     private final ScrapRepository scrapRepository;
     private final ScrapService scrapService;
+    private final ExpoTokenRepository expoTokenRepository;
+    private final AlarmService alarmService;
 
 
     /**
@@ -214,6 +216,12 @@ public class UserService {
                 scrapService.deleteScrapDir(userId, scrapDir.getId());
             };
         });
+
+        //유저 알람 전체 삭제
+        alarmService.deleteAllAlarm(userId);
+
+        //유저의 expoToken 모두 삭제
+        expoTokenRepository.deleteAllByUser(user);
 
         return userId;
     }
