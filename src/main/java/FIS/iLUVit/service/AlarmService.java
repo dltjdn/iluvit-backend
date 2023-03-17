@@ -1,5 +1,6 @@
 package FIS.iLUVit.service;
 
+import FIS.iLUVit.domain.User;
 import FIS.iLUVit.dto.alarm.AlarmDetailDto;
 import FIS.iLUVit.domain.alarms.Alarm;
 import FIS.iLUVit.exception.UserErrorResult;
@@ -22,10 +23,19 @@ import java.util.stream.Collectors;
 public class AlarmService {
     private final AlarmRepository alarmRepository;
     private final UserRepository userRepository;
-    public Integer deleteUserAlarm(Long userId, List<Long> alarmIds) {
+    public Integer deleteSelectedAlarm(Long userId, List<Long> alarmIds) {
         if(userId == null)
             throw new UserException(UserErrorResult.NOT_LOGIN);
         return alarmRepository.deleteByIds(userId, alarmIds);
+    }
+
+    public void deleteAllAlarm(Long userId){
+        if(userId == null)
+            throw new UserException(UserErrorResult.NOT_LOGIN);
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new UserException(UserErrorResult.NOT_VALID_TOKEN));
+
+        alarmRepository.deleteAllByUser(user);
     }
 
     public Slice<AlarmDetailDto> findUserActiveAlarm(Long userId, Pageable pageable) {

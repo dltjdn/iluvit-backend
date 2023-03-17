@@ -28,7 +28,7 @@ public class AlarmController {
      */
     @DeleteMapping("")
     public Integer deleteAlarm(@Login Long userId, @RequestBody AlarmRequest request) {
-        return alarmService.deleteUserAlarm(userId, request.getAlarmIds());
+        return alarmService.deleteSelectedAlarm(userId, request.getAlarmIds());
     }
 
     /**
@@ -63,4 +63,14 @@ public class AlarmController {
         alarmService.readAlarm(userId);
     }
 
+
+    /**
+     *   작성자: 이서우
+     *   작성내용: 해당 유저의 알림 전체 삭제
+     */
+    @DeleteMapping("all")
+    public void deleteAllAlarm(@Login Long userId) {
+        alarmService.deleteAllAlarm(userId);
+
+    }
 }
