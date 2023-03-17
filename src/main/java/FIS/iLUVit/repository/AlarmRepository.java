@@ -1,6 +1,8 @@
 package FIS.iLUVit.repository;
 
+import FIS.iLUVit.domain.User;
 import FIS.iLUVit.domain.alarms.Alarm;
+import org.springframework.boot.autoconfigure.security.SecurityProperties;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -29,4 +31,6 @@ public interface AlarmRepository extends JpaRepository<Alarm, Long> {
     @Modifying(clearAutomatically = true)
     @Query("update PostAlarm pa set pa.postId = null where pa.postId = :postId")
     Integer setPostIsNull(@Param("postId") Long postId);
+
+    void deleteAllByUser(User user);
 }

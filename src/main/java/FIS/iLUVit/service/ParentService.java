@@ -35,13 +35,11 @@ public class ParentService {
     private final BoardRepository boardRepository;
     private final BoardBookmarkRepository boardBookmarkRepository;
     private final MapService mapService;
-
     private final ChildRepository childRepository;
     private final ChildService childService;
     private final CenterBookmarkRepository centerBookmarkRepository;
     private final CenterBookmarkService centerBookmarkService;
     private final ParticipationRepository participationRepository;
-    private  final  ParticipationService participationService;
     private final WaitingRepository waitingRepository;
     private final WaitingService waitingService;
 

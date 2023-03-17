@@ -19,4 +19,6 @@ public interface ExpoTokenRepository extends JpaRepository<ExpoToken, Long> {
     Optional<ExpoToken> findByTokenAndUser(String token, User user);
 
     void deleteByTokenIn(Collection<String> tokens);
+
+    void deleteAllByUser(User user);
 }
