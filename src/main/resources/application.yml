@@ -39,6 +39,8 @@ spring:
       # 그룹별 묶을 설정 파일 grouping
       develop: iluvit-develop, test, http
 
+      prod: iluvit-prod, mysql, http
+
       # 배포작업을 취한 acitve 설정
       release1: iluvit-release, mysql, ssl
       release2: iluvit-release, mysql, ssl
@@ -63,6 +65,18 @@ logging:
 ---
 spring:
   config.activate.on-profile: iluvit-release
+
+logging:
+  level:
+    org.hibernate.SQL: info
+
+management:
+  endpoints:
+    web:
+      base-path: /management
+---
+spring:
+  config.activate.on-profile: iluvit-prod
 
 logging:
   level:
