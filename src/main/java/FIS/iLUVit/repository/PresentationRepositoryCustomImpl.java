@@ -47,6 +47,7 @@ public class PresentationRepositoryCustomImpl extends CenterQueryMethod implemen
                 .limit(pageable.getPageSize() + 1)
                 .fetch();
 
+
         boolean hasNext = false;
         if(presentations.size() > pageable.getPageSize()){
             presentations.remove(pageable.getPageSize());
