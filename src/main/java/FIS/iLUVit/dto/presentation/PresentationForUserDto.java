@@ -21,7 +21,9 @@ public class PresentationForUserDto {
     private LocalDate endDate;
     private String place;               // 설명회 장소
     private String content;             // 설명회 내용
-    private Theme theme;
+    private Theme theme;                // 센터 테마
+
+    private String centerAddress;   // 센터 주소 ( 시/군/구 )
     private String infoImages;
 
     @QueryProjection
@@ -34,6 +36,7 @@ public class PresentationForUserDto {
         place = presentation.getPlace();
         content = presentation.getContent();
         theme = center.getTheme();
+        centerAddress = center.getArea().getSigungu();
         infoImages = presentation.getInfoImagePath();
     }
 }
