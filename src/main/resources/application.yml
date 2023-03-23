@@ -37,8 +37,8 @@ spring:
     default: develop
     group:
       # 그룹별 묶을 설정 파일 grouping
-      develop: iluvit-develop, test, http
-      prod: iluvit-prod, mysql, http
+      develop: iluvit-develop, test, http, dev
+      prod: iluvit-prod, mysql, http, prod
 
   version:
     aos: 1.0.0
