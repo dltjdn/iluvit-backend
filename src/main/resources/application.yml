@@ -34,7 +34,7 @@ spring:
       - map
       - security
     # active 건드리지 말 것
-    active: develop
+    active: prod
     group:
       # 그룹별 묶을 설정 파일 grouping
       develop: iluvit-develop, test, http
