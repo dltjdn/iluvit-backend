@@ -34,20 +34,16 @@ spring:
       - map
       - security
     # active 건드리지 말 것
-    active: prod
+    default: develop
     group:
       # 그룹별 묶을 설정 파일 grouping
       develop: iluvit-develop, test, http
-
       prod: iluvit-prod, mysql, http
-
-      # 배포작업을 취한 acitve 설정
-      release1: iluvit-release, mysql, ssl
-      release2: iluvit-release, mysql, ssl
 
   version:
     aos: 1.0.0
     ios: 1.0.0
+
 ---
 spring:
   config.activate.on-profile: iluvit-develop
@@ -64,29 +60,19 @@ logging:
 
 ---
 spring:
-  config.activate.on-profile: iluvit-release
-
-logging:
-  level:
-    org.hibernate.SQL: info
-
-management:
-  endpoints:
-    web:
-      base-path: /management
----
-spring:
   config.activate.on-profile: iluvit-prod
 
 logging:
   level:
     org.hibernate.SQL: info
 
+---
+
 management:
   endpoints:
     web:
       base-path: /management
----
+
 logging:
   slack:
     webhook-uri: https://hooks.slack.com/services/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
