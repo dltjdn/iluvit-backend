@@ -36,7 +36,7 @@ public class CenterController {
      */
     @PostMapping("search/all")
     public List<CenterMapPreviewDto> getAllCenter(@RequestBody @Validated CenterSearchMapDto dto){
-        return centerService.findByFilterForMap(dto.getLongitude(), dto.getLatitude(), dto.getDistance(), dto.getSearchContent());
+        return centerService.findCenterByFilterForMap(dto.getLongitude(), dto.getLatitude(), dto.getDistance(), dto.getSearchContent());
     }
 
     /**
@@ -52,7 +52,7 @@ public class CenterController {
     public SliceImpl<CenterAndDistancePreviewDto> getCenterByFilter(@RequestBody @Validated CenterSearchMapFilterDto dto,
                                                                            @Login Long userId,
                                                                            Pageable pageable){
-        return centerService.findByFilterForMapList(dto.getLongitude(), dto.getLatitude(), dto.getCenterIds(), userId, dto.getKindOf(), pageable);
+        return centerService.findCenterByFilterForMapList(dto.getLongitude(), dto.getLatitude(), dto.getCenterIds(), userId, dto.getKindOf(), pageable);
     }
 
     /**
@@ -63,7 +63,7 @@ public class CenterController {
      */
     @GetMapping("{centerId}/info")
     public CenterResponse getCenterDetails(@PathVariable("centerId") Long id){
-        return centerService.findInfoById(id);
+        return centerService.findCenterInfoByCenterId(id);
     }
 
     /**
@@ -72,8 +72,8 @@ public class CenterController {
      * 비고: id 기반 으로 센터 클릭시 배너로 나올 center 이름, 모집 상황 반환할 api
      */
     @GetMapping("{centerId}/recruit")
-    public void getCenterDetailsForBanner(@PathVariable("centerId") Long id, @Login Long userId){
-        // return centerService.findBannerById(id, userId);
+    public CenterBannerResponse getCenterDetailsForBanner(@PathVariable("centerId") Long id, @Login Long userId){
+        return centerService.findCenterBannerByCenterId(id, userId);
     }
 
 
@@ -88,7 +88,7 @@ public class CenterController {
      */
     @GetMapping("theme")
     public List<CenterRecommendDto> getAllCenterByTheme(@Login Long userId){
-        return centerService.findCenterForParent(userId);
+        return centerService.findRecommendCenterWithTheme(userId);
     }
 
 

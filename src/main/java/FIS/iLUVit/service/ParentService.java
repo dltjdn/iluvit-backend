@@ -147,7 +147,7 @@ public class ParentService {
 
         // 찜한 시설 리스트 삭제
         centerBookmarkRepository.findByParent(parent).forEach(centerBookmark -> {
-            centerBookmarkService.deletePrefer(userId, centerBookmark.getCenter().getId());
+            centerBookmarkService.deleteCenterBookmark(userId, centerBookmark.getCenter().getId());
         });
 
 

@@ -80,7 +80,7 @@ public class AuthControllerTest {
 
         doThrow(new AuthNumberException(error))
                 .when(authService)
-                .sendAuthNumberForSignup(phoneNum);
+                .sendAuthNumForSignup(phoneNum);
 
         // when
         ResultActions resultActions = mockMvc.perform(
@@ -106,7 +106,7 @@ public class AuthControllerTest {
 
         doThrow(new AuthNumberException(error))
                 .when(authService)
-                .sendAuthNumberForSignup(phoneNum);
+                .sendAuthNumForSignup(phoneNum);
         // when
         ResultActions resultActions = mockMvc.perform(
                 MockMvcRequestBuilders.get(url)
@@ -228,7 +228,7 @@ public class AuthControllerTest {
         AuthNumberErrorResult error = AuthNumberErrorResult.NOT_SIGNUP_PHONE;
         doThrow(new AuthNumberException(error))
                 .when(authService)
-                .sendAuthNumberForFindLoginId(phoneNum);
+                .sendAuthNumForFindLoginId(phoneNum);
         // when
         ResultActions resultActions = mockMvc.perform(
                 MockMvcRequestBuilders.get(url)
@@ -266,7 +266,7 @@ public class AuthControllerTest {
         AuthNumRequest request = new AuthNumRequest(phoneNum, authNum, AuthKind.findLoginId);
         doReturn(loginId)
                 .when(authService)
-                .findLoginId(request);
+                .authenticateAuthNumForFindLoginId(request);
         // when
         ResultActions resultActions = mockMvc.perform(
                 MockMvcRequestBuilders.post(url)
@@ -325,7 +325,7 @@ public class AuthControllerTest {
         AuthNumberErrorResult error = AuthNumberErrorResult.AUTHENTICATION_FAIL;
         doThrow(new AuthNumberException(error))
                 .when(authService)
-                .sendAuthNumberForChangePhone(null, phoneNum);
+                .sendAuthNumForChangePhone(null, phoneNum);
         // when
         ResultActions resultActions = mockMvc.perform(
                 MockMvcRequestBuilders.get(url)
@@ -384,7 +384,7 @@ public class AuthControllerTest {
             FindPasswordRequest request = new FindPasswordRequest(user.getLoginId(), user.getPhoneNumber(), "1234", "asdf1234!", "asdf12345!");
             doThrow(new AuthNumberException(error))
                     .when(authService)
-                    .changePassword(any());
+                    .authenticateAuthNumForChangePwd(any());
             // when
             ResultActions result = mockMvc.perform(
                     MockMvcRequestBuilders.post(url)
@@ -407,7 +407,7 @@ public class AuthControllerTest {
             FindPasswordRequest request = new FindPasswordRequest(user.getLoginId(), user.getPhoneNumber(), "1234", "asdf1234!", "asdf1234!");
             doThrow(new AuthNumberException(error))
                     .when(authService)
-                    .changePassword(any());
+                    .authenticateAuthNumForChangePwd(any());
             // when
             ResultActions result = mockMvc.perform(
                     MockMvcRequestBuilders.post(url)

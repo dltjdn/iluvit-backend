@@ -23,7 +23,11 @@ public class BoardBookmarkService {
     private final UserRepository userRepository;
     private final BoardRepository boardRepository;
 
-    public List<StoryDto> search(Long userId) {
+    /**
+     * 작성자: 이창윤
+     * 작성내용: 유저가 즐겨찾기한 게시판 리스트를 반환합니다
+     */
+    public List<StoryDto> findBoardBookmarkByUser(Long userId) {
         if (userId == null) {
             return searchByDefault();
         }
@@ -71,7 +75,7 @@ public class BoardBookmarkService {
                 storyDto = new StoryDto(center.getId(),center.getName());
                 storyDtos.add(storyDto);
             }
-            updateStoryDto(boardList, boardPostMap, storyDto);
+            modifyStoryDto(boardList, boardPostMap, storyDto);
         });
 
         // 시설의 이야기 리스트는 아이디로 정렬 후
@@ -83,26 +87,13 @@ public class BoardBookmarkService {
 //        sortedStoryDTOS.forEach(s -> dto.getStories().add(s));
         storyDtos2.addAll(sortedStoryDtos);
         return storyDtos2;
-
     }
 
-    private Map<Center, List<Post>> getCenterPostMapByBookmark(Long userId, Center tmp) {
-        return boardBookmarkRepository.findPostByBoard(userId).stream()
-                .collect(Collectors.groupingBy(p -> p.getBoard().getCenter() == null ?
-                        tmp : p.getBoard().getCenter()));
-    }
-
-    private Map<Center, List<Board>> getCenterBoardMapByBookmark(Long userId, Center tmp) {
-        return boardBookmarkRepository.findByUserWithBoardAndCenter(userId)
-                .stream()
-                .map(bookmark -> bookmark.getBoard())
-                .collect(Collectors.toList())
-                .stream()
-                .collect(Collectors.groupingBy(b -> b.getCenter() == null ?
-                        tmp : b.getCenter()));
-    }
-
-    private void updateStoryDto(List<Board> boardList, Map<Board, List<Post>> boardPostMap, StoryDto storyDto) {
+    /**
+     * 작성자: 이창윤
+     * 작성내용: StoryDto를 업데이트합니다
+     */
+    private void modifyStoryDto(List<Board> boardList, Map<Board, List<Post>> boardPostMap, StoryDto storyDto) {
         // 게시판이 없는 경우 == 게시글이 하나도 없는 경우 -> 빈 배열 넣어줌.
         for (Board board : boardList) {
             if (!boardPostMap.containsKey(board)) {
@@ -134,6 +125,10 @@ public class BoardBookmarkService {
         storyDto.addBoardDtoList(boardDtoAsc);
     }
 
+    /**
+     * 작성자: 이창윤
+     * 작성내용: 유저가 null일 경우 default를 반환합니다
+     */
     public List<StoryDto> searchByDefault() {
         List<StoryDto> storyDtos = new ArrayList<>();
         List<Board> defaultBoards = boardRepository.findDefaultByModu();
@@ -142,12 +137,40 @@ public class BoardBookmarkService {
         Map<Board, List<Post>> boardPostMap = boardRepository.findPostByDefault()
                 .stream()
                 .collect(Collectors.groupingBy(post -> post.getBoard()));
-        updateStoryDto(defaultBoards, boardPostMap, storyDto);
+        modifyStoryDto(defaultBoards, boardPostMap, storyDto);
         storyDtos.add(storyDto);
         return storyDtos;
     }
 
-    public Long create(Long userId, Long boardId) {
+    /**
+     * 작성자: 이창윤
+     * 작성내용: 유저가 즐겨찾기한 게시판의 글을 매핑합니다
+     */
+    private Map<Center, List<Post>> getCenterPostMapByBookmark(Long userId, Center tmp) {
+        return boardBookmarkRepository.findPostByBoard(userId).stream()
+                .collect(Collectors.groupingBy(p -> p.getBoard().getCenter() == null ?
+                        tmp : p.getBoard().getCenter()));
+    }
+
+    /**
+     * 작성자: 이창윤
+     * 작성내용: 유저의 즐겨찾기한 게시판을 매핑합니다
+     */
+    private Map<Center, List<Board>> getCenterBoardMapByBookmark(Long userId, Center tmp) {
+        return boardBookmarkRepository.findByUserWithBoardAndCenter(userId)
+                .stream()
+                .map(bookmark -> bookmark.getBoard())
+                .collect(Collectors.toList())
+                .stream()
+                .collect(Collectors.groupingBy(b -> b.getCenter() == null ?
+                        tmp : b.getCenter()));
+    }
+
+    /**
+     * 작성자: 이창윤
+     * 작성내용: 해당 게시판을 게시판 즐겨찾기에 등록합니다
+     */
+    public Long saveBoardBookmark(Long userId, Long boardId) {
         if (userId == null) {
             throw new BookmarkException(BookmarkErrorResult.UNAUTHORIZED_USER_ACCESS);
         }
@@ -159,7 +182,11 @@ public class BoardBookmarkService {
         return boardBookmarkRepository.save(bookmark).getId();
     }
 
-    public Long delete(Long userId, Long bookmarkId) {
+    /**
+     * 작성자: 이창윤
+     * 작성내용: 해당 게시판의 게시판 즐겨찾기를 해제합니다
+     */
+    public Long deleteBoardBookmark(Long userId, Long bookmarkId) {
         if (userId == null) {
             throw new BookmarkException(BookmarkErrorResult.UNAUTHORIZED_USER_ACCESS);
         }

@@ -270,7 +270,7 @@ public class ChildService {
             // 승인하고자 하는 시설의 게시판들 lazyLoading 통해 가져오기
             teacher.getCenter().getBoards().forEach(board -> {
                 if (board.getIsDefault()) {
-                    boardBookmarkService.create(acceptedParent.getId(), board.getId());
+                    boardBookmarkService.saveBoardBookmark(acceptedParent.getId(), board.getId());
                 }
             });
         }

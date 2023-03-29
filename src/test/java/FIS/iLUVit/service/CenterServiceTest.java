@@ -146,7 +146,7 @@ public class CenterServiceTest {
             Mockito.doReturn(dataSlice).when(centerRepository).findByFilterForMapList(1.2, 1.2, 1L, KindOf.ALL, centerIds, PageRequest.of(0, 10));
 
             //when
-            List<CenterAndDistancePreviewDto> result = target.findByFilterForMapList(1.2, 1.2, centerIds, 1L, KindOf.ALL, PageRequest.of(0, 10)).getContent();
+            List<CenterAndDistancePreviewDto> result = target.findCenterByFilterForMapList(1.2, 1.2, centerIds, 1L, KindOf.ALL, PageRequest.of(0, 10)).getContent();
 
             //then
             verify(centerRepository, times(1)).findByFilterForMapList(1.2, 1.2, 1L, KindOf.ALL, centerIds, PageRequest.of(0, 10));
@@ -163,7 +163,7 @@ public class CenterServiceTest {
             Mockito.doReturn(dataSlice).when(centerRepository).findByFilterForMapList(1.2, 1.2, 1L, KindOf.ALL, centerIds, PageRequest.of(0, 10));
 
             //when
-            List<CenterAndDistancePreviewDto> result = target.findByFilterForMapList(1.2, 1.2, new ArrayList<>(), 1L, KindOf.ALL, PageRequest.of(0, 10)).getContent();
+            List<CenterAndDistancePreviewDto> result = target.findCenterByFilterForMapList(1.2, 1.2, new ArrayList<>(), 1L, KindOf.ALL, PageRequest.of(0, 10)).getContent();
 
             //then
             verify(centerRepository, times(1)).findByFilterForMapList(1.2, 1.2, 1L, KindOf.ALL, centerIds, PageRequest.of(0, 10));
@@ -200,7 +200,7 @@ public class CenterServiceTest {
             Mockito.doReturn(dataSlice).when(centerRepository).findByFilterForMapList(1.2, 1.2, KindOf.ALL, centerIds, PageRequest.of(0, 10));
 
             //when
-            List<CenterAndDistancePreviewDto> result = target.findByFilterForMapList(1.2, 1.2, centerIds, null, KindOf.ALL,PageRequest.of(0, 10)).getContent();
+            List<CenterAndDistancePreviewDto> result = target.findCenterByFilterForMapList(1.2, 1.2, centerIds, null, KindOf.ALL,PageRequest.of(0, 10)).getContent();
 
             //then
             verify(centerRepository, times(1)).findByFilterForMapList(1.2, 1.2,  KindOf.ALL, centerIds, PageRequest.of(0, 10));
