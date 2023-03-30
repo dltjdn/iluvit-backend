@@ -156,7 +156,7 @@ public class TeacherServiceTest {
                     .thenReturn(alarmEvent);
             doReturn("hashedPwd")
                     .when(userService)
-                    .signupValidation(request.getPassword(), request.getPasswordCheck(), request.getLoginId(), request.getPhoneNum(), request.getNickname());
+                    .hashAndValidatePwdForSignup(request.getPassword(), request.getPasswordCheck(), request.getLoginId(), request.getPhoneNum(), request.getNickname());
             doReturn(Optional.of(center1))
                     .when(centerRepository)
                     .findByIdWithTeacher(request.getCenterId());
@@ -203,7 +203,7 @@ public class TeacherServiceTest {
                 .build();
         doReturn("hashedPwd")
                 .when(userService)
-                .signupValidation(request.getPassword(), request.getPasswordCheck(), request.getLoginId(), request.getPhoneNum(), request.getNickname());
+                .hashAndValidatePwdForSignup(request.getPassword(), request.getPasswordCheck(), request.getLoginId(), request.getPhoneNum(), request.getNickname());
         doReturn(new ArrayList<Board>())
                 .when(boardRepository)
                 .findDefaultByModu();
@@ -496,7 +496,7 @@ public class TeacherServiceTest {
                     .findDirectorByIdWithCenterWithTeacher(teacher2.getId());
             // when
             UserException result = assertThrows(UserException.class,
-                    () -> target.acceptTeacher(teacher2.getId(), teacher3.getId()));
+                    () -> target.acceptTeacherRegistration(teacher2.getId(), teacher3.getId()));
             // then
             assertThat(result.getErrorResult()).isEqualTo(UserErrorResult.HAVE_NOT_AUTHORIZATION);
         }
@@ -514,7 +514,7 @@ public class TeacherServiceTest {
                     .findDirectorByIdWithCenterWithTeacher(teacher1.getId());
             // when
             UserException result = assertThrows(UserException.class,
-                    () -> target.acceptTeacher(teacher1.getId(), teacher4.getId()));
+                    () -> target.acceptTeacherRegistration(teacher1.getId(), teacher4.getId()));
             // then
             assertThat(result.getErrorResult()).isEqualTo(UserErrorResult.NOT_VALID_REQUEST);
         }
@@ -534,7 +534,7 @@ public class TeacherServiceTest {
                     .when(boardRepository)
                     .findDefaultByCenter(teacher1.getCenter().getId());
             // when
-            Teacher result = target.acceptTeacher(teacher1.getId(), teacher3.getId());
+            Teacher result = target.acceptTeacherRegistration(teacher1.getId(), teacher3.getId());
             // then
             assertThat(result.getId()).isEqualTo(teacher3.getId());
             assertThat(result.getApproval()).isEqualTo(Approval.ACCEPT);

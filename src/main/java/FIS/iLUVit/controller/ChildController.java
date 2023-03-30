@@ -33,7 +33,7 @@ public class ChildController {
      */
     @GetMapping("info")
     public List<ChildDto> getAllChild(@Login Long id) {
-        return childService.childInfo(id);
+        return childService.findChildInfo(id);
     }
 
     /**
@@ -42,7 +42,7 @@ public class ChildController {
      */
     @PostMapping("")
     public void createChild(@Login Long userId, @Valid @ModelAttribute ChildDetailRequest request) throws IOException {
-        childService.saveChild(userId, request);
+        childService.saveNewChild(userId, request);
     }
 
     /**
@@ -61,7 +61,7 @@ public class ChildController {
     @PutMapping("{childId}")
     public ChildDetailResponse updateChild(@Login Long userId, @PathVariable("childId") Long childId,
                                            @ModelAttribute ChildRequest request, Pageable pageable) throws IOException {
-        return childService.updateChild(userId, childId, request);
+        return childService.saveChildDetailsChanges(userId, childId, request);
     }
 
     /**
@@ -88,7 +88,7 @@ public class ChildController {
      */
     @PatchMapping("{childId}/center/{centerId}")
     public Long assignCenterForChild(@Login Long userId, @PathVariable("childId") Long childId, @PathVariable("centerId") Long centerId) {
-        return childService.mappingCenter(userId, childId, centerId).getCenter().getId();
+        return childService.requestAssignCenterForChild(userId, childId, centerId).getCenter().getId();
     }
 
     /**
@@ -97,7 +97,7 @@ public class ChildController {
      */
     @PatchMapping("{childId}/center")
     public void leaveCenterForChild(@Login Long userId, @PathVariable("childId") Long childId) {
-        childService.exitCenter(userId, childId);
+        childService.leaveChildCenter(userId, childId);
     }
 
 
@@ -111,7 +111,7 @@ public class ChildController {
      */
     @GetMapping("approval")
     public List<ChildInfoForAdminDto> getChildForApproval(@Login Long userId) {
-        return childService.findChildApprovalInfoList(userId);
+        return childService.findChildApprovalList(userId);
     }
 
     /**
@@ -120,7 +120,7 @@ public class ChildController {
      */
     @PatchMapping("{childId}/accept")
     public void acceptChild(@Login Long userId, @PathVariable("childId") Long childId) {
-        childService.acceptChild(userId, childId);
+        childService.acceptChildRegistration(userId, childId);
     }
 
     /**
@@ -129,7 +129,7 @@ public class ChildController {
      */
     @PatchMapping("{childId}/reject")
     public void rejectChild(@Login Long userId, @PathVariable("childId") Long childId) {
-        childService.fireChild(userId, childId);
+        childService.rejectChildRegistration(userId, childId);
     }
 
 }

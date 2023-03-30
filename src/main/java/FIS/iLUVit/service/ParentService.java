@@ -49,7 +49,7 @@ public class ParentService {
      * 작성자: 이승범
      * 작성내용: 부모의 마이페이지 정보 반환
      */
-    public ParentDetailResponse findDetail(Long id) throws IOException {
+    public ParentDetailResponse findParentDetails(Long id) throws IOException {
 
         Parent findParent = parentRepository.findById(id)
                 .orElseThrow(() -> new UserException("유효하지 않은 토큰으로의 사용자 접근입니다."));
@@ -62,7 +62,7 @@ public class ParentService {
      * 작성자: 이승범
      * 작성내용: 부모의 마이페이지 정보 업데이트
      */
-    public ParentDetailResponse updateDetail(Long id, ParentDetailRequest request) throws IOException {
+    public ParentDetailResponse saveParentDetailsChanges(Long id, ParentDetailRequest request) throws IOException {
 
         Parent findParent = parentRepository.findById(id)
                 .orElseThrow(() -> new UserException(UserErrorResult.NOT_VALID_TOKEN));
@@ -105,9 +105,9 @@ public class ParentService {
      * 작성자: 이승범
      * 작성내용: 학부모 회원가입
      */
-    public Parent signup(SignupParentRequest request) {
+    public Parent signupParent(SignupParentRequest request) {
 
-        String hashedPwd = userService.signupValidation(request.getPassword(), request.getPasswordCheck(), request.getLoginId(), request.getPhoneNum(), request.getNickname());
+        String hashedPwd = userService.hashAndValidatePwdForSignup(request.getPassword(), request.getPasswordCheck(), request.getLoginId(), request.getPhoneNum(), request.getNickname());
         Parent parent = request.createParent(hashedPwd);
 
         Pair<Double, Double> loAndLat = mapService.convertAddressToLocation(request.getAddress());

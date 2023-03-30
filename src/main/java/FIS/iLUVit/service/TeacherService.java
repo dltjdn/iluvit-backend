@@ -59,7 +59,7 @@ public class TeacherService {
      * 작성자: 이승범
      * 작성내용: 선생의 마이페이지에 정보 조회
      */
-    public TeacherDetailResponse findDetail(Long id) throws IOException {
+    public TeacherDetailResponse findTeacherDetails(Long id) throws IOException {
 
         Teacher findTeacher = teacherRepository.findById(id)
                 .orElseThrow(() -> new UserException(UserErrorResult.NOT_VALID_TOKEN));
@@ -73,7 +73,7 @@ public class TeacherService {
      * 작성자: 이승범
      * 작성내용: 선생의 마이페이지에 정보 update
      */
-    public TeacherDetailResponse updateDetail(Long id, TeacherDetailRequest request) throws IOException {
+    public TeacherDetailResponse saveTeacherDetailsChanges(Long id, TeacherDetailRequest request) throws IOException {
 
         Teacher findTeacher = teacherRepository.findById(id)
                 .orElseThrow(() -> new UserException(UserErrorResult.NOT_VALID_TOKEN));
@@ -114,10 +114,10 @@ public class TeacherService {
      * 작성자: 이승범
      * 작성내용: 교사 회원가입
      */
-    public Teacher signup(SignupTeacherRequest request) {
+    public Teacher signupTeacher(SignupTeacherRequest request) {
 
         // 회원가입 유효성 검사 및 비밀번호 해싱
-        String hashedPwd = userService.signupValidation(request.getPassword(), request.getPasswordCheck(), request.getLoginId(), request.getPhoneNum(), request.getNickname());
+        String hashedPwd = userService.hashAndValidatePwdForSignup(request.getPassword(), request.getPasswordCheck(), request.getLoginId(), request.getPhoneNum(), request.getNickname());
 
         // 교사 객체 생성
         Teacher teacher;
@@ -171,7 +171,7 @@ public class TeacherService {
      * 작성자: 이승범
      * 작성내용: 시설에 등록신청
      */
-    public Teacher assignCenter(Long userId, Long centerId) {
+    public Teacher requestAssignCenterForTeacher(Long userId, Long centerId) {
         Teacher teacher = teacherRepository.findByIdAndNotAssign(userId)
                 .orElseThrow(() -> new SignupException(SignupErrorResult.ALREADY_BELONG_CENTER));
 
@@ -193,7 +193,7 @@ public class TeacherService {
      * 작성자: 이승범
      * 작성내용: 시설 탈퇴하기
      */
-    public Teacher escapeCenter(Long userId) {
+    public Teacher resignCenterForTeacher(Long userId) {
 
         Teacher escapedTeacher = teacherRepository.findByIdWithCenterWithTeacher(userId)
                 .orElseThrow(() -> new SignupException(SignupErrorResult.NOT_BELONG_CENTER));
@@ -248,7 +248,7 @@ public class TeacherService {
      * 작성자: 이승범
      * 작성내용: 교사 승인
      */
-    public Teacher acceptTeacher(Long userId, Long teacherId) {
+    public Teacher acceptTeacherRegistration(Long userId, Long teacherId) {
         // 로그인한 사용자가 원장인지 확인 && 사용자 시설에 등록된 교사들 싹 다 가져오기
         Teacher director = teacherRepository.findDirectorByIdWithCenterWithTeacher(userId)
                 .orElseThrow(() -> new UserException(UserErrorResult.HAVE_NOT_AUTHORIZATION));
@@ -276,7 +276,7 @@ public class TeacherService {
      * 작성자: 이승범
      * 작성내용: 교사 삭제/승인거절
      */
-    public Teacher fireTeacher(Long userId, Long teacherId) {
+    public Teacher rejectTeacherRegistration(Long userId, Long teacherId) {
 
         // 로그인한 사용자가 원장인지 확인
         Teacher director = teacherRepository.findDirectorById(userId)
@@ -353,7 +353,7 @@ public class TeacherService {
      *   작성자: 이승범
      *   작성내용: 회원가입 과정에서 필요한 센터정보 가져오기
      */
-    public Slice<CenterDto> findCenterForSignup(CenterRequest request, Pageable pageable) {
+    public Slice<CenterDto> findCenterForTeacherSignup(CenterRequest request, Pageable pageable) {
         return centerRepository.findForSignup(request.getSido(), request.getSigungu(), request.getCenterName(), pageable);
     }
 
@@ -363,7 +363,7 @@ public class TeacherService {
      */
     public long withdrawTeacher(Long userId){
         userService.withdrawUser(userId); // 교사, 학부모 공톤 탈퇴 로직
-        escapeCenter(userId); // 연결된 시설 끊기 ( 해당 시설과 연관된 bookmark 삭제 )
+        resignCenterForTeacher(userId); // 연결된 시설 끊기 ( 해당 시설과 연관된 bookmark 삭제 )
         return userId;
     }
 

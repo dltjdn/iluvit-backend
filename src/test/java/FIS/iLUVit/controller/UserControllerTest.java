@@ -88,7 +88,7 @@ public class UserControllerTest {
         SignupErrorResult error = SignupErrorResult.NOT_MATCH_PWD;
         doThrow(new SignupException(error))
                 .when(userService)
-                .updatePassword(any(), any());
+                .changePassword(any(), any());
         // when
         ResultActions result = mockMvc.perform(
                 MockMvcRequestBuilders.put(url)
@@ -116,7 +116,7 @@ public class UserControllerTest {
         SignupErrorResult error = SignupErrorResult.NOT_MATCH_PWDCHECK;
         doThrow(new SignupException(error))
                 .when(userService)
-                .updatePassword(any(), any());
+                .changePassword(any(), any());
         // when
         ResultActions result = mockMvc.perform(
                 MockMvcRequestBuilders.put(url)

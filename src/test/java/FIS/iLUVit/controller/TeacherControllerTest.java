@@ -100,7 +100,7 @@ public class TeacherControllerTest {
         SliceImpl<CenterDto> response = new SliceImpl<>(content, pageable, false);
         doReturn(response)
                 .when(teacherService)
-                .findCenterForSignup(request, pageable);
+                .findCenterForTeacherSignup(request, pageable);
         // when
         ResultActions result = mockMvc.perform(
                 MockMvcRequestBuilders.get(url)
@@ -469,7 +469,7 @@ public class TeacherControllerTest {
             UserErrorResult error = UserErrorResult.HAVE_NOT_AUTHORIZATION;
             doThrow(new UserException(error))
                     .when(teacherService)
-                    .acceptTeacher(any(), any());
+                    .acceptTeacherRegistration(any(), any());
             // when
             ResultActions result = mockMvc.perform(
                     MockMvcRequestBuilders.patch(url, teacher.getId())
@@ -490,7 +490,7 @@ public class TeacherControllerTest {
             UserErrorResult error = UserErrorResult.NOT_VALID_REQUEST;
             doThrow(new UserException(error))
                     .when(teacherService)
-                    .acceptTeacher(any(), any());
+                    .acceptTeacherRegistration(any(), any());
             // when
             ResultActions result = mockMvc.perform(
                     MockMvcRequestBuilders.patch(url, director.getId())

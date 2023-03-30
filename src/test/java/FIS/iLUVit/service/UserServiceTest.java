@@ -66,7 +66,7 @@ public class UserServiceTest {
         // given
         // when
         SignupException result = assertThrows(SignupException.class,
-                () -> target.signupValidation("pwd", "pwdCheck", "loginId", "phoneNum", "nickName"));
+                () -> target.hashAndValidatePwdForSignup("pwd", "pwdCheck", "loginId", "phoneNum", "nickName"));
         // then
         assertThat(result.getErrorResult()).isEqualTo(SignupErrorResult.NOT_MATCH_PWDCHECK);
     } 
@@ -79,7 +79,7 @@ public class UserServiceTest {
                 .findByLoginIdOrNickName("loginId", "nickName");
         // when
         SignupException result = assertThrows(SignupException.class,
-                () -> target.signupValidation("pwd", "pwd", "loginId", "phoneNum", "nickName"));
+                () -> target.hashAndValidatePwdForSignup("pwd", "pwd", "loginId", "phoneNum", "nickName"));
         // then
         assertThat(result.getErrorResult()).isEqualTo(SignupErrorResult.DUPLICATED_NICKNAME);
     } 
@@ -95,7 +95,7 @@ public class UserServiceTest {
                 .findAuthComplete("phoneNum", AuthKind.signup);
         // when
         AuthNumberException result = assertThrows(AuthNumberException.class,
-                () -> target.signupValidation("pwd", "pwd", "loginId", "phoneNum", "nickName"));
+                () -> target.hashAndValidatePwdForSignup("pwd", "pwd", "loginId", "phoneNum", "nickName"));
         // then
         assertThat(result.getErrorResult()).isEqualTo(AuthNumberErrorResult.NOT_AUTHENTICATION);
     }
@@ -111,7 +111,7 @@ public class UserServiceTest {
                 .findAuthComplete("phoneNum", AuthKind.signup);
         // when
         AuthNumberException result = assertThrows(AuthNumberException.class,
-                () -> target.signupValidation("pwd", "pwd", "loginId", "phoneNum", "nickName"));
+                () -> target.hashAndValidatePwdForSignup("pwd", "pwd", "loginId", "phoneNum", "nickName"));
         // then
         assertThat(result.getErrorResult()).isEqualTo(AuthNumberErrorResult.EXPIRED);
     }
@@ -127,7 +127,7 @@ public class UserServiceTest {
                 .when(authRepository)
                 .findAuthComplete("phoneNum", AuthKind.signup);
         // when
-        String result = target.signupValidation("pwd", "pwd", "loginId", "phoneNum", "nickName");
+        String result = target.hashAndValidatePwdForSignup("pwd", "pwd", "loginId", "phoneNum", "nickName");
         // then
         assertThat(encoder.matches("pwd", result)).isEqualTo(true);
     }
@@ -145,7 +145,7 @@ public class UserServiceTest {
                 .findById(any());
         // when
         SignupException result = assertThrows(SignupException.class,
-                () -> target.updatePassword(parent.getId(), request));
+                () -> target.changePassword(parent.getId(), request));
         // then
         assertThat(result.getErrorResult()).isEqualTo(SignupErrorResult.NOT_MATCH_PWD);
     }
@@ -163,7 +163,7 @@ public class UserServiceTest {
                 .findById(any());
         // when
         SignupException result = assertThrows(SignupException.class,
-                () -> target.updatePassword(parent.getId(), request));
+                () -> target.changePassword(parent.getId(), request));
         // then
         assertThat(result.getErrorResult()).isEqualTo(SignupErrorResult.NOT_MATCH_PWDCHECK);
     }
@@ -180,7 +180,7 @@ public class UserServiceTest {
                 .when(userRepository)
                 .findById(any());
         // when
-        User result = target.updatePassword(parent.getId(), request);
+        User result = target.changePassword(parent.getId(), request);
         // then
         assertThat(encoder.matches("newPwd", result.getPassword())).isTrue();
     }

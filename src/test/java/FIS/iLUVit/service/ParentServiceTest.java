@@ -90,7 +90,7 @@ public class ParentServiceTest {
                 .build();
         doReturn("hashedPwd")
                 .when(userService)
-                .signupValidation(request.getPassword(), request.getPasswordCheck(), request.getLoginId(), request.getPhoneNum(), request.getNickname());
+                .hashAndValidatePwdForSignup(request.getPassword(), request.getPasswordCheck(), request.getLoginId(), request.getPhoneNum(), request.getNickname());
         doReturn(List.of(board1))
                 .when(boardRepository)
                 .findDefaultByModu();
