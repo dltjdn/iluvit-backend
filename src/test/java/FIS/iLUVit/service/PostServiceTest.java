@@ -46,6 +46,7 @@ class PostServiceTest {
 
     @InjectMocks
     PostService postService;
+    PostHeartService postHeartService;
 
     @Mock
     PostRepository postRepository;
@@ -1036,7 +1037,7 @@ class PostServiceTest {
 
         //when
         UserException result = assertThrows(UserException.class,
-                () -> postService.savePostHeart(null, post1.getId()));
+                () -> postHeartService.savePostHeart(null, post1.getId()));
 
         //then
         assertThat(result.getErrorResult())
@@ -1053,7 +1054,7 @@ class PostServiceTest {
 
         //when
         PostException result = assertThrows(PostException.class,
-                () -> postService.savePostHeart(parent1.getId(), post1.getId()));
+                () -> postHeartService.savePostHeart(parent1.getId(), post1.getId()));
 
         //then
         assertThat(result.getErrorResult())
@@ -1074,7 +1075,7 @@ class PostServiceTest {
                 .findByPostAndUser(parent1.getId(), post1.getId());
         //when
         PostException result = assertThrows(PostException.class,
-                () -> postService.savePostHeart(parent1.getId(), post1.getId()));
+                () -> postHeartService.savePostHeart(parent1.getId(), post1.getId()));
 
         //then
         assertThat(result.getErrorResult())
@@ -1102,7 +1103,7 @@ class PostServiceTest {
                 .when(postHeartRepository)
                 .save(any());
         //when
-        Long savedId = postService.savePostHeart(parent1.getId(), post1.getId());
+        Long savedId = postHeartService.savePostHeart(parent1.getId(), post1.getId());
 
         //then
         assertThat(savedId)

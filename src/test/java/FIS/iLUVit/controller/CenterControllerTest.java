@@ -100,7 +100,7 @@ class CenterControllerTest extends ResponseRequests {
             String jwtToken = createJwtToken(parent);
 
             doReturn(response)
-                    .when(centerService).findBannerById(1L, 1L);
+                    .when(centerService).findCenterBannerByCenterId(1L, 1L);
 
             //when
             ResultActions result = mockMvc.perform(
@@ -110,7 +110,7 @@ class CenterControllerTest extends ResponseRequests {
 
             //then
             verify(centerService, times(1))
-                    .findBannerById(1L, 1L);
+                    .findCenterBannerByCenterId(1L, 1L);
 
             result.andDo(print())
                     .andExpect(content().contentType(MediaType.APPLICATION_JSON))
@@ -126,7 +126,7 @@ class CenterControllerTest extends ResponseRequests {
             String jwtToken = createJwtToken(teacher);
 
             doReturn(response)
-                    .when(centerService).findBannerById(1L, 1L);
+                    .when(centerService).findCenterBannerByCenterId(1L, 1L);
 
             //when
             ResultActions result = mockMvc.perform(
@@ -136,7 +136,7 @@ class CenterControllerTest extends ResponseRequests {
 
             //then
             verify(centerService, times(1))
-                    .findBannerById(1L, 1L);
+                    .findCenterBannerByCenterId(1L, 1L);
 
             result.andDo(print())
                     .andExpect(content().contentType(MediaType.APPLICATION_JSON))
@@ -151,7 +151,7 @@ class CenterControllerTest extends ResponseRequests {
 //            String jwtToken = createJwtToken(teacher);
 
             doReturn(response)
-                    .when(centerService).findBannerById(1L, null);
+                    .when(centerService).findCenterBannerByCenterId(1L, null);
 
             //when
             ResultActions result = mockMvc.perform(
@@ -160,7 +160,7 @@ class CenterControllerTest extends ResponseRequests {
 
             //then
             verify(centerService, times(1))
-                    .findBannerById(1L, null);
+                    .findCenterBannerByCenterId(1L, null);
 
             result.andDo(print())
                     .andExpect(content().contentType(MediaType.APPLICATION_JSON))

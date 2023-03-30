@@ -124,7 +124,7 @@ public class TeacherServiceTest {
                 .findByIdWithTeacher(request.getCenterId());
         // when
         SignupException result = assertThrows(SignupException.class,
-                () -> target.signup(request));
+                () -> target.signupTeacher(request));
         // then
         assertThat(result.getErrorResult()).isEqualTo(SignupErrorResult.NOT_EXIST_CENTER);
     }
@@ -170,7 +170,7 @@ public class TeacherServiceTest {
                     .when(mapService).getSidoSigunguByLocation(126.8806602, 37.4778951);
             // when
 
-            Teacher result = target.signup(request);
+            Teacher result = target.signupTeacher(request);
             // then
             assertThat(result.getLoginId()).isEqualTo(request.getLoginId());
             assertThat(result.getCenter().getId()).isEqualTo(request.getCenterId());
@@ -213,7 +213,7 @@ public class TeacherServiceTest {
         Mockito.doReturn(Pair.of("서울특별시", "금천구"))
                 .when(mapService).getSidoSigunguByLocation(126.8806602, 37.4778951);
         // when
-        Teacher result = target.signup(request);
+        Teacher result = target.signupTeacher(request);
         // then
         assertThat(result.getLoginId()).isEqualTo(request.getLoginId());
         assertThat(result.getCenter()).isNull();
@@ -235,7 +235,7 @@ public class TeacherServiceTest {
                 .when(imageService)
                 .getProfileImage(teacher1);
         // when
-        TeacherDetailResponse result = target.findDetail(teacher1.getId());
+        TeacherDetailResponse result = target.findTeacherDetails(teacher1.getId());
         // then
         assertThat(result.getNickname()).isEqualTo(response.getNickname());
         assertThat(result.getProfileImg()).isEqualTo("imagePath");
@@ -255,7 +255,7 @@ public class TeacherServiceTest {
                 .findByNickName("중복닉네임");
         // when
         SignupException result = assertThrows(SignupException.class,
-                () -> target.updateDetail(teacher1.getId(), request));
+                () -> target.saveTeacherDetailsChanges(teacher1.getId(), request));
         // then
         assertThat(result.getErrorResult()).isEqualTo(SignupErrorResult.DUPLICATED_NICKNAME);
     }
@@ -282,7 +282,7 @@ public class TeacherServiceTest {
                 .validateAuthNumber(request.getPhoneNum(), AuthKind.updatePhoneNum);
         // when
         AuthNumberException result = assertThrows(AuthNumberException.class,
-                () -> target.updateDetail(teacher1.getId(), request));
+                () -> target.saveTeacherDetailsChanges(teacher1.getId(), request));
         // then
         assertThat(result.getErrorResult()).isEqualTo(AuthNumberErrorResult.NOT_AUTHENTICATION);
     }
@@ -308,7 +308,7 @@ public class TeacherServiceTest {
         Mockito.doReturn(Pair.of("서울특별시", "금천구"))
                 .when(mapService).getSidoSigunguByLocation(126.8806602, 37.4778951);
         // when
-        TeacherDetailResponse response = target.updateDetail(teacher1.getId(), request);
+        TeacherDetailResponse response = target.saveTeacherDetailsChanges(teacher1.getId(), request);
         // then
         assertThat(response.getPhoneNumber()).isEqualTo("newPhoneNum");
     }
@@ -334,7 +334,7 @@ public class TeacherServiceTest {
         Mockito.doReturn(Pair.of("서울특별시", "금천구"))
                 .when(mapService).getSidoSigunguByLocation(126.8806602, 37.4778951);
         // when
-        TeacherDetailResponse result = target.updateDetail(teacher1.getId(), request);
+        TeacherDetailResponse result = target.saveTeacherDetailsChanges(teacher1.getId(), request);
         // then
         assertThat(result.getName()).isEqualTo(request.getName());
         assertThat(result.getPhoneNumber()).isNotEqualTo(request.getPhoneNum());
@@ -353,7 +353,7 @@ public class TeacherServiceTest {
                     .findByIdAndNotAssign(teacher1.getId());
             // when
             SignupException result = assertThrows(SignupException.class,
-                    () -> target.assignCenter(teacher1.getId(), center2.getId()));
+                    () -> target.acceptTeacherRegistration(teacher1.getId(), center2.getId()));
             // then
             assertThat(result.getErrorResult()).isEqualTo(SignupErrorResult.ALREADY_BELONG_CENTER);
         }
@@ -378,7 +378,7 @@ public class TeacherServiceTest {
                 alarmUtils.when(() -> AlarmUtils.publishAlarmEvent(new CenterApprovalReceivedAlarm(teacher1, Auth.TEACHER, teacher1.getCenter())))
                         .thenReturn(alarmEvent);
                 // when
-                Teacher result = target.assignCenter(teacher4.getId(), center1.getId());
+                Teacher result = target.acceptTeacherRegistration(teacher4.getId(), center1.getId());
                 // then
                 assertThat(result.getCenter().getId()).isEqualTo(center1.getId());
                 assertThat(result.getApproval()).isEqualTo(Approval.WAITING);
@@ -399,7 +399,7 @@ public class TeacherServiceTest {
                     .findByIdWithCenterWithTeacher(any());
             // when
             SignupException result = assertThrows(SignupException.class,
-                    () -> target.escapeCenter(teacher2.getId()));
+                    () -> target.resignCenterForTeacher(teacher2.getId()));
 
             // then
             assertThat(result.getErrorResult()).isEqualTo(SignupErrorResult.NOT_BELONG_CENTER);
@@ -418,7 +418,7 @@ public class TeacherServiceTest {
                     .findByIdWithCenterWithTeacher(any());
             // when
             SignupException result = assertThrows(SignupException.class,
-                    () -> target.escapeCenter(teacher1.getId()));
+                    () -> target.resignCenterForTeacher(teacher1.getId()));
             // then
             assertThat(result.getErrorResult()).isEqualTo(SignupErrorResult.HAVE_TO_MANDATE);
         }
@@ -438,7 +438,7 @@ public class TeacherServiceTest {
                     .when(boardRepository)
                     .findByCenter(teacher2.getCenter().getId());
             // when
-            Teacher result = target.escapeCenter(teacher2.getId());
+            Teacher result = target.resignCenterForTeacher(teacher2.getId());
             // then
             assertThat(result.getId()).isEqualTo(teacher2.getId());
             assertThat(result.getCenter()).isNull();
@@ -555,7 +555,7 @@ public class TeacherServiceTest {
                     .findDirectorById(any());
             // when
             UserException result = assertThrows(UserException.class,
-                    () -> target.fireTeacher(teacher1.getId(), teacher2.getId()));
+                    () -> target.rejectTeacherRegistration(teacher1.getId(), teacher2.getId()));
             // then
             assertThat(result.getErrorResult()).isEqualTo(UserErrorResult.HAVE_NOT_AUTHORIZATION);
         }
@@ -576,7 +576,7 @@ public class TeacherServiceTest {
                     .findById(teacher4.getId());
             // when
             UserException result = assertThrows(UserException.class,
-                    () -> target.fireTeacher(teacher1.getId(), teacher4.getId()));
+                    () -> target.rejectTeacherRegistration(teacher1.getId(), teacher4.getId()));
             // then
             assertThat(result.getErrorResult()).isEqualTo(UserErrorResult.NOT_VALID_REQUEST);
         }
@@ -597,7 +597,7 @@ public class TeacherServiceTest {
                     .findById(teacher4.getId());
             // when
             UserException result = assertThrows(UserException.class,
-                    () -> target.fireTeacher(teacher1.getId(), teacher4.getId()));
+                    () -> target.rejectTeacherRegistration(teacher1.getId(), teacher4.getId()));
             // then
             assertThat(result.getErrorResult()).isEqualTo(UserErrorResult.NOT_VALID_REQUEST);
         }
@@ -628,7 +628,7 @@ public class TeacherServiceTest {
                     .when(boardRepository)
                     .findByCenter(any());
             // when
-            Teacher result = target.fireTeacher(teacher1.getId(), teacher2.getId());
+            Teacher result = target.rejectTeacherRegistration(teacher1.getId(), teacher2.getId());
             // then
             assertThat(result.getCenter()).isNull();
             verify(boardRepository, times(1)).findByCenter(teacher1.getCenter().getId());

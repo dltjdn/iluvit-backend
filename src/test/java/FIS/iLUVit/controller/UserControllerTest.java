@@ -62,7 +62,7 @@ public class UserControllerTest {
         String url = "/user";
         doReturn(new UserResponse())
                 .when(userService)
-                .findUserInfo(any());
+                .findUserInfoDetails(any());
         // when
         ResultActions result = mockMvc.perform(
                 MockMvcRequestBuilders.get(url)
@@ -179,7 +179,7 @@ public class UserControllerTest {
             UserErrorResult error = UserErrorResult.ALREADY_LOGINID_EXIST;
             doThrow(new UserException(error))
                     .when(userService)
-                    .checkLoginId(any());
+                    .checkLoginIdAvailability(any());
             // when
             ResultActions result = mockMvc.perform(
                     MockMvcRequestBuilders.get(url)
@@ -234,7 +234,7 @@ public class UserControllerTest {
             CheckNicknameRequest request = new CheckNicknameRequest("asd");
             doThrow(new UserException(error))
                     .when(userService)
-                    .checkNickname(request);
+                    .checkNicknameAvailability(request);
             // when
             ResultActions result = mockMvc.perform(
                     MockMvcRequestBuilders.get(url)

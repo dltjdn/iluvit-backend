@@ -149,7 +149,7 @@ public class ParentControllerTest {
         SignupErrorResult errorResult = SignupErrorResult.NOT_MATCH_PWDCHECK;
         doThrow(new SignupException(errorResult))
                 .when(parentService)
-                .signup(request);
+                .signupParent(request);
         // when
         ResultActions result = mockMvc.perform(
                 MockMvcRequestBuilders.post(url)
@@ -182,7 +182,7 @@ public class ParentControllerTest {
         SignupErrorResult errorResult = SignupErrorResult.DUPLICATED_NICKNAME;
         doThrow(new SignupException(errorResult))
                 .when(parentService)
-                .signup(request);
+                .signupParent(request);
         // when
         ResultActions result = mockMvc.perform(
                 MockMvcRequestBuilders.post(url)
@@ -216,7 +216,7 @@ public class ParentControllerTest {
         AuthNumberErrorResult errorResult = AuthNumberErrorResult.NOT_AUTHENTICATION;
         doThrow(new AuthNumberException(errorResult))
                 .when(parentService)
-                .signup(request);
+                .signupParent(request);
         // when
         ResultActions result = mockMvc.perform(
                 MockMvcRequestBuilders.post(url)
@@ -250,7 +250,7 @@ public class ParentControllerTest {
         AuthNumberErrorResult errorResult = AuthNumberErrorResult.EXPIRED;
         doThrow(new AuthNumberException(errorResult))
                 .when(parentService)
-                .signup(request);
+                .signupParent(request);
         // when
         ResultActions result = mockMvc.perform(
                 MockMvcRequestBuilders.post(url)
@@ -299,7 +299,7 @@ public class ParentControllerTest {
         ParentDetailResponse response = new ParentDetailResponse();
         doReturn(response)
                 .when(parentService)
-                .findDetail(parent.getId());
+                .findParentDetails(parent.getId());
         // when
         ResultActions result = mockMvc.perform(
                 MockMvcRequestBuilders.get(url)

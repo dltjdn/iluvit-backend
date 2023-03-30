@@ -110,7 +110,7 @@ public class ChildServiceTest {
                     .when(imageService)
                     .getProfileImage(any(Child.class));
             // when
-            List<ChildDto> result = target.childInfo(parent1.getId());
+            List<ChildDto> result = target.findChildInfo(parent1.getId());
             // then
             assertThat(result.size()).isEqualTo(2);
         }
@@ -286,7 +286,7 @@ public class ChildServiceTest {
                     .findByIdWithCenterWithChildWithParent(any());
             // when
             UserException result = assertThrows(UserException.class,
-                    () -> target.fireChild(teacher2.getId(), child1.getId()));
+                    () -> target.rejectChildRegistration(teacher2.getId(), child1.getId()));
             // then
             assertThat(result.getErrorResult()).isEqualTo(UserErrorResult.HAVE_NOT_AUTHORIZATION);
         }
@@ -304,7 +304,7 @@ public class ChildServiceTest {
                     .findByIdWithCenterWithChildWithParent(any());
             // when
             UserException result = assertThrows(UserException.class,
-                    () -> target.fireChild(teacher1.getId(), child5.getId()));
+                    () -> target.rejectChildRegistration(teacher1.getId(), child5.getId()));
             // then
             assertThat(result.getErrorResult()).isEqualTo(UserErrorResult.NOT_VALID_REQUEST);
         }
@@ -323,7 +323,7 @@ public class ChildServiceTest {
                     .when(childRepository)
                     .findByUserWithCenter(any());
             // when
-            target.fireChild(teacher1.getId(), child1.getId());
+            target.rejectChildRegistration(teacher1.getId(), child1.getId());
             // then
             assertThat(child1.getApproval()).isEqualTo(Approval.REJECT);
             assertThat(child1.getCenter()).isNull();
@@ -345,7 +345,7 @@ public class ChildServiceTest {
                     .when(childRepository)
                     .findByUserWithCenter(any());
             // when
-            target.fireChild(teacher1.getId(), child1.getId());
+            target.rejectChildRegistration(teacher1.getId(), child1.getId());
             // then
             assertThat(child1.getApproval()).isEqualTo(Approval.REJECT);
             assertThat(child1.getCenter()).isNull();
@@ -561,7 +561,7 @@ public class ChildServiceTest {
                     .findByUserWithCenter(any());
             // when
             UserException result = assertThrows(UserException.class,
-                    () -> target.exitCenter(parent1.getId(), child4.getId()));
+                    () -> target.leaveChildCenter(parent1.getId(), child4.getId()));
             // then
             assertThat(result.getErrorResult()).isEqualTo(UserErrorResult.NOT_VALID_REQUEST);
         }
@@ -575,7 +575,7 @@ public class ChildServiceTest {
                     .findByUserWithCenter(any());
             //when
             UserException result = assertThrows(UserException.class,
-                    () -> target.exitCenter(parent1.getId(), child3.getId()));
+                    () -> target.leaveChildCenter(parent1.getId(), child3.getId()));
             //then
             assertThat(result.getErrorResult()).isEqualTo(UserErrorResult.NOT_VALID_REQUEST);
         }
@@ -588,7 +588,7 @@ public class ChildServiceTest {
                     .when(childRepository)
                     .findByUserWithCenter(any());
             // when
-            Child result = target.exitCenter(parent1.getId(), child2.getId());
+            Child result = target.leaveChildCenter(parent1.getId(), child2.getId());
             // then
             assertThat(result.getId()).isEqualTo(child2.getId());
             assertThat(result.getParent().getId()).isEqualTo(parent1.getId());
@@ -603,7 +603,7 @@ public class ChildServiceTest {
                     .when(childRepository)
                     .findByUserWithCenter(any());
             // when
-            Child result = target.exitCenter(parent1.getId(), child1.getId());
+            Child result = target.leaveChildCenter(parent1.getId(), child1.getId());
             // then
             assertThat(result.getId()).isEqualTo(child1.getId());
             assertThat(result.getParent().getId()).isEqualTo(parent1.getId());

@@ -99,7 +99,7 @@ public class ParentServiceTest {
         Mockito.doReturn(Pair.of("서울특별시", "금천구"))
                 .when(mapService).getSidoSigunguByLocation(126.8806602, 37.4778951);
         // when
-        Parent result = target.signup(request);
+        Parent result = target.signupParent(request);
         // then
         assertThat(result.getPassword()).isEqualTo("hashedPwd");
         assertThat(result.getLoginId()).isEqualTo("loginId");
@@ -117,7 +117,7 @@ public class ParentServiceTest {
                 .when(imageService)
                 .getProfileImage(parent1);
         // when
-        ParentDetailResponse result = target.findDetail(parent1.getId());
+        ParentDetailResponse result = target.findParentDetails(parent1.getId());
         // then
         assertThat(result.getNickname()).isEqualTo(parent1.getNickName());
         assertThat(result.getProfileImg()).isEqualTo("imagePath");
@@ -151,7 +151,7 @@ public class ParentServiceTest {
                     .findByNickName(any());
             // when
             UserException result = assertThrows(UserException.class,
-                    () -> target.updateDetail(parent1.getId(), request));
+                    () -> target.saveParentDetailsChanges(parent1.getId(), request));
             // then
             assertThat(result.getErrorResult()).isEqualTo(UserErrorResult.ALREADY_NICKNAME_EXIST);
         }
@@ -179,7 +179,7 @@ public class ParentServiceTest {
             Mockito.doReturn(Pair.of("서울특별시", "금천구"))
                     .when(mapService).getSidoSigunguByLocation(126.8806602, 37.4778951);
             // when
-            ParentDetailResponse result = target.updateDetail(parent1.getId(), request);
+            ParentDetailResponse result = target.saveParentDetailsChanges(parent1.getId(), request);
             // then
             assertThat(result).isNotNull();
             assertThat(result.getAddress()).isEqualTo(request.getAddress());
@@ -209,7 +209,7 @@ public class ParentServiceTest {
             Mockito.doReturn(Pair.of("서울특별시", "금천구"))
                     .when(mapService).getSidoSigunguByLocation(126.8806602, 37.4778951);
             // when
-            ParentDetailResponse result = target.updateDetail(parent1.getId(), request);
+            ParentDetailResponse result = target.saveParentDetailsChanges(parent1.getId(), request);
             // then
             assertThat(result).isNotNull();
             assertThat(result.getNickname()).isEqualTo("nickName");
@@ -230,7 +230,7 @@ public class ParentServiceTest {
                     .findByUserIdAndCenterId(parent1.getId(), center1.getId());
             // when
             PreferException result = assertThrows(PreferException.class,
-                    () -> centerBookmarkService.savePrefer(parent1.getId(), center1.getId()));
+                    () -> centerBookmarkService.saveCenterBookmark(parent1.getId(), center1.getId()));
             // then
             assertThat(result.getErrorResult()).isEqualTo(PreferErrorResult.ALREADY_PREFER);
         }
@@ -253,7 +253,7 @@ public class ParentServiceTest {
                     .saveAndFlush(any());
             // when
             PreferException result = assertThrows(PreferException.class,
-                    () -> centerBookmarkService.savePrefer(parent1.getId(), center2.getId()));
+                    () -> centerBookmarkService.saveCenterBookmark(parent1.getId(), center2.getId()));
             // then
             assertThat(result.getErrorResult()).isEqualTo(PreferErrorResult.NOT_VALID_CENTER);
         }
@@ -272,7 +272,7 @@ public class ParentServiceTest {
                     .when(parentRepository)
                     .getById(parent1.getId());
             // when
-            Prefer result = centerBookmarkService.savePrefer(parent1.getId(), center2.getId());
+            Prefer result = centerBookmarkService.saveCenterBookmark(parent1.getId(), center2.getId());
             // then
             assertThat(result.getParent().getId()).isEqualTo(parent1.getId());
             assertThat(result.getCenter().getId()).isEqualTo(center2.getId());
@@ -291,7 +291,7 @@ public class ParentServiceTest {
                     .findByUserIdAndCenterId(any(), any());
             // when
             PreferException result = assertThrows(PreferException.class,
-                    () -> centerBookmarkService.deletePrefer(parent1.getId(), center1.getId()));
+                    () -> centerBookmarkService.deleteCenterBookmark(parent1.getId(), center1.getId()));
             // then
             assertThat(result.getErrorResult()).isEqualTo(PreferErrorResult.NOT_VALID_CENTER);
         }
@@ -304,7 +304,7 @@ public class ParentServiceTest {
                     .when(centerBookmarkRepository)
                     .findByUserIdAndCenterId(parent1.getId(), center1.getId());
             // when
-            centerBookmarkService.deletePrefer(parent1.getId(), center1.getId());
+            centerBookmarkService.deleteCenterBookmark(parent1.getId(), center1.getId());
             // then
             verify(centerBookmarkRepository, times(1)).delete(any());
         }

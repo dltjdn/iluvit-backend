@@ -94,10 +94,10 @@ class BoardControllerTest {
 
         BoardRequest request = new BoardRequest("자유게시판", BoardKind.NORMAL);
 
-        given(boardService.create(eq(null), eq(1L), any()))
+        given(boardService.saveNewBoard(eq(null), eq(1L), any()))
                 .willReturn(2L);
 
-        given(boardService.create(eq(null), eq(null), any()))
+        given(boardService.saveNewBoard(eq(null), eq(null), any()))
                 .willReturn(3L);
         //when
 
@@ -136,7 +136,7 @@ class BoardControllerTest {
     @Test
     public void 게시판_삭제() throws Exception {
         //given
-        given(boardService.remove(any(), any()))
+        given(boardService.deleteBoardWithValidation(any(), any()))
                 .willReturn(1L);
         //when
 
@@ -153,7 +153,7 @@ class BoardControllerTest {
         BoardListDto boardListDto = new BoardListDto();
         List<BoardListDto.BoardBookmarkDto> boardList = getBookmarkDTOS(board1, board2, boardListDto);
         boardListDto.addBoardList(boardList);
-        given(boardService.findAllWithBookmark(any()))
+        given(boardService.findAllBoardByPublic(any()))
                 .willReturn(boardListDto);
         //when
 
@@ -175,7 +175,7 @@ class BoardControllerTest {
         BoardListDto boardListDto = new BoardListDto();
         List<BoardListDto.BoardBookmarkDto> boardList = getBookmarkDTOS(board1, board2, boardListDto);
         boardListDto.addBoardList(boardList);
-        given(boardService.findAllWithBookmarkInCenter(any(), any()))
+        given(boardService.findAllBoardByCenter(any(), any()))
                 .willReturn(boardListDto);
         //when
 
@@ -207,7 +207,7 @@ class BoardControllerTest {
 
         Mockito.doReturn(storyPreviewDtoList)
                 .when(boardService)
-                .findCenterStory(null);
+                .findAllStoryPreview(null);
         //when
 
         ResultActions resultActions = mockMvc.perform(
@@ -229,7 +229,7 @@ class BoardControllerTest {
         UserErrorResult error = UserErrorResult.USER_NOT_EXIST;
         Mockito.doThrow(new UserException(error))
                 .when(boardService)
-                .findCenterStory(any(Long.class));
+                .findAllStoryPreview(any(Long.class));
         //when
 
         ResultActions resultActions = mockMvc.perform(get(url)
@@ -254,7 +254,7 @@ class BoardControllerTest {
         String url = "/board/home";
         Mockito.doReturn(storyPreviewDtoList)
                 .when(boardService)
-                .findCenterStory(any(Long.class));
+                .findAllStoryPreview(any(Long.class));
         //when
 
         ResultActions resultActions = mockMvc.perform(get(url)

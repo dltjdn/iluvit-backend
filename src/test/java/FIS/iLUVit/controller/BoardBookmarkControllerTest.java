@@ -109,7 +109,7 @@ class BoardBookmarkControllerTest {
         final String url = "/board-bookmark/main";
         Mockito.doReturn(dto)
                 .when(boardBookmarkService)
-                .search(any());
+                .findBoardBookmarkByUser(any());
 
         //when
         ResultActions resultActions = mockMvc.perform(MockMvcRequestBuilders.get(url)
@@ -129,7 +129,7 @@ class BoardBookmarkControllerTest {
         BookmarkErrorResult error = BookmarkErrorResult.UNAUTHORIZED_USER_ACCESS;
         Mockito.doThrow(new BookmarkException(error))
                 .when(boardBookmarkService)
-                .create(any(), any());
+                .saveBoardBookmark(any(), any());
         //when
         ResultActions resultActions = mockMvc.perform(MockMvcRequestBuilders.post(url, 2));
         //then
@@ -149,7 +149,7 @@ class BoardBookmarkControllerTest {
         BookmarkErrorResult error = BookmarkErrorResult.USER_NOT_EXIST;
         Mockito.doThrow(new BookmarkException(error))
                 .when(boardBookmarkService)
-                .create(user.getId(), board1.getId());
+                .saveBoardBookmark(user.getId(), board1.getId());
         //when
         ResultActions resultActions = mockMvc.perform(MockMvcRequestBuilders.post(url, 2)
                 .header("Authorization", createJwtToken()));
@@ -170,7 +170,7 @@ class BoardBookmarkControllerTest {
         BookmarkErrorResult error = BookmarkErrorResult.BOARD_NOT_EXIST;
         Mockito.doThrow(new BookmarkException(error))
                 .when(boardBookmarkService)
-                .create(user.getId(), 9999L);
+                .saveBoardBookmark(user.getId(), 9999L);
         //when
         ResultActions resultActions = mockMvc.perform(
                 MockMvcRequestBuilders.post(url, 9999)
@@ -190,7 +190,7 @@ class BoardBookmarkControllerTest {
         final String url = "/board-bookmark/{boardId}";
         Mockito.doReturn(2L)
                 .when(boardBookmarkService)
-                .create(any(), any());
+                .saveBoardBookmark(any(), any());
         //when
         ResultActions resultActions = mockMvc.perform(
                 MockMvcRequestBuilders.post(url, 2)
@@ -210,7 +210,7 @@ class BoardBookmarkControllerTest {
         BookmarkErrorResult error = BookmarkErrorResult.UNAUTHORIZED_USER_ACCESS;
         Mockito.doThrow(new BookmarkException(error))
                 .when(boardBookmarkService)
-                .delete(any(), any());
+                .saveBoardBookmark(any(), any());
         //when
         ResultActions resultActions = mockMvc.perform(
                 MockMvcRequestBuilders.delete(url, bookmark1.getId()));
@@ -229,7 +229,7 @@ class BoardBookmarkControllerTest {
         BookmarkErrorResult error = BookmarkErrorResult.BOOKMARK_NOT_EXIST;
         Mockito.doThrow(new BookmarkException(error))
                 .when(boardBookmarkService)
-                .delete(any(), any());
+                .saveBoardBookmark(any(), any());
         //when
         ResultActions resultActions = mockMvc.perform(
                 MockMvcRequestBuilders.delete(url, bookmark1.getId())
@@ -249,7 +249,7 @@ class BoardBookmarkControllerTest {
         BookmarkErrorResult error = BookmarkErrorResult.UNAUTHORIZED_USER_ACCESS;
         Mockito.doThrow(new BookmarkException(error))
                 .when(boardBookmarkService)
-                .delete(any(), any());
+                .deleteBoardBookmark(any(), any());
         //when
         ResultActions resultActions = mockMvc.perform(
                 MockMvcRequestBuilders.delete(url, bookmark1.getId())
@@ -269,7 +269,7 @@ class BoardBookmarkControllerTest {
         final String url = "/board-bookmark/{bookmark_id}";
         Mockito.doReturn(2L)
                 .when(boardBookmarkService)
-                .delete(any(), any());
+                .deleteBoardBookmark(any(), any());
         //when
         ResultActions resultActions = mockMvc.perform(
                 MockMvcRequestBuilders.delete(url, 2)

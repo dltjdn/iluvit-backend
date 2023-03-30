@@ -56,7 +56,7 @@ public class UserServiceTest {
                 .when(userRepository)
                 .findById(parent.getId());
         // when
-        UserResponse result = target.findUserInfo(parent.getId());
+        UserResponse result = target.findUserInfoDetails(parent.getId());
         // then
         assertThat(result.getId()).isEqualTo(parent.getId());
     }
@@ -199,7 +199,7 @@ public class UserServiceTest {
             CheckLoginIdRequest request = new CheckLoginIdRequest(parent.getLoginId());
             // when
             UserException result = assertThrows(UserException.class,
-                    () -> target.checkLoginId(request));
+                    () -> target.checkLoginIdAvailability(request));
             // then
             assertThat(result.getErrorResult()).isEqualTo(UserErrorResult.ALREADY_LOGINID_EXIST);
         }
@@ -214,7 +214,7 @@ public class UserServiceTest {
             CheckLoginIdRequest request = new CheckLoginIdRequest("loginId");
             // when
             // then
-            assertDoesNotThrow(() -> target.checkLoginId(request));
+            assertDoesNotThrow(() -> target.checkLoginIdAvailability(request));
         }
     }
 
@@ -232,7 +232,7 @@ public class UserServiceTest {
             CheckNicknameRequest request = new CheckNicknameRequest(parent.getNickName());
             // when
             UserException result = assertThrows(UserException.class,
-                    () -> target.checkNickname(request));
+                    () -> target.checkNicknameAvailability(request));
             // then
             assertThat(result.getErrorResult()).isEqualTo(UserErrorResult.ALREADY_NICKNAME_EXIST);
         }
@@ -247,7 +247,7 @@ public class UserServiceTest {
             CheckNicknameRequest request = new CheckNicknameRequest("nickname");
             // when
             // then
-            assertDoesNotThrow(() -> target.checkNickname(request));
+            assertDoesNotThrow(() -> target.checkNicknameAvailability(request));
         }
     }
 

@@ -73,7 +73,7 @@ public class CenterServiceTest {
             doReturn(null)
                     .when(centerRepository).findBannerById(2L);
             //when
-            CenterBannerResponse result = target.findBannerById(2L, null);
+            CenterBannerResponse result = target.findCenterBannerByCenterId(2L, null);
 
             //then
             assertThat(result)
@@ -89,7 +89,7 @@ public class CenterServiceTest {
                     .when(centerRepository).findBannerById(any(Long.class), any(Long.class));
 
             //when
-            CenterBannerResponse result = target.findBannerById(1L, 1L);
+            CenterBannerResponse result = target.findCenterBannerByCenterId(1L, 1L);
             //then
             verify(centerRepository, times(1))
                     .findBannerById(any(Long.class), any(Long.class));
@@ -105,7 +105,7 @@ public class CenterServiceTest {
                     .when(centerRepository).findBannerById(any(Long.class));
 
             //when
-            CenterBannerResponse result = target.findBannerById(1L, null);
+            CenterBannerResponse result = target.findCenterBannerByCenterId(1L, null);
             //then
             verify(centerRepository, times(1))
                     .findBannerById(any(Long.class));
