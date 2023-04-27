@@ -131,7 +131,7 @@ class ParticipationControllerTest {
 
         Mockito.doThrow(new PresentationException(error))
                 .when(participationService)
-                .register(any(Long.class), any(Long.class));
+                .registerParticipation(any(Long.class), any(Long.class));
         //when
         ResultActions resultActions = mockMvc.perform(
                 MockMvcRequestBuilders.post(url)
@@ -158,7 +158,7 @@ class ParticipationControllerTest {
 
         Mockito.doThrow(new PresentationException(error))
                 .when(participationService)
-                .register(any(Long.class), any(Long.class));
+                .registerParticipation(any(Long.class), any(Long.class));
         //when
         ResultActions resultActions = mockMvc.perform(
                 MockMvcRequestBuilders.post(url)
@@ -185,7 +185,7 @@ class ParticipationControllerTest {
 
         Mockito.doThrow(new PresentationException(error))
                 .when(participationService)
-                .register(any(Long.class), any(Long.class));
+                .registerParticipation(any(Long.class), any(Long.class));
         //when
         ResultActions resultActions = mockMvc.perform(
                 MockMvcRequestBuilders.post(url)
@@ -212,7 +212,7 @@ class ParticipationControllerTest {
 
         Mockito.doReturn(1L)
                 .when(participationService)
-                .register(any(Long.class), any(Long.class));
+                .registerParticipation(any(Long.class), any(Long.class));
         //when
         ResultActions resultActions = mockMvc.perform(
                 MockMvcRequestBuilders.post(url)
@@ -262,7 +262,7 @@ class ParticipationControllerTest {
             final String url = "/participation/{participationId}";
             String jwtToken = createJwtToken();
             Mockito.doThrow(new ParticipationException(ParticipationErrorResult.WRONG_PARTICIPATIONID_REQUEST))
-                    .when(participationService).cancel(1L, -1L);
+                    .when(participationService).cancelParticipation(1L, -1L);
 
             //when
             ResultActions resultActions = mockMvc.perform(
@@ -288,7 +288,7 @@ class ParticipationControllerTest {
             final String url = "/participation/{participationId}";
             String jwtToken = createJwtToken();
             Mockito.doThrow(new ParticipationException(ParticipationErrorResult.NO_RESULT))
-                    .when(participationService).cancel(1L, 1L);
+                    .when(participationService).cancelParticipation(1L, 1L);
             //when
             ResultActions resultActions = mockMvc.perform(
                     MockMvcRequestBuilders.patch(url, participationId)
@@ -313,7 +313,7 @@ class ParticipationControllerTest {
             final String url = "/participation/{participationId}";
             String jwtToken = createJwtToken();
             Mockito.doReturn(1L)
-                    .when(participationService).cancel(1L, 1L);
+                    .when(participationService).cancelParticipation(1L, 1L);
             //when
             ResultActions resultActions = mockMvc.perform(
                     MockMvcRequestBuilders.patch(url, participationId)

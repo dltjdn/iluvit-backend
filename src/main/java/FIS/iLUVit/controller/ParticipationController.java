@@ -35,7 +35,7 @@ public class ParticipationController {
     @PostMapping("")
     @ResponseStatus(HttpStatus.CREATED)
     public Long registerParticipation(@Login Long userId, @RequestBody @Validated PtDateRequest dto){
-        return participationService.register(userId, dto.getPtDateId());
+        return participationService.registerParticipation(userId, dto.getPtDateId());
     }
 
     /**
@@ -46,7 +46,7 @@ public class ParticipationController {
     @PatchMapping("{participationId}")
     @ResponseStatus(HttpStatus.ACCEPTED)
     public Long cancelParticipation(@Login Long userId, @PathVariable("participationId") Long participationId){
-        return participationService.cancel(userId, participationId);
+        return participationService.cancelParticipation(userId, participationId);
     }
 
     /**
@@ -56,7 +56,7 @@ public class ParticipationController {
     @GetMapping("")
     @ResponseStatus(HttpStatus.ACCEPTED)
     public Map<Status, List<ParticipationListDto>> getAllParticipation(@Login Long userId){
-        return participationService.getMyParticipation(userId);
+        return participationService.findAllParticipationByUser(userId);
     }
 
     /**
@@ -66,7 +66,7 @@ public class ParticipationController {
     @GetMapping("join")
     @ResponseStatus(HttpStatus.ACCEPTED)
     public Slice<ParticipationListDto> getRegisterParticipation(@Login Long userId, Pageable pageable){
-        return participationService.getMyJoinParticipation(userId, pageable);
+        return participationService.findRegisterParticipationByUser(userId, pageable);
     }
 
     /**
@@ -76,7 +76,7 @@ public class ParticipationController {
     @GetMapping("cancel")
     @ResponseStatus(HttpStatus.ACCEPTED)
     public Slice<ParticipationListDto> getCancelParticipation(@Login Long userId, Pageable pageable){
-        return participationService.getMyCancelParticipation(userId, pageable);
+        return participationService.findCancelParticipationByUser(userId, pageable);
     }
 
     /**
@@ -86,7 +86,7 @@ public class ParticipationController {
     @GetMapping("waiting")
     @ResponseStatus(HttpStatus.ACCEPTED)
     public Slice<ParticipationListDto> getWaitingParticipation(@Login Long userId, Pageable pageable){
-        return participationService.getMyWaiting(userId, pageable);
+        return participationService.findWaitingParticipationByUser(userId, pageable);
     }
 
 }

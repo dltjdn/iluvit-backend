@@ -175,7 +175,7 @@ class PresentationControllerTest {
                     "application/json", objectMapper.writeValueAsString(request).getBytes());
 
             Mockito.doThrow(new UserException(UserErrorResult.USER_NOT_EXIST))
-                    .when(presentationService).saveInfoWithPtDate(any(PresentationDetailRequest.class), any(Long.class));
+                    .when(presentationService).savePresentationInfoWithPtDate(any(PresentationDetailRequest.class), any(Long.class));
 
             //when
             ResultActions result = mockMvc.perform(
@@ -200,7 +200,7 @@ class PresentationControllerTest {
                     "application/json", objectMapper.writeValueAsString(request).getBytes());
 
             Mockito.doThrow(new PresentationException(PresentationErrorResult.ALREADY_PRESENTATION_EXIST))
-                    .when(presentationService).saveInfoWithPtDate(any(PresentationDetailRequest.class), any(Long.class));
+                    .when(presentationService).savePresentationInfoWithPtDate(any(PresentationDetailRequest.class), any(Long.class));
 
             //when
             ResultActions result = mockMvc.perform(
@@ -229,7 +229,7 @@ class PresentationControllerTest {
             presentation.getPtDates().add(ptDate2);
 
             Mockito.doReturn(presentation)
-                    .when(presentationService).saveInfoWithPtDate(any(PresentationDetailRequest.class), any(Long.class));
+                    .when(presentationService).savePresentationInfoWithPtDate(any(PresentationDetailRequest.class), any(Long.class));
 
             //when
             ResultActions result = mockMvc.perform(
@@ -258,7 +258,7 @@ class PresentationControllerTest {
             presentation.getPtDates().add(ptDate2);
 
             Mockito.doReturn(presentation)
-                    .when(presentationService).saveImageWithPtDate(any(Long.class), anyList(), any(Long.class));
+                    .when(presentationService).savePresentationImageWithPtDate(any(Long.class), anyList(), any(Long.class));
 
             //when
             ResultActions result = mockMvc.perform(

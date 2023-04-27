@@ -164,7 +164,7 @@ public class ParentService {
 
         // 신청되어있는 설명회 대기 목록에서 빠지게 하기 ( 설명회 대기 취소 )
         waitingRepository.findByParent(parent).forEach(waiting-> {
-            waitingService.cancel(waiting.getId(), userId);
+            waitingService.cancelParticipation(waiting.getId(), userId);
         });
 
         return userId;

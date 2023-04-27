@@ -135,7 +135,7 @@ class WaitingControllerTest {
             final String url = "/waiting";
             String jwtToken = createJwtToken();
             Mockito.doThrow(new PresentationException(PresentationErrorResult.WRONG_PTDATE_ID_REQUEST))
-                    .when(waitingService).register(1L, 1L);
+                    .when(waitingService).watingParticipation(1L, 1L);
 
             //when
             ResultActions resultActions = mockMvc.perform(
@@ -152,7 +152,7 @@ class WaitingControllerTest {
                             new ErrorResponse(HttpStatus.I_AM_A_TEAPOT
                                     , "올바르지 않은 ptDateId 입니다")
                     )));
-            verify(waitingService, times(1)).register(1L, 1L);
+            verify(waitingService, times(1)).watingParticipation(1L, 1L);
         }
 
         @Test
@@ -162,7 +162,7 @@ class WaitingControllerTest {
             final String url = "/waiting";
             String jwtToken = createJwtToken();
             Mockito.doThrow(new PresentationException(PresentationErrorResult.PARTICIPATION_PERIOD_PASSED))
-                    .when(waitingService).register(1L, 1L);
+                    .when(waitingService).watingParticipation(1L, 1L);
 
             //when
             ResultActions resultActions = mockMvc.perform(
@@ -179,7 +179,7 @@ class WaitingControllerTest {
                             new ErrorResponse(HttpStatus.BAD_REQUEST
                                     , "설명회 신청기간이 종료되었습니다")
                     )));
-            verify(waitingService, times(1)).register(1L, 1L);
+            verify(waitingService, times(1)).watingParticipation(1L, 1L);
         }
 
         @Test
@@ -189,7 +189,7 @@ class WaitingControllerTest {
             final String url = "/waiting";
             String jwtToken = createJwtToken();
             Mockito.doThrow(new PresentationException(PresentationErrorResult.ALREADY_WAITED_IN))
-                    .when(waitingService).register(1L, 1L);
+                    .when(waitingService).watingParticipation(1L, 1L);
 
             //when
             ResultActions resultActions = mockMvc.perform(
@@ -206,7 +206,7 @@ class WaitingControllerTest {
                             new ErrorResponse(HttpStatus.BAD_REQUEST
                                     , "이미 설명회 대기를 하셨습니다")
                     )));
-            verify(waitingService, times(1)).register(1L, 1L);
+            verify(waitingService, times(1)).watingParticipation(1L, 1L);
         }
 
         @Test
@@ -216,7 +216,7 @@ class WaitingControllerTest {
             final String url = "/waiting";
             String jwtToken = createJwtToken();
             Mockito.doThrow(new PresentationException(PresentationErrorResult.PRESENTATION_NOT_OVERCAPACITY))
-                    .when(waitingService).register(1L, 1L);
+                    .when(waitingService).watingParticipation(1L, 1L);
 
             //when
             ResultActions resultActions = mockMvc.perform(
@@ -233,7 +233,7 @@ class WaitingControllerTest {
                             new ErrorResponse(HttpStatus.BAD_REQUEST
                                     , "아직 설명회 신청이 가득 차지 않아 대기 요청 할 수 없습니다")
                     )));
-            verify(waitingService, times(1)).register(1L, 1L);
+            verify(waitingService, times(1)).watingParticipation(1L, 1L);
         }
 
         @Test
@@ -243,7 +243,7 @@ class WaitingControllerTest {
             final String url = "/waiting";
             String jwtToken = createJwtToken();
             Mockito.doThrow(new PresentationException(PresentationErrorResult.ALREADY_PARTICIPATED_IN))
-                    .when(waitingService).register(1L, 1L);
+                    .when(waitingService).watingParticipation(1L, 1L);
 
             //when
             ResultActions resultActions = mockMvc.perform(
@@ -260,7 +260,7 @@ class WaitingControllerTest {
                             new ErrorResponse(HttpStatus.BAD_REQUEST
                                     , "이미 설명회를 신청하셨습니다")
                     )));
-            verify(waitingService, times(1)).register(1L, 1L);
+            verify(waitingService, times(1)).watingParticipation(1L, 1L);
         }
 
         @Test
@@ -271,7 +271,7 @@ class WaitingControllerTest {
             String jwtToken = createJwtToken();
             Waiting waiting = Creator.createWaiting(1L);
             Mockito.doReturn(waiting)
-                    .when(waitingService).register(1L, 1L);
+                    .when(waitingService).watingParticipation(1L, 1L);
 
             //when
             ResultActions resultActions = mockMvc.perform(
@@ -287,7 +287,7 @@ class WaitingControllerTest {
                     .andExpect(content().json(objectMapper.writeValueAsString(
                             1L
                     )));
-            verify(waitingService, times(1)).register(1L, 1L);
+            verify(waitingService, times(1)).watingParticipation(1L, 1L);
         }
     }
 
@@ -323,7 +323,7 @@ class WaitingControllerTest {
             final String url = "/waiting/{waitingId}";
             String jwtToken = createJwtToken();
             Mockito.doThrow(new WaitingException(WaitingErrorResult.WRONG_WAITINGID_REQUEST))
-                    .when(waitingService).cancel(-1L, 1L);
+                    .when(waitingService).cancelParticipation(-1L, 1L);
 
             //when
             ResultActions resultActions = mockMvc.perform(
@@ -349,7 +349,7 @@ class WaitingControllerTest {
             final String url = "/waiting/{waitingId}";
             String jwtToken = createJwtToken();
             Mockito.doThrow(new WaitingException(WaitingErrorResult.NO_RESULT))
-                    .when(waitingService).cancel(1L, 1L);
+                    .when(waitingService).cancelParticipation(1L, 1L);
 
             //when
             ResultActions resultActions = mockMvc.perform(
@@ -375,7 +375,7 @@ class WaitingControllerTest {
             final String url = "/waiting/{waitingId}";
             String jwtToken = createJwtToken();
             Mockito.doReturn(1L)
-                    .when(waitingService).cancel(1L, 1L);
+                    .when(waitingService).cancelParticipation(1L, 1L);
 
             //when
             ResultActions resultActions = mockMvc.perform(
