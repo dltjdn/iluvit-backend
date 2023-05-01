@@ -9,18 +9,18 @@ import java.util.Optional;
 
 public interface CenterRepository extends JpaRepository<Center, Long>, CenterRepositoryCustom {
 
-    @Query("select ct from Child c join c.center ct join c.parent p where p.id = :userId")
+    @Query("select ct " +
+            "from Child c " +
+            "join c.center ct" +
+            " join c.parent p " +
+            "where p.id = :userId")
     List<Center> findByUser(@Param("userId") Long userId);
 
-    @Query("select distinct c " +
-            "from Center c " +
-            "left join fetch c.teachers " +
-            "where c.id =:centerId")
-    Optional<Center> findByIdWithTeacher(@Param("centerId") Long centerId);
+    Optional<Center> findById(Long centerId);
 
-    @Query("select distinct c " +
-            "from Center c " +
-            "join fetch c.teachers t " +
+    @Query("select c " +
+            "from Teacher t " +
+            "join t.center c " +
             "where c.id =:centerId " +
             "and t.approval = 'ACCEPT' " +
             "and c.signed = true")

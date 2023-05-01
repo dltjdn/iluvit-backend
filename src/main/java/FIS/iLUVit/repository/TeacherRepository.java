@@ -1,6 +1,5 @@
 package FIS.iLUVit.repository;
 
-import FIS.iLUVit.domain.Center;
 import FIS.iLUVit.domain.Teacher;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
@@ -26,7 +25,7 @@ public interface TeacherRepository extends JpaRepository<Teacher, Long> {
     Optional<Teacher> findByIdAndNotAssign(@Param("userId") Long userId);
 
     @Query("select t from Teacher t where t.center.id =:centerId")
-    List<Center> findByCenter(@Param("centerId") Long centerId);
+    List<Teacher> findByCenterId(@Param("centerId") Long centerId);
 
     Optional<Teacher> findById(Long userId);
 

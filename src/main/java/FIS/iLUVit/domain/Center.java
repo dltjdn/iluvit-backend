@@ -73,8 +73,6 @@ public class Center extends BaseImageEntity {
     protected Theme theme;                    // 테마
     @Embedded
     protected OtherInfo otherInfo;            // 지문등록 사업에서 사용하는 정보들 집합
-    @OneToMany(mappedBy = "center")
-    protected List<Teacher> teachers = new ArrayList<>();
 
 
     @Builder

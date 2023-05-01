@@ -1,7 +1,6 @@
 package FIS.iLUVit.service;
 
 import FIS.iLUVit.domain.alarms.Alarm;
-import FIS.iLUVit.domain.alarms.ChatAlarm;
 import FIS.iLUVit.dto.center.CenterDto;
 import FIS.iLUVit.dto.center.CenterRequest;
 import FIS.iLUVit.dto.child.*;
@@ -9,7 +8,6 @@ import FIS.iLUVit.domain.*;
 import FIS.iLUVit.domain.alarms.CenterApprovalAcceptedAlarm;
 import FIS.iLUVit.domain.alarms.CenterApprovalReceivedAlarm;
 import FIS.iLUVit.domain.enumtype.Approval;
-import FIS.iLUVit.dto.child.*;
 import FIS.iLUVit.exception.*;
 import FIS.iLUVit.domain.enumtype.Auth;
 import FIS.iLUVit.exception.UserErrorResult;
@@ -83,7 +81,7 @@ public class ChildService {
         Child newChild = request.createChild(center, parent);
 
         // 아이 승인 요청 알람이 해당 시설에 승인된 교사들에게 감
-        center.getTeachers().forEach(teacher -> {
+        teacherRepository.findByCenterId(center.getId()).forEach(teacher -> {
             Alarm alarm = new CenterApprovalReceivedAlarm(teacher, Auth.PARENT, teacher.getCenter());
             alarmRepository.save(alarm);
             AlarmUtils.publishAlarmEvent(alarm);
@@ -151,8 +149,7 @@ public class ChildService {
                 .orElseThrow(() -> new CenterException(CenterErrorResult.CENTER_NOT_EXIST));
 
         mappedChild.mappingCenter(center);
-
-        center.getTeachers().forEach(teacher -> {
+        teacherRepository.findByCenterId(center.getId()).forEach(teacher -> {
             Alarm alarm = new CenterApprovalReceivedAlarm(teacher, Auth.PARENT, teacher.getCenter());
             alarmRepository.save(alarm);
             AlarmUtils.publishAlarmEvent(alarm);
