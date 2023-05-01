@@ -99,7 +99,7 @@ class ReviewRepositoryTest {
 
         //when
         Slice<Review> reviewList = reviewRepository
-                .findByCenter(center1.getId(), PageRequest.of(0, 10));
+                .findByCenterSlice(center1.getId(), PageRequest.of(0, 10));
 
         //then
         List<Review> content = reviewList.getContent();

@@ -1,5 +1,6 @@
 package FIS.iLUVit.repository;
 
+import FIS.iLUVit.domain.Center;
 import FIS.iLUVit.domain.Parent;
 import FIS.iLUVit.domain.Prefer;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -15,4 +16,7 @@ public interface CenterBookmarkRepository extends JpaRepository<Prefer, Long> {
     Optional<Prefer> findByUserIdAndCenterId(@Param("userId") Long userId, @Param("centerId") Long centerId);
 
     List<Prefer> findByParent(Parent parent);
+
+    @Query("select prefer from Prefer prefer where prefer.center.id = :centerId and prefer.parent.id = :userId")
+    Optional<Prefer> findByCenterAndParent(@Param("centerId") Long centerId, @Param("userId") Long userId);
 }
