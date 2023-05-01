@@ -17,7 +17,7 @@ public interface ReviewRepository extends JpaRepository<Review, Long>{
 
     @Query(value = "select r from Review r join fetch r.center c join fetch r.parent p where c.id = :centerId",
             countQuery = "select count(r) from Review r where r.center.id = :centerId order by r.createdDate desc ")
-    Slice<Review> findByCenterSlice(@Param("centerId") Long centerId, Pageable pageable);
+    Slice<Review> findByCenterId(@Param("centerId") Long centerId, Pageable pageable);
 
     @Query("select r from Review r join r.center c join r.parent p where c.id = :centerId and p.id = :userId")
     Optional<Review> findByUserAndCenter(@Param("userId") Long userId, @Param("centerId") Long centerId);
