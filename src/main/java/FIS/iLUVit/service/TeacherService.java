@@ -195,7 +195,7 @@ public class TeacherService {
      */
     public Teacher escapeCenter(Long userId) {
 
-        Teacher escapedTeacher = teacherRepository.findByIdWithCenterWithTeacher(userId)
+        Teacher escapedTeacher = teacherRepository.findById(userId)
                 .orElseThrow(() -> new SignupException(SignupErrorResult.NOT_BELONG_CENTER));
 
         // 시설에 속한 일반 교사들
@@ -228,7 +228,7 @@ public class TeacherService {
     public List<TeacherInfoForAdminDto> findTeacherApprovalList(Long userId) {
 
         // 로그인한 사용자가 원장인지 확인 및 원장으로 등록되어있는 시설에 모든 교사들 갖오기
-        Teacher director = teacherRepository.findDirectorByIdWithCenterWithTeacher(userId)
+        Teacher director = teacherRepository.findDirectorById(userId)
                 .orElseThrow(() -> new UserException(UserErrorResult.HAVE_NOT_AUTHORIZATION));
 
         List<TeacherInfoForAdminDto> response = new ArrayList<>();
@@ -250,7 +250,7 @@ public class TeacherService {
      */
     public Teacher acceptTeacher(Long userId, Long teacherId) {
         // 로그인한 사용자가 원장인지 확인 && 사용자 시설에 등록된 교사들 싹 다 가져오기
-        Teacher director = teacherRepository.findDirectorByIdWithCenterWithTeacher(userId)
+        Teacher director = teacherRepository.findDirectorById(userId)
                 .orElseThrow(() -> new UserException(UserErrorResult.HAVE_NOT_AUTHORIZATION));
 
         // 승인하고자 하는 교사가 해당 시설에 속해 있는지 && 대기 상태인지 확인
@@ -305,7 +305,7 @@ public class TeacherService {
     public Teacher mandateTeacher(Long userId, Long teacherId) {
 
         // 사용자의 시설에 등록된 교사들 엮어서 가져오기
-        Teacher director = teacherRepository.findDirectorByIdWithCenterWithTeacher(userId)
+        Teacher director = teacherRepository.findDirectorById(userId)
                 .orElseThrow(() -> new UserException(UserErrorResult.HAVE_NOT_AUTHORIZATION));
 
         //
@@ -325,7 +325,7 @@ public class TeacherService {
      */
     public Teacher demoteTeacher(Long userId, Long teacherId) {
 
-        Teacher director = teacherRepository.findDirectorByIdWithCenterWithTeacher(userId)
+        Teacher director = teacherRepository.findDirectorById(userId)
                 .orElseThrow(() -> new UserException(UserErrorResult.HAVE_NOT_AUTHORIZATION));
 
         Teacher demotedTeacher = director.getCenter().getTeachers().stream()

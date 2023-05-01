@@ -44,6 +44,7 @@ public class ChildService {
     private final BoardRepository boardRepository;
     private final BoardBookmarkRepository boardBookmarkRepository;
     private final TeacherRepository teacherRepository;
+    private final ChildRepository childrenRepository;
 
     private final AlarmRepository alarmRepository;
 
@@ -217,7 +218,8 @@ public class ChildService {
 
         List<ChildInfoForAdminDto> response = new ArrayList<>();
 
-        teacher.getCenter().getChildren().forEach(child -> {
+
+        childrenRepository.findByCenter(teacher.getCenter()).forEach(child -> {
             // 해당시설에 대해 거절/삭제 당하지 않은 아이들만 보여주기
             if (child.getApproval() != Approval.REJECT) {
                 ChildInfoForAdminDto childInfo =
@@ -226,6 +228,7 @@ public class ChildService {
                 response.add(childInfo);
             }
         });
+
         return response;
     }
 
@@ -240,7 +243,7 @@ public class ChildService {
                 .orElseThrow(() -> new UserException(UserErrorResult.HAVE_NOT_AUTHORIZATION));
 
         // childId에 해당하는 아이가 시설에 승인 대기중인지 확인
-        Child acceptedChild = teacher.getCenter().getChildren().stream()
+        Child acceptedChild = childrenRepository.findByCenter(teacher.getCenter()).stream()
                 .filter(child -> Objects.equals(child.getId(), childId) && child.getApproval() == Approval.WAITING)
                 .findFirst()
                 .orElseThrow(() -> new UserException(UserErrorResult.NOT_VALID_REQUEST));
@@ -293,7 +296,7 @@ public class ChildService {
                 .orElseThrow(() -> new UserException(UserErrorResult.HAVE_NOT_AUTHORIZATION));
 
         // childId 검증
-        Child firedChild = teacher.getCenter().getChildren().stream()
+        Child firedChild = childrenRepository.findByCenter(teacher.getCenter()).stream()
                 .filter(child -> Objects.equals(child.getId(), childId))
                 .findFirst()
                 .orElseThrow(() -> new UserException(UserErrorResult.NOT_VALID_REQUEST));

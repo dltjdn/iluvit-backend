@@ -18,17 +18,6 @@ public class CenterBannerResponse {
     private List<String> infoImages;
     private Double starAverage;         // 센터 리뷰 평균 평점
     private Boolean prefer;             // 내가 북마크한 시설인지  여부
-//
-//    public CenterBannerResponse(CenterBannerDto banner, Double starAverage,List<String> infoImages) {
-//        this.centerId = banner.getCenterId();
-//        this.name = banner.getName();
-//        this.signed = banner.getSigned();
-//        this.recruit = banner.getRecruit();
-//        this.starAverage = starAverage;
-//        this.profileImage = banner.getProfileImage();
-//        this.infoImages = infoImages;
-//        this.prefer = banner.getPrefer();
-//    }
 
     public CenterBannerResponse(Long centerId, String name, Boolean signed, Boolean recruit, Double starAverage, Boolean IsPrefer, String profileImage, List<String> infoImages) {
         this.centerId = centerId;
