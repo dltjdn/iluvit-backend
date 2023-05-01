@@ -73,15 +73,19 @@ public class Center extends BaseImageEntity {
     protected Theme theme;                    // 테마
     @Embedded
     protected OtherInfo otherInfo;            // 지문등록 사업에서 사용하는 정보들 집합
-
-
+//
+//    @OneToMany(mappedBy = "center")
+//    protected List<Presentation> presentations = new ArrayList<>();
     @OneToMany(mappedBy = "center")
     protected List<Teacher> teachers = new ArrayList<>();
+//    @OneToMany(mappedBy = "center")
+//    protected List<Review> reviews = new ArrayList<>();
+//    @OneToMany(mappedBy = "center")
+//    protected List<Board> boards = new ArrayList<>();
     @OneToMany(mappedBy = "center")
-    protected List<Review> reviews = new ArrayList<>();
-
-    @OneToMany(mappedBy = "center")
-    protected List<Prefer> prefers = new ArrayList<>();
+    protected List<Child> children = new ArrayList<>();
+//    @OneToMany(mappedBy = "center")
+//    protected List<Prefer> prefers = new ArrayList<>();
 
     @Builder
     public Center(Long id, String name, String owner, String director, String estType, String status, String estDate, String tel, String homepage, String startTime, String endTime, Integer minAge, Integer maxAge, String address, String addressDetail, String zipcode, Area area, Double longitude, Double latitude, String offerService, Integer maxChildCnt, Integer curChildCnt, LocalDate updateDate, Boolean signed, Boolean recruit, Integer waitingNum, String introText, Integer imgCnt, Integer videoCnt, Integer score, String addInfo, String program, KindOf kindOf, ClassInfo classInfo, TeacherInfo teacherInfo, CostInfo costInfo, BasicInfra basicInfra, Theme theme, OtherInfo otherInfo, String infoImagePath, String profileImagePath) {

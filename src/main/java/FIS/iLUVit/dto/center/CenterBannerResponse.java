@@ -16,21 +16,21 @@ public class CenterBannerResponse {
     private Boolean recruit;                // 원아 모집중
     private String profileImage;
     private List<String> infoImages;
-    private Double starAverage;
-    private Boolean prefer;
+    private Double starAverage;         // 센터 리뷰 평균 평점
+    private Boolean prefer;             // 내가 북마크한 시설인지  여부
+//
+//    public CenterBannerResponse(CenterBannerDto banner, Double starAverage,List<String> infoImages) {
+//        this.centerId = banner.getCenterId();
+//        this.name = banner.getName();
+//        this.signed = banner.getSigned();
+//        this.recruit = banner.getRecruit();
+//        this.starAverage = starAverage;
+//        this.profileImage = banner.getProfileImage();
+//        this.infoImages = infoImages;
+//        this.prefer = banner.getPrefer();
+//    }
 
-    public CenterBannerResponse(CenterBannerDto banner, Double starAverage,List<String> infoImages) {
-        this.centerId = banner.getCenterId();
-        this.name = banner.getName();
-        this.signed = banner.getSigned();
-        this.recruit = banner.getRecruit();
-        this.starAverage = starAverage;
-        this.profileImage = banner.getProfileImage();
-        this.infoImages = infoImages;
-        this.prefer = banner.getPrefer();
-    }
-
-    public CenterBannerResponse(Long centerId, String name, Boolean signed, Boolean recruit, Double starAverage, Long preferId, String profileImage, List<String> infoImages) {
+    public CenterBannerResponse(Long centerId, String name, Boolean signed, Boolean recruit, Double starAverage, Boolean IsPrefer, String profileImage, List<String> infoImages) {
         this.centerId = centerId;
         this.name = name;
         this.signed = signed;
@@ -38,6 +38,6 @@ public class CenterBannerResponse {
         this.starAverage = starAverage;
         this.infoImages = infoImages;
         this.profileImage = profileImage;
-        this.prefer = preferId != null;
+        this.prefer = IsPrefer;
     }
 }

@@ -268,11 +268,15 @@ public class ChildService {
         // 새로운 시설에 아이가 승인될 경우 해당 시설에 default board 북마크에 추가
         if (alreadySignedChild.isEmpty()) {
             // 승인하고자 하는 시설의 게시판들 lazyLoading 통해 가져오기
-            teacher.getCenter().getBoards().forEach(board -> {
+            Long centerId = teacher.getCenter().getId();
+            boardRepository.findByCenter(centerId).stream().map(board-> {
                 if (board.getIsDefault()) {
                     boardBookmarkService.create(acceptedParent.getId(), board.getId());
                 }
+                return null;
             });
+
+
         }
 
         return acceptedChild;
