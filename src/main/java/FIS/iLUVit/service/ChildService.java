@@ -1,7 +1,6 @@
 package FIS.iLUVit.service;
 
 import FIS.iLUVit.domain.alarms.Alarm;
-import FIS.iLUVit.domain.alarms.ChatAlarm;
 import FIS.iLUVit.dto.center.CenterDto;
 import FIS.iLUVit.dto.center.CenterRequest;
 import FIS.iLUVit.dto.child.*;
@@ -9,7 +8,6 @@ import FIS.iLUVit.domain.*;
 import FIS.iLUVit.domain.alarms.CenterApprovalAcceptedAlarm;
 import FIS.iLUVit.domain.alarms.CenterApprovalReceivedAlarm;
 import FIS.iLUVit.domain.enumtype.Approval;
-import FIS.iLUVit.dto.child.*;
 import FIS.iLUVit.exception.*;
 import FIS.iLUVit.domain.enumtype.Auth;
 import FIS.iLUVit.exception.UserErrorResult;
@@ -44,6 +42,7 @@ public class ChildService {
     private final BoardRepository boardRepository;
     private final BoardBookmarkRepository boardBookmarkRepository;
     private final TeacherRepository teacherRepository;
+    private final ChildRepository childrenRepository;
 
     private final AlarmRepository alarmRepository;
 
@@ -82,7 +81,7 @@ public class ChildService {
         Child newChild = request.createChild(center, parent);
 
         // 아이 승인 요청 알람이 해당 시설에 승인된 교사들에게 감
-        center.getTeachers().forEach(teacher -> {
+        teacherRepository.findByCenterId(center.getId()).forEach(teacher -> {
             Alarm alarm = new CenterApprovalReceivedAlarm(teacher, Auth.PARENT, teacher.getCenter());
             alarmRepository.save(alarm);
             AlarmUtils.publishAlarmEvent(alarm);
@@ -150,8 +149,7 @@ public class ChildService {
                 .orElseThrow(() -> new CenterException(CenterErrorResult.CENTER_NOT_EXIST));
 
         mappedChild.mappingCenter(center);
-
-        center.getTeachers().forEach(teacher -> {
+        teacherRepository.findByCenterId(center.getId()).forEach(teacher -> {
             Alarm alarm = new CenterApprovalReceivedAlarm(teacher, Auth.PARENT, teacher.getCenter());
             alarmRepository.save(alarm);
             AlarmUtils.publishAlarmEvent(alarm);
@@ -217,7 +215,8 @@ public class ChildService {
 
         List<ChildInfoForAdminDto> response = new ArrayList<>();
 
-        teacher.getCenter().getChildren().forEach(child -> {
+
+        childrenRepository.findByCenter(teacher.getCenter()).forEach(child -> {
             // 해당시설에 대해 거절/삭제 당하지 않은 아이들만 보여주기
             if (child.getApproval() != Approval.REJECT) {
                 ChildInfoForAdminDto childInfo =
@@ -226,6 +225,7 @@ public class ChildService {
                 response.add(childInfo);
             }
         });
+
         return response;
     }
 
@@ -240,7 +240,7 @@ public class ChildService {
                 .orElseThrow(() -> new UserException(UserErrorResult.HAVE_NOT_AUTHORIZATION));
 
         // childId에 해당하는 아이가 시설에 승인 대기중인지 확인
-        Child acceptedChild = teacher.getCenter().getChildren().stream()
+        Child acceptedChild = childrenRepository.findByCenter(teacher.getCenter()).stream()
                 .filter(child -> Objects.equals(child.getId(), childId) && child.getApproval() == Approval.WAITING)
                 .findFirst()
                 .orElseThrow(() -> new UserException(UserErrorResult.NOT_VALID_REQUEST));
@@ -268,11 +268,15 @@ public class ChildService {
         // 새로운 시설에 아이가 승인될 경우 해당 시설에 default board 북마크에 추가
         if (alreadySignedChild.isEmpty()) {
             // 승인하고자 하는 시설의 게시판들 lazyLoading 통해 가져오기
-            teacher.getCenter().getBoards().forEach(board -> {
+            Long centerId = teacher.getCenter().getId();
+            boardRepository.findByCenter(centerId).stream().map(board-> {
                 if (board.getIsDefault()) {
                     boardBookmarkService.create(acceptedParent.getId(), board.getId());
                 }
+                return null;
             });
+
+
         }
 
         return acceptedChild;
@@ -289,7 +293,7 @@ public class ChildService {
                 .orElseThrow(() -> new UserException(UserErrorResult.HAVE_NOT_AUTHORIZATION));
 
         // childId 검증
-        Child firedChild = teacher.getCenter().getChildren().stream()
+        Child firedChild = childrenRepository.findByCenter(teacher.getCenter()).stream()
                 .filter(child -> Objects.equals(child.getId(), childId))
                 .findFirst()
                 .orElseThrow(() -> new UserException(UserErrorResult.NOT_VALID_REQUEST));

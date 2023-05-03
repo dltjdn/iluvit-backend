@@ -123,7 +123,7 @@ public class TeacherService {
         Teacher teacher;
         // 센터를 선택한 경우
         if (request.getCenterId() != null) {
-            Center center = centerRepository.findByIdWithTeacher(request.getCenterId())
+            Center center = centerRepository.findById(request.getCenterId())
                     .orElseThrow(() -> new SignupException(SignupErrorResult.NOT_EXIST_CENTER));
             teacher = request.createTeacher(center, hashedPwd);
 
@@ -134,7 +134,7 @@ public class TeacherService {
             imageService.saveProfileImage(null, teacher);
             teacherRepository.save(teacher);
             // 시설에 원장들에게 알람보내기
-            center.getTeachers().forEach(t -> {
+            teacherRepository.findByCenterId(center.getId()).forEach(t -> {
                 if (t.getAuth() == Auth.DIRECTOR) {
                     Alarm alarm = new CenterApprovalReceivedAlarm(t, Auth.TEACHER, t.getCenter());
                     alarmRepository.save(alarm);
@@ -195,16 +195,17 @@ public class TeacherService {
      */
     public Teacher escapeCenter(Long userId) {
 
-        Teacher escapedTeacher = teacherRepository.findByIdWithCenterWithTeacher(userId)
+        Teacher escapedTeacher = teacherRepository.findById(userId)
                 .orElseThrow(() -> new SignupException(SignupErrorResult.NOT_BELONG_CENTER));
 
         // 시설에 속한 일반 교사들
-        List<Teacher> commons = escapedTeacher.getCenter().getTeachers().stream()
+        List<Teacher> commons = teacherRepository.findByCenterId(escapedTeacher.getCenter().getId()).stream()
                 .filter(teacher -> teacher.getAuth() == Auth.TEACHER)
                 .collect(Collectors.toList());
 
+
         // 시설에 속한 원장들
-        List<Teacher> directors = escapedTeacher.getCenter().getTeachers().stream()
+        List<Teacher> directors = teacherRepository.findByCenterId(escapedTeacher.getCenter().getId()).stream()
                 .filter(teacher -> teacher.getAuth() == Auth.DIRECTOR)
                 .collect(Collectors.toList());
 
@@ -228,12 +229,12 @@ public class TeacherService {
     public List<TeacherInfoForAdminDto> findTeacherApprovalList(Long userId) {
 
         // 로그인한 사용자가 원장인지 확인 및 원장으로 등록되어있는 시설에 모든 교사들 갖오기
-        Teacher director = teacherRepository.findDirectorByIdWithCenterWithTeacher(userId)
+        Teacher director = teacherRepository.findDirectorById(userId)
                 .orElseThrow(() -> new UserException(UserErrorResult.HAVE_NOT_AUTHORIZATION));
 
         List<TeacherInfoForAdminDto> response = new ArrayList<>();
 
-        director.getCenter().getTeachers().forEach(teacher -> {
+        teacherRepository.findByCenterId(director.getCenter().getId()).forEach(teacher -> {
             // 요청한 원장은 빼고 시설에 연관된 교사들 보여주기
             if (!Objects.equals(teacher.getId(), userId)) {
                 TeacherInfoForAdminDto teacherInfoForAdmin =
@@ -250,11 +251,12 @@ public class TeacherService {
      */
     public Teacher acceptTeacher(Long userId, Long teacherId) {
         // 로그인한 사용자가 원장인지 확인 && 사용자 시설에 등록된 교사들 싹 다 가져오기
-        Teacher director = teacherRepository.findDirectorByIdWithCenterWithTeacher(userId)
+        Teacher director = teacherRepository.findDirectorById(userId)
                 .orElseThrow(() -> new UserException(UserErrorResult.HAVE_NOT_AUTHORIZATION));
 
         // 승인하고자 하는 교사가 해당 시설에 속해 있는지 && 대기 상태인지 확인
-        Teacher acceptedTeacher = director.getCenter().getTeachers().stream()
+
+        Teacher acceptedTeacher = teacherRepository.findByCenterId(director.getCenter().getId()).stream()
                 .filter(teacher -> Objects.equals(teacher.getId(), teacherId) && teacher.getApproval() == Approval.WAITING)
                 .findFirst()
                 .orElseThrow(() -> new UserException(UserErrorResult.NOT_VALID_REQUEST));
@@ -305,11 +307,11 @@ public class TeacherService {
     public Teacher mandateTeacher(Long userId, Long teacherId) {
 
         // 사용자의 시설에 등록된 교사들 엮어서 가져오기
-        Teacher director = teacherRepository.findDirectorByIdWithCenterWithTeacher(userId)
+        Teacher director = teacherRepository.findDirectorById(userId)
                 .orElseThrow(() -> new UserException(UserErrorResult.HAVE_NOT_AUTHORIZATION));
 
-        //
-        Teacher mandatedTeacher = director.getCenter().getTeachers().stream()
+
+        Teacher mandatedTeacher = teacherRepository.findByCenterId(director.getCenter().getId()).stream()
                 .filter(teacher -> Objects.equals(teacher.getId(), teacherId))
                 .filter(teacher -> teacher.getApproval() == Approval.ACCEPT)
                 .findFirst()
@@ -325,10 +327,10 @@ public class TeacherService {
      */
     public Teacher demoteTeacher(Long userId, Long teacherId) {
 
-        Teacher director = teacherRepository.findDirectorByIdWithCenterWithTeacher(userId)
+        Teacher director = teacherRepository.findDirectorById(userId)
                 .orElseThrow(() -> new UserException(UserErrorResult.HAVE_NOT_AUTHORIZATION));
 
-        Teacher demotedTeacher = director.getCenter().getTeachers().stream()
+        Teacher demotedTeacher =teacherRepository.findByCenterId(director.getCenter().getId()).stream()
                 .filter(teacher -> Objects.equals(teacher.getId(), teacherId))
                 .findFirst()
                 .orElseThrow(() -> new UserException(UserErrorResult.NOT_VALID_REQUEST));
