@@ -1,9 +1,6 @@
-package FIS.iLUVit.domain.iluvit.alarms;
+package FIS.iLUVit.domain.iluvit;
 
 import FIS.iLUVit.dto.alarm.AlarmDetailDto;
-import FIS.iLUVit.domain.iluvit.Comment;
-import FIS.iLUVit.domain.iluvit.Post;
-import FIS.iLUVit.domain.iluvit.User;
 import FIS.iLUVit.exception.BoardErrorResult;
 import FIS.iLUVit.exception.BoardException;
 import FIS.iLUVit.service.AlarmUtils;

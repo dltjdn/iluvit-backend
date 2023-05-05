@@ -1,7 +1,7 @@
 package FIS.iLUVit.repository.iluvit;
 
 import FIS.iLUVit.domain.iluvit.User;
-import FIS.iLUVit.domain.iluvit.alarms.Alarm;
+import FIS.iLUVit.domain.iluvit.Alarm;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
 import org.springframework.data.jpa.repository.JpaRepository;

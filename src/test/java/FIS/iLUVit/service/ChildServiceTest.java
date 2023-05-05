@@ -1,7 +1,7 @@
 package FIS.iLUVit.service;
 
 import FIS.iLUVit.Creator;
-import FIS.iLUVit.domain.iluvit.alarms.CenterApprovalAcceptedAlarm;
+import FIS.iLUVit.domain.iluvit.CenterApprovalAcceptedAlarm;
 import FIS.iLUVit.domain.common.Center;
 import FIS.iLUVit.domain.iluvit.enumtype.Approval;
 import FIS.iLUVit.domain.iluvit.enumtype.Auth;

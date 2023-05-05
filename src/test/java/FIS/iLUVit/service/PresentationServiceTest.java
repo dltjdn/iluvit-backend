@@ -1,7 +1,7 @@
 package FIS.iLUVit.service;
 
-import FIS.iLUVit.domain.iluvit.alarms.Alarm;
-import FIS.iLUVit.domain.iluvit.alarms.PresentationFullAlarm;
+import FIS.iLUVit.domain.iluvit.Alarm;
+import FIS.iLUVit.domain.iluvit.PresentationFullAlarm;
 import FIS.iLUVit.domain.common.Center;
 import FIS.iLUVit.domain.iluvit.enumtype.Approval;
 import FIS.iLUVit.domain.iluvit.enumtype.Auth;

@@ -1,12 +1,12 @@
 package FIS.iLUVit.service;
 
-import FIS.iLUVit.domain.iluvit.alarms.Alarm;
+import FIS.iLUVit.domain.iluvit.Alarm;
 import FIS.iLUVit.dto.parent.ParticipationListDto;
 import FIS.iLUVit.domain.iluvit.Parent;
 import FIS.iLUVit.domain.iluvit.Participation;
 import FIS.iLUVit.domain.iluvit.Presentation;
 import FIS.iLUVit.domain.iluvit.PtDate;
-import FIS.iLUVit.domain.iluvit.alarms.PresentationFullAlarm;
+import FIS.iLUVit.domain.iluvit.PresentationFullAlarm;
 import FIS.iLUVit.domain.iluvit.enumtype.Status;
 import FIS.iLUVit.event.ParticipationCancelEvent;
 import FIS.iLUVit.exception.*;
