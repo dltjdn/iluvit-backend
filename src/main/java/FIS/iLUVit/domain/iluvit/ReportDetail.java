@@ -1,7 +1,5 @@
-package FIS.iLUVit.domain.iluvit.reports;
+package FIS.iLUVit.domain.iluvit;
 
-import FIS.iLUVit.domain.iluvit.BaseEntity;
-import FIS.iLUVit.domain.iluvit.User;
 import FIS.iLUVit.domain.iluvit.enumtype.ReportReason;
 import lombok.Getter;
 import lombok.NoArgsConstructor;

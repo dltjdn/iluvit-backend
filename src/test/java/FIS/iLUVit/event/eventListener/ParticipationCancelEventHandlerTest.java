@@ -1,7 +1,7 @@
 package FIS.iLUVit.event.eventListener;
 
-import FIS.iLUVit.domain.iluvit.alarms.Alarm;
-import FIS.iLUVit.domain.iluvit.alarms.ConvertedToParticipateAlarm;
+import FIS.iLUVit.domain.iluvit.Alarm;
+import FIS.iLUVit.domain.iluvit.ConvertedToParticipateAlarm;
 import FIS.iLUVit.domain.common.Center;
 import FIS.iLUVit.domain.iluvit.*;
 import FIS.iLUVit.event.AlarmEvent;

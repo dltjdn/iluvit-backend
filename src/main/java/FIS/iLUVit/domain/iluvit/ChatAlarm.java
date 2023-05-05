@@ -1,7 +1,6 @@
-package FIS.iLUVit.domain.iluvit.alarms;
+package FIS.iLUVit.domain.iluvit;
 
 import FIS.iLUVit.dto.alarm.AlarmDetailDto;
-import FIS.iLUVit.domain.iluvit.User;
 import FIS.iLUVit.service.AlarmUtils;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
