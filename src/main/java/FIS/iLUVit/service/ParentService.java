@@ -1,14 +1,14 @@
 package FIS.iLUVit.service;
 
+import FIS.iLUVit.domain.iluvit.*;
 import FIS.iLUVit.dto.parent.ParentDetailRequest;
 import FIS.iLUVit.dto.parent.ParentDetailResponse;
 import FIS.iLUVit.dto.parent.SignupParentRequest;
-import FIS.iLUVit.domain.*;
-import FIS.iLUVit.domain.embeddable.Theme;
-import FIS.iLUVit.domain.enumtype.AuthKind;
+import FIS.iLUVit.domain.common.embeddable.Theme;
+import FIS.iLUVit.domain.iluvit.enumtype.AuthKind;
 import FIS.iLUVit.exception.UserErrorResult;
 import FIS.iLUVit.exception.UserException;
-import FIS.iLUVit.repository.*;
+import FIS.iLUVit.repository.iluvit.*;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;

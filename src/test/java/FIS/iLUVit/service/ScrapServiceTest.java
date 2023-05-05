@@ -1,14 +1,15 @@
 package FIS.iLUVit.service;
 
 import FIS.iLUVit.Creator;
-import FIS.iLUVit.domain.*;
+import FIS.iLUVit.domain.common.Center;
+import FIS.iLUVit.domain.iluvit.*;
 import FIS.iLUVit.dto.scrap.*;
 import FIS.iLUVit.exception.ScrapErrorResult;
 import FIS.iLUVit.exception.ScrapException;
-import FIS.iLUVit.repository.PostRepository;
-import FIS.iLUVit.repository.ScrapPostRepository;
-import FIS.iLUVit.repository.ScrapRepository;
-import FIS.iLUVit.repository.UserRepository;
+import FIS.iLUVit.repository.iluvit.PostRepository;
+import FIS.iLUVit.repository.iluvit.ScrapPostRepository;
+import FIS.iLUVit.repository.iluvit.ScrapRepository;
+import FIS.iLUVit.repository.iluvit.UserRepository;
 import org.junit.jupiter.api.*;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;

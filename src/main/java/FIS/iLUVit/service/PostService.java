@@ -1,15 +1,16 @@
 package FIS.iLUVit.service;
 
+import FIS.iLUVit.domain.common.Center;
+import FIS.iLUVit.domain.iluvit.*;
 import FIS.iLUVit.dto.board.BoardPreviewDto;
 import FIS.iLUVit.dto.post.PostPreviewDto;
 import FIS.iLUVit.dto.post.PostRequest;
 import FIS.iLUVit.dto.post.PostResponse;
-import FIS.iLUVit.domain.*;
-import FIS.iLUVit.domain.enumtype.Approval;
-import FIS.iLUVit.domain.enumtype.Auth;
-import FIS.iLUVit.domain.enumtype.BoardKind;
+import FIS.iLUVit.domain.iluvit.enumtype.Approval;
+import FIS.iLUVit.domain.iluvit.enumtype.Auth;
+import FIS.iLUVit.domain.iluvit.enumtype.BoardKind;
 import FIS.iLUVit.exception.*;
-import FIS.iLUVit.repository.*;
+import FIS.iLUVit.repository.iluvit.*;
 import FIS.iLUVit.service.constant.Criteria;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;

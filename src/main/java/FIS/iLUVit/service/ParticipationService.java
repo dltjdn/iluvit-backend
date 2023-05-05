@@ -1,16 +1,16 @@
 package FIS.iLUVit.service;
 
-import FIS.iLUVit.domain.alarms.Alarm;
+import FIS.iLUVit.domain.iluvit.alarms.Alarm;
 import FIS.iLUVit.dto.parent.ParticipationListDto;
-import FIS.iLUVit.domain.Parent;
-import FIS.iLUVit.domain.Participation;
-import FIS.iLUVit.domain.Presentation;
-import FIS.iLUVit.domain.PtDate;
-import FIS.iLUVit.domain.alarms.PresentationFullAlarm;
-import FIS.iLUVit.domain.enumtype.Status;
+import FIS.iLUVit.domain.iluvit.Parent;
+import FIS.iLUVit.domain.iluvit.Participation;
+import FIS.iLUVit.domain.iluvit.Presentation;
+import FIS.iLUVit.domain.iluvit.PtDate;
+import FIS.iLUVit.domain.iluvit.alarms.PresentationFullAlarm;
+import FIS.iLUVit.domain.iluvit.enumtype.Status;
 import FIS.iLUVit.event.ParticipationCancelEvent;
 import FIS.iLUVit.exception.*;
-import FIS.iLUVit.repository.*;
+import FIS.iLUVit.repository.iluvit.*;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.ApplicationEventPublisher;

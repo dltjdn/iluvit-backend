@@ -1,7 +1,7 @@
 package FIS.iLUVit.dto.child;
 
-import FIS.iLUVit.domain.Child;
-import FIS.iLUVit.domain.enumtype.Approval;
+import FIS.iLUVit.domain.iluvit.Child;
+import FIS.iLUVit.domain.iluvit.enumtype.Approval;
 import lombok.Getter;
 import java.time.LocalDate;
 

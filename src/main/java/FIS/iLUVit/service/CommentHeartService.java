@@ -1,14 +1,13 @@
 package FIS.iLUVit.service;
 
-import FIS.iLUVit.domain.Comment;
-import FIS.iLUVit.domain.CommentHeart;
-import FIS.iLUVit.domain.User;
+import FIS.iLUVit.domain.iluvit.Comment;
+import FIS.iLUVit.domain.iluvit.CommentHeart;
+import FIS.iLUVit.domain.iluvit.User;
 import FIS.iLUVit.exception.CommentErrorResult;
 import FIS.iLUVit.exception.CommentException;
-import FIS.iLUVit.exception.UserException;
-import FIS.iLUVit.repository.CommentHeartRepository;
-import FIS.iLUVit.repository.CommentRepository;
-import FIS.iLUVit.repository.UserRepository;
+import FIS.iLUVit.repository.iluvit.CommentHeartRepository;
+import FIS.iLUVit.repository.iluvit.CommentRepository;
+import FIS.iLUVit.repository.iluvit.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;

@@ -1,14 +1,22 @@
 package FIS.iLUVit.service;
 
-import FIS.iLUVit.domain.*;
-import FIS.iLUVit.domain.embeddable.Score;
-import FIS.iLUVit.domain.embeddable.Theme;
-import FIS.iLUVit.domain.enumtype.KindOf;
+import FIS.iLUVit.domain.common.Center;
+import FIS.iLUVit.domain.common.embeddable.Score;
+import FIS.iLUVit.domain.common.embeddable.Theme;
+import FIS.iLUVit.domain.iluvit.enumtype.KindOf;
+import FIS.iLUVit.domain.iluvit.Location;
+import FIS.iLUVit.domain.iluvit.Parent;
+import FIS.iLUVit.domain.iluvit.Prefer;
+import FIS.iLUVit.domain.iluvit.Teacher;
 import FIS.iLUVit.dto.center.*;
 import FIS.iLUVit.exception.CenterException;
 import FIS.iLUVit.exception.UserErrorResult;
 import FIS.iLUVit.exception.UserException;
-import FIS.iLUVit.repository.*;
+import FIS.iLUVit.repository.common.CenterRepository;
+import FIS.iLUVit.repository.iluvit.CenterBookmarkRepository;
+import FIS.iLUVit.repository.iluvit.ParentRepository;
+import FIS.iLUVit.repository.iluvit.ReviewRepository;
+import FIS.iLUVit.repository.iluvit.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;

@@ -1,7 +1,7 @@
 package FIS.iLUVit.security;
 
-import FIS.iLUVit.domain.User;
-import FIS.iLUVit.domain.enumtype.Auth;
+import FIS.iLUVit.domain.iluvit.User;
+import FIS.iLUVit.domain.iluvit.enumtype.Auth;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;

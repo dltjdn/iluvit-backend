@@ -1,17 +1,16 @@
 package FIS.iLUVit.service;
 
 import FIS.iLUVit.dto.scrap.*;
-import FIS.iLUVit.domain.Post;
-import FIS.iLUVit.domain.Scrap;
-import FIS.iLUVit.domain.ScrapPost;
-import FIS.iLUVit.domain.User;
-import FIS.iLUVit.dto.scrap.*;
+import FIS.iLUVit.domain.iluvit.Post;
+import FIS.iLUVit.domain.iluvit.Scrap;
+import FIS.iLUVit.domain.iluvit.ScrapPost;
+import FIS.iLUVit.domain.iluvit.User;
 import FIS.iLUVit.exception.ScrapErrorResult;
 import FIS.iLUVit.exception.ScrapException;
-import FIS.iLUVit.repository.PostRepository;
-import FIS.iLUVit.repository.ScrapPostRepository;
-import FIS.iLUVit.repository.ScrapRepository;
-import FIS.iLUVit.repository.UserRepository;
+import FIS.iLUVit.repository.iluvit.PostRepository;
+import FIS.iLUVit.repository.iluvit.ScrapPostRepository;
+import FIS.iLUVit.repository.iluvit.ScrapRepository;
+import FIS.iLUVit.repository.iluvit.UserRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Pageable;
@@ -22,7 +21,6 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
-import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
 @Slf4j

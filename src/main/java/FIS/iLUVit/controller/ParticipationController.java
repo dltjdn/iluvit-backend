@@ -3,7 +3,7 @@ package FIS.iLUVit.controller;
 import FIS.iLUVit.config.argumentResolver.Login;
 import FIS.iLUVit.dto.parent.ParticipationListDto;
 import FIS.iLUVit.dto.presentation.PtDateRequest;
-import FIS.iLUVit.domain.enumtype.Status;
+import FIS.iLUVit.domain.iluvit.enumtype.Status;
 import FIS.iLUVit.service.ParticipationService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;

@@ -1,10 +1,16 @@
 package FIS.iLUVit.service;
 
+import FIS.iLUVit.domain.common.Center;
+import FIS.iLUVit.domain.iluvit.Board;
+import FIS.iLUVit.domain.iluvit.Bookmark;
+import FIS.iLUVit.domain.iluvit.Post;
+import FIS.iLUVit.domain.iluvit.User;
 import FIS.iLUVit.dto.board.StoryDto;
-import FIS.iLUVit.domain.*;
 import FIS.iLUVit.exception.BookmarkErrorResult;
 import FIS.iLUVit.exception.BookmarkException;
-import FIS.iLUVit.repository.*;
+import FIS.iLUVit.repository.iluvit.BoardBookmarkRepository;
+import FIS.iLUVit.repository.iluvit.BoardRepository;
+import FIS.iLUVit.repository.iluvit.UserRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;

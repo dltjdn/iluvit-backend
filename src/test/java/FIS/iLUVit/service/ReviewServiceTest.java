@@ -1,17 +1,18 @@
 package FIS.iLUVit.service;
 
 import FIS.iLUVit.Creator;
+import FIS.iLUVit.domain.common.Center;
+import FIS.iLUVit.domain.iluvit.*;
 import FIS.iLUVit.dto.review.ReviewByCenterDto;
 import FIS.iLUVit.dto.review.ReviewByParentDto;
 import FIS.iLUVit.dto.review.ReviewDetailDto;
-import FIS.iLUVit.domain.*;
-import FIS.iLUVit.domain.enumtype.Approval;
-import FIS.iLUVit.domain.enumtype.Auth;
+import FIS.iLUVit.domain.iluvit.enumtype.Approval;
+import FIS.iLUVit.domain.iluvit.enumtype.Auth;
 import FIS.iLUVit.exception.*;
-import FIS.iLUVit.repository.CenterRepository;
-import FIS.iLUVit.repository.ParentRepository;
-import FIS.iLUVit.repository.ReviewRepository;
-import FIS.iLUVit.repository.TeacherRepository;
+import FIS.iLUVit.repository.common.CenterRepository;
+import FIS.iLUVit.repository.iluvit.ParentRepository;
+import FIS.iLUVit.repository.iluvit.ReviewRepository;
+import FIS.iLUVit.repository.iluvit.TeacherRepository;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import org.jetbrains.annotations.NotNull;

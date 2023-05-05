@@ -2,9 +2,9 @@ package FIS.iLUVit.controller.messagecreate;
 
 import FIS.iLUVit.dto.center.CenterRecommendDto;
 import FIS.iLUVit.dto.center.CenterSearchMapFilterDto;
-import FIS.iLUVit.domain.embeddable.Area;
-import FIS.iLUVit.domain.embeddable.Theme;
-import FIS.iLUVit.domain.enumtype.KindOf;
+import FIS.iLUVit.domain.common.embeddable.Area;
+import FIS.iLUVit.domain.common.embeddable.Theme;
+import FIS.iLUVit.domain.iluvit.enumtype.KindOf;
 import FIS.iLUVit.dto.center.CenterAndDistancePreviewDto;
 import FIS.iLUVit.dto.center.CenterPreviewDto;
 

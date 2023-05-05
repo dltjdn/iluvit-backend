@@ -1,6 +1,6 @@
 package FIS.iLUVit.dto.parent;
 
-import FIS.iLUVit.domain.Parent;
+import FIS.iLUVit.domain.iluvit.Parent;
 import lombok.Getter;
 
 

@@ -1,9 +1,9 @@
 package FIS.iLUVit.dto.child;
 
-import FIS.iLUVit.domain.Center;
-import FIS.iLUVit.domain.Child;
-import FIS.iLUVit.domain.Parent;
-import FIS.iLUVit.domain.enumtype.Approval;
+import FIS.iLUVit.domain.common.Center;
+import FIS.iLUVit.domain.iluvit.Child;
+import FIS.iLUVit.domain.iluvit.Parent;
+import FIS.iLUVit.domain.iluvit.enumtype.Approval;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;

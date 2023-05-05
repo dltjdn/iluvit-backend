@@ -1,6 +1,6 @@
 package FIS.iLUVit.dto.presentation;
 
-import FIS.iLUVit.domain.Presentation;
+import FIS.iLUVit.domain.iluvit.Presentation;
 import lombok.Getter;
 import org.springframework.format.annotation.DateTimeFormat;
 import java.time.LocalDate;

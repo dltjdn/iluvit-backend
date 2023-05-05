@@ -1,14 +1,14 @@
 package FIS.iLUVit.service;
 
-import FIS.iLUVit.domain.alarms.Alarm;
+import FIS.iLUVit.domain.iluvit.alarms.Alarm;
+import FIS.iLUVit.domain.iluvit.*;
 import FIS.iLUVit.dto.chat.ChatDto;
 import FIS.iLUVit.dto.chat.ChatListDto;
 import FIS.iLUVit.dto.chat.ChatRequest;
 import FIS.iLUVit.dto.chat.ChatRoomRequest;
-import FIS.iLUVit.domain.*;
-import FIS.iLUVit.domain.alarms.ChatAlarm;
+import FIS.iLUVit.domain.iluvit.alarms.ChatAlarm;
 import FIS.iLUVit.exception.*;
-import FIS.iLUVit.repository.*;
+import FIS.iLUVit.repository.iluvit.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;

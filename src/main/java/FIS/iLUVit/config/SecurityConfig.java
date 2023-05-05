@@ -1,6 +1,6 @@
 package FIS.iLUVit.config;
 
-import FIS.iLUVit.repository.UserRepository;
+import FIS.iLUVit.repository.iluvit.UserRepository;
 import FIS.iLUVit.security.ExceptionHandlerFilter;
 import FIS.iLUVit.security.JwtAuthorizationFilter;
 import FIS.iLUVit.security.JwtUtils;

@@ -1,7 +1,7 @@
 package FIS.iLUVit.dto.parent;
 
-import FIS.iLUVit.domain.Parent;
-import FIS.iLUVit.domain.embeddable.Theme;
+import FIS.iLUVit.domain.iluvit.Parent;
+import FIS.iLUVit.domain.common.embeddable.Theme;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;

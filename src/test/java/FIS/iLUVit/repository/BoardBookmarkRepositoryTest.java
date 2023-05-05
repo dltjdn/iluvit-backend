@@ -2,9 +2,12 @@ package FIS.iLUVit.repository;
 
 import FIS.iLUVit.Creator;
 import FIS.iLUVit.config.argumentResolver.ForDB;
-import FIS.iLUVit.domain.*;
-import FIS.iLUVit.domain.enumtype.Auth;
-import FIS.iLUVit.domain.enumtype.BoardKind;
+import FIS.iLUVit.domain.common.Center;
+import FIS.iLUVit.domain.iluvit.enumtype.Auth;
+import FIS.iLUVit.domain.iluvit.enumtype.BoardKind;
+import FIS.iLUVit.domain.iluvit.*;
+import FIS.iLUVit.repository.iluvit.BoardBookmarkRepository;
+import FIS.iLUVit.repository.iluvit.BoardRepository;
 import org.junit.jupiter.api.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;

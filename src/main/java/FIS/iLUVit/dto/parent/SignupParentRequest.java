@@ -1,8 +1,8 @@
 package FIS.iLUVit.dto.parent;
 
-import FIS.iLUVit.domain.Parent;
-import FIS.iLUVit.domain.embeddable.Theme;
-import FIS.iLUVit.domain.enumtype.Auth;
+import FIS.iLUVit.domain.iluvit.Parent;
+import FIS.iLUVit.domain.common.embeddable.Theme;
+import FIS.iLUVit.domain.iluvit.enumtype.Auth;
 import lombok.*;
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotNull;

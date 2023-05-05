@@ -1,6 +1,6 @@
 package FIS.iLUVit.dto.center;
 
-import FIS.iLUVit.domain.enumtype.KindOf;
+import FIS.iLUVit.domain.iluvit.enumtype.KindOf;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;

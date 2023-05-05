@@ -1,6 +1,6 @@
 package FIS.iLUVit.service;
 
-import FIS.iLUVit.domain.BaseImageEntity;
+import FIS.iLUVit.domain.iluvit.BaseImageEntity;
 import FIS.iLUVit.exception.ImageErrorResult;
 import FIS.iLUVit.exception.ImageException;
 import org.springframework.web.multipart.MultipartFile;

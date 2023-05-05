@@ -1,9 +1,9 @@
 package FIS.iLUVit.dto.teacher;
 
-import FIS.iLUVit.domain.Center;
-import FIS.iLUVit.domain.Teacher;
-import FIS.iLUVit.domain.enumtype.Approval;
-import FIS.iLUVit.domain.enumtype.Auth;
+import FIS.iLUVit.domain.common.Center;
+import FIS.iLUVit.domain.iluvit.Teacher;
+import FIS.iLUVit.domain.iluvit.enumtype.Approval;
+import FIS.iLUVit.domain.iluvit.enumtype.Auth;
 import lombok.*;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;

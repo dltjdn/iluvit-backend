@@ -1,6 +1,6 @@
 package FIS.iLUVit.dto.board;
 
-import FIS.iLUVit.domain.Board;
+import FIS.iLUVit.domain.iluvit.Board;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 

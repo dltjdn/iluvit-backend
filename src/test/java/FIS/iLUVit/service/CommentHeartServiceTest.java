@@ -1,14 +1,14 @@
 package FIS.iLUVit.service;
 
 import FIS.iLUVit.Creator;
-import FIS.iLUVit.domain.*;
-import FIS.iLUVit.domain.enumtype.Auth;
-import FIS.iLUVit.domain.enumtype.BoardKind;
+import FIS.iLUVit.domain.iluvit.enumtype.Auth;
+import FIS.iLUVit.domain.iluvit.enumtype.BoardKind;
+import FIS.iLUVit.domain.iluvit.*;
 import FIS.iLUVit.exception.CommentErrorResult;
 import FIS.iLUVit.exception.CommentException;
-import FIS.iLUVit.repository.CommentHeartRepository;
-import FIS.iLUVit.repository.CommentRepository;
-import FIS.iLUVit.repository.UserRepository;
+import FIS.iLUVit.repository.iluvit.CommentHeartRepository;
+import FIS.iLUVit.repository.iluvit.CommentRepository;
+import FIS.iLUVit.repository.iluvit.UserRepository;
 import FIS.iLUVit.service.createmethod.CreateTest;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;

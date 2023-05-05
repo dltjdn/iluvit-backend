@@ -2,13 +2,13 @@ package FIS.iLUVit.service;
 
 import FIS.iLUVit.dto.auth.AuthNumRequest;
 import FIS.iLUVit.dto.auth.FindPasswordRequest;
-import FIS.iLUVit.domain.AuthNumber;
-import FIS.iLUVit.domain.User;
-import FIS.iLUVit.domain.enumtype.AuthKind;
+import FIS.iLUVit.domain.iluvit.AuthNumber;
+import FIS.iLUVit.domain.iluvit.User;
+import FIS.iLUVit.domain.iluvit.enumtype.AuthKind;
 import FIS.iLUVit.exception.AuthNumberErrorResult;
 import FIS.iLUVit.exception.AuthNumberException;
-import FIS.iLUVit.repository.AuthRepository;
-import FIS.iLUVit.repository.UserRepository;
+import FIS.iLUVit.repository.iluvit.AuthRepository;
+import FIS.iLUVit.repository.iluvit.UserRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import net.nurigo.sdk.message.model.Message;

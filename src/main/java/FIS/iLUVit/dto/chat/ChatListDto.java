@@ -1,9 +1,8 @@
 package FIS.iLUVit.dto.chat;
 
-import FIS.iLUVit.domain.Center;
-import FIS.iLUVit.domain.ChatRoom;
-import FIS.iLUVit.domain.Post;
-import lombok.Data;
+import FIS.iLUVit.domain.common.Center;
+import FIS.iLUVit.domain.iluvit.ChatRoom;
+import FIS.iLUVit.domain.iluvit.Post;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 

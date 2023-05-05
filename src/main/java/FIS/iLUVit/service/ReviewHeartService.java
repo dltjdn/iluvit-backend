@@ -1,15 +1,15 @@
 package FIS.iLUVit.service;
 
-import FIS.iLUVit.domain.Review;
-import FIS.iLUVit.domain.ReviewHeart;
-import FIS.iLUVit.domain.User;
+import FIS.iLUVit.domain.iluvit.Review;
+import FIS.iLUVit.domain.iluvit.ReviewHeart;
+import FIS.iLUVit.domain.iluvit.User;
 import FIS.iLUVit.exception.ReviewErrorResult;
 import FIS.iLUVit.exception.ReviewException;
 import FIS.iLUVit.exception.UserErrorResult;
 import FIS.iLUVit.exception.UserException;
-import FIS.iLUVit.repository.ReviewHeartRepository;
-import FIS.iLUVit.repository.ReviewRepository;
-import FIS.iLUVit.repository.UserRepository;
+import FIS.iLUVit.repository.iluvit.ReviewHeartRepository;
+import FIS.iLUVit.repository.iluvit.ReviewRepository;
+import FIS.iLUVit.repository.iluvit.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
