@@ -3,6 +3,7 @@ package FIS.iLUVit.config;
 import FIS.iLUVit.config.argumentResolver.ForDB;
 import com.zaxxer.hikari.HikariConfig;
 import com.zaxxer.hikari.HikariDataSource;
+import org.springframework.boot.autoconfigure.jdbc.DataSourceProperties;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.boot.jdbc.DataSourceBuilder;
 import org.springframework.context.annotation.Bean;
@@ -27,16 +28,26 @@ public class CommonJpaConfig {
 
     @Bean
     @Primary
+    @ConfigurationProperties("spring.datasource-common")
+    public DataSourceProperties commonDatasourceProperties() {
+        return new DataSourceProperties();
+    }
+
+    @Bean
+    @Primary
     @ConfigurationProperties(prefix = "spring.datasource-common.hikari")
-    public DataSource commonDataSource() {
-        return DataSourceBuilder.create().build();
+    public HikariDataSource commonDataSource(DataSourceProperties properties) {
+            return properties
+                    .initializeDataSourceBuilder()
+                    .type(HikariDataSource.class)
+                    .build();
     }
 
     @Bean
     @Primary
     public LocalContainerEntityManagerFactoryBean commonEntityManager() {
         LocalContainerEntityManagerFactoryBean em = new LocalContainerEntityManagerFactoryBean();
-        em.setDataSource(commonDataSource());
+        em.setDataSource(commonDataSource(commonDatasourceProperties()));
         em.setPackagesToScan("FIS.iLUVit.domain.common");
         em.setPersistenceUnitName("commonEntityManager");
 
