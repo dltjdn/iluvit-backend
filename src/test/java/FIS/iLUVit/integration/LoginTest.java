@@ -1,11 +1,11 @@
 package FIS.iLUVit.integration;
 
 import FIS.iLUVit.dto.user.TokenRefreshRequest;
-import FIS.iLUVit.domain.Parent;
-import FIS.iLUVit.domain.TokenPair;
-import FIS.iLUVit.domain.User;
-import FIS.iLUVit.repository.TokenPairRepository;
-import FIS.iLUVit.repository.UserRepository;
+import FIS.iLUVit.domain.iluvit.Parent;
+import FIS.iLUVit.domain.iluvit.TokenPair;
+import FIS.iLUVit.domain.iluvit.User;
+import FIS.iLUVit.repository.iluvit.TokenPairRepository;
+import FIS.iLUVit.repository.iluvit.UserRepository;
 import FIS.iLUVit.security.JwtUtils;
 import FIS.iLUVit.security.LoginRequest;
 import FIS.iLUVit.security.LoginResponse;

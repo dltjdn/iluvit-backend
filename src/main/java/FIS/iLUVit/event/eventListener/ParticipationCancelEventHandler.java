@@ -1,15 +1,15 @@
 package FIS.iLUVit.event.eventListener;
 
-import FIS.iLUVit.domain.Participation;
-import FIS.iLUVit.domain.Presentation;
-import FIS.iLUVit.domain.PtDate;
-import FIS.iLUVit.domain.Waiting;
-import FIS.iLUVit.domain.alarms.Alarm;
-import FIS.iLUVit.domain.alarms.ConvertedToParticipateAlarm;
+import FIS.iLUVit.domain.iluvit.Participation;
+import FIS.iLUVit.domain.iluvit.Presentation;
+import FIS.iLUVit.domain.iluvit.PtDate;
+import FIS.iLUVit.domain.iluvit.Waiting;
+import FIS.iLUVit.domain.iluvit.alarms.Alarm;
+import FIS.iLUVit.domain.iluvit.alarms.ConvertedToParticipateAlarm;
 import FIS.iLUVit.event.ParticipationCancelEvent;
-import FIS.iLUVit.repository.AlarmRepository;
-import FIS.iLUVit.repository.ParticipationRepository;
-import FIS.iLUVit.repository.WaitingRepository;
+import FIS.iLUVit.repository.iluvit.AlarmRepository;
+import FIS.iLUVit.repository.iluvit.ParticipationRepository;
+import FIS.iLUVit.repository.iluvit.WaitingRepository;
 import FIS.iLUVit.service.AlarmUtils;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.event.EventListener;

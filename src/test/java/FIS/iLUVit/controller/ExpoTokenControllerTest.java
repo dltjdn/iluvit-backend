@@ -2,8 +2,8 @@ package FIS.iLUVit.controller;
 
 import FIS.iLUVit.config.argumentResolver.LoginUserArgumentResolver;
 import FIS.iLUVit.dto.expoToken.ExpoTokenRequest;
-import FIS.iLUVit.domain.Parent;
-import FIS.iLUVit.domain.User;
+import FIS.iLUVit.domain.iluvit.Parent;
+import FIS.iLUVit.domain.iluvit.User;
 import FIS.iLUVit.exception.exceptionHandler.controllerAdvice.GlobalControllerAdvice;
 import FIS.iLUVit.service.ExpoTokenService;
 import com.auth0.jwt.JWT;

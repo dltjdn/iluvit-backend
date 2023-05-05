@@ -1,12 +1,12 @@
 package FIS.iLUVit.service;
 
-import FIS.iLUVit.domain.User;
+import FIS.iLUVit.domain.iluvit.User;
 import FIS.iLUVit.dto.alarm.AlarmDetailDto;
-import FIS.iLUVit.domain.alarms.Alarm;
+import FIS.iLUVit.domain.iluvit.alarms.Alarm;
 import FIS.iLUVit.exception.UserErrorResult;
 import FIS.iLUVit.exception.UserException;
-import FIS.iLUVit.repository.AlarmRepository;
-import FIS.iLUVit.repository.UserRepository;
+import FIS.iLUVit.repository.iluvit.AlarmRepository;
+import FIS.iLUVit.repository.iluvit.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;

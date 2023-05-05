@@ -1,8 +1,8 @@
 package FIS.iLUVit.dto.center;
 
-import FIS.iLUVit.domain.Center;
-import FIS.iLUVit.domain.embeddable.*;
-import FIS.iLUVit.domain.enumtype.KindOf;
+import FIS.iLUVit.domain.common.Center;
+import FIS.iLUVit.domain.common.embeddable.*;
+import FIS.iLUVit.domain.iluvit.enumtype.KindOf;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 

@@ -1,11 +1,10 @@
 package FIS.iLUVit.repository;
 
-import FIS.iLUVit.Creator;
 import FIS.iLUVit.config.argumentResolver.ForDB;
-import FIS.iLUVit.domain.Parent;
-import FIS.iLUVit.domain.Teacher;
-import FIS.iLUVit.domain.User;
-import org.assertj.core.api.Assertions;
+import FIS.iLUVit.domain.iluvit.Parent;
+import FIS.iLUVit.domain.iluvit.Teacher;
+import FIS.iLUVit.domain.iluvit.User;
+import FIS.iLUVit.repository.iluvit.UserRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -16,11 +15,9 @@ import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.context.annotation.ComponentScan;
 
 import javax.persistence.EntityManager;
-import java.util.Optional;
 import java.util.stream.Stream;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.InstanceOfAssertFactories.predicate;
 
 @DataJpaTest(includeFilters = @ComponentScan.Filter(ForDB.class))
 public class UserRepositoryTest {

@@ -2,9 +2,10 @@ package FIS.iLUVit.controller;
 
 import FIS.iLUVit.Creator;
 import FIS.iLUVit.config.argumentResolver.LoginUserArgumentResolver;
-import FIS.iLUVit.domain.*;
-import FIS.iLUVit.domain.enumtype.Approval;
-import FIS.iLUVit.domain.enumtype.Auth;
+import FIS.iLUVit.domain.common.Center;
+import FIS.iLUVit.domain.iluvit.enumtype.Approval;
+import FIS.iLUVit.domain.iluvit.enumtype.Auth;
+import FIS.iLUVit.domain.iluvit.*;
 import FIS.iLUVit.exception.ReviewErrorResult;
 import FIS.iLUVit.exception.ReviewException;
 import FIS.iLUVit.exception.UserErrorResult;

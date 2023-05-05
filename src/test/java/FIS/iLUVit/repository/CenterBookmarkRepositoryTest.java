@@ -2,9 +2,10 @@ package FIS.iLUVit.repository;
 
 import FIS.iLUVit.Creator;
 import FIS.iLUVit.config.argumentResolver.ForDB;
-import FIS.iLUVit.domain.Center;
-import FIS.iLUVit.domain.Parent;
-import FIS.iLUVit.domain.Prefer;
+import FIS.iLUVit.domain.common.Center;
+import FIS.iLUVit.domain.iluvit.Parent;
+import FIS.iLUVit.domain.iluvit.Prefer;
+import FIS.iLUVit.repository.iluvit.CenterBookmarkRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;

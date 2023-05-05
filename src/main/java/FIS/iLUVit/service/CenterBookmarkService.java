@@ -1,13 +1,13 @@
 package FIS.iLUVit.service;
 
-import FIS.iLUVit.domain.Center;
-import FIS.iLUVit.domain.Parent;
-import FIS.iLUVit.domain.Prefer;
+import FIS.iLUVit.domain.common.Center;
+import FIS.iLUVit.domain.iluvit.Parent;
+import FIS.iLUVit.domain.iluvit.Prefer;
 import FIS.iLUVit.exception.PreferErrorResult;
 import FIS.iLUVit.exception.PreferException;
-import FIS.iLUVit.repository.CenterRepository;
-import FIS.iLUVit.repository.ParentRepository;
-import FIS.iLUVit.repository.CenterBookmarkRepository;
+import FIS.iLUVit.repository.common.CenterRepository;
+import FIS.iLUVit.repository.iluvit.ParentRepository;
+import FIS.iLUVit.repository.iluvit.CenterBookmarkRepository;
 import FIS.iLUVit.dto.center.CenterPreviewDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.dao.DataIntegrityViolationException;

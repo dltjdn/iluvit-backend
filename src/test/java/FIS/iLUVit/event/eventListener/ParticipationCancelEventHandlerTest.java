@@ -1,12 +1,13 @@
 package FIS.iLUVit.event.eventListener;
 
-import FIS.iLUVit.domain.*;
-import FIS.iLUVit.domain.alarms.Alarm;
-import FIS.iLUVit.domain.alarms.ConvertedToParticipateAlarm;
+import FIS.iLUVit.domain.iluvit.alarms.Alarm;
+import FIS.iLUVit.domain.iluvit.alarms.ConvertedToParticipateAlarm;
+import FIS.iLUVit.domain.common.Center;
+import FIS.iLUVit.domain.iluvit.*;
 import FIS.iLUVit.event.AlarmEvent;
 import FIS.iLUVit.event.ParticipationCancelEvent;
-import FIS.iLUVit.repository.ParticipationRepository;
-import FIS.iLUVit.repository.WaitingRepository;
+import FIS.iLUVit.repository.iluvit.ParticipationRepository;
+import FIS.iLUVit.repository.iluvit.WaitingRepository;
 import FIS.iLUVit.service.AlarmUtils;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.DisplayName;

@@ -1,8 +1,8 @@
 package FIS.iLUVit.dto.presentation;
 
-import FIS.iLUVit.domain.embeddable.Area;
-import FIS.iLUVit.domain.embeddable.Theme;
-import FIS.iLUVit.domain.enumtype.KindOf;
+import FIS.iLUVit.domain.common.embeddable.Area;
+import FIS.iLUVit.domain.common.embeddable.Theme;
+import FIS.iLUVit.domain.iluvit.enumtype.KindOf;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;

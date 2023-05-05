@@ -1,18 +1,18 @@
 package FIS.iLUVit.service;
 
 import FIS.iLUVit.Creator;
+import FIS.iLUVit.domain.iluvit.*;
 import FIS.iLUVit.dto.chat.ChatDto;
 import FIS.iLUVit.dto.chat.ChatListDto;
 import FIS.iLUVit.dto.chat.ChatRequest;
 import FIS.iLUVit.dto.chat.ChatRoomRequest;
-import FIS.iLUVit.domain.*;
-import FIS.iLUVit.domain.alarms.Alarm;
-import FIS.iLUVit.domain.alarms.ChatAlarm;
-import FIS.iLUVit.domain.enumtype.Auth;
-import FIS.iLUVit.domain.enumtype.BoardKind;
+import FIS.iLUVit.domain.iluvit.alarms.Alarm;
+import FIS.iLUVit.domain.iluvit.alarms.ChatAlarm;
+import FIS.iLUVit.domain.iluvit.enumtype.Auth;
+import FIS.iLUVit.domain.iluvit.enumtype.BoardKind;
 import FIS.iLUVit.event.AlarmEvent;
 import FIS.iLUVit.exception.*;
-import FIS.iLUVit.repository.*;
+import FIS.iLUVit.repository.iluvit.*;
 import FIS.iLUVit.service.createmethod.CreateTest;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;

@@ -1,13 +1,12 @@
 package FIS.iLUVit.event.eventListener;
 
-import FIS.iLUVit.domain.ExpoToken;
-import FIS.iLUVit.domain.User;
-import FIS.iLUVit.domain.alarms.Alarm;
+import FIS.iLUVit.domain.iluvit.ExpoToken;
+import FIS.iLUVit.domain.iluvit.User;
+import FIS.iLUVit.domain.iluvit.alarms.Alarm;
 import FIS.iLUVit.event.AlarmEvent;
 import FIS.iLUVit.event.ExpoServerUtils;
 import FIS.iLUVit.event.dto.ExpoServerResponse;
-import FIS.iLUVit.repository.AlarmRepository;
-import FIS.iLUVit.repository.ExpoTokenRepository;
+import FIS.iLUVit.repository.iluvit.ExpoTokenRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.event.EventListener;
 import org.springframework.scheduling.annotation.Async;

@@ -1,7 +1,9 @@
 package FIS.iLUVit.dto.chat;
 
-import FIS.iLUVit.domain.*;
-import lombok.Data;
+import FIS.iLUVit.domain.common.Center;
+import FIS.iLUVit.domain.iluvit.Chat;
+import FIS.iLUVit.domain.iluvit.ChatRoom;
+import FIS.iLUVit.domain.iluvit.Post;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.springframework.data.domain.Slice;

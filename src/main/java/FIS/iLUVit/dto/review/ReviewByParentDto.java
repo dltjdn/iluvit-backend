@@ -1,6 +1,6 @@
 package FIS.iLUVit.dto.review;
 
-import FIS.iLUVit.domain.Review;
+import FIS.iLUVit.domain.iluvit.Review;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;

@@ -1,7 +1,7 @@
 package FIS.iLUVit.dto.report;
 
-import FIS.iLUVit.domain.enumtype.ReportReason;
-import FIS.iLUVit.domain.enumtype.ReportType;
+import FIS.iLUVit.domain.iluvit.enumtype.ReportReason;
+import FIS.iLUVit.domain.iluvit.enumtype.ReportType;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;

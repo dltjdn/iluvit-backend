@@ -1,7 +1,7 @@
 package FIS.iLUVit.dto.comment;
 
-import FIS.iLUVit.domain.Comment;
-import FIS.iLUVit.domain.User;
+import FIS.iLUVit.domain.iluvit.Comment;
+import FIS.iLUVit.domain.iluvit.User;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
