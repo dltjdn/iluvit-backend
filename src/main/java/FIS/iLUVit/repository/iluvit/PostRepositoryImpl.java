@@ -13,11 +13,11 @@ import org.springframework.data.domain.SliceImpl;
 import java.util.Collection;
 import java.util.List;
 
-import static FIS.iLUVit.domain.QBoard.board;
-import static FIS.iLUVit.domain.QCenter.center;
-import static FIS.iLUVit.domain.QPost.post;
+import static FIS.iLUVit.domain.iluvit.QBoard.board;
+import static FIS.iLUVit.domain.common.QCenter.center;
+import static FIS.iLUVit.domain.iluvit.QPost.post;
 
-@AllArgsConstructor
+//@AllArgsConstructor
 public class PostRepositoryImpl extends PostQueryMethod implements PostRepositoryCustom {
 
     private final JPAQueryFactory jpaQueryFactory;
