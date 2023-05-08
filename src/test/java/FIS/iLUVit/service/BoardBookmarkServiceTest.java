@@ -1,16 +1,15 @@
 package FIS.iLUVit.service;
 
 import FIS.iLUVit.Creator;
-import FIS.iLUVit.domain.common.Center;
-import FIS.iLUVit.domain.iluvit.*;
 import FIS.iLUVit.dto.board.StoryDto;
-import FIS.iLUVit.domain.iluvit.enumtype.Auth;
-import FIS.iLUVit.domain.iluvit.enumtype.BoardKind;
+import FIS.iLUVit.domain.*;
+import FIS.iLUVit.domain.enumtype.Auth;
+import FIS.iLUVit.domain.enumtype.BoardKind;
 import FIS.iLUVit.exception.BookmarkErrorResult;
 import FIS.iLUVit.exception.BookmarkException;
-import FIS.iLUVit.repository.iluvit.BoardRepository;
-import FIS.iLUVit.repository.iluvit.BoardBookmarkRepository;
-import FIS.iLUVit.repository.iluvit.UserRepository;
+import FIS.iLUVit.repository.BoardRepository;
+import FIS.iLUVit.repository.BoardBookmarkRepository;
+import FIS.iLUVit.repository.UserRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;

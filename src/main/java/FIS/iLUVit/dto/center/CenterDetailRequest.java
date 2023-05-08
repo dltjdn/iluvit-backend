@@ -1,6 +1,6 @@
 package FIS.iLUVit.dto.center;
 
-import FIS.iLUVit.domain.common.embeddable.*;
+import FIS.iLUVit.domain.embeddable.*;
 import lombok.*;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;

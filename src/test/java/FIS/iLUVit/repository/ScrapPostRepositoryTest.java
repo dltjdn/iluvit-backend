@@ -2,10 +2,9 @@ package FIS.iLUVit.repository;
 
 import FIS.iLUVit.Creator;
 import FIS.iLUVit.config.argumentResolver.ForDB;
-import FIS.iLUVit.domain.common.Center;
-import FIS.iLUVit.domain.iluvit.enumtype.BoardKind;
-import FIS.iLUVit.domain.iluvit.*;
-import FIS.iLUVit.repository.iluvit.ScrapPostRepository;
+import FIS.iLUVit.domain.*;
+import FIS.iLUVit.domain.enumtype.BoardKind;
+import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -14,10 +13,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
 
 import javax.persistence.EntityManager;
 
+import java.util.List;
 import java.util.Objects;
 
 import static org.assertj.core.api.Assertions.*;

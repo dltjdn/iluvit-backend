@@ -2,11 +2,10 @@ package FIS.iLUVit.repository;
 
 import FIS.iLUVit.Creator;
 import FIS.iLUVit.config.argumentResolver.ForDB;
-import FIS.iLUVit.domain.iluvit.AuthNumber;
-import FIS.iLUVit.domain.iluvit.Parent;
-import FIS.iLUVit.domain.iluvit.User;
-import FIS.iLUVit.domain.iluvit.enumtype.AuthKind;
-import FIS.iLUVit.repository.iluvit.AuthRepository;
+import FIS.iLUVit.domain.AuthNumber;
+import FIS.iLUVit.domain.Parent;
+import FIS.iLUVit.domain.User;
+import FIS.iLUVit.domain.enumtype.AuthKind;
 import org.hibernate.exception.ConstraintViolationException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;

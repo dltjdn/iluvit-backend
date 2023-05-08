@@ -2,11 +2,10 @@ package FIS.iLUVit.repository;
 
 import FIS.iLUVit.Creator;
 import FIS.iLUVit.config.argumentResolver.ForDB;
-import FIS.iLUVit.domain.iluvit.Parent;
-import FIS.iLUVit.domain.iluvit.Post;
-import FIS.iLUVit.domain.iluvit.Scrap;
-import FIS.iLUVit.domain.iluvit.ScrapPost;
-import FIS.iLUVit.repository.iluvit.ScrapRepository;
+import FIS.iLUVit.domain.Parent;
+import FIS.iLUVit.domain.Post;
+import FIS.iLUVit.domain.Scrap;
+import FIS.iLUVit.domain.ScrapPost;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -17,6 +16,7 @@ import org.springframework.context.annotation.ComponentScan;
 
 import javax.persistence.EntityManager;
 import java.util.List;
+import java.util.Objects;
 
 import static org.assertj.core.api.Assertions.*;
 

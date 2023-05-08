@@ -2,12 +2,12 @@ package FIS.iLUVit.controller;
 
 import FIS.iLUVit.config.argumentResolver.LoginUserArgumentResolver;
 import FIS.iLUVit.dto.board.StoryDto;
-import FIS.iLUVit.domain.iluvit.Board;
-import FIS.iLUVit.domain.iluvit.Bookmark;
-import FIS.iLUVit.domain.iluvit.Parent;
-import FIS.iLUVit.domain.iluvit.User;
-import FIS.iLUVit.domain.iluvit.enumtype.Auth;
-import FIS.iLUVit.domain.iluvit.enumtype.BoardKind;
+import FIS.iLUVit.domain.Board;
+import FIS.iLUVit.domain.Bookmark;
+import FIS.iLUVit.domain.Parent;
+import FIS.iLUVit.domain.User;
+import FIS.iLUVit.domain.enumtype.Auth;
+import FIS.iLUVit.domain.enumtype.BoardKind;
 import FIS.iLUVit.exception.BookmarkErrorResult;
 import FIS.iLUVit.exception.BookmarkException;
 import FIS.iLUVit.exception.exceptionHandler.ErrorResponse;

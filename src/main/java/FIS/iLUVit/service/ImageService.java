@@ -1,6 +1,6 @@
 package FIS.iLUVit.service;
 
-import FIS.iLUVit.domain.iluvit.BaseImageEntity;
+import FIS.iLUVit.domain.BaseImageEntity;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;

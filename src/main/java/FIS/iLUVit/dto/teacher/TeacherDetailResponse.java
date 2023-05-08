@@ -1,6 +1,6 @@
 package FIS.iLUVit.dto.teacher;
 
-import FIS.iLUVit.domain.iluvit.Teacher;
+import FIS.iLUVit.domain.Teacher;
 import lombok.Getter;
 
 @Getter

@@ -1,6 +1,6 @@
 package FIS.iLUVit.dto.presentation;
 
-import FIS.iLUVit.domain.iluvit.Presentation;
+import FIS.iLUVit.domain.Presentation;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;

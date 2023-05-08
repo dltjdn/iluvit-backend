@@ -1,17 +1,16 @@
 package FIS.iLUVit.service;
 
 import FIS.iLUVit.Creator;
-import FIS.iLUVit.domain.common.Center;
-import FIS.iLUVit.domain.iluvit.enumtype.Approval;
-import FIS.iLUVit.domain.iluvit.enumtype.Auth;
-import FIS.iLUVit.domain.iluvit.*;
+import FIS.iLUVit.domain.*;
+import FIS.iLUVit.domain.enumtype.Approval;
+import FIS.iLUVit.domain.enumtype.Auth;
 import FIS.iLUVit.exception.ReviewErrorResult;
 import FIS.iLUVit.exception.ReviewException;
 import FIS.iLUVit.exception.UserErrorResult;
 import FIS.iLUVit.exception.UserException;
-import FIS.iLUVit.repository.iluvit.ReviewHeartRepository;
-import FIS.iLUVit.repository.iluvit.ReviewRepository;
-import FIS.iLUVit.repository.iluvit.UserRepository;
+import FIS.iLUVit.repository.ReviewHeartRepository;
+import FIS.iLUVit.repository.ReviewRepository;
+import FIS.iLUVit.repository.UserRepository;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import org.junit.jupiter.api.BeforeEach;

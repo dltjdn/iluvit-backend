@@ -1,6 +1,6 @@
 package FIS.iLUVit.service;
 
-import FIS.iLUVit.domain.iluvit.alarms.Alarm;
+import FIS.iLUVit.domain.alarms.Alarm;
 import FIS.iLUVit.event.AlarmEvent;
 import lombok.NoArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;

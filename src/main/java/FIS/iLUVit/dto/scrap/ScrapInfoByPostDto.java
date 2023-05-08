@@ -1,6 +1,6 @@
 package FIS.iLUVit.dto.scrap;
 
-import FIS.iLUVit.domain.iluvit.Scrap;
+import FIS.iLUVit.domain.Scrap;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;

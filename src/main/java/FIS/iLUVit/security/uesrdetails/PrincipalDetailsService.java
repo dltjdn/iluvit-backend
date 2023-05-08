@@ -1,7 +1,7 @@
 package FIS.iLUVit.security.uesrdetails;
 
-import FIS.iLUVit.domain.iluvit.User;
-import FIS.iLUVit.repository.iluvit.UserRepository;
+import FIS.iLUVit.domain.User;
+import FIS.iLUVit.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;

@@ -2,9 +2,9 @@ package FIS.iLUVit.controller;
 
 import FIS.iLUVit.config.argumentResolver.LoginUserArgumentResolver;
 import FIS.iLUVit.dto.presentation.PtDateRequest;
-import FIS.iLUVit.domain.iluvit.Parent;
-import FIS.iLUVit.domain.iluvit.User;
-import FIS.iLUVit.domain.iluvit.enumtype.Auth;
+import FIS.iLUVit.domain.Parent;
+import FIS.iLUVit.domain.User;
+import FIS.iLUVit.domain.enumtype.Auth;
 import FIS.iLUVit.exception.ParticipationErrorResult;
 import FIS.iLUVit.exception.ParticipationException;
 import FIS.iLUVit.exception.PresentationErrorResult;

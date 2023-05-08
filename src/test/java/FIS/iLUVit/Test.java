@@ -1,9 +1,10 @@
 package FIS.iLUVit;
 
-import FIS.iLUVit.domain.iluvit.Teacher;
-import FIS.iLUVit.domain.iluvit.User;
-import FIS.iLUVit.domain.iluvit.enumtype.Approval;
-import FIS.iLUVit.domain.iluvit.enumtype.Auth;
+import FIS.iLUVit.domain.ChildHouse;
+import FIS.iLUVit.domain.Teacher;
+import FIS.iLUVit.domain.User;
+import FIS.iLUVit.domain.enumtype.Approval;
+import FIS.iLUVit.domain.enumtype.Auth;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;

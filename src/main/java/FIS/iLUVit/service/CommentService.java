@@ -1,14 +1,14 @@
 package FIS.iLUVit.service;
 
-import FIS.iLUVit.domain.iluvit.alarms.Alarm;
+import FIS.iLUVit.domain.alarms.Alarm;
 import FIS.iLUVit.dto.comment.CommentDto;
 import FIS.iLUVit.dto.comment.CommentRequest;
-import FIS.iLUVit.domain.iluvit.Comment;
-import FIS.iLUVit.domain.iluvit.Post;
-import FIS.iLUVit.domain.iluvit.User;
-import FIS.iLUVit.domain.iluvit.alarms.PostAlarm;
+import FIS.iLUVit.domain.Comment;
+import FIS.iLUVit.domain.Post;
+import FIS.iLUVit.domain.User;
+import FIS.iLUVit.domain.alarms.PostAlarm;
 import FIS.iLUVit.exception.*;
-import FIS.iLUVit.repository.iluvit.*;
+import FIS.iLUVit.repository.*;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Pageable;

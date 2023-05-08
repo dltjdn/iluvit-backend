@@ -1,6 +1,6 @@
 package FIS.iLUVit.dto.post;
 
-import FIS.iLUVit.domain.iluvit.Post;
+import FIS.iLUVit.domain.Post;
 import com.querydsl.core.annotations.QueryProjection;
 import lombok.AllArgsConstructor;
 import lombok.Getter;

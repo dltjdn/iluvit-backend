@@ -1,16 +1,21 @@
 package FIS.iLUVit.controller;
 
 import FIS.iLUVit.config.argumentResolver.Login;
+import FIS.iLUVit.domain.User;
 import FIS.iLUVit.dto.user.*;
+import FIS.iLUVit.exception.UserErrorResult;
+import FIS.iLUVit.exception.UserException;
 import FIS.iLUVit.security.LoginRequest;
 import FIS.iLUVit.security.LoginResponse;
 import FIS.iLUVit.service.UserService;
+import com.auth0.jwt.exceptions.JWTVerificationException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.core.env.Environment;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+import java.io.IOException;
 
 
 @Slf4j

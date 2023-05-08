@@ -1,10 +1,10 @@
 package FIS.iLUVit.service.createmethod;
 
-import FIS.iLUVit.domain.iluvit.Board;
-import FIS.iLUVit.domain.iluvit.Bookmark;
-import FIS.iLUVit.domain.common.Center;
-import FIS.iLUVit.domain.iluvit.User;
-import FIS.iLUVit.domain.iluvit.enumtype.BoardKind;
+import FIS.iLUVit.domain.Board;
+import FIS.iLUVit.domain.Bookmark;
+import FIS.iLUVit.domain.Center;
+import FIS.iLUVit.domain.User;
+import FIS.iLUVit.domain.enumtype.BoardKind;
 
 public class CreateTest {
 

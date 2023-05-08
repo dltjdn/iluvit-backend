@@ -1,13 +1,13 @@
 package FIS.iLUVit.service;
 
-import FIS.iLUVit.domain.iluvit.Participation;
-import FIS.iLUVit.domain.iluvit.PtDate;
-import FIS.iLUVit.domain.iluvit.Waiting;
+import FIS.iLUVit.domain.Participation;
+import FIS.iLUVit.domain.PtDate;
+import FIS.iLUVit.domain.Waiting;
 import FIS.iLUVit.exception.*;
-import FIS.iLUVit.repository.iluvit.ParentRepository;
-import FIS.iLUVit.repository.iluvit.ParticipationRepository;
-import FIS.iLUVit.repository.iluvit.PtDateRepository;
-import FIS.iLUVit.repository.iluvit.WaitingRepository;
+import FIS.iLUVit.repository.ParentRepository;
+import FIS.iLUVit.repository.ParticipationRepository;
+import FIS.iLUVit.repository.PtDateRepository;
+import FIS.iLUVit.repository.WaitingRepository;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;

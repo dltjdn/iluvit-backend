@@ -2,12 +2,11 @@ package FIS.iLUVit.repository;
 
 import FIS.iLUVit.Creator;
 import FIS.iLUVit.config.argumentResolver.ForDB;
-import FIS.iLUVit.domain.common.Center;
-import FIS.iLUVit.domain.iluvit.Parent;
-import FIS.iLUVit.domain.iluvit.Review;
-import FIS.iLUVit.domain.iluvit.Teacher;
-import FIS.iLUVit.domain.iluvit.enumtype.Auth;
-import FIS.iLUVit.repository.iluvit.ReviewRepository;
+import FIS.iLUVit.domain.Center;
+import FIS.iLUVit.domain.Parent;
+import FIS.iLUVit.domain.Review;
+import FIS.iLUVit.domain.Teacher;
+import FIS.iLUVit.domain.enumtype.Auth;
 import org.assertj.core.groups.Tuple;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;

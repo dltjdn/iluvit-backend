@@ -1,6 +1,6 @@
 package FIS.iLUVit.dto.comment;
 
-import FIS.iLUVit.domain.iluvit.Comment;
+import FIS.iLUVit.domain.Comment;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import java.time.LocalDate;

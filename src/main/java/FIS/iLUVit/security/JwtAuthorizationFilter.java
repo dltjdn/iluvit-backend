@@ -1,7 +1,7 @@
 package FIS.iLUVit.security;
 
-import FIS.iLUVit.domain.iluvit.User;
-import FIS.iLUVit.repository.iluvit.UserRepository;
+import FIS.iLUVit.domain.User;
+import FIS.iLUVit.repository.UserRepository;
 import FIS.iLUVit.security.uesrdetails.PrincipalDetails;
 import com.auth0.jwt.exceptions.JWTVerificationException;
 import lombok.extern.slf4j.Slf4j;
