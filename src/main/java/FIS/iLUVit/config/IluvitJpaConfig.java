@@ -27,8 +27,9 @@ import javax.sql.DataSource;
 public class IluvitJpaConfig {
 
     @Bean
+    @Primary
     @ConfigurationProperties("spring.datasource-iluvit")
-    public DataSourceProperties iluvitDatasourceProperties() {
+    public DataSourceProperties commonDatasourceProperties() {
         return new DataSourceProperties();
     }
 
@@ -44,7 +45,7 @@ public class IluvitJpaConfig {
     @Bean
     public LocalContainerEntityManagerFactoryBean iluvitEntityManager() {
         LocalContainerEntityManagerFactoryBean em = new LocalContainerEntityManagerFactoryBean();
-        em.setDataSource(iluvitDataSource(iluvitDatasourceProperties()));
+        em.setDataSource(iluvitDataSource(commonDatasourceProperties()));
         em.setPackagesToScan("FIS.iLUVit.domain.iluvit");
         em.setPersistenceUnitName("iluvitEntityManager");
 
