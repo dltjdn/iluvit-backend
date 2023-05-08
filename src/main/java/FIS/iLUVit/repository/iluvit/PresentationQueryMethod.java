@@ -8,8 +8,8 @@ import org.springframework.data.domain.Sort;
 import java.util.ArrayList;
 import java.util.List;
 
-import static FIS.iLUVit.domain.common.QCenter.center;
-import static FIS.iLUVit.domain.iluvit.QPresentation.presentation;
+import static FIS.iLUVit.domain.QCenter.center;
+import static FIS.iLUVit.domain.QPresentation.presentation;
 
 public class PresentationQueryMethod {
 

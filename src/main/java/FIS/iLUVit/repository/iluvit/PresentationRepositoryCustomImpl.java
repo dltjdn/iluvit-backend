@@ -21,11 +21,11 @@ import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
-import static FIS.iLUVit.domain.common.QCenter.center;
-import static FIS.iLUVit.domain.iluvit.QPresentation.presentation;
+import static FIS.iLUVit.domain.QCenter.center;
+import static FIS.iLUVit.domain.QPresentation.presentation;
 import static FIS.iLUVit.repository.iluvit.PresentationQueryMethod.presentationSort;
 
-//@AllArgsConstructor
+@AllArgsConstructor
 public class PresentationRepositoryCustomImpl extends CenterQueryMethod implements PresentationRepositoryCustom {
 
     private final JPAQueryFactory jpaQueryFactory;

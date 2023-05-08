@@ -10,7 +10,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.List;
 
-import static FIS.iLUVit.domain.common.QCenter.center;
+import static FIS.iLUVit.domain.QCenter.center;
 import static com.querydsl.core.types.dsl.MathExpressions.*;
 
 public class CenterQueryMethod {
