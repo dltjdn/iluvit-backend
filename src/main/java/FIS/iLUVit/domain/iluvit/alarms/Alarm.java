@@ -1,4 +1,4 @@
-package FIS.iLUVit.domain.iluvit;
+package FIS.iLUVit.domain.iluvit.alarms;
 
 import FIS.iLUVit.dto.alarm.AlarmDetailDto;
 import FIS.iLUVit.domain.iluvit.BaseEntity;

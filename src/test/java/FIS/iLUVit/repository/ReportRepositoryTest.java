@@ -5,7 +5,7 @@ import FIS.iLUVit.config.argumentResolver.ForDB;
 import FIS.iLUVit.domain.iluvit.Post;
 import FIS.iLUVit.domain.iluvit.Teacher;
 import FIS.iLUVit.domain.iluvit.enumtype.Approval;
-import FIS.iLUVit.domain.iluvit.Report;
+import FIS.iLUVit.domain.iluvit.reports.Report;
 import FIS.iLUVit.repository.iluvit.ReportRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;

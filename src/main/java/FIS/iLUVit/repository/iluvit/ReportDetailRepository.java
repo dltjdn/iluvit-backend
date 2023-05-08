@@ -1,6 +1,6 @@
 package FIS.iLUVit.repository.iluvit;
 
-import FIS.iLUVit.domain.iluvit.ReportDetail;
+import FIS.iLUVit.domain.iluvit.reports.ReportDetail;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;

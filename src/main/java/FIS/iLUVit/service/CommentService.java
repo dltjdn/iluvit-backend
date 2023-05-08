@@ -1,12 +1,12 @@
 package FIS.iLUVit.service;
 
-import FIS.iLUVit.domain.iluvit.Alarm;
+import FIS.iLUVit.domain.iluvit.alarms.Alarm;
 import FIS.iLUVit.dto.comment.CommentDto;
 import FIS.iLUVit.dto.comment.CommentRequest;
 import FIS.iLUVit.domain.iluvit.Comment;
 import FIS.iLUVit.domain.iluvit.Post;
 import FIS.iLUVit.domain.iluvit.User;
-import FIS.iLUVit.domain.iluvit.PostAlarm;
+import FIS.iLUVit.domain.iluvit.alarms.PostAlarm;
 import FIS.iLUVit.exception.*;
 import FIS.iLUVit.repository.iluvit.*;
 import lombok.RequiredArgsConstructor;
