@@ -2,7 +2,7 @@ package FIS.iLUVit.event.eventListener;
 
 import FIS.iLUVit.domain.iluvit.ExpoToken;
 import FIS.iLUVit.domain.iluvit.User;
-import FIS.iLUVit.domain.iluvit.Alarm;
+import FIS.iLUVit.domain.iluvit.alarms.Alarm;
 import FIS.iLUVit.event.AlarmEvent;
 import FIS.iLUVit.event.ExpoServerUtils;
 import FIS.iLUVit.event.dto.ExpoServerResponse;

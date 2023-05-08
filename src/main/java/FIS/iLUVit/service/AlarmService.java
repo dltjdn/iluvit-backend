@@ -2,7 +2,7 @@ package FIS.iLUVit.service;
 
 import FIS.iLUVit.domain.iluvit.User;
 import FIS.iLUVit.dto.alarm.AlarmDetailDto;
-import FIS.iLUVit.domain.iluvit.Alarm;
+import FIS.iLUVit.domain.iluvit.alarms.Alarm;
 import FIS.iLUVit.exception.UserErrorResult;
 import FIS.iLUVit.exception.UserException;
 import FIS.iLUVit.repository.iluvit.AlarmRepository;

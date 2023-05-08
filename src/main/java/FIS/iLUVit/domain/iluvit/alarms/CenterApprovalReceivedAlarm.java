@@ -1,6 +1,7 @@
-package FIS.iLUVit.domain.iluvit;
+package FIS.iLUVit.domain.iluvit.alarms;
 
 import FIS.iLUVit.dto.alarm.AlarmDetailDto;
+import FIS.iLUVit.domain.iluvit.User;
 import FIS.iLUVit.domain.common.Center;
 import FIS.iLUVit.domain.iluvit.enumtype.Auth;
 import FIS.iLUVit.service.AlarmUtils;

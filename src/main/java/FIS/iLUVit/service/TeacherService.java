@@ -1,6 +1,6 @@
 package FIS.iLUVit.service;
 
-import FIS.iLUVit.domain.iluvit.Alarm;
+import FIS.iLUVit.domain.iluvit.alarms.Alarm;
 import FIS.iLUVit.domain.common.Center;
 import FIS.iLUVit.domain.iluvit.*;
 import FIS.iLUVit.dto.center.CenterDto;
@@ -9,7 +9,7 @@ import FIS.iLUVit.dto.teacher.SignupTeacherRequest;
 import FIS.iLUVit.dto.teacher.TeacherDetailRequest;
 import FIS.iLUVit.dto.teacher.TeacherDetailResponse;
 import FIS.iLUVit.dto.teacher.TeacherInfoForAdminDto;
-import FIS.iLUVit.domain.iluvit.CenterApprovalReceivedAlarm;
+import FIS.iLUVit.domain.iluvit.alarms.CenterApprovalReceivedAlarm;
 import FIS.iLUVit.domain.iluvit.enumtype.Approval;
 import FIS.iLUVit.domain.iluvit.enumtype.Auth;
 import FIS.iLUVit.domain.iluvit.enumtype.AuthKind;

@@ -1,7 +1,9 @@
-package FIS.iLUVit.domain.iluvit;
+package FIS.iLUVit.domain.iluvit.alarms;
 
 import FIS.iLUVit.dto.alarm.AlarmDetailDto;
 import FIS.iLUVit.domain.common.Center;
+import FIS.iLUVit.domain.iluvit.Presentation;
+import FIS.iLUVit.domain.iluvit.User;
 import FIS.iLUVit.service.AlarmUtils;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -13,7 +15,7 @@ import java.time.LocalDateTime;
 @Entity
 @NoArgsConstructor
 @Getter
-public class PresentationPeriodClosedAlarm extends Alarm{
+public class PresentationFullAlarm extends Alarm{
 
     @Column(name = "presentationId")
     private Long presentationId;
@@ -24,9 +26,9 @@ public class PresentationPeriodClosedAlarm extends Alarm{
     @Column(name = "centerName")
     private String centerName;
 
-    public PresentationPeriodClosedAlarm(User user, Presentation presentation, Center center) {
+    public PresentationFullAlarm(User user, Presentation presentation, Center center) {
         super(user);
-        this.mode = AlarmUtils.PRESENTATION_CLOSED;
+        this.mode = AlarmUtils.PRESENTATION_APPLICANTS_FULL;
         this.presentationId = presentation.getId();
         this.centerId = center.getId();
         this.centerName = center.getName();
@@ -35,22 +37,21 @@ public class PresentationPeriodClosedAlarm extends Alarm{
 
     @Override
     public AlarmDetailDto exportAlarm() {
-        return new PresentationPeriodClosedAlarmDto(id, createdDate, message, dtype, presentationId, centerId, centerName);
+        return new PresentationFullAlarmDto(id, createdDate, message, dtype, presentationId, centerId, centerName);
     }
 
     @Getter
-    public static class PresentationPeriodClosedAlarmDto extends AlarmDetailDto {
+    public static class PresentationFullAlarmDto extends AlarmDetailDto {
 
         protected Long presentationId;
         protected Long centerId;
         protected String centerName;
 
-        public PresentationPeriodClosedAlarmDto(Long id, LocalDateTime createdDate, String message, String type, Long presentationId, Long centerId, String centerName) {
+        public PresentationFullAlarmDto(Long id, LocalDateTime createdDate, String message, String type, Long presentationId, Long centerId, String centerName) {
             super(id, createdDate, message, type);
             this.presentationId = presentationId;
             this.centerId = centerId;
             this.centerName = centerName;
         }
     }
-
 }

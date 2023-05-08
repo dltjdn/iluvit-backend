@@ -45,7 +45,7 @@ public class IluvitJpaConfig {
     public LocalContainerEntityManagerFactoryBean iluvitEntityManager() {
         LocalContainerEntityManagerFactoryBean em = new LocalContainerEntityManagerFactoryBean();
         em.setDataSource(iluvitDataSource(iluvitDatasourceProperties()));
-        em.setPackagesToScan("FIS.iLUVit.domain.iluvit.*");
+        em.setPackagesToScan("FIS.iLUVit.domain.iluvit");
         em.setPersistenceUnitName("iluvitEntityManager");
 
 

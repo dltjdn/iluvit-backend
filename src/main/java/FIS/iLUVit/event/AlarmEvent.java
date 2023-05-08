@@ -1,6 +1,6 @@
 package FIS.iLUVit.event;
 
-import FIS.iLUVit.domain.iluvit.Alarm;
+import FIS.iLUVit.domain.iluvit.alarms.Alarm;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 

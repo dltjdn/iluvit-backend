@@ -11,9 +11,9 @@ import FIS.iLUVit.domain.iluvit.enumtype.Approval;
 import FIS.iLUVit.domain.iluvit.enumtype.Auth;
 import FIS.iLUVit.domain.iluvit.enumtype.AuthKind;
 import FIS.iLUVit.domain.iluvit.enumtype.Status;
-import FIS.iLUVit.domain.iluvit.Report;
-import FIS.iLUVit.domain.iluvit.ReportDetailComment;
-import FIS.iLUVit.domain.iluvit.ReportDetailPost;
+import FIS.iLUVit.domain.iluvit.reports.Report;
+import FIS.iLUVit.domain.iluvit.reports.ReportDetailComment;
+import FIS.iLUVit.domain.iluvit.reports.ReportDetailPost;
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.algorithms.Algorithm;
 

@@ -1,14 +1,14 @@
 package FIS.iLUVit.service;
 
-import FIS.iLUVit.domain.iluvit.Alarm;
-import FIS.iLUVit.domain.iluvit.ConvertedToParticipateAlarm;
+import FIS.iLUVit.domain.iluvit.alarms.Alarm;
+import FIS.iLUVit.domain.iluvit.alarms.ConvertedToParticipateAlarm;
 import FIS.iLUVit.domain.common.Center;
 import FIS.iLUVit.domain.iluvit.Participation;
 import FIS.iLUVit.domain.iluvit.Presentation;
 import FIS.iLUVit.domain.iluvit.PtDate;
 import FIS.iLUVit.domain.iluvit.Waiting;
 import FIS.iLUVit.dto.presentation.*;
-import FIS.iLUVit.domain.iluvit.PresentationCreatedAlarm;
+import FIS.iLUVit.domain.iluvit.alarms.PresentationCreatedAlarm;
 import FIS.iLUVit.domain.common.embeddable.Area;
 import FIS.iLUVit.domain.common.embeddable.Theme;
 import FIS.iLUVit.domain.iluvit.enumtype.KindOf;
