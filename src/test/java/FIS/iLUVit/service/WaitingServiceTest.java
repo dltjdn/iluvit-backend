@@ -1,15 +1,14 @@
 package FIS.iLUVit.service;
 
-import FIS.iLUVit.domain.common.Center;
-import FIS.iLUVit.domain.iluvit.*;
+import FIS.iLUVit.domain.*;
 import FIS.iLUVit.exception.PresentationErrorResult;
 import FIS.iLUVit.exception.PresentationException;
 import FIS.iLUVit.exception.WaitingErrorResult;
 import FIS.iLUVit.exception.WaitingException;
-import FIS.iLUVit.repository.iluvit.ParentRepository;
-import FIS.iLUVit.repository.iluvit.ParticipationRepository;
-import FIS.iLUVit.repository.iluvit.PtDateRepository;
-import FIS.iLUVit.repository.iluvit.WaitingRepository;
+import FIS.iLUVit.repository.ParentRepository;
+import FIS.iLUVit.repository.ParticipationRepository;
+import FIS.iLUVit.repository.PtDateRepository;
+import FIS.iLUVit.repository.WaitingRepository;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;

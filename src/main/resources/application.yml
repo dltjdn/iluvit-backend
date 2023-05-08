@@ -13,8 +13,6 @@ spring:
     multipart:
       max-file-size: 30MB
       max-request-size: 30MB
-  main:
-    allow-bean-definition-overriding: true
   jpa:
     hibernate:
       ddl-auto: none

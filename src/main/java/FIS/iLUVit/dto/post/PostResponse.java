@@ -1,7 +1,7 @@
 package FIS.iLUVit.dto.post;
 
 import FIS.iLUVit.dto.comment.CommentResponse;
-import FIS.iLUVit.domain.iluvit.Post;
+import FIS.iLUVit.domain.Post;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;

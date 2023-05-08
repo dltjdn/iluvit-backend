@@ -1,16 +1,16 @@
 package FIS.iLUVit.service;
 
 import FIS.iLUVit.Creator;
-import FIS.iLUVit.domain.iluvit.*;
 import FIS.iLUVit.dto.comment.CommentDto;
 import FIS.iLUVit.dto.comment.CommentRequest;
-import FIS.iLUVit.domain.iluvit.alarms.Alarm;
-import FIS.iLUVit.domain.iluvit.alarms.PostAlarm;
-import FIS.iLUVit.domain.iluvit.enumtype.Auth;
-import FIS.iLUVit.domain.iluvit.enumtype.BoardKind;
+import FIS.iLUVit.domain.*;
+import FIS.iLUVit.domain.alarms.Alarm;
+import FIS.iLUVit.domain.alarms.PostAlarm;
+import FIS.iLUVit.domain.enumtype.Auth;
+import FIS.iLUVit.domain.enumtype.BoardKind;
 import FIS.iLUVit.event.AlarmEvent;
 import FIS.iLUVit.exception.*;
-import FIS.iLUVit.repository.iluvit.*;
+import FIS.iLUVit.repository.*;
 import FIS.iLUVit.service.createmethod.CreateTest;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;

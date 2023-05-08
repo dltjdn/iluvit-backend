@@ -1,19 +1,17 @@
 package FIS.iLUVit.service;
 
-import FIS.iLUVit.domain.iluvit.enumtype.AuthKind;
-import FIS.iLUVit.domain.iluvit.AuthNumber;
-import FIS.iLUVit.domain.iluvit.Scrap;
-import FIS.iLUVit.domain.iluvit.TokenPair;
-import FIS.iLUVit.domain.iluvit.User;
+import FIS.iLUVit.domain.*;
+import FIS.iLUVit.domain.enumtype.AuthKind;
 import FIS.iLUVit.dto.user.*;
 import FIS.iLUVit.exception.*;
-import FIS.iLUVit.repository.iluvit.*;
+import FIS.iLUVit.repository.*;
 import FIS.iLUVit.security.JwtUtils;
 import FIS.iLUVit.security.LoginRequest;
 import FIS.iLUVit.security.LoginResponse;
 import FIS.iLUVit.security.uesrdetails.PrincipalDetails;
 import com.auth0.jwt.exceptions.JWTVerificationException;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -24,6 +22,9 @@ import org.springframework.transaction.annotation.Transactional;
 import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
+
+import static java.util.stream.Collectors.toList;
 
 @Service
 @Transactional

@@ -1,8 +1,7 @@
 package FIS.iLUVit.dto.parent;
 
-import FIS.iLUVit.domain.common.Center;
-import FIS.iLUVit.domain.iluvit.enumtype.Status;
-import FIS.iLUVit.domain.iluvit.*;
+import FIS.iLUVit.domain.*;
+import FIS.iLUVit.domain.enumtype.Status;
 import lombok.*;
 import org.springframework.format.annotation.DateTimeFormat;
 import java.time.LocalDate;

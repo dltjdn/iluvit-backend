@@ -1,6 +1,6 @@
 package FIS.iLUVit.dto.presentation;
 
-import FIS.iLUVit.domain.common.embeddable.Theme;
+import FIS.iLUVit.domain.embeddable.Theme;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;

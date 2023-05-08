@@ -2,12 +2,12 @@ package FIS.iLUVit.service;
 
 import FIS.iLUVit.dto.expoToken.ExpoTokenDto;
 import FIS.iLUVit.dto.expoToken.ExpoTokenRequest;
-import FIS.iLUVit.domain.iluvit.ExpoToken;
-import FIS.iLUVit.domain.iluvit.User;
+import FIS.iLUVit.domain.ExpoToken;
+import FIS.iLUVit.domain.User;
 import FIS.iLUVit.exception.UserErrorResult;
 import FIS.iLUVit.exception.UserException;
-import FIS.iLUVit.repository.iluvit.ExpoTokenRepository;
-import FIS.iLUVit.repository.iluvit.UserRepository;
+import FIS.iLUVit.repository.ExpoTokenRepository;
+import FIS.iLUVit.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.stereotype.Service;

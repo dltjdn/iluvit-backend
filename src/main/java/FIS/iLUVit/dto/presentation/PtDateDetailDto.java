@@ -1,6 +1,6 @@
 package FIS.iLUVit.dto.presentation;
 
-import FIS.iLUVit.domain.iluvit.PtDate;
+import FIS.iLUVit.domain.PtDate;
 import lombok.Getter;
 import java.time.LocalDate;
 

@@ -8,16 +8,15 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.MessageSource;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.Primary;
 import org.springframework.context.support.ReloadableResourceBundleMessageSource;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
 import javax.annotation.PostConstruct;
 import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
 import java.util.TimeZone;
 
 @Configuration
+@ForDB
 public class AppConfig {
 
     @PostConstruct
@@ -25,10 +24,10 @@ public class AppConfig {
         TimeZone.setDefault(TimeZone.getTimeZone("Asia/Seoul"));
     }
 
-//    @Bean
-//    public JPAQueryFactory jpaQueryFactory(EntityManager entityManager){
-//        return new JPAQueryFactory(entityManager);
-//    }
+    @Bean
+    public JPAQueryFactory jpaQueryFactory(EntityManager entityManager){
+        return new JPAQueryFactory(entityManager);
+    }
 
     // 비밀번호 해싱 encoder 빈등록
     @Bean

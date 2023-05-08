@@ -1,6 +1,6 @@
 package FIS.iLUVit.dto.presentation;
 
-import FIS.iLUVit.domain.iluvit.Presentation;
+import FIS.iLUVit.domain.Presentation;
 import FIS.iLUVit.exception.PresentationException;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.fasterxml.jackson.datatype.jsr310.ser.LocalDateSerializer;

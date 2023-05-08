@@ -6,7 +6,7 @@ import FIS.iLUVit.dto.scrap.ScrapDirRequest;
 import FIS.iLUVit.dto.scrap.ScrapDirDetailRequest;
 import FIS.iLUVit.dto.scrap.ScrapDirUpdateRequest;
 import FIS.iLUVit.dto.scrap.ScrapInfoDto;
-import FIS.iLUVit.domain.iluvit.User;
+import FIS.iLUVit.domain.User;
 import FIS.iLUVit.exception.ScrapErrorResult;
 import FIS.iLUVit.exception.ScrapException;
 import FIS.iLUVit.exception.exceptionHandler.ErrorResponse;

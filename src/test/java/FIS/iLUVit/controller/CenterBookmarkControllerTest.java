@@ -2,11 +2,11 @@ package FIS.iLUVit.controller;
 
 import FIS.iLUVit.Creator;
 import FIS.iLUVit.config.argumentResolver.LoginUserArgumentResolver;
-import FIS.iLUVit.domain.common.Center;
-import FIS.iLUVit.domain.iluvit.Parent;
-import FIS.iLUVit.domain.iluvit.Prefer;
-import FIS.iLUVit.domain.iluvit.User;
-import FIS.iLUVit.domain.iluvit.enumtype.Auth;
+import FIS.iLUVit.domain.Center;
+import FIS.iLUVit.domain.Parent;
+import FIS.iLUVit.domain.Prefer;
+import FIS.iLUVit.domain.User;
+import FIS.iLUVit.domain.enumtype.Auth;
 import FIS.iLUVit.exception.PreferErrorResult;
 import FIS.iLUVit.exception.PreferException;
 import FIS.iLUVit.exception.exceptionHandler.ErrorResponse;

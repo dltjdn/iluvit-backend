@@ -5,7 +5,7 @@ import FIS.iLUVit.config.argumentResolver.LoginUserArgumentResolver;
 import FIS.iLUVit.dto.user.CheckNicknameRequest;
 import FIS.iLUVit.dto.user.PasswordRequest;
 import FIS.iLUVit.dto.user.UserResponse;
-import FIS.iLUVit.domain.iluvit.Parent;
+import FIS.iLUVit.domain.Parent;
 import FIS.iLUVit.exception.SignupErrorResult;
 import FIS.iLUVit.exception.SignupException;
 import FIS.iLUVit.exception.UserErrorResult;

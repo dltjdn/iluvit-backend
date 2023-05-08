@@ -1,8 +1,8 @@
 package FIS.iLUVit.dto.center;
 
-import FIS.iLUVit.domain.common.embeddable.Area;
-import FIS.iLUVit.domain.common.embeddable.Theme;
-import FIS.iLUVit.domain.iluvit.enumtype.KindOf;
+import FIS.iLUVit.domain.embeddable.Area;
+import FIS.iLUVit.domain.embeddable.Theme;
+import FIS.iLUVit.domain.enumtype.KindOf;
 import com.querydsl.core.annotations.QueryProjection;
 import lombok.Builder;
 import lombok.Getter;

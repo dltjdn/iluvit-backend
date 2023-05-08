@@ -1,7 +1,7 @@
 package FIS.iLUVit.dto.board;
 
-import FIS.iLUVit.domain.iluvit.Post;
-import FIS.iLUVit.domain.iluvit.enumtype.BoardKind;
+import FIS.iLUVit.domain.Post;
+import FIS.iLUVit.domain.enumtype.BoardKind;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;

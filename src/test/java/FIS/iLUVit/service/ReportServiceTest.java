@@ -1,18 +1,14 @@
 package FIS.iLUVit.service;
 
 import FIS.iLUVit.Creator;
-import FIS.iLUVit.domain.common.Center;
-import FIS.iLUVit.domain.iluvit.enumtype.ReportReason;
-import FIS.iLUVit.domain.iluvit.Board;
-import FIS.iLUVit.domain.iluvit.Comment;
-import FIS.iLUVit.domain.iluvit.Post;
-import FIS.iLUVit.domain.iluvit.Teacher;
+import FIS.iLUVit.domain.enumtype.ReportReason;
 import FIS.iLUVit.dto.report.ReportRequest;
-import FIS.iLUVit.domain.iluvit.enumtype.ReportType;
-import FIS.iLUVit.domain.iluvit.reports.Report;
-import FIS.iLUVit.domain.iluvit.reports.ReportDetail;
+import FIS.iLUVit.domain.*;
+import FIS.iLUVit.domain.enumtype.ReportType;
+import FIS.iLUVit.domain.reports.Report;
+import FIS.iLUVit.domain.reports.ReportDetail;
 import FIS.iLUVit.exception.*;
-import FIS.iLUVit.repository.iluvit.*;
+import FIS.iLUVit.repository.*;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;

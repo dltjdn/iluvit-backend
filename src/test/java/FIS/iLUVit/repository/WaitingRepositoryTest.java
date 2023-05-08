@@ -1,10 +1,7 @@
 package FIS.iLUVit.repository;
 
 import FIS.iLUVit.config.argumentResolver.ForDB;
-import FIS.iLUVit.domain.common.Center;
-import FIS.iLUVit.domain.iluvit.*;
-import FIS.iLUVit.repository.iluvit.PtDateRepository;
-import FIS.iLUVit.repository.iluvit.WaitingRepository;
+import FIS.iLUVit.domain.*;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;

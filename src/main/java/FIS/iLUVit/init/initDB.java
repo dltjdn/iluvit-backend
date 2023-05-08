@@ -1,13 +1,19 @@
 package FIS.iLUVit.init;
 
-import FIS.iLUVit.domain.iluvit.enumtype.BoardKind;
-import FIS.iLUVit.domain.iluvit.Board;
+import FIS.iLUVit.domain.*;
+import FIS.iLUVit.domain.embeddable.Area;
+import FIS.iLUVit.domain.embeddable.Theme;
+import FIS.iLUVit.domain.enumtype.Approval;
+import FIS.iLUVit.domain.enumtype.Auth;
+import FIS.iLUVit.domain.enumtype.BoardKind;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.annotation.PostConstruct;
 import javax.persistence.EntityManager;
+import java.time.LocalDate;
 
 @Component
 @RequiredArgsConstructor

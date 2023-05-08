@@ -1,19 +1,14 @@
 package FIS.iLUVit.service;
 
-import FIS.iLUVit.domain.common.Center;
-import FIS.iLUVit.domain.iluvit.*;
 import FIS.iLUVit.dto.board.BoardListDto;
 import FIS.iLUVit.dto.board.BoardRequest;
 
 import FIS.iLUVit.dto.board.StoryPreviewDto;
-import FIS.iLUVit.domain.iluvit.enumtype.Approval;
-import FIS.iLUVit.domain.iluvit.enumtype.Auth;
+import FIS.iLUVit.domain.*;
+import FIS.iLUVit.domain.enumtype.Approval;
+import FIS.iLUVit.domain.enumtype.Auth;
 import FIS.iLUVit.exception.*;
-import FIS.iLUVit.repository.common.CenterRepository;
-import FIS.iLUVit.repository.iluvit.BoardBookmarkRepository;
-import FIS.iLUVit.repository.iluvit.BoardRepository;
-import FIS.iLUVit.repository.iluvit.ChildRepository;
-import FIS.iLUVit.repository.iluvit.UserRepository;
+import FIS.iLUVit.repository.*;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;

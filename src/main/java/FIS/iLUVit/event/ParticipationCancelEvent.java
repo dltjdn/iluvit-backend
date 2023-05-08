@@ -1,7 +1,7 @@
 package FIS.iLUVit.event;
 
-import FIS.iLUVit.domain.iluvit.Presentation;
-import FIS.iLUVit.domain.iluvit.PtDate;
+import FIS.iLUVit.domain.Presentation;
+import FIS.iLUVit.domain.PtDate;
 import lombok.Getter;
 
 @Getter

@@ -1,19 +1,13 @@
 package FIS.iLUVit;
 
-import FIS.iLUVit.domain.common.Center;
-import FIS.iLUVit.domain.common.ChildHouse;
-import FIS.iLUVit.domain.common.Kindergarten;
-import FIS.iLUVit.domain.common.embeddable.Area;
-import FIS.iLUVit.domain.common.embeddable.BasicInfra;
-import FIS.iLUVit.domain.common.embeddable.Theme;
-import FIS.iLUVit.domain.iluvit.*;
-import FIS.iLUVit.domain.iluvit.enumtype.Approval;
-import FIS.iLUVit.domain.iluvit.enumtype.Auth;
-import FIS.iLUVit.domain.iluvit.enumtype.AuthKind;
-import FIS.iLUVit.domain.iluvit.enumtype.Status;
-import FIS.iLUVit.domain.iluvit.reports.Report;
-import FIS.iLUVit.domain.iluvit.reports.ReportDetailComment;
-import FIS.iLUVit.domain.iluvit.reports.ReportDetailPost;
+import FIS.iLUVit.domain.*;
+import FIS.iLUVit.domain.embeddable.Area;
+import FIS.iLUVit.domain.embeddable.BasicInfra;
+import FIS.iLUVit.domain.embeddable.Theme;
+import FIS.iLUVit.domain.enumtype.*;
+import FIS.iLUVit.domain.reports.Report;
+import FIS.iLUVit.domain.reports.ReportDetailComment;
+import FIS.iLUVit.domain.reports.ReportDetailPost;
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.algorithms.Algorithm;
 

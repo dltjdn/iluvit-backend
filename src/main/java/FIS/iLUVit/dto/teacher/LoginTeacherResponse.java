@@ -1,7 +1,7 @@
 package FIS.iLUVit.dto.teacher;
 
-import FIS.iLUVit.domain.iluvit.Teacher;
-import FIS.iLUVit.domain.iluvit.enumtype.Approval;
+import FIS.iLUVit.domain.Teacher;
+import FIS.iLUVit.domain.enumtype.Approval;
 import FIS.iLUVit.security.LoginResponse;
 import lombok.Getter;
 

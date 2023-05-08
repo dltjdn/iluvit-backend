@@ -2,13 +2,12 @@ package FIS.iLUVit.repository;
 
 import FIS.iLUVit.Creator;
 import FIS.iLUVit.config.argumentResolver.ForDB;
-import FIS.iLUVit.domain.common.Center;
-import FIS.iLUVit.domain.iluvit.Child;
-import FIS.iLUVit.domain.iluvit.Parent;
-import FIS.iLUVit.domain.iluvit.Teacher;
-import FIS.iLUVit.domain.iluvit.enumtype.Approval;
-import FIS.iLUVit.domain.iluvit.enumtype.Auth;
-import FIS.iLUVit.repository.iluvit.TeacherRepository;
+import FIS.iLUVit.domain.Center;
+import FIS.iLUVit.domain.Child;
+import FIS.iLUVit.domain.Parent;
+import FIS.iLUVit.domain.Teacher;
+import FIS.iLUVit.domain.enumtype.Approval;
+import FIS.iLUVit.domain.enumtype.Auth;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -16,12 +15,14 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.context.annotation.ComponentScan;
+import org.springframework.dao.DataIntegrityViolationException;
 
 import javax.persistence.EntityManager;
 
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 @DataJpaTest(includeFilters = @ComponentScan.Filter(ForDB.class))
 public class TeacherRepositoryTest {

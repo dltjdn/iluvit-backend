@@ -2,13 +2,9 @@ package FIS.iLUVit.repository;
 
 import FIS.iLUVit.Creator;
 import FIS.iLUVit.config.argumentResolver.ForDB;
-import FIS.iLUVit.domain.common.Center;
-import FIS.iLUVit.domain.iluvit.enumtype.Auth;
-import FIS.iLUVit.domain.iluvit.Parent;
-import FIS.iLUVit.domain.iluvit.Review;
-import FIS.iLUVit.domain.iluvit.ReviewHeart;
-import FIS.iLUVit.domain.iluvit.Teacher;
-import FIS.iLUVit.repository.iluvit.ReviewHeartRepository;
+import FIS.iLUVit.domain.*;
+import FIS.iLUVit.domain.enumtype.Auth;
+import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,6 +15,7 @@ import org.springframework.context.annotation.ComponentScan;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 @DataJpaTest(includeFilters = @ComponentScan.Filter(ForDB.class))
 class ReviewHeartRepositoryTest {

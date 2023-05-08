@@ -1,7 +1,7 @@
 package FIS.iLUVit.controller;
 
 import FIS.iLUVit.config.argumentResolver.Login;
-import FIS.iLUVit.domain.iluvit.enumtype.Auth;
+import FIS.iLUVit.domain.enumtype.Auth;
 import FIS.iLUVit.dto.board.BoardPreviewDto;
 import FIS.iLUVit.dto.post.PostPreviewDto;
 import FIS.iLUVit.dto.post.PostRequest;

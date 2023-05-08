@@ -1,11 +1,9 @@
 package FIS.iLUVit.repository;
 
 import FIS.iLUVit.config.argumentResolver.ForDB;
-import FIS.iLUVit.domain.common.Center;
-import FIS.iLUVit.domain.iluvit.enumtype.Auth;
-import FIS.iLUVit.domain.iluvit.enumtype.Status;
-import FIS.iLUVit.domain.iluvit.*;
-import FIS.iLUVit.repository.iluvit.PtDateRepository;
+import FIS.iLUVit.domain.*;
+import FIS.iLUVit.domain.enumtype.Auth;
+import FIS.iLUVit.domain.enumtype.Status;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;

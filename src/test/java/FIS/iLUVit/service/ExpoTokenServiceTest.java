@@ -1,11 +1,11 @@
 package FIS.iLUVit.service;
 
 import FIS.iLUVit.dto.expoToken.ExpoTokenRequest;
-import FIS.iLUVit.domain.iluvit.ExpoToken;
-import FIS.iLUVit.domain.iluvit.Parent;
-import FIS.iLUVit.domain.iluvit.User;
-import FIS.iLUVit.repository.iluvit.ExpoTokenRepository;
-import FIS.iLUVit.repository.iluvit.UserRepository;
+import FIS.iLUVit.domain.ExpoToken;
+import FIS.iLUVit.domain.Parent;
+import FIS.iLUVit.domain.User;
+import FIS.iLUVit.repository.ExpoTokenRepository;
+import FIS.iLUVit.repository.UserRepository;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;

@@ -1,15 +1,15 @@
 package FIS.iLUVit.service;
 
 import FIS.iLUVit.dto.report.ReportRequest;
-import FIS.iLUVit.domain.iluvit.Comment;
-import FIS.iLUVit.domain.iluvit.Post;
-import FIS.iLUVit.domain.iluvit.User;
-import FIS.iLUVit.domain.iluvit.enumtype.ReportType;
-import FIS.iLUVit.domain.iluvit.reports.Report;
-import FIS.iLUVit.domain.iluvit.reports.ReportDetailComment;
-import FIS.iLUVit.domain.iluvit.reports.ReportDetailPost;
+import FIS.iLUVit.domain.Comment;
+import FIS.iLUVit.domain.Post;
+import FIS.iLUVit.domain.User;
+import FIS.iLUVit.domain.enumtype.ReportType;
+import FIS.iLUVit.domain.reports.Report;
+import FIS.iLUVit.domain.reports.ReportDetailComment;
+import FIS.iLUVit.domain.reports.ReportDetailPost;
 import FIS.iLUVit.exception.*;
-import FIS.iLUVit.repository.iluvit.*;
+import FIS.iLUVit.repository.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;

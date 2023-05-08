@@ -1,13 +1,8 @@
 package FIS.iLUVit.repository;
 
 import FIS.iLUVit.config.argumentResolver.ForDB;
-import FIS.iLUVit.domain.common.Center;
-import FIS.iLUVit.domain.iluvit.enumtype.Status;
-import FIS.iLUVit.domain.iluvit.Parent;
-import FIS.iLUVit.domain.iluvit.Participation;
-import FIS.iLUVit.domain.iluvit.Presentation;
-import FIS.iLUVit.domain.iluvit.PtDate;
-import FIS.iLUVit.repository.iluvit.ParticipationRepository;
+import FIS.iLUVit.domain.*;
+import FIS.iLUVit.domain.enumtype.Status;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;

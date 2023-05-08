@@ -1,7 +1,14 @@
 package FIS.iLUVit.controller;
 
 import FIS.iLUVit.config.argumentResolver.Login;
-import FIS.iLUVit.repository.iluvit.PostHeartRepository;
+import FIS.iLUVit.domain.Post;
+import FIS.iLUVit.domain.PostHeart;
+import FIS.iLUVit.domain.User;
+import FIS.iLUVit.exception.PostErrorResult;
+import FIS.iLUVit.exception.PostException;
+import FIS.iLUVit.repository.PostHeartRepository;
+import FIS.iLUVit.repository.PostRepository;
+import FIS.iLUVit.repository.UserRepository;
 import FIS.iLUVit.service.PostService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
