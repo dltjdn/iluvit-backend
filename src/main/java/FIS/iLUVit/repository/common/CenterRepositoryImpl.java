@@ -22,7 +22,7 @@ import static FIS.iLUVit.domain.iluvit.QPrefer.prefer;
 import static FIS.iLUVit.domain.iluvit.QReview.review;
 import static com.querydsl.core.types.dsl.MathExpressions.*;
 
-//@AllArgsConstructor
+@AllArgsConstructor
 public class CenterRepositoryImpl extends CenterQueryMethod implements CenterRepositoryCustom {
 
     private final JPAQueryFactory jpaQueryFactory;

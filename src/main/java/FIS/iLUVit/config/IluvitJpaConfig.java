@@ -3,7 +3,6 @@ package FIS.iLUVit.config;
 import FIS.iLUVit.config.argumentResolver.ForDB;
 import com.zaxxer.hikari.HikariConfig;
 import com.zaxxer.hikari.HikariDataSource;
-import org.springframework.boot.autoconfigure.jdbc.DataSourceProperties;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.boot.jdbc.DataSourceBuilder;
 import org.springframework.context.annotation.Bean;
@@ -25,30 +24,17 @@ import javax.sql.DataSource;
         transactionManagerRef = "iluvitTransactionManager"
 )
 public class IluvitJpaConfig {
-
-    @Bean
-    @Primary
-    @ConfigurationProperties("spring.datasource-iluvit")
-    public DataSourceProperties commonDatasourceProperties() {
-        return new DataSourceProperties();
-    }
-
     @Bean
     @ConfigurationProperties(prefix = "spring.datasource-iluvit.hikari")
-    public HikariDataSource iluvitDataSource(DataSourceProperties properties) {
-        return properties
-                .initializeDataSourceBuilder()
-                .type(HikariDataSource.class)
-                .build();
+    public DataSource iluvitDataSource() {
+        return DataSourceBuilder.create().build();
     }
 
     @Bean
     public LocalContainerEntityManagerFactoryBean iluvitEntityManager() {
         LocalContainerEntityManagerFactoryBean em = new LocalContainerEntityManagerFactoryBean();
-        em.setDataSource(iluvitDataSource(commonDatasourceProperties()));
+        em.setDataSource(iluvitDataSource());
         em.setPackagesToScan("FIS.iLUVit.domain.iluvit");
-        em.setPersistenceUnitName("iluvitEntityManager");
-
 
         HibernateJpaVendorAdapter vendorAdapter = new HibernateJpaVendorAdapter();
         em.setJpaVendorAdapter(vendorAdapter);

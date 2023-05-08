@@ -4,8 +4,8 @@ import com.querydsl.core.types.dsl.BooleanExpression;
 
 import java.util.Collection;
 
-import static FIS.iLUVit.domain.common.QCenter.center;
-import static FIS.iLUVit.domain.iluvit.QPost.post;
+import static FIS.iLUVit.domain.QCenter.center;
+import static FIS.iLUVit.domain.QPost.post;
 
 public class PostQueryMethod {
     protected BooleanExpression keywordContains(String keyword) {
