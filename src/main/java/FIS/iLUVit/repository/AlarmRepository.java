@@ -31,7 +31,7 @@ public interface AlarmRepository extends JpaRepository<Alarm, Long> {
     Slice<Alarm> findPresentationByUser(@Param("userId") Long userId, Pageable pageable);
 
     /*
-        유저 id와 알람 id 여러 개를 파라미터 값으로 받아 id들을 삭제한다.
+        유저 id와 여러개의 알람 id들을 파라미터 값으로 받아 알람을 삭제한다.
      */
     @Modifying
     @Query("delete from Alarm alarm where alarm.id in :alarmIds and alarm.user.id = :userId")
@@ -45,7 +45,7 @@ public interface AlarmRepository extends JpaRepository<Alarm, Long> {
     Integer setPostIsNull(@Param("postId") Long postId);
 
     /*
-        User 도메인에 있는 user 정보들을 모두 제거함.
+        유저의 모든 알람을 삭제함.
     */
     void deleteAllByUser(User user);
 }
