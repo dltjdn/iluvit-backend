@@ -15,7 +15,7 @@ import java.util.List;
 public interface AlarmRepository extends JpaRepository<Alarm, Long> {
 
     /*
-        유저 id를 파라미터로 정하여 유저 id에 맞는 활동을 찾음.
+        유저 id를 파라미터로 정하여 유저 id에 맞는 활동을 조회한다.
      */
     @Query("select alarm from Alarm alarm " +
             "where alarm.user.id =:userId and " +
@@ -23,7 +23,7 @@ public interface AlarmRepository extends JpaRepository<Alarm, Long> {
     Slice<Alarm> findActiveByUser(@Param("userId") Long userId, Pageable pageable);
 
     /*
-        유저 id를 파라미터로 정하여 유저 id에 맞는 설명회를 찾음.
+        유저 id를 파라미터로 정하여 유저 id에 맞는 설명회를 조회한다.
      */
     @Query("select alarm from Alarm alarm " +
             "where alarm.user.id =:userId and " +
@@ -38,14 +38,14 @@ public interface AlarmRepository extends JpaRepository<Alarm, Long> {
     Integer deleteByIds(@Param("userId") Long userId, @Param("alarmIds") List<Long> alarmIds);
 
     /*
-        게시글 id를 파라미터로 받아서 게시글은 null이 아니다를 세팅함.
+        게시글 id를 파라미터로 받아서 게시글은 null이 아니다를 세팅한다.
      */
     @Modifying(clearAutomatically = true)
     @Query("update PostAlarm pa set pa.postId = null where pa.postId = :postId")
     Integer setPostIsNull(@Param("postId") Long postId);
 
     /*
-        유저의 모든 알람을 삭제함.
+        유저의 모든 알람을 삭제한다.
     */
     void deleteAllByUser(User user);
 }

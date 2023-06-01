@@ -58,7 +58,7 @@ public interface BoardBookmarkRepository extends JpaRepository<Bookmark, Long> {
     void deleteAllByBoardAndUser(@Param("userId") Long userId, @Param("boardIds") List<Long> boardIds);
 
     /*
-        유저 id와 센터 id를 파라미터로 받아서 센터 및 사용자별로 모두 삭제합니다.
+        유저 id와 센터 id를 파라미터로 받아서 시설 및 사용자별로 모두 삭제합니다.
     */
     @Modifying
     @Query("delete " +
@@ -77,7 +77,7 @@ public interface BoardBookmarkRepository extends JpaRepository<Bookmark, Long> {
     List<Bookmark> findByUser(User user);
 
     /*
-        사용자 id를 파라미터로 받아서 게시판 및 센터를 사용하여 사용자별로 조회합니다.
+        사용자 id를 파라미터로 받아서 게시판 및 시설을 사용하여 사용자별로 조회합니다.
     */
     @Query("select bm from Bookmark bm " +
             "join fetch bm.board b " +
