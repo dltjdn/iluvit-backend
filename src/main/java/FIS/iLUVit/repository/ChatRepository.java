@@ -11,6 +11,9 @@ import org.springframework.data.repository.query.Param;
 
 public interface ChatRepository extends JpaRepository<Chat, Long> {
 
+    /*
+        사용자 id와 채팅방 id를 파라미터로 받아서 채팅방으로 조회합니다.
+     */
     @Query("select c from Chat c " +
             "join fetch c.chatRoom cr " +
             "where cr.id = :roomId " +
