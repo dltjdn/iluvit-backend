@@ -14,6 +14,9 @@ import java.util.List;
 
 public interface AlarmRepository extends JpaRepository<Alarm, Long> {
 
+    /*
+        유저 id를 파라미터로 정하여
+     */
     @Query("select alarm from Alarm alarm " +
             "where alarm.user.id =:userId and " +
             "alarm.dtype <> 'PresentationFullAlarm' and alarm.dtype <> 'ConvertedToParticipateAlarm' and alarm.dtype <> 'PresentationCreatedAlarm' and alarm.dtype <> 'PresentationPeriodClosedAlarm' ")
