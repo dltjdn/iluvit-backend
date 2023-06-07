@@ -13,12 +13,18 @@ public interface ReportRepository extends JpaRepository<Report, Long> {
 
     Optional<Report> findByTargetId(Long targetId);
 
+    /*
+        게시글 id를 파라미터로 받아서 대상이 Null이고 상태가 삭제가 되도록 설정합니다.
+     */
     @Modifying(clearAutomatically = true)
     @Query("update Report r " +
             "set r.targetId = null, r.status = 'DELETE' "+
             "where r.targetId =:postId ")
     void setTargetIsNullAndStatusIsDelete(@Param("postId") Long postId);
 
+    /*
+        댓글 id들을 파라미터로 받아서 대상이 Null이고 상태가 삭제가 되도록 설정합니다.
+     */
     @Modifying(clearAutomatically = true)
     @Query("update Report r " +
             "set r.targetId = null, r.status = 'DELETE' "+
