@@ -11,6 +11,9 @@ import java.util.Optional;
 
 public interface ReportRepository extends JpaRepository<Report, Long> {
 
+    /*
+        대상 id로 신고를 조회합니다.
+     */
     Optional<Report> findByTargetId(Long targetId);
 
     /*
