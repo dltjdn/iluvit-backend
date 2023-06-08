@@ -30,7 +30,7 @@ public interface ScrapRepository extends JpaRepository<Scrap, Long> {
     Optional<Scrap> findScrapByIdAndUserId(@Param("scrapId") Long scrapId, @Param("userId") Long userId);
 
     /*
-        사용자로 스크랩을 조회합니다.
+        사용자로 조회합니다.
      */
     List<Scrap> findByUser(User user);
 
