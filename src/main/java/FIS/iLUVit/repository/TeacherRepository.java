@@ -1,5 +1,6 @@
 package FIS.iLUVit.repository;
 
+import FIS.iLUVit.domain.Center;
 import FIS.iLUVit.domain.Teacher;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
@@ -14,6 +15,17 @@ public interface TeacherRepository extends JpaRepository<Teacher, Long> {
 
     @Query("select distinct t " +
             "from Teacher t " +
+            "join fetch t.center c " +
+            "left join fetch c.teachers " +
+            "where t.id =:userId " +
+            "and t.auth = 'DIRECTOR'")
+    Optional<Teacher> findDirectorByIdWithCenterWithTeacher(@Param("userId") Long userId);
+
+    @Query("select distinct t " +
+            "from Teacher t " +
+            "join fetch t.center c " +
+            "left join fetch c.children cc " +
+            "left join fetch cc.parent " +
             "where t.id =:userId " +
             "and t.approval = 'ACCEPT'")
     Optional<Teacher> findByIdWithCenterWithChildWithParent(@Param("userId") Long userId);
@@ -25,9 +37,14 @@ public interface TeacherRepository extends JpaRepository<Teacher, Long> {
     Optional<Teacher> findByIdAndNotAssign(@Param("userId") Long userId);
 
     @Query("select t from Teacher t where t.center.id =:centerId")
-    List<Teacher> findByCenterId(@Param("centerId") Long centerId);
+    List<Center> findByCenter(@Param("centerId") Long centerId);
 
-    Optional<Teacher> findById(Long userId);
+    @Query("select distinct t " +
+            "from Teacher t " +
+            "join fetch t.center c " +
+            "left join fetch c.teachers " +
+            "where t.id =:userId")
+    Optional<Teacher> findByIdWithCenterWithTeacher(@Param("userId") Long userId);
 
     @Query("select t " +
             "from Teacher t " +

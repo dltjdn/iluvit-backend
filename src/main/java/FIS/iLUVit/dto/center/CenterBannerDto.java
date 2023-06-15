@@ -4,33 +4,20 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
-import java.util.List;
-
 @Getter
-@NoArgsConstructor
 @AllArgsConstructor
-public class CenterBannerResponse {
+@NoArgsConstructor
+public class CenterBannerDto {
     private Long centerId;
     private String name;                    // 시설명
     private Boolean signed;                 // 원장의 가입 유무
     private Boolean recruit;                // 원아 모집중
     private String profileImage;
-    private List<String> infoImages;
+    private String infoImages;
     private Double starAverage;
     private Boolean prefer;
 
-    public CenterBannerResponse(CenterBannerDto banner, Double starAverage,List<String> infoImages) {
-        this.centerId = banner.getCenterId();
-        this.name = banner.getName();
-        this.signed = banner.getSigned();
-        this.recruit = banner.getRecruit();
-        this.starAverage = starAverage;
-        this.profileImage = banner.getProfileImage();
-        this.infoImages = infoImages;
-        this.prefer = banner.getPrefer();
-    }
-
-    public CenterBannerResponse(Long centerId, String name, Boolean signed, Boolean recruit, Double starAverage, Long preferId, String profileImage, List<String> infoImages) {
+    public CenterBannerDto(Long centerId, String name, Boolean signed, Boolean recruit, Double starAverage, Long preferId, String profileImage, String infoImages) {
         this.centerId = centerId;
         this.name = name;
         this.signed = signed;
@@ -39,5 +26,15 @@ public class CenterBannerResponse {
         this.infoImages = infoImages;
         this.profileImage = profileImage;
         this.prefer = preferId != null;
+    }
+
+    public CenterBannerDto(Long centerId, String name, Boolean signed, Boolean recruit, Double starAverage, String profileImage, String infoImages) {
+        this.centerId = centerId;
+        this.name = name;
+        this.signed = signed;
+        this.recruit = recruit;
+        this.starAverage = starAverage;
+        this.profileImage = profileImage;
+        this.prefer = false;
     }
 }
