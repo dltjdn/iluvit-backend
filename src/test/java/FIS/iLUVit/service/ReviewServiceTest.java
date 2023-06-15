@@ -393,7 +393,7 @@ public class ReviewServiceTest {
 
         Mockito.doReturn(reviewSlice)
                 .when(reviewRepository)
-                .findByCenterId(center1.getId(), PageRequest.of(0, 10));
+                .findByCenter(center1.getId(), PageRequest.of(0, 10));
 
         Mockito.doReturn(imagePath)
                 .when(imageService)

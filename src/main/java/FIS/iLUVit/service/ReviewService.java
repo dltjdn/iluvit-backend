@@ -100,7 +100,7 @@ public class ReviewService {
 
     public Slice<ReviewByCenterDto> findByCenter(Long centerId, Pageable pageable) {
         // getParent 지연 로딩 쿼리 막음
-        Slice<Review> reviews = reviewRepository.findByCenterId(centerId, pageable);
+        Slice<Review> reviews = reviewRepository.findByCenter(centerId, pageable);
 
         Slice<ReviewByCenterDto> reviewByCenterDtos = reviews.map(review -> {
 

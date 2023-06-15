@@ -72,8 +72,8 @@ public class CenterController {
      * 비고: id 기반 으로 센터 클릭시 배너로 나올 center 이름, 모집 상황 반환할 api
      */
     @GetMapping("{centerId}/recruit")
-    public CenterBannerResponse getCenterDetailsForBanner(@PathVariable("centerId") Long id, @Login Long userId) throws Exception {
-        return centerService.findBannerById(id, userId);
+    public void getCenterDetailsForBanner(@PathVariable("centerId") Long id, @Login Long userId){
+        // return centerService.findBannerById(id, userId);
     }
 
 
