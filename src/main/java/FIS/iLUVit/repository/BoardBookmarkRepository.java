@@ -9,6 +9,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
 import java.util.List;
+import java.util.Optional;
 
 public interface BoardBookmarkRepository extends JpaRepository<Bookmark, Long> {
     @Query("select b from Bookmark b join fetch b.user u join fetch b.board bd left join fetch bd.center c " +
@@ -27,6 +28,9 @@ public interface BoardBookmarkRepository extends JpaRepository<Bookmark, Long> {
 
     @Query("select bm from Bookmark bm join fetch bm.board b where bm.user.id = :userId and b.center.id is null ")
     List<Bookmark> findBoardByUser(@Param("userId") Long userId);
+
+    @Query("select bm from Bookmark bm where bm.user.id = :userId and bm.board.id = :boardId")
+    Optional<Bookmark> findBoardBookmarkByUserAndBoard(@Param("userId") Long userId, @Param("boardId") Long boardId);
 
     @Query("select bm from Bookmark bm join fetch bm.board b where bm.user.id = :userId and b.center.id = :centerId ")
     List<Bookmark> findBoardByUserAndCenter(@Param("userId") Long userId, @Param("centerId") Long centerId);
