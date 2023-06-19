@@ -27,7 +27,7 @@ do
     echo "> #${RETRY_COUNT} trying..."
     # 테스트할 API 주소를 통해 http 상태 코드 가져오기
     RESPONSE_CODE=$(curl -s -o /dev/null -w "%{http_code}"  http://127.0.0.1:${TARGET_PORT}/actuator/health)
-
+    echo "> ${RESPONSE_CODE}"
 	# RESPONSE_CODE의 http 상태가 200번인 경우
     if [ ${RESPONSE_CODE} -eq 200 ]; then
         echo "> New WAS successfully running"
