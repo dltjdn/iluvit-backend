@@ -34,11 +34,10 @@ spring:
       - map
       - security
     # active 건드리지 말 것
-    active: develop
     group:
       # 그룹별 묶을 설정 파일 grouping
-      develop: iluvit-develop, test, http
-      prod: iluvit-prod, mysql, http
+      develop: iluvit-develop, dev-db, http
+      prod: iluvit-prod, prod-db, http
 
   version:
     aos: 1.0.0
