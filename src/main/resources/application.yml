@@ -40,9 +40,9 @@ spring:
       dev: iluvit-dev, dev-db, http
       prod: iluvit-prod, prod-db, http
 
-  version:
-    aos: 1.0.0
-    ios: 1.0.0
+version:
+  aos: 1.0.0
+  ios: 1.0.0
 
 ---
 spring:
