@@ -34,9 +34,10 @@ spring:
       - map
       - security
     # active 건드리지 말 것
+    active: dev
     group:
       # 그룹별 묶을 설정 파일 grouping
-      develop: iluvit-develop, dev-db, http
+      dev: iluvit-dev, dev-db, http
       prod: iluvit-prod, prod-db, http
 
   version:
@@ -45,7 +46,7 @@ spring:
 
 ---
 spring:
-  config.activate.on-profile: iluvit-develop
+  config.activate.on-profile: iluvit-dev
   jpa:
     hibernate:
       ddl-auto: update
