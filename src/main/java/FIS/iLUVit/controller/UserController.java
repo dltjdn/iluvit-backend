@@ -90,7 +90,7 @@ public class UserController {
      */
     @GetMapping("version/ios")
     public String iosVersion() {
-        return env.getProperty("version.ios");
+        return "뭐야???";
     }
 
 
