@@ -33,6 +33,6 @@ echo "$TIME_NOW > $JAR_FILE 파일 복사"
 cp $PROJECT_ROOT/build/libs/*.jar $JAR_FILE
 
 # 타켓 포트에 jar파일을 이용해 새로운 서버 실행
-nohup java -jar -Dserver.port=$TARGET_PORT /home/ubuntu/iluvit/app/iLUVit-0.0.1-SNAPSHOT.jar > /home/ubuntu/iluvit/app/nohup.out 2>&1 &
+nohup java -jar -Dserver.port=$TARGET_PORT $JAR_FILE > /home/ubuntu/iluvit/app/nohup.out 2>&1 &
 echo "> Now new WAS runs at ${TARGET_PORT}."
 exit 0
