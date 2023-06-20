@@ -57,6 +57,7 @@ public class ParentController {
      */
     @DeleteMapping("withdraw")
     public Long deleteParent(@Login Long userId){
-        return parentService.withdrawParent(userId);
+        return 12345L;
+        //return parentService.withdrawParent(userId);
     }
 }
