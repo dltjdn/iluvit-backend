@@ -38,9 +38,9 @@ PUBLIC_IP=$(curl http://169.254.169.254/latest/meta-data/public-ipv4)
 echo "퍼플릭 아이피 > ${PUBLIC_IP:0:2}"
 
 
-if [ ${PUBLIC_IP:0:2} -eq 52 ]; then
+if [ ${PUBLIC_IP:0:2} -eq 52.22 ]; then
   nohup java -jar -Dserver.port=$TARGET_PORT -Dspring.profiles.active=dev $JAR_FILE > /home/ubuntu/iluvit/app/nohup.out 2>&1 &
-elif [ ${PUBLIC_IP:0:2} -eq 13 ]; then
+elif [ ${PUBLIC_IP:0:2} -eq 13.22 ]; then
   nohup java -jar -Dserver.port=$TARGET_PORT -Dspring.profiles.active=prod $JAR_FILE > /home/ubuntu/iluvit/app/nohup.out 2>&1 &
 fi
 echo "> Now new WAS runs at ${TARGET_PORT}."
