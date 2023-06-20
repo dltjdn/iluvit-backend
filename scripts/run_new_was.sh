@@ -34,11 +34,11 @@ cp $PROJECT_ROOT/build/libs/*.jar $JAR_FILE
 
 
 # 타켓 포트에 jar파일을 이용해 새로운 서버 실행
-PUBLIC_IP = $(curl http://169.254.169.254/latest/meta-data/public-ipv4)
+PUBLIC_IP=$(curl http://169.254.169.254/latest/meta-data/public-ipv4)
 
-if [ ${PUBLIC_IP} -eq 52.79.36.148 ]; then
+if [ ${PUBLIC_IP} -eq "52.79.36.148" ]; then
   nohup java -jar -Dserver.port=$TARGET_PORT -Dspring.profiles.active=dev $JAR_FILE > /home/ubuntu/iluvit/app/nohup.out 2>&1 &
-elif [ ${PUBLIC_IP} -eq 13.125.168.243]; then
+elif [ ${PUBLIC_IP} -eq "13.125.168.243" ]; then
   nohup java -jar -Dserver.port=$TARGET_PORT -Dspring.profiles.active=prod $JAR_FILE > /home/ubuntu/iluvit/app/nohup.out 2>&1 &
 fi
 echo "> Now new WAS runs at ${TARGET_PORT}."
