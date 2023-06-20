@@ -90,7 +90,7 @@ public class UserController {
      */
     @GetMapping("version/ios")
     public String iosVersion() {
-        return "테스트";
+        return "테스트222";
     }
 
 
