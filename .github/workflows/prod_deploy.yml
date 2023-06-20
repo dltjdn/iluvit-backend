@@ -1,4 +1,4 @@
-name: Release Deploy
+name: Prod Deploy
 
 on:
   push:
@@ -45,8 +45,8 @@ jobs:
           cd ./src/main/resources
           touch ./application.properties
           echo "${{ secrets.PROPERTIES }}" > ./application.properties
-          touch ./application-database.yml
-          echo "${{ secrets.DATABASE_YML }}" > ./application-database.yml
+          touch ./application-prod.yml
+          echo "${{ secrets.PROD_YML }}" > ./application-prod.yml
           touch ./application-http.yml
           echo "${{ secrets.HTTP_YML }}" > ./application-http.yml
           touch ./application-map.yml
