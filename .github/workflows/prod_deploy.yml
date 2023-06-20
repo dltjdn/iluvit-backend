@@ -1,22 +1,25 @@
-name: Dev Deploy
+name: Release Deploy
 
 on:
   push:
     branches:
-      - develop
+      - master
+  pull_request:
+    branches:
+      - master
 
 env:
   AWS_REGION: ap-northeast-2
   S3_BUCKET_NAME: iluvit-dev-actions-s3-bucket
   CODE_DEPLOY_APPLICATION_NAME: iluvit-app
-  CODE_DEPLOY_DEPLOYMENT_GROUP_NAME: iluvit-dev-deployment-group
+  CODE_DEPLOY_DEPLOYMENT_GROUP_NAME: iluvit-prod-deployment-group
 
 permissions:
   contents: read
 
 jobs:
   deploy:
-    name: Deploy
+    name: Realease_Deploy
     runs-on: ubuntu-latest
     environment: production
 
