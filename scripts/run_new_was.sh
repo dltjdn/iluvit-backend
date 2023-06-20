@@ -42,6 +42,8 @@ if [ ${PUBLIC_IP:0:2} -eq 52 ]; then
   nohup java -jar -Dspring.profiles.active=dev -Dserver.port=$TARGET_PORT /home/ubuntu/iluvit/app/iLUVit-0.0.1-SNAPSHOT.jar > /home/ubuntu/iluvit/app/nohup.out 2>&1 &
 elif [ ${PUBLIC_IP:0:2} -eq 13 ]; then
   nohup java -jar -Dspring.profiles.active=prod -Dserver.port=$TARGET_PORT /home/ubuntu/iluvit/app/iLUVit-0.0.1-SNAPSHOT.jar > /home/ubuntu/iluvit/app/nohup.out 2>&1 &
+else
+  nohup java -jar iLUVit-0.0.1-SNAPSHOU.jar &
 fi
 
 echo "> Now new WAS runs at ${TARGET_PORT}."
