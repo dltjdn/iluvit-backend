@@ -1,6 +1,5 @@
 package FIS.iLUVit.repository;
 
-import FIS.iLUVit.domain.Center;
 import FIS.iLUVit.domain.Review;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
@@ -24,7 +23,7 @@ public interface ReviewRepository extends JpaRepository<Review, Long>{
      */
     @Query(value = "select r from Review r join fetch r.center c join fetch r.parent p where c.id = :centerId",
             countQuery = "select count(r) from Review r where r.center.id = :centerId order by r.createdDate desc ")
-    Slice<Review> findByCenterId(@Param("centerId") Long centerId, Pageable pageable);
+    Slice<Review> findByCenter(@Param("centerId") Long centerId, Pageable pageable);
 
     /*
         사용자 id와 시설 id를 파라미터로 받아 사용자와 시설로 리뷰를 조회합니다.
@@ -36,4 +35,5 @@ public interface ReviewRepository extends JpaRepository<Review, Long>{
         시설로 리뷰를 조회합니다.
      */
     List<Review> findByCenter(Center center);
+
 }

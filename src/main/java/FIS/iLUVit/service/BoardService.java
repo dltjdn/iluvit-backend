@@ -14,10 +14,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
+import javax.swing.text.html.Option;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Slf4j
@@ -33,47 +31,47 @@ public class BoardService {
     private final ChildRepository childRepository;
 
     public BoardListDto findAllWithBookmark(Long userId) {
-        BoardListDto dto = new BoardListDto(null, "모두의 이야기");
-        // 모두의 이야기 내 유저의 북마크 정보
-        List<Bookmark> bookmarks = boardBookmarkRepository.findBoardByUser(userId);
-        // 모두의 이야기 내 모든 게시판
-        List<Board> boards = boardRepository.findByCenterIsNull();
-        // DTO 생성 후 반환
-        createDTO(bookmarks, boards, dto);
 
-        return dto;
+        List<Board> boards = boardRepository.findByCenterIsNull(); // 모두의 이야기 내 모든 게시판
+        List<BoardListDto.BoardBookmarkDto> bookmarkList = new ArrayList<>();
+        List<BoardListDto.BoardBookmarkDto> boardList = new ArrayList<>();
+
+        boards.forEach(board -> {
+            Optional<Bookmark> bookmark =  boardBookmarkRepository.findBoardBookmarkByUserAndBoard(userId, board.getId());
+            if (bookmark.isEmpty()) { // 즐찾 안한 게시판들은 보드 리스트에 넣음
+                boardList.add(new BoardListDto.BoardBookmarkDto(board));
+            } else { // 즐찾한 게시판들은 북마크 리스트에 넣음
+                bookmarkList.add(new BoardListDto.BoardBookmarkDto(board,bookmark.get().getId()));
+            }
+        });
+        BoardListDto boardListDto = new BoardListDto(null, "모두의 이야기", bookmarkList, boardList);
+
+        return boardListDto;
     }
 
     public BoardListDto findAllWithBookmarkInCenter(Long userId, Long centerId) {
         Center findCenter = centerRepository.findById(centerId)
                 .orElseThrow(() -> new CenterException(CenterErrorResult.CENTER_NOT_EXIST));
-        BoardListDto dto = new BoardListDto(centerId, findCenter.getName());
-        // 시설(유치원)의 이야기 내 유저의 북마크 정보
-        List<Bookmark> bookmarks = boardBookmarkRepository.findBoardByUserAndCenter(userId, centerId);
-        // 시설(유치원)의 이야기 모든 게시판
-        List<Board> boards = boardRepository.findByCenter(centerId);
-        // DTO 생성 후 반환
-        createDTO(bookmarks, boards, dto);
 
-        return dto;
-    }
 
-    private void createDTO(List<Bookmark> bookmarks, List<Board> boards, BoardListDto dto) {
-        // 북마크 정보를 게시판 id 으로 그루핑
-        Map<Long, List<Bookmark>> bookmarkMap = bookmarks.stream()
-                .collect(Collectors.groupingBy(b -> b.getBoard().getId()));
+        List<Board> boards = boardRepository.findByCenter(centerId);  // 시설 이야기 모든 게시판
+        List<BoardListDto.BoardBookmarkDto> bookmarkList = new ArrayList<>();
+        List<BoardListDto.BoardBookmarkDto> boardList = new ArrayList<>();
 
-        // 모두의 이야기 내 모든 게시판에서
         boards.forEach(board -> {
-            List<Bookmark> bookmarkList = bookmarkMap.get(board.getId());
-            if (bookmarkList == null) { // 즐찾 안한 게시판들은 보드 리스트에 넣음
-                dto.getBoardList().add(new BoardListDto.BoardBookmarkDto(board));
+            Optional<Bookmark> bookmark =  boardBookmarkRepository.findBoardBookmarkByUserAndBoard(userId, board.getId());
+            if (bookmark.isEmpty()) { // 즐찾 안한 게시판들은 보드 리스트에 넣음
+                boardList.add(new BoardListDto.BoardBookmarkDto(board));
             } else { // 즐찾한 게시판들은 북마크 리스트에 넣음
-                BoardListDto.BoardBookmarkDto boardBookmarkDto = new BoardListDto.BoardBookmarkDto(board,bookmarkList.get(0).getId());
-                dto.getBookmarkList().add(boardBookmarkDto);
+                bookmarkList.add(new BoardListDto.BoardBookmarkDto(board,bookmark.get().getId()));
             }
         });
+
+        BoardListDto boardListDto = new BoardListDto(centerId, findCenter.getName(), bookmarkList, boardList);
+
+        return boardListDto;
     }
+
 
     public Long create(Long userId, Long center_id, BoardRequest request) {
         // userId 가 null 인 경우 게시판 생성 제한

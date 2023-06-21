@@ -27,9 +27,18 @@ public interface UserRepository extends JpaRepository<User, Long> {
      */
     Optional<User> findByLoginIdOrNickName(String loginId, String nickName);
 
+
     /*
         사용자 id를 파라미터로 받아서 id로 선생님을 조회합니다.
      */
+    @Query("select distinct teacher from Teacher teacher " +
+            "join fetch teacher.center as center " +
+            "join fetch center.presentations as presentation " +
+            "where teacher.id = :userId " +
+            "and presentation.endDate <= :date")
+    Optional<Teacher> findTeacherAndJoinPresentationById(@Param("userId") Long userId, @Param("date") LocalDate date);
+
+
     @Query("select teacher from Teacher teacher " +
             "join fetch teacher.center " +
             "where teacher.id = :userId")

@@ -9,6 +9,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
 import java.util.List;
+import java.util.Optional;
 
 public interface BoardBookmarkRepository extends JpaRepository<Bookmark, Long> {
 
@@ -36,13 +37,21 @@ public interface BoardBookmarkRepository extends JpaRepository<Bookmark, Long> {
     List<Post> findPostByBoard(@Param("userId") Long userId);
 
     /*
-        유저 id를 파라미터로 받아서 사용자별 게시판을 조회합니다.
+        사용자별 게시판을 조회합니다.
     */
     @Query("select bm from Bookmark bm join fetch bm.board b where bm.user.id = :userId and b.center.id is null ")
     List<Bookmark> findBoardByUser(@Param("userId") Long userId);
 
+
     /*
-        유저 id와 센터 id를 파라미터로 받아서 사용자 및 센터별 게시판을 조회합니다.
+        사용자 및 게시판별 즐겨찾기한 게시판을 조회합니다.
+    */
+
+    @Query("select bm from Bookmark bm where bm.user.id = :userId and bm.board.id = :boardId")
+    Optional<Bookmark> findBoardBookmarkByUserAndBoard(@Param("userId") Long userId, @Param("boardId") Long boardId);
+
+     /*
+        사용자 및 센터별 게시판을 조회합니다.
     */
     @Query("select bm from Bookmark bm join fetch bm.board b where bm.user.id = :userId and b.center.id = :centerId ")
     List<Bookmark> findBoardByUserAndCenter(@Param("userId") Long userId, @Param("centerId") Long centerId);
@@ -77,7 +86,7 @@ public interface BoardBookmarkRepository extends JpaRepository<Bookmark, Long> {
     List<Bookmark> findByUser(User user);
 
     /*
-        사용자 id를 파라미터로 받아서 게시판 및 시설을 사용하여 사용자별로 조회합니다.
+        사용자별로 게시판 즐겨찾기 리스트를 조회합니다.
     */
     @Query("select bm from Bookmark bm " +
             "join fetch bm.board b " +

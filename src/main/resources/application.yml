@@ -34,19 +34,19 @@ spring:
       - map
       - security
     # active 건드리지 말 것
-    active: develop
+    active: dev
     group:
       # 그룹별 묶을 설정 파일 grouping
-      develop: iluvit-develop, test, http
-      prod: iluvit-prod, mysql, http
+      dev: iluvit-dev, dev-db, http
+      prod: iluvit-prod, prod-db, http
 
-  version:
-    aos: 1.0.0
-    ios: 1.0.0
+version:
+  aos: 1.0.0
+  ios: 1.0.0
 
 ---
 spring:
-  config.activate.on-profile: iluvit-develop
+  config.activate.on-profile: iluvit-dev
   jpa:
     hibernate:
       ddl-auto: update
@@ -67,11 +67,11 @@ logging:
     org.hibernate.SQL: info
 
 ---
-
 management:
   endpoints:
     web:
-      base-path: /management
+      exposure:
+        include: "*"
 
 logging:
   slack:

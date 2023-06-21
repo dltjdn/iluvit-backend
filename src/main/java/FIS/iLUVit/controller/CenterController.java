@@ -2,8 +2,6 @@ package FIS.iLUVit.controller;
 
 import FIS.iLUVit.config.argumentResolver.Login;
 import FIS.iLUVit.dto.center.*;
-import FIS.iLUVit.exception.UserErrorResult;
-import FIS.iLUVit.exception.UserException;
 import FIS.iLUVit.dto.center.CenterAndDistancePreviewDto;
 import FIS.iLUVit.dto.center.CenterMapPreviewDto;
 import FIS.iLUVit.service.CenterService;
@@ -72,7 +70,7 @@ public class CenterController {
      * 비고: id 기반 으로 센터 클릭시 배너로 나올 center 이름, 모집 상황 반환할 api
      */
     @GetMapping("{centerId}/recruit")
-    public CenterBannerResponse getCenterDetailsForBanner(@PathVariable("centerId") Long id, @Login Long userId) throws Exception {
+    public CenterBannerResponse getCenterDetailsForBanner(@PathVariable("centerId") Long id, @Login Long userId){
         return centerService.findBannerById(id, userId);
     }
 

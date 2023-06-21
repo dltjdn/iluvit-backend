@@ -13,8 +13,10 @@ import lombok.AllArgsConstructor;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
 import org.springframework.data.domain.SliceImpl;
+
 import java.util.List;
 import java.util.stream.Collectors;
+
 import static FIS.iLUVit.domain.QCenter.center;
 import static FIS.iLUVit.domain.QPrefer.prefer;
 import static FIS.iLUVit.domain.QReview.review;
@@ -28,8 +30,8 @@ public class CenterRepositoryImpl extends CenterQueryMethod implements CenterRep
     @Override
     public Slice<CenterPreviewDto> findByFilter(List<Area> areas, Theme theme, Integer interestedAge, KindOf kindOf, Pageable pageable) {
         List<CenterPreviewDto> content = jpaQueryFactory.select(new QCenterPreviewDto(center, review.score.avg()))
-                .from(review)
-                .leftJoin(review.center, center)
+                .from(center)
+                .leftJoin(center.reviews, review)
                 .where(areasIn(areas)
                         .and(kindOfEq(kindOf))
                         .and(themeEq(theme))
@@ -62,8 +64,8 @@ public class CenterRepositoryImpl extends CenterQueryMethod implements CenterRep
                 .add(sin(radians(longitudeEx)).multiply(sin(radians(center.longitude))))).multiply(param).as("distance");
 
         List<CenterAndDistancePreviewDto> result = jpaQueryFactory.select(new QCenterAndDistancePreviewDto(center, review.score.avg(), distanceEx))
-                .from(review)
-                .leftJoin(review.center, center)
+                .from(center)
+                .leftJoin(center.reviews, review)
                 .where(center.latitude.between(latitude_l, latitude_h)
                         .and(center.longitude.between(longitude_l, longitude_h))
                         .and(themeEq(theme))
@@ -97,9 +99,9 @@ public class CenterRepositoryImpl extends CenterQueryMethod implements CenterRep
                                         review.score.avg(),
                                         center.profileImagePath, prefer.parent.id
                                 ))
-                        .from(review)
-                        .leftJoin(review.center, center)
-                        .leftJoin(review.center, prefer.center).on(prefer.parent.id.eq(userId))
+                        .from(center)
+                        .leftJoin(center.reviews, review)
+                        .leftJoin(center.prefers, prefer).on(prefer.parent.id.eq(userId))
                         .where(kindOfEq(kindOf), center.id.in(centerIds))
                         .groupBy(center)
                         .orderBy(center.score.desc(), center.id.asc())
@@ -136,8 +138,8 @@ public class CenterRepositoryImpl extends CenterQueryMethod implements CenterRep
                                         review.score.avg(),
                                         center.profileImagePath
                                 ))
-                        .from(review)
-                        .leftJoin(review.center, center)
+                        .from(center)
+                        .leftJoin(center.reviews, review)
                         .where(kindOfEq(kindOf), center.id.in(centerIds))
                         .groupBy(center)
                         .orderBy(center.score.desc(), center.id.asc())
@@ -166,10 +168,11 @@ public class CenterRepositoryImpl extends CenterQueryMethod implements CenterRep
                                 .multiply(cos(radians(longitudeEx).subtract(radians(center.longitude)))))).multiply(param);
 
         List<CenterMapPreviewDto> result = jpaQueryFactory.select(new QCenterMapPreviewDto(center.id, center.name, center.longitude, center.latitude))
-                .from(review)
-                .leftJoin(review.center, center)
+                .from(center)
+                .leftJoin(center.reviews, review)
                 .groupBy(center)
-                .where(centerNameEq(searchContent), (kindOfEq(KindOf.Kindergarten).or(kindOfEq(KindOf.ChildHouse))))
+                .where(centerNameEq(searchContent)
+                        , (kindOfEq(KindOf.Kindergarten).or(kindOfEq(KindOf.ChildHouse))))
                 .having(distanceEx.loe(distance))
                 .orderBy(center.score.desc())
                 .limit(100)
@@ -179,10 +182,11 @@ public class CenterRepositoryImpl extends CenterQueryMethod implements CenterRep
         while (result.size() <= 10 && searchContent != null && !searchContent.equals("") && distance <= 1600) {
             distance = distance * 3;
             result = jpaQueryFactory.select(new QCenterMapPreviewDto(center.id, center.name, center.longitude, center.latitude))
-                    .from(review)
-                    .leftJoin(review.center, center)
+                    .from(center)
+                    .leftJoin(center.reviews, review)
                     .groupBy(center)
-                    .where(centerNameEq(searchContent), (kindOfEq(KindOf.Kindergarten).or(kindOfEq(KindOf.ChildHouse))))
+                    .where(centerNameEq(searchContent)
+                            , (kindOfEq(KindOf.Kindergarten).or(kindOfEq(KindOf.ChildHouse))))
                     .having(distanceEx.loe(distance))
                     .orderBy(center.score.desc())
                     .limit(100)
@@ -226,7 +230,7 @@ public class CenterRepositoryImpl extends CenterQueryMethod implements CenterRep
                 .from(center)
                 .where(areaEq(sido, sigungu)
                         , (centerNameEq(centerName))
-                        , (center.kindOf.isNotNull()))
+                        , (kindOfEq(KindOf.Kindergarten).or(kindOfEq(KindOf.ChildHouse))))
                 .offset(pageable.getOffset())
                 .limit(pageable.getPageSize() + 1)
                 .fetch();
@@ -252,7 +256,7 @@ public class CenterRepositoryImpl extends CenterQueryMethod implements CenterRep
                 .where(center.signed.eq(true)
                         , (areaEq(sido, sigungu))
                         , (centerNameEq(centerName))
-                        , (center.kindOf.isNotNull()))
+                        , (kindOfEq(KindOf.Kindergarten).or(kindOfEq(KindOf.ChildHouse))))
                 .offset(pageable.getOffset())
                 .limit(pageable.getPageSize() + 1)
                 .fetch();
@@ -274,9 +278,9 @@ public class CenterRepositoryImpl extends CenterQueryMethod implements CenterRep
     @Override
     public Slice<CenterPreviewDto> findByPrefer(Long userId, Pageable pageable) {
         List<CenterPreviewDto> content = jpaQueryFactory.select(new QCenterPreviewDto(center, review.score.avg()))
-                .from(review)
-                .join(review.center, prefer.center).on(prefer.parent.id.eq(userId))
-                .leftJoin(review.center, center)
+                .from(center)
+                .join(center.prefers, prefer).on(prefer.parent.id.eq(userId))
+                .leftJoin(center.reviews, review)
                 .groupBy(center)
                 .offset(pageable.getOffset())
                 .limit(pageable.getPageSize() + 1)
