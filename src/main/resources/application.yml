@@ -24,8 +24,8 @@ spring:
           enabled: true
     open-in-view: false
 
-# 현승구 : yml 분리 작업을 위해서 spring.config.import , profiles.active , group 활용
   profiles:
+    default: dev
     include:
       - secret
       - s3
