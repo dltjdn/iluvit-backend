@@ -30,7 +30,7 @@ fi
 
 # 현재 ec2 서버의 public IP 주소를 불러온다
 PUBLIC_IP=$(curl http://169.254.169.254/latest/meta-data/public-ipv4)
-echo "퍼플릭 아이피 > ${PUBLIC_IP:0:2}"
+echo "퍼플릭 아이피 > ${PUBLIC_IP:10:3}"
 
 # public IP 주소의 앞 두자리가 52(임의)라면 profile을 dev로 하여 타켓 포트에 jar파일을 이용해 새로운 서버 실행
 if [ ${PUBLIC_IP:10:3} -eq 176 ]; then
