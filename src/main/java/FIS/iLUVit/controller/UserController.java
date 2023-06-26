@@ -90,7 +90,8 @@ public class UserController {
      */
     @GetMapping("version/ios")
     public String iosVersion() {
-        return env.getProperty("version.ios");
+        //return env.getProperty("version.ios");
+        return "테스트";
     }
 
 
