@@ -11,6 +11,9 @@ import java.util.List;
 
 public interface PresentationRepositoryCustom {
 
+    /*
+        지역과 테마와 관심 연령과 종류와 설명회 종료일 이동과 시설이름이 각각 검색 조건에 부합하도록 필터링을하여 PresentationForUserDto 객체를 불러옵니다.
+     */
     SliceImpl<PresentationForUserResponse> findByFilter(List<Area> areas, Theme theme, Integer interestedAge, KindOf kindOf, String searchContent, Pageable pageable);
 
 }
