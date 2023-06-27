@@ -12,7 +12,7 @@ import java.util.Optional;
 public interface ScrapRepository extends JpaRepository<Scrap, Long> {
 
     /*
-        사용자 id를 파라미터로 받아서 게시글들 스크랩한 사용자로 게시글들을 조회합니다.
+        ScrapPosts의 사용자로 스크랩 리스트를 불러옵니다.
      */
     @Query("select distinct s " +
             "from Scrap s " +
@@ -21,7 +21,7 @@ public interface ScrapRepository extends JpaRepository<Scrap, Long> {
     List<Scrap> findScrapsByUserWithScrapPosts(@Param("userId") Long userId);
 
     /*
-        스크랩 id와 사용자 id를 파라미터로 받아서 id 및 사용자 id로 스크랩을 조회합니다.
+        scrapId와 userId에 해당하는 스크랩을 조회합니다.
      */
     @Query("select s " +
             "from Scrap s " +
@@ -30,7 +30,7 @@ public interface ScrapRepository extends JpaRepository<Scrap, Long> {
     Optional<Scrap> findScrapByIdAndUserId(@Param("scrapId") Long scrapId, @Param("userId") Long userId);
 
     /*
-        사용자로 조회합니다.
+        사용자로 스크랩 리스트를 조회합니다.
      */
     List<Scrap> findByUser(User user);
 

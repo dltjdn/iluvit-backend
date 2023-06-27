@@ -11,7 +11,7 @@ import java.util.Optional;
 public interface TokenPairRepository extends JpaRepository<TokenPair, Long> {
 
     /*
-        사용자 id를 파라미터로 받아서 사용자에 사용자 id로 공정토큰을 조회합니다.
+        공정토큰 사용자 id가 사용자 id와 같은 공정 토큰을 불러옵니다.
      */
     @Query("select r " +
             "from TokenPair r " +
@@ -20,7 +20,7 @@ public interface TokenPairRepository extends JpaRepository<TokenPair, Long> {
     Optional<TokenPair> findByUserIdWithUser(@Param("userId") Long userId);
 
     /*
-        사용자 id를 파라미터로 받아서 사용자 id로 공정토큰을 조회합니다.
+        공정토큰 사용자 id가 사용자 id와 같은 공정 토큰을 불러옵니다.
      */
     @Query("select r " +
             "from TokenPair r " +

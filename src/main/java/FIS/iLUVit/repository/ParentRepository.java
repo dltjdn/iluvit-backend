@@ -13,7 +13,7 @@ import java.util.Optional;
 public interface ParentRepository extends JpaRepository<Parent, Long> {
 
     /*
-        부모 id를 파라미터로 받아서 아이들과 함께 부모를 조회합니다.
+        아이들과 함께 있는 부모를 조회합니다.
      */
     @Query("select distinct p " +
             "from Parent p " +
@@ -28,7 +28,7 @@ public interface ParentRepository extends JpaRepository<Parent, Long> {
     Optional<Parent> findByNickName(String nickname);
 
     /*
-        사용자 id를 파라미터로 받아서 나의 설명회를 조회합니다.
+        부모 id로 내 참여를 조회합니다.
      */
     @Query("select parent " +
             "from Parent parent " +
@@ -40,7 +40,7 @@ public interface ParentRepository extends JpaRepository<Parent, Long> {
     Parent findMyParticipation(@Param("userId") Long userId);
 
     /*
-        사용자 id를 파라미터로 받아서 나의 웨이팅을 조회합니다.
+        부모 id로 내 대기를 조회합니다.
      */
     @Query("select parent " +
             "from Parent parent " +
@@ -52,7 +52,7 @@ public interface ParentRepository extends JpaRepository<Parent, Long> {
     Parent findMyWaiting(@Param("userId") Long userId);
 
     /*
-        사용자 id를 파라미터로 받아서 나의 설명회 참여를 조회합니다.
+        참여 현황이 참여로 되어있고 부모 id로 참여 리스트 DTO를 조회합니다. (설명회 참여 현황이 참여로 되어있을 때)
      */
     @Query("select new FIS.iLUVit.dto.parent.ParticipationListDto(" +
             "parent.id, participation.id, ptDate.id, presentation.id, center.id, ptDate.date, ptDate.time, center.profileImagePath, presentation.place, presentation.content, center.name, center.tel, center.address, center.addressDetail, ptDate.ablePersonNum, ptDate.participantCnt, participation.status" +
@@ -66,7 +66,7 @@ public interface ParentRepository extends JpaRepository<Parent, Long> {
     Slice<ParticipationListDto> findMyJoinParticipation(@Param("userId") Long userId, Pageable pageable);
 
     /*
-        사용자 id를 파라미터로 받아서 나의 설명회 취소를 조회합니다.
+        참여 현황이 참여로 되어있고 부모 id로 참여 리스트 DTO를 조회합니다. (설명회 참여 현황이 취소로 되어있을 때)
      */
     @Query("select new FIS.iLUVit.dto.parent.ParticipationListDto(" +
             "parent.id, participation.id, ptDate.id, presentation.id, center.id, ptDate.date, ptDate.time, center.profileImagePath, presentation.place, presentation.content, center.name, center.tel, center.address, center.addressDetail, ptDate.ablePersonNum, ptDate.participantCnt, participation.status" +
@@ -80,7 +80,7 @@ public interface ParentRepository extends JpaRepository<Parent, Long> {
     Slice<ParticipationListDto> findMyCancelParticipation(@Param("userId") Long userId, Pageable pageable);
 
     /*
-        사용자 id를 파라미터로 받아서 나의 웨이팅을 조회합니다.
+        부모 id로 참여 리스트 DTO를 조회합니다. (설명회 참여 현황이 대기로 되어있을 때)
      */
     @Query("select new FIS.iLUVit.dto.parent.ParticipationListDto(" +
             "parent.id, waiting.id, ptDate.id, presentation.id, center.id, ptDate.date, ptDate.time, center.profileImagePath, presentation.place, presentation.content, center.name, center.tel, center.address, center.addressDetail, ptDate.ablePersonNum, ptDate.participantCnt" +
@@ -94,7 +94,7 @@ public interface ParentRepository extends JpaRepository<Parent, Long> {
     Slice<ParticipationListDto> findMyWaiting(@Param("userId") Long userId, Pageable pageable);
 
     /*
-        사용자 id를 파라미터로 받아서 자녀 ID로 부모를 조회합니다.
+        아이 id로 부모를 조회합니다.
      */
     @Query("select distinct p " +
             "from Parent p " +
@@ -103,7 +103,7 @@ public interface ParentRepository extends JpaRepository<Parent, Long> {
     Optional<Parent> findByIdWithChild(@Param("userId") Long userId);
 
     /*
-        사용자 id를 파라미터로 받아서 시설에 선호하는 ID로 부모를 조회합니다.
+        시설 즐겨찾기 id로 부모를 조회합니다.
      */
     @Query("select distinct p " +
             "from Parent p " +

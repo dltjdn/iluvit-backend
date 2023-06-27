@@ -15,7 +15,7 @@ import java.util.Optional;
 public interface CommentRepository extends JpaRepository<Comment, Long> {
 
     /*
-        유저 id를 파라미터로 받아서 사용자로 댓글을 조회합니다.
+        댓글 사용자 id로 댓글을 조회합니다.
      */
     @Query("select c from Comment c " +
             "left join fetch c.post p " +
@@ -25,12 +25,12 @@ public interface CommentRepository extends JpaRepository<Comment, Long> {
     Slice<Comment> findByUser(@Param("userId") Long userId, Pageable pageable);
 
     /*
-        게시글 및 사용자 및 익명으로 댓글을 먼저 조회합니다.
+        게시글과 사용자와 익명여부로 첫 댓글을 조회합니다;
      */
     Optional<Comment> findFirstByPostAndUserAndAnonymous(Post post, User user, Boolean anonymous);
 
     /*
-        게시글 id를 파라미터로 받아서 게시글 Id로 댓글을 조회합니다.
+        댓글 id로 댓글 리스트를 조회합니다.
      */
     @Query("select c from Comment c " +
             "where c.post.id =:postId ")

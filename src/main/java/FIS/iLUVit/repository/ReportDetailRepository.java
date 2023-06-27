@@ -12,7 +12,7 @@ import java.util.Optional;
 public interface ReportDetailRepository extends JpaRepository<ReportDetail, Long> {
 
     /*
-        사용자 Id와 대상 Id를 파라미터로 받아서 사용자 ID 및 대상 게시글 ID로 조회합니다.
+        userId와 targetId에 해당하는 ReportDetailPost 객체를 검색하여 ReportDetail을 불러옵니다.
      */
     @Query("select rdp " +
             "from ReportDetailPost rdp " +
@@ -21,7 +21,7 @@ public interface ReportDetailRepository extends JpaRepository<ReportDetail, Long
     Optional<ReportDetail> findByUserIdAndTargetPostId(@Param("userId") Long userId, @Param("targetId") Long targetId);
 
     /*
-        사용자 Id와 타겟 Id를 파라미터로 받아서 사용자 id 및 대상 댓글 id로 조회합니다.
+        userId와 targetId에 해당하는 ReportDetailComment 객체를 검색하여 ReportDetail을 불러옵니다.
      */
     @Query("select rdc " +
             "from ReportDetailComment rdc " +
@@ -30,14 +30,14 @@ public interface ReportDetailRepository extends JpaRepository<ReportDetail, Long
     Optional<ReportDetail> findByUserIdAndTargetCommentId(@Param("userId") Long userId, @Param("targetId") Long targetId);
 
     /*
-        게시글 id를 파라미터로 받아서 게시글을 존재하지 않게 설정합니다.
+        postId에 해당하는 게시물 ID를 가진 ReportDetailPost 객체들의 post 속성을 null로 업데이트합니다.
      */
     @Modifying(clearAutomatically = true)
     @Query("update ReportDetailPost  rdp set rdp.post = null where rdp.post.id =:postId")
     void setPostIsNull(@Param("postId") Long postId);
 
     /*
-        댓글 id들을 파라미터로 받아서 댓글을 존재하지 않게 설정합니다.
+        commentIds에 해당하는 댓글 ID를 가진 ReportDetailComment 객체들의 comment 속성을 null로 업데이트합니다.
      */
     @Modifying(clearAutomatically = true)
     @Query("update ReportDetailComment  rdc set rdc.comment = null where rdc.comment.id in :commentIds")

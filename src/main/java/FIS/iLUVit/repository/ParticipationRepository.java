@@ -12,7 +12,7 @@ import java.util.Optional;
 public interface ParticipationRepository extends JpaRepository<Participation, Long> {
 
     /*
-        설명회 날짜 id를 파라미터로 받아서 설명회 날짜 및 가입 상태로 조회합니다.
+        참여 현황이 참여로 되어있고 설명회 참여 날짜 id로 설명회 참여 리스트를 조회합니다.
      */
     @Query("select participation from Participation participation " +
             "where participation.status = FIS.iLUVit.domain.enumtype.Status.JOINED " +
@@ -20,7 +20,7 @@ public interface ParticipationRepository extends JpaRepository<Participation, Lo
     List<Participation> findByPtDateAndStatusJOINED(@Param("ptDateId") Long ptDateId);
 
     /*
-        설명회 id와 부모 id를 파라미터로 받아서 설명회 날짜 ID 및 상태로 조회합니다.
+        설명회 참여 현황이 참여로 되어 있고 설명회 참여 id와 설명회 참여한 부모 id로 설명회 참여를 조회합니다.
      */
     @Query("select participation from Participation participation " +
             "join fetch participation.ptDate as ptDate " +
@@ -33,7 +33,7 @@ public interface ParticipationRepository extends JpaRepository<Participation, Lo
     Optional<Participation> findByIdAndStatusWithPtDate(@Param("participationId") Long participantId, @Param("parentId") Long parentId);
 
     /*
-        부모로 조회합니다.
+        부모로 설명회 참여 리스트를 조회합니다.
      */
     List<Participation> findByParent(Parent parent);
 }

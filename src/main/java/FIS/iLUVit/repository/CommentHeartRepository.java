@@ -10,7 +10,7 @@ import java.util.Optional;
 public interface CommentHeartRepository extends JpaRepository<CommentHeart, Long> {
 
     /*
-        유저 id와 댓글 id를 파라미터로 받아서 사용자 및 댓글로 조회합니다.
+        댓글 하트를 누른 유저 id와 댓글 Id로 댓글 하트를 조회합니다.
      */
     @Query("select ch " +
             "from CommentHeart ch " +

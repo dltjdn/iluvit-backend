@@ -12,7 +12,7 @@ import org.springframework.data.repository.query.Param;
 public interface ChatRepository extends JpaRepository<Chat, Long> {
 
     /*
-        사용자 id와 채팅방 id를 파라미터로 받아서 채팅방으로 조회합니다.
+        채팅방 생성일을 내림차순으로 정렬하고 채팅방 id와 수신자 id별로 대화를 조회합니다.
      */
     @Query("select c from Chat c " +
             "join fetch c.chatRoom cr " +

@@ -13,23 +13,22 @@ import java.util.Optional;
 public interface UserRepository extends JpaRepository<User, Long> {
 
     /*
-        로그인 id로 사용자를 조회합니다.
+        로그인 id로 User를 불러옵니다.
      */
     Optional<User> findByLoginId(String loginId);
 
     /*
-        닉네임으로 사용자를 조회합니다.
+        닉네임으로 User를 불러옵니다.
      */
     Optional<User> findByNickName(String nickname);
 
     /*
-        로그인 id 또는 닉네임으로 사용자를 조회합니다.
+        로그인 id 또는 닉네임으로 User를 불러옵니다.
      */
     Optional<User> findByLoginIdOrNickName(String loginId, String nickName);
 
-
     /*
-        사용자 id를 파라미터로 받아서 id로 선생님을 조회합니다.
+        교수 id가 사용자 id와 같고 설명회 종료날짜가 설명회 날짜보다 작거나 같은 Teacher를 불러옵니다.
      */
     @Query("select distinct teacher from Teacher teacher " +
             "join fetch teacher.center as center " +
@@ -38,26 +37,28 @@ public interface UserRepository extends JpaRepository<User, Long> {
             "and presentation.endDate <= :date")
     Optional<Teacher> findTeacherAndJoinPresentationById(@Param("userId") Long userId, @Param("date") LocalDate date);
 
-
+    /*
+        교수 id가 사용자 id와 같은 Teacher를 조회합니다.
+     */
     @Query("select teacher from Teacher teacher " +
             "join fetch teacher.center " +
             "where teacher.id = :userId")
     Optional<Teacher> findTeacherById(@Param("userId") Long userId);
 
     /*
-        전화번호로 사용자를 조회합니다.
+        전화번호로 User를 조회합니다.
      */
     Optional<User> findByPhoneNumber(String phoneNumber);
 
     /*
-        부모 id를 파라미터로 받아서 아이를 조회합니다.
+        시설에 속해있는 부모 id가 부모 id와 같은 Child 리스트를 조회합니다.
      */
     @Query("select c from Child c join c.parent p" +
             " where p.id = :parentId")
     List<Child> findChildren(@Param("parentId") Long parentId);
 
     /*
-        부모 id를 파라미터로 받아서 시설에 있는 아이를 조회합니다.
+        시설에 속해있는 아이의 부모 id가 부모 id와 같은 Child 리스트를 조회합니다.
      */
     @Query("select c from Child c " +
             "join c.parent p " +
@@ -66,26 +67,26 @@ public interface UserRepository extends JpaRepository<User, Long> {
     List<Child> findChildrenWithCenter(@Param("parentId") Long parentId);
 
     /*
-        로그인 id 및 전화번호로 조회합니다.
+        전화번호와 로그인 id로 User를 조회합니다.
      */
     Optional<User> findByLoginIdAndPhoneNumber(String loginId, String phoneNumber);
 
     /*
-        부모 id를 파라미터로 받아서 아이를 조회합니다.
+        모든 사용자를 조회하여 User 리스트로 불러옵니다.
      */
     @Query("select user " +
             "from User user ")
     List<User> findByIdTest();
 
     /*
-        시설을 파라미터로 받아서 시설로 선생님을 조회합니다.
+        특정 센터에 속한 교수를 조회하여 User 리스트로 불러옵니다.
      */
     @Query("select teacher from Teacher teacher " +
             "where teacher.center =:center")
     List<User> findTeacherByCenter(@Param("center") Center center);
 
     /*
-        시설을 파라미터로 받아서 시설 id로 사용자 선호를 받아옵니다.
+        즐겨찾기한 시설과 시설을 비교하여 같은 것을 즐겨찾기 리스트로 불러옵니다.
      */
     @Query("select prefer from Prefer prefer " +
             "join fetch prefer.center " +
@@ -93,7 +94,7 @@ public interface UserRepository extends JpaRepository<User, Long> {
     List<Prefer> getUserPreferByCenterId(@Param("center") Center center);
 
     /*
-        id 및 전화번호로 조회합니다.
+        전화번호와 사용자 id로 User를 받아옵니다.
      */
     Optional<User> findByIdAndPhoneNumber(Long id, String phoneNumber);
 }

@@ -11,7 +11,7 @@ import java.util.Optional;
 public interface ExpoTokenRepository extends JpaRepository<ExpoToken, Long> {
 
     /*
-        사용자로 expo 토큰을 조회합니다.
+        사용자로 expo 토큰 리스트를 조회합니다.
      */
     List<ExpoToken> findByUser(User user);
 
@@ -21,22 +21,22 @@ public interface ExpoTokenRepository extends JpaRepository<ExpoToken, Long> {
     Optional<ExpoToken> findByToken(String token);
 
     /*
-        토큰 및 사용자별로 삭제합니다.
+        토큰과 사용자로 Expo 토큰을 삭제합니다.
      */
     void deleteByTokenAndUser(String token, User user);
 
     /*
-        토큰 및 사용자로 expo 토큰을 조회합니다.
+        토큰과 사용자로 expo 토큰을 조회합니다.
      */
     Optional<ExpoToken> findByTokenAndUser(String token, User user);
 
     /*
-        토큰 인으로 삭제합니다.
+        토큰 인으로 expo 토큰을 삭제합니다.
      */
     void deleteByTokenIn(Collection<String> tokens);
 
     /*
-        사용자별로 모두 삭제합니다.
+        사용자로 모든 expo 토큰을 삭제합니다.
      */
     void deleteAllByUser(User user);
 }

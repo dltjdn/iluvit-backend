@@ -13,7 +13,7 @@ import java.util.Optional;
 public interface PostRepository extends JpaRepository<Post, Long>, PostRepositoryCustom {
 
     /*
-        게시글 id를 파라미터로 받아서 사용자와 게시판 및 시설에 ID로 조회합니다.
+        사용자, 게시판, 시설 id로 게시글을 조회합니다.
      */
     @Query("select p from Post p " +
             "left join fetch p.user u " +
@@ -23,13 +23,13 @@ public interface PostRepository extends JpaRepository<Post, Long>, PostRepositor
     Optional<Post> findByIdWithUserAndBoardAndCenter(@Param("postId") Long postId);
 
     /*
-        사용자 id를 파라미터로 받아서 사용자로 게시글을 조회합니다.
+        사용자 id로 게시글을 조회합니다.
      */
     @Query(value = "select p from Post p join fetch p.user u join fetch p.board b where u.id = :userId")
     Slice<Post> findByUser(@Param("userId") Long userId, Pageable pageable);
 
     /*
-        게시판 id들로 게시글 top3를 조회합니다.
+        게시판 id 리스트 중 최근 3개의 게시글을 불러옵니다.
      */
     @Query(value = "select * from " +
             "(select row_number() over (partition by p.board_id order by p.created_date desc) as ranks, " +
@@ -39,7 +39,7 @@ public interface PostRepository extends JpaRepository<Post, Long>, PostRepositor
     List<Post> findTop3(@Param("boardIds") List<Long> boardIds);
 
     /*
-        게시판 id들로 게시글 top3_H2를 조회합니다.
+        게시판 id 리스트 중 최근 3개의 게시글 리스트를 불러옵니다.
      */
     @Query(value = "select * from " +
             "(select row_number() over (partition by p.board_id order by p.createddate desc) as ranks, " +
@@ -49,14 +49,14 @@ public interface PostRepository extends JpaRepository<Post, Long>, PostRepositor
     List<Post> findTop3_H2(@Param("boardIds") List<Long> boardIds);
 
     /*
-        하트 개수를 파라미터로 받아서 하트 개수로 top3를 조회합니다.
+        게시글 하트 개수가 가장 많은 3개의 게시글 리스트를 불러옵니다.
      */
     @Query("select p from Post p join p.board b " +
             "where b.center.id is null and p.heartCnt >= :heartCnt order by p.postCreateDate desc ")
     List<Post> findTop3ByHeartCnt(@Param("heartCnt") int heartCnt, Pageable pageable);
 
     /*
-        하트 개수와 센터 id를 파라미터로 받아서 시설에 HeartCnt로 Top3를 조회합니다.
+        시설에 있는 게시글중 하트가 가장 많은 3개의 게시글 리스트를 불러옵니다.
      */
     @Query("select p from Post p join p.board b " +
             "where b.center.id = :centerId and p.heartCnt >= :heartCnt order by p.postCreateDate desc ")
@@ -64,7 +64,7 @@ public interface PostRepository extends JpaRepository<Post, Long>, PostRepositor
                                             Pageable pageable);
 
     /*
-        스크랩 id를 파라미터로 받아서 스크랩으로 게시글을 조회합니다.
+        게시글 스크랩 id로 게시글을 불러옵니다.
      */
     @Query("select p " +
             "from Post p " +
@@ -74,7 +74,7 @@ public interface PostRepository extends JpaRepository<Post, Long>, PostRepositor
     Slice<Post> findByScrap(@Param("scrapId") Long scrapId);
 
     /*
-        게시글 id를 파라미터로 받아서 보드에 ID로 게시글을 조회합니다.
+        게시판에 있는 게시글 id로 게시글을 불러옵니다.
      */
     @Query("select p " +
             "from Post p " +

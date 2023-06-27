@@ -14,21 +14,21 @@ import java.util.Optional;
 public interface BoardBookmarkRepository extends JpaRepository<Bookmark, Long> {
 
     /*
-        유저 id를 파라미터로 받아서 사용자 및 게시판으로 북마크한 게시판을 조회합니다.
+        사용자 id별로 즐겨찾기 리스트를 조회합니다.
     */
     @Query("select b from Bookmark b join fetch b.user u join fetch b.board bd left join fetch bd.center c " +
             "where u.id = :userId")
     List<Bookmark> findWithUserAndBoard(@Param("userId") Long userId);
 
     /*
-        유저 id를 파라미터로 받아서 사용자 및 게시판 센터가 null인 것으로 북마크한 게시판을 조회합니다.
+        센터 id가 null이 아닌 사용자 id별로 즐겨찾기 리스트를 조회합니다.
     */
     @Query("select b from Bookmark b join fetch b.user u join fetch b.board bd left outer join bd.center c " +
             "where u.id = :userId and c.id is null ")
     List<Bookmark> findWithUserAndBoardCenterIsNull(@Param("userId") Long userId);
 
     /*
-        유저 id를 파라미터로 받아서 게시판별 게시글을 조회합니다.
+        게시판 id로 즐겨찾기 게시글 리스트를 조회합니다.
     */
     @Query("select p from Post p join fetch p.board b where p.id in " +
             "(select max(p.id) from Post p where p.board.id in " +
@@ -37,27 +37,25 @@ public interface BoardBookmarkRepository extends JpaRepository<Bookmark, Long> {
     List<Post> findPostByBoard(@Param("userId") Long userId);
 
     /*
-        사용자별 게시판을 조회합니다.
+        시설에 가입되어 있지 않은 사용자별 즐겨찾기 리스트를 조회합니다.
     */
     @Query("select bm from Bookmark bm join fetch bm.board b where bm.user.id = :userId and b.center.id is null ")
     List<Bookmark> findBoardByUser(@Param("userId") Long userId);
 
-
     /*
-        사용자 및 게시판별 즐겨찾기한 게시판을 조회합니다.
+        사용자 및 게시판별로 즐겨찾기를 조회합니다.
     */
-
     @Query("select bm from Bookmark bm where bm.user.id = :userId and bm.board.id = :boardId")
     Optional<Bookmark> findBoardBookmarkByUserAndBoard(@Param("userId") Long userId, @Param("boardId") Long boardId);
 
-     /*
-        사용자 및 센터별 게시판을 조회합니다.
+    /*
+        시설 및 사용자별로 즐겨찾기 리스트를 조회합니다.
     */
     @Query("select bm from Bookmark bm join fetch bm.board b where bm.user.id = :userId and b.center.id = :centerId ")
     List<Bookmark> findBoardByUserAndCenter(@Param("userId") Long userId, @Param("centerId") Long centerId);
 
     /*
-        유저 id와 여러 개의 게시판 id를 파라미터로 받아서 게시판 및 사용자별로 모두 삭제합니다.
+        사용자 id와 게시판 id 리스트별로 즐겨찾기를 삭제합니다.
     */
     @Modifying
     @Query("delete " +
@@ -67,7 +65,7 @@ public interface BoardBookmarkRepository extends JpaRepository<Bookmark, Long> {
     void deleteAllByBoardAndUser(@Param("userId") Long userId, @Param("boardIds") List<Long> boardIds);
 
     /*
-        유저 id와 센터 id를 파라미터로 받아서 시설 및 사용자별로 모두 삭제합니다.
+        사용자 id와 시설 id별로 즐겨찾기를 삭제합니다.
     */
     @Modifying
     @Query("delete " +
@@ -81,12 +79,12 @@ public interface BoardBookmarkRepository extends JpaRepository<Bookmark, Long> {
     void deleteAllByCenterAndUser(@Param("userId") Long userId, @Param("centerId") Long centerId);
 
     /*
-        사용자를 조회합니다.
+        사용자별로 즐겨찾기 리스트를 조회합니다.
     */
     List<Bookmark> findByUser(User user);
 
     /*
-        사용자별로 게시판 즐겨찾기 리스트를 조회합니다.
+        즐겨찾기 사용자 id별로 즐겨찾기 리스트를 조회합니다.
     */
     @Query("select bm from Bookmark bm " +
             "join fetch bm.board b " +
