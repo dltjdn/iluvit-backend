@@ -10,18 +10,12 @@ import java.util.Optional;
 
 public interface TokenPairRepository extends JpaRepository<TokenPair, Long> {
 
-    /*
-        공정토큰 사용자 id가 사용자 id와 같은 공정 토큰을 불러옵니다.
-     */
     @Query("select r " +
             "from TokenPair r " +
             "join fetch r.user u " +
             "where u.id =:userId")
     Optional<TokenPair> findByUserIdWithUser(@Param("userId") Long userId);
 
-    /*
-        공정토큰 사용자 id가 사용자 id와 같은 공정 토큰을 불러옵니다.
-     */
     @Query("select r " +
             "from TokenPair r " +
             "where r.user.id =:userId")

@@ -11,9 +11,6 @@ import java.util.Optional;
 
 public interface ScrapPostRepository extends JpaRepository<ScrapPost, Long> {
 
-    /*
-        사용자 ID와 스크랩 ID에 해당하는 스크랩된 게시글을 조회합니다.
-     */
     @Query("select sp " +
             "from ScrapPost sp " +
             "join fetch sp.scrap s " +
@@ -24,9 +21,6 @@ public interface ScrapPostRepository extends JpaRepository<ScrapPost, Long> {
             "and s.user.id =:userId")
     Slice<ScrapPost> findByScrapWithPost(@Param("userId") Long userId, @Param("scrapId") Long scrapId, Pageable pageable);
 
-    /*
-        사용자 ID와 스크랩 게시글 ID에 해당하는 스크랩된 게시글을 조회합니다.
-     */
     @Query("select sp " +
             "from ScrapPost sp " +
             "join sp.scrap s " +
