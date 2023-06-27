@@ -17,21 +17,48 @@ import java.util.List;
 
 public interface CenterRepositoryCustom {
 
+    /*
+        필터로 시설 미리보기 DTO를 조회합니다.
+     */
     Slice<CenterPreviewDto> findByFilter(List<Area> areas, Theme theme, Integer interestedAge, KindOf kindOf, Pageable pageable);
 
+    /*
+        지도 리스트에 대한 필터로 시설과 거리 미리보기 DTO 리스트를 조회합니다.
+     */
     List<CenterAndDistancePreviewDto> findByFilterForMapList(double longitude, double latitude, Theme theme, Integer interestedAge, KindOf kindOf, Integer distance);
 
+    /*
+        지도 리스트에 대한 필터로 시설과 거리 미리보기 DTO를 조회합니다.
+     */
     SliceImpl<CenterAndDistancePreviewDto> findByFilterForMapList(double longitude, double latitude, Long userId, KindOf kindOf, List<Long> centerIds, Pageable pageable);
 
+    /*
+        지도 리스트에 대한 필터로 시설과 거리 미리보기 DTO를 조회합니다.
+     */
     SliceImpl<CenterAndDistancePreviewDto> findByFilterForMapList(double longitude, double latitude, KindOf kindOf, List<Long> centerIds, Pageable pageable);
 
+    /*
+        지도에 대한 필터로 시설 지도 미리보기 DTO 리스트를 조회합니다.
+     */
     List<CenterMapPreviewDto> findByFilterForMap(double longitude, double latitude, Double distance, String searchContent);
 
+    /*
+        추천 시설로 시설 추천 DTO 리스트를 조회합니다.
+     */
     List<CenterRecommendDto> findRecommendCenter(Theme theme, Location location, Pageable pageable);
 
+    /*
+        회원가입을 위해 시설 DTO를 조회합니다.
+     */
     Slice<CenterDto> findForSignup(String sido, String sigungu, String centerName, Pageable pageable);
 
+    /*
+        자녀 추가를 위한 시설로 시설 DTO를 조회합니다.
+     */
     Slice<CenterDto> findCenterForAddChild(String sido, String sigungu, String centerName, Pageable pageable);
 
+    /*
+        시설 즐겨찾기로 시설 미리보기 DTO를 조회합니다.
+     */
     Slice<CenterPreviewDto> findByPrefer(Long userId, Pageable pageable);
 }
