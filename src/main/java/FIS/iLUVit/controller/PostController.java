@@ -11,8 +11,10 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
+import org.springframework.http.MediaType;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 
@@ -28,11 +30,11 @@ public class PostController {
      * COMMON
      */
 
-//    /**
-//     * 작성자: 이창윤
-//     * 작성시간: 2022/06/27 11:31 AM
-//     * 내용: multipart/form-data 형식으로 변환된 request, 이미지 파일 리스트 images 파라미터로 게시글 저장
-//     */
+    /**
+     * 작성자: 이창윤
+     * 작성시간: 2022/06/27 11:31 AM
+     * 내용: multipart/form-data 형식으로 변환된 request, 이미지 파일 리스트 images 파라미터로 게시글 저장
+     */
 //    @PostMapping(value = "", consumes = {MediaType.APPLICATION_JSON_VALUE, MediaType.MULTIPART_FORM_DATA_VALUE})
 //    public Long registerPost(@Login Long userId,
 //                             @RequestPart(required = false) List<MultipartFile> images,

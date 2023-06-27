@@ -28,6 +28,7 @@ if [ ! -z ${TARGET_PID} ]; then
   sudo kill -9 ${TARGET_PID}
 fi
 
+
 # 현재 ec2 서버의 public IP 주소를 불러온다
 PUBLIC_IP=$(curl http://169.254.169.254/latest/meta-data/public-ipv4)
 echo "퍼플릭 아이피 > ${PUBLIC_IP:0:2}"

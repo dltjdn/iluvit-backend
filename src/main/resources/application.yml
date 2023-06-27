@@ -24,6 +24,7 @@ spring:
           enabled: true
     open-in-view: false
 
+
   profiles:
     default: dev
     include:

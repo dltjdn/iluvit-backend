@@ -27,6 +27,10 @@ public class CenterRepositoryImpl extends CenterQueryMethod implements CenterRep
 
     private final JPAQueryFactory jpaQueryFactory;
 
+
+    /*
+        게시글 리스트를 조회합니다.
+     */
     @Override
     public Slice<CenterPreviewDto> findByFilter(List<Area> areas, Theme theme, Integer interestedAge, KindOf kindOf, Pageable pageable) {
         List<CenterPreviewDto> content = jpaQueryFactory.select(new QCenterPreviewDto(center, review.score.avg()))

@@ -20,6 +20,9 @@ public class PostRepositoryImpl extends PostQueryMethod implements PostRepositor
 
     private final JPAQueryFactory jpaQueryFactory;
 
+    /*
+        시설 id가 주어진 시설 id 리스트에 속하거나 null인지를 확인하고 keywordContains 메서드를 호출하여 키워드 검색을 적용하여 게시글 미리보기 DTO 객체를 불러옵니다.
+     */
     @Override
     public Slice<PostPreviewDto> findInCenterByKeyword(Collection<Long> centerIds, String keyword, Pageable pageable) {
         List<PostPreviewDto> posts = jpaQueryFactory.select(new QPostPreviewDto(post))
@@ -40,6 +43,9 @@ public class PostRepositoryImpl extends PostQueryMethod implements PostRepositor
         return new SliceImpl<>(posts, pageable, hasNext);
     }
 
+    /*
+        시설 id가 주어진 시설 id와 동일한지 확인하고 keywordContains 메서드를 호출하여 키워드 검색을 적용하여 게시글 미리보기 DTO 객체를 불러옵니다.
+     */
     @Override
     public Slice<PostPreviewDto> findByCenterAndKeyword(Long centerId, String keyword, Pageable pageable) {
         List<PostPreviewDto> posts = jpaQueryFactory.select(new QPostPreviewDto(post))
@@ -61,6 +67,9 @@ public class PostRepositoryImpl extends PostQueryMethod implements PostRepositor
         return new SliceImpl<>(posts, pageable, hasNext);
     }
 
+    /*
+        시설 id가 주어진 시설 id 값과 같은지 확인하고 keywordContains 메서드를 호출하여 키워드 검색을 적용하여 게시글 미리보기 DTO 객체를 불러옵니다.
+     */
     @Override
     public Slice<PostPreviewDto> findByBoardAndKeyword(Long boardId, String keyword, Pageable pageable) {
         List<PostPreviewDto> posts = jpaQueryFactory.select(new QPostPreviewDto(post))
@@ -81,6 +90,9 @@ public class PostRepositoryImpl extends PostQueryMethod implements PostRepositor
         return new SliceImpl<>(posts, pageable, hasNext);
     }
 
+    /*
+        시설 id가 주어진 시설 id와 같고 게시글 엔티티의 하트 개수가 주어진 하트 개수보다 크거나 같은지 확인하여 게시글 미리보기 DTO를 불러옵니다.
+     */
     @Override
     public Slice<PostPreviewDto> findHotPosts(Long centerId, Integer heartCnt, Pageable pageable) {
         List<PostPreviewDto> posts = jpaQueryFactory.select(new QPostPreviewDto(post))
