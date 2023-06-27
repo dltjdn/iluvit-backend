@@ -110,10 +110,14 @@ public class ParentService {
         String hashedPwd = userService.signupValidation(request.getPassword(), request.getPasswordCheck(), request.getLoginId(), request.getPhoneNum(), request.getNickname());
         Parent parent = request.createParent(hashedPwd);
 
+        System.out.println("###########");
+
         Pair<Double, Double> loAndLat = mapService.convertAddressToLocation(request.getAddress());
         Pair<String, String> hangjung = mapService.getSidoSigunguByLocation(loAndLat.getFirst(), loAndLat.getSecond());
         Location location = new Location(loAndLat, hangjung);
         parent.updateLocation(location);
+
+        System.out.println("$$$$$$$$$");
 
         // default 스크랩 생성
         Scrap scrap = Scrap.createDefaultScrap(parent);
