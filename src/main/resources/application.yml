@@ -25,7 +25,6 @@ spring:
     open-in-view: false
 
   profiles:
-    default: dev
     include:
       - secret
       - s3
