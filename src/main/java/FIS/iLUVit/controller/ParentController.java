@@ -48,6 +48,7 @@ public class ParentController {
      */
     @PostMapping("signup")
     public void createParent(@RequestBody @Valid SignupParentRequest request) {
+        System.out.println("@@@@@@@@@@@@");
         parentService.signup(request);
     }
 
