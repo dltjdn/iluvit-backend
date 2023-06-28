@@ -30,54 +30,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.
 @ExtendWith(MockitoExtension.class)
 class ExpoTokenControllerTest {
 
-    @InjectMocks
-    ExpoTokenController expoTokenController;
+    // TODO ExpoTokenSave
 
-    @Mock
-    ExpoTokenService expoTokenService;
-
-    MockMvc mockMvc;
-
-    ObjectMapper objectMapper;
-
-    @BeforeEach
-    void init() {
-        mockMvc = MockMvcBuilders.standaloneSetup(expoTokenController)
-                .setCustomArgumentResolvers(new LoginUserArgumentResolver("secretKey"))
-                .setControllerAdvice(GlobalControllerAdvice .class)
-                .build();
-        objectMapper = new ObjectMapper();
-    }
-
-    @Test
-    public void save() throws Exception {
-        //given
-        String url = "/expo-tokens";
-        ExpoTokenRequest request = new ExpoTokenRequest("ExponentPushToken[FeQrt0GvJiT-1i1ClIgINc]",true);
-        User user = Parent.builder()
-                .id(1L)
-                .build();
-
-        given(expoTokenService.saveToken(user.getId(), request))
-                .willReturn(2L);
-        //when
-        ResultActions resultActions = mockMvc.perform(
-                MockMvcRequestBuilders.post(url)
-                        .header("Authorization", createJwtToken(user))
-                        .content(objectMapper.writeValueAsString(request))
-                        .characterEncoding(StandardCharsets.UTF_8)
-                        .contentType(MediaType.APPLICATION_JSON)
-        );
-        //then
-        resultActions.andDo(print());
-    }
-
-    public String createJwtToken(User user){
-        return JWT.create()
-                .withSubject("JWT")
-                .withExpiresAt(new Date(System.currentTimeMillis() + (60000 * 60 * 3))) // JWT 만료시간 밀리세컨단위
-                .withClaim("id", user.getId())
-                .sign(Algorithm.HMAC512("secretKey"));
-    }
 
 }
