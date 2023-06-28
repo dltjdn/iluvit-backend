@@ -1,25 +1,23 @@
 package FIS.iLUVit.service;
 
+import FIS.iLUVit.domain.*;
 import FIS.iLUVit.dto.center.CenterBannerResponse;
 import FIS.iLUVit.dto.center.CenterDetailRequest;
 import FIS.iLUVit.dto.center.CenterRecommendDto;
 import FIS.iLUVit.dto.center.CenterResponse;
-import FIS.iLUVit.domain.Center;
-import FIS.iLUVit.domain.Location;
-import FIS.iLUVit.domain.Parent;
-import FIS.iLUVit.domain.Teacher;
 import FIS.iLUVit.domain.embeddable.Score;
 import FIS.iLUVit.domain.embeddable.Theme;
 import FIS.iLUVit.domain.enumtype.KindOf;
+import FIS.iLUVit.exception.CenterErrorResult;
 import FIS.iLUVit.exception.CenterException;
 import FIS.iLUVit.exception.UserErrorResult;
 import FIS.iLUVit.exception.UserException;
-import FIS.iLUVit.repository.CenterRepository;
-import FIS.iLUVit.repository.ParentRepository;
-import FIS.iLUVit.repository.UserRepository;
+import FIS.iLUVit.repository.*;
 import FIS.iLUVit.dto.center.CenterAndDistancePreviewDto;
-import FIS.iLUVit.dto.center.CenterBannerDto;
 import FIS.iLUVit.dto.center.CenterMapPreviewDto;
+import com.querydsl.core.types.Expression;
+import com.querydsl.core.types.dsl.Expressions;
+import com.querydsl.core.types.dsl.NumberExpression;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.*;
 import org.springframework.data.util.Pair;
@@ -28,6 +26,12 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
+import java.util.Optional;
+import java.util.OptionalDouble;
+
+import static FIS.iLUVit.domain.QCenter.center;
+import static com.querydsl.core.types.dsl.MathExpressions.*;
+import static com.querydsl.core.types.dsl.MathExpressions.radians;
 
 @Service
 @Transactional
@@ -36,22 +40,21 @@ public class CenterService {
 
     private final CenterRepository centerRepository;
     private final ImageService imageService;
+
+  private final ReviewRepository reviewRepository;
+  private final CenterBookmarkRepository centerBookmarkRepository;
+
     private final ParentRepository parentRepository;
     private final UserRepository userRepository;
     private final MapService mapService;
 
-    public List<CenterAndDistancePreviewDto> findByFilterForMapList(double longitude, double latitude, Theme theme, Integer interestedAge, KindOf kindOf, Integer distance) {
-
-        return centerRepository.findByFilterForMapList(longitude, latitude, theme, interestedAge, kindOf, distance);
-    }
-
     public SliceImpl<CenterAndDistancePreviewDto> findByFilterForMapList(double longitude, double latitude, List<Long> centerIds, Long userId, KindOf kindOf, Pageable pageable) {
-        return userId == null ?
-                centerRepository.findByFilterForMapList(longitude, latitude, kindOf, centerIds, pageable) :
-                centerRepository.findByFilterForMapList(longitude, latitude, userId, kindOf, centerIds, pageable);
+
+        return centerRepository.findByFilterForMapList(longitude, latitude, userId, kindOf, centerIds, pageable);
     }
 
     public List<CenterMapPreviewDto> findByFilterForMap(double longitude, double latitude, Double distance, String searchContent){
+
         return centerRepository.findByFilterForMap(longitude, latitude, distance, searchContent);
     }
 
@@ -65,21 +68,24 @@ public class CenterService {
         return result;
     }
 
-    public CenterBannerResponse findBannerById(Long id, Long userId) {
-        CenterBannerDto data = userId == null ?
-                centerRepository.findBannerById(id) :
-                centerRepository.findBannerById(id, userId);
+    public CenterBannerResponse findBannerById(Long centerId, Long userId) {
 
-        if(data == null)
-            return null;
+        Center center = centerRepository.findById(centerId)
+                .orElseThrow(() -> new CenterException(CenterErrorResult.CENTER_NOT_EXIST));
 
-        Double starAverage = data.getStarAverage();
-        if(data.getStarAverage() != null) {
-            starAverage = (Math.round(starAverage * 10) / 10.0);
-        }
+        // 리뷰 score 평균
+        Double tempStarAvg = reviewRepository.findByCenter(center).stream()
+                .mapToInt(Review::getScore).average().orElse(0.0);
+        Double starAvg = Math.round(tempStarAvg * 10) / 10.0;
 
-        List<String> infoImages = imageService.getInfoImages(data.getInfoImages());
-        return new CenterBannerResponse(data, starAverage, infoImages);
+        // 현재 유저와 센터에 해당하는 북마크가 있을 시 센터 북마크 조회, 없을시 null
+        Prefer centerBookmark = centerBookmarkRepository.findByCenterAndParentId(center, userId)
+                .orElse(null);
+
+
+        List<String> infoImages = imageService.getInfoImages(center.getInfoImagePath());
+
+        return new CenterBannerResponse(center.getId(),center.getName(), center.getSigned(), center.getRecruit(),centerBookmark, center.getProfileImagePath(), starAvg, infoImages);
 
     }
 

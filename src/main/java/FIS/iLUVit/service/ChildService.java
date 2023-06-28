@@ -72,15 +72,16 @@ public class ChildService {
 
         Parent parent = parentRepository.getById(userId);
 
-        // 새로 등록할 시설에 교사들 엮어서 가져오기
-        Center center = centerRepository.findByIdAndSignedWithTeacher(request.getCenter_id())
+        // 시설 가져오기
+        Center center = centerRepository.findByIdAndSigned(request.getCenter_id())
                 .orElseThrow(() -> new UserException(UserErrorResult.NOT_VALID_REQUEST));
 
         // 아이 등록
         Child newChild = request.createChild(center, parent);
 
         // 아이 승인 요청 알람이 해당 시설에 승인된 교사들에게 감
-        center.getTeachers().forEach(teacher -> {
+        List<Teacher> teacherList = teacherRepository.findByCenterWithApproval(center.getId());
+        teacherList.forEach(teacher -> {
             Alarm alarm = new CenterApprovalReceivedAlarm(teacher, Auth.PARENT, teacher.getCenter());
             alarmRepository.save(alarm);
             AlarmUtils.publishAlarmEvent(alarm);
@@ -144,12 +145,13 @@ public class ChildService {
         }
 
         // 승인 요청 보내는 시설
-        Center center = centerRepository.findByIdAndSignedWithTeacher(centerId)
+        Center center = centerRepository.findByIdAndSigned(centerId)
                 .orElseThrow(() -> new CenterException(CenterErrorResult.CENTER_NOT_EXIST));
 
         mappedChild.mappingCenter(center);
 
-        center.getTeachers().forEach(teacher -> {
+        List<Teacher> teacherList = teacherRepository.findByCenterWithApproval(centerId);
+        teacherList.forEach(teacher -> {
             Alarm alarm = new CenterApprovalReceivedAlarm(teacher, Auth.PARENT, teacher.getCenter());
             alarmRepository.save(alarm);
             AlarmUtils.publishAlarmEvent(alarm);
