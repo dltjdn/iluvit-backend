@@ -25,8 +25,8 @@ public class AuthController {
      * 작성내용: (회원가입) 인증번호 받기
      */
     @GetMapping("signup")
-    public void sendAuthNumberForSignup(@RequestParam String phoneNumber) {
-        authService.sendAuthNumberForSignup(phoneNumber);
+    public void getAuthNumForSignup(@RequestParam String phoneNumber) {
+        authService.sendAuthNumForSignup(phoneNumber);
     }
 
     /**
@@ -34,8 +34,8 @@ public class AuthController {
      * 작성내용: (아이디찾기) 인증번호 받기
      */
     @GetMapping("loginid")
-    public void sendAuthNumForFindLoginId(@RequestParam String phoneNumber) {
-        authService.sendAuthNumberForFindLoginId(phoneNumber);
+    public void getAuthNumForFindLoginId(@RequestParam String phoneNumber) {
+        authService.sendAuthNumForFindLoginId(phoneNumber);
     }
 
     /**
@@ -43,7 +43,7 @@ public class AuthController {
      * 작성내용: (비밀번호찾기) 인증번호 받기
      */
     @GetMapping("password")
-    public void sendAuthNumForFindPwd(@RequestParam String loginId, @RequestParam String phoneNumber) {
+    public void getAuthNumForFindPwd(@RequestParam String loginId, @RequestParam String phoneNumber) {
         authService.sendAuthNumberForFindPassword(loginId, phoneNumber);
     }
 
@@ -52,8 +52,8 @@ public class AuthController {
      * 작성내용: (핸드폰 변경) 인증번호 받기
      */
     @GetMapping("phonenumber")
-    public void sendAuthNumForUpdatePhoneNum(@Login Long userId, @RequestParam String phoneNumber) {
-        authService.sendAuthNumberForChangePhone(userId, phoneNumber);
+    public void getAuthNumForUpdatePhoneNum(@Login Long userId, @RequestParam String phoneNumber) {
+        authService.sendAuthNumForChangePhone(userId, phoneNumber);
     }
 
     /**
@@ -71,7 +71,7 @@ public class AuthController {
      */
     @PostMapping("loginid")
     public String authenticateAuthNumForFindLoginId(@RequestBody AuthNumRequest request) {
-        return authService.findLoginId(request);
+        return authService.authenticateAuthNumForFindLoginId(request);
     }
 
     /**
@@ -80,7 +80,7 @@ public class AuthController {
      */
     @PostMapping("password")
     public void authenticateAuthNumForChangePwd(@RequestBody @Valid FindPasswordRequest request) {
-        authService.changePassword(request);
+        authService.authenticateAuthNumForChangePwd(request);
     }
 
 }

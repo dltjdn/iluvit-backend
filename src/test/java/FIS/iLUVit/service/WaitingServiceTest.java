@@ -55,7 +55,7 @@ class WaitingServiceTest {
             Mockito.doReturn(Optional.of(ptDate)).when(ptDateRepository).findByIdWith(any(Long.class));
 
             //when
-            PresentationException presentationException = assertThrows(PresentationException.class, () -> target.register(1L, 1L));
+            PresentationException presentationException = assertThrows(PresentationException.class, () -> target.watingParticipation(1L, 1L));
 
             //then
             assertThat(presentationException.getErrorResult()).isEqualTo(PresentationErrorResult.PARTICIPATION_PERIOD_PASSED);
@@ -78,7 +78,7 @@ class WaitingServiceTest {
             //when
 
             PresentationException result = assertThrows(PresentationException.class, () ->
-                    target.register(1L, ptDate.getId())
+                    target.watingParticipation(1L, ptDate.getId())
             );
             //then
 
@@ -100,7 +100,7 @@ class WaitingServiceTest {
             Mockito.doReturn(List.of(joinParticipation)).when(participationRepository).findByPtDateAndStatusJOINED(1L);
 
             //when
-            PresentationException presentationException = assertThrows(PresentationException.class, () -> target.register(1L, 1L));
+            PresentationException presentationException = assertThrows(PresentationException.class, () -> target.watingParticipation(1L, 1L));
 
             //then
             assertThat(presentationException.getErrorResult()).isEqualTo(PresentationErrorResult.ALREADY_PARTICIPATED_IN);
@@ -119,7 +119,7 @@ class WaitingServiceTest {
             Mockito.doReturn(Optional.of(ptDate)).when(ptDateRepository).findByIdWith(1L);
 
             //when
-            PresentationException presentationException = assertThrows(PresentationException.class, () -> target.register(1L, 1L));
+            PresentationException presentationException = assertThrows(PresentationException.class, () -> target.watingParticipation(1L, 1L));
 
             //then
             assertThat(presentationException.getErrorResult()).isEqualTo(PresentationErrorResult.PRESENTATION_NOT_OVERCAPACITY);
@@ -143,7 +143,7 @@ class WaitingServiceTest {
             Mockito.doReturn(waiting).when(waitingRepository).save(any(Waiting.class));
             //when
 
-            Waiting result = target.register(2L, 1L);
+            Waiting result = target.watingParticipation(2L, 1L);
 
             //then
             assertThat(result.getParent()).isEqualTo(parent);
@@ -164,7 +164,7 @@ class WaitingServiceTest {
             Mockito.doReturn(Optional.ofNullable(null))
                     .when(waitingRepository).findByIdWithPtDate(1L, 1L);
             //when
-            WaitingException result = assertThrows(WaitingException.class, () -> target.cancel(1L, 1L));
+            WaitingException result = assertThrows(WaitingException.class, () -> target.cancelParticipation(1L, 1L));
             //then
             assertThat(result.getErrorResult()).isEqualTo(WaitingErrorResult.NO_RESULT);
         }
@@ -186,7 +186,7 @@ class WaitingServiceTest {
             Mockito.doReturn(Optional.of(waiting2)).when(waitingRepository).findByIdWithPtDate(1L, 1L);
 
             //when
-            Long cancel = target.cancel(1L, 1L);
+            Long cancel = target.cancelParticipation(1L, 1L);
 
             //then
             assertThat(ptDate.getWaitingCnt()).isEqualTo(waitingCnt - 1);

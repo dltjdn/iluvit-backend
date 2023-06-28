@@ -36,7 +36,7 @@ public class TeacherController {
      */
     @GetMapping("")
     public TeacherDetailResponse getTeacherDetail(@Login Long id) throws IOException {
-        return teacherService.findDetail(id);
+        return teacherService.findTeacherDetails(id);
     }
 
     /**
@@ -45,7 +45,7 @@ public class TeacherController {
      */
     @PostMapping("signup")
     public void createTeacher(@RequestBody @Valid SignupTeacherRequest request) {
-        teacherService.signup(request);
+        teacherService.signupTeacher(request);
     }
 
     /**
@@ -54,7 +54,7 @@ public class TeacherController {
      */
     @PostMapping("")
     public TeacherDetailResponse updateTeacher(@Login Long id, @Valid @ModelAttribute TeacherDetailRequest request) throws IOException {
-        return teacherService.updateDetail(id, request);
+        return teacherService.modifyTeacherInfo(id, request);
     }
 
     /**
@@ -63,7 +63,7 @@ public class TeacherController {
      */
     @GetMapping("search/center")
     public Slice<CenterDto> getCenterForTeacher(@ModelAttribute CenterRequest request, Pageable pageable) {
-        return teacherService.findCenterForSignup(request, pageable);
+        return teacherService.findCenterForSignupTeacher(request, pageable);
     }
 
     /**
@@ -72,7 +72,7 @@ public class TeacherController {
      */
     @PatchMapping("center/{centerId}")
     public void assignCenterForTeacher(@Login Long userId, @PathVariable("centerId") Long centerId) {
-        teacherService.assignCenter(userId, centerId);
+        teacherService.requestAssignCenterForTeacher(userId, centerId);
     }
 
     /**
@@ -81,7 +81,7 @@ public class TeacherController {
      */
     @PatchMapping("center")
     public void leaveCenterForTeacher(@Login Long userId) {
-        teacherService.escapeCenter(userId);
+        teacherService.leaveCenterForTeacher(userId);
     }
 
 
@@ -104,7 +104,7 @@ public class TeacherController {
      */
     @PatchMapping("{teacherId}/accept")
     public void acceptTeacher(@Login Long userId, @PathVariable("teacherId") Long teacherId) {
-        teacherService.acceptTeacher(userId, teacherId);
+        teacherService.acceptTeacherRegistration(userId, teacherId);
     }
 
     /**
@@ -113,7 +113,7 @@ public class TeacherController {
      */
     @PatchMapping("{teacherId}/reject")
     public void rejectTeacher(@Login Long userId, @PathVariable("teacherId") Long teacherId) {
-        teacherService.fireTeacher(userId, teacherId);
+        teacherService.rejectTeacherRegistration(userId, teacherId);
     }
 
     /**

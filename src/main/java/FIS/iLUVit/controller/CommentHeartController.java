@@ -22,7 +22,7 @@ public class CommentHeartController {
      */
     @PostMapping("{commentId}")
     public Long createCommentHeart(@Login Long userId, @PathVariable Long commentId) {
-        return commentHeartService.save(userId, commentId);
+        return commentHeartService.saveCommentHeart(userId, commentId);
     }
 
     /**
@@ -31,7 +31,7 @@ public class CommentHeartController {
      */
     @DeleteMapping("{commentId}")
     public Long deleteCommentHeart(@Login Long userId, @PathVariable Long commentId) {
-        return commentHeartService.delete(userId, commentId);
+        return commentHeartService.deleteCommentHeart(userId, commentId);
     }
 
 }

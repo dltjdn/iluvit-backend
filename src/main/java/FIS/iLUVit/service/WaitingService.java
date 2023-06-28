@@ -27,7 +27,7 @@ public class WaitingService {
     private final ParentRepository parentRepository;
     private final ParticipationRepository participationRepository;
 
-    public Waiting register(Long userId, Long ptDateId) {
+    public Waiting watingParticipation(Long userId, Long ptDateId) {
         if(userId == null)
             throw new UserException(UserErrorResult.NOT_LOGIN);
         // 학부모 조회
@@ -70,7 +70,7 @@ public class WaitingService {
         return waiting;
     }
 
-    public Long cancel(Long waitingId, Long userId) {
+    public Long cancelParticipation(Long waitingId, Long userId) {
         if(userId == null)
             throw new UserException(UserErrorResult.NOT_LOGIN);
 

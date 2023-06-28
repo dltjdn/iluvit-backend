@@ -2,11 +2,7 @@ package FIS.iLUVit.controller;
 
 import FIS.iLUVit.config.argumentResolver.Login;
 import FIS.iLUVit.dto.presentation.*;
-import FIS.iLUVit.dto.presentation.*;
-import FIS.iLUVit.exception.UserErrorResult;
-import FIS.iLUVit.exception.UserException;
 import FIS.iLUVit.service.PresentationService;
-import FIS.iLUVit.service.UserService;
 import FIS.iLUVit.dto.parent.ParentDto;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -39,7 +35,7 @@ public class PresentationController {
      */
     @PostMapping("search")
     public SliceImpl<PresentationForUserResponse> getPresentationByFilter(@RequestBody PresentationSearchFilterDto dto, Pageable pageable){
-        return presentationService.findByFilter(dto.getAreas(), dto.getTheme(), dto.getInterestedAge(), dto.getKindOf(), dto.getSearchContent(), pageable);
+        return presentationService.findPresentationByFilter(dto.getAreas(), dto.getTheme(), dto.getInterestedAge(), dto.getKindOf(), dto.getSearchContent(), pageable);
     }
 
     /**
@@ -68,7 +64,7 @@ public class PresentationController {
     public PresentationResponse createPresentationInfo(@RequestBody @Validated PresentationDetailRequest request,
                                                          @Login Long userId){
 
-        return new PresentationResponse(presentationService.saveInfoWithPtDate(request, userId));
+        return new PresentationResponse(presentationService.savePresentationInfoWithPtDate(request, userId));
     }
 
 
@@ -81,7 +77,7 @@ public class PresentationController {
     @ResponseStatus(HttpStatus.ACCEPTED)
     public PresentationResponse updatePresentationInfo(@RequestBody @Validated PresentationRequest request,
                                                        @Login Long userId){
-        return new PresentationResponse(presentationService.modifyInfoWithPtDate(request, userId));
+        return new PresentationResponse(presentationService.modifyPresentationInfoWithPtDate(request, userId));
     }
 
     /**
@@ -94,7 +90,7 @@ public class PresentationController {
     public PresentationResponse createPresentationImage(@PathVariable("presentationId") Long presentationId,
                                                           @RequestPart(required = false) List<MultipartFile> images,
                                                           @Login Long userId) {
-        return new PresentationResponse(presentationService.saveImageWithPtDate(presentationId, images, userId));
+        return new PresentationResponse(presentationService.savePresentationImageWithPtDate(presentationId, images, userId));
     }
 
     /**
@@ -107,7 +103,7 @@ public class PresentationController {
     public PresentationResponse updatePresentationImage(@PathVariable("presentationId") Long presentationId,
                                                         @RequestPart(required = false) List<MultipartFile> images,
                                                         @Login Long userId){
-        return new PresentationResponse(presentationService.modifyImageWithPtDate(presentationId, images, userId));
+        return new PresentationResponse(presentationService.modifyPresentationImageWithPtDate(presentationId, images, userId));
     }
 
     /**
@@ -118,7 +114,7 @@ public class PresentationController {
     public List<PresentationForTeacherResponse> getAllPresentationForTeacher(@Login Long userId,
                                                                              @PathVariable("centerId") Long centerId,
                                                                              Pageable pageable){
-        return presentationService.findPresentationListByCenterId(userId, centerId, pageable);
+        return presentationService.findPresentationListByCenter(userId, centerId, pageable);
     }
 
     /**
@@ -127,7 +123,7 @@ public class PresentationController {
      */
     @GetMapping("{presentationId}")
     public PresentationDetailResponse getPresentationDetails(@PathVariable("presentationId") Long presentationId){
-        return presentationService.findPresentationDetail(presentationId);
+        return presentationService.findPresentationDetails(presentationId);
     }
 
     /**
@@ -136,7 +132,7 @@ public class PresentationController {
      */
     @GetMapping("pt-date/{ptDateId}/participating")
     public List<ParentDto> getParentParticipate(@Login Long userId, @PathVariable("ptDateId") Long ptDateId){
-        return presentationService.findPtDateParticipatingParents(userId, ptDateId);
+        return presentationService.findParentListWithRegisterParticipation(userId, ptDateId);
     }
 
     /**
@@ -145,7 +141,7 @@ public class PresentationController {
      */
     @GetMapping("pt-date/{ptDateId}/waiting")
     public List<ParentDto> getParentWait(@Login Long userId, @PathVariable("ptDateId") Long ptDateId){
-        return presentationService.findPtDateWaitingParents(userId, ptDateId);
+        return presentationService.findParentListWithWaitingParticipation(userId, ptDateId);
     }
 
 }

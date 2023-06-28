@@ -247,7 +247,7 @@ class PresentationServiceTest {
                     .when(userRepository).findTeacherById(1L);
             //when
             UserException result = assertThrows(UserException.class, () -> {
-                target.saveInfoWithPtDate(request,  1L);
+                target.savePresentationInfoWithPtDate(request,  1L);
             });
 
             //then
@@ -263,7 +263,7 @@ class PresentationServiceTest {
                     .when(userRepository).findTeacherById(1L);
             //when
             CenterException result = assertThrows(CenterException.class, () -> {
-                target.saveInfoWithPtDate(request,1L);
+                target.savePresentationInfoWithPtDate(request,1L);
             });
 
             //then
@@ -282,7 +282,7 @@ class PresentationServiceTest {
 
             //when
             PresentationException result = assertThrows(PresentationException.class, () -> {
-                target.saveInfoWithPtDate(request, 1L);
+                target.savePresentationInfoWithPtDate(request, 1L);
             });
 
             //then
@@ -304,7 +304,7 @@ class PresentationServiceTest {
                     .when(centerRepository).getById(center.getId());
 
             //when
-            Presentation result = target.saveInfoWithPtDate(request, 1L);
+            Presentation result = target.savePresentationInfoWithPtDate(request, 1L);
 
             //then
             assertThat(result.getCenter().getId()).isEqualTo(1L);
@@ -360,7 +360,7 @@ class PresentationServiceTest {
                     .when(presentationRepository).findByIdAndJoinPtDate(request.getPresentationId());
             //when
             PresentationException result = assertThrows(PresentationException.class, () -> {
-                target.modifyInfoWithPtDate(request, 1L);
+                target.modifyPresentationInfoWithPtDate(request, 1L);
             });
 
             //then
@@ -379,7 +379,7 @@ class PresentationServiceTest {
 
             //when
             UserException result = assertThrows(UserException.class, () -> {
-                target.modifyInfoWithPtDate(request, 1L);
+                target.modifyPresentationInfoWithPtDate(request, 1L);
             });
 
             //then
@@ -398,7 +398,7 @@ class PresentationServiceTest {
 
             //when
             CenterException result = assertThrows(CenterException.class, () -> {
-                target.modifyInfoWithPtDate(request, 1L);
+                target.modifyPresentationInfoWithPtDate(request, 1L);
             });
 
             //then
@@ -426,7 +426,7 @@ class PresentationServiceTest {
                         .thenReturn(new AlarmEvent(presentationFullAlarm));
                 //when
                 PresentationException result = assertThrows(PresentationException.class,
-                        () -> target.modifyInfoWithPtDate(request, 1L));
+                        () -> target.modifyPresentationInfoWithPtDate(request, 1L));
 
                 //then
                 verify(ptDateRepository, times(2)).save(any(PtDate.class));
@@ -483,7 +483,7 @@ class PresentationServiceTest {
                 alarmUtils.when(() -> AlarmUtils.publishAlarmEvent(any(Alarm.class)))
                         .thenReturn(new AlarmEvent(presentationFullAlarm));
                 //when
-                Presentation presentation = target.modifyInfoWithPtDate(request, 1L);
+                Presentation presentation = target.modifyPresentationInfoWithPtDate(request, 1L);
 
                 //then
                 verify(ptDateRepository, times(2)).save(any(PtDate.class));
