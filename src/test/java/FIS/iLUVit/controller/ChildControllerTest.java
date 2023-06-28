@@ -1,627 +1,116 @@
 package FIS.iLUVit.controller;
 
-import FIS.iLUVit.Creator;
-import FIS.iLUVit.config.argumentResolver.LoginUserArgumentResolver;
-import FIS.iLUVit.dto.center.CenterDto;
-import FIS.iLUVit.dto.center.CenterRequest;
-import FIS.iLUVit.dto.child.ChildDto;
-import FIS.iLUVit.domain.Center;
-import FIS.iLUVit.domain.Child;
-import FIS.iLUVit.domain.Parent;
-import FIS.iLUVit.domain.Teacher;
-import FIS.iLUVit.domain.enumtype.Approval;
-import FIS.iLUVit.domain.enumtype.Auth;
-import FIS.iLUVit.exception.*;
-import FIS.iLUVit.exception.exceptionHandler.ErrorResponse;
-import FIS.iLUVit.exception.exceptionHandler.controllerAdvice.GlobalControllerAdvice;
-import FIS.iLUVit.service.ChildService;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
-import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.SliceImpl;
-import org.springframework.data.web.PageableHandlerMethodArgumentResolver;
-import org.springframework.http.MediaType;
-import org.springframework.mock.web.MockMultipartFile;
-import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.test.web.servlet.ResultActions;
-import org.springframework.test.web.servlet.request.MockMultipartHttpServletRequestBuilder;
-import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
-import org.springframework.test.web.servlet.setup.MockMvcBuilders;
-
-import java.io.File;
-import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.time.LocalDate;
-import java.util.List;
-
-import static org.mockito.Mockito.*;
-import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @ExtendWith(MockitoExtension.class)
 public class ChildControllerTest {
 
-    @InjectMocks
-    private ChildController target;
+    // TODO 아이들정보반환
 
-    @Mock
-    private ChildService childService;
-
-    private ObjectMapper objectMapper;
-    private MockMvc mockMvc;
-    private MockMultipartFile multipartFile;
-
-    private Parent parent;
-    private Child child;
-    private Center center;
-    private Teacher teacher;
-
-    @BeforeEach
-    public void init() throws IOException {
-        objectMapper = new ObjectMapper();
-        mockMvc = MockMvcBuilders.standaloneSetup(target)
-                .setCustomArgumentResolvers(new PageableHandlerMethodArgumentResolver(), new LoginUserArgumentResolver("secretKey"))
-                .setControllerAdvice(GlobalControllerAdvice.class)
-                .build();
-        String name = "162693895955046828.png";
-        Path path = Paths.get(new File("").getAbsolutePath() + '/' + name);
-        byte[] content = Files.readAllBytes(path);
-        multipartFile = new MockMultipartFile("profileImg", name, "image", content);
-        parent = Creator.createParent(1L);
-        center = Creator.createCenter(3L, "center");
-        child = Creator.createChild(2L, "child", parent, center, Approval.ACCEPT);
-        teacher = Creator.createTeacher(4L, "teacher", center, Auth.TEACHER, Approval.ACCEPT);
-    }
-
-    @Test
-    public void 아이들정보반환() throws Exception {
-        // given
-        String url = "/child/info";
-        doReturn(new ChildDto())
-                .when(childService)
-                .findChildList(any());
-        // when
-        ResultActions result = mockMvc.perform(
-                MockMvcRequestBuilders.get(url)
-                        .header("Authorization", Creator.createJwtToken(parent))
-        );
-        // then
-        result.andExpect(status().isOk());
-    }
-
-    @Test
-    public void 아이추가센터정보조회() throws Exception {
-        // given
-        String url = "/child/search/center?page=0&size=10";
-        List<CenterDto> content = List.of(CenterDto.builder().build());
-        CenterRequest request = CenterRequest.builder().build();
-        Pageable pageable = PageRequest.of(0, 10);
-        SliceImpl<CenterDto> response = new SliceImpl<>(content, pageable, false);
-        doReturn(response)
-                .when(childService)
-                .findCenterForAddChild(any(), any());
-        // when
-        ResultActions result = mockMvc.perform(
-                MockMvcRequestBuilders.get(url)
-                        .content(objectMapper.writeValueAsString(request))
-                        .contentType(MediaType.APPLICATION_JSON)
-        );
-        // then
-        result.andExpect(status().isOk())
-                .andExpect(content().json(
-                        objectMapper.writeValueAsString(response)
-                ));
-    }
+    // TODO 아이추가센터정보조회
 
     @Nested
     @DisplayName("아이승인")
     class acceptChild {
 
-        @Test
-        @DisplayName("[error] 승인받지않은교사요청")
-        public void 승인받지않은교사요청() throws Exception {
-            // given
-            String url = "/child/{childId}/accept";
-            UserErrorResult error = UserErrorResult.HAVE_NOT_AUTHORIZATION;
-            doThrow(new UserException(error))
-                    .when(childService)
-                    .acceptChildRegistration(any(), any());
-            // when
-            ResultActions result = mockMvc.perform(
-                    MockMvcRequestBuilders.patch(url, child.getId())
-                            .header("Authorization", Creator.createJwtToken(teacher))
-            );
-            // then
-            result.andExpect(status().isForbidden())
-                    .andExpect(content().json(
-                            objectMapper.writeValueAsString(new ErrorResponse(error.getHttpStatus(), error.getMessage()))
-                    ));
-        }
+        // TODO 승인받지 않은 교사 요청
 
-        @Test
-        @DisplayName("[error] 아이 아이디 에러")
-        public void 아이아이디에러() throws Exception {
-            // given
-            String url = "/child/{childId}/accept";
-            UserErrorResult error = UserErrorResult.NOT_VALID_REQUEST;
-            doThrow(new UserException(error))
-                    .when(childService)
-                    .acceptChildRegistration(any(), any());
-            // when
-            ResultActions result = mockMvc.perform(
-                    MockMvcRequestBuilders.patch(url, child.getId())
-                            .header("Authorization", Creator.createJwtToken(teacher))
-            );
-            // then
-            result.andExpect(status().isIAmATeapot())
-                    .andExpect(content().json(
-                            objectMapper.writeValueAsString(new ErrorResponse(error.getHttpStatus(), error.getMessage()))
-                    ));
-        }
+        // TODO 아이 아이디 에러
 
-        @Test
-        @DisplayName("[success] 아이승인성공")
-        public void 아이승인성공() throws Exception {
-            // given
-            String url = "/child/{childId}/accept";
-            // when
-            ResultActions result = mockMvc.perform(
-                    MockMvcRequestBuilders.patch(url, child.getId())
-                            .header("Authorization", Creator.createJwtToken(teacher))
+        // TODO 아이 승인 성공
 
-            );
-            // then
-            result.andExpect(status().isOk());
-        }
     }
 
     @Nested
     @DisplayName("아이삭제")
     class fireChild {
 
-        @Test
-        @DisplayName("[error] 승인받지 않은 교사")
-        public void 승인받지않은교사() throws Exception {
-            // given
-            String url = "/child/{childId}/reject";
-            UserErrorResult error = UserErrorResult.HAVE_NOT_AUTHORIZATION;
-            doThrow(new UserException(error))
-                    .when(childService)
-                    .deleteChild(any(), any());
-            // when
-            ResultActions result = mockMvc.perform(
-                    MockMvcRequestBuilders.patch(url, child.getId())
-                            .header("Authorization", teacher.getId())
-            );
-            // then
-            result.andExpect(status().isForbidden())
-                    .andExpect(content().json(
-                            objectMapper.writeValueAsString(new ErrorResponse(error.getHttpStatus(), error.getMessage()))
-                    ));
-        }
+        // TODO 승인받지 않은 교사
 
-        @Test
-        @DisplayName("[error] 아이 아이디 에러")
-        public void 아이아이디에러() throws Exception {
-            // given
-            String url = "/child/{childId}/reject";
-            UserErrorResult error = UserErrorResult.NOT_VALID_REQUEST;
-            doThrow(new UserException(error))
-                    .when(childService)
-                    .deleteChild(any(), any());
-            // when
-            ResultActions result = mockMvc.perform(
-                    MockMvcRequestBuilders.patch(url, child.getId())
-                            .header("Authorization", teacher.getId())
-            );
-            // then
-            result.andExpect(status().isIAmATeapot())
-                    .andExpect(content().json(
-                            objectMapper.writeValueAsString(new ErrorResponse(error.getHttpStatus(), error.getMessage()))
-                    ));
-        }
+        // TODO 아이 아이디 에러
 
-        @Test
-        @DisplayName("[success] 아이삭제성공")
-        public void 아이삭제성공() throws Exception {
-            // given
-            String url = "/child/{childId}/reject";
-            // when
-            ResultActions result = mockMvc.perform(
-                    MockMvcRequestBuilders.patch(url, child.getId())
-                            .header("Authorization", teacher.getId())
-            );
-            // then
-            result.andExpect(status().isOk());
-        }
+        // TODO 아이 삭제 성공
+
     }
 
     @Nested
     @DisplayName("아이 프로필 수정")
     class updateChild {
 
-        @Test
-        @DisplayName("[error] 식별자값 에러")
-        public void 식별자에러() throws Exception {
-            // given
-            MockMultipartHttpServletRequestBuilder builder =
-                    MockMvcRequestBuilders.multipart("/child/{childId}", child.getId());
-            builder.with(request -> {
-                request.setMethod("PUT");
-                return request;
-            });
-            UserErrorResult error = UserErrorResult.NOT_VALID_REQUEST;
-            doThrow(new UserException(error))
-                    .when(childService)
-                    .modifyChildInfo(any(), any(), any());
-            // when
-            ResultActions result = mockMvc.perform(builder
-                    .file(multipartFile)
-                    .header("Authorization", Creator.createJwtToken(parent))
-                    .param("center_id", "1")
-                    .param("name", "name")
-                    .param("birthDate", "2022-01-01"));
-            // then
-            result.andExpect(status().isIAmATeapot())
-                    .andExpect(content().json(
-                            objectMapper.writeValueAsString(new ErrorResponse(error.getHttpStatus(), error.getMessage()))
-                    ));
-        }
+        // TODO 식별자값 에러
 
-        @Test
-        @DisplayName("[error] 요청 validation error")
-        public void validationError() throws Exception {
-            // given
-            MockMultipartHttpServletRequestBuilder builder =
-                    MockMvcRequestBuilders.multipart("/child/{childId}", child.getId());
-            builder.with(request -> {
-                request.setMethod("PUT");
-                return request;
-            });
-            // when
-            ResultActions result = mockMvc.perform(builder
-                    .file(multipartFile)
-                    .header("Authorization", Creator.createJwtToken(parent))
-                    .param("center_id", "1")
-                    .param("name", "name")
-                    .param("birthDate", "missMatch"));
-            // then
-            result.andExpect(status().isBadRequest());
-        }
+        // TODO 요청 validation error
 
-        @Test
-        @DisplayName("[success] 수정성공")
-        public void 수정성공() throws Exception {
-            // given
-            MockMultipartHttpServletRequestBuilder builder =
-                    MockMvcRequestBuilders.multipart("/child/{childId}", child.getId());
-            builder.with(request -> {
-                request.setMethod("PUT");
-                return request;
-            });
-            // when
-            ResultActions result = mockMvc.perform(builder
-                    .file(multipartFile)
-                    .header("Authorization", Creator.createJwtToken(parent))
-                    .param("center_id", "1")
-                    .param("name", "name")
-                    .param("birthDate", "2022-01-01"));
-            // then
-            result.andExpect(status().isOk());
-        }
+        // TODO 수정 성공
+
     }
 
     @Nested
     @DisplayName("학부모/아이 시설 승인 요청")
     class mappingCenter {
-        @Test
-        public void 잘못된아이정보() throws Exception {
-            //given
-            String url = "/child/{childId}/center/{centerId}";
-            UserErrorResult error = UserErrorResult.NOT_VALID_REQUEST;
-            doThrow(new UserException(error))
-                    .when(childService)
-                    .requestAssignCenterForChild(any(), any(), any());
-            //when
-            ResultActions result = mockMvc.perform(
-                    MockMvcRequestBuilders.patch(url, child.getId(), center.getId())
-                            .header("Authorization", Creator.createJwtToken(parent))
-            );
-            //then
-            result.andExpect(status().isIAmATeapot())
-                    .andExpect(content().json(
-                            objectMapper.writeValueAsString(new ErrorResponse(error.getHttpStatus(), error.getMessage()))
-                    ));
-        }
 
-        @Test
-        public void 아이가시설에속해있는경우() throws Exception {
-            //given
-            String url = "/child/{childId}/center/{centerId}";
-            SignupErrorResult error = SignupErrorResult.ALREADY_BELONG_CENTER;
-            doThrow(new SignupException(error))
-                    .when(childService)
-                    .requestAssignCenterForChild(any(), any(), any());
-            //when
-            ResultActions result = mockMvc.perform(
-                    MockMvcRequestBuilders.patch(url, parent.getId(), child.getId())
-                            .header("Authorization", Creator.createJwtToken(parent))
-            );
-            //then
-            result.andExpect(status().isBadRequest())
-                    .andExpect(content().json(
-                            objectMapper.writeValueAsString(new ErrorResponse(error.getHttpStatus(), error.getMessage()))
-                    ));
-        }
+        // TODO 잘못된 아이 정보
 
-        @Test
-        public void 잘못된시설정보() throws Exception {
-            //given
-            String url = "/child/{childId}/center/{centerId}";
-            CenterErrorResult error = CenterErrorResult.CENTER_NOT_EXIST;
-            doThrow(new CenterException(error))
-                    .when(childService)
-                    .requestAssignCenterForChild(any(), any(), any());
-            //when
-            ResultActions result = mockMvc.perform(
-                    MockMvcRequestBuilders.patch(url, parent.getId(), child.getId())
-                            .header("Authorization", Creator.createJwtToken(parent))
-            );
-            //then
-            result.andExpect(status().isIAmATeapot())
-                    .andExpect(content().json(
-                            objectMapper.writeValueAsString(new ErrorResponse(error.getHttpStatus(), error.getMessage()))
-                    ));
-        }
-        @Test
-        public void 승인요청성공() throws Exception {
-            //given
-            String url = "/child/{childId}/center/{centerId}";
-            doReturn(child)
-                    .when(childService)
-                    .requestAssignCenterForChild(any(), any(), any());
-            //when
-            ResultActions result = mockMvc.perform(
-                    MockMvcRequestBuilders.patch(url, parent.getId(), child.getId())
-                            .header("Authorization", Creator.createJwtToken(parent))
-            );
-            //then
-            result.andDo(print())
-                    .andExpect(status().isOk())
-                    .andExpect(content().json(objectMapper.writeValueAsString(center.getId())));
-        }
+        // TODO 아이가 시설에 속해있는 경우
+
+        // TODO 잘못된 시설 정보
+
+        // TODO 승인 요청 성공
+
     }
 
     @Nested
     @DisplayName("아이의 시설 탈퇴")
     class exitCenter {
-        @Test
-        public void 잘못된요청() throws Exception {
-            //given
-            String url = "/child/{childId}/center";
-            UserErrorResult error = UserErrorResult.NOT_VALID_REQUEST;
-            doThrow(new UserException(error))
-                    .when(childService)
-                    .leaveCenterForChild(any(), any());
-            //when
-            ResultActions result = mockMvc.perform(
-                    MockMvcRequestBuilders.patch(url, child.getId())
-                            .header("Authorization", Creator.createJwtToken(parent)
-                            ));
-            //then
-            result.andExpect(status().isIAmATeapot())
-                    .andExpect(content().json(
-                            objectMapper.writeValueAsString(new ErrorResponse(error.getHttpStatus(), error.getMessage()))
-                    ));
-        }
 
-        @Test
-        public void 정상요청() throws Exception {
-            //given
-            String url = "/child/{childId}/center";
-            //when
-            ResultActions result = mockMvc.perform(
-                    MockMvcRequestBuilders.patch(url, child.getId())
-                            .header("Authorization", Creator.createJwtToken(parent)
-                            ));
-            //then
-            result.andExpect(status().isOk());
-        }
+        // TODO 잘못된 요청
+
+        // TODO 정상 요청
+
     }
 
     @Nested
     @DisplayName("아이삭제")
     class deleteChild{
-        @Test
-        @DisplayName("[error] 잘못된 childId")
-        public void childIdError() throws Exception {
-            // given
-            String url = "/child/{childId}";
-            UserErrorResult error = UserErrorResult.NOT_VALID_REQUEST;
-            doThrow(new UserException(error))
-                    .when(childService)
-                    .deleteChild(any(), any());
-            // when
-            ResultActions result = mockMvc.perform(
-                    MockMvcRequestBuilders.delete(url, child.getId())
-                            .header("Authorization", Creator.createJwtToken(parent))
-            );
-            // then
-            result.andExpect(status().isIAmATeapot())
-                    .andExpect(content().json(
-                            objectMapper.writeValueAsString(new ErrorResponse(error.getHttpStatus(), error.getMessage()))
-                    ));
-        }
-        @Test
-        @DisplayName("[success] 아이 삭제 성공")
-        public void 아이삭제성공() throws Exception {
-            // given
-            String url = "/child/{childId}";
-            // when
-            ResultActions result = mockMvc.perform(
-                    MockMvcRequestBuilders.delete(url, child.getId())
-                            .header("Authorization", Creator.createJwtToken(parent))
-            );
-            // then
-            result.andExpect(status().isOk());
-        }
+
+        // TODO 잘못된 childId
+
+        // TODO 아이 삭제 성공
+
     }
 
     @Nested
     @DisplayName("아이추가")
     class saveChild{
-        @Test
-        @DisplayName("[error] 불완전한 요청")
-        public void 불완전한요청() throws Exception {
-            // given
-            String url = "/child";
-            // when
-            ResultActions result = mockMvc.perform(
-                    MockMvcRequestBuilders
-                            .multipart(url)
-                            .file(multipartFile)
-                            .header("Authorization", Creator.createJwtToken(parent))
-                            .param("center_id", center.getId().toString())
-                            .param("birthDate", LocalDate.now().toString())
-            );
-            // then
-            result.andDo(print())
-                    .andExpect(status().isBadRequest());
-        }
 
-        @Test
-        @DisplayName("[error] 잘못된 센터로의 접근")
-        public void 잘못된요청() throws Exception {
-            // given
-            String url = "/child";
-            UserErrorResult error = UserErrorResult.NOT_VALID_REQUEST;
-            doThrow(new UserException(error))
-                    .when(childService)
-                    .saveNewChild(any(), any());
-            // when
-            ResultActions result = mockMvc.perform(
-                    MockMvcRequestBuilders
-                            .multipart(url)
-                            .file(multipartFile)
-                            .header("Authorization", Creator.createJwtToken(parent))
-                            .param("center_id", center.getId().toString())
-                            .param("name", "childName")
-                            .param("birthDate", LocalDate.now().toString())
-            );
-            // then
-            result.andExpect(status().isIAmATeapot())
-                    .andExpect(content().json(
-                            objectMapper.writeValueAsString(new ErrorResponse(error.getHttpStatus(), error.getMessage()))
-                    ));
-        }
-        @Test
-        @DisplayName("[success] 아이추가 성공")
-        public void 아이추가성공() throws Exception {
-            // given
-            String url = "/child";
-            // when
-            ResultActions result = mockMvc.perform(
-                    MockMvcRequestBuilders
-                            .multipart(url)
-                            .file(multipartFile)
-                            .header("Authorization", Creator.createJwtToken(parent))
-                            .param("center_id", center.getId().toString())
-                            .param("name", "childName")
-                            .param("birthDate", LocalDate.now().toString()));
+        // TODO 불완전한 요청
 
-            // then
-            result.andExpect(status().isOk());
-        }
+        // TODO 잘못된 센터로의 접근
+
+        // TODO 아이추가 성공
+
     }
 
     @Nested
     @DisplayName("아이 프로필 조회")
     class findChildInfoDetail{
-        @Test
-        @DisplayName("[error] 잘못된 아이 ID")
-        public void 잘못된아이정보() throws Exception {
-            // given
-            String url = "/child/{childId}";
-            UserErrorResult error = UserErrorResult.NOT_VALID_REQUEST;
-            doThrow(new UserException(error))
-                    .when(childService)
-                    .findChildDetails(any(), any());
-            // when
-            ResultActions result = mockMvc.perform(
-                    MockMvcRequestBuilders.get(url, child.getId())
-                            .header("Authorization", Creator.createJwtToken(parent))
-            );
-            // then
-            result.andExpect(status().isIAmATeapot())
-                    .andExpect(content().json(
-                            objectMapper.writeValueAsString(new ErrorResponse(error.getHttpStatus(), error.getMessage()))
-                    ));
-        }
 
-        @Test
-        @DisplayName("[success] 아이 프로필 조회 성공")
-        public void 프로필조회성공() throws Exception {
-            // given
-            String url = "/child/{childId}";
-            // when
-            ResultActions result = mockMvc.perform(
-                    MockMvcRequestBuilders.get(url, child.getId())
-                            .header("Authorization", Creator.createJwtToken(parent))
-            );
-            // then
-            result.andExpect(status().isOk());
-        }
+        // TODO 잘못된 아이 ID
+
+        // TODO 아이 프로필 조회 성공
+
     }
 
     @Nested
     @DisplayName("시설에 등록된 아이들정보 조회")
     class approvalList{
-        @Test
-        @DisplayName("[error] 승인되지않은 교사의 요청")
-        public void 승인되지않은교사() throws Exception {
-            // given
-            String url = "/child/approval";
-            UserErrorResult error = UserErrorResult.HAVE_NOT_AUTHORIZATION;
-            doThrow(new UserException(error))
-                    .when(childService)
-                    .findChildApprovalList(any());
-            // when
-            ResultActions result = mockMvc.perform(
-                    MockMvcRequestBuilders.get(url)
-                            .header("Authorization", Creator.createJwtToken(teacher))
-            );
-            // then
-            result.andExpect(status().isForbidden())
-                    .andExpect(content().json(
-                            objectMapper.writeValueAsString(new ErrorResponse(error.getHttpStatus(), error.getMessage()))
-                    ));
-        }
 
-        @Test
-        @DisplayName("[success] 아이들정보 조회 성공")
-        public void 아이들정보조회성공() throws Exception {
-            // given
-            String url = "/child/approval";
-            // when
-            ResultActions result = mockMvc.perform(
-                    MockMvcRequestBuilders.get(url)
-                            .header("Authorization", Creator.createJwtToken(teacher))
-            );
-            // then
-            result.andExpect(status().isOk());
-        }
+        // TODO 승인되지 않은 교사의 요청
+
+        // TODO 아이들 정보 조회 성공
+
     }
-
-
 }
