@@ -22,7 +22,7 @@ public class CommentHeartController {
      */
     @PostMapping("{commentId}")
     public Long createCommentHeart(@Login Long userId, @PathVariable Long commentId) {
-        return commentHeartService.saveCommnetHeart(userId, commentId);
+        return commentHeartService.saveCommentHeart(userId, commentId);
     }
 
     /**

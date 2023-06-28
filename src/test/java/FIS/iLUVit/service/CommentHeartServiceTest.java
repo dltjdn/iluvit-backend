@@ -75,7 +75,7 @@ class CommentHeartServiceTest {
 
         //when
         CommentException result = assertThrows(CommentException.class,
-                () -> commentHeartService.saveCommnetHeart(null, comment1.getId()));
+                () -> commentHeartService.saveCommentHeart(null, comment1.getId()));
 
         //then
         assertThat(result.getErrorResult())
@@ -91,7 +91,7 @@ class CommentHeartServiceTest {
                 .findById(comment1.getId());
         //when
         CommentException result = assertThrows(CommentException.class,
-                () -> commentHeartService.saveCommnetHeart(user1.getId(), comment1.getId()));
+                () -> commentHeartService.saveCommentHeart(user1.getId(), comment1.getId()));
 
         //then
         assertThat(result.getErrorResult())
@@ -110,7 +110,7 @@ class CommentHeartServiceTest {
                 .findById(comment1.getId());
         //when
         CommentException result = assertThrows(CommentException.class,
-                () -> commentHeartService.saveCommnetHeart(user1.getId(), comment1.getId()));
+                () -> commentHeartService.saveCommentHeart(user1.getId(), comment1.getId()));
 
         //then
         assertThat(result.getErrorResult())
@@ -136,7 +136,7 @@ class CommentHeartServiceTest {
                 .when(commentHeartRepository)
                 .save(any());
         //when
-        Long savedId = commentHeartService.saveCommnetHeart(user1.getId(), comment1.getId());
+        Long savedId = commentHeartService.saveCommentHeart(user1.getId(), comment1.getId());
 
         //then
         assertThat(savedId).isEqualTo(commentHeart1.getId());

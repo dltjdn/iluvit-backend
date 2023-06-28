@@ -221,7 +221,7 @@ public class PostService {
         List<Post> hotPosts = postRepository.findTop3ByHeartCnt(Criteria.HOT_POST_HEART_CNT, PageRequest.of(0, 3));
         List<BoardPreviewDto> results = new ArrayList<>();
 
-        return getPreivewResult(hotPosts, results, boardPreviews);
+        return getPreviewResult(hotPosts, results, boardPreviews);
     }
 
 
@@ -261,7 +261,7 @@ public class PostService {
         List<Post> hotPosts = postRepository.findTop3ByHeartCntWithCenter(Criteria.HOT_POST_HEART_CNT, centerId, PageRequest.of(0, 3));
         List<BoardPreviewDto> results = new ArrayList<>();
 
-        return getPreivewResult(hotPosts, results, boardPreviews);
+        return getPreviewResult(hotPosts, results, boardPreviews);
     }
 
     private void getBoardPreviews(List<Bookmark> bookmarkList, List<BoardPreviewDto> boardPreviews) {
@@ -301,7 +301,7 @@ public class PostService {
     }
 
     @NotNull
-    private List<BoardPreviewDto> getPreivewResult(List<Post> hotPosts, List<BoardPreviewDto> results, List<BoardPreviewDto> boardPreviews) {
+    private List<BoardPreviewDto> getPreviewResult(List<Post> hotPosts, List<BoardPreviewDto> results, List<BoardPreviewDto> boardPreviews) {
         List<BoardPreviewDto.PostInfo> postInfoList = hotPosts.stream()
                 .map((Post post) -> {
                     BoardPreviewDto.PostInfo postInfo = new BoardPreviewDto.PostInfo(post);

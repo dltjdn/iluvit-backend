@@ -74,7 +74,7 @@ public class BoardService {
         // 모두의 이야기 내 모든 게시판
         List<Board> boards = boardRepository.findByCenterIsNull();
         // DTO 생성 후 반환
-        groupDTOsByBoardBookmark(bookmarks, boards, dto);
+        createBoardBookmarkDto(bookmarks, boards, dto);
 
         return dto;
     }
@@ -92,7 +92,7 @@ public class BoardService {
         // 시설(유치원)의 이야기 모든 게시판
         List<Board> boards = boardRepository.findByCenter(centerId);
         // DTO 생성 후 반환
-        groupDTOsByBoardBookmark(bookmarks, boards, dto);
+        createBoardBookmarkDto(bookmarks, boards, dto);
 
         return dto;
     }
@@ -188,7 +188,7 @@ public class BoardService {
      * 작성자: 이창윤
      * 작성내용: 게시판 조회를 위한 dto를 만듭니다
      */
-    private void groupDTOsByBoardBookmark(List<Bookmark> bookmarks, List<Board> boards, BoardListDto dto) {
+    private void createBoardBookmarkDto(List<Bookmark> bookmarks, List<Board> boards, BoardListDto dto) {
         // 북마크 정보를 게시판 id 으로 그루핑
         Map<Long, List<Bookmark>> bookmarkMap = bookmarks.stream()
                 .collect(Collectors.groupingBy(b -> b.getBoard().getId()));

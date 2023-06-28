@@ -36,11 +36,11 @@ public class BoardBookmarkService {
         Center tmp = new Center();
 
         // bookmark에서 즐겨찾는 게시판을 가져온 후 센터와 매핑
-        Map<Center, List<Board>> centerBoardMap = getCenterBoardMapByBookmark(userId, tmp);
+        Map<Center, List<Board>> centerBoardMap = mappingCenterBoardByBoardBookmark(userId, tmp);
 
         // 유저의 즐찾 게시판에서 최신 글 하나씩 뽑아옴.
         // 최신 글 리스트를 센터로 그루핑함.
-        Map<Center, List<Post>> centerPostMap = getCenterPostMapByBookmark(userId, tmp);
+        Map<Center, List<Post>> centerPostMap = mappingCenterPostByBoardBookmark(userId, tmp);
 
         // 센터-게시글 맵의 키에서 북마크의 센터(센터-게시판 맵)가 없으면 빈 배열과 함께 넣어줌.
         centerBoardMap.keySet()
@@ -146,7 +146,7 @@ public class BoardBookmarkService {
      * 작성자: 이창윤
      * 작성내용: 유저가 즐겨찾기한 게시판의 글을 매핑합니다
      */
-    private Map<Center, List<Post>> getCenterPostMapByBookmark(Long userId, Center tmp) {
+    private Map<Center, List<Post>> mappingCenterPostByBoardBookmark(Long userId, Center tmp) {
         return boardBookmarkRepository.findPostByBoard(userId).stream()
                 .collect(Collectors.groupingBy(p -> p.getBoard().getCenter() == null ?
                         tmp : p.getBoard().getCenter()));
@@ -156,7 +156,7 @@ public class BoardBookmarkService {
      * 작성자: 이창윤
      * 작성내용: 유저의 즐겨찾기한 게시판을 매핑합니다
      */
-    private Map<Center, List<Board>> getCenterBoardMapByBookmark(Long userId, Center tmp) {
+    private Map<Center, List<Board>> mappingCenterBoardByBoardBookmark(Long userId, Center tmp) {
         return boardBookmarkRepository.findByUserWithBoardAndCenter(userId)
                 .stream()
                 .map(bookmark -> bookmark.getBoard())

@@ -369,7 +369,7 @@ class CommentServiceTest {
                 .when(commentRepository)
                 .findByUser(user1.getId(), PageRequest.of(0, 10));
 
-        Slice<CommentDto> commentDTOS = commentService.findCommnetByUser(user1.getId(), PageRequest.of(0, 10));
+        Slice<CommentDto> commentDTOS = commentService.findCommentByUser(user1.getId(), PageRequest.of(0, 10));
         //then
 
         assertThat(commentDTOS.getContent())

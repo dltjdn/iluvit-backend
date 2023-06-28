@@ -108,7 +108,7 @@ class CommentHeartControllerTest {
 
         Mockito.doThrow(new CommentException(error))
                 .when(commentHeartService)
-                .saveCommnetHeart(null, comment1.getId());
+                .saveCommentHeart(null, comment1.getId());
         //when
         ResultActions resultActions = mockMvc.perform(
                 MockMvcRequestBuilders.post(url, comment1.getId())
@@ -132,7 +132,7 @@ class CommentHeartControllerTest {
 
         Mockito.doThrow(new CommentException(error))
                 .when(commentHeartService)
-                .saveCommnetHeart(user1.getId(), comment1.getId());
+                .saveCommentHeart(user1.getId(), comment1.getId());
         //when
         ResultActions resultActions = mockMvc.perform(
                 MockMvcRequestBuilders.post(url, comment1.getId())
@@ -156,7 +156,7 @@ class CommentHeartControllerTest {
 
         Mockito.doReturn(commentHeart1.getId())
                 .when(commentHeartService)
-                .saveCommnetHeart(user1.getId(), comment1.getId());
+                .saveCommentHeart(user1.getId(), comment1.getId());
         //when
         ResultActions resultActions = mockMvc.perform(
                 MockMvcRequestBuilders.post(url, comment1.getId())

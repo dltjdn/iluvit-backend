@@ -113,7 +113,7 @@ public class CommentService {
         return commentId;
     }
 
-    public Slice<CommentDto> findCommnetByUser(Long userId, Pageable pageable) {
+    public Slice<CommentDto> findCommentByUser(Long userId, Pageable pageable) {
         // Comment -> CommentDTO 타입으로 변환
         return commentRepository.findByUser(userId, pageable).map(CommentDto::new);
     }

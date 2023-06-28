@@ -316,7 +316,7 @@ class CommentControllerTest {
 
         Mockito.doReturn(commentSlice)
                 .when(commentService)
-                .findCommnetByUser(user1.getId(), PageRequest.of(0, 10));
+                .findCommentByUser(user1.getId(), PageRequest.of(0, 10));
 
         //when
         ResultActions resultActions = mockMvc.perform(

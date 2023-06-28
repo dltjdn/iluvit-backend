@@ -23,7 +23,7 @@ public class CommentHeartService {
     private final UserRepository userRepository;
     private final CommentRepository commentRepository;
 
-    public Long saveCommnetHeart(Long userId, Long comment_id) {
+    public Long saveCommentHeart(Long userId, Long comment_id) {
         if (userId == null) {
             throw new CommentException(CommentErrorResult.UNAUTHORIZED_USER_ACCESS_HEART);
         }
