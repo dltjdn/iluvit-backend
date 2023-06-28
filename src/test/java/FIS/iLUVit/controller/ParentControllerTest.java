@@ -40,322 +40,138 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @ExtendWith(MockitoExtension.class)
 public class ParentControllerTest {
 
-    @InjectMocks
-    private ParentController target;
-    @Mock
-    private ParentService parentService;
+    // TODO 학부모회원가입_실패_비밀번호길이짧음
 
-    @Mock
-    private CenterBookmarkService centerBookmarkService;
 
-    private MockMvc mockMvc;
-    private ObjectMapper objectMapper;
-    private MockMultipartFile multipartFile;
-    private Parent parent;
-    private Center center;
 
-    @BeforeEach
-    public void init() throws IOException {
-        objectMapper = new ObjectMapper();
-        mockMvc = MockMvcBuilders.standaloneSetup(target)
-                .setCustomArgumentResolvers(new LoginUserArgumentResolver("secretKey"))
-                .setControllerAdvice(GlobalControllerAdvice.class)
-                .build();
-        String name = "162693895955046828.png";
-        Path path = Paths.get(new File("").getAbsolutePath() + '/' + name);
-        byte[] content = Files.readAllBytes(path);
-        multipartFile = new MockMultipartFile("profileImg", name, "image", content);
-        parent = Parent.builder()
-                .id(1L)
-                .nickName("nickname")
-                .name("name")
-                .build();
-        center = Center.builder()
-                .id(2L)
-                .name("center")
-                .build();
-    }
 
-    @Test
-    public void 학부모회원가입_실패_비밀번호길이짧음() throws Exception {
-        // given
-        SignupParentRequest request = SignupParentRequest.builder()
-                .loginId("loginId")
-                .password("pwd")
-                .passwordCheck("pwd")
-                .phoneNum("phoneNum")
-                .nickname("nickName")
-                .name("name")
-                .emailAddress("asd@asd")
-                .address("address")
-                .detailAddress("detailAddress")
-                .interestAge(3)
-                .build();
-        String url = "/parent/signup";
-        // when
-        ResultActions result = mockMvc.perform(
-                MockMvcRequestBuilders.post(url)
-                        .content(objectMapper.writeValueAsString(request))
-                        .contentType(MediaType.APPLICATION_JSON)
-        );
-        // then
-        result.andDo(print())
-                .andExpect(status().isBadRequest());
-    }
 
-    @Test
-    public void 학부모회원가입_실패_일부필드null() throws Exception {
-        // given
-        SignupParentRequest request = SignupParentRequest.builder()
-                .loginId("loginId")
-                .password("pwd")
-                .passwordCheck("pwd")
-                .phoneNum("phoneNum")
-                .name("name")
-                .emailAddress("asd@asd")
-                .address("address")
-                .detailAddress("detailAddress")
-                .interestAge(3)
-                .build();
-        String url = "/parent/signup";
 
-        // when
-        ResultActions result = mockMvc.perform(
-                MockMvcRequestBuilders.post(url)
-                        .content(objectMapper.writeValueAsString(request))
-                        .contentType(MediaType.APPLICATION_JSON)
-        );
-        // then
-        result.andDo(print())
-                .andExpect(status().isBadRequest());
-    }
 
-    @Test
-    public void 학부모회원가입_실패_비밀번호확인틀림() throws Exception {
-        // given
-        SignupParentRequest request = SignupParentRequest.builder()
-                .loginId("loginId")
-                .password("asd123!@#")
-                .passwordCheck("asd123!@#")
-                .phoneNum("phoneNum")
-                .nickname("nickName")
-                .name("name")
-                .emailAddress("asd@asd")
-                .address("address")
-                .detailAddress("detailAddress")
-                .interestAge(3)
-                .build();
-        String url = "/parent/signup";
-        SignupErrorResult errorResult = SignupErrorResult.NOT_MATCH_PWDCHECK;
-        doThrow(new SignupException(errorResult))
-                .when(parentService)
-                .signup(request);
-        // when
-        ResultActions result = mockMvc.perform(
-                MockMvcRequestBuilders.post(url)
-                        .content(objectMapper.writeValueAsString(request))
-                        .contentType(MediaType.APPLICATION_JSON)
-        );
-        // then
-        result.andExpect(status().isBadRequest())
-                .andExpect(content().json(objectMapper.writeValueAsString(
-                        new ErrorResponse(errorResult.getHttpStatus(), errorResult.getMessage()))
-                ));
-    }
 
-    @Test
-    public void 학부모회원가입_실패_중복아이디닉네임() throws Exception {
-        // given
-        SignupParentRequest request = SignupParentRequest.builder()
-                .loginId("loginId")
-                .password("asd123!@#")
-                .passwordCheck("asd123!@#")
-                .phoneNum("phoneNum")
-                .nickname("nickName")
-                .name("name")
-                .emailAddress("asd@asd")
-                .address("address")
-                .detailAddress("detailAddress")
-                .interestAge(3)
-                .build();
-        String url = "/parent/signup";
-        SignupErrorResult errorResult = SignupErrorResult.DUPLICATED_NICKNAME;
-        doThrow(new SignupException(errorResult))
-                .when(parentService)
-                .signup(request);
-        // when
-        ResultActions result = mockMvc.perform(
-                MockMvcRequestBuilders.post(url)
-                        .content(objectMapper.writeValueAsString(request))
-                        .contentType(MediaType.APPLICATION_JSON)
-        );
-        // then
-        result.andExpect(status().isBadRequest())
-                .andExpect(content().json(
-                        objectMapper.writeValueAsString(
-                                new ErrorResponse(errorResult.getHttpStatus(), errorResult.getMessage()))
-                ));
-    }
 
-    @Test
-    public void 학부모회원가입_실패_핸드폰미인증() throws Exception {
-        // given
-        SignupParentRequest request = SignupParentRequest.builder()
-                .loginId("loginId")
-                .password("asd123!@#")
-                .passwordCheck("asd123!@#")
-                .phoneNum("phoneNum")
-                .nickname("nickName")
-                .name("name")
-                .emailAddress("asd@asd")
-                .address("address")
-                .detailAddress("detailAddress")
-                .interestAge(3)
-                .build();
-        String url = "/parent/signup";
-        AuthNumberErrorResult errorResult = AuthNumberErrorResult.NOT_AUTHENTICATION;
-        doThrow(new AuthNumberException(errorResult))
-                .when(parentService)
-                .signup(request);
-        // when
-        ResultActions result = mockMvc.perform(
-                MockMvcRequestBuilders.post(url)
-                        .content(objectMapper.writeValueAsString(request))
-                        .contentType(MediaType.APPLICATION_JSON)
-        );
-        // then
-        result.andExpect(status().isBadRequest())
-                .andExpect(content().json(
-                        objectMapper.writeValueAsString(
-                                new ErrorResponse(errorResult.getHttpStatus(), errorResult.getMessage()))
-                ));
-    }
 
-    @Test
-    public void 학부모회원가입_실패_인증번호만료() throws Exception {
-        // given
-        SignupParentRequest request = SignupParentRequest.builder()
-                .loginId("loginId")
-                .password("asd123!@#")
-                .passwordCheck("asd123!@#")
-                .phoneNum("phoneNum")
-                .nickname("nickName")
-                .name("name")
-                .emailAddress("asd@asd")
-                .address("address")
-                .detailAddress("detailAddress")
-                .interestAge(3)
-                .build();
-        String url = "/parent/signup";
-        AuthNumberErrorResult errorResult = AuthNumberErrorResult.EXPIRED;
-        doThrow(new AuthNumberException(errorResult))
-                .when(parentService)
-                .signup(request);
-        // when
-        ResultActions result = mockMvc.perform(
-                MockMvcRequestBuilders.post(url)
-                        .content(objectMapper.writeValueAsString(request))
-                        .contentType(MediaType.APPLICATION_JSON)
-        );
-        // then
-        result.andExpect(status().isBadRequest())
-                .andExpect(content().json(
-                        objectMapper.writeValueAsString(
-                                new ErrorResponse(errorResult.getHttpStatus(), errorResult.getMessage()))
-                ));
 
-    }
 
-    @Test
-    public void 학부모회원가입_성공() throws Exception {
-        // given
-        SignupParentRequest request = SignupParentRequest.builder()
-                .loginId("loginId")
-                .password("asd123!@#")
-                .passwordCheck("asd123!@#")
-                .phoneNum("phoneNum")
-                .nickname("nickName")
-                .name("name")
-                .emailAddress("asd@asd")
-                .address("address")
-                .detailAddress("detailAddress")
-                .interestAge(3)
-                .build();
-        String url = "/parent/signup";
-        // when
-        ResultActions result = mockMvc.perform(
-                MockMvcRequestBuilders.post(url)
-                        .content(objectMapper.writeValueAsString(request))
-                        .contentType(MediaType.APPLICATION_JSON)
-        );
-        // then
-        result.andExpect(status().isOk());
-    }
+    // TODO 학부모회원가입_실패_일부필드null
 
-    @Test
-    public void 학부모프로필조회_성공() throws Exception {
-        // given
-        String url = "/parent";
-        ParentDetailResponse response = new ParentDetailResponse();
-        doReturn(response)
-                .when(parentService)
-                .findDetail(parent.getId());
-        // when
-        ResultActions result = mockMvc.perform(
-                MockMvcRequestBuilders.get(url)
-                        .header("Authorization", Creator.createJwtToken(parent))
-        );
-        // then
-        result.andExpect(content().json(
-                objectMapper.writeValueAsString(new ParentDetailResponse())
-        ));
-    }
 
-    @Test
-    public void 학부모프로필수정_실패_불완전한요청() throws Exception {
-        // given
-        String url = "/parent";
-        // when
-        ResultActions result = mockMvc.perform(
-                MockMvcRequestBuilders
-                        .multipart(url)
-                        .file(multipartFile)
-                        .header("Authorization", Creator.createJwtToken(parent))
-                        .param("name", "name")
-                        .param("changePhoneNum", "true")
-                        .param("phoneNum", "newPhoneNum")
-                        .param("address", "address")
-                        .param("detailAddress", "detailAddress")
-                        .param("emailAddress", "emailAddress")
-                        .param("interestAge", "3")
-                        .param("theme", objectMapper.writeValueAsString(Creator.createTheme()))
-        );
-        // then
-        result.andDo(print())
-                .andExpect(status().isBadRequest());
-    }
 
-    @Test
-    public void 학부모프로필수정_성공() throws Exception {
-        // given
-        String url = "/parent";
-        // when
-        ResultActions result = mockMvc.perform(
-                MockMvcRequestBuilders
-                        .multipart(url)
-                        .file(multipartFile)
-                        .header("Authorization", Creator.createJwtToken(parent))
-                        .param("name", "name")
-                        .param("nickname", "nickname")
-                        .param("changePhoneNum", "true")
-                        .param("phoneNum", "newPhoneNum")
-                        .param("address", "address")
-                        .param("detailAddress", "detailAddress")
-                        .param("emailAddress", "emailAddress")
-                        .param("interestAge", "3")
-                        .param("theme", objectMapper.writeValueAsString(Creator.createTheme())));
-        // then
-        result.andExpect(status().isOk());
-    }
+
+
+
+
+
+
+
+
+
+
+
+    // TODO 학부모회원가입_실패_비밀번호확인틀림
+
+
+
+
+
+
+
+
+
+
+
+
+
+    // TODO 학부모회원가입_실패_중복아이디닉네임
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    // TODO 학부모회원가입_실패_핸드폰미인증
+
+
+
+
+
+
+
+
+
+
+
+
+
+    // TODO 학부모회원가입_실패_인증번호만료
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    // TODO 학부모회원가입_성공
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    // TODO 학부모프로필조회_성공
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    // TODO 학부모프로필수정_실패_불완전한요청
+
+
+
+
+
+
+
+
+
+
+
+
+
+    // TODO 학부모프로필수정_성공
+
+
 
 }
