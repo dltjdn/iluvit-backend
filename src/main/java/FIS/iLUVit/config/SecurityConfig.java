@@ -47,14 +47,13 @@ public class SecurityConfig {
                 .and()
                 .authorizeRequests()
                 .requestMatchers(CorsUtils::isPreFlightRequest).permitAll()
-//                .antMatchers("/user/**")
-//                .access("hasRole('PARENT') or hasRole('TEACHER') or hasRole('DIRECTOR')")
-//                .antMatchers("/parent/**")
-//                .access("hasRole('PARENT')")
-//                .antMatchers("/teacher/**")
-//                .access("hasRole('TEACHER') or hasRole('DIRECTOR')")
-//                .antMatchers("/director/**")
-//                .access("hasRole('DIRECTOR')")
+                .antMatchers("/teacher/search/center/**").permitAll()
+                .antMatchers("/teacher/signup/**").permitAll()
+                .antMatchers("/teacher/**")
+                .access("hasRole('TEACHER') or hasRole('DIRECTOR')")
+                .antMatchers("/parent/signup/**").permitAll()
+                .antMatchers("/parent/**","/participation/**","/waiting/**","/center-bookmark/**")
+                .access("hasRole('PARENT')")
                 .anyRequest().permitAll();
         return http.build();
     }

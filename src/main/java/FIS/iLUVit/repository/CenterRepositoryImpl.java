@@ -27,6 +27,10 @@ public class CenterRepositoryImpl extends CenterQueryMethod implements CenterRep
 
     private final JPAQueryFactory jpaQueryFactory;
 
+
+    /*
+        게시글 리스트를 조회합니다.
+     */
     @Override
     public Slice<CenterPreviewDto> findByFilter(List<Area> areas, Theme theme, Integer interestedAge, KindOf kindOf, Pageable pageable) {
         List<CenterPreviewDto> content = jpaQueryFactory.select(new QCenterPreviewDto(center, review.score.avg()))
@@ -171,7 +175,8 @@ public class CenterRepositoryImpl extends CenterQueryMethod implements CenterRep
                 .from(center)
                 .leftJoin(center.reviews, review)
                 .groupBy(center)
-                .where(centerNameEq(searchContent), (kindOfEq(KindOf.Kindergarten).or(kindOfEq(KindOf.ChildHouse))))
+                .where(centerNameEq(searchContent)
+                        , (kindOfEq(KindOf.Kindergarten).or(kindOfEq(KindOf.ChildHouse))))
                 .having(distanceEx.loe(distance))
                 .orderBy(center.score.desc())
                 .limit(100)
@@ -184,7 +189,8 @@ public class CenterRepositoryImpl extends CenterQueryMethod implements CenterRep
                     .from(center)
                     .leftJoin(center.reviews, review)
                     .groupBy(center)
-                    .where(centerNameEq(searchContent), (kindOfEq(KindOf.Kindergarten).or(kindOfEq(KindOf.ChildHouse))))
+                    .where(centerNameEq(searchContent)
+                            , (kindOfEq(KindOf.Kindergarten).or(kindOfEq(KindOf.ChildHouse))))
                     .having(distanceEx.loe(distance))
                     .orderBy(center.score.desc())
                     .limit(100)
@@ -228,7 +234,7 @@ public class CenterRepositoryImpl extends CenterQueryMethod implements CenterRep
                 .from(center)
                 .where(areaEq(sido, sigungu)
                         , (centerNameEq(centerName))
-                        , (center.kindOf.isNotNull()))
+                        , (kindOfEq(KindOf.Kindergarten).or(kindOfEq(KindOf.ChildHouse))))
                 .offset(pageable.getOffset())
                 .limit(pageable.getPageSize() + 1)
                 .fetch();
@@ -254,7 +260,7 @@ public class CenterRepositoryImpl extends CenterQueryMethod implements CenterRep
                 .where(center.signed.eq(true)
                         , (areaEq(sido, sigungu))
                         , (centerNameEq(centerName))
-                        , (center.kindOf.isNotNull()))
+                        , (kindOfEq(KindOf.Kindergarten).or(kindOfEq(KindOf.ChildHouse))))
                 .offset(pageable.getOffset())
                 .limit(pageable.getPageSize() + 1)
                 .fetch();

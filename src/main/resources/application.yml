@@ -24,56 +24,36 @@ spring:
           enabled: true
     open-in-view: false
 
-# 현승구 : yml 분리 작업을 위해서 spring.config.import , profiles.active , group 활용
-  config:
-    import: application-database.yml
   profiles:
     include:
       - secret
       - s3
       - map
       - security
-    # active 건드리지 말 것
-    default: develop
-    group:
-      # 그룹별 묶을 설정 파일 grouping
-      develop: iluvit-develop, test, http, dev
-      prod: iluvit-prod, mysql, http, prod
+      - http
 
-  version:
-    aos: 1.0.0
-    ios: 1.0.0
+version:
+  aos: 1.0.0
+  ios: 1.0.0
 
 ---
 spring:
-  config.activate.on-profile: iluvit-develop
-  jpa:
-    hibernate:
-      ddl-auto: update
-    properties:
-      hibernate:
-        show_sql: true
-
-logging:
-  level:
-    org.hibernate.SQL: info
-
+  profiles:
+    active: dev
 ---
 spring:
-  config.activate.on-profile: iluvit-prod
-
-logging:
-  level:
-    org.hibernate.SQL: info
-
+  profiles:
+    active: prod
 ---
-
 management:
   endpoints:
     web:
-      base-path: /management
+      exposure:
+        include: "*"
 
 logging:
+  level:
+    org.hibernate.SQL: info
   slack:
     webhook-uri: https://hooks.slack.com/services/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
   config: classpath:logback-spring.xml

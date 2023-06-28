@@ -14,10 +14,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
+import javax.swing.text.html.Option;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Slf4j
@@ -34,49 +32,25 @@ public class BoardService {
 
     /**
      * 작성자: 이창윤
-     * 작성내용: 모두의 이야기 및 유저가 속한 시설의 이야기의 프리뷰를 조회합니다
-     */
-    public List<StoryPreviewDto> findStoryPreviewList(Long userId) {
-        List<StoryPreviewDto> result = new ArrayList<>();
-        result.add(new StoryPreviewDto(null));
-        if (userId == null) {
-            return result;
-        }
-        User findUser = userRepository.findById(userId)
-                .orElseThrow(() -> new UserException(UserErrorResult.USER_NOT_EXIST));
-        log.info("findUser = {}", findUser.getAuth());
-        if (findUser.getAuth() == Auth.PARENT) {
-            List<Child> children = userRepository.findChildrenWithCenter(userId);
-            List<StoryPreviewDto> storyPreviewDtoList = children.stream()
-                    .filter(child -> child.getCenter() != null && child.getApproval() == Approval.ACCEPT)
-                    .map(child -> new StoryPreviewDto(child.getCenter()))
-                    .collect(Collectors.toList());
-            result.addAll(storyPreviewDtoList);
-        } else {
-            Center findCenter = ((Teacher) findUser).getCenter();
-            Approval approval = ((Teacher) findUser).getApproval();
-            if (findCenter != null && approval == Approval.ACCEPT) {
-                StoryPreviewDto storyPreviewDto = new StoryPreviewDto(findCenter);
-                result.add(storyPreviewDto);
-            }
-        }
-        return result;
-    }
-
-    /**
-     * 작성자: 이창윤
      * 작성내용: 모두의 이야기의 게시판을 조회합니다
      */
     public BoardListDto findBoardByPublicList(Long userId) {
-        BoardListDto dto = new BoardListDto(null, "모두의 이야기");
-        // 모두의 이야기 내 유저의 북마크 정보
-        List<Bookmark> bookmarks = boardBookmarkRepository.findBoardByUser(userId);
-        // 모두의 이야기 내 모든 게시판
-        List<Board> boards = boardRepository.findByCenterIsNull();
-        // DTO 생성 후 반환
-        createBoardBookmarkDto(bookmarks, boards, dto);
 
-        return dto;
+        List<Board> boards = boardRepository.findByCenterIsNull(); // 모두의 이야기 내 모든 게시판
+        List<BoardListDto.BoardBookmarkDto> bookmarkList = new ArrayList<>();
+        List<BoardListDto.BoardBookmarkDto> boardList = new ArrayList<>();
+
+        boards.forEach(board -> {
+            Optional<Bookmark> bookmark =  boardBookmarkRepository.findBoardBookmarkByUserAndBoard(userId, board.getId());
+            if (bookmark.isEmpty()) { // 즐찾 안한 게시판들은 보드 리스트에 넣음
+                boardList.add(new BoardListDto.BoardBookmarkDto(board));
+            } else { // 즐찾한 게시판들은 북마크 리스트에 넣음
+                bookmarkList.add(new BoardListDto.BoardBookmarkDto(board,bookmark.get().getId()));
+            }
+        });
+        BoardListDto boardListDto = new BoardListDto(null, "모두의 이야기", bookmarkList, boardList);
+
+        return boardListDto;
     }
 
     /**
@@ -86,15 +60,24 @@ public class BoardService {
     public BoardListDto findAllBoardByCenter(Long userId, Long centerId) {
         Center findCenter = centerRepository.findById(centerId)
                 .orElseThrow(() -> new CenterException(CenterErrorResult.CENTER_NOT_EXIST));
-        BoardListDto dto = new BoardListDto(centerId, findCenter.getName());
-        // 시설(유치원)의 이야기 내 유저의 북마크 정보
-        List<Bookmark> bookmarks = boardBookmarkRepository.findBoardByUserAndCenter(userId, centerId);
-        // 시설(유치원)의 이야기 모든 게시판
-        List<Board> boards = boardRepository.findByCenter(centerId);
-        // DTO 생성 후 반환
-        createBoardBookmarkDto(bookmarks, boards, dto);
 
-        return dto;
+
+        List<Board> boards = boardRepository.findByCenter(centerId);  // 시설 이야기 모든 게시판
+        List<BoardListDto.BoardBookmarkDto> bookmarkList = new ArrayList<>();
+        List<BoardListDto.BoardBookmarkDto> boardList = new ArrayList<>();
+
+        boards.forEach(board -> {
+            Optional<Bookmark> bookmark =  boardBookmarkRepository.findBoardBookmarkByUserAndBoard(userId, board.getId());
+            if (bookmark.isEmpty()) { // 즐찾 안한 게시판들은 보드 리스트에 넣음
+                boardList.add(new BoardListDto.BoardBookmarkDto(board));
+            } else { // 즐찾한 게시판들은 북마크 리스트에 넣음
+                bookmarkList.add(new BoardListDto.BoardBookmarkDto(board,bookmark.get().getId()));
+            }
+        });
+
+        BoardListDto boardListDto = new BoardListDto(centerId, findCenter.getName(), bookmarkList, boardList);
+
+        return boardListDto;
     }
 
     /**
@@ -147,7 +130,6 @@ public class BoardService {
 
         Board board = Board.createBoard(request.getBoard_name(), request.getBoardKind(), findCenter,false);
         Board savedBoard = boardRepository.save(board);
-
         return savedBoard.getId();
     }
 
@@ -180,29 +162,7 @@ public class BoardService {
                 .ifPresent(u -> validateAuth(findBoard, u));
 
         boardRepository.delete(findBoard);
-
         return boardId;
-    }
-
-    /**
-     * 작성자: 이창윤
-     * 작성내용: 게시판 조회를 위한 dto를 만듭니다
-     */
-    private void createBoardBookmarkDto(List<Bookmark> bookmarks, List<Board> boards, BoardListDto dto) {
-        // 북마크 정보를 게시판 id 으로 그루핑
-        Map<Long, List<Bookmark>> bookmarkMap = bookmarks.stream()
-                .collect(Collectors.groupingBy(b -> b.getBoard().getId()));
-
-        // 모두의 이야기 내 모든 게시판에서
-        boards.forEach(board -> {
-            List<Bookmark> bookmarkList = bookmarkMap.get(board.getId());
-            if (bookmarkList == null) { // 즐찾 안한 게시판들은 보드 리스트에 넣음
-                dto.getBoardList().add(new BoardListDto.BoardBookmarkDto(board));
-            } else { // 즐찾한 게시판들은 북마크 리스트에 넣음
-                BoardListDto.BoardBookmarkDto boardBookmarkDto = new BoardListDto.BoardBookmarkDto(board,bookmarkList.get(0).getId());
-                dto.getBookmarkList().add(boardBookmarkDto);
-            }
-        });
     }
 
     /**
@@ -226,4 +186,34 @@ public class BoardService {
         }
     }
 
+
+    /**
+     * 작성자: 이창윤
+     * 작성내용: 모두의 이야기 및 유저가 속한 시설의 이야기의 프리뷰를 조회합니다
+     */
+    public List<StoryPreviewDto> findStoryPreviewList(Long userId) {
+        List<StoryPreviewDto> result = new ArrayList<>();
+        result.add(new StoryPreviewDto(null));
+        if (userId == null) {
+            return result;
+        }
+        User findUser = userRepository.findById(userId)
+                .orElseThrow(() -> new UserException(UserErrorResult.USER_NOT_EXIST));
+        if (findUser.getAuth() == Auth.PARENT) {
+            List<Child> children = userRepository.findChildrenWithCenter(userId);
+            List<StoryPreviewDto> storyPreviewDtoList = children.stream()
+                    .filter(child -> child.getCenter() != null && child.getApproval() == Approval.ACCEPT)
+                    .map(child -> new StoryPreviewDto(child.getCenter()))
+                    .collect(Collectors.toList());
+            result.addAll(storyPreviewDtoList);
+        } else {
+            Center findCenter = ((Teacher) findUser).getCenter();
+            Approval approval = ((Teacher) findUser).getApproval();
+            if (findCenter != null && approval == Approval.ACCEPT) {
+               StoryPreviewDto storyPreviewDto = new StoryPreviewDto(findCenter);
+                result.add(storyPreviewDto);
+            }
+        }
+        return result;
+    }
 }
