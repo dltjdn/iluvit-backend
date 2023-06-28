@@ -82,9 +82,10 @@ public class Center extends BaseImageEntity {
     protected List<Review> reviews = new ArrayList<>();
 //    @OneToMany(mappedBy = "center")
 //    protected List<Board> boards = new ArrayList<>();
-//
-    @OneToMany(mappedBy = "center")
-    protected List<Child> children = new ArrayList<>();
+
+
+//    @OneToMany(mappedBy = "center")
+//    protected List<Child> children = new ArrayList<>();
     @OneToMany(mappedBy = "center")
     protected List<Prefer> prefers = new ArrayList<>();
 

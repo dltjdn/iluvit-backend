@@ -32,9 +32,6 @@ public interface TeacherRepository extends JpaRepository<Teacher, Long> {
      */
     @Query("select distinct t " +
             "from Teacher t " +
-            "join fetch t.center c " +
-            "left join fetch c.children cc " +
-            "left join fetch cc.parent " +
             "where t.id =:userId " +
             "and t.approval = 'ACCEPT'")
     Optional<Teacher> findByIdWithCenterWithChildWithParent(@Param("userId") Long userId);

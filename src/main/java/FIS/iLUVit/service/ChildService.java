@@ -212,10 +212,10 @@ public class ChildService {
         // 사용자가 속한 시설의 아이들 끌어오기
         Teacher teacher = teacherRepository.findByIdWithCenterWithChildWithParent(userId)
                 .orElseThrow(() -> new UserException(UserErrorResult.HAVE_NOT_AUTHORIZATION));
-
         List<ChildInfoForAdminDto> response = new ArrayList<>();
 
-        teacher.getCenter().getChildren().forEach(child -> {
+        List<Child> childList = childRepository.findByCenter(teacher.getCenter());
+        childList.forEach(child -> {
             // 해당시설에 대해 거절/삭제 당하지 않은 아이들만 보여주기
             if (child.getApproval() != Approval.REJECT) {
                 ChildInfoForAdminDto childInfo =
@@ -231,14 +231,15 @@ public class ChildService {
      * 작성자: 이승범
      * 작성내용: 아이 승인
      */
+
     public Child acceptChild(Long userId, Long childId) {
 
         // 사용자가 등록된 시설과 연관된 아이들 목록 가져오기
         Teacher teacher = teacherRepository.findByIdWithCenterWithChildWithParent(userId)
                 .orElseThrow(() -> new UserException(UserErrorResult.HAVE_NOT_AUTHORIZATION));
-
         // childId에 해당하는 아이가 시설에 승인 대기중인지 확인
-        Child acceptedChild = teacher.getCenter().getChildren().stream()
+        List<Child> childList = childRepository.findByCenter(teacher.getCenter());
+        Child acceptedChild = childList.stream()
                 .filter(child -> Objects.equals(child.getId(), childId) && child.getApproval() == Approval.WAITING)
                 .findFirst()
                 .orElseThrow(() -> new UserException(UserErrorResult.NOT_VALID_REQUEST));
@@ -288,7 +289,8 @@ public class ChildService {
                 .orElseThrow(() -> new UserException(UserErrorResult.HAVE_NOT_AUTHORIZATION));
 
         // childId 검증
-        Child firedChild = teacher.getCenter().getChildren().stream()
+        List<Child> childList = childRepository.findByCenter(teacher.getCenter());
+        Child firedChild = childList.stream()
                 .filter(child -> Objects.equals(child.getId(), childId))
                 .findFirst()
                 .orElseThrow(() -> new UserException(UserErrorResult.NOT_VALID_REQUEST));
