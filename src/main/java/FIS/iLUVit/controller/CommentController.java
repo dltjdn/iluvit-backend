@@ -9,8 +9,6 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.Optional;
-
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("comment")
@@ -33,7 +31,7 @@ public class CommentController {
                                 @PathVariable(required = false, value="commentId") Long commentId,
                                 @RequestBody CommentRequest request) {
 
-        return commentService.registerComment(userId, postId, commentId, request);
+        return commentService.saveNewComment(userId, postId, commentId, request);
     }
 
     /**
@@ -55,7 +53,7 @@ public class CommentController {
      */
     @GetMapping("mypage")
     public Slice<CommentDto> getCommentByUser(@Login Long userId, Pageable pageable) {
-        return commentService.searchByUser(userId, pageable);
+        return commentService.findCommnetByUser(userId, pageable);
     }
 
 }

@@ -255,7 +255,7 @@ public class TeacherServiceTest {
                 .findByNickName("중복닉네임");
         // when
         SignupException result = assertThrows(SignupException.class,
-                () -> target.saveTeacherDetailsChanges(teacher1.getId(), request));
+                () -> target.modifyTeacherInfo(teacher1.getId(), request));
         // then
         assertThat(result.getErrorResult()).isEqualTo(SignupErrorResult.DUPLICATED_NICKNAME);
     }
@@ -282,7 +282,7 @@ public class TeacherServiceTest {
                 .validateAuthNumber(request.getPhoneNum(), AuthKind.updatePhoneNum);
         // when
         AuthNumberException result = assertThrows(AuthNumberException.class,
-                () -> target.saveTeacherDetailsChanges(teacher1.getId(), request));
+                () -> target.modifyTeacherInfo(teacher1.getId(), request));
         // then
         assertThat(result.getErrorResult()).isEqualTo(AuthNumberErrorResult.NOT_AUTHENTICATION);
     }
@@ -308,7 +308,7 @@ public class TeacherServiceTest {
         Mockito.doReturn(Pair.of("서울특별시", "금천구"))
                 .when(mapService).getSidoSigunguByLocation(126.8806602, 37.4778951);
         // when
-        TeacherDetailResponse response = target.saveTeacherDetailsChanges(teacher1.getId(), request);
+        TeacherDetailResponse response = target.modifyTeacherInfo(teacher1.getId(), request);
         // then
         assertThat(response.getPhoneNumber()).isEqualTo("newPhoneNum");
     }
@@ -334,7 +334,7 @@ public class TeacherServiceTest {
         Mockito.doReturn(Pair.of("서울특별시", "금천구"))
                 .when(mapService).getSidoSigunguByLocation(126.8806602, 37.4778951);
         // when
-        TeacherDetailResponse result = target.saveTeacherDetailsChanges(teacher1.getId(), request);
+        TeacherDetailResponse result = target.modifyTeacherInfo(teacher1.getId(), request);
         // then
         assertThat(result.getName()).isEqualTo(request.getName());
         assertThat(result.getPhoneNumber()).isNotEqualTo(request.getPhoneNum());
@@ -399,7 +399,7 @@ public class TeacherServiceTest {
                     .findByIdWithCenterWithTeacher(any());
             // when
             SignupException result = assertThrows(SignupException.class,
-                    () -> target.resignCenterForTeacher(teacher2.getId()));
+                    () -> target.leaveCenterForTeacher(teacher2.getId()));
 
             // then
             assertThat(result.getErrorResult()).isEqualTo(SignupErrorResult.NOT_BELONG_CENTER);
@@ -418,7 +418,7 @@ public class TeacherServiceTest {
                     .findByIdWithCenterWithTeacher(any());
             // when
             SignupException result = assertThrows(SignupException.class,
-                    () -> target.resignCenterForTeacher(teacher1.getId()));
+                    () -> target.leaveCenterForTeacher(teacher1.getId()));
             // then
             assertThat(result.getErrorResult()).isEqualTo(SignupErrorResult.HAVE_TO_MANDATE);
         }
@@ -438,7 +438,7 @@ public class TeacherServiceTest {
                     .when(boardRepository)
                     .findByCenter(teacher2.getCenter().getId());
             // when
-            Teacher result = target.resignCenterForTeacher(teacher2.getId());
+            Teacher result = target.leaveCenterForTeacher(teacher2.getId());
             // then
             assertThat(result.getId()).isEqualTo(teacher2.getId());
             assertThat(result.getCenter()).isNull();

@@ -90,7 +90,7 @@ public class ChildControllerTest {
         String url = "/child/info";
         doReturn(new ChildDto())
                 .when(childService)
-                .findChildInfo(any());
+                .findChildList(any());
         // when
         ResultActions result = mockMvc.perform(
                 MockMvcRequestBuilders.get(url)
@@ -264,7 +264,7 @@ public class ChildControllerTest {
             UserErrorResult error = UserErrorResult.NOT_VALID_REQUEST;
             doThrow(new UserException(error))
                     .when(childService)
-                    .saveChildDetailsChanges(any(), any(), any());
+                    .modifyChildInfo(any(), any(), any());
             // when
             ResultActions result = mockMvc.perform(builder
                     .file(multipartFile)
@@ -413,7 +413,7 @@ public class ChildControllerTest {
             UserErrorResult error = UserErrorResult.NOT_VALID_REQUEST;
             doThrow(new UserException(error))
                     .when(childService)
-                    .leaveChildCenter(any(), any());
+                    .leaveCenterForChild(any(), any());
             //when
             ResultActions result = mockMvc.perform(
                     MockMvcRequestBuilders.patch(url, child.getId())
@@ -556,7 +556,7 @@ public class ChildControllerTest {
             UserErrorResult error = UserErrorResult.NOT_VALID_REQUEST;
             doThrow(new UserException(error))
                     .when(childService)
-                    .findChildInfoDetail(any(), any());
+                    .findChildDetails(any(), any());
             // when
             ResultActions result = mockMvc.perform(
                     MockMvcRequestBuilders.get(url, child.getId())

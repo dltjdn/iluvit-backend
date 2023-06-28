@@ -151,7 +151,7 @@ public class ParentServiceTest {
                     .findByNickName(any());
             // when
             UserException result = assertThrows(UserException.class,
-                    () -> target.saveParentDetailsChanges(parent1.getId(), request));
+                    () -> target.modifyParentInfo(parent1.getId(), request));
             // then
             assertThat(result.getErrorResult()).isEqualTo(UserErrorResult.ALREADY_NICKNAME_EXIST);
         }
@@ -179,7 +179,7 @@ public class ParentServiceTest {
             Mockito.doReturn(Pair.of("서울특별시", "금천구"))
                     .when(mapService).getSidoSigunguByLocation(126.8806602, 37.4778951);
             // when
-            ParentDetailResponse result = target.saveParentDetailsChanges(parent1.getId(), request);
+            ParentDetailResponse result = target.modifyParentInfo(parent1.getId(), request);
             // then
             assertThat(result).isNotNull();
             assertThat(result.getAddress()).isEqualTo(request.getAddress());
@@ -209,7 +209,7 @@ public class ParentServiceTest {
             Mockito.doReturn(Pair.of("서울특별시", "금천구"))
                     .when(mapService).getSidoSigunguByLocation(126.8806602, 37.4778951);
             // when
-            ParentDetailResponse result = target.saveParentDetailsChanges(parent1.getId(), request);
+            ParentDetailResponse result = target.modifyParentInfo(parent1.getId(), request);
             // then
             assertThat(result).isNotNull();
             assertThat(result.getNickname()).isEqualTo("nickName");

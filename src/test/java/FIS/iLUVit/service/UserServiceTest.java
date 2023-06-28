@@ -56,7 +56,7 @@ public class UserServiceTest {
                 .when(userRepository)
                 .findById(parent.getId());
         // when
-        UserResponse result = target.findUserInfoDetails(parent.getId());
+        UserResponse result = target.findUserDetails(parent.getId());
         // then
         assertThat(result.getId()).isEqualTo(parent.getId());
     }

@@ -114,7 +114,7 @@ public class PresentationController {
     public List<PresentationForTeacherResponse> getAllPresentationForTeacher(@Login Long userId,
                                                                              @PathVariable("centerId") Long centerId,
                                                                              Pageable pageable){
-        return presentationService.findPresentationListByCenterId(userId, centerId, pageable);
+        return presentationService.findPresentationListByCenter(userId, centerId, pageable);
     }
 
     /**

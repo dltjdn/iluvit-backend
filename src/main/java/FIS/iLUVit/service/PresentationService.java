@@ -110,7 +110,7 @@ public class PresentationService {
         return presentation;
     }
 
-    public List<PresentationForTeacherResponse> findPresentationListByCenterId(Long userId, Long centerId, Pageable pageable) {
+    public List<PresentationForTeacherResponse> findPresentationListByCenter(Long userId, Long centerId, Pageable pageable) {
         //
         userRepository.findTeacherById(userId)
                 .orElseThrow(() -> new UserException("존재하지 않는 유저입니다"))

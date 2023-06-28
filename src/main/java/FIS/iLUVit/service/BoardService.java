@@ -36,7 +36,7 @@ public class BoardService {
      * 작성자: 이창윤
      * 작성내용: 모두의 이야기 및 유저가 속한 시설의 이야기의 프리뷰를 조회합니다
      */
-    public List<StoryPreviewDto> findAllStoryPreview(Long userId) {
+    public List<StoryPreviewDto> findStoryPreviewList(Long userId) {
         List<StoryPreviewDto> result = new ArrayList<>();
         result.add(new StoryPreviewDto(null));
         if (userId == null) {
@@ -67,7 +67,7 @@ public class BoardService {
      * 작성자: 이창윤
      * 작성내용: 모두의 이야기의 게시판을 조회합니다
      */
-    public BoardListDto findAllBoardByPublic(Long userId) {
+    public BoardListDto findBoardByPublicList(Long userId) {
         BoardListDto dto = new BoardListDto(null, "모두의 이야기");
         // 모두의 이야기 내 유저의 북마크 정보
         List<Bookmark> bookmarks = boardBookmarkRepository.findBoardByUser(userId);

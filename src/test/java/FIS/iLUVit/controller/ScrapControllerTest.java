@@ -62,7 +62,7 @@ public class ScrapControllerTest {
         List<ScrapInfoDto>  response = new ArrayList<>();
         doReturn(response)
                 .when(scrapService)
-                .findScrapDirListInfo(user.getId());
+                .findScrapDirList(user.getId());
         // when
         ResultActions result = mockMvc.perform(
                 MockMvcRequestBuilders.get(url)
@@ -86,7 +86,7 @@ public class ScrapControllerTest {
             ScrapDirRequest request = new ScrapDirRequest("name");
             doReturn(response)
                     .when(scrapService)
-                    .addScrapDir(user.getId(), request);
+                    .saveNewScrapDir(user.getId(), request);
             // when
             ResultActions result = mockMvc.perform(
                     MockMvcRequestBuilders.post(url)
@@ -195,7 +195,7 @@ public class ScrapControllerTest {
             ScrapErrorResult error = ScrapErrorResult.NOT_VALID_SCRAP;
             doThrow(new ScrapException(error))
                     .when(scrapService)
-                    .updateScrapDirName(any(), any());
+                    .modifyScrapDirName(any(), any());
             // when
             ResultActions result = mockMvc.perform(
                     MockMvcRequestBuilders.put(url)
@@ -267,7 +267,7 @@ public class ScrapControllerTest {
 
             doThrow(new ScrapException(error))
                     .when(scrapService)
-                    .scrapPost(any(), any(), any());
+                    .modifyScrapPost(any(), any(), any());
             // when
             ResultActions result = mockMvc.perform(
                     MockMvcRequestBuilders.put(url)
@@ -294,7 +294,7 @@ public class ScrapControllerTest {
 
             doThrow(new ScrapException(error))
                     .when(scrapService)
-                    .scrapPost(any(), any(), any());
+                    .modifyScrapPost(any(), any(), any());
             // when
             ResultActions result = mockMvc.perform(
                     MockMvcRequestBuilders.put(url)

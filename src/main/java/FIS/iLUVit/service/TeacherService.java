@@ -73,7 +73,7 @@ public class TeacherService {
      * 작성자: 이승범
      * 작성내용: 선생의 마이페이지에 정보 update
      */
-    public TeacherDetailResponse saveTeacherDetailsChanges(Long id, TeacherDetailRequest request) throws IOException {
+    public TeacherDetailResponse modifyTeacherInfo(Long id, TeacherDetailRequest request) throws IOException {
 
         Teacher findTeacher = teacherRepository.findById(id)
                 .orElseThrow(() -> new UserException(UserErrorResult.NOT_VALID_TOKEN));
@@ -193,7 +193,7 @@ public class TeacherService {
      * 작성자: 이승범
      * 작성내용: 시설 탈퇴하기
      */
-    public Teacher resignCenterForTeacher(Long userId) {
+    public Teacher leaveCenterForTeacher(Long userId) {
 
         Teacher escapedTeacher = teacherRepository.findByIdWithCenterWithTeacher(userId)
                 .orElseThrow(() -> new SignupException(SignupErrorResult.NOT_BELONG_CENTER));
@@ -353,7 +353,7 @@ public class TeacherService {
      *   작성자: 이승범
      *   작성내용: 회원가입 과정에서 필요한 센터정보 가져오기
      */
-    public Slice<CenterDto> findCenterForTeacherSignup(CenterRequest request, Pageable pageable) {
+    public Slice<CenterDto> findCenterForSignupTeacher(CenterRequest request, Pageable pageable) {
         return centerRepository.findForSignup(request.getSido(), request.getSigungu(), request.getCenterName(), pageable);
     }
 
@@ -363,7 +363,7 @@ public class TeacherService {
      */
     public long withdrawTeacher(Long userId){
         userService.withdrawUser(userId); // 교사, 학부모 공톤 탈퇴 로직
-        resignCenterForTeacher(userId); // 연결된 시설 끊기 ( 해당 시설과 연관된 bookmark 삭제 )
+        leaveCenterForTeacher(userId); // 연결된 시설 끊기 ( 해당 시설과 연관된 bookmark 삭제 )
         return userId;
     }
 

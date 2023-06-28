@@ -100,7 +100,7 @@ public class TeacherControllerTest {
         SliceImpl<CenterDto> response = new SliceImpl<>(content, pageable, false);
         doReturn(response)
                 .when(teacherService)
-                .findCenterForTeacherSignup(request, pageable);
+                .findCenterForSignupTeacher(request, pageable);
         // when
         ResultActions result = mockMvc.perform(
                 MockMvcRequestBuilders.get(url)
@@ -275,7 +275,7 @@ public class TeacherControllerTest {
         SignupErrorResult error = SignupErrorResult.DUPLICATED_NICKNAME;
         doThrow(new SignupException(error))
                 .when(teacherService)
-                .saveTeacherDetailsChanges(any(), any(TeacherDetailRequest.class));
+                .modifyTeacherInfo(any(), any(TeacherDetailRequest.class));
         // when
         ResultActions result = mockMvc.perform(
                 MockMvcRequestBuilders
@@ -364,7 +364,7 @@ public class TeacherControllerTest {
             SignupErrorResult error = SignupErrorResult.NOT_BELONG_CENTER;
             doThrow(new SignupException(error))
                     .when(teacherService)
-                    .resignCenterForTeacher(any());
+                    .leaveCenterForTeacher(any());
             // when
             ResultActions result = mockMvc.perform(
                     MockMvcRequestBuilders.patch(url)
@@ -385,7 +385,7 @@ public class TeacherControllerTest {
             SignupErrorResult error = SignupErrorResult.HAVE_TO_MANDATE;
             doThrow(new SignupException(error))
                     .when(teacherService)
-                    .resignCenterForTeacher(any());
+                    .leaveCenterForTeacher(any());
             // when
             ResultActions result = mockMvc.perform(
                     MockMvcRequestBuilders.patch(url)

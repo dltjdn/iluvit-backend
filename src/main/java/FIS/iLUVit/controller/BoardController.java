@@ -28,7 +28,7 @@ public class BoardController {
      */
     @GetMapping("home")
     public List<StoryPreviewDto> getAllStory(@Login Long userId) {
-        return boardService.findAllStoryPreview(userId);
+        return boardService.findStoryPreviewList(userId);
     }
 
 
@@ -38,7 +38,7 @@ public class BoardController {
      */
     @GetMapping("public")
     public BoardListDto getAllBoardByPublic(@Login Long userId) {
-        return boardService.findAllBoardByPublic(userId);
+        return boardService.findBoardByPublicList(userId);
     }
 
     /**

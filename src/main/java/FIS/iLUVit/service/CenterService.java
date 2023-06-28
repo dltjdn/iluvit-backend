@@ -67,7 +67,7 @@ public class CenterService {
      * 작성자: 현승구
      * 작성내용: 시설별 정보를 상세 조회합니다
      */
-    public CenterResponse findCenterInfoByCenterId(Long id) {
+    public CenterResponse findCenterDetailsByCenter(Long id) {
         Center center = centerRepository.findById(id)
                 .orElseThrow(() -> new CenterException("해당 센터 존재하지 않음"));
         // Center 가 id 에 의해 조회 되었으므로 score에 1 추가
@@ -81,7 +81,7 @@ public class CenterService {
      * 작성자: 현승구
      * 작성내용: 시설별 정보 preview를 조회합니다
      */
-    public CenterBannerResponse findCenterBannerByCenterId(Long id, Long userId) {
+    public CenterBannerResponse findCenterBannerByCenter(Long id, Long userId) {
         CenterBannerDto data = userId == null ?
                 centerRepository.findBannerById(id) :
                 centerRepository.findBannerById(id, userId);

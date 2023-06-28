@@ -62,7 +62,7 @@ public class UserControllerTest {
         String url = "/user";
         doReturn(new UserResponse())
                 .when(userService)
-                .findUserInfoDetails(any());
+                .findUserDetails(any());
         // when
         ResultActions result = mockMvc.perform(
                 MockMvcRequestBuilders.get(url)

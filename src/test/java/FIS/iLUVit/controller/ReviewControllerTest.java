@@ -151,7 +151,7 @@ class ReviewControllerTest {
 
         Mockito.doReturn(reviewByParentSlice)
                 .when(reviewService)
-                .findByParent(parent1.getId(), PageRequest.of(0, 10));
+                .findReviewListByParent(parent1.getId(), PageRequest.of(0, 10));
 
         final String url = "/review";
         //when
@@ -179,7 +179,7 @@ class ReviewControllerTest {
         UserErrorResult error = UserErrorResult.NOT_VALID_TOKEN;
         Mockito.doThrow(new UserException(error))
                 .when(reviewService)
-                .saveReview(null, reviewDetailDto);
+                .saveNewReview(null, reviewDetailDto);
         //when
         ResultActions resultActions = mockMvc.perform(
                 MockMvcRequestBuilders.post(url)
@@ -206,7 +206,7 @@ class ReviewControllerTest {
         UserErrorResult error = UserErrorResult.USER_NOT_EXIST;
         Mockito.doThrow(new UserException(error))
                 .when(reviewService)
-                .saveReview(parent1.getId(), reviewDetailDto);
+                .saveNewReview(parent1.getId(), reviewDetailDto);
         //when
         ResultActions resultActions = mockMvc.perform(
                 MockMvcRequestBuilders.post(url)
@@ -231,7 +231,7 @@ class ReviewControllerTest {
         ReviewErrorResult error = ReviewErrorResult.UNAUTHORIZED_USER_ACCESS;
         Mockito.doThrow(new ReviewException(error))
                 .when(reviewService)
-                .saveReview(parent1.getId(), reviewDetailDto);
+                .saveNewReview(parent1.getId(), reviewDetailDto);
         //when
         ResultActions resultActions = mockMvc.perform(
                 MockMvcRequestBuilders.post(url)
@@ -257,7 +257,7 @@ class ReviewControllerTest {
         CenterErrorResult error = CenterErrorResult.CENTER_NOT_EXIST;
         Mockito.doThrow(new CenterException(error))
                 .when(reviewService)
-                .saveReview(parent1.getId(), reviewDetailDto);
+                .saveNewReview(parent1.getId(), reviewDetailDto);
         //when
         ResultActions resultActions = mockMvc.perform(
                 MockMvcRequestBuilders.post(url)
@@ -282,7 +282,7 @@ class ReviewControllerTest {
         ReviewErrorResult error = ReviewErrorResult.NO_MORE_THAN_ONE_REVIEW;
         Mockito.doThrow(new ReviewException(error))
                 .when(reviewService)
-                .saveReview(parent1.getId(), reviewDetailDto);
+                .saveNewReview(parent1.getId(), reviewDetailDto);
         //when
         ResultActions resultActions = mockMvc.perform(
                 MockMvcRequestBuilders.post(url)
@@ -307,7 +307,7 @@ class ReviewControllerTest {
 
         Mockito.doReturn(review1.getId())
                 .when(reviewService)
-                .saveReview(parent1.getId(), reviewDetailDto);
+                .saveNewReview(parent1.getId(), reviewDetailDto);
         //when
         ResultActions resultActions = mockMvc.perform(
                 MockMvcRequestBuilders.post(url)
@@ -330,7 +330,7 @@ class ReviewControllerTest {
         ReviewErrorResult error = ReviewErrorResult.REVIEW_NOT_EXIST;
         Mockito.doThrow(new ReviewException(error))
                 .when(reviewService)
-                .updateReview(review1.getId(), parent1.getId(), "수정했어요");
+                .modifyReview(review1.getId(), parent1.getId(), "수정했어요");
         reviewDto = new ReviewDto("수정했어요");
         //when
 
@@ -355,7 +355,7 @@ class ReviewControllerTest {
         ReviewErrorResult error = ReviewErrorResult.UNAUTHORIZED_USER_ACCESS;
         Mockito.doThrow(new ReviewException(error))
                 .when(reviewService)
-                .updateReview(review1.getId(), parent1.getId(), "수정했어요");
+                .modifyReview(review1.getId(), parent1.getId(), "수정했어요");
         reviewDto = new ReviewDto("수정했어요");
         //when
 
@@ -380,7 +380,7 @@ class ReviewControllerTest {
         ReviewErrorResult error = ReviewErrorResult.UNAUTHORIZED_USER_ACCESS;
         Mockito.doNothing()
                 .when(reviewService)
-                .updateReview(review1.getId(), parent1.getId(), "수정했어요");
+                .modifyReview(review1.getId(), parent1.getId(), "수정했어요");
         reviewDto = new ReviewDto("수정했어요");
         //when
 
@@ -488,7 +488,7 @@ class ReviewControllerTest {
 
         Mockito.doReturn(reviewByCenterDtos)
                 .when(reviewService)
-                .findByCenter(center1.getId(), PageRequest.of(0, 10));
+                .findReviewByCenter(center1.getId(), PageRequest.of(0, 10));
 
         final String url = "/review/center/{centerId}";
         //when

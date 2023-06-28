@@ -47,7 +47,7 @@ public class PostController {
     @PostMapping("")
     public Long createPost(@Login Long userId,
                                  @ModelAttribute @Validated PostRequest request) {
-        return postService.savePost(request, userId);
+        return postService.saveNewPost(request, userId);
     }
 
     /**
@@ -56,7 +56,7 @@ public class PostController {
      */
     @DeleteMapping("{postId}")
     public Long deletePost(@Login Long userId, @PathVariable("postId") Long postId) {
-        return postService.deleteById(postId, userId);
+        return postService.deletePost(postId, userId);
     }
 
     /**
@@ -65,7 +65,7 @@ public class PostController {
      */
     @GetMapping("mypage")
     public Slice<PostPreviewDto> getPostByUser(@Login Long userId, Pageable pageable) {
-        return postService.searchByUser(userId, pageable);
+        return postService.findPostByUser(userId, pageable);
     }
 
     /**
@@ -75,7 +75,7 @@ public class PostController {
      */
     @PutMapping("{postId}/update")
     public void pullUp(@Login Long userId, @PathVariable("postId") Long postId) {
-        postService.updateDate(userId, postId);
+        postService.pullUpPost(userId, postId);
     }
 
     /**
@@ -87,7 +87,7 @@ public class PostController {
     public Slice<PostPreviewDto> getPost(@Login Long userId,
                                             @RequestParam("input") String keyword,
                                             Pageable pageable) {
-        return postService.searchByKeyword(keyword, userId, pageable);
+        return postService.searchPost(keyword, userId, pageable);
     }
 
     /**
@@ -101,7 +101,7 @@ public class PostController {
             @RequestParam("input") String keyword,
             @RequestParam("auth") Auth auth,
             Pageable pageable) {
-        return postService.searchByKeywordAndCenter(centerId, keyword, auth, userId, pageable);
+        return postService.searchPostByCenter(centerId, keyword, auth, userId, pageable);
     }
 
     /**
@@ -113,7 +113,7 @@ public class PostController {
             @RequestParam("board_id") Long boardId,
             @RequestParam("input") String keyword,
             Pageable pageable) {
-        return postService.searchByKeywordAndBoard(boardId, keyword, pageable);
+        return postService.searchByBoard(boardId, keyword, pageable);
     }
 
     /**
@@ -122,7 +122,7 @@ public class PostController {
      */
     @GetMapping("public-main")
     public List<BoardPreviewDto> getBoardDetailsByPublic(@Login Long userId) {
-        return postService.searchMainPreview(userId);
+        return postService.findBoardDetailsByPublic(userId);
     }
 
     /**
@@ -131,7 +131,7 @@ public class PostController {
      */
     @GetMapping("center-main")
     public List<BoardPreviewDto> getBoardDetailsByCenter(@Login Long userId, @RequestParam("center_id") Long centerId) {
-        return postService.searchCenterMainPreview(userId, centerId);
+        return postService.findBoardDetailsByCenter(userId, centerId);
     }
 
     /**
@@ -140,7 +140,7 @@ public class PostController {
      */
     @GetMapping("search/hot-board")
     public Slice<PostPreviewDto> getPostByHotBoard(@RequestParam(value = "center_id", required = false) Long centerId, Pageable pageable) {
-        return postService.findByHeartCnt(centerId, pageable);
+        return postService.findPostByHeartCnt(centerId, pageable);
     }
 
     /**
@@ -149,7 +149,7 @@ public class PostController {
      */
     @GetMapping("{postId}")
     public PostResponse getPostDetails(@Login Long userId, @PathVariable("postId") Long postId) {
-        return postService.findById(userId, postId);
+        return postService.findPostByPostId(userId, postId);
     }
 
 }

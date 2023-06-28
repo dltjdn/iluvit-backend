@@ -31,7 +31,7 @@ public class UserController {
      */
     @GetMapping("user")
     public UserResponse getUserDetails(@Login Long id) {
-        return userService.findUserInfoDetails(id);
+        return userService.findUserDetails(id);
     }
 
     /**

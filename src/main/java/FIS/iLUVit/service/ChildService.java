@@ -49,7 +49,7 @@ public class ChildService {
      * 작성자: 이승범
      * 작성내용: 부모의 메인페이지에 필요한 아이들 정보 반환
      */
-    public List<ChildDto> findChildInfo(Long id) {
+    public List<ChildDto> findChildList(Long id) {
         Parent findParent = parentRepository.findWithChildren(id)
                 .orElseThrow(() -> new UserException(UserErrorResult.NOT_VALID_TOKEN));
 
@@ -98,7 +98,7 @@ public class ChildService {
      * 작성자: 이승범
      * 작성내용: 아이 프로필 조회
      */
-    public ChildDetailResponse findChildInfoDetail(Long userId, Long childId) {
+    public ChildDetailResponse findChildDetails(Long userId, Long childId) {
         // 프로필 수정하고자 하는 아이 가져오기
         Child child = childRepository.findByIdAndParentWithCenter(userId, childId)
                 .orElseThrow(() -> new UserException(UserErrorResult.NOT_VALID_REQUEST));
@@ -112,7 +112,7 @@ public class ChildService {
     *   작성자: 이승범
     *   작성내용: 아이 프로필 수정
     */
-    public ChildDetailResponse saveChildDetailsChanges(Long userId, Long childId, ChildRequest request) {
+    public ChildDetailResponse modifyChildInfo(Long userId, Long childId, ChildRequest request) {
         // 수정하고자 하는 아이
         Child updatedChild = childRepository.findByIdAndParentWithCenter(userId, childId)
                 .orElseThrow(() -> new UserException(UserErrorResult.NOT_VALID_REQUEST));
@@ -162,7 +162,7 @@ public class ChildService {
     *   작성자: 이승범
     *   작성내용: 아이의 시설 탈퇴
     */
-    public Child leaveChildCenter(Long userId, Long childId) {
+    public Child leaveCenterForChild(Long userId, Long childId) {
         // 요청 사용자가 등록한 모든 아이 가져오기
         List<Child> childrenByUser = childRepository.findByUserWithCenter(userId);
 
@@ -201,7 +201,7 @@ public class ChildService {
         }
 
         childRepository.delete(deletedChild);
-        return findChildInfo(userId);
+        return findChildList(userId);
     }
 
     /**

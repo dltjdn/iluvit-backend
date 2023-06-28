@@ -110,7 +110,7 @@ public class ChildServiceTest {
                     .when(imageService)
                     .getProfileImage(any(Child.class));
             // when
-            List<ChildDto> result = target.findChildInfo(parent1.getId());
+            List<ChildDto> result = target.findChildList(parent1.getId());
             // then
             assertThat(result.size()).isEqualTo(2);
         }
@@ -127,7 +127,7 @@ public class ChildServiceTest {
                     .when(imageService)
                     .getProfileImage(any(Child.class));
             // when
-            List<ChildDto> result = target.findChildInfo(parent1.getId());
+            List<ChildDto> result = target.findChildList(parent1.getId());
             // then
             assertThat(result.size()).isEqualTo(3);
             for (ChildDto childInfo : result) {
@@ -142,7 +142,7 @@ public class ChildServiceTest {
             doReturn(Optional.of(parent2))
                     .when(parentRepository)
                     .findWithChildren(any());
-            List<ChildDto> result = target.findChildInfo(parent2.getId());
+            List<ChildDto> result = target.findChildList(parent2.getId());
             // then
             assertThat(result.size()).isEqualTo(0);
         }
@@ -412,7 +412,7 @@ public class ChildServiceTest {
                     .findByIdAndParentWithCenter(any(), any());
             //when
             UserException result = assertThrows(UserException.class,
-                    () -> target.findChildInfoDetail(parent1.getId(), child4.getId()));
+                    () -> target.findChildDetails(parent1.getId(), child4.getId()));
             //then
             assertThat(result.getErrorResult()).isEqualTo(UserErrorResult.NOT_VALID_REQUEST);
         }
@@ -426,7 +426,7 @@ public class ChildServiceTest {
                     .when(imageService)
                     .getProfileImage(any(Child.class));
             // when
-            ChildDetailResponse result = target.findChildInfoDetail(parent1.getId(), child3.getId());
+            ChildDetailResponse result = target.findChildDetails(parent1.getId(), child3.getId());
             // then
             assertThat(result.getChild_id()).isEqualTo(child3.getId());
             assertThat(result.getCenter_name()).isNull();
@@ -441,7 +441,7 @@ public class ChildServiceTest {
                     .when(imageService)
                     .getProfileImage(any(Child.class));
             //when
-            ChildDetailResponse result = target.findChildInfoDetail(parent1.getId(), child1.getId());
+            ChildDetailResponse result = target.findChildDetails(parent1.getId(), child1.getId());
             //then
             assertThat(result.getChild_id()).isEqualTo(child1.getId());
             assertThat(result.getCenter_name()).isEqualTo(center1.getName());
@@ -461,7 +461,7 @@ public class ChildServiceTest {
                     .findByIdAndParentWithCenter(any(), any());
             //when
             UserException result = assertThrows(UserException.class,
-                    () -> target.saveChildDetailsChanges(parent1.getId(), child4.getId(), request));
+                    () -> target.modifyChildInfo(parent1.getId(), child4.getId(), request));
             //then
             assertThat(result.getErrorResult()).isEqualTo(UserErrorResult.NOT_VALID_REQUEST);
         }
@@ -474,7 +474,7 @@ public class ChildServiceTest {
                     .when(childRepository)
                     .findByIdAndParentWithCenter(any(), any());
             // when
-            ChildDetailResponse result = target.saveChildDetailsChanges(parent1.getId(), child1.getId(), request);
+            ChildDetailResponse result = target.modifyChildInfo(parent1.getId(), child1.getId(), request);
             // then
             assertThat(result.getChild_id()).isEqualTo(child1.getId());
             assertThat(result.getChild_name()).isEqualTo(request.getName());
@@ -561,7 +561,7 @@ public class ChildServiceTest {
                     .findByUserWithCenter(any());
             // when
             UserException result = assertThrows(UserException.class,
-                    () -> target.leaveChildCenter(parent1.getId(), child4.getId()));
+                    () -> target.leaveCenterForChild(parent1.getId(), child4.getId()));
             // then
             assertThat(result.getErrorResult()).isEqualTo(UserErrorResult.NOT_VALID_REQUEST);
         }
@@ -575,7 +575,7 @@ public class ChildServiceTest {
                     .findByUserWithCenter(any());
             //when
             UserException result = assertThrows(UserException.class,
-                    () -> target.leaveChildCenter(parent1.getId(), child3.getId()));
+                    () -> target.leaveCenterForChild(parent1.getId(), child3.getId()));
             //then
             assertThat(result.getErrorResult()).isEqualTo(UserErrorResult.NOT_VALID_REQUEST);
         }
@@ -588,7 +588,7 @@ public class ChildServiceTest {
                     .when(childRepository)
                     .findByUserWithCenter(any());
             // when
-            Child result = target.leaveChildCenter(parent1.getId(), child2.getId());
+            Child result = target.leaveCenterForChild(parent1.getId(), child2.getId());
             // then
             assertThat(result.getId()).isEqualTo(child2.getId());
             assertThat(result.getParent().getId()).isEqualTo(parent1.getId());
@@ -603,7 +603,7 @@ public class ChildServiceTest {
                     .when(childRepository)
                     .findByUserWithCenter(any());
             // when
-            Child result = target.leaveChildCenter(parent1.getId(), child1.getId());
+            Child result = target.leaveCenterForChild(parent1.getId(), child1.getId());
             // then
             assertThat(result.getId()).isEqualTo(child1.getId());
             assertThat(result.getParent().getId()).isEqualTo(parent1.getId());

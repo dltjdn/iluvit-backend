@@ -212,7 +212,7 @@ class PostControllerTest {
 
         Mockito.doThrow(new UserException(error))
                 .when(postService)
-                .savePost(postRequest, null);
+                .saveNewPost(postRequest, null);
         //when
 
 
@@ -253,7 +253,7 @@ class PostControllerTest {
 
         Mockito.doThrow(new UserException(error))
                 .when(postService)
-                .savePost(postRequest, parent1.getId());
+                .saveNewPost(postRequest, parent1.getId());
         //when
 
 
@@ -294,7 +294,7 @@ class PostControllerTest {
 
         Mockito.doThrow(new BoardException(error))
                 .when(postService)
-                .savePost(postRequest, parent1.getId());
+                .saveNewPost(postRequest, parent1.getId());
         //when
 
 
@@ -335,7 +335,7 @@ class PostControllerTest {
 
         Mockito.doThrow(new PostException(error))
                 .when(postService)
-                .savePost(postRequest, parent1.getId());
+                .saveNewPost(postRequest, parent1.getId());
         //when
 
 
@@ -375,7 +375,7 @@ class PostControllerTest {
 
         Mockito.doReturn(post1.getId())
                 .when(postService)
-                .savePost(postRequest,parent1.getId());
+                .saveNewPost(postRequest,parent1.getId());
         //when
 
 
@@ -445,7 +445,7 @@ class PostControllerTest {
 
         Mockito.doThrow(new UserException(error))
                 .when(postService)
-                .deleteById(post1.getId(), null);
+                .deletePost(post1.getId(), null);
 
         //when
         ResultActions resultActions = mockMvc.perform(
@@ -468,7 +468,7 @@ class PostControllerTest {
 
         Mockito.doThrow(new UserException(error))
                 .when(postService)
-                .deleteById(post1.getId(), parent1.getId());
+                .deletePost(post1.getId(), parent1.getId());
 
         //when
         ResultActions resultActions = mockMvc.perform(
@@ -492,7 +492,7 @@ class PostControllerTest {
 
         Mockito.doThrow(new PostException(error))
                 .when(postService)
-                .deleteById(post1.getId(), parent1.getId());
+                .deletePost(post1.getId(), parent1.getId());
 
         //when
         ResultActions resultActions = mockMvc.perform(
@@ -516,7 +516,7 @@ class PostControllerTest {
 
         Mockito.doThrow(new PostException(error))
                 .when(postService)
-                .deleteById(post1.getId(), parent1.getId());
+                .deletePost(post1.getId(), parent1.getId());
 
         //when
         ResultActions resultActions = mockMvc.perform(
@@ -537,7 +537,7 @@ class PostControllerTest {
         String url = "/post/{postId}";
         Mockito.doReturn(post1.getId())
                 .when(postService)
-                .deleteById(post1.getId(), parent1.getId());
+                .deletePost(post1.getId(), parent1.getId());
 
         //when
         ResultActions resultActions = mockMvc.perform(
@@ -560,7 +560,7 @@ class PostControllerTest {
 
         Mockito.doThrow(new PostException(error))
                 .when(postService)
-                .findById(null, post1.getId());
+                .findPostByPostId(null, post1.getId());
 
         //when
         ResultActions resultActions = mockMvc.perform(
@@ -584,7 +584,7 @@ class PostControllerTest {
 
         Mockito.doReturn(response)
                 .when(postService)
-                .findById(null, post1.getId());
+                .findPostByPostId(null, post1.getId());
 
         //when
         ResultActions resultActions = mockMvc.perform(
@@ -607,7 +607,7 @@ class PostControllerTest {
         UserErrorResult error = UserErrorResult.NOT_VALID_TOKEN;
         Mockito.doThrow(new UserException(error))
                 .when(postService)
-                .searchByKeyword("1", null, PageRequest.of(0, 10));
+                .searchPost("1", null, PageRequest.of(0, 10));
 
         //when
         ResultActions resultActions = mockMvc.perform(
@@ -633,7 +633,7 @@ class PostControllerTest {
         UserErrorResult error = UserErrorResult.USER_NOT_EXIST;
         Mockito.doThrow(new UserException(error))
                 .when(postService)
-                .searchByKeyword("1", parent1.getId(), PageRequest.of(0, 10));
+                .searchPost("1", parent1.getId(), PageRequest.of(0, 10));
 
         //when
         ResultActions resultActions = mockMvc.perform(
@@ -669,7 +669,7 @@ class PostControllerTest {
 
         Mockito.doReturn(previewSlice)
                 .when(postService)
-                .searchByKeyword("1", parent1.getId(), PageRequest.of(0, 10));
+                .searchPost("1", parent1.getId(), PageRequest.of(0, 10));
 
         //when
         ResultActions resultActions = mockMvc.perform(
@@ -696,7 +696,7 @@ class PostControllerTest {
 
         Mockito.doThrow(new PostException(error))
                 .when(postService)
-                .searchByKeywordAndCenter(
+                .searchPostByCenter(
                         center1.getId(), "1", Auth.PARENT,
                         parent1.getId(), PageRequest.of(0, 10)
                 );
@@ -736,7 +736,7 @@ class PostControllerTest {
 
         Mockito.doReturn(previewSlice)
                 .when(postService)
-                .searchByKeywordAndBoard(board1.getId(), "제목", PageRequest.of(0, 10));
+                .searchByBoard(board1.getId(), "제목", PageRequest.of(0, 10));
 
         //when
 
@@ -772,7 +772,7 @@ class PostControllerTest {
 
         Mockito.doReturn(previewSlice)
                 .when(postService)
-                .findByHeartCnt(center1.getId(), PageRequest.of(0, 10));
+                .findPostByHeartCnt(center1.getId(), PageRequest.of(0, 10));
         //when
         ResultActions resultActions = mockMvc.perform(
                 MockMvcRequestBuilders.get(url)
@@ -808,7 +808,7 @@ class PostControllerTest {
 
         Mockito.doReturn(previewSlice)
                 .when(postService)
-                .searchByUser(parent1.getId(), PageRequest.of(0, 10));
+                .findPostByUser(parent1.getId(), PageRequest.of(0, 10));
         //when
         ResultActions resultActions = mockMvc.perform(
                 MockMvcRequestBuilders.get(url)
@@ -861,7 +861,7 @@ class PostControllerTest {
 
         Mockito.doReturn(boardPreviews)
                 .when(postService)
-                .searchMainPreview(null);
+                .findBoardDetailsByPublic(null);
         //when
         ResultActions resultActions = mockMvc.perform(
                 MockMvcRequestBuilders.get(url)
@@ -914,7 +914,7 @@ class PostControllerTest {
 
         Mockito.doReturn(boardPreviews)
                 .when(postService)
-                .searchMainPreview(parent1.getId());
+                .findBoardDetailsByPublic(parent1.getId());
         //when
         ResultActions resultActions = mockMvc.perform(
                 MockMvcRequestBuilders.get(url)
@@ -938,7 +938,7 @@ class PostControllerTest {
 
         Mockito.doThrow(new UserException(error))
                 .when(postService)
-                .searchCenterMainPreview(null, center1.getId());
+                .findBoardDetailsByCenter(null, center1.getId());
 
         //when
         ResultActions resultActions = mockMvc.perform(
@@ -963,7 +963,7 @@ class PostControllerTest {
 
         Mockito.doThrow(new UserException(error))
                 .when(postService)
-                .searchCenterMainPreview(parent1.getId(), center1.getId());
+                .findBoardDetailsByCenter(parent1.getId(), center1.getId());
 
         //when
         ResultActions resultActions = mockMvc.perform(
@@ -988,7 +988,7 @@ class PostControllerTest {
 
         Mockito.doThrow(new PostException(error))
                 .when(postService)
-                .searchCenterMainPreview(parent1.getId(), center1.getId());
+                .findBoardDetailsByCenter(parent1.getId(), center1.getId());
 
         //when
         ResultActions resultActions = mockMvc.perform(
@@ -1045,7 +1045,7 @@ class PostControllerTest {
 
         Mockito.doReturn(boardPreviewList)
                 .when(postService)
-                .searchCenterMainPreview(parent1.getId(), center1.getId());
+                .findBoardDetailsByCenter(parent1.getId(), center1.getId());
         //when
         ResultActions resultActions = mockMvc.perform(
                 MockMvcRequestBuilders.get(url)
@@ -1069,7 +1069,7 @@ class PostControllerTest {
 
         Mockito.doThrow(new UserException(error))
                 .when(postService)
-                .updateDate(null, post1.getId());
+                .pullUpPost(null, post1.getId());
         //when
 
         ResultActions resultActions = mockMvc.perform(
@@ -1092,7 +1092,7 @@ class PostControllerTest {
 
         Mockito.doThrow(new PostException(error))
                 .when(postService)
-                .updateDate(parent1.getId(), post1.getId());
+                .pullUpPost(parent1.getId(), post1.getId());
         //when
         ResultActions resultActions = mockMvc.perform(
                 MockMvcRequestBuilders.put(url, post1.getId())
@@ -1115,7 +1115,7 @@ class PostControllerTest {
 
         Mockito.doThrow(new PostException(error))
                 .when(postService)
-                .updateDate(parent1.getId(), post1.getId());
+                .pullUpPost(parent1.getId(), post1.getId());
         //when
         ResultActions resultActions = mockMvc.perform(
                 MockMvcRequestBuilders.put(url, post1.getId())
@@ -1137,7 +1137,7 @@ class PostControllerTest {
 
         Mockito.doNothing()
                 .when(postService)
-                .updateDate(parent1.getId(), post1.getId());
+                .pullUpPost(parent1.getId(), post1.getId());
         //when
         ResultActions resultActions = mockMvc.perform(
                 MockMvcRequestBuilders.put(url, post1.getId())

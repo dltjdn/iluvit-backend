@@ -42,7 +42,7 @@ public class UserService {
      * 작성자: 이승범
      * 작성내용: 사용자 기본정보(id, nickname, auth) 반환
      */
-    public UserResponse findUserInfoDetails(Long id) {
+    public UserResponse findUserDetails(Long id) {
         User findUser = userRepository.findById(id)
                 .orElseThrow(() -> new UserException(UserErrorResult.NOT_VALID_TOKEN));
         return findUser.getUserInfo();

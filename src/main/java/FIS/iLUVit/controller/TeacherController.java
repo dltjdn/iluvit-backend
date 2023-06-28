@@ -54,7 +54,7 @@ public class TeacherController {
      */
     @PostMapping("")
     public TeacherDetailResponse updateTeacher(@Login Long id, @Valid @ModelAttribute TeacherDetailRequest request) throws IOException {
-        return teacherService.saveTeacherDetailsChanges(id, request);
+        return teacherService.modifyTeacherInfo(id, request);
     }
 
     /**
@@ -63,7 +63,7 @@ public class TeacherController {
      */
     @GetMapping("search/center")
     public Slice<CenterDto> getCenterForTeacher(@ModelAttribute CenterRequest request, Pageable pageable) {
-        return teacherService.findCenterForTeacherSignup(request, pageable);
+        return teacherService.findCenterForSignupTeacher(request, pageable);
     }
 
     /**
@@ -81,7 +81,7 @@ public class TeacherController {
      */
     @PatchMapping("center")
     public void leaveCenterForTeacher(@Login Long userId) {
-        teacherService.resignCenterForTeacher(userId);
+        teacherService.leaveCenterForTeacher(userId);
     }
 
 

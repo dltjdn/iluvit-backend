@@ -43,7 +43,7 @@ public class PostService {
 
 //    private final Integer heartCriteria = 2; // HOT 게시판 좋아요 기준
 
-    public Long savePost(PostRequest request, Long userId) {
+    public Long saveNewPost(PostRequest request, Long userId) {
         if (userId == null) {
             throw new UserException(UserErrorResult.NOT_VALID_TOKEN);
         }
@@ -69,7 +69,7 @@ public class PostService {
 
     }
 
-    public Long deleteById(Long postId, Long userId) {
+    public Long deletePost(Long postId, Long userId) {
         if (userId == null) {
             throw new UserException(UserErrorResult.NOT_VALID_TOKEN);
         }
@@ -109,7 +109,7 @@ public class PostService {
     }
 
 
-    public PostResponse findById(Long userId, Long postId) {
+    public PostResponse findPostByPostId(Long userId, Long postId) {
         // 게시글과 연관된 유저, 게시판, 시설 한 번에 끌고옴
         Post findPost = postRepository.findByIdWithUserAndBoardAndCenter(postId)
                 .orElseThrow(() -> new PostException(PostErrorResult.POST_NOT_EXIST));
@@ -119,7 +119,7 @@ public class PostService {
     }
 
     // [모두의 이야기 + 유저가 속한 센터의 이야기] 에서 통합 검색
-    public Slice<PostPreviewDto> searchByKeyword(String input, Long userId, Pageable pageable) {
+    public Slice<PostPreviewDto> searchPost(String input, Long userId, Pageable pageable) {
 
         if (userId == null) {
             throw new UserException(UserErrorResult.NOT_VALID_TOKEN);
@@ -151,7 +151,7 @@ public class PostService {
         return posts;
     }
 
-    public Slice<PostPreviewDto> searchByKeywordAndCenter(Long centerId, String input, Auth auth, Long userId, Pageable pageable) {
+    public Slice<PostPreviewDto> searchPostByCenter(Long centerId, String input, Auth auth, Long userId, Pageable pageable) {
         if (centerId != null) {
             if (auth == Auth.PARENT) {
                 // 학부모 유저일 때 아이와 연관된 센터의 아이디를 모두 가져옴
@@ -177,7 +177,7 @@ public class PostService {
         return posts;
     }
 
-    public Slice<PostPreviewDto> searchByKeywordAndBoard(Long boardId, String input, Pageable pageable) {
+    public Slice<PostPreviewDto> searchByBoard(Long boardId, String input, Pageable pageable) {
         Slice<PostPreviewDto> posts = postRepository.findByBoardAndKeyword(boardId, input, pageable);
         posts.forEach(g -> setPreviewImage(g));
         return posts;
@@ -198,13 +198,13 @@ public class PostService {
         preview.updatePreviewImage(infoImages);
     }
 
-    public Slice<PostPreviewDto> searchByUser(Long userId, Pageable pageable) {
+    public Slice<PostPreviewDto> findPostByUser(Long userId, Pageable pageable) {
         Slice<Post> posts = postRepository.findByUser(userId, pageable);
         Slice<PostPreviewDto> preview = posts.map(post -> new PostPreviewDto(post));
         return preview;
     }
 
-    public List<BoardPreviewDto> searchMainPreview(Long userId) {
+    public List<BoardPreviewDto> findBoardDetailsByPublic(Long userId) {
         List<BoardPreviewDto> boardPreviews = new ArrayList<>();
 
         // 비회원일 때 기본 게시판들의 id를 북마크처럼 디폴트로 제공, 회원일 땐 북마크를 통해서 제공
@@ -225,7 +225,7 @@ public class PostService {
     }
 
 
-    public List<BoardPreviewDto> searchCenterMainPreview(Long userId, Long centerId) {
+    public List<BoardPreviewDto> findBoardDetailsByCenter(Long userId, Long centerId) {
         if (userId == null) {
             throw new UserException(UserErrorResult.NOT_VALID_TOKEN);
         }
@@ -319,7 +319,7 @@ public class PostService {
         return results;
     }
 
-    public void updateDate(Long userId, Long postId) {
+    public void pullUpPost(Long userId, Long postId) {
         if (userId == null) {
             throw new UserException(UserErrorResult.NOT_VALID_TOKEN);
         }
@@ -331,7 +331,7 @@ public class PostService {
         findPost.updateTime(LocalDateTime.now());
     }
 
-    public Slice<PostPreviewDto> findByHeartCnt(Long centerId, Pageable pageable) {
+    public Slice<PostPreviewDto> findPostByHeartCnt(Long centerId, Pageable pageable) {
         // heartCnt 가 n 개 이상이면 HOT 게시판에 넣어줍니다.
         return postRepository.findHotPosts(centerId, Criteria.HOT_POST_HEART_CNT, pageable);
     }

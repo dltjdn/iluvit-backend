@@ -85,7 +85,7 @@ class CommentServiceTest {
         request = new CommentRequest("하이", true);
         //when
         CommentException result = assertThrows(CommentException.class,
-                () -> commentService.registerComment(null, post1.getId(), null, request));
+                () -> commentService.saveNewComment(null, post1.getId(), null, request));
         //then
         assertThat(result.getErrorResult())
                 .isEqualTo(CommentErrorResult.UNAUTHORIZED_USER_ACCESS);
@@ -101,7 +101,7 @@ class CommentServiceTest {
                 .findById(user1.getId());
         //when
         UserException result = assertThrows(UserException.class,
-                () -> commentService.registerComment(user1.getId(), post1.getId(), null, request));
+                () -> commentService.saveNewComment(user1.getId(), post1.getId(), null, request));
         //then
         assertThat(result.getClass())
                 .isEqualTo(UserException.class);
@@ -121,7 +121,7 @@ class CommentServiceTest {
                 .findByIdWithBoard(post1.getId());
         //when
         PostException result = assertThrows(PostException.class,
-                () -> commentService.registerComment(user1.getId(), post1.getId(), null, request));
+                () -> commentService.saveNewComment(user1.getId(), post1.getId(), null, request));
         //then
         assertThat(result.getErrorResult())
                 .isEqualTo(PostErrorResult.POST_NOT_EXIST);
@@ -153,7 +153,7 @@ class CommentServiceTest {
                     .when(commentRepository)
                     .save(any(Comment.class));
             //when
-            Long savedId = commentService.registerComment(user1.getId(), post1.getId(), null, request);
+            Long savedId = commentService.saveNewComment(user1.getId(), post1.getId(), null, request);
             //then
             assertThat(savedId).isEqualTo(comment4.getId());
 
@@ -186,7 +186,7 @@ class CommentServiceTest {
                     .when(commentRepository)
                     .save(any(Comment.class));
             //when
-            Long savedId = commentService.registerComment(user1.getId(), post1.getId(), null, request);
+            Long savedId = commentService.saveNewComment(user1.getId(), post1.getId(), null, request);
             //then
             assertThat(savedId).isEqualTo(comment2.getId());
 
@@ -223,7 +223,7 @@ class CommentServiceTest {
                     .when(commentRepository)
                     .save(any(Comment.class));
             //when
-            Long savedId = commentService.registerComment(user2.getId(), post1.getId(), null, request);
+            Long savedId = commentService.saveNewComment(user2.getId(), post1.getId(), null, request);
             //then
             assertThat(savedId).isEqualTo(comment2.getId());
 
@@ -258,7 +258,7 @@ class CommentServiceTest {
                     .when(commentRepository)
                     .save(any(Comment.class));
             //when
-            Long savedId = commentService.registerComment(user2.getId(), post1.getId(), null, request);
+            Long savedId = commentService.saveNewComment(user2.getId(), post1.getId(), null, request);
             //then
             assertThat(savedId).isEqualTo(comment2.getId());
 
@@ -294,7 +294,7 @@ class CommentServiceTest {
                     .when(commentRepository)
                     .getById(any(Long.class));
             //when
-            Long savedId = commentService.registerComment(user1.getId(), post1.getId(), comment1.getId(), request);
+            Long savedId = commentService.saveNewComment(user1.getId(), post1.getId(), comment1.getId(), request);
             //then
             assertThat(savedId).isEqualTo(comment2.getId());
 
@@ -369,7 +369,7 @@ class CommentServiceTest {
                 .when(commentRepository)
                 .findByUser(user1.getId(), PageRequest.of(0, 10));
 
-        Slice<CommentDto> commentDTOS = commentService.searchByUser(user1.getId(), PageRequest.of(0, 10));
+        Slice<CommentDto> commentDTOS = commentService.findCommnetByUser(user1.getId(), PageRequest.of(0, 10));
         //then
 
         assertThat(commentDTOS.getContent())

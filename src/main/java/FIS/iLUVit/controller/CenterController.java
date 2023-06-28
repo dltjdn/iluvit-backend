@@ -2,8 +2,6 @@ package FIS.iLUVit.controller;
 
 import FIS.iLUVit.config.argumentResolver.Login;
 import FIS.iLUVit.dto.center.*;
-import FIS.iLUVit.exception.UserErrorResult;
-import FIS.iLUVit.exception.UserException;
 import FIS.iLUVit.dto.center.CenterAndDistancePreviewDto;
 import FIS.iLUVit.dto.center.CenterMapPreviewDto;
 import FIS.iLUVit.service.CenterService;
@@ -63,7 +61,7 @@ public class CenterController {
      */
     @GetMapping("{centerId}/info")
     public CenterResponse getCenterDetails(@PathVariable("centerId") Long id){
-        return centerService.findCenterInfoByCenterId(id);
+        return centerService.findCenterDetailsByCenter(id);
     }
 
     /**
@@ -73,7 +71,7 @@ public class CenterController {
      */
     @GetMapping("{centerId}/recruit")
     public CenterBannerResponse getCenterDetailsForBanner(@PathVariable("centerId") Long id, @Login Long userId){
-        return centerService.findCenterBannerByCenterId(id, userId);
+        return centerService.findCenterBannerByCenter(id, userId);
     }
 
 

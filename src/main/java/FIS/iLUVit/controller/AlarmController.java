@@ -36,7 +36,7 @@ public class AlarmController {
      */
     @GetMapping("active")
     public Slice<AlarmDetailDto> getActiveAlarm(@Login Long userId, Pageable pageable){
-        return alarmService.findUserActiveAlarm(userId, pageable);
+        return alarmService.findActiveAlarmByUser(userId, pageable);
     }
 
     /**
@@ -44,7 +44,7 @@ public class AlarmController {
      */
     @GetMapping("presentation")
     public Slice<AlarmDetailDto> getPresentationAlarm(@Login Long userId, Pageable pageable){
-        return alarmService.findPresentationActiveAlarm(userId, pageable);
+        return alarmService.findPresentationActiveAlarmByUser(userId, pageable);
     }
 
     /**

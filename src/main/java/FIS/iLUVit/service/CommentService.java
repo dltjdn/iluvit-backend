@@ -32,7 +32,7 @@ public class CommentService {
 
     private final AlarmRepository alarmRepository;
 
-    public Long registerComment(Long userId, Long postId, Long p_commentId, CommentRequest request) {
+    public Long saveNewComment(Long userId, Long postId, Long p_commentId, CommentRequest request) {
         if (userId == null) {
             throw new CommentException(CommentErrorResult.UNAUTHORIZED_USER_ACCESS);
         }
@@ -113,7 +113,7 @@ public class CommentService {
         return commentId;
     }
 
-    public Slice<CommentDto> searchByUser(Long userId, Pageable pageable) {
+    public Slice<CommentDto> findCommnetByUser(Long userId, Pageable pageable) {
         // Comment -> CommentDTO 타입으로 변환
         return commentRepository.findByUser(userId, pageable).map(CommentDto::new);
     }

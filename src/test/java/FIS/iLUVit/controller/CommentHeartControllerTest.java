@@ -5,16 +5,12 @@ import FIS.iLUVit.config.argumentResolver.LoginUserArgumentResolver;
 import FIS.iLUVit.domain.*;
 import FIS.iLUVit.domain.enumtype.Auth;
 import FIS.iLUVit.domain.enumtype.BoardKind;
-import FIS.iLUVit.dto.comment.CommentDto;
 import FIS.iLUVit.dto.comment.CommentRequest;
 import FIS.iLUVit.exception.CommentErrorResult;
 import FIS.iLUVit.exception.CommentException;
-import FIS.iLUVit.exception.PostErrorResult;
-import FIS.iLUVit.exception.PostException;
 import FIS.iLUVit.exception.exceptionHandler.ErrorResponse;
 import FIS.iLUVit.exception.exceptionHandler.controllerAdvice.GlobalControllerAdvice;
 import FIS.iLUVit.service.CommentHeartService;
-import FIS.iLUVit.service.CommentService;
 import FIS.iLUVit.service.createmethod.CreateTest;
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.algorithms.Algorithm;
@@ -27,9 +23,6 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Slice;
-import org.springframework.data.domain.SliceImpl;
 import org.springframework.data.web.PageableHandlerMethodArgumentResolver;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
@@ -37,7 +30,6 @@ import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
-import java.util.Arrays;
 import java.util.Date;
 
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
@@ -116,7 +108,7 @@ class CommentHeartControllerTest {
 
         Mockito.doThrow(new CommentException(error))
                 .when(commentHeartService)
-                .save(null, comment1.getId());
+                .saveCommnetHeart(null, comment1.getId());
         //when
         ResultActions resultActions = mockMvc.perform(
                 MockMvcRequestBuilders.post(url, comment1.getId())
@@ -140,7 +132,7 @@ class CommentHeartControllerTest {
 
         Mockito.doThrow(new CommentException(error))
                 .when(commentHeartService)
-                .save(user1.getId(), comment1.getId());
+                .saveCommnetHeart(user1.getId(), comment1.getId());
         //when
         ResultActions resultActions = mockMvc.perform(
                 MockMvcRequestBuilders.post(url, comment1.getId())
@@ -164,7 +156,7 @@ class CommentHeartControllerTest {
 
         Mockito.doReturn(commentHeart1.getId())
                 .when(commentHeartService)
-                .save(user1.getId(), comment1.getId());
+                .saveCommnetHeart(user1.getId(), comment1.getId());
         //when
         ResultActions resultActions = mockMvc.perform(
                 MockMvcRequestBuilders.post(url, comment1.getId())
@@ -190,7 +182,7 @@ class CommentHeartControllerTest {
         CommentErrorResult error = CommentErrorResult.UNAUTHORIZED_USER_ACCESS_HEART;
         Mockito.doThrow(new CommentException(error))
                 .when(commentHeartService)
-                .delete(null, comment1.getId());
+                .deleteCommentHeart(null, comment1.getId());
         //when
         ResultActions resultActions = mockMvc.perform(
                 MockMvcRequestBuilders.delete(url, comment1.getId())
@@ -216,7 +208,7 @@ class CommentHeartControllerTest {
         CommentErrorResult error = CommentErrorResult.NO_EXIST_COMMENT_HEART;
         Mockito.doThrow(new CommentException(error))
                 .when(commentHeartService)
-                .delete(user1.getId(), comment1.getId());
+                .deleteCommentHeart(user1.getId(), comment1.getId());
         //when
         ResultActions resultActions = mockMvc.perform(
                 MockMvcRequestBuilders.delete(url, comment1.getId())
@@ -240,7 +232,7 @@ class CommentHeartControllerTest {
 
         Mockito.doReturn(commentHeart1.getId())
                 .when(commentHeartService)
-                .delete(user1.getId(), comment1.getId());
+                .deleteCommentHeart(user1.getId(), comment1.getId());
         //when
         ResultActions resultActions = mockMvc.perform(
                 MockMvcRequestBuilders.delete(url, comment1.getId())

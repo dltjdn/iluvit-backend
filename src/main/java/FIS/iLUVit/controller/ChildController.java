@@ -33,7 +33,7 @@ public class ChildController {
      */
     @GetMapping("info")
     public List<ChildDto> getAllChild(@Login Long id) {
-        return childService.findChildInfo(id);
+        return childService.findChildList(id);
     }
 
     /**
@@ -51,7 +51,7 @@ public class ChildController {
      */
     @GetMapping("{childId}")
     public ChildDetailResponse getChildDetails(@Login Long userId, @PathVariable("childId") Long childId) {
-        return childService.findChildInfoDetail(userId, childId);
+        return childService.findChildDetails(userId, childId);
     }
 
     /**
@@ -61,7 +61,7 @@ public class ChildController {
     @PutMapping("{childId}")
     public ChildDetailResponse updateChild(@Login Long userId, @PathVariable("childId") Long childId,
                                            @ModelAttribute ChildRequest request, Pageable pageable) throws IOException {
-        return childService.saveChildDetailsChanges(userId, childId, request);
+        return childService.modifyChildInfo(userId, childId, request);
     }
 
     /**
@@ -97,7 +97,7 @@ public class ChildController {
      */
     @PatchMapping("{childId}/center")
     public void leaveCenterForChild(@Login Long userId, @PathVariable("childId") Long childId) {
-        childService.leaveChildCenter(userId, childId);
+        childService.leaveCenterForChild(userId, childId);
     }
 
 

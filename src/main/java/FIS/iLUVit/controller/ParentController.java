@@ -39,7 +39,7 @@ public class ParentController {
      */
     @PatchMapping("")
     public ParentDetailResponse updateParent(@Login Long id, @Valid @ModelAttribute ParentDetailRequest request) throws IOException {
-        return parentService.saveParentDetailsChanges(id, request);
+        return parentService.modifyParentInfo(id, request);
     }
 
     /**

@@ -62,7 +62,7 @@ public class ParentService {
      * 작성자: 이승범
      * 작성내용: 부모의 마이페이지 정보 업데이트
      */
-    public ParentDetailResponse saveParentDetailsChanges(Long id, ParentDetailRequest request) throws IOException {
+    public ParentDetailResponse modifyParentInfo(Long id, ParentDetailRequest request) throws IOException {
 
         Parent findParent = parentRepository.findById(id)
                 .orElseThrow(() -> new UserException(UserErrorResult.NOT_VALID_TOKEN));

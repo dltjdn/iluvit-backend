@@ -153,7 +153,7 @@ class BoardControllerTest {
         BoardListDto boardListDto = new BoardListDto();
         List<BoardListDto.BoardBookmarkDto> boardList = getBookmarkDTOS(board1, board2, boardListDto);
         boardListDto.addBoardList(boardList);
-        given(boardService.findAllBoardByPublic(any()))
+        given(boardService.findBoardByPublicList(any()))
                 .willReturn(boardListDto);
         //when
 
@@ -207,7 +207,7 @@ class BoardControllerTest {
 
         Mockito.doReturn(storyPreviewDtoList)
                 .when(boardService)
-                .findAllStoryPreview(null);
+                .findStoryPreviewList(null);
         //when
 
         ResultActions resultActions = mockMvc.perform(
@@ -229,7 +229,7 @@ class BoardControllerTest {
         UserErrorResult error = UserErrorResult.USER_NOT_EXIST;
         Mockito.doThrow(new UserException(error))
                 .when(boardService)
-                .findAllStoryPreview(any(Long.class));
+                .findStoryPreviewList(any(Long.class));
         //when
 
         ResultActions resultActions = mockMvc.perform(get(url)
@@ -254,7 +254,7 @@ class BoardControllerTest {
         String url = "/board/home";
         Mockito.doReturn(storyPreviewDtoList)
                 .when(boardService)
-                .findAllStoryPreview(any(Long.class));
+                .findStoryPreviewList(any(Long.class));
         //when
 
         ResultActions resultActions = mockMvc.perform(get(url)

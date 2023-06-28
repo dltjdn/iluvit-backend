@@ -341,7 +341,7 @@ class BoardServiceTest {
                 .when(boardRepository)
                 .findByCenterIsNull();
         //when
-        BoardListDto dto = boardService.findAllBoardByPublic(parent1.getId());
+        BoardListDto dto = boardService.findBoardByPublicList(parent1.getId());
         //then
         BoardListDto.BoardBookmarkDto board = dto.getBoardList().get(0);
         List<BoardListDto.BoardBookmarkDto> bookmarkList = dto.getBookmarkList();
@@ -514,7 +514,7 @@ class BoardServiceTest {
         List<StoryPreviewDto> storyPreviewDtoList = new ArrayList<>();
         storyPreviewDtoList.addAll(List.of(new StoryPreviewDto(null)));
         //when
-        List<StoryPreviewDto> stories = boardService.findAllStoryPreview(null);
+        List<StoryPreviewDto> stories = boardService.findStoryPreviewList(null);
         //then
 
         assertThat(objectMapper.writeValueAsString(stories))
@@ -535,7 +535,7 @@ class BoardServiceTest {
                 .findById(parent1.getId());
         //when
         UserException result = assertThrows(UserException.class,
-                () -> boardService.findAllStoryPreview(parent1.getId()));
+                () -> boardService.findStoryPreviewList(parent1.getId()));
 
 
         //then
@@ -562,7 +562,7 @@ class BoardServiceTest {
                 .when(userRepository)
                 .findChildrenWithCenter(parent1.getId());
         //when
-        List<StoryPreviewDto> result = boardService.findAllStoryPreview(parent1.getId());
+        List<StoryPreviewDto> result = boardService.findStoryPreviewList(parent1.getId());
 
         //then
 
@@ -583,7 +583,7 @@ class BoardServiceTest {
                 .when(userRepository)
                 .findById(teacher1.getId());
         //when
-        List<StoryPreviewDto> result = boardService.findAllStoryPreview(teacher1.getId());
+        List<StoryPreviewDto> result = boardService.findStoryPreviewList(teacher1.getId());
 
         //then
 

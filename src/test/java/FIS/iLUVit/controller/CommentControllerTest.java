@@ -108,7 +108,7 @@ class CommentControllerTest {
 
         Mockito.doThrow(new CommentException(error))
                 .when(commentService)
-                .registerComment(null, post1.getId(), null, commentRequest);
+                .saveNewComment(null, post1.getId(), null, commentRequest);
         //when
         ResultActions resultActions = mockMvc.perform(
                 MockMvcRequestBuilders.post(url)
@@ -145,7 +145,7 @@ class CommentControllerTest {
 
         Mockito.doThrow(new PostException(error))
                 .when(commentService)
-                .registerComment(user1.getId(), post1.getId(), null, commentRequest);
+                .saveNewComment(user1.getId(), post1.getId(), null, commentRequest);
         //when
         ResultActions resultActions = mockMvc.perform(
                 MockMvcRequestBuilders.post(url)
@@ -173,7 +173,7 @@ class CommentControllerTest {
 
         Mockito.doReturn(comment1.getId())
                 .when(commentService)
-                .registerComment(user1.getId(), post1.getId(), null, commentRequest);
+                .saveNewComment(user1.getId(), post1.getId(), null, commentRequest);
 
         //when
         ResultActions resultActions = mockMvc.perform(
@@ -201,7 +201,7 @@ class CommentControllerTest {
 
         Mockito.doReturn(comment1.getId())
                 .when(commentService)
-                .registerComment(user1.getId(), post1.getId(), comment2.getId(), commentRequest);
+                .saveNewComment(user1.getId(), post1.getId(), comment2.getId(), commentRequest);
 
         //when
         ResultActions resultActions = mockMvc.perform(
@@ -316,7 +316,7 @@ class CommentControllerTest {
 
         Mockito.doReturn(commentSlice)
                 .when(commentService)
-                .searchByUser(user1.getId(), PageRequest.of(0, 10));
+                .findCommnetByUser(user1.getId(), PageRequest.of(0, 10));
 
         //when
         ResultActions resultActions = mockMvc.perform(
