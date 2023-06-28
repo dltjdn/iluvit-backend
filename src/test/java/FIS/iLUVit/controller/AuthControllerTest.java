@@ -51,5 +51,4 @@ public class AuthControllerTest {
         // TODO 비밀번호찾기 완료
 
     }
-
 }
