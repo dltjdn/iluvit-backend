@@ -340,7 +340,7 @@ public class TeacherService {
     // 해당 시설과 연관된 게시판 bookmark 삭제
     private void deleteBookmarkByCenter(Teacher escapedTeacher) {
         if (escapedTeacher.getApproval() == Approval.ACCEPT) {
-            List<Board> boards = boardRepository.findByCenter(escapedTeacher.getCenter().getId());
+            List<Board> boards = boardRepository.findByCenterId(escapedTeacher.getCenter().getId());
             List<Long> boardIds = boards.stream()
                     .map(Board::getId)
                     .collect(Collectors.toList());

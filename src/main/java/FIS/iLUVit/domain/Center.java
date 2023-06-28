@@ -74,14 +74,15 @@ public class Center extends BaseImageEntity {
     @Embedded
     protected OtherInfo otherInfo;            // 지문등록 사업에서 사용하는 정보들 집합
 
-    @OneToMany(mappedBy = "center")
-    protected List<Presentation> presentations = new ArrayList<>();
+//    @OneToMany(mappedBy = "center")
+//    protected List<Presentation> presentations = new ArrayList<>();
     @OneToMany(mappedBy = "center")
     protected List<Teacher> teachers = new ArrayList<>();
     @OneToMany(mappedBy = "center")
     protected List<Review> reviews = new ArrayList<>();
-    @OneToMany(mappedBy = "center")
-    protected List<Board> boards = new ArrayList<>();
+//    @OneToMany(mappedBy = "center")
+//    protected List<Board> boards = new ArrayList<>();
+//
     @OneToMany(mappedBy = "center")
     protected List<Child> children = new ArrayList<>();
     @OneToMany(mappedBy = "center")

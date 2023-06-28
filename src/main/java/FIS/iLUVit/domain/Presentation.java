@@ -66,7 +66,6 @@ public class Presentation extends BaseImageEntity {
 
     public Presentation updateCenter(Center center) {
         this.center = center;
-        center.getPresentations().add(this);
         return this;
     }
 

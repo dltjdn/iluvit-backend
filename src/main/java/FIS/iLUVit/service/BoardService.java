@@ -14,7 +14,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import javax.swing.text.html.Option;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -54,7 +53,7 @@ public class BoardService {
                 .orElseThrow(() -> new CenterException(CenterErrorResult.CENTER_NOT_EXIST));
 
 
-        List<Board> boards = boardRepository.findByCenter(centerId);  // 시설 이야기 모든 게시판
+        List<Board> boards = boardRepository.findByCenterId(centerId);  // 시설 이야기 모든 게시판
         List<BoardListDto.BoardBookmarkDto> bookmarkList = new ArrayList<>();
         List<BoardListDto.BoardBookmarkDto> boardList = new ArrayList<>();
 

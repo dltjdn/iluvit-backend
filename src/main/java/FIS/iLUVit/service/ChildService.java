@@ -1,7 +1,6 @@
 package FIS.iLUVit.service;
 
 import FIS.iLUVit.domain.alarms.Alarm;
-import FIS.iLUVit.domain.alarms.ChatAlarm;
 import FIS.iLUVit.dto.center.CenterDto;
 import FIS.iLUVit.dto.center.CenterRequest;
 import FIS.iLUVit.dto.child.*;
@@ -9,7 +8,6 @@ import FIS.iLUVit.domain.*;
 import FIS.iLUVit.domain.alarms.CenterApprovalAcceptedAlarm;
 import FIS.iLUVit.domain.alarms.CenterApprovalReceivedAlarm;
 import FIS.iLUVit.domain.enumtype.Approval;
-import FIS.iLUVit.dto.child.*;
 import FIS.iLUVit.exception.*;
 import FIS.iLUVit.domain.enumtype.Auth;
 import FIS.iLUVit.exception.UserErrorResult;
@@ -264,11 +262,12 @@ public class ChildService {
                 .filter(child -> child.getApproval() == Approval.ACCEPT)
                 .filter(child -> !Objects.equals(child.getId(), acceptedChild.getId()))
                 .findFirst();
-
         // 새로운 시설에 아이가 승인될 경우 해당 시설에 default board 북마크에 추가
         if (alreadySignedChild.isEmpty()) {
-            // 승인하고자 하는 시설의 게시판들 lazyLoading 통해 가져오기
-            teacher.getCenter().getBoards().forEach(board -> {
+            // 선생이 가입되어 있는 시설의 게시판 가져오기
+            List<Board> boardList = boardRepository.findByCenter(teacher.getCenter());
+            // 게시판이 default면 게시판 즐겨찾기에 등록
+            boardList.forEach(board -> {
                 if (board.getIsDefault()) {
                     boardBookmarkService.create(acceptedParent.getId(), board.getId());
                 }
@@ -316,7 +315,7 @@ public class ChildService {
 
         // 없으면 해당 시설과 연관된 bookmark 싹 다 삭제
         if (sameCenterChildren.isEmpty()) {
-            List<Board> boards = boardRepository.findByCenter(deletedChild.getCenter().getId());
+            List<Board> boards = boardRepository.findByCenterId(deletedChild.getCenter().getId());
             List<Long> boardIds = boards.stream()
                     .map(Board::getId)
                     .collect(Collectors.toList());
