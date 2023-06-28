@@ -190,7 +190,7 @@ public class LoginTest {
             TokenRefreshRequest request = new TokenRefreshRequest(loginResponse.getRefreshToken() + "trash");
             // when
             assertThrows(JWTVerificationException.class,
-                    () -> userService.refresh(request));
+                    () -> userService.refreshAccessToken(request));
             // then
         }
 
@@ -206,7 +206,7 @@ public class LoginTest {
             TokenRefreshRequest request = new TokenRefreshRequest(loginResponse.getRefreshToken());
             // when
             assertThrows(JWTVerificationException.class,
-                    () -> userService.refresh(request));
+                    () -> userService.refreshAccessToken(request));
             // then
         }
 
@@ -218,7 +218,7 @@ public class LoginTest {
             LoginResponse loginResponse = userService.login(new LoginRequest(loginId, password));
             TokenRefreshRequest request = new TokenRefreshRequest(loginResponse.getRefreshToken());
             // when
-            LoginResponse result = userService.refresh(request);
+            LoginResponse result = userService.refreshAccessToken(request);
             // then
             assertThat(result).isNull();
         }
@@ -234,7 +234,7 @@ public class LoginTest {
             LoginResponse loginResponse = userService.login(new LoginRequest(loginId, password));
             TokenRefreshRequest request = new TokenRefreshRequest(loginResponse.getRefreshToken());
             // when
-            LoginResponse result = userService.refresh(request);
+            LoginResponse result = userService.refreshAccessToken(request);
             // then
             TokenPair tokenPair = tokenPairRepository.findByUserId(parent.getId()).orElse(null);
             String dbAccessToken = tokenPair.getAccessToken();

@@ -1,15 +1,8 @@
 package FIS.iLUVit.controller;
 
 import FIS.iLUVit.config.argumentResolver.Login;
-import FIS.iLUVit.domain.Post;
-import FIS.iLUVit.domain.PostHeart;
-import FIS.iLUVit.domain.User;
-import FIS.iLUVit.exception.PostErrorResult;
-import FIS.iLUVit.exception.PostException;
-import FIS.iLUVit.repository.PostHeartRepository;
-import FIS.iLUVit.repository.PostRepository;
-import FIS.iLUVit.repository.UserRepository;
 import FIS.iLUVit.service.PostService;
+import FIS.iLUVit.service.PostHeartService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
@@ -18,8 +11,7 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("post-heart")
 public class PostHeartController {
 
-    private final PostHeartRepository postHeartRepository;
-    private final PostService postService;
+    private final PostHeartService postHeartService;
 
     /**
      * COMMON
@@ -31,7 +23,7 @@ public class PostHeartController {
     */
     @PostMapping("{postId}")
     public Long createPostHeart(@Login Long userId, @PathVariable("postId") Long postId) {
-        return postService.savePostHeart(userId, postId);
+        return postHeartService.savePostHeart(userId, postId);
     }
     
     /**
@@ -41,7 +33,7 @@ public class PostHeartController {
     */
     @DeleteMapping("{postId}")
     public void deletePostHeart(@Login Long userId, @PathVariable("postId") Long postId){
-        postService.deletePostHeart(userId,postId);
+        postHeartService.deletePostHeart(userId,postId);
     }
 
 }

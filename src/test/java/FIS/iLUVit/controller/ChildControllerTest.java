@@ -90,7 +90,7 @@ public class ChildControllerTest {
         String url = "/child/info";
         doReturn(new ChildDto())
                 .when(childService)
-                .childInfo(any());
+                .findChildList(any());
         // when
         ResultActions result = mockMvc.perform(
                 MockMvcRequestBuilders.get(url)
@@ -136,7 +136,7 @@ public class ChildControllerTest {
             UserErrorResult error = UserErrorResult.HAVE_NOT_AUTHORIZATION;
             doThrow(new UserException(error))
                     .when(childService)
-                    .acceptChild(any(), any());
+                    .acceptChildRegistration(any(), any());
             // when
             ResultActions result = mockMvc.perform(
                     MockMvcRequestBuilders.patch(url, child.getId())
@@ -157,7 +157,7 @@ public class ChildControllerTest {
             UserErrorResult error = UserErrorResult.NOT_VALID_REQUEST;
             doThrow(new UserException(error))
                     .when(childService)
-                    .acceptChild(any(), any());
+                    .acceptChildRegistration(any(), any());
             // when
             ResultActions result = mockMvc.perform(
                     MockMvcRequestBuilders.patch(url, child.getId())
@@ -198,7 +198,7 @@ public class ChildControllerTest {
             UserErrorResult error = UserErrorResult.HAVE_NOT_AUTHORIZATION;
             doThrow(new UserException(error))
                     .when(childService)
-                    .fireChild(any(), any());
+                    .deleteChild(any(), any());
             // when
             ResultActions result = mockMvc.perform(
                     MockMvcRequestBuilders.patch(url, child.getId())
@@ -219,7 +219,7 @@ public class ChildControllerTest {
             UserErrorResult error = UserErrorResult.NOT_VALID_REQUEST;
             doThrow(new UserException(error))
                     .when(childService)
-                    .fireChild(any(), any());
+                    .deleteChild(any(), any());
             // when
             ResultActions result = mockMvc.perform(
                     MockMvcRequestBuilders.patch(url, child.getId())
@@ -264,7 +264,7 @@ public class ChildControllerTest {
             UserErrorResult error = UserErrorResult.NOT_VALID_REQUEST;
             doThrow(new UserException(error))
                     .when(childService)
-                    .updateChild(any(), any(), any());
+                    .modifyChildInfo(any(), any(), any());
             // when
             ResultActions result = mockMvc.perform(builder
                     .file(multipartFile)
@@ -332,7 +332,7 @@ public class ChildControllerTest {
             UserErrorResult error = UserErrorResult.NOT_VALID_REQUEST;
             doThrow(new UserException(error))
                     .when(childService)
-                    .mappingCenter(any(), any(), any());
+                    .requestAssignCenterForChild(any(), any(), any());
             //when
             ResultActions result = mockMvc.perform(
                     MockMvcRequestBuilders.patch(url, child.getId(), center.getId())
@@ -352,7 +352,7 @@ public class ChildControllerTest {
             SignupErrorResult error = SignupErrorResult.ALREADY_BELONG_CENTER;
             doThrow(new SignupException(error))
                     .when(childService)
-                    .mappingCenter(any(), any(), any());
+                    .requestAssignCenterForChild(any(), any(), any());
             //when
             ResultActions result = mockMvc.perform(
                     MockMvcRequestBuilders.patch(url, parent.getId(), child.getId())
@@ -372,7 +372,7 @@ public class ChildControllerTest {
             CenterErrorResult error = CenterErrorResult.CENTER_NOT_EXIST;
             doThrow(new CenterException(error))
                     .when(childService)
-                    .mappingCenter(any(), any(), any());
+                    .requestAssignCenterForChild(any(), any(), any());
             //when
             ResultActions result = mockMvc.perform(
                     MockMvcRequestBuilders.patch(url, parent.getId(), child.getId())
@@ -390,7 +390,7 @@ public class ChildControllerTest {
             String url = "/child/{childId}/center/{centerId}";
             doReturn(child)
                     .when(childService)
-                    .mappingCenter(any(), any(), any());
+                    .requestAssignCenterForChild(any(), any(), any());
             //when
             ResultActions result = mockMvc.perform(
                     MockMvcRequestBuilders.patch(url, parent.getId(), child.getId())
@@ -413,7 +413,7 @@ public class ChildControllerTest {
             UserErrorResult error = UserErrorResult.NOT_VALID_REQUEST;
             doThrow(new UserException(error))
                     .when(childService)
-                    .exitCenter(any(), any());
+                    .leaveCenterForChild(any(), any());
             //when
             ResultActions result = mockMvc.perform(
                     MockMvcRequestBuilders.patch(url, child.getId())
@@ -508,7 +508,7 @@ public class ChildControllerTest {
             UserErrorResult error = UserErrorResult.NOT_VALID_REQUEST;
             doThrow(new UserException(error))
                     .when(childService)
-                    .saveChild(any(), any());
+                    .saveNewChild(any(), any());
             // when
             ResultActions result = mockMvc.perform(
                     MockMvcRequestBuilders
@@ -556,7 +556,7 @@ public class ChildControllerTest {
             UserErrorResult error = UserErrorResult.NOT_VALID_REQUEST;
             doThrow(new UserException(error))
                     .when(childService)
-                    .findChildInfoDetail(any(), any());
+                    .findChildDetails(any(), any());
             // when
             ResultActions result = mockMvc.perform(
                     MockMvcRequestBuilders.get(url, child.getId())
@@ -595,7 +595,7 @@ public class ChildControllerTest {
             UserErrorResult error = UserErrorResult.HAVE_NOT_AUTHORIZATION;
             doThrow(new UserException(error))
                     .when(childService)
-                    .findChildApprovalInfoList(any());
+                    .findChildApprovalList(any());
             // when
             ResultActions result = mockMvc.perform(
                     MockMvcRequestBuilders.get(url)

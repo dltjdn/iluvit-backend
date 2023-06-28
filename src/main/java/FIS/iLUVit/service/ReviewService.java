@@ -31,7 +31,7 @@ public class ReviewService {
     private final CenterRepository centerRepository;
     private final ImageService imageService;
 
-    public Slice<ReviewByParentDto> findByParent(Long userId, Pageable pageable) {
+    public Slice<ReviewByParentDto> findReviewListByParent(Long userId, Pageable pageable) {
         Slice<Review> reviews = reviewRepository.findByParent(userId, pageable);
 
         Slice<ReviewByParentDto> reviewDtoSlice = reviews
@@ -40,7 +40,7 @@ public class ReviewService {
         return reviewDtoSlice;
     }
 
-    public Long saveReview(Long userId, ReviewDetailDto reviewCreateDTO) {
+    public Long saveNewReview(Long userId, ReviewDetailDto reviewCreateDTO) {
 
         if (userId == null) {
             throw new UserException(UserErrorResult.NOT_VALID_TOKEN);
@@ -80,7 +80,7 @@ public class ReviewService {
         return reviewRepository.save(review).getId();
     }
 
-    public void updateReview(Long reviewId, Long userId, String content) {
+    public void modifyReview(Long reviewId, Long userId, String content) {
         Review findReview = reviewRepository.findById(reviewId).orElseThrow(
                 () -> new ReviewException(ReviewErrorResult.REVIEW_NOT_EXIST));
         if (!Objects.equals(findReview.getParent().getId(), userId)) {
@@ -98,7 +98,7 @@ public class ReviewService {
         reviewRepository.delete(findReview);
     }
 
-    public Slice<ReviewByCenterDto> findByCenter(Long centerId, Pageable pageable) {
+    public Slice<ReviewByCenterDto> findReviewByCenter(Long centerId, Pageable pageable) {
         // getParent 지연 로딩 쿼리 막음
         Slice<Review> reviews = reviewRepository.findByCenter(centerId, pageable);
 

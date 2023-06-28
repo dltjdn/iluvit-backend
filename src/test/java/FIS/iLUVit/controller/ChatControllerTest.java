@@ -137,7 +137,7 @@ class ChatControllerTest {
 
         Mockito.doThrow(new ChatException(error))
                 .when(chatService)
-                .saveChat(eq(null), any(ChatRequest.class));
+                .saveNewChat(eq(null), any(ChatRequest.class));
         //when
         ResultActions resultActions = mockMvc.perform(
                 MockMvcRequestBuilders.post(url)
@@ -164,7 +164,7 @@ class ChatControllerTest {
 
         Mockito.doThrow(new ChatException(error))
                 .when(chatService)
-                .saveChat(any(Long.class), any(ChatRequest.class));
+                .saveNewChat(any(Long.class), any(ChatRequest.class));
 
         //when
         ResultActions resultActions = mockMvc.perform(
@@ -193,7 +193,7 @@ class ChatControllerTest {
 
         Mockito.doThrow(new ChatException(error))
                 .when(chatService)
-                .saveChat(any(Long.class), any(ChatRequest.class));
+                .saveNewChat(any(Long.class), any(ChatRequest.class));
         //when
         ResultActions resultActions = mockMvc.perform(
                 MockMvcRequestBuilders.post(url)
@@ -220,7 +220,7 @@ class ChatControllerTest {
 
         Mockito.doThrow(new ChatException(error))
                 .when(chatService)
-                .saveChat(any(Long.class), any(ChatRequest.class));
+                .saveNewChat(any(Long.class), any(ChatRequest.class));
         //when
         ResultActions resultActions = mockMvc.perform(
                 MockMvcRequestBuilders.post(url)
@@ -246,7 +246,7 @@ class ChatControllerTest {
 
         Mockito.doReturn(chat2.getId())
                 .when(chatService)
-                .saveChat(any(Long.class), any(ChatRequest.class));
+                .saveNewChat(any(Long.class), any(ChatRequest.class));
         //when
         ResultActions resultActions = mockMvc.perform(
                 MockMvcRequestBuilders.post(url)
@@ -408,7 +408,7 @@ class ChatControllerTest {
 
         Mockito.doReturn(chatListDTOSlice)
                 .when(chatService)
-                .findAll(receiver.getId(), PageRequest.of(0, 10));
+                .findChatRoomList(receiver.getId(), PageRequest.of(0, 10));
         //when
         ResultActions resultActions = mockMvc.perform(
                 MockMvcRequestBuilders.get(url)
@@ -433,7 +433,7 @@ class ChatControllerTest {
 
         Mockito.doReturn(chatDTO)
                 .when(chatService)
-                .findByOpponent(any(), any(), any());
+                .findChatRoomDetails(any(), any(), any());
 
         //when
         final String url = "/chat/{roomId}";

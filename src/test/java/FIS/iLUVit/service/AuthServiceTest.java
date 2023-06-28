@@ -57,7 +57,7 @@ public class AuthServiceTest {
 
         // when
         AuthNumberException result = assertThrows(AuthNumberException.class,
-                () -> target.sendAuthNumberForSignup(phoneNum));
+                () -> target.sendAuthNumForSignup(phoneNum));
 
         // then
         assertThat(result.getErrorResult()).isEqualTo(AuthNumberErrorResult.ALREADY_PHONENUMBER_REGISTER);
@@ -72,7 +72,7 @@ public class AuthServiceTest {
                 .findOverlap(phoneNum, AuthKind.signup);
         // when
         AuthNumberException result = assertThrows(AuthNumberException.class,
-                () -> target.sendAuthNumberForSignup(phoneNum));
+                () -> target.sendAuthNumForSignup(phoneNum));
 
         // then
         assertThat(result.getErrorResult()).isEqualTo(AuthNumberErrorResult.YET_AUTHNUMBER_VALID);
@@ -95,7 +95,7 @@ public class AuthServiceTest {
                 .save(any(AuthNumber.class));
 
         // when
-        AuthNumber result = target.sendAuthNumberForSignup(phoneNum);
+        AuthNumber result = target.sendAuthNumForSignup(phoneNum);
 
         // then
         System.out.println("message = " + messageServiceStub.messageHistory);
@@ -118,7 +118,7 @@ public class AuthServiceTest {
                 .when(authRepository)
                 .save(any(AuthNumber.class));
         // when
-        AuthNumber result = target.sendAuthNumberForSignup(phoneNum);
+        AuthNumber result = target.sendAuthNumForSignup(phoneNum);
 
         // then
         System.out.println("message = " + messageServiceStub.messageHistory);
@@ -183,7 +183,7 @@ public class AuthServiceTest {
                 .findByPhoneNumber(phoneNum);
         // when
         AuthNumberException result = assertThrows(AuthNumberException.class,
-                () -> target.sendAuthNumberForFindLoginId(phoneNum));
+                () -> target.sendAuthNumForFindLoginId(phoneNum));
         // then
         assertThat(result.getErrorResult()).isEqualTo(AuthNumberErrorResult.NOT_SIGNUP_PHONE);
     }
@@ -197,7 +197,7 @@ public class AuthServiceTest {
                 .findOverlap(phoneNum, AuthKind.findLoginId);
         // when
         AuthNumberException result = assertThrows(AuthNumberException.class,
-                () -> target.sendAuthNumberForFindLoginId(phoneNum));
+                () -> target.sendAuthNumForFindLoginId(phoneNum));
         // then
         assertThat(result.getErrorResult()).isEqualTo(AuthNumberErrorResult.YET_AUTHNUMBER_VALID);
     }
@@ -217,7 +217,7 @@ public class AuthServiceTest {
                 .when(authRepository)
                 .save(any(AuthNumber.class));
         // when
-        AuthNumber result = target.sendAuthNumberForFindLoginId(phoneNum);
+        AuthNumber result = target.sendAuthNumForFindLoginId(phoneNum);
         // then
         assertThat(result).isNotNull();
         assertThat(result.getAuthKind()).isEqualTo(AuthKind.findLoginId);
@@ -241,7 +241,7 @@ public class AuthServiceTest {
                 .when(authRepository)
                 .save(any(AuthNumber.class));
         // when
-        AuthNumber result = target.sendAuthNumberForFindLoginId(phoneNum);
+        AuthNumber result = target.sendAuthNumForFindLoginId(phoneNum);
 
         // then
         assertThat(result).isNotNull();
@@ -262,7 +262,7 @@ public class AuthServiceTest {
                 .when(userRepository)
                 .findByPhoneNumber(phoneNum);
         // when
-        String result = target.findLoginId(request);
+        String result = target.authenticateAuthNumForFindLoginId(request);
         // then
         assertThat(result).isNotNull();
         assertThat(result).isEqualTo("a***g");
@@ -310,7 +310,7 @@ public class AuthServiceTest {
         FindPasswordRequest request = new FindPasswordRequest("loginId", phoneNum, authNum, "newPwd", "nwePwdCheck");
         // when
         AuthNumberException result = assertThrows(AuthNumberException.class,
-                () -> target.changePassword(request));
+                () -> target.authenticateAuthNumForChangePwd(request));
         // then
         assertThat(result.getErrorResult()).isEqualTo(AuthNumberErrorResult.NOT_MATCH_CHECKPWD);
     }
@@ -325,7 +325,7 @@ public class AuthServiceTest {
                 .findAuthComplete(phoneNum, AuthKind.findPwd);
         // when
         AuthNumberException result = assertThrows(AuthNumberException.class,
-                () -> target.changePassword(request));
+                () -> target.authenticateAuthNumForChangePwd(request));
         // then
         assertThat(result.getErrorResult()).isEqualTo(AuthNumberErrorResult.NOT_AUTHENTICATION);
     }
@@ -339,7 +339,7 @@ public class AuthServiceTest {
                 .findAuthComplete(phoneNum, AuthKind.findPwd);
         // when
         AuthNumberException result = assertThrows(AuthNumberException.class,
-                () -> target.changePassword(request));
+                () -> target.authenticateAuthNumForChangePwd(request));
         // then
         assertThat(result.getErrorResult()).isEqualTo(AuthNumberErrorResult.EXPIRED);
     }
@@ -356,7 +356,7 @@ public class AuthServiceTest {
                 .findByLoginIdAndPhoneNumber("loginId", phoneNum);
         // when
         AuthNumberException result = assertThrows(AuthNumberException.class,
-                () -> target.changePassword(request));
+                () -> target.authenticateAuthNumForChangePwd(request));
         // then
         assertThat(result.getErrorResult()).isEqualTo(AuthNumberErrorResult.NOT_MATCH_INFO);
     }
@@ -374,7 +374,7 @@ public class AuthServiceTest {
                 .when(userRepository)
                 .findByLoginIdAndPhoneNumber("loginId", phoneNum);
         // when
-        User user = target.changePassword(request);
+        User user = target.authenticateAuthNumForChangePwd(request);
         // then
         assertThat(user.getId()).isEqualTo(parent.getId());
         assertThat(encoder.matches("newPwd", user.getPassword())).isEqualTo(true);
@@ -389,7 +389,7 @@ public class AuthServiceTest {
                 .findByPhoneNumber(phoneNum);
         // when
         AuthNumberException result = assertThrows(AuthNumberException.class,
-                () -> target.sendAuthNumberForChangePhone(any(Long.class), phoneNum));
+                () -> target.sendAuthNumForChangePhone(any(Long.class), phoneNum));
         // then
         assertThat(result.getErrorResult()).isEqualTo(AuthNumberErrorResult.ALREADY_PHONENUMBER_REGISTER);
     }
@@ -411,7 +411,7 @@ public class AuthServiceTest {
                 .when(authRepository)
                 .save(any(AuthNumber.class));
         // when
-        AuthNumber result = target.sendAuthNumberForChangePhone(id, phoneNum);
+        AuthNumber result = target.sendAuthNumForChangePhone(id, phoneNum);
         // then
         assertThat(result.getId()).isEqualTo(authNumber.getId());
         assertThat(result.getAuthKind()).isEqualTo(authNumber.getAuthKind());

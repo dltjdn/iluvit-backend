@@ -101,7 +101,7 @@ class CenterBookmarkControllerTest {
             PreferErrorResult error = PreferErrorResult.ALREADY_PREFER;
             doThrow(new PreferException(error))
                     .when(centerBookmarkService)
-                    .savePrefer(any(), any());
+                    .saveCenterBookmark(any(), any());
             // when
             ResultActions result = mockMvc.perform(
                     MockMvcRequestBuilders.post(url, center.getId())
@@ -122,7 +122,7 @@ class CenterBookmarkControllerTest {
             PreferErrorResult error = PreferErrorResult.NOT_VALID_CENTER;
             doThrow(new PreferException(error))
                     .when(centerBookmarkService)
-                    .savePrefer(any(), any());
+                    .saveCenterBookmark(any(), any());
             // when
             ResultActions result = mockMvc.perform(
                     MockMvcRequestBuilders.post(url, center.getId())
@@ -160,7 +160,7 @@ class CenterBookmarkControllerTest {
             PreferErrorResult error = PreferErrorResult.NOT_VALID_CENTER;
             doThrow(new PreferException(error))
                     .when(centerBookmarkService)
-                    .deletePrefer(any(), any());
+                    .deleteCenterBookmark(any(), any());
             // when
             ResultActions result = mockMvc.perform(
                     MockMvcRequestBuilders.delete(url, center.getId())

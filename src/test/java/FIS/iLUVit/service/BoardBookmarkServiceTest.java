@@ -136,7 +136,7 @@ class BoardBookmarkServiceTest {
                 .when(boardBookmarkRepository)
                 .findPostByBoard(parent1.getId());
         //when
-        List<StoryDto> stories = boardBookmarkService.search(parent1.getId());
+        List<StoryDto> stories = boardBookmarkService.findBoardBookmarkByUser(parent1.getId());
 
         //then
         assertThat(stories).extracting("story_name")
@@ -166,7 +166,7 @@ class BoardBookmarkServiceTest {
         //given
         //when
         BookmarkException result = assertThrows(BookmarkException.class,
-                () -> boardBookmarkService.create(null, board1.getId()));
+                () -> boardBookmarkService.saveBoardBookmark(null, board1.getId()));
         //then
         assertThat(result.getErrorResult())
                 .isEqualTo(BookmarkErrorResult.UNAUTHORIZED_USER_ACCESS);
@@ -180,7 +180,7 @@ class BoardBookmarkServiceTest {
                 .findById(any());
         //when
         BookmarkException result = assertThrows(BookmarkException.class,
-                () -> boardBookmarkService.create(parent1.getId(), board1.getId()));
+                () -> boardBookmarkService.saveBoardBookmark(parent1.getId(), board1.getId()));
         //then
         assertThat(result.getErrorResult())
                 .isEqualTo(BookmarkErrorResult.USER_NOT_EXIST);
@@ -198,7 +198,7 @@ class BoardBookmarkServiceTest {
                 .findById(any());
         //when
         BookmarkException result = assertThrows(BookmarkException.class,
-                () -> boardBookmarkService.create(parent1.getId(), board1.getId()));
+                () -> boardBookmarkService.saveBoardBookmark(parent1.getId(), board1.getId()));
         //then
         assertThat(result.getErrorResult())
                 .isEqualTo(BookmarkErrorResult.BOARD_NOT_EXIST);
@@ -219,7 +219,7 @@ class BoardBookmarkServiceTest {
                 .when(boardBookmarkRepository)
                 .save(any());
         //when
-        Long bookmarkId = boardBookmarkService.create(parent1.getId(), board1.getId());
+        Long bookmarkId = boardBookmarkService.saveBoardBookmark(parent1.getId(), board1.getId());
         //then
         assertThat(bookmarkId).isEqualTo(bookmark1.getId());
     }
@@ -232,7 +232,7 @@ class BoardBookmarkServiceTest {
                 .findById(any());
         //when
         BookmarkException result = assertThrows(BookmarkException.class,
-                () -> boardBookmarkService.delete(parent1.getId(), bookmark1.getId()));
+                () -> boardBookmarkService.deleteBoardBookmark(parent1.getId(), bookmark1.getId()));
 
         //then
         assertThat(result.getErrorResult())
@@ -244,7 +244,7 @@ class BoardBookmarkServiceTest {
         //given
         //when
         BookmarkException result = assertThrows(BookmarkException.class,
-                () -> boardBookmarkService.delete(null, bookmark1.getId()));
+                () -> boardBookmarkService.deleteBoardBookmark(null, bookmark1.getId()));
 
         //then
         assertThat(result.getErrorResult())
@@ -259,7 +259,7 @@ class BoardBookmarkServiceTest {
                 .findById(bookmark1.getId());
         //when
         BookmarkException result = assertThrows(BookmarkException.class,
-                () -> boardBookmarkService.delete(teacher1.getId(), bookmark1.getId()));
+                () -> boardBookmarkService.deleteBoardBookmark(teacher1.getId(), bookmark1.getId()));
 
         //then
         assertThat(result.getErrorResult())
@@ -274,7 +274,7 @@ class BoardBookmarkServiceTest {
                 .findById(any());
 
         //when
-        Long deletedId = boardBookmarkService.delete(parent1.getId(), bookmark1.getId());
+        Long deletedId = boardBookmarkService.deleteBoardBookmark(parent1.getId(), bookmark1.getId());
 
         //then
         assertThat(deletedId).isEqualTo(bookmark1.getId());

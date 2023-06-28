@@ -100,7 +100,7 @@ public class TeacherControllerTest {
         SliceImpl<CenterDto> response = new SliceImpl<>(content, pageable, false);
         doReturn(response)
                 .when(teacherService)
-                .findCenterForSignup(request, pageable);
+                .findCenterForSignupTeacher(request, pageable);
         // when
         ResultActions result = mockMvc.perform(
                 MockMvcRequestBuilders.get(url)
@@ -187,7 +187,7 @@ public class TeacherControllerTest {
         SignupErrorResult error = SignupErrorResult.NOT_EXIST_CENTER;
         doThrow(new SignupException(error))
                 .when(teacherService)
-                .signup(request);
+                .signupTeacher(request);
         // when
         ResultActions result = mockMvc.perform(
                 MockMvcRequestBuilders.post(url)
@@ -234,7 +234,7 @@ public class TeacherControllerTest {
         TeacherDetailResponse response = new TeacherDetailResponse(Teacher.builder().build(),Teacher.builder().build().getProfileImagePath());
         doReturn(response)
                 .when(teacherService)
-                .findDetail(teacher.getId());
+                .findTeacherDetails(teacher.getId());
         // when
         ResultActions result = mockMvc.perform(
                 MockMvcRequestBuilders.get(url)
@@ -275,7 +275,7 @@ public class TeacherControllerTest {
         SignupErrorResult error = SignupErrorResult.DUPLICATED_NICKNAME;
         doThrow(new SignupException(error))
                 .when(teacherService)
-                .updateDetail(any(), any(TeacherDetailRequest.class));
+                .modifyTeacherInfo(any(), any(TeacherDetailRequest.class));
         // when
         ResultActions result = mockMvc.perform(
                 MockMvcRequestBuilders
@@ -326,7 +326,7 @@ public class TeacherControllerTest {
         SignupErrorResult error = SignupErrorResult.ALREADY_BELONG_CENTER;
         doThrow(new SignupException(error))
                 .when(teacherService)
-                .assignCenter(any(), any());
+                .acceptTeacherRegistration(any(), any());
         // when
         ResultActions result = mockMvc.perform(
                 MockMvcRequestBuilders.patch(url, "123")
@@ -364,7 +364,7 @@ public class TeacherControllerTest {
             SignupErrorResult error = SignupErrorResult.NOT_BELONG_CENTER;
             doThrow(new SignupException(error))
                     .when(teacherService)
-                    .escapeCenter(any());
+                    .leaveCenterForTeacher(any());
             // when
             ResultActions result = mockMvc.perform(
                     MockMvcRequestBuilders.patch(url)
@@ -385,7 +385,7 @@ public class TeacherControllerTest {
             SignupErrorResult error = SignupErrorResult.HAVE_TO_MANDATE;
             doThrow(new SignupException(error))
                     .when(teacherService)
-                    .escapeCenter(any());
+                    .leaveCenterForTeacher(any());
             // when
             ResultActions result = mockMvc.perform(
                     MockMvcRequestBuilders.patch(url)
@@ -469,7 +469,7 @@ public class TeacherControllerTest {
             UserErrorResult error = UserErrorResult.HAVE_NOT_AUTHORIZATION;
             doThrow(new UserException(error))
                     .when(teacherService)
-                    .acceptTeacher(any(), any());
+                    .acceptTeacherRegistration(any(), any());
             // when
             ResultActions result = mockMvc.perform(
                     MockMvcRequestBuilders.patch(url, teacher.getId())
@@ -490,7 +490,7 @@ public class TeacherControllerTest {
             UserErrorResult error = UserErrorResult.NOT_VALID_REQUEST;
             doThrow(new UserException(error))
                     .when(teacherService)
-                    .acceptTeacher(any(), any());
+                    .acceptTeacherRegistration(any(), any());
             // when
             ResultActions result = mockMvc.perform(
                     MockMvcRequestBuilders.patch(url, director.getId())
@@ -529,7 +529,7 @@ public class TeacherControllerTest {
             UserErrorResult error = UserErrorResult.HAVE_NOT_AUTHORIZATION;
             doThrow(new UserException(error))
                     .when(teacherService)
-                    .fireTeacher(any(), any());
+                    .rejectTeacherRegistration(any(), any());
             // when
             ResultActions result = mockMvc.perform(
                     MockMvcRequestBuilders.patch(url, teacher.getId())
@@ -550,7 +550,7 @@ public class TeacherControllerTest {
             UserErrorResult error = UserErrorResult.NOT_VALID_REQUEST;
             doThrow(new UserException(error))
                     .when(teacherService)
-                    .fireTeacher(any(), any());
+                    .rejectTeacherRegistration(any(), any());
             // when
             ResultActions result = mockMvc.perform(
                     MockMvcRequestBuilders.patch(url, director.getId())
@@ -571,7 +571,7 @@ public class TeacherControllerTest {
             UserErrorResult error = UserErrorResult.NOT_VALID_REQUEST;
             doThrow(new UserException(error))
                     .when(teacherService)
-                    .fireTeacher(any(), any());
+                    .rejectTeacherRegistration(any(), any());
             // when
             ResultActions result = mockMvc.perform(
                     MockMvcRequestBuilders.patch(url, director.getId())
