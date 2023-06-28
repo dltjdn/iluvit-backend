@@ -53,7 +53,8 @@ public class CommentController {
      */
     @GetMapping("mypage")
     public Slice<CommentDto> getCommentByUser(@Login Long userId, Pageable pageable) {
-        return commentService.findCommnetByUser(userId, pageable);
+        return commentService.findCommentByUser(userId, pageable);
+
     }
 
 }
