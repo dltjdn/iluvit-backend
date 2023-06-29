@@ -436,7 +436,7 @@ public class TeacherServiceTest {
                     .findByIdWithCenterWithTeacher(any());
             doReturn(List.of())
                     .when(boardRepository)
-                    .findByCenter(teacher2.getCenter().getId());
+                    .findByCenterId(teacher2.getCenter().getId());
             // when
             Teacher result = target.leaveCenterForTeacher(teacher2.getId());
             // then
@@ -631,7 +631,7 @@ public class TeacherServiceTest {
             Teacher result = target.rejectTeacherRegistration(teacher1.getId(), teacher2.getId());
             // then
             assertThat(result.getCenter()).isNull();
-            verify(boardRepository, times(1)).findByCenter(teacher1.getCenter().getId());
+            verify(boardRepository, times(1)).findByCenterId(teacher1.getCenter().getId());
             verify(boardBookmarkRepository, times(1)).deleteAllByBoardAndUser(any(), any());
         }
     }

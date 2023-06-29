@@ -1,6 +1,7 @@
 package FIS.iLUVit.repository;
 
 import FIS.iLUVit.domain.Board;
+import FIS.iLUVit.domain.Center;
 import FIS.iLUVit.domain.Post;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
@@ -15,7 +16,9 @@ public interface BoardRepository extends JpaRepository<Board, Long> {
         시설 id별로 게시판 리스트를 조회합니다.
     */
     @Query("select b from Board b where b.center.id = :centerId")
-    List<Board> findByCenter(@Param("centerId") Long centerId);
+    List<Board> findByCenterId(@Param("centerId") Long centerId);
+
+    List<Board> findByCenter(Center center);
 
     /*
         시설 id가 널인 게시판 리스트를 조회합니다.

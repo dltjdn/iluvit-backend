@@ -2,15 +2,11 @@ package FIS.iLUVit.repository;
 
 import FIS.iLUVit.config.argumentResolver.ForDB;
 import FIS.iLUVit.domain.Board;
-import FIS.iLUVit.domain.Center;
 import FIS.iLUVit.domain.Kindergarten;
 import FIS.iLUVit.domain.embeddable.Area;
 import FIS.iLUVit.domain.enumtype.BoardKind;
 import FIS.iLUVit.exception.BoardException;
 import FIS.iLUVit.service.createmethod.CreateTest;
-import com.querydsl.jpa.impl.JPAQueryFactory;
-import org.assertj.core.api.Assertions;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,12 +14,9 @@ import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabas
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.boot.test.autoconfigure.orm.jpa.TestEntityManager;
 import org.springframework.context.annotation.ComponentScan;
-import org.springframework.context.annotation.Import;
 
-import javax.persistence.EntityManager;
 import java.time.LocalDate;
 import java.util.List;
-import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.*;
 import static org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase.*;
@@ -116,7 +109,7 @@ class BoardRepositoryTest {
         Board board2 = boardRepository.save(Board.createBoard("board2", BoardKind.MARKET, center1, false));
 
         //when
-        List<Board> boardList = boardRepository.findByCenter(savedCenter.getId());
+        List<Board> boardList = boardRepository.findByCenterId(savedCenter.getId());
 
         //then
         assertThat(boardList).contains(board2, board1);
@@ -236,7 +229,7 @@ class BoardRepositoryTest {
         em.flush();
         em.clear();
         // when
-        List<Board> result = boardRepository.findByCenter(center1.getId());
+        List<Board> result = boardRepository.findByCenterId(center1.getId());
         // then
         assertThat(result.size()).isEqualTo(2);
         result.forEach(board -> {

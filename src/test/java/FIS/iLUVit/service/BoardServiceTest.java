@@ -369,7 +369,7 @@ class BoardServiceTest {
 
         Mockito.doReturn(Arrays.asList(board3, board5, board6))
                 .when(boardRepository)
-                .findByCenter(1L);
+                .findByCenterId(1L);
         //when
         BoardListDto dto = boardService.findAllBoardByCenter(parent1.getId(), 1L);
         //then
