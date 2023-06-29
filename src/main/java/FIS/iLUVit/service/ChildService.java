@@ -1,7 +1,6 @@
 package FIS.iLUVit.service;
 
 import FIS.iLUVit.domain.alarms.Alarm;
-import FIS.iLUVit.domain.alarms.ChatAlarm;
 import FIS.iLUVit.dto.center.CenterDto;
 import FIS.iLUVit.dto.center.CenterRequest;
 import FIS.iLUVit.dto.child.*;
@@ -9,7 +8,6 @@ import FIS.iLUVit.domain.*;
 import FIS.iLUVit.domain.alarms.CenterApprovalAcceptedAlarm;
 import FIS.iLUVit.domain.alarms.CenterApprovalReceivedAlarm;
 import FIS.iLUVit.domain.enumtype.Approval;
-import FIS.iLUVit.dto.child.*;
 import FIS.iLUVit.exception.*;
 import FIS.iLUVit.domain.enumtype.Auth;
 import FIS.iLUVit.exception.UserErrorResult;
@@ -51,7 +49,7 @@ public class ChildService {
      * 작성자: 이승범
      * 작성내용: 부모의 메인페이지에 필요한 아이들 정보 반환
      */
-    public List<ChildDto> childInfo(Long id) {
+    public List<ChildDto> findChildList(Long id) {
         Parent findParent = parentRepository.findWithChildren(id)
                 .orElseThrow(() -> new UserException(UserErrorResult.NOT_VALID_TOKEN));
 
@@ -70,7 +68,7 @@ public class ChildService {
      * 작성자: 이승범
      * 작성내용: 아이 추가
      */
-    public Child saveChild(Long userId, ChildDetailRequest request) throws IOException {
+    public Child saveNewChild(Long userId, ChildDetailRequest request) throws IOException {
 
         Parent parent = parentRepository.getById(userId);
 
@@ -100,7 +98,7 @@ public class ChildService {
      * 작성자: 이승범
      * 작성내용: 아이 프로필 조회
      */
-    public ChildDetailResponse findChildInfoDetail(Long userId, Long childId) {
+    public ChildDetailResponse findChildDetails(Long userId, Long childId) {
         // 프로필 수정하고자 하는 아이 가져오기
         Child child = childRepository.findByIdAndParentWithCenter(userId, childId)
                 .orElseThrow(() -> new UserException(UserErrorResult.NOT_VALID_REQUEST));
@@ -114,7 +112,7 @@ public class ChildService {
     *   작성자: 이승범
     *   작성내용: 아이 프로필 수정
     */
-    public ChildDetailResponse updateChild(Long userId, Long childId, ChildRequest request) {
+    public ChildDetailResponse modifyChildInfo(Long userId, Long childId, ChildRequest request) {
         // 수정하고자 하는 아이
         Child updatedChild = childRepository.findByIdAndParentWithCenter(userId, childId)
                 .orElseThrow(() -> new UserException(UserErrorResult.NOT_VALID_REQUEST));
@@ -134,7 +132,7 @@ public class ChildService {
      * 작성자: 이승범
      * 작성내용: 학부모/아이 시설 승인 요청
      */
-    public Child mappingCenter(Long userId, Long childId, Long centerId) {
+    public Child requestAssignCenterForChild(Long userId, Long childId, Long centerId) {
 
         // 승인 받고자 하는 아이
         Child mappedChild = childRepository.findByIdAndParent(userId, childId)
@@ -164,7 +162,7 @@ public class ChildService {
     *   작성자: 이승범
     *   작성내용: 아이의 시설 탈퇴
     */
-    public Child exitCenter(Long userId, Long childId) {
+    public Child leaveCenterForChild(Long userId, Long childId) {
         // 요청 사용자가 등록한 모든 아이 가져오기
         List<Child> childrenByUser = childRepository.findByUserWithCenter(userId);
 
@@ -203,14 +201,14 @@ public class ChildService {
         }
 
         childRepository.delete(deletedChild);
-        return childInfo(userId);
+        return findChildList(userId);
     }
 
     /**
      * 작성자: 이승범
      * 작성내용: 아이 승인 페이지를 위한 시설에 등록된 아이들 정보 조회
      */
-    public List<ChildInfoForAdminDto> findChildApprovalInfoList(Long userId) {
+    public List<ChildInfoForAdminDto> findChildApprovalList(Long userId) {
         // 사용자가 속한 시설의 아이들 끌어오기
         Teacher teacher = teacherRepository.findByIdWithCenterWithChildWithParent(userId)
                 .orElseThrow(() -> new UserException(UserErrorResult.HAVE_NOT_AUTHORIZATION));
@@ -233,7 +231,7 @@ public class ChildService {
      * 작성자: 이승범
      * 작성내용: 아이 승인
      */
-    public Child acceptChild(Long userId, Long childId) {
+    public Child acceptChildRegistration(Long userId, Long childId) {
 
         // 사용자가 등록된 시설과 연관된 아이들 목록 가져오기
         Teacher teacher = teacherRepository.findByIdWithCenterWithChildWithParent(userId)
@@ -270,7 +268,7 @@ public class ChildService {
             // 승인하고자 하는 시설의 게시판들 lazyLoading 통해 가져오기
             teacher.getCenter().getBoards().forEach(board -> {
                 if (board.getIsDefault()) {
-                    boardBookmarkService.create(acceptedParent.getId(), board.getId());
+                    boardBookmarkService.saveBoardBookmark(acceptedParent.getId(), board.getId());
                 }
             });
         }
@@ -282,7 +280,7 @@ public class ChildService {
      * 작성자: 이승범
      * 작성내용: 시설에서 아이 삭제/승인거절
      */
-    public void fireChild(Long userId, Long childId) {
+    public void rejectChildRegistration(Long userId, Long childId) {
 
         // 사용자가 등록된 시설과 연관된 아이들 목록 가져오기
         Teacher teacher = teacherRepository.findByIdWithCenterWithChildWithParent(userId)

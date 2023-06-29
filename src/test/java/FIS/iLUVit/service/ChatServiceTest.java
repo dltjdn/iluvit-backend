@@ -125,7 +125,7 @@ class ChatServiceTest {
         request = new ChatRequest("안녕",post1.getId());
         //when
         ChatException result = assertThrows(ChatException.class,
-                () -> chatService.saveChat(null, request));
+                () -> chatService.saveNewChat(null, request));
         //then
         assertThat(result.getErrorResult())
                 .isEqualTo(ChatErrorResult.UNAUTHORIZED_USER_ACCESS);
@@ -141,7 +141,7 @@ class ChatServiceTest {
                 .findById(receiver.getId());
         //when
         ChatException result = assertThrows(ChatException.class,
-                () -> chatService.saveChat(receiver.getId(), request));
+                () -> chatService.saveNewChat(receiver.getId(), request));
         //then
         assertThat(result.getErrorResult())
                 .isEqualTo(ChatErrorResult.USER_NOT_EXIST);
@@ -162,7 +162,7 @@ class ChatServiceTest {
 
         //when
         ChatException result = assertThrows(ChatException.class,
-                () -> chatService.saveChat(receiver.getId(), request));
+                () -> chatService.saveNewChat(receiver.getId(), request));
         //then
         assertThat(result.getErrorResult())
                 .isEqualTo(ChatErrorResult.POST_NOT_EXIST);
@@ -187,7 +187,7 @@ class ChatServiceTest {
 
         //when
         CommentException result = assertThrows(CommentException.class,
-                () -> chatService.saveChat(receiver.getId(), request));
+                () -> chatService.saveNewChat(receiver.getId(), request));
 
         //then
         assertThat(result.getErrorResult())
@@ -213,7 +213,7 @@ class ChatServiceTest {
 
         //when
         ChatException result = assertThrows(ChatException.class,
-                () -> chatService.saveChat(receiver.getId(), request));
+                () -> chatService.saveNewChat(receiver.getId(), request));
         //then
         assertThat(result.getErrorResult())
                 .isEqualTo(ChatErrorResult.NO_SEND_TO_SELF);
@@ -234,7 +234,7 @@ class ChatServiceTest {
 
         //when
         ChatException result = assertThrows(ChatException.class,
-                () -> chatService.saveChat(receiver.getId(), request));
+                () -> chatService.saveNewChat(receiver.getId(), request));
         //then
         assertThat(result.getErrorResult())
                 .isEqualTo(ChatErrorResult.NO_SEND_TO_SELF);
@@ -267,7 +267,7 @@ class ChatServiceTest {
                     .thenReturn(alarmEvent);
 
             //when
-            Long returnedId = chatService.saveChat(receiver.getId(), request);
+            Long returnedId = chatService.saveNewChat(receiver.getId(), request);
             //then
             assertThat(returnedId).isEqualTo(chat2.getId());
         }
@@ -304,7 +304,7 @@ class ChatServiceTest {
                     .thenReturn(alarmEvent);
 
             //when
-            Long returnedId = chatService.saveChat(receiver.getId(), request);
+            Long returnedId = chatService.saveNewChat(receiver.getId(), request);
             //then
             assertThat(returnedId).isEqualTo(chat2.getId());
         }
@@ -328,7 +328,7 @@ class ChatServiceTest {
 
         //when
         Slice<ChatListDto> all = chatService
-                .findAll(receiver.getId(), PageRequest.of(0, 10));
+                .findChatRoomList(receiver.getId(), PageRequest.of(0, 10));
         //then
         List<ChatListDto> content = all.getContent();
         assertThat(content.size()).isEqualTo(1);
@@ -557,7 +557,7 @@ class ChatServiceTest {
 
         //when
         ChatException result = assertThrows(ChatException.class,
-                () -> chatService.findByOpponent(receiver.getId(), chatRoom1.getId(),
+                () -> chatService.findChatRoomDetails(receiver.getId(), chatRoom1.getId(),
                         PageRequest.of(0, 10)));
         //then
         assertThat(result.getErrorResult())
@@ -588,7 +588,7 @@ class ChatServiceTest {
                 .findByChatRoom(receiver.getId(), chatRoom1.getId(), PageRequest.of(0, 10));
 
         //when
-        ChatDto chatDTO = chatService.findByOpponent(receiver.getId(), chatRoom1.getId(),
+        ChatDto chatDTO = chatService.findChatRoomDetails(receiver.getId(), chatRoom1.getId(),
                 PageRequest.of(0, 10));
         //then
         String actual = objectMapper.writeValueAsString(chatDTO);

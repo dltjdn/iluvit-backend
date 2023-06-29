@@ -26,7 +26,7 @@ public class ReviewController {
     @GetMapping("center/{centerId}")
     public Slice<ReviewByCenterDto> getReviewByCenter(@PathVariable(name = "centerId") Long centerId,
                                                    Pageable pageable) {
-        return reviewService.findByCenter(centerId, pageable);
+        return reviewService.findReviewByCenter(centerId, pageable);
     }
 
 
@@ -40,7 +40,7 @@ public class ReviewController {
      */
     @GetMapping("")
     public Slice<ReviewByParentDto> getReviewByParent(@Login Long userId, Pageable pageable) { // @Login 어노테이션 달아야됨.
-        return reviewService.findByParent(userId, pageable);
+        return reviewService.findReviewListByParent(userId, pageable);
     }
 
     /**
@@ -49,7 +49,7 @@ public class ReviewController {
     */
     @PostMapping("")
     public Long createReview(@Login Long userId, @RequestBody ReviewDetailDto reviewCreateDTO) {
-        return reviewService.saveReview(userId, reviewCreateDTO);
+        return reviewService.saveNewReview(userId, reviewCreateDTO);
     }
 
     /**
@@ -59,7 +59,7 @@ public class ReviewController {
     @PatchMapping("{reviewId}")
     public void updateReview(@Login Long userId, @PathVariable(name = "reviewId") Long reviewId,
                              @RequestBody ReviewDto reviewDto) {
-        reviewService.updateReview(reviewId, userId, reviewDto.getContent());
+        reviewService.modifyReview(reviewId, userId, reviewDto.getContent());
     }
 
     /**

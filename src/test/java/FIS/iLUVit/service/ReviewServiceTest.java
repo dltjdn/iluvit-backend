@@ -138,7 +138,7 @@ public class ReviewServiceTest {
                 .when(reviewRepository)
                 .findByParent(parent1.getId(), PageRequest.of(0, 10));
         //when
-        Slice<ReviewByParentDto> result = reviewService.findByParent(parent1.getId(), PageRequest.of(0, 10));
+        Slice<ReviewByParentDto> result = reviewService.findReviewListByParent(parent1.getId(), PageRequest.of(0, 10));
         //then
         assertThat(objectMapper.writeValueAsString(result))
                 .isEqualTo(objectMapper.writeValueAsString(reviewDtoSlice));
@@ -150,7 +150,7 @@ public class ReviewServiceTest {
 
         //when
         assertThatThrownBy(
-                () -> reviewService.saveReview(null, null)
+                () -> reviewService.saveNewReview(null, null)
         ).isInstanceOf(UserException.class);
         //then
 
@@ -167,7 +167,7 @@ public class ReviewServiceTest {
         //when
         //then
         assertThatThrownBy(
-                () -> reviewService.saveReview(parent1.getId(), reviewCreateDto)
+                () -> reviewService.saveNewReview(parent1.getId(), reviewCreateDto)
         ).isInstanceOf(UserException.class);
     }
 
@@ -181,7 +181,7 @@ public class ReviewServiceTest {
                 .findWithChildren(parent2.getId());
         //when
         ReviewException result = assertThrows(ReviewException.class,
-                () -> reviewService.saveReview(parent2.getId(), reviewCreateDto));
+                () -> reviewService.saveNewReview(parent2.getId(), reviewCreateDto));
         //then
         assertThat(result.getErrorResult())
                 .isEqualTo(ReviewErrorResult.UNAUTHORIZED_USER_ACCESS);
@@ -202,7 +202,7 @@ public class ReviewServiceTest {
         //when
 
         CenterException result = assertThrows(CenterException.class,
-                () -> reviewService.saveReview(parent1.getId(), reviewCreateDto));
+                () -> reviewService.saveNewReview(parent1.getId(), reviewCreateDto));
         //then
         assertThat(result.getErrorResult())
                 .isEqualTo(CenterErrorResult.CENTER_NOT_EXIST);
@@ -227,7 +227,7 @@ public class ReviewServiceTest {
         //when
 
         ReviewException result = assertThrows(ReviewException.class,
-                () -> reviewService.saveReview(parent1.getId(), reviewCreateDto));
+                () -> reviewService.saveNewReview(parent1.getId(), reviewCreateDto));
         //then
         assertThat(result.getErrorResult())
                 .isEqualTo(ReviewErrorResult.NO_MORE_THAN_ONE_REVIEW);
@@ -255,7 +255,7 @@ public class ReviewServiceTest {
                 .save(any());
         //when
 
-        Long savedId = reviewService.saveReview(parent1.getId(), reviewCreateDto);
+        Long savedId = reviewService.saveNewReview(parent1.getId(), reviewCreateDto);
         //then
         assertThat(savedId)
                 .isEqualTo(review1.getId());
@@ -270,7 +270,7 @@ public class ReviewServiceTest {
 
         //when
         ReviewException result = assertThrows(ReviewException.class,
-                () -> reviewService.updateReview(review1.getId(), parent1.getId(), "수정사항"));
+                () -> reviewService.modifyReview(review1.getId(), parent1.getId(), "수정사항"));
 
         //then
         assertThat(result.getErrorResult())
@@ -286,7 +286,7 @@ public class ReviewServiceTest {
 
         //when
         ReviewException result = assertThrows(ReviewException.class,
-                () -> reviewService.updateReview(review1.getId(), null, "수정사항"));
+                () -> reviewService.modifyReview(review1.getId(), null, "수정사항"));
 
         //then
         assertThat(result.getErrorResult())
@@ -302,7 +302,7 @@ public class ReviewServiceTest {
 
         //when
         ReviewException result = assertThrows(ReviewException.class,
-                () -> reviewService.updateReview(review2.getId(), parent1.getId(), "수정사항"));
+                () -> reviewService.modifyReview(review2.getId(), parent1.getId(), "수정사항"));
 
         //then
         assertThat(result.getErrorResult())
@@ -317,7 +317,7 @@ public class ReviewServiceTest {
                 .findById(review1.getId());
 
         //when
-        reviewService.updateReview(review1.getId(), parent1.getId(), "수정사항");
+        reviewService.modifyReview(review1.getId(), parent1.getId(), "수정사항");
 
         //then
         assertThat(review1.getContent())
@@ -401,7 +401,7 @@ public class ReviewServiceTest {
 
         //when
         Slice<ReviewByCenterDto> result = reviewService
-                .findByCenter(center1.getId(), PageRequest.of(0, 10));
+                .findReviewByCenter(center1.getId(), PageRequest.of(0, 10));
 
         //then
         assertThat(objectMapper.writeValueAsString(result))

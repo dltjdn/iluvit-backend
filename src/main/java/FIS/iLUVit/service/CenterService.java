@@ -45,27 +45,43 @@ public class CenterService {
         return centerRepository.findByFilterForMapList(longitude, latitude, theme, interestedAge, kindOf, distance);
     }
 
-    public SliceImpl<CenterAndDistancePreviewDto> findByFilterForMapList(double longitude, double latitude, List<Long> centerIds, Long userId, KindOf kindOf, Pageable pageable) {
+    /**
+     * 작성자: 현승구
+     * 작성내용: 위치에 따른 전체 시설을 리스트로 반환합니다
+     */
+    public List<CenterMapPreviewDto> findCenterByFilterForMap(double longitude, double latitude, Double distance, String searchContent){
+        return centerRepository.findByFilterForMap(longitude, latitude, distance, searchContent);
+    }
+
+    /**
+     * 작성자: 현승구
+     * 작성내용: 유저가 설정한 필터를 기반으로 시설을 조회합니다
+     */
+    public SliceImpl<CenterAndDistancePreviewDto> findCenterByFilterForMapList(double longitude, double latitude, List<Long> centerIds, Long userId, KindOf kindOf, Pageable pageable) {
         return userId == null ?
                 centerRepository.findByFilterForMapList(longitude, latitude, kindOf, centerIds, pageable) :
                 centerRepository.findByFilterForMapList(longitude, latitude, userId, kindOf, centerIds, pageable);
     }
 
-    public List<CenterMapPreviewDto> findByFilterForMap(double longitude, double latitude, Double distance, String searchContent){
-        return centerRepository.findByFilterForMap(longitude, latitude, distance, searchContent);
-    }
-
-
-    public CenterResponse findInfoById(Long id) {
+    /**
+     * 작성자: 현승구
+     * 작성내용: 시설별 정보를 상세 조회합니다
+     */
+    public CenterResponse findCenterDetailsByCenter(Long id) {
         Center center = centerRepository.findById(id)
                 .orElseThrow(() -> new CenterException("해당 센터 존재하지 않음"));
         // Center 가 id 에 의해 조회 되었으므로 score에 1 추가
         center.addScore(Score.GET);
         CenterResponse result = new CenterResponse(center,imageService.getProfileImage(center),imageService.getInfoImages(center));
+
         return result;
     }
 
-    public CenterBannerResponse findBannerById(Long id, Long userId) {
+    /**
+     * 작성자: 현승구
+     * 작성내용: 시설별 정보 preview를 조회합니다
+     */
+    public CenterBannerResponse findCenterBannerByCenter(Long id, Long userId) {
         CenterBannerDto data = userId == null ?
                 centerRepository.findBannerById(id) :
                 centerRepository.findBannerById(id, userId);
@@ -80,9 +96,25 @@ public class CenterService {
 
         List<String> infoImages = imageService.getInfoImages(data.getInfoImages());
         return new CenterBannerResponse(data, starAverage, infoImages);
-
     }
 
+    /**
+     * 작성자: 현승구
+     * 작성내용: 학부모가 선택한 관심 테마를 가지고 있는 시설을 조회합니다
+     */
+    public List<CenterRecommendDto> findRecommendCenterWithTheme(Long userId) {
+        Parent parent = parentRepository.findById(userId)
+                .orElseThrow(() -> new UserException("해당 유저가 존재 하지 않습니다."));
+        Theme theme = parent.getTheme();
+        Location location = parent.getLocation();
+
+        return centerRepository.findRecommendCenter(theme, location, PageRequest.of(0, 10, Sort.by("score")));
+    }
+
+    /**
+     * 작성자: 현승구
+     * 작성내용: 교사가 시설의 이미지를 수정합니다
+     */
     public Long modifyCenterImage(Long centerId, Long userId, List<MultipartFile> infoImages, MultipartFile profileImage) {
         if(userId == null)
             throw new UserException(UserErrorResult.NOT_LOGIN);
@@ -94,9 +126,14 @@ public class CenterService {
         Center center = teacher.getCenter();
         imageService.saveInfoImages(infoImages, center);
         imageService.saveProfileImage(profileImage, center);
+
         return center.getId();
     }
 
+    /**
+     * 작성자: 현승구
+     * 작성내용: 교사가 시설의 정보를 수정합니다
+     */
     public Long modifyCenterInfo(Long centerId, Long userId, CenterDetailRequest requestDto) {
         if(userId == null)
             throw new UserException(UserErrorResult.NOT_LOGIN);
@@ -109,16 +146,8 @@ public class CenterService {
         Pair<Double, Double> location = mapService.convertAddressToLocation(requestDto.getAddress());
         Pair<String, String> area = mapService.getSidoSigunguByLocation(location.getFirst(), location.getSecond());
         center.update(requestDto, location.getFirst(), location.getSecond(), area.getFirst(), area.getSecond());
+
         return center.getId();
     }
-
-    public List<CenterRecommendDto> findCenterForParent(Long userId) {
-        Parent parent = parentRepository.findById(userId)
-                .orElseThrow(() -> new UserException("해당 유저가 존재 하지 않습니다."));
-        Theme theme = parent.getTheme();
-        Location location = parent.getLocation();
-        return centerRepository.findRecommendCenter(theme, location, PageRequest.of(0, 10, Sort.by("score")));
-    }
-
 
 }

@@ -30,7 +30,11 @@ public class BoardService {
     private final UserRepository userRepository;
     private final ChildRepository childRepository;
 
-    public BoardListDto findAllWithBookmark(Long userId) {
+    /**
+     * 작성자: 이창윤
+     * 작성내용: 모두의 이야기의 게시판을 조회합니다
+     */
+    public BoardListDto findBoardByPublicList(Long userId) {
 
         List<Board> boards = boardRepository.findByCenterIsNull(); // 모두의 이야기 내 모든 게시판
         List<BoardListDto.BoardBookmarkDto> bookmarkList = new ArrayList<>();
@@ -49,7 +53,11 @@ public class BoardService {
         return boardListDto;
     }
 
-    public BoardListDto findAllWithBookmarkInCenter(Long userId, Long centerId) {
+    /**
+     * 작성자: 이창윤
+     * 작성내용: 시설 이야기의 게시판을 조회합니다
+     */
+    public BoardListDto findAllBoardByCenter(Long userId, Long centerId) {
         Center findCenter = centerRepository.findById(centerId)
                 .orElseThrow(() -> new CenterException(CenterErrorResult.CENTER_NOT_EXIST));
 
@@ -72,8 +80,11 @@ public class BoardService {
         return boardListDto;
     }
 
-
-    public Long create(Long userId, Long center_id, BoardRequest request) {
+    /**
+     * 작성자: 이창윤
+     * 작성내용: 새로운 게시판을 생성합니다
+     */
+    public Long saveNewBoard(Long userId, Long center_id, BoardRequest request) {
         // userId 가 null 인 경우 게시판 생성 제한
         if (userId == null) {
             throw new BoardException(BoardErrorResult.UNAUTHORIZED_USER_ACCESS);
@@ -122,7 +133,11 @@ public class BoardService {
         return savedBoard.getId();
     }
 
-    public Long remove(Long userId, Long boardId) {
+    /**
+     * 작성자: 이창윤
+     * 작성내용: 게시판을 삭제합니다
+     */
+    public Long deleteBoardWithValidation(Long userId, Long boardId) {
         // userId 가 null 인 경우 게시판 삭제 제한
         if (userId == null) {
             throw new BoardException(BoardErrorResult.UNAUTHORIZED_USER_ACCESS);
@@ -150,6 +165,10 @@ public class BoardService {
         return boardId;
     }
 
+    /**
+     * 작성자: 이창윤
+     * 작성내용: 게시판 삭제를 위한 권한을 조회합니다
+     */
     private void validateAuth(Board findBoard, User u) {
         if (u.getAuth() == Auth.PARENT) {
             throw new BoardException(BoardErrorResult.UNAUTHORIZED_USER_ACCESS);
@@ -167,7 +186,12 @@ public class BoardService {
         }
     }
 
-    public List<StoryPreviewDto> findCenterStory(Long userId) {
+
+    /**
+     * 작성자: 이창윤
+     * 작성내용: 모두의 이야기 및 유저가 속한 시설의 이야기의 프리뷰를 조회합니다
+     */
+    public List<StoryPreviewDto> findStoryPreviewList(Long userId) {
         List<StoryPreviewDto> result = new ArrayList<>();
         result.add(new StoryPreviewDto(null));
         if (userId == null) {
@@ -175,7 +199,6 @@ public class BoardService {
         }
         User findUser = userRepository.findById(userId)
                 .orElseThrow(() -> new UserException(UserErrorResult.USER_NOT_EXIST));
-        log.info("findUser = {}", findUser.getAuth());
         if (findUser.getAuth() == Auth.PARENT) {
             List<Child> children = userRepository.findChildrenWithCenter(userId);
             List<StoryPreviewDto> storyPreviewDtoList = children.stream()

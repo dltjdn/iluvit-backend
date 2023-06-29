@@ -142,7 +142,7 @@ class BoardServiceTest {
 
         //when
         BoardException result = assertThrows(BoardException.class,
-                () -> boardService.create(null, null, request));
+                () -> boardService.saveNewBoard(null, null, request));
         //then
         assertThat(result.getErrorResult())
                 .isEqualTo(BoardErrorResult.UNAUTHORIZED_USER_ACCESS);
@@ -158,7 +158,7 @@ class BoardServiceTest {
                 .findByName(request.getBoard_name());
         //when
         BoardException result = assertThrows(BoardException.class,
-                () -> boardService.create(parent1.getId(), null, request));
+                () -> boardService.saveNewBoard(parent1.getId(), null, request));
 
         //then
         assertThat(result.getErrorResult())
@@ -181,7 +181,7 @@ class BoardServiceTest {
                 .willReturn(Optional.of(board));
 
         //when
-        Long newId = boardService.create(parent1.getId(), null, request);
+        Long newId = boardService.saveNewBoard(parent1.getId(), null, request);
 
         //then
         Board findBoard = boardRepository.findById(newId).get();
@@ -204,7 +204,7 @@ class BoardServiceTest {
                 .findById(1L);
         //when
         UserException result = assertThrows(UserException.class,
-                () -> boardService.create(parent1.getId(), 1L, request));
+                () -> boardService.saveNewBoard(parent1.getId(), 1L, request));
 
         //then
 
@@ -228,7 +228,7 @@ class BoardServiceTest {
 
         //when
         BoardException result = assertThrows(BoardException.class,
-                () -> boardService.create(parent1.getId(), 1L, request));
+                () -> boardService.saveNewBoard(parent1.getId(), 1L, request));
 
         //then
         assertThat(result.getErrorResult())
@@ -249,7 +249,7 @@ class BoardServiceTest {
 
         //when
         BoardException result = assertThrows(BoardException.class,
-                () -> boardService.create(1000L, 2L, request));
+                () -> boardService.saveNewBoard(1000L, 2L, request));
 
         //then
         assertThat(result.getErrorResult())
@@ -279,7 +279,7 @@ class BoardServiceTest {
                 .findByParentAndCenter(0L, 1L);
         //when
         BoardException result = assertThrows(BoardException.class,
-                () -> boardService.create(parent1.getId(), 1L, request));
+                () -> boardService.saveNewBoard(parent1.getId(), 1L, request));
 
         //then
         assertThat(result.getErrorResult())
@@ -296,7 +296,7 @@ class BoardServiceTest {
                 .findById(3L);
         //when
         CenterException result = assertThrows(CenterException.class,
-                () -> boardService.create(parent1.getId(), 3L, request));
+                () -> boardService.saveNewBoard(parent1.getId(), 3L, request));
 
         //then
         assertThat(result.getErrorResult())
@@ -319,7 +319,7 @@ class BoardServiceTest {
                 .willReturn(Optional.of(board));
 
         //when
-        Long newId = boardService.create(parent1.getId(), null, request);
+        Long newId = boardService.saveNewBoard(parent1.getId(), null, request);
 
         //then
         Board findBoard = boardRepository.findById(newId).get();
@@ -341,7 +341,7 @@ class BoardServiceTest {
                 .when(boardRepository)
                 .findByCenterIsNull();
         //when
-        BoardListDto dto = boardService.findAllWithBookmark(parent1.getId());
+        BoardListDto dto = boardService.findBoardByPublicList(parent1.getId());
         //then
         BoardListDto.BoardBookmarkDto board = dto.getBoardList().get(0);
         List<BoardListDto.BoardBookmarkDto> bookmarkList = dto.getBookmarkList();
@@ -371,7 +371,7 @@ class BoardServiceTest {
                 .when(boardRepository)
                 .findByCenter(1L);
         //when
-        BoardListDto dto = boardService.findAllWithBookmarkInCenter(parent1.getId(), 1L);
+        BoardListDto dto = boardService.findAllBoardByCenter(parent1.getId(), 1L);
         //then
         BoardListDto.BoardBookmarkDto board = dto.getBoardList().get(0);
         List<BoardListDto.BoardBookmarkDto> bookmarkList = dto.getBookmarkList();
@@ -390,7 +390,7 @@ class BoardServiceTest {
 
         //when
         BoardException result = assertThrows(BoardException.class,
-                () -> boardService.remove(null, 0L));
+                () -> boardService.deleteBoardWithValidation(null, 0L));
         //then
         assertThat(result.getErrorResult())
                 .isEqualTo(BoardErrorResult.UNAUTHORIZED_USER_ACCESS);
@@ -405,7 +405,7 @@ class BoardServiceTest {
 
         //when
         BoardException result = assertThrows(BoardException.class,
-                () -> boardService.remove(parent1.getId(), 0L));
+                () -> boardService.deleteBoardWithValidation(parent1.getId(), 0L));
         //then
         assertThat(result.getErrorResult())
                 .isEqualTo(BoardErrorResult.BOARD_NOT_EXIST);
@@ -420,7 +420,7 @@ class BoardServiceTest {
 
         //when
         BoardException result = assertThrows(BoardException.class,
-                () -> boardService.remove(0L, board3.getId()));
+                () -> boardService.deleteBoardWithValidation(0L, board3.getId()));
 
         //then
         assertThat(result.getErrorResult())
@@ -436,7 +436,7 @@ class BoardServiceTest {
 
         //when
         BoardException result = assertThrows(BoardException.class,
-                () -> boardService.remove(0L, board3.getId()));
+                () -> boardService.deleteBoardWithValidation(0L, board3.getId()));
 
         //then
         assertThat(result.getErrorResult())
@@ -453,7 +453,7 @@ class BoardServiceTest {
 
         //when
         BoardException result = assertThrows(BoardException.class,
-                () -> boardService.remove(0L, board3.getId()));
+                () -> boardService.deleteBoardWithValidation(0L, board3.getId()));
 
         //then
         assertThat(result.getErrorResult())
@@ -469,7 +469,7 @@ class BoardServiceTest {
 
         //when
         BoardException result = assertThrows(BoardException.class,
-                () -> boardService.remove(0L, board3.getId()));
+                () -> boardService.deleteBoardWithValidation(0L, board3.getId()));
 
         //then
         assertThat(result.getErrorResult())
@@ -485,7 +485,7 @@ class BoardServiceTest {
 
         //when
         BoardException result = assertThrows(BoardException.class,
-                () -> boardService.remove(100L, board4.getId()));
+                () -> boardService.deleteBoardWithValidation(100L, board4.getId()));
 
         //then
         assertThat(result.getErrorResult())
@@ -503,7 +503,7 @@ class BoardServiceTest {
                 .when(userRepository)
                 .findById(0L);
         //when
-        Long removedId = boardService.remove(0L, board7.getId());
+        Long removedId = boardService.deleteBoardWithValidation(0L, board7.getId());
         //then
         assertThat(removedId).isEqualTo(12L);
     }
@@ -514,7 +514,7 @@ class BoardServiceTest {
         List<StoryPreviewDto> storyPreviewDtoList = new ArrayList<>();
         storyPreviewDtoList.addAll(List.of(new StoryPreviewDto(null)));
         //when
-        List<StoryPreviewDto> stories = boardService.findCenterStory(null);
+        List<StoryPreviewDto> stories = boardService.findStoryPreviewList(null);
         //then
 
         assertThat(objectMapper.writeValueAsString(stories))
@@ -535,7 +535,7 @@ class BoardServiceTest {
                 .findById(parent1.getId());
         //when
         UserException result = assertThrows(UserException.class,
-                () -> boardService.findCenterStory(parent1.getId()));
+                () -> boardService.findStoryPreviewList(parent1.getId()));
 
 
         //then
@@ -562,7 +562,7 @@ class BoardServiceTest {
                 .when(userRepository)
                 .findChildrenWithCenter(parent1.getId());
         //when
-        List<StoryPreviewDto> result = boardService.findCenterStory(parent1.getId());
+        List<StoryPreviewDto> result = boardService.findStoryPreviewList(parent1.getId());
 
         //then
 
@@ -583,7 +583,7 @@ class BoardServiceTest {
                 .when(userRepository)
                 .findById(teacher1.getId());
         //when
-        List<StoryPreviewDto> result = boardService.findCenterStory(teacher1.getId());
+        List<StoryPreviewDto> result = boardService.findStoryPreviewList(teacher1.getId());
 
         //then
 

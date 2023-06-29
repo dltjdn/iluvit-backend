@@ -39,7 +39,7 @@ public class AlarmService {
         alarmRepository.deleteAllByUser(user);
     }
 
-    public Slice<AlarmDetailDto> findUserActiveAlarm(Long userId, Pageable pageable) {
+    public Slice<AlarmDetailDto> findActiveAlarmByUser(Long userId, Pageable pageable) {
         Slice<Alarm> alarmSlice = alarmRepository.findActiveByUser(userId, pageable);
         return new SliceImpl<>(alarmSlice.stream()
                 .map(Alarm::exportAlarm)
@@ -47,7 +47,7 @@ public class AlarmService {
                 pageable, alarmSlice.hasNext());
     }
 
-    public Slice<AlarmDetailDto> findPresentationActiveAlarm(Long userId, Pageable pageable) {
+    public Slice<AlarmDetailDto> findPresentationActiveAlarmByUser(Long userId, Pageable pageable) {
         Slice<Alarm> alarmSlice = alarmRepository.findPresentationByUser(userId, pageable);
         return new SliceImpl<>(alarmSlice.stream()
                 .map(Alarm::exportAlarm)
