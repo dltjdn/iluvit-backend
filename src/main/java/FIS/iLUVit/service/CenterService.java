@@ -1,24 +1,19 @@
 package FIS.iLUVit.service;
 
+import FIS.iLUVit.domain.*;
 import FIS.iLUVit.dto.center.CenterBannerResponse;
 import FIS.iLUVit.dto.center.CenterDetailRequest;
 import FIS.iLUVit.dto.center.CenterRecommendDto;
 import FIS.iLUVit.dto.center.CenterResponse;
-import FIS.iLUVit.domain.Center;
-import FIS.iLUVit.domain.Location;
-import FIS.iLUVit.domain.Parent;
-import FIS.iLUVit.domain.Teacher;
 import FIS.iLUVit.domain.embeddable.Score;
 import FIS.iLUVit.domain.embeddable.Theme;
 import FIS.iLUVit.domain.enumtype.KindOf;
+import FIS.iLUVit.exception.CenterErrorResult;
 import FIS.iLUVit.exception.CenterException;
 import FIS.iLUVit.exception.UserErrorResult;
 import FIS.iLUVit.exception.UserException;
-import FIS.iLUVit.repository.CenterRepository;
-import FIS.iLUVit.repository.ParentRepository;
-import FIS.iLUVit.repository.UserRepository;
+import FIS.iLUVit.repository.*;
 import FIS.iLUVit.dto.center.CenterAndDistancePreviewDto;
-import FIS.iLUVit.dto.center.CenterBannerDto;
 import FIS.iLUVit.dto.center.CenterMapPreviewDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.*;
@@ -46,7 +41,7 @@ public class CenterService {
      * 작성자: 현승구
      * 작성내용: 유저가 설정한 필터를 기반으로 시설을 조회합니다
      */
-    public SliceImpl<CenterAndDistancePreviewDto> findByFilterForMapList(double longitude, double latitude, List<Long> centerIds, Long userId, KindOf kindOf, Pageable pageable) {
+    public SliceImpl<CenterAndDistancePreviewDto> findCenterByFilterForMapList(double longitude, double latitude, List<Long> centerIds, Long userId, KindOf kindOf, Pageable pageable) {
 
         return centerRepository.findByFilterForMapList(longitude, latitude, userId, kindOf, centerIds, pageable);
     }
@@ -56,7 +51,7 @@ public class CenterService {
      * 작성자: 현승구
      * 작성내용: 위치에 따른 전체 시설을 리스트로 반환합니다
      */
-    public List<CenterMapPreviewDto> findByFilterForMap(double longitude, double latitude, Double distance, String searchContent){
+    public List<CenterMapPreviewDto> findCenterByFilterForMap(double longitude, double latitude, Double distance, String searchContent){
 
         return centerRepository.findByFilterForMap(longitude, latitude, distance, searchContent);
     }
