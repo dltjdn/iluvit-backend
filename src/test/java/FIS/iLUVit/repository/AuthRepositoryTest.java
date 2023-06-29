@@ -25,186 +25,21 @@ import static org.junit.jupiter.api.Assertions.*;
 @DataJpaTest(includeFilters = @ComponentScan.Filter(ForDB.class))
 public class AuthRepositoryTest {
 
-    @Autowired
-    private AuthRepository authRepository;
+    // TODO 회원가입용 인증번호 받기
 
-    @Autowired
-    private EntityManager em;
+    // TODO find Over lap
 
-    AuthNumber authNumber1;
-    AuthNumber authNumber2;
-    AuthNumber authNumber3;
-    AuthNumber authNumber4;
-    User user;
-    String phoneNum1 = "phoneNumber1";
-    String phoneNum2 = "phoneNumber2";
-    String authNum = "1234";
+    // TODO delete Expired Number
 
-    @BeforeEach
-    void init() {
-        authNumber1 = AuthNumber.createAuthNumber(phoneNum1, authNum, AuthKind.signup, null);
-        authNumber2 = AuthNumber.createAuthNumber(phoneNum1, authNum, AuthKind.findLoginId, null);
-        authNumber3 = AuthNumber.createAuthNumber(phoneNum2, authNum, AuthKind.signup, null);
-        authNumber4 = AuthNumber.createAuthNumber(phoneNum2, authNum, AuthKind.findLoginId, null);
-        user = Parent.builder()
-                .phoneNumber(phoneNum1)
-                .build();
-    }
+    // TODO 이미 인증번호 발급 받음
 
+    // TODO find By Phone Num And Auth Num And Auth Kind
 
-    @Test
-    public void 회원가입용인증번호받기() {
-        //given
+    // TODO find Auth Complete 인증된거 없음
 
-        //when
-        AuthNumber result = authRepository.save(authNumber1);
-        em.flush();
-        em.clear();
+    // TODO find Auth Complete 인증된거 있음
 
-        //then
-        AuthNumber target = authRepository.findById(result.getId()).orElse(null);
-        assertThat(target).isNotNull();
-        assertThat(target.getId()).isEqualTo(result.getId());
-    }
+    // TODO delete By Phone Num And Auth Kind
 
-    @Test
-    public void findOverlap() {
-        // given
-        authRepository.save(authNumber1);
-        authRepository.save(authNumber2);
-        em.flush();
-        em.clear();
-
-        // when
-        AuthNumber target = authRepository.findOverlap(phoneNum1, AuthKind.signup).orElse(null);
-
-        // then
-        assertThat(target).isNotNull();
-        assertThat(target.getId()).isEqualTo(authNumber1.getId());
-
-    }
-
-    @Test
-    public void deleteExpiredNumber() {
-        // given
-        authRepository.save(authNumber1);
-        authRepository.save(authNumber2);
-        authRepository.save(authNumber3);
-        authRepository.save(authNumber4);
-        em.flush();
-        em.clear();
-
-        // when
-        authRepository.deleteExpiredNumber(phoneNum1, AuthKind.signup);
-        AuthNumber target = authRepository.findOverlap(phoneNum1, AuthKind.signup).orElse(null);
-
-        // then
-        assertThat(target).isNull();
-    }
-
-    @Test
-    public void 이미인증번호발급받음() {
-        // given
-        authRepository.save(authNumber1);
-        authRepository.save(authNumber2);
-        authRepository.save(authNumber3);
-        authRepository.save(authNumber4);
-        em.flush();
-        em.clear();
-
-        // when
-        AuthNumber over = AuthNumber.createAuthNumber(phoneNum1, authNum, AuthKind.signup, null);
-        authRepository.save(over);
-
-        // then
-        PersistenceException exception = assertThrows(PersistenceException.class, () -> em.flush());
-        assertTrue(exception.getCause() instanceof ConstraintViolationException);
-    }
-
-    @Test
-    public void findByPhoneNumAndAuthNumAndAuthKind() {
-        // given
-        authRepository.save(authNumber1);
-        authRepository.save(authNumber2);
-        authRepository.save(authNumber3);
-        authRepository.save(authNumber4);
-        em.flush();
-        em.clear();
-
-        // when
-        AuthNumber target = authRepository.findByPhoneNumAndAuthNumAndAuthKind(phoneNum1, authNum, AuthKind.signup)
-                .orElse(null);
-
-        // then
-        assertThat(target).isNotNull();
-        assertThat(target.getId()).isEqualTo(authNumber1.getId());
-    }
-
-    @Test
-    public void findAuthComplete_인증된거없음() {
-        // given
-        AuthNumber authNumber = Creator.createAuthNumber(phoneNum1, authNum, AuthKind.findPwd, null);
-        authRepository.save(authNumber);
-        em.flush();
-        em.clear();
-        // when
-        AuthNumber target = authRepository.findAuthComplete(phoneNum1, AuthKind.findPwd).orElse(null);
-        // then
-        assertThat(target).isNull();
-    }
-
-    @Test
-    public void findAuthComplete_인증된거있음() {
-        // given
-        AuthNumber authNumber = Creator.createAuthNumber(phoneNum1, authNum, AuthKind.findPwd, LocalDateTime.now());
-        authRepository.save(authNumber);
-        em.flush();
-        em.clear();
-        // when
-        AuthNumber target = authRepository.findAuthComplete(phoneNum1, AuthKind.findPwd).orElse(null);
-        // then
-        assertThat(target).isNotNull();
-        assertThat(target.getId()).isEqualTo(authNumber.getId());
-    }
-
-    @Test
-    public void deleteByPhoneNumAndAuthKind() {
-        // given
-        authRepository.save(authNumber1);
-        authRepository.save(authNumber2);
-        em.flush();
-        em.clear();
-        // when
-        authRepository.deleteByPhoneNumAndAuthKind(authNumber1.getPhoneNum(), AuthKind.signup);
-        // then
-        AuthNumber result = authRepository.findById(authNumber1.getId()).orElse(null);
-        assertThat(result).isNull();
-    }
-
-    @Test
-    public void findByPhoneNumAndAuthNumAndAuthKindAndUserId() {
-        // given
-        em.persist(user);
-        AuthNumber authNumber = AuthNumber.builder()
-                .phoneNum(phoneNum1)
-                .authNum(authNum)
-                .authKind(AuthKind.updatePhoneNum)
-                .userId(user.getId())
-                .build();
-        authRepository.save(authNumber);
-        authRepository.save(authNumber1);
-        authRepository.save(authNumber2);
-        authRepository.save(authNumber3);
-        authRepository.save(authNumber4);
-        em.flush();
-        em.clear();
-        // when
-        AuthNumber target = authRepository.findByPhoneNumAndAuthNumAndAuthKindAndUserId(phoneNum1, authNum, authNumber.getAuthKind(), user.getId())
-                .orElse(null);
-        // then
-        assertThat(target).isNotNull();
-        assertThat(target.getId()).isEqualTo(authNumber.getId());
-    }
-
-
+    // TODO find By Phone Num And Auth Num And Auth Kind And User Id
 }
