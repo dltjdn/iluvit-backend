@@ -1,38 +1,11 @@
 package FIS.iLUVit.repository;
 
-import FIS.iLUVit.Creator;
 import FIS.iLUVit.config.argumentResolver.ForDB;
-import FIS.iLUVit.dto.center.CenterDto;
-import FIS.iLUVit.dto.center.CenterRecommendDto;
-import FIS.iLUVit.domain.*;
-import FIS.iLUVit.domain.embeddable.Area;
-import FIS.iLUVit.domain.embeddable.BasicInfra;
-import FIS.iLUVit.domain.embeddable.Theme;
-import FIS.iLUVit.domain.enumtype.Approval;
-import FIS.iLUVit.domain.enumtype.KindOf;
-import FIS.iLUVit.dto.center.CenterAndDistancePreviewDto;
-import FIS.iLUVit.dto.center.CenterBannerDto;
-import FIS.iLUVit.dto.center.CenterMapPreviewDto;
-import FIS.iLUVit.dto.center.CenterPreviewDto;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
-import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.context.annotation.ComponentScan;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Slice;
-import org.springframework.data.domain.SliceImpl;
 import org.springframework.transaction.annotation.Transactional;
-
-import javax.persistence.EntityManager;
-import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
-
-import static FIS.iLUVit.Creator.*;
-import static org.assertj.core.api.Assertions.assertThat;
 
 @DataJpaTest(includeFilters = @ComponentScan.Filter(ForDB.class))
 //@SpringBootTest

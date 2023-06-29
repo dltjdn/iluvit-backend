@@ -1,24 +1,8 @@
 package FIS.iLUVit.repository;
 
-import FIS.iLUVit.Creator;
 import FIS.iLUVit.config.argumentResolver.ForDB;
-import FIS.iLUVit.domain.*;
-import FIS.iLUVit.domain.enumtype.Auth;
-import FIS.iLUVit.domain.enumtype.BoardKind;
-import org.junit.jupiter.api.*;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
-import org.springframework.boot.test.autoconfigure.orm.jpa.TestEntityManager;
 import org.springframework.context.annotation.ComponentScan;
-
-import javax.transaction.Transactional;
-import java.util.Arrays;
-import java.util.List;
-import java.util.stream.Collectors;
-
-import static FIS.iLUVit.service.createmethod.CreateTest.*;
-import static FIS.iLUVit.service.createmethod.CreateTest.createCenter;
-import static org.assertj.core.api.Assertions.*;
 
 @DataJpaTest(includeFilters = @ComponentScan.Filter(ForDB.class))
 class BoardBookmarkRepositoryTest {
