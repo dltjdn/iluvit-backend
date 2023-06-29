@@ -28,7 +28,7 @@ public class BoardController {
      */
     @GetMapping("home")
     public List<StoryPreviewDto> getAllStory(@Login Long userId) {
-        return boardService.findCenterStory(userId);
+        return boardService.findStoryPreviewList(userId);
     }
 
 
@@ -38,7 +38,7 @@ public class BoardController {
      */
     @GetMapping("public")
     public BoardListDto getAllBoardByPublic(@Login Long userId) {
-        return boardService.findAllWithBookmark(userId);
+        return boardService.findBoardByPublicList(userId);
     }
 
     /**
@@ -47,7 +47,7 @@ public class BoardController {
      */
     @GetMapping("in-center/{centerId}")
     public BoardListDto getAllBoardByCenter(@Login Long userId, @PathVariable("centerId") Long centerId) {
-        return boardService.findAllWithBookmarkInCenter(userId, centerId);
+        return boardService.findAllBoardByCenter(userId, centerId);
     }
 
     /**
@@ -58,7 +58,7 @@ public class BoardController {
     public Long createBoard(@Login Long userId,
                             @RequestParam(value = "center_id", required = false) Long center_id,
                             @RequestBody @Valid BoardRequest request) {
-        return boardService.create(userId, center_id, request);
+        return boardService.saveNewBoard(userId, center_id, request);
     }
 
     /**
@@ -67,7 +67,7 @@ public class BoardController {
     */
     @DeleteMapping("{boardId}")
     public Long deleteBoard(@Login Long userId, @PathVariable("boardId") Long boardId) {
-        return boardService.remove(userId, boardId);
+        return boardService.deleteBoardWithValidation(userId, boardId);
     }
 
 }

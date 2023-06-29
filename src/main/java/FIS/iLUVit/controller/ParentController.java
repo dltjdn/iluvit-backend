@@ -30,7 +30,7 @@ public class ParentController {
      */
     @GetMapping("")
     public ParentDetailResponse getParentDetails(@Login Long id) throws IOException {
-        return parentService.findDetail(id);
+        return parentService.findParentDetails(id);
     }
 
     /**
@@ -39,7 +39,7 @@ public class ParentController {
      */
     @PatchMapping("")
     public ParentDetailResponse updateParent(@Login Long id, @Valid @ModelAttribute ParentDetailRequest request) throws IOException {
-        return parentService.updateDetail(id, request);
+        return parentService.modifyParentInfo(id, request);
     }
 
     /**
@@ -48,7 +48,7 @@ public class ParentController {
      */
     @PostMapping("signup")
     public void createParent(@RequestBody @Valid SignupParentRequest request) {
-        parentService.signup(request);
+        parentService.signupParent(request);
     }
 
     /**

@@ -86,7 +86,7 @@ public class ScrapServiceTest {
                 .when(scrapRepository)
                 .findScrapsByUserWithScrapPosts(parent1.getId());
         // when
-        List<ScrapInfoDto>  result = target.findScrapDirListInfo(parent1.getId());
+        List<ScrapInfoDto>  result = target.findScrapDirList(parent1.getId());
         // then
         assertThat(result.size()).isEqualTo(2);
         result.forEach(scrapInfo -> {
@@ -110,7 +110,7 @@ public class ScrapServiceTest {
                 .findScrapsByUserWithScrapPosts(parent1.getId());
         ScrapDirRequest request = new ScrapDirRequest("scrap");
         // when
-        List<ScrapInfoDto>  result = target.addScrapDir(parent1.getId(), request);
+        List<ScrapInfoDto>  result = target.saveNewScrapDir(parent1.getId(), request);
         // then
         assertThat(result.size()).isEqualTo(3);
     }
@@ -173,7 +173,7 @@ public class ScrapServiceTest {
                 .when(scrapRepository)
                 .findScrapByIdAndUserId(any(), any());
         // when
-        Scrap result = target.updateScrapDirName(parent1.getId(), request);
+        Scrap result = target.modifyScrapDirName(parent1.getId(), request);
         // then
         assertThat(result.getId()).isEqualTo(request.getScrapId());
         assertThat(result.getName()).isEqualTo(name);
@@ -205,7 +205,7 @@ public class ScrapServiceTest {
                     .findById(post1.getId());
             // when
             ScrapException result = assertThrows(ScrapException.class,
-                    () -> target.scrapPost(parent1.getId(),post1.getId(), scrapDirInfos));
+                    () -> target.modifyScrapPost(parent1.getId(),post1.getId(), scrapDirInfos));
 
             // then
             assertThat(result.getErrorResult()).isEqualTo(ScrapErrorResult.NOT_VALID_SCRAP);
@@ -231,7 +231,7 @@ public class ScrapServiceTest {
                     .findById(post1.getId());
             // when
             ScrapException result = assertThrows(ScrapException.class,
-                    () -> target.scrapPost(parent1.getId(),post1.getId(), scrapDirInfos));
+                    () -> target.modifyScrapPost(parent1.getId(),post1.getId(), scrapDirInfos));
             // then
             assertThat(result.getErrorResult()).isEqualTo(ScrapErrorResult.NOT_VALID_POST);
         }
@@ -255,7 +255,7 @@ public class ScrapServiceTest {
                     .when(postRepository)
                     .findById(post1.getId());
             // when
-            List<Scrap> result = target.scrapPost(parent1.getId(),post1.getId(), scrapDirInfos);
+            List<Scrap> result = target.modifyScrapPost(parent1.getId(),post1.getId(), scrapDirInfos);
             // verify
             verify(scrapPostRepository, times(1)).save(any());
             verify(scrapRepository, times(0)).delete(any());
@@ -280,7 +280,7 @@ public class ScrapServiceTest {
                     .when(postRepository)
                     .findById(post1.getId());
             // when
-            target.scrapPost(parent1.getId(),post1.getId(), scrapDirInfos);
+            target.modifyScrapPost(parent1.getId(),post1.getId(), scrapDirInfos);
             // verify
             verify(scrapPostRepository, times(0)).save(any());
             verify(scrapPostRepository, times(1)).delete(any());
@@ -305,7 +305,7 @@ public class ScrapServiceTest {
                     .when(postRepository)
                     .findById(post1.getId());
             // when
-            target.scrapPost(parent1.getId(), post1.getId(), scrapDirInfos);
+            target.modifyScrapPost(parent1.getId(), post1.getId(), scrapDirInfos);
             // then
             verify(scrapPostRepository, times(1)).save(any());
             verify(scrapPostRepository, times(1)).delete(any());
@@ -353,7 +353,7 @@ public class ScrapServiceTest {
                 .when(scrapRepository)
                 .findScrapsByUserWithScrapPosts(any());
         // when
-        List<ScrapInfoByPostDto> result = target.findScrapListByPost(parent1.getId(), post1.getId());
+        List<ScrapInfoByPostDto> result = target.findScrapDirListByPost(parent1.getId(), post1.getId());
         // then
         assertThat(result.size()).isEqualTo(2);
         result.forEach(scrapInfo -> {
@@ -375,7 +375,7 @@ public class ScrapServiceTest {
 
         // when
         Slice<ScrapPostPreviewResponse> result =
-                target.searchByScrap(parent1.getId(), scrap1.getId(), PageRequest.of(0, 5));
+                target.findPostByScrapDir(parent1.getId(), scrap1.getId(), PageRequest.of(0, 5));
         // then
         assertThat(result.getContent().size()).isEqualTo(2);
         result.getContent().forEach(sp -> {

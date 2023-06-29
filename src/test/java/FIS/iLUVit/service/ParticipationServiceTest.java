@@ -179,7 +179,7 @@ class ParticipationServiceTest {
 
             //when
             PresentationException result = assertThrows(PresentationException.class,
-                    () -> target.register(parent.getId(), ptDate1.getId()));     // 예외가 발생 해야한다.
+                    () -> target.registerParticipation(parent.getId(), ptDate1.getId()));     // 예외가 발생 해야한다.
 
             //then
             assertThat(result.getErrorResult())
@@ -202,7 +202,7 @@ class ParticipationServiceTest {
 
             //when
             PresentationException result = assertThrows(PresentationException.class,
-                    () -> target.register(parent.getId(), ptDate1.getId()));     // 예외가 발생 해야한다.
+                    () -> target.registerParticipation(parent.getId(), ptDate1.getId()));     // 예외가 발생 해야한다.
 
             //then
             assertThat(result.getErrorResult())
@@ -219,7 +219,7 @@ class ParticipationServiceTest {
 
             //when
             PresentationException result = assertThrows(PresentationException.class,
-                    () -> target.register(parent.getId(), ptDate2.getId()));
+                    () -> target.registerParticipation(parent.getId(), ptDate2.getId()));
 
             //then
             assertThat(result.getErrorResult())
@@ -235,7 +235,7 @@ class ParticipationServiceTest {
             //when
 
             PresentationException result = assertThrows(PresentationException.class,
-                    () -> target.register(parent.getId(), ptDate4.getId()));
+                    () -> target.registerParticipation(parent.getId(), ptDate4.getId()));
 
             //then
             assertThat(result.getErrorResult())
@@ -281,7 +281,7 @@ class ParticipationServiceTest {
                         .thenReturn(new AlarmEvent(presentationFullAlarm));
 
                 //when
-                Long result = target.register(parent.getId(), ptDate3.getId());
+                Long result = target.registerParticipation(parent.getId(), ptDate3.getId());
 
                 // then
                 assertThat(result).isEqualTo(participation1.getId());
@@ -303,7 +303,7 @@ class ParticipationServiceTest {
                     .when(participationRepository).findByIdAndStatusWithPtDate(any(Long.class), any(Long.class));
             //when
             ParticipationException result = assertThrows(ParticipationException.class, () -> {
-                target.cancel(1L, 1L);
+                target.cancelParticipation(1L, 1L);
             });
 
             //then
@@ -324,7 +324,7 @@ class ParticipationServiceTest {
                     .when(participationRepository).findByIdAndStatusWithPtDate(any(Long.class), any(Long.class));
 
             //when
-            Long result = target.cancel(1L, 2L);
+            Long result = target.cancelParticipation(1L, 2L);
 
             //then
             assertThat(participation.getStatus()).isEqualTo(Status.CANCELED);
@@ -350,7 +350,7 @@ class ParticipationServiceTest {
                     .when(publisher).publishEvent(any(Object.class));
 
             //when
-            target.cancel(1L, 1L);
+            target.cancelParticipation(1L, 1L);
 
             //then
             assertThat(participation.getStatus()).isEqualTo(Status.CANCELED);

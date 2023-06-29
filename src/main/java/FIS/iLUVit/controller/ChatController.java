@@ -29,7 +29,7 @@ public class ChatController {
      */
     @PostMapping("")
     public Long createChat(@Login Long userId, @RequestBody ChatRequest request) {
-        return chatService.saveChat(userId, request);
+        return chatService.saveNewChat(userId, request);
     }
 
     /**
@@ -47,7 +47,7 @@ public class ChatController {
      */
     @GetMapping("")
     public Slice<ChatListDto> getAllChatRoom(@Login Long userId, Pageable pageable) {
-        return chatService.findAll(userId, pageable);
+        return chatService.findChatRoomList(userId, pageable);
     }
 
     /**
@@ -57,7 +57,7 @@ public class ChatController {
     @GetMapping("{roomId}")
     public ChatDto getChatRoomDetails(@Login Long userId, @PathVariable("roomId") Long roomId,
                                 Pageable pageable) {
-        return chatService.findByOpponent(userId, roomId, pageable);
+        return chatService.findChatRoomDetails(userId, roomId, pageable);
     }
 
     /**

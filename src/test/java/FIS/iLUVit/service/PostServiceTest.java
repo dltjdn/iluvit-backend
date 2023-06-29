@@ -46,6 +46,7 @@ class PostServiceTest {
 
     @InjectMocks
     PostService postService;
+    PostHeartService postHeartService;
 
     @Mock
     PostRepository postRepository;
@@ -218,7 +219,7 @@ class PostServiceTest {
 
         //when
         UserException result = assertThrows(UserException.class,
-                () -> postService.savePost(postRequest, null));
+                () -> postService.saveNewPost(postRequest, null));
 
         //then
         assertThat(result.getErrorResult())
@@ -240,7 +241,7 @@ class PostServiceTest {
 
         //when
         UserException result = assertThrows(UserException.class,
-                () -> postService.savePost(postRequest, parent1.getId()));
+                () -> postService.saveNewPost(postRequest, parent1.getId()));
 
         //then
         assertThat(result.getErrorResult())
@@ -266,7 +267,7 @@ class PostServiceTest {
 
         //when
         BoardException result = assertThrows(BoardException.class,
-                () -> postService.savePost(postRequest, parent1.getId()));
+                () -> postService.saveNewPost(postRequest, parent1.getId()));
 
         //then
         assertThat(result.getErrorResult())
@@ -292,7 +293,7 @@ class PostServiceTest {
 
         //when
         PostException result = assertThrows(PostException.class,
-                () -> postService.savePost(postRequest, parent1.getId()));
+                () -> postService.saveNewPost(postRequest, parent1.getId()));
 
         //then
         assertThat(result.getErrorResult())
@@ -325,7 +326,7 @@ class PostServiceTest {
                 .saveInfoImages(any(), any());
 
         //when
-        Long savedId = postService.savePost(postRequest, parent1.getId());
+        Long savedId = postService.saveNewPost(postRequest, parent1.getId());
         //then
         assertThat(savedId).isEqualTo(post1.getId());
     }
@@ -338,7 +339,7 @@ class PostServiceTest {
                 .findById(parent1.getId());
         //when
         UserException result = assertThrows(UserException.class,
-                () -> postService.deleteById(post1.getId(), parent1.getId()));
+                () -> postService.deletePost(post1.getId(), parent1.getId()));
 
         //then
         assertThat(result.getErrorResult())
@@ -357,7 +358,7 @@ class PostServiceTest {
                 .findById(post1.getId());
         //when
         PostException result = assertThrows(PostException.class,
-                () -> postService.deleteById(post1.getId(), parent1.getId()));
+                () -> postService.deletePost(post1.getId(), parent1.getId()));
 
         //then
         assertThat(result.getErrorResult())
@@ -381,7 +382,7 @@ class PostServiceTest {
                 .findByPostId(post1.getId());
         //when
         PostException result = assertThrows(PostException.class,
-                () -> postService.deleteById(post1.getId(), parent2.getId()));
+                () -> postService.deletePost(post1.getId(), parent2.getId()));
 
         //then
         assertThat(result.getErrorResult())
@@ -404,7 +405,7 @@ class PostServiceTest {
                 .when(commentRepository)
                 .findByPostId(post1.getId());
         //when
-        Long savedId = postService.deleteById(post1.getId(), parent1.getId());
+        Long savedId = postService.deletePost(post1.getId(), parent1.getId());
 
         //then
         assertThat(savedId)
@@ -422,7 +423,7 @@ class PostServiceTest {
                 .findByIdWithUserAndBoardAndCenter(post1.getId());
 
         //when
-        PostResponse resultDTO = postService.findById(null, post1.getId());
+        PostResponse resultDTO = postService.findPostByPostId(null, post1.getId());
 
         //then
         assertThat(objectMapper.writeValueAsString(resultDTO))
@@ -436,7 +437,7 @@ class PostServiceTest {
 
         //when
         UserException result = assertThrows(UserException.class,
-                () -> postService.searchByKeyword("1", null, PageRequest.of(0, 10)));
+                () -> postService.searchPost("1", null, PageRequest.of(0, 10)));
         //then
         assertThat(result.getErrorResult())
                 .isEqualTo(UserErrorResult.NOT_VALID_TOKEN);
@@ -451,7 +452,7 @@ class PostServiceTest {
                 .findById(parent1.getId());
         //when
         UserException result = assertThrows(UserException.class,
-                () -> postService.searchByKeyword("1", parent1.getId(), PageRequest.of(0, 10)));
+                () -> postService.searchPost("1", parent1.getId(), PageRequest.of(0, 10)));
         //then
         assertThat(result.getErrorResult())
                 .isEqualTo(UserErrorResult.USER_NOT_EXIST);
@@ -491,7 +492,7 @@ class PostServiceTest {
 
         //when
         Slice<PostPreviewDto> result = postService
-                .searchByKeyword(keyword, parent1.getId(), PageRequest.of(0, 10));
+                .searchPost(keyword, parent1.getId(), PageRequest.of(0, 10));
         //then
 
         assertThat(objectMapper.writeValueAsString(previewSlice))
@@ -518,7 +519,7 @@ class PostServiceTest {
 
         //when
         Slice<PostPreviewDto> result = postService
-                .searchByKeyword(keyword, teacher2.getId(), PageRequest.of(0, 10));
+                .searchPost(keyword, teacher2.getId(), PageRequest.of(0, 10));
         //then
 
         assertThat(objectMapper.writeValueAsString(previewSlice))
@@ -550,7 +551,7 @@ class PostServiceTest {
 
         //when
         Slice<PostPreviewDto> result = postService
-                .searchByKeyword(keyword, teacher2.getId(), PageRequest.of(0, 10));
+                .searchPost(keyword, teacher2.getId(), PageRequest.of(0, 10));
         //then
 
         assertThat(objectMapper.writeValueAsString(previewSlice))
@@ -567,7 +568,7 @@ class PostServiceTest {
 
         //when
         PostException result = assertThrows(PostException.class,
-                () -> postService.searchByKeywordAndCenter(
+                () -> postService.searchPostByCenter(
                         999L, "1", Auth.PARENT, parent1.getId(), PageRequest.of(0, 10)));
         //then
         assertThat(result.getErrorResult())
@@ -598,7 +599,7 @@ class PostServiceTest {
 
 
         //when
-        Slice<PostPreviewDto> result = postService.searchByKeywordAndCenter(
+        Slice<PostPreviewDto> result = postService.searchPostByCenter(
                 center1.getId(), "1", Auth.PARENT, parent1.getId(), PageRequest.of(0, 10));
         //then
         assertThat(objectMapper.writeValueAsString(result))
@@ -614,7 +615,7 @@ class PostServiceTest {
 
         //when
         PostException result = assertThrows(PostException.class,
-                () -> postService.searchByKeywordAndCenter(
+                () -> postService.searchPostByCenter(
                         center1.getId(), "1", Auth.TEACHER, teacher1.getId(), PageRequest.of(0, 10)));
         //then
         assertThat(result.getErrorResult())
@@ -639,7 +640,7 @@ class PostServiceTest {
                 .findByCenterAndKeyword(center1.getId(), "1", PageRequest.of(0, 10));
 
         //when
-        Slice<PostPreviewDto> result = postService.searchByKeywordAndCenter(
+        Slice<PostPreviewDto> result = postService.searchPostByCenter(
                 center1.getId(), "1", Auth.TEACHER, teacher1.getId(), PageRequest.of(0, 10));
 
         //then
@@ -664,7 +665,7 @@ class PostServiceTest {
                 .findByBoardAndKeyword(board1.getId(), "제목", PageRequest.of(0, 10));
         //when
         Slice<PostPreviewDto> result = postService
-                .searchByKeywordAndBoard(board1.getId(), "제목", PageRequest.of(0, 10));
+                .searchByBoard(board1.getId(), "제목", PageRequest.of(0, 10));
         //then
         assertThat(objectMapper.writeValueAsString(result))
                 .isEqualTo(objectMapper.writeValueAsString(previewSlice));
@@ -681,7 +682,7 @@ class PostServiceTest {
                 .when(postRepository)
                 .findByUser(parent1.getId(), PageRequest.of(0, 10));
         //when
-        Slice<PostPreviewDto> result = postService.searchByUser(parent1.getId(), PageRequest.of(0, 10));
+        Slice<PostPreviewDto> result = postService.findPostByUser(parent1.getId(), PageRequest.of(0, 10));
         //then
         assertThat(objectMapper.writeValueAsString(result))
                 .isEqualTo(objectMapper.writeValueAsString(postPreviewSlice));
@@ -735,7 +736,7 @@ class PostServiceTest {
                 .when(postRepository)
                 .findTop3ByHeartCnt(any(Integer.class), eq(PageRequest.of(0, 3)));
         //when
-        List<BoardPreviewDto> result = postService.searchMainPreview(null);
+        List<BoardPreviewDto> result = postService.findBoardDetailsByPublic(null);
         //then
         System.out.println("result = " + objectMapper.writeValueAsString(result));
         System.out.println("boardPreviews = " + objectMapper.writeValueAsString(boardPreviews));
@@ -751,7 +752,7 @@ class PostServiceTest {
         //when
 
         UserException result = assertThrows(UserException.class,
-                () -> postService.searchCenterMainPreview(null, center1.getId()));
+                () -> postService.findBoardDetailsByCenter(null, center1.getId()));
         //then
         assertThat(result.getErrorResult())
                 .isEqualTo(UserErrorResult.NOT_VALID_TOKEN);
@@ -764,7 +765,7 @@ class PostServiceTest {
                 .when(userRepository)
                 .findById(parent1.getId());
         UserException result = assertThrows(UserException.class,
-                () -> postService.searchCenterMainPreview(parent1.getId(), center1.getId()));
+                () -> postService.findBoardDetailsByCenter(parent1.getId(), center1.getId()));
         //then
         assertThat(result.getErrorResult())
                 .isEqualTo(UserErrorResult.USER_NOT_EXIST);
@@ -779,7 +780,7 @@ class PostServiceTest {
 
         //when
         PostException result = assertThrows(PostException.class,
-                () -> postService.searchCenterMainPreview(parent2.getId(), center1.getId()));
+                () -> postService.findBoardDetailsByCenter(parent2.getId(), center1.getId()));
         //then
         assertThat(result.getErrorResult())
                 .isEqualTo(PostErrorResult.WAITING_OR_REJECT_CANNOT_ACCESS);
@@ -842,7 +843,7 @@ class PostServiceTest {
                 .findTop3(any());
 
         List<BoardPreviewDto> result = postService
-                .searchCenterMainPreview(parent1.getId(), center1.getId());
+                .findBoardDetailsByCenter(parent1.getId(), center1.getId());
         //then
         System.out.println("result = " + objectMapper.writeValueAsString(result));
         System.out.println("result = " + objectMapper.writeValueAsString(boardPreviewList));
@@ -861,7 +862,7 @@ class PostServiceTest {
 
         //when
         PostException result = assertThrows(PostException.class,
-                () -> postService.searchCenterMainPreview(teacher2.getId(), center1.getId()));
+                () -> postService.findBoardDetailsByCenter(teacher2.getId(), center1.getId()));
         //then
         assertThat(result.getErrorResult())
                 .isEqualTo(PostErrorResult.UNAUTHORIZED_USER_ACCESS);
@@ -924,7 +925,7 @@ class PostServiceTest {
                 .findTop3(any());
         //when
 
-        List<BoardPreviewDto> result = postService.searchCenterMainPreview(teacher1.getId(), center1.getId());
+        List<BoardPreviewDto> result = postService.findBoardDetailsByCenter(teacher1.getId(), center1.getId());
         //then
         System.out.println("result = " + objectMapper.writeValueAsString(result));
         System.out.println("result = " + objectMapper.writeValueAsString(boardPreviewList));
@@ -938,7 +939,7 @@ class PostServiceTest {
 
         //when
         UserException result = assertThrows(UserException.class,
-                () -> postService.updateDate(null, post1.getId()));
+                () -> postService.pullUpPost(null, post1.getId()));
         //then
         assertThat(result.getErrorResult())
                 .isEqualTo(UserErrorResult.NOT_VALID_TOKEN);
@@ -952,7 +953,7 @@ class PostServiceTest {
                 .findById(post1.getId());
         //when
         PostException result = assertThrows(PostException.class,
-                () -> postService.updateDate(parent1.getId(), post1.getId()));
+                () -> postService.pullUpPost(parent1.getId(), post1.getId()));
 
         //then
         assertThat(result.getErrorResult())
@@ -967,7 +968,7 @@ class PostServiceTest {
                 .findById(post1.getId());
         //when
         PostException result = assertThrows(PostException.class,
-                () -> postService.updateDate(parent2.getId(), post1.getId()));
+                () -> postService.pullUpPost(parent2.getId(), post1.getId()));
 
         //then
         assertThat(result.getErrorResult())
@@ -983,7 +984,7 @@ class PostServiceTest {
 
         LocalDateTime prev = post1.getPostUpdateDate();
         //when
-        postService.updateDate(parent1.getId(), post1.getId());
+        postService.pullUpPost(parent1.getId(), post1.getId());
 
         //then
         assertThat(post1.getPostUpdateDate())
@@ -1022,7 +1023,7 @@ class PostServiceTest {
                 .findHotPosts(null, Criteria.HOT_POST_HEART_CNT, PageRequest.of(0, 10));
         //when
         Slice<PostPreviewDto> result = postService
-                .findByHeartCnt(null, PageRequest.of(0, 10));
+                .findPostByHeartCnt(null, PageRequest.of(0, 10));
 
         //then
         assertThat(objectMapper.writeValueAsString(result))
@@ -1036,7 +1037,7 @@ class PostServiceTest {
 
         //when
         UserException result = assertThrows(UserException.class,
-                () -> postService.savePostHeart(null, post1.getId()));
+                () -> postHeartService.savePostHeart(null, post1.getId()));
 
         //then
         assertThat(result.getErrorResult())
@@ -1053,7 +1054,7 @@ class PostServiceTest {
 
         //when
         PostException result = assertThrows(PostException.class,
-                () -> postService.savePostHeart(parent1.getId(), post1.getId()));
+                () -> postHeartService.savePostHeart(parent1.getId(), post1.getId()));
 
         //then
         assertThat(result.getErrorResult())
@@ -1074,7 +1075,7 @@ class PostServiceTest {
                 .findByPostAndUser(parent1.getId(), post1.getId());
         //when
         PostException result = assertThrows(PostException.class,
-                () -> postService.savePostHeart(parent1.getId(), post1.getId()));
+                () -> postHeartService.savePostHeart(parent1.getId(), post1.getId()));
 
         //then
         assertThat(result.getErrorResult())
@@ -1102,7 +1103,7 @@ class PostServiceTest {
                 .when(postHeartRepository)
                 .save(any());
         //when
-        Long savedId = postService.savePostHeart(parent1.getId(), post1.getId());
+        Long savedId = postHeartService.savePostHeart(parent1.getId(), post1.getId());
 
         //then
         assertThat(savedId)
