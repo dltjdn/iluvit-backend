@@ -34,25 +34,33 @@
 4️⃣ 아이목록 관리
 - 우리 아이가 다니는 시설을 등록하여 빠르게 소식을 받아볼 수 있습니다.
 
-<!--
-## 🔍 Architecture
--->
+## 💡아키텍쳐 
+
 
 ## 🖥 기술 스택
-<img src="https://img.shields.io/badge/SpringBoot-6DB33F?style=flat&logo=SpringBoot&logoColor=white"/> <img src="https://img.shields.io/badge/SpringSecurity-6DB33F?style=flat&logo=SpringSecurity&logoColor=white"/> <img src="https://img.shields.io/badge/AmazonEC2-FF9900?style=flat&logo=AmazonEC2&logoColor=white"/> <img src="https://img.shields.io/badge/Jenkins-D24939?style=flat&logo=Jenkins&logoColor=white"/> <img src="https://img.shields.io/badge/NGINX-009639?style=flat&logo=NGINX&logoColor=white"/> <img src="https://img.shields.io/badge/JSON Web Tokens-000000?style=flat&logo=JSONWebTokens"/>
+<img src="https://img.shields.io/badge/SpringBoot-6DB33F?style=flat&logo=SpringBoot&logoColor=white"/> <img src="https://img.shields.io/badge/SpringSecurity-6DB33F?style=flat&logo=SpringSecurity&logoColor=white"/> <img src="https://img.shields.io/badge/AmazonEC2-FF9900?style=flat&logo=AmazonEC2&logoColor=white"/> <img src="https://img.shields.io/badge/NGINX-009639?style=flat&logo=NGINX&logoColor=white"/>
+<img src="https://img.shields.io/badge/JSON Web Tokens-000000?style=flat&logo=JSONWebTokens"/><img src="https://img.shields.io/badge/Amazon S3-569A31?style=flat&logo=Amazon S3&logoColor=white"/>
+<img src="https://img.shields.io/badge/GitHub Actions-2088FF?style=flat&logo=GitHub Actions&logoColor=white"/><img src="https://img.shields.io/badge/MySQL-4479A1?style=flat&logo=MySQL&logoColor=white"/><img src="https://img.shields.io/badge/Amazon RDS-527FFF?style=flat&logo=Amazon RDS&logoColor=white"/>
 
 
+## 📘 ERD
+![]()
 
-## ERD
-![](iluviterd.jpeg)
+## 💞 API 명세서
+- [API 명세서 노션 링크](https://half-turn-bb0.notion.site/API-ILUVIT-4f0bd47ebe8c43f1ab3ec475389b3898?pvs=4)
 
 ## 🧑🏻‍💻 Contributors
-| name | position   | github                    |
-|------|------------|---------------------------|
-| 현승구  | BackEnd    | https://github.com/digda5624      |
-| 이승범  | BackEnd | https://github.com/sbl133 |
-| 이창윤  | BackEnd | https://github.com/rooni97 |
-| 최민아  | BackEnd | https://github.com/minah9999 |
+|name|position|github|
+|------|---|---|
+| 현승구 | BackEnd | https://github.com/digda5624 |
+| 이승범 | BackEnd | https://github.com/sbl133 |
+| 이창윤 | BackEnd | https://github.com/rooni97 |
+| 최민아 | BackEnd | https://github.com/minah9999 |
+| 이서우 | BackEnd | https://github.com/dltjdn |
+| 이영은 | BackEnd | https://github.com/ye0ngeun |
+| 박찬희 | BackEnd | https://github.com/cksgml12345 |
+
+
 
 ## ⚙️ Release Note
 ### 2022-09-08
