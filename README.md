@@ -39,8 +39,8 @@
 
 ## 🖥 기술 스택
 <img src="https://img.shields.io/badge/SpringBoot-6DB33F?style=flat&logo=SpringBoot&logoColor=white"/> <img src="https://img.shields.io/badge/SpringSecurity-6DB33F?style=flat&logo=SpringSecurity&logoColor=white"/> <img src="https://img.shields.io/badge/AmazonEC2-FF9900?style=flat&logo=AmazonEC2&logoColor=white"/> <img src="https://img.shields.io/badge/NGINX-009639?style=flat&logo=NGINX&logoColor=white"/>
-<img src="https://img.shields.io/badge/JSON Web Tokens-000000?style=flat&logo=JSONWebTokens"/><img src="https://img.shields.io/badge/Amazon S3-569A31?style=flat&logo=Amazon S3&logoColor=white"/>
-<img src="https://img.shields.io/badge/GitHub Actions-2088FF?style=flat&logo=GitHub Actions&logoColor=white"/><img src="https://img.shields.io/badge/MySQL-4479A1?style=flat&logo=MySQL&logoColor=white"/><img src="https://img.shields.io/badge/Amazon RDS-527FFF?style=flat&logo=Amazon RDS&logoColor=white"/>
+<img src="https://img.shields.io/badge/JSON Web Tokens-000000?style=flat&logo=JSONWebTokens"/> <img src="https://img.shields.io/badge/Amazon S3-569A31?style=flat&logo=Amazon S3&logoColor=white"/>
+<img src="https://img.shields.io/badge/GitHub Actions-2088FF?style=flat&logo=GitHub Actions&logoColor=white"/> <img src="https://img.shields.io/badge/MySQL-4479A1?style=flat&logo=MySQL&logoColor=white"/> <img src="https://img.shields.io/badge/Amazon RDS-527FFF?style=flat&logo=Amazon RDS&logoColor=white"/>
 
 
 ## 📘 ERD
@@ -49,19 +49,27 @@
 ## 💞 API 명세서
 - [API 명세서 노션 링크](https://half-turn-bb0.notion.site/API-ILUVIT-4f0bd47ebe8c43f1ab3ec475389b3898?pvs=4)
 
+## 📍 커밋 컨벤션
+<img width="727" alt="스크린샷 2023-06-29 오후 5 37 21" src="https://github.com/FISOLUTION/BE_ILUVIT/assets/78267146/14bc458e-3879-4a6d-84a5-a45d075e6d92">
+
+## 📝 브랜치 전략
+<img width="730" alt="스크린샷 2023-06-29 오후 5 36 33" src="https://github.com/FISOLUTION/BE_ILUVIT/assets/78267146/9be83d24-2020-4671-b99c-37a32c1fb90a">
+
 ## 🧑🏻‍💻 Contributors
-|name|position|github|
+| name |position|github|
 |------|---|---|
-| 현승구 | BackEnd | https://github.com/digda5624 |
-| 이승범 | BackEnd | https://github.com/sbl133 |
-| 이창윤 | BackEnd | https://github.com/rooni97 |
-| 최민아 | BackEnd | https://github.com/minah9999 |
-| 이서우 | BackEnd | https://github.com/dltjdn |
-| 이영은 | BackEnd | https://github.com/ye0ngeun |
-| 박찬희 | BackEnd | https://github.com/cksgml12345 |
+| 현승구  | BackEnd | https://github.com/digda5624 | 2021.06 ~ 2022.12 |
+| 이승범  | BackEnd | https://github.com/sbl133 | 2022.01 ~ 2022.09 |
+| 이창윤  | BackEnd | https://github.com/rooni97 | 2022.01 ~ 2022.12 |
+| 박찬희  | BackEnd | https://github.com/cksgml12345 | 2022.03 ~ |
+| 최민아  | BackEnd | https://github.com/minah9999 | 2022.06 ~ 2022.10 |
+| 이서우  | BackEnd | https://github.com/dltjdn | 2023.01 ~ |
+| 이영은  | BackEnd | https://github.com/ye0ngeun | 2023.01 ~ |
 
 
 
 ## ⚙️ Release Note
 ### 2022-09-08
 > Readme 파일 생성
+### 2023-07
+> 릴리즈 version 1.0.0
