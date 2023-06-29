@@ -19,5 +19,4 @@ import static org.assertj.core.api.Assertions.*;
 public class CenterBookmarkRepositoryTest {
 
     // TODO find By User Id And Center Id
-
 }
