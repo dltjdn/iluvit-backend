@@ -1,33 +1,7 @@
 package FIS.iLUVit.service;
 
-import FIS.iLUVit.Creator;
-import FIS.iLUVit.dto.auth.AuthNumRequest;
-import FIS.iLUVit.dto.auth.FindPasswordRequest;
-import FIS.iLUVit.domain.AuthNumber;
-import FIS.iLUVit.domain.Parent;
-import FIS.iLUVit.domain.Teacher;
-import FIS.iLUVit.domain.User;
-import FIS.iLUVit.domain.enumtype.AuthKind;
-import FIS.iLUVit.exception.AuthNumberErrorResult;
-import FIS.iLUVit.exception.AuthNumberException;
-import FIS.iLUVit.repository.AuthRepository;
-import FIS.iLUVit.repository.UserRepository;
-import FIS.iLUVit.stub.MessageServiceStub;
-import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
-import org.mockito.Spy;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-
-import java.time.LocalDateTime;
-import java.util.Optional;
-
-import static FIS.iLUVit.Creator.createAuthNumber;
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 public class AuthServiceTest {
