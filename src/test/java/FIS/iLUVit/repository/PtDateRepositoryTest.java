@@ -1,23 +1,10 @@
 package FIS.iLUVit.repository;
 
 import FIS.iLUVit.config.argumentResolver.ForDB;
-import FIS.iLUVit.domain.*;
-import FIS.iLUVit.domain.enumtype.Auth;
-import FIS.iLUVit.domain.enumtype.Status;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
-import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.context.annotation.ComponentScan;
-import org.springframework.transaction.annotation.Transactional;
-
-import javax.persistence.EntityManager;
-import java.time.LocalDate;
-
-import static FIS.iLUVit.Creator.*;
-import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 
 @DataJpaTest(includeFilters = @ComponentScan.Filter(ForDB.class))
 class PtDateRepositoryTest {
