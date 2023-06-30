@@ -7,7 +7,7 @@ import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.context.annotation.ComponentScan;
 
 @DataJpaTest(includeFilters = @ComponentScan.Filter(ForDB.class))
-public class PresentationRepositoryTest {
+public class PresentationRepositoryTest
 
     @Nested
     @DisplayName("설명회_필터_검색")
