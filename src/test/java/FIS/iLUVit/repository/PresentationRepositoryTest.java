@@ -29,7 +29,7 @@ public class PresentationRepositoryTest {
 
     @Nested
     @DisplayName("설명회_필터_검색")
-    class FindByFilter{
+    class FindByFilter {
 
         // TODO 설명회_검색_결과_없음
 
@@ -38,9 +38,10 @@ public class PresentationRepositoryTest {
 
     @Nested
     @DisplayName("시설 상세보기에서 설명회 버튼 눌렀을 때 조회 될 내용")
-    class 설명회버튼조회내용{
+    class 설명회버튼조회내용 {
 
         // TODO 학부모의 시설 설명회 상세보기 로그인 X
 
         // TODO 학부모 시dpdpeenpii
+    }
 }
