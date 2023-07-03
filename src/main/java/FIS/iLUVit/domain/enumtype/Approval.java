@@ -1,5 +1,5 @@
 package FIS.iLUVit.domain.enumtype;
 
-public enumApproval {
+public enum Approval {
     WAITING, ACCEPT, REJECT
 }

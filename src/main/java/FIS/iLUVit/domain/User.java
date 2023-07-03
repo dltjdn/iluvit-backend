@@ -43,16 +43,11 @@ public class User extends BaseImageEntity {
     protected Boolean readAlarm; // 알림 모두 읽음 or 안 읽은 알림 있음
 
     @Enumerated(EnumType.STRING)
-    protected Auth auth;                   // 교사, 원장, 부모
+    protected Auth auth;                   // Teacher or Director or Parent
 
     @Column(name = "dtype", insertable = false, updatable = false)
     protected String dtype;               // Teacher or Parent
 
-    @OneToMany(mappedBy = "receiver")
-    protected List<Chat> receiveChats = new ArrayList<>();
-
-    @OneToMany(mappedBy = "sender")
-    protected List<Chat> sendChats = new ArrayList<>();
 
     public void changePassword(String newPwd) {
         this.password = newPwd;
