@@ -19,6 +19,10 @@ import java.util.Date;
 
 public class Creator {
 
+    /*
+        Parent 객체를 생성하는 메서드로, 주어진 파라미터와 기본값으로 Parent 객체의 속성을 설정하여 생성합니다. 이를 통해 간편하게 Parent 객체를 생성하고 초기화할 수 있습니다.
+     */
+
     public static Parent createParent(String phoneNum){
         return Parent.builder()
                 .id(-1L)
@@ -32,6 +36,10 @@ public class Creator {
                 .detailAddress("detailAddress")
                 .build();
     }
+
+    /*
+        Parent 객체를 생성하는 메서드로, 주어진 파라미터와 기본값으로 Parent 객체의 속성을 설정하여 생성합니다. userId 파라미터를 사용하여 Parent 객체의 식별자를 설정하고, 나머지 속성은 기본값으로 설정됩니다. 이를 통해 간편하게 Parent 객체를 생성하고 초기화할 수 있습니다.
+     */
 
     public static Parent createParent(Long userId){
         return Parent.builder()
