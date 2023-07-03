@@ -41,9 +41,6 @@ public class ChatRoom extends BaseEntity {
     @JoinColumn(name = "comment_id")
     private Comment comment;
 
-    @OneToMany(mappedBy = "chatRoom")
-    private List<Chat> chatList = new ArrayList<>();
-
     public ChatRoom(User receiver, User sender, Post post, Boolean anonymous) {
         this.date = LocalDate.now();
         this.time = LocalTime.now();
@@ -51,21 +48,6 @@ public class ChatRoom extends BaseEntity {
         this.sender = sender;
         this.post = post;
         this.anonymous = anonymous;
-    }
-
-    @Builder(toBuilder = true)
-    public ChatRoom(Long id, LocalDate date, LocalTime time, String message, Long partner_id, Boolean anonymous, User receiver, User sender, Post post, Comment comment, List<Chat> chatList) {
-        this.id = id;
-        this.date = date;
-        this.time = time;
-        this.message = message;
-        this.partner_id = partner_id;
-        this.anonymous = anonymous;
-        this.receiver = receiver;
-        this.sender = sender;
-        this.post = post;
-        this.comment = comment;
-        this.chatList = chatList;
     }
 
     public void updateComment(Comment comment) {
