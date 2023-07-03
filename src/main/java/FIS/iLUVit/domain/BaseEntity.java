@@ -35,8 +35,4 @@ public class BaseEntity {
         return this;
     }
 
-    public BaseEntity setUpdateDateForTest(LocalDateTime localDateTime) {
-        this.updatedDate = localDateTime;
-        return this;
-    }
 }
