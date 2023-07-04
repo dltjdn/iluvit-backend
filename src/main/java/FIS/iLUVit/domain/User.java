@@ -1,5 +1,6 @@
 package FIS.iLUVit.domain;
 
+import FIS.iLUVit.domain.embeddable.Location;
 import FIS.iLUVit.dto.user.UserResponse;
 import FIS.iLUVit.domain.enumtype.Auth;
 import FIS.iLUVit.security.LoginResponse;
@@ -9,8 +10,6 @@ import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Objects;
 
 @Entity
@@ -102,10 +101,7 @@ public class User extends BaseImageEntity {
         this.profileImagePath = "";
         this.infoImagePath = null;
         this.imgCnt = null;
-        this.location.latitude = null;
-        this.location.sido=null;
-        this.location.longitude=null;
-        this.location.sigungu=null;
+        this.location = null;
         this.auth=null;
         this.dtype=null;
     }

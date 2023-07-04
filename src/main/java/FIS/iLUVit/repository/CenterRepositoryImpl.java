@@ -1,7 +1,7 @@
 package FIS.iLUVit.repository;
 
 import FIS.iLUVit.dto.center.*;
-import FIS.iLUVit.domain.Location;
+import FIS.iLUVit.domain.embeddable.Location;
 import FIS.iLUVit.domain.embeddable.Area;
 import FIS.iLUVit.domain.embeddable.Theme;
 import FIS.iLUVit.domain.enumtype.KindOf;

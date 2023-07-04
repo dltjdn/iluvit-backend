@@ -1,6 +1,7 @@
 package FIS.iLUVit.service;
 
 import FIS.iLUVit.domain.*;
+import FIS.iLUVit.domain.embeddable.Location;
 import FIS.iLUVit.dto.center.CenterBannerResponse;
 import FIS.iLUVit.dto.center.CenterDetailRequest;
 import FIS.iLUVit.dto.center.CenterRecommendDto;

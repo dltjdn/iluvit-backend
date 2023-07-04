@@ -1,5 +1,6 @@
 package FIS.iLUVit.service;
 
+import FIS.iLUVit.domain.embeddable.Location;
 import FIS.iLUVit.dto.parent.ParentDetailRequest;
 import FIS.iLUVit.dto.parent.ParentDetailResponse;
 import FIS.iLUVit.dto.parent.SignupParentRequest;
