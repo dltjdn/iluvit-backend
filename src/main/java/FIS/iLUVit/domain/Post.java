@@ -54,11 +54,11 @@ public class Post extends BaseImageEntity {
     @OneToMany(mappedBy = "post")
     private List<Comment> comments = new ArrayList<>();
 
-    @OneToMany(mappedBy = "post", cascade = CascadeType.ALL)
-    private List<ScrapPost> scrapPosts = new ArrayList<>();
+//    @OneToMany(mappedBy = "post", cascade = CascadeType.ALL)
+//    private List<ScrapPost> scrapPosts = new ArrayList<>();
 
     @Builder(toBuilder = true)
-    public Post(Long id, String title, String content, Boolean anonymous, LocalDate date, LocalTime time, Integer commentCnt, Integer heartCnt, Integer imgCnt, Integer videoCnt, LocalDateTime postCreateDate, LocalDateTime postUpdateDate, Board board, User user, List<PostHeart> postHearts, List<Comment> comments, List<ScrapPost> scrapPosts, Integer anonymousOrder) {
+    public Post(Long id, String title, String content, Boolean anonymous, LocalDate date, LocalTime time, Integer commentCnt, Integer heartCnt, Integer imgCnt, Integer videoCnt, LocalDateTime postCreateDate, LocalDateTime postUpdateDate, Board board, User user, List<PostHeart> postHearts, List<Comment> comments, Integer anonymousOrder) {
         this.id = id;
         this.title = title;
         this.content = content;
@@ -75,7 +75,6 @@ public class Post extends BaseImageEntity {
         this.user = user;
         this.postHearts = postHearts;
         this.comments = comments;
-        this.scrapPosts = scrapPosts;
         this.anonymousOrder = anonymousOrder;
     }
 

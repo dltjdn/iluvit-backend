@@ -108,9 +108,9 @@ public class ParticipationService {
             throw new UserException(UserErrorResult.NOT_LOGIN);
         // 학부모 조회
         Parent parent = parentRepository.findMyParticipation(userId);
-        parentRepository.findMyWaiting(userId);
 
-        List<ParticipationListDto> participationListDtos = parent.getParticipations().stream()
+
+        List<ParticipationListDto> participationListDtos = participationRepository.findByParent(parent).stream()
                 .map(ParticipationListDto::createDto)
                 .collect(Collectors.toList());
 

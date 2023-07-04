@@ -63,15 +63,6 @@ public interface PostRepository extends JpaRepository<Post, Long>, PostRepositor
     List<Post> findTop3ByHeartCntWithCenter(@Param("heartCnt") int heartCnt, @Param("centerId") Long centerId,
                                             Pageable pageable);
 
-    /*
-        게시글 스크랩 id로 게시글을 불러옵니다.
-     */
-    @Query("select p " +
-            "from Post p " +
-            "join fetch p.scrapPosts sp " +
-            "join fetch sp.scrap s " +
-            "where s.id = :scrapId")
-    Slice<Post> findByScrap(@Param("scrapId") Long scrapId);
 
     /*
         게시판에 있는 게시글 id로 게시글을 불러옵니다.
