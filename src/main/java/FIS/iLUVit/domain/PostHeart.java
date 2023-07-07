@@ -29,7 +29,6 @@ public class PostHeart extends BaseEntity {
     public PostHeart(User user, Post post) {
         this.user = user;
         this.post = post;
-        post.updatePostHeart(this);
     }
 
     @Builder(toBuilder = true)
