@@ -8,7 +8,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 @ExtendWith(MockitoExtension.class)
 public class AuthControllerTest {
 
-    // TODO 회원가입인증번호받기_실패_이미가입된번호
+    // 기TODO 회원가입인증번호받기_실패_이미가입된번호
 
     // TODO 인증번호받기_실패_유효시간남음
 

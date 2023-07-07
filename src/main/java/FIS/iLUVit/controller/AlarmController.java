@@ -1,13 +1,13 @@
 package FIS.iLUVit.controller;
 
 import FIS.iLUVit.config.argumentResolver.Login;
+import FIS.iLUVit.dto.alarm.AlarmResponseDto;
 import FIS.iLUVit.dto.alarm.AlarmRequest;
-import FIS.iLUVit.dto.alarm.AlarmDetailDto;
+import FIS.iLUVit.dto.alarm.AlarmDetailResponseDto;
 import FIS.iLUVit.service.AlarmService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Slice;
 import org.springframework.web.bind.annotation.*;
 
 
@@ -22,29 +22,35 @@ public class AlarmController {
     /**
      * COMMON
      */
-
     /**
-     * 알림 목록 삭제
-     */
-    @DeleteMapping("")
-    public Integer deleteAlarm(@Login Long userId, @RequestBody AlarmRequest request) {
-        return alarmService.deleteSelectedAlarm(userId, request.getAlarmIds());
-    }
-
-    /**
-     * 활동 알림 조회
+     작성날짜: 2023/07/07 7:35 PM
+     작성자: 이서우
+     작성내용: 활동 알림을 조회합니다
      */
     @GetMapping("active")
-    public Slice<AlarmDetailDto> getActiveAlarm(@Login Long userId, Pageable pageable){
+    public AlarmDetailResponseDto getActiveAlarm(@Login Long userId, Pageable pageable){
         return alarmService.findActiveAlarmByUser(userId, pageable);
     }
 
     /**
-     * 설명회 알림 조회
+     작성날짜: 2023/07/07 7:36 PM
+     작성자: 이서우
+     작성내용: 설명회 알림을 조회합니다
      */
     @GetMapping("presentation")
-    public Slice<AlarmDetailDto> getPresentationAlarm(@Login Long userId, Pageable pageable){
+    public AlarmDetailResponseDto getPresentationAlarm(@Login Long userId, Pageable pageable){
         return alarmService.findPresentationActiveAlarmByUser(userId, pageable);
+    }
+
+
+    /**
+     작성날짜: 2023/07/07 7:49 PM
+     작성자: 이서우
+     작성내용: 전체 알림 읽었다고 처리하기
+     */
+    @GetMapping("read")
+    public AlarmResponseDto readAlarm(@Login Long userId){
+        return alarmService.readAlarm(userId);
     }
 
     /**
@@ -55,22 +61,25 @@ public class AlarmController {
         return alarmService.hasRead(userId);
     }
 
+
     /**
-     * 전체 알림 읽었다고 처리하기
+     작성날짜: 2023/07/07 7:25 PM
+     작성자: 이서우
+     작성내용: 선택한 알림들을 삭제합니다
      */
-    @GetMapping("read")
-    public void readAlarm(@Login Long userId){
-        alarmService.readAlarm(userId);
+    @DeleteMapping("")
+    public AlarmResponseDto deleteAlarm(@Login Long userId, @RequestBody AlarmRequest request) {
+        return alarmService.deleteSelectedAlarm(userId, request.getAlarmIds());
     }
 
-
     /**
-     *   작성자: 이서우
-     *   작성내용: 해당 유저의 알림 전체 삭제
+     작성날짜: 2023/07/07 7:26 PM
+     작성자: 이서우
+     작성내용: 모든 알림을 삭제합니다
      */
     @DeleteMapping("all")
-    public void deleteAllAlarm(@Login Long userId) {
-        alarmService.deleteAllAlarm(userId);
+    public AlarmResponseDto deleteAllAlarm(@Login Long userId) {
+        return alarmService.deleteAllAlarm(userId);
 
     }
 }
