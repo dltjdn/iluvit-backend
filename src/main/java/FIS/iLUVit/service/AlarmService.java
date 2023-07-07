@@ -91,7 +91,7 @@ public class AlarmService {
     /**
         작성날짜: 2023/07/07 7:57 PM
         작성자: 이서우
-        작성내용: 전체 알림 읽었는지 안 읽었는지 여부
+        작성내용: 전체 알림 읽었는지 안 읽었는지 여부를 조회합니다
     */
     public AlarmReadResponseDto hasRead(Long userId) {
         if(userId == null)

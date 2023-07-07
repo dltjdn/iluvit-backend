@@ -54,10 +54,14 @@ public interface AlarmRepository extends JpaRepository<Alarm, Long> {
     */
     void deleteAllByUser(User user);
 
-    /*
+
+    /**
+     * @@@ 알림 디비 리팩토링 후 삭제 예정 @@@
      게시글 알람 id가 게시글 id인 것들의 게시글 id를 null로 업데이트합니다.
- */
+     *
+    */
     @Modifying(clearAutomatically = true)
     @Query("update PostAlarm pa set pa.postId = null where pa.postId = :postId")
     Integer setPostIsNull(@Param("postId") Long postId);
+
 }

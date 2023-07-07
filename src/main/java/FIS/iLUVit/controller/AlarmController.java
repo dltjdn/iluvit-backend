@@ -55,7 +55,9 @@ public class AlarmController {
     }
 
     /**
-     * 전체 알림 읽었는지 안 읽었는지 받아오기
+     작성날짜: 2023/07/07 7:57 PM
+     작성자: 이서우
+     작성내용: 전체 알림 읽었는지 안 읽었는지 여부를 조회합니다
      */
     @GetMapping("is-read")
     public AlarmReadResponseDto hasRead(@Login Long userId){
