@@ -30,11 +30,4 @@ public class PostHeart extends BaseEntity {
         this.user = user;
         this.post = post;
     }
-
-    @Builder(toBuilder = true)
-    public PostHeart(Long id, User user, Post post) {
-        this.id = id;
-        this.user = user;
-        this.post = post;
-    }
 }

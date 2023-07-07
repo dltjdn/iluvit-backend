@@ -66,25 +66,9 @@ public class PtDate extends BaseEntity {
         return ptDate;
     }
 
-    public static PtDate createPtDate(LocalDate date, String time, Integer ablePersonNum, Integer waitingCnt, Presentation presentation) {
-        return PtDate.builder()
-                .date(date)
-                .time(time)
-                .ablePersonNum(ablePersonNum)
-                .participantCnt(0)
-                .waitingCnt(waitingCnt)
-                .presentation(presentation)
-                .build();
-    }
-
     // 일정을 취소할 경우 participantCnt 값을 줄인다
     public void cancelParticipation() {
         participantCnt--;
-    }
-
-    public void canWait() {
-        if (ablePersonNum > participantCnt)
-            throw new PresentationException("정원이 가득 차지 않아 대기를 할 필요없습니다. 설명회 신청을 해주세요");
     }
 
     public PtDate acceptWaiting(Waiting waiting) {

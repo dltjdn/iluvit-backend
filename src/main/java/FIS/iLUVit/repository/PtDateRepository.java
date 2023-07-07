@@ -37,10 +37,6 @@ public interface PtDateRepository extends JpaRepository<PtDate, Long> {
         설명회 날짜 id에 해당하는 설명회 날짜 객체를 가져오고 waiting의 parent 객체를 포함하여 설명회 날짜로 불러옵니다.
      */
     @Query("select distinct ptDate from PtDate ptDate " +
-            "left join fetch ptDate.waitings as waiting " +
-            "left join fetch ptDate.presentation as presentation " +
-            "left join fetch presentation.center " +
-            "left join fetch waiting.parent " +
             "where ptDate.id = :ptDateId")
     Optional<PtDate> findByIdWithWaitingAndPresentationAndCenterAndParent(@Param("ptDateId") Long ptDateId);
 
@@ -55,8 +51,6 @@ public interface PtDateRepository extends JpaRepository<PtDate, Long> {
         설명회 대기 등록을 위한 ptDate 정보를 가져옵니다.
      */
     @Query("select distinct ptDate from PtDate ptDate " +
-            "left join fetch ptDate.presentation as presentation " +
-            "left join fetch ptDate.waitings as waiting " +
             "where ptDate.id = :id ")
     Optional<PtDate> findByIdWith(@Param("id") Long id);
 }

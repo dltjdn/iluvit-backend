@@ -40,7 +40,8 @@ public class WaitingService {
             throw new PresentationException(PresentationErrorResult.PARTICIPATION_PERIOD_PASSED);
 
         // 대기 등록을 이미 했을 경우 error Throw
-        ptDate.getWaitings().forEach(waiting -> {
+
+        waitingRepository.findByPtDate(ptDate).forEach(waiting -> {
             if(waiting.getParent().getId().equals(userId))
                 throw new PresentationException(PresentationErrorResult.ALREADY_WAITED_IN);
         });
