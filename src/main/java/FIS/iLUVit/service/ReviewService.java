@@ -26,6 +26,7 @@ import java.util.Objects;
 public class ReviewService {
 
     private final ReviewRepository reviewRepository;
+    private final ReviewHeartRepository reviewHeartRepository;
     private final TeacherRepository teacherRepository;
     private final ParentRepository parentRepository;
     private final CenterRepository centerRepository;
@@ -104,14 +105,15 @@ public class ReviewService {
 
         Slice<ReviewByCenterDto> reviewByCenterDtos = reviews.map(review -> {
 
-            Integer like = review.getReviewHearts().size();
+            int reviewHeartNum = reviewHeartRepository.findByReview(review).size();
+
             Long teacherId = review.getTeacher() == null ? null : review.getTeacher().getId();
 
             return new ReviewByCenterDto(
                     review.getId(), review.getParent().getId(), review.getParent().getNickName(), review.getContent(), review.getScore(),
                     review.getCreateDate(), review.getCreateTime(), review.getUpdateDate(), review.getUpdateTime(),
                     teacherId, review.getAnswer(), review.getAnswerCreateDate(), review.getAnswerCreateTime(),
-                    review.getAnonymous(), like, imageService.getProfileImage(review.getParent())
+                    review.getAnonymous(), reviewHeartNum, imageService.getProfileImage(review.getParent())
             );
         });
 

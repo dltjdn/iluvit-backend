@@ -230,7 +230,7 @@ public class PresentationService {
                 .orElseThrow(() -> new UserException("존재하지 않는 유저입니다"))
                 .canRead(ptDate.getPresentation().getCenter().getId());
 
-        return ptDate.getWaitings().stream()
+        return waitingRepository.findByPtDate(ptDate).stream()
                 .map(participation -> new ParentDto(participation.getParent()))
                 .collect(Collectors.toList());
     }

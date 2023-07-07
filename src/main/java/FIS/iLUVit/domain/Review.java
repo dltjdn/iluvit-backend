@@ -46,8 +46,6 @@ public class Review extends BaseEntity{
     @JoinColumn(name = "center_id")
     private Center center;
 
-    @OneToMany(mappedBy = "review")
-    private List<ReviewHeart> reviewHearts = new ArrayList<>();
 
     public static Review createReview(String content, Integer score, Boolean anonymous, Parent parent, Center center) {
         Review review = new Review();

@@ -66,4 +66,6 @@ public interface WaitingRepository extends JpaRepository<Waiting, Long> {
      */
     List<Waiting> findByParent(Parent parent);
 
+    List<Waiting> findByPtDate(PtDate ptDate);
+
 }

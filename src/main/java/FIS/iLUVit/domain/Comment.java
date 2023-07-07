@@ -37,9 +37,6 @@ public class Comment extends BaseEntity {
     @JoinColumn(name = "user_id")
     private User user;
 
-    @OneToMany(mappedBy = "comment")
-    private List<CommentHeart> commentHearts = new ArrayList<>();
-
     @OneToMany(mappedBy = "parentComment")
     private List<Comment> subComments = new ArrayList<>();
 
@@ -65,16 +62,8 @@ public class Comment extends BaseEntity {
         parentComment.getSubComments().add(this);
     }
 
-    public void updateContent(String content) {
-        this.content = content;
-    }
-
-    public void updateUser(User user) {
-        this.user = user;
-    }
-
     @Builder(toBuilder = true)
-    public Comment(Long id, LocalDate date, LocalTime time, Boolean anonymous, String content, Integer anonymousOrder, Integer heartCnt, Post post, User user, List<CommentHeart> commentHearts, List<Comment> subComments, Comment parentComment) {
+    public Comment(Long id, LocalDate date, LocalTime time, Boolean anonymous, String content, Integer anonymousOrder, Integer heartCnt, Post post, User user, List<Comment> subComments, Comment parentComment) {
         this.id = id;
         this.date = date;
         this.time = time;
@@ -84,7 +73,6 @@ public class Comment extends BaseEntity {
         this.heartCnt = heartCnt;
         this.post = post;
         this.user = user;
-        this.commentHearts = commentHearts;
         this.subComments = subComments;
         this.parentComment = parentComment;
     }
