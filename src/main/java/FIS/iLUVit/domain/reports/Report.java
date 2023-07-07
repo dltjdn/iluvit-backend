@@ -37,9 +37,6 @@ public class Report extends BaseEntity {
     @JoinColumn(name = "target_user_id")
     private User targetUser;                         // 피신고자(해당 게시글,댓글의 작성자)
 
-    @OneToMany(mappedBy = "report")
-    private List<ReportDetail> reportDetails = new ArrayList<>();
-
     @Builder
     public Report(Long id, Long targetId, ReportType type, int count, LocalDate date, LocalTime time, ReportStatus status, User targetUser){
         this.id = id;
@@ -64,10 +61,6 @@ public class Report extends BaseEntity {
 
     public void plusCount() {
         this.count +=1;
-    }
-
-    public void updateReportDetail(ReportDetail reportDetail){
-        this.reportDetails.add(reportDetail);
     }
 
     public void updateStatus() {
