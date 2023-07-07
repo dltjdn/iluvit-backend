@@ -1,6 +1,7 @@
 package FIS.iLUVit.service;
 
 import FIS.iLUVit.domain.User;
+import FIS.iLUVit.dto.alarm.AlarmReadResponseDto;
 import FIS.iLUVit.dto.alarm.AlarmResponseDto;
 import FIS.iLUVit.dto.alarm.AlarmDetailDto;
 import FIS.iLUVit.domain.alarms.Alarm;
@@ -92,14 +93,19 @@ public class AlarmService {
         작성자: 이서우
         작성내용: 전체 알림 읽었는지 안 읽었는지 여부
     */
-    public Boolean hasRead(Long userId) {
+    public AlarmReadResponseDto hasRead(Long userId) {
         if(userId == null)
             throw new UserException(UserErrorResult.NOT_LOGIN);
-        return userRepository.findById(userId)
+        Boolean readAlarm = userRepository.findById(userId)
                 .orElseThrow(() -> new UserException(UserErrorResult.USER_NOT_EXIST))
                 .getReadAlarm();
 
-
+        return new AlarmReadResponseDto(
+                "전체 알림 읽었는지 안 읽었는지 여부 조회 성공",
+                HttpServletResponse.SC_OK,
+                true,
+                readAlarm
+        );
     }
 
     /**

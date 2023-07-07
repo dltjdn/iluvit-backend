@@ -1,6 +1,7 @@
 package FIS.iLUVit.controller;
 
 import FIS.iLUVit.config.argumentResolver.Login;
+import FIS.iLUVit.dto.alarm.AlarmReadResponseDto;
 import FIS.iLUVit.dto.alarm.AlarmResponseDto;
 import FIS.iLUVit.dto.alarm.AlarmRequest;
 import FIS.iLUVit.dto.alarm.AlarmDetailResponseDto;
@@ -57,7 +58,7 @@ public class AlarmController {
      * 전체 알림 읽었는지 안 읽었는지 받아오기
      */
     @GetMapping("is-read")
-    public Boolean hasRead(@Login Long userId){
+    public AlarmReadResponseDto hasRead(@Login Long userId){
         return alarmService.hasRead(userId);
     }
 
