@@ -6,7 +6,7 @@ import lombok.AllArgsConstructor;
 public class AlarmResponseDto {
     private String message;
     private Integer status;
-    private Boolean success;
+    private Boolean data;
 
 }
 
