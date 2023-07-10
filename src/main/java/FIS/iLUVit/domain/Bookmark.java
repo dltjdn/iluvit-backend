@@ -43,10 +43,4 @@ public class Bookmark extends BaseEntity {
         return bookmark;
     }
 
-    @Builder(toBuilder = true)
-    public Bookmark(Long id, Board board, User user) {
-        this.id = id;
-        this.board = board;
-        this.user = user;
-    }
 }

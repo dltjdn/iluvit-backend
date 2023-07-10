@@ -35,10 +35,6 @@ public class Parent extends User {
     @OneToMany(mappedBy = "parent")
     private List<Waiting> waitings = new ArrayList<>();
 
-    @OneToMany(mappedBy = "parent")
-    private List<Prefer> prefers = new ArrayList<>();
-
-
     @Builder
     public Parent(Long id, String nickName, String loginId, String password, String phoneNumber, String emailAddress, String name, Theme theme, Integer interestAge, Auth auth, String address, String detailAddress, Boolean readAlarm) {
         this.id = id;

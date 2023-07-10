@@ -11,7 +11,6 @@ import FIS.iLUVit.security.LoginResponse;
 import FIS.iLUVit.security.uesrdetails.PrincipalDetails;
 import com.auth0.jwt.exceptions.JWTVerificationException;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -22,9 +21,6 @@ import org.springframework.transaction.annotation.Transactional;
 import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.Optional;
-
-import static java.util.stream.Collectors.toList;
 
 @Service
 @Transactional
@@ -46,7 +42,7 @@ public class UserService {
      * 작성자: 이승범
      * 작성내용: 사용자 기본정보(id, nickname, auth) 반환
      */
-    public UserResponse findUserInfo(Long id) {
+    public UserResponse findUserDetails(Long id) {
         User findUser = userRepository.findById(id)
                 .orElseThrow(() -> new UserException(UserErrorResult.NOT_VALID_TOKEN));
         return findUser.getUserInfo();
@@ -56,7 +52,7 @@ public class UserService {
     *   작성자: 이승범
     *   작성내용: 비밀번호 변경
     */
-    public User updatePassword(Long id, PasswordRequest request) {
+    public User changePassword(Long id, PasswordRequest request) {
 
         User findUser = userRepository.findById(id)
                 .orElseThrow(() -> new UserException(UserErrorResult.NOT_VALID_TOKEN));
@@ -73,7 +69,7 @@ public class UserService {
     }
 
     // 회원가입 학부모, 교사 공통 로직(유효성 검사 및 비밀번호 해싱)
-    public String signupValidation(String password, String passwordCheck, String loginId, String phoneNum, String nickName) {
+    public String hashAndValidatePwdForSignup(String password, String passwordCheck, String loginId, String phoneNum, String nickName) {
 
         // 비밀번호 확인
         if (!password.equals(passwordCheck)) {
@@ -135,7 +131,7 @@ public class UserService {
      *   작성자: 이승범
      *   작성내용: refreshToken으로 accessToken를 재발급
      */
-    public LoginResponse refresh(TokenRefreshRequest request) {
+    public LoginResponse refreshAccessToken(TokenRefreshRequest request) {
 
         String requestRefreshToken = request.getRefreshToken().replace("Bearer ", "");
 
@@ -178,7 +174,7 @@ public class UserService {
     *   작성자: 이승범
     *   작성내용: 로그인아이디 중복 확인
     */
-    public void checkLoginId(CheckLoginIdRequest request) {
+    public void checkLoginIdAvailability(CheckLoginIdRequest request) {
         userRepository.findByLoginId(request.getLoginId())
                 .ifPresent((user)->{
                     throw new UserException(UserErrorResult.ALREADY_LOGINID_EXIST);
@@ -189,7 +185,7 @@ public class UserService {
     *   작성자: 이승범
     *   작성내용: 닉네임 중복 확인
     */
-    public void checkNickname(CheckNicknameRequest request) {
+    public void checkNicknameAvailability(CheckNicknameRequest request) {
         userRepository.findByNickName(request.getNickname())
                 .ifPresent((user)->{
                     throw new UserException(UserErrorResult.ALREADY_NICKNAME_EXIST);

@@ -47,16 +47,16 @@ public class SecurityConfig {
                 .and()
                 .authorizeRequests()
                 .requestMatchers(CorsUtils::isPreFlightRequest).permitAll()
-                .antMatchers("/center-bookmark/**")
-                .access("hasRole('PARENT')")
-                .antMatchers("/parent/**")
-                .access("hasRole('PARENT')")
-                .antMatchers("/participation/**")
-                .access("hasRole('PARENT')")
+                .antMatchers("/teacher/search/center/**").permitAll()
+                .antMatchers("/teacher/signup/**").permitAll()
                 .antMatchers("/teacher/**")
                 .access("hasRole('TEACHER') or hasRole('DIRECTOR')")
-                .antMatchers("/waiting/**")
+                .antMatchers("/parent/signup/**").permitAll()
+                .antMatchers("/parent/**","/participation/**","/waiting/**","/center-bookmark/**")
                 .access("hasRole('PARENT')")
+                .antMatchers("/alarm/**", "/board-bookmark/**", "/board/**","/center/**", "/chat/**", "/child/**", "/comment/**", "/comment-heart/**", "/expo-token/**"
+                        , "/post/**", "/post-heart/**", "/presentation/**", "/report/**", "/review/**", "/review-heart/**", "/scrap/**", "/user/**", "/password/**")
+                .access("hasRole('TEACHER') or hasRole('DIRECTOR') or hasRole('PARENT')")
                 .anyRequest().permitAll();
         return http.build();
     }

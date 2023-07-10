@@ -43,7 +43,6 @@ src/main/resources/application-s3.yml
 src/main/resources/application-dev.yml
 src/main/resources/application-prod.yml
 src/main/resources/application-map.yml
-src/main/resources/application.properties
 src/main/resources/application-security.yml
 src/main/resources/application-http.yml
 src/test/resources

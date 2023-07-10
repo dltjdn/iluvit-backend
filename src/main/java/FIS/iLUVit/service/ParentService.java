@@ -1,5 +1,6 @@
 package FIS.iLUVit.service;
 
+import FIS.iLUVit.domain.embeddable.Location;
 import FIS.iLUVit.dto.parent.ParentDetailRequest;
 import FIS.iLUVit.dto.parent.ParentDetailResponse;
 import FIS.iLUVit.dto.parent.SignupParentRequest;
@@ -49,7 +50,7 @@ public class ParentService {
      * 작성자: 이승범
      * 작성내용: 부모의 마이페이지 정보 반환
      */
-    public ParentDetailResponse findDetail(Long id) throws IOException {
+    public ParentDetailResponse findParentDetails(Long id) throws IOException {
 
         Parent findParent = parentRepository.findById(id)
                 .orElseThrow(() -> new UserException("유효하지 않은 토큰으로의 사용자 접근입니다."));
@@ -62,7 +63,7 @@ public class ParentService {
      * 작성자: 이승범
      * 작성내용: 부모의 마이페이지 정보 업데이트
      */
-    public ParentDetailResponse updateDetail(Long id, ParentDetailRequest request) throws IOException {
+    public ParentDetailResponse modifyParentInfo(Long id, ParentDetailRequest request) throws IOException {
 
         Parent findParent = parentRepository.findById(id)
                 .orElseThrow(() -> new UserException(UserErrorResult.NOT_VALID_TOKEN));
@@ -105,15 +106,19 @@ public class ParentService {
      * 작성자: 이승범
      * 작성내용: 학부모 회원가입
      */
-    public Parent signup(SignupParentRequest request) {
+    public Parent signupParent(SignupParentRequest request) {
 
-        String hashedPwd = userService.signupValidation(request.getPassword(), request.getPasswordCheck(), request.getLoginId(), request.getPhoneNum(), request.getNickname());
+        String hashedPwd = userService.hashAndValidatePwdForSignup(request.getPassword(), request.getPasswordCheck(), request.getLoginId(), request.getPhoneNum(), request.getNickname());
         Parent parent = request.createParent(hashedPwd);
+
+        System.out.println("###########");
 
         Pair<Double, Double> loAndLat = mapService.convertAddressToLocation(request.getAddress());
         Pair<String, String> hangjung = mapService.getSidoSigunguByLocation(loAndLat.getFirst(), loAndLat.getSecond());
         Location location = new Location(loAndLat, hangjung);
         parent.updateLocation(location);
+
+        System.out.println("$$$$$$$$$");
 
         // default 스크랩 생성
         Scrap scrap = Scrap.createDefaultScrap(parent);
@@ -147,7 +152,7 @@ public class ParentService {
 
         // 찜한 시설 리스트 삭제
         centerBookmarkRepository.findByParent(parent).forEach(centerBookmark -> {
-            centerBookmarkService.deletePrefer(userId, centerBookmark.getCenter().getId());
+            centerBookmarkService.deleteCenterBookmark(userId, centerBookmark.getCenter().getId());
         });
 
 
@@ -164,7 +169,7 @@ public class ParentService {
 
         // 신청되어있는 설명회 대기 목록에서 빠지게 하기 ( 설명회 대기 취소 )
         waitingRepository.findByParent(parent).forEach(waiting-> {
-            waitingService.cancel(waiting.getId(), userId);
+            waitingService.cancelParticipation(waiting.getId(), userId);
         });
 
         return userId;

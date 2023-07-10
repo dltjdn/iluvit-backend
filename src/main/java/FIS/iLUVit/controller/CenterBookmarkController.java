@@ -27,7 +27,7 @@ public class CenterBookmarkController {
      */
     @GetMapping("")
     public Slice<CenterPreviewDto> getAllCenterBookmark(@Login Long userId, Pageable pageable) {
-        return centerBookmarkService.findCentersByPrefer(userId, pageable);
+        return centerBookmarkService.findCentersByCenterBookmark(userId, pageable);
     }
 
     /**
@@ -36,7 +36,7 @@ public class CenterBookmarkController {
      */
     @PostMapping("{centerId}")
     public void createCenterBookmark(@Login Long userId, @PathVariable("centerId") Long centerId) {
-        centerBookmarkService.savePrefer(userId, centerId);
+        centerBookmarkService.saveCenterBookmark(userId, centerId);
     }
 
     /**
@@ -45,7 +45,7 @@ public class CenterBookmarkController {
      */
     @DeleteMapping("{centerId}")
     public void deleteCenterBookmark(@Login Long userId, @PathVariable("centerId") Long centerId) {
-        centerBookmarkService.deletePrefer(userId, centerId);
+        centerBookmarkService.deleteCenterBookmark(userId, centerId);
     }
 
 }

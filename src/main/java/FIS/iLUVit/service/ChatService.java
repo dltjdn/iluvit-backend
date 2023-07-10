@@ -31,7 +31,7 @@ public class ChatService {
 
     private final AlarmRepository alarmRepository;
 
-    public Long saveChat(Long userId, ChatRequest request) {
+    public Long saveNewChat(Long userId, ChatRequest request) {
 
         if (userId == null) {
             throw new ChatException(ChatErrorResult.UNAUTHORIZED_USER_ACCESS);
@@ -108,7 +108,7 @@ public class ChatService {
         return chatRoom;
     }
 
-    public Slice<ChatListDto> findAll(Long userId, Pageable pageable) {
+    public Slice<ChatListDto> findChatRoomList(Long userId, Pageable pageable) {
         Slice<ChatRoom> chatList = chatRoomRepository.findByUser(userId, pageable);
         return chatList.map(c -> {
             ChatListDto chatListDto = new ChatListDto(c);
@@ -118,7 +118,7 @@ public class ChatService {
         });
     }
 
-    public ChatDto findByOpponent(Long userId, Long roomId, Pageable pageable) {
+    public ChatDto findChatRoomDetails(Long userId, Long roomId, Pageable pageable) {
         ChatRoom findRoom = chatRoomRepository.findById(roomId)
                 .orElseThrow(() -> new ChatException(ChatErrorResult.ROOM_NOT_EXIST));
 

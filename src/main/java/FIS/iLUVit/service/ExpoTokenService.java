@@ -40,7 +40,7 @@ public class ExpoTokenService {
         expoToken.modifyAcceptStatus(request.getAccept());
     }
 
-    public ExpoTokenDto findById(Long userId, String expoToken) {
+    public ExpoTokenDto findExpoTokenByUser(Long userId, String expoToken) {
         ExpoToken token = getExpoTokenWithUserException(expoToken, userId);
         return new ExpoTokenDto(token.getId(), token.getToken(), token.getAccept());
     }
@@ -57,7 +57,7 @@ public class ExpoTokenService {
         return expoToken;
     }
 
-    public void deleteById(Long userId, String expoToken) {
+    public void deleteExpoTokenByUser(Long userId, String expoToken) {
         User user = userRepository.getById(userId);
         expoTokenRepository.deleteByTokenAndUser(expoToken, user);
     }

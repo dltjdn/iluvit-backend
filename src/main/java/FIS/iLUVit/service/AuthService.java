@@ -43,11 +43,10 @@ public class AuthService {
     private final Integer authNumberValidTime = 60 * 60;
 
     /**
-     * 작성날짜: 2022/05/24 10:38 AM
      * 작성자: 이승범
      * 작성내용: 회원가입을 위한 인증번호 전송
      */
-    public AuthNumber sendAuthNumberForSignup(String toNumber) {
+    public AuthNumber sendAuthNumForSignup(String toNumber) {
 
         User findUser = userRepository.findByPhoneNumber(toNumber).orElse(null);
 
@@ -58,26 +57,10 @@ public class AuthService {
     }
 
     /**
-    *   작성날짜: 2022/07/19 4:32 PM
-    *   작성자: 이승범
-    *   작성내용: 핸드폰번호 변경을 위한 인증번호 전송
-    */
-    public AuthNumber sendAuthNumberForChangePhone(Long id, String toNumber) {
-
-        User findUser = userRepository.findByPhoneNumber(toNumber).orElse(null);
-
-        if (findUser != null) {
-            throw new AuthNumberException(AuthNumberErrorResult.ALREADY_PHONENUMBER_REGISTER);
-        }
-        return sendAuthNumber(toNumber, AuthKind.updatePhoneNum, id);
-    }
-
-    /**
-     * 작성날짜: 2022/05/25 10:44 AM
      * 작성자: 이승범
-     * 작성내용: 로그인 아이디를 찾기위한 인증번호 전송
+     * 작성내용: 아이디찾기를 위한 인증번호 전송
      */
-    public AuthNumber sendAuthNumberForFindLoginId(String toNumber) {
+    public AuthNumber sendAuthNumForFindLoginId(String toNumber) {
 
         userRepository.findByPhoneNumber(toNumber)
                 .orElseThrow(() -> new AuthNumberException(AuthNumberErrorResult.NOT_SIGNUP_PHONE));
@@ -86,9 +69,8 @@ public class AuthService {
     }
 
     /**
-     * 작성날짜: 2022/05/25 10:55 AM
      * 작성자: 이승범
-     * 작성내용: 비밀번호를 찾기위한 인증번호 전송
+     * 작성내용: 비밀번호찾기를 위한 인증번호 전송
      */
     public AuthNumber sendAuthNumberForFindPassword(String loginId, String toNumber) {
 
@@ -101,9 +83,22 @@ public class AuthService {
     }
 
     /**
-     * 작성날짜: 2022/05/24 10:40 AM
+    *   작성자: 이승범
+    *   작성내용: 핸드폰번호 변경을 위한 인증번호 전송
+    */
+    public AuthNumber sendAuthNumForChangePhone(Long id, String toNumber) {
+
+        User findUser = userRepository.findByPhoneNumber(toNumber).orElse(null);
+
+        if (findUser != null) {
+            throw new AuthNumberException(AuthNumberErrorResult.ALREADY_PHONENUMBER_REGISTER);
+        }
+        return sendAuthNumber(toNumber, AuthKind.updatePhoneNum, id);
+    }
+
+    /**
      * 작성자: 이승범
-     * 작성내용: 인증번호 인증
+     * 작성내용: (회원가입, 비밀번호 찾기, 핸드폰번호 변경을 위한) 인증번호 인증
      */
     public AuthNumber authenticateAuthNum(Long userId, AuthNumRequest request) {
 
@@ -129,11 +124,10 @@ public class AuthService {
     }
 
     /**
-     * 작성날짜: 2022/05/24 10:40 AM
      * 작성자: 이승범
-     * 작성내용: 로그인 아이디 찾기
+     * 작성내용: (아이디찾기) 인증번호 인증 후 유저 아이디 반환
      */
-    public String findLoginId(AuthNumRequest request) {
+    public String authenticateAuthNumForFindLoginId(AuthNumRequest request) {
 
         // request와 일치하는 유효한 인증번호가 있는지 검공
         AuthNumber authNumber = authenticateAuthNum(null, request);
@@ -146,11 +140,10 @@ public class AuthService {
     }
 
     /**
-     * 작성날짜: 2022/05/25 4:14 PM
      * 작성자: 이승범
-     * 작성내용: 비밀번호 찾기 근데 이제 변경을 곁들인
+     * 작성내용: (비밀번호 변경용 비밀번호찾기) 인증번호 인증 후 비밀번호 변경
      */
-    public User changePassword(FindPasswordRequest request) {
+    public User authenticateAuthNumForChangePwd(FindPasswordRequest request) {
 
         // 비밀번호와 비밀번호 확인 불일치
         if (!request.getNewPwd().equals(request.getNewPwdCheck())) {
@@ -168,7 +161,10 @@ public class AuthService {
         return user;
     }
 
-    // 인증이 완료된 인증번호인지 검사
+    /**
+     * 작성자: 이승범
+     * 작성내용: 인증이 완료된 인증번호인지 검사
+     */
     public AuthNumber validateAuthNumber(String phoneNum, AuthKind authKind) {
         // 핸드폰 인증여부 확인
         AuthNumber authComplete = authRepository.findAuthComplete(phoneNum, authKind)
@@ -180,7 +176,10 @@ public class AuthService {
         return authComplete;
     }
 
-    // 인증번호 전송 로직
+    /**
+     * 작성자: 이승범
+     * 작성내용: 인증번호 전송 로직
+     */
     private AuthNumber sendAuthNumber(String toNumber, AuthKind authKind, Long userId) {
 
         // 4자리 랜덤 숫자 생성
@@ -208,7 +207,10 @@ public class AuthService {
         }
     }
 
-    // 로그인 찾기에서 로그인아이디 일부를 *로 가리기
+    /**
+     * 작성자: 이승범
+     * 작성내용: 로그인 찾기에서 로그인아이디 일부를 *로 가리기
+     */
     private String blindLoginId(String loginId) {
         StringBuilder builder = new StringBuilder(loginId);
         int mid = loginId.length() / 2;
@@ -218,7 +220,10 @@ public class AuthService {
         return builder.toString();
     }
 
-    // CoolSMS 문자전송 요청
+    /**
+     * 작성자: 이승범
+     * 작성내용: CoolSMS 문자전송 요청
+     */
     private void requestCoolSMS(String toNumber, String authNumber) {
         Message message = new Message();
         message.setFrom(fromNumber);
@@ -228,7 +233,10 @@ public class AuthService {
         this.defaultMessageService.sendOne(new SingleMessageSendingRequest(message));
     }
 
-    // 4자리 랜던 숫자 생성
+    /**
+     * 작성자: 이승범
+     * 작성내용: 4자리 랜덤 숫자 생성
+     */
     private String createRandomNumber() {
         String authNumber = "";
         Random random = new Random();
@@ -246,5 +254,6 @@ public class AuthService {
     public Integer getAuthNumberValidTime() {
         return authNumberValidTime;
     }
+
 }
 

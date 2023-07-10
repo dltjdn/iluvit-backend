@@ -2,8 +2,6 @@ package FIS.iLUVit.controller;
 
 import FIS.iLUVit.config.argumentResolver.Login;
 import FIS.iLUVit.dto.waiting.WaitingRegisterDto;
-import FIS.iLUVit.exception.UserErrorResult;
-import FIS.iLUVit.exception.UserException;
 import FIS.iLUVit.service.WaitingService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -33,7 +31,7 @@ public class WaitingController {
     @ResponseStatus(HttpStatus.CREATED)
     public Long registerWaiting(@Login Long userId, @RequestBody @Validated WaitingRegisterDto waitingRegister){
         Long ptDateId = waitingRegister.getPtDateId();
-        return waitingService.register(userId, ptDateId).getId();
+        return waitingService.watingParticipation(userId, ptDateId).getId();
     }
 
     /**
@@ -43,7 +41,7 @@ public class WaitingController {
     @DeleteMapping("{waitingId}")
     @ResponseStatus(HttpStatus.ACCEPTED)
     public Long cancelWaiting(@Login Long userId, @PathVariable("waitingId") Long waitingId) {
-        return waitingService.cancel(waitingId, userId);
+        return waitingService.cancelParticipation(waitingId, userId);
     }
 
 }

@@ -1,4 +1,4 @@
-package FIS.iLUVit.domain;
+package FIS.iLUVit.domain.embeddable;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;

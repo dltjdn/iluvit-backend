@@ -28,7 +28,6 @@ public class CommentHeart extends BaseEntity {
     public CommentHeart(User user, Comment comment) {
         this.user = user;
         this.comment = comment;
-        comment.getCommentHearts().add(this);
     }
 
     @Builder(toBuilder = true)
