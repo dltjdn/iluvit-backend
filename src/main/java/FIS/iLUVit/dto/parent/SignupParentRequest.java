@@ -52,4 +52,5 @@ public class SignupParentRequest {
                 .readAlarm(true)
                 .build();
     }
+    private SignupParentRequest() {}
 }
