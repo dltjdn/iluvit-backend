@@ -26,18 +26,18 @@ public class CenterBookmarkService {
 
     /**
      *   작성자: 이승범
-     *   작성내용: 찜한 시설 리스트
+     *   작성내용: 유저가 즐겨찾기한 시설을 조회합니다
      */
-    public Slice<CenterPreviewDto> findCentersByPrefer(Long userId, Pageable pageable) {
+    public Slice<CenterPreviewDto> findCentersByCenterBookmark(Long userId, Pageable pageable) {
         return centerRepository.findByPrefer(userId, pageable);
     }
 
 
     /**
      *   작성자: 이승범
-     *   작성내용: 시설 찜하기
+     *   작성내용: 해당 시설을 시설 즐겨찾기에 등록합니다
      */
-    public Prefer savePrefer(Long userId, Long centerId) {
+    public Prefer saveCenterBookmark(Long userId, Long centerId) {
 
         centerBookmarkRepository.findByUserIdAndCenterId(userId, centerId)
                 .ifPresent(prefer -> {
@@ -57,9 +57,9 @@ public class CenterBookmarkService {
 
     /**
      *   작성자: 이승범
-     *   작성내용: 찜한 시설 삭제
+     *   작성내용: 해당 시설의 시설 즐겨찾기를 해제합니다
      */
-    public void deletePrefer(Long userId, Long centerId) {
+    public void deleteCenterBookmark(Long userId, Long centerId) {
         Prefer deletedPrefer = centerBookmarkRepository.findByUserIdAndCenterId(userId, centerId)
                 .orElseThrow(() -> new PreferException(PreferErrorResult.NOT_VALID_CENTER));
 

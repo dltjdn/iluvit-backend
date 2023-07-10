@@ -51,7 +51,7 @@ public class ChildService {
      * 작성자: 이승범
      * 작성내용: 부모의 메인페이지에 필요한 아이들 정보 반환
      */
-    public List<ChildDto> childInfo(Long id) {
+    public List<ChildDto> findChildList(Long id) {
         Parent findParent = parentRepository.findWithChildren(id)
                 .orElseThrow(() -> new UserException(UserErrorResult.NOT_VALID_TOKEN));
 
@@ -70,19 +70,20 @@ public class ChildService {
      * 작성자: 이승범
      * 작성내용: 아이 추가
      */
-    public Child saveChild(Long userId, ChildDetailRequest request) throws IOException {
+    public Child saveNewChild(Long userId, ChildDetailRequest request) throws IOException {
 
         Parent parent = parentRepository.getById(userId);
 
-        // 새로 등록할 시설에 교사들 엮어서 가져오기
-        Center center = centerRepository.findByIdAndSignedWithTeacher(request.getCenter_id())
+        // 시설 가져오기
+        Center center = centerRepository.findByIdAndSigned(request.getCenter_id())
                 .orElseThrow(() -> new UserException(UserErrorResult.NOT_VALID_REQUEST));
 
         // 아이 등록
         Child newChild = request.createChild(center, parent);
 
         // 아이 승인 요청 알람이 해당 시설에 승인된 교사들에게 감
-        center.getTeachers().forEach(teacher -> {
+        List<Teacher> teacherList = teacherRepository.findByCenterWithApproval(center.getId());
+        teacherList.forEach(teacher -> {
             Alarm alarm = new CenterApprovalReceivedAlarm(teacher, Auth.PARENT, teacher.getCenter());
             alarmRepository.save(alarm);
             AlarmUtils.publishAlarmEvent(alarm);
@@ -100,7 +101,7 @@ public class ChildService {
      * 작성자: 이승범
      * 작성내용: 아이 프로필 조회
      */
-    public ChildDetailResponse findChildInfoDetail(Long userId, Long childId) {
+    public ChildDetailResponse findChildDetails(Long userId, Long childId) {
         // 프로필 수정하고자 하는 아이 가져오기
         Child child = childRepository.findByIdAndParentWithCenter(userId, childId)
                 .orElseThrow(() -> new UserException(UserErrorResult.NOT_VALID_REQUEST));
@@ -114,7 +115,7 @@ public class ChildService {
     *   작성자: 이승범
     *   작성내용: 아이 프로필 수정
     */
-    public ChildDetailResponse updateChild(Long userId, Long childId, ChildRequest request) {
+    public ChildDetailResponse modifyChildInfo(Long userId, Long childId, ChildRequest request) {
         // 수정하고자 하는 아이
         Child updatedChild = childRepository.findByIdAndParentWithCenter(userId, childId)
                 .orElseThrow(() -> new UserException(UserErrorResult.NOT_VALID_REQUEST));
@@ -134,7 +135,7 @@ public class ChildService {
      * 작성자: 이승범
      * 작성내용: 학부모/아이 시설 승인 요청
      */
-    public Child mappingCenter(Long userId, Long childId, Long centerId) {
+    public Child requestAssignCenterForChild(Long userId, Long childId, Long centerId) {
 
         // 승인 받고자 하는 아이
         Child mappedChild = childRepository.findByIdAndParent(userId, childId)
@@ -146,12 +147,13 @@ public class ChildService {
         }
 
         // 승인 요청 보내는 시설
-        Center center = centerRepository.findByIdAndSignedWithTeacher(centerId)
+        Center center = centerRepository.findByIdAndSigned(centerId)
                 .orElseThrow(() -> new CenterException(CenterErrorResult.CENTER_NOT_EXIST));
 
         mappedChild.mappingCenter(center);
 
-        center.getTeachers().forEach(teacher -> {
+        List<Teacher> teacherList = teacherRepository.findByCenterWithApproval(centerId);
+        teacherList.forEach(teacher -> {
             Alarm alarm = new CenterApprovalReceivedAlarm(teacher, Auth.PARENT, teacher.getCenter());
             alarmRepository.save(alarm);
             AlarmUtils.publishAlarmEvent(alarm);
@@ -164,7 +166,7 @@ public class ChildService {
     *   작성자: 이승범
     *   작성내용: 아이의 시설 탈퇴
     */
-    public Child exitCenter(Long userId, Long childId) {
+    public Child leaveCenterForChild(Long userId, Long childId) {
         // 요청 사용자가 등록한 모든 아이 가져오기
         List<Child> childrenByUser = childRepository.findByUserWithCenter(userId);
 
@@ -203,21 +205,22 @@ public class ChildService {
         }
 
         childRepository.delete(deletedChild);
-        return childInfo(userId);
+        return findChildList(userId);
     }
 
     /**
      * 작성자: 이승범
      * 작성내용: 아이 승인 페이지를 위한 시설에 등록된 아이들 정보 조회
      */
-    public List<ChildInfoForAdminDto> findChildApprovalInfoList(Long userId) {
+    public List<ChildInfoForAdminDto> findChildApprovalList(Long userId) {
         // 사용자가 속한 시설의 아이들 끌어오기
         Teacher teacher = teacherRepository.findByIdWithCenterWithChildWithParent(userId)
                 .orElseThrow(() -> new UserException(UserErrorResult.HAVE_NOT_AUTHORIZATION));
 
         List<ChildInfoForAdminDto> response = new ArrayList<>();
 
-        teacher.getCenter().getChildren().forEach(child -> {
+        List<Child> childList = childRepository.findByCenter(teacher.getCenter());
+        childList.forEach(child -> {
             // 해당시설에 대해 거절/삭제 당하지 않은 아이들만 보여주기
             if (child.getApproval() != Approval.REJECT) {
                 ChildInfoForAdminDto childInfo =
@@ -233,14 +236,14 @@ public class ChildService {
      * 작성자: 이승범
      * 작성내용: 아이 승인
      */
-    public Child acceptChild(Long userId, Long childId) {
+    public Child acceptChildRegistration(Long userId, Long childId) {
 
         // 사용자가 등록된 시설과 연관된 아이들 목록 가져오기
         Teacher teacher = teacherRepository.findByIdWithCenterWithChildWithParent(userId)
                 .orElseThrow(() -> new UserException(UserErrorResult.HAVE_NOT_AUTHORIZATION));
-
         // childId에 해당하는 아이가 시설에 승인 대기중인지 확인
-        Child acceptedChild = teacher.getCenter().getChildren().stream()
+        List<Child> childList = childRepository.findByCenter(teacher.getCenter());
+        Child acceptedChild = childList.stream()
                 .filter(child -> Objects.equals(child.getId(), childId) && child.getApproval() == Approval.WAITING)
                 .findFirst()
                 .orElseThrow(() -> new UserException(UserErrorResult.NOT_VALID_REQUEST));
@@ -267,10 +270,12 @@ public class ChildService {
 
         // 새로운 시설에 아이가 승인될 경우 해당 시설에 default board 북마크에 추가
         if (alreadySignedChild.isEmpty()) {
-            // 승인하고자 하는 시설의 게시판들 lazyLoading 통해 가져오기
-            teacher.getCenter().getBoards().forEach(board -> {
+            // 선생이 가입되어 있는 시설의 게시판 가져오기
+            List<Board> boardList = boardRepository.findByCenter(teacher.getCenter());
+            // 게시판이 default면 게시판 즐겨찾기에 등록
+            boardList.forEach(board -> {
                 if (board.getIsDefault()) {
-                    boardBookmarkService.create(acceptedParent.getId(), board.getId());
+                    boardBookmarkService.saveBoardBookmark(acceptedParent.getId(), board.getId());
                 }
             });
         }
@@ -282,14 +287,15 @@ public class ChildService {
      * 작성자: 이승범
      * 작성내용: 시설에서 아이 삭제/승인거절
      */
-    public void fireChild(Long userId, Long childId) {
+    public void rejectChildRegistration(Long userId, Long childId) {
 
         // 사용자가 등록된 시설과 연관된 아이들 목록 가져오기
         Teacher teacher = teacherRepository.findByIdWithCenterWithChildWithParent(userId)
                 .orElseThrow(() -> new UserException(UserErrorResult.HAVE_NOT_AUTHORIZATION));
 
         // childId 검증
-        Child firedChild = teacher.getCenter().getChildren().stream()
+        List<Child> childList = childRepository.findByCenter(teacher.getCenter());
+        Child firedChild = childList.stream()
                 .filter(child -> Objects.equals(child.getId(), childId))
                 .findFirst()
                 .orElseThrow(() -> new UserException(UserErrorResult.NOT_VALID_REQUEST));
@@ -316,7 +322,7 @@ public class ChildService {
 
         // 없으면 해당 시설과 연관된 bookmark 싹 다 삭제
         if (sameCenterChildren.isEmpty()) {
-            List<Board> boards = boardRepository.findByCenter(deletedChild.getCenter().getId());
+            List<Board> boards = boardRepository.findByCenterId(deletedChild.getCenter().getId());
             List<Long> boardIds = boards.stream()
                     .map(Board::getId)
                     .collect(Collectors.toList());

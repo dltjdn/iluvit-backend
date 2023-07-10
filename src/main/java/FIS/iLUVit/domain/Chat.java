@@ -42,20 +42,8 @@ public class Chat extends BaseEntity {
         this.sender = sender;
     }
 
-    @Builder(toBuilder = true)
-    public Chat(Long id, LocalDate date, LocalTime time, String message, ChatRoom chatRoom, User receiver, User sender) {
-        this.id = id;
-        this.date = date;
-        this.time = time;
-        this.message = message;
-        this.chatRoom = chatRoom;
-        this.receiver = receiver;
-        this.sender = sender;
-    }
-
     public void updateChatRoom(ChatRoom chatRoom) {
         this.chatRoom = chatRoom;
-        chatRoom.getChatList().add(this);
         chatRoom.updateMessage(this.message);
     }
 

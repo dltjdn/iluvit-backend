@@ -1,21 +1,16 @@
 package FIS.iLUVit.controller;
 
 import FIS.iLUVit.config.argumentResolver.Login;
-import FIS.iLUVit.domain.User;
 import FIS.iLUVit.dto.user.*;
-import FIS.iLUVit.exception.UserErrorResult;
-import FIS.iLUVit.exception.UserException;
 import FIS.iLUVit.security.LoginRequest;
 import FIS.iLUVit.security.LoginResponse;
 import FIS.iLUVit.service.UserService;
-import com.auth0.jwt.exceptions.JWTVerificationException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.core.env.Environment;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
-import java.io.IOException;
 
 
 @Slf4j
@@ -36,7 +31,7 @@ public class UserController {
      */
     @GetMapping("user")
     public UserResponse getUserDetails(@Login Long id) {
-        return userService.findUserInfo(id);
+        return userService.findUserDetails(id);
     }
 
     /**
@@ -45,7 +40,7 @@ public class UserController {
     */
     @GetMapping("check-loginid")
     public void checkLoginId(@Valid @ModelAttribute CheckLoginIdRequest request) {
-        userService.checkLoginId(request);
+        userService.checkLoginIdAvailability(request);
     }
 
     /**
@@ -54,7 +49,7 @@ public class UserController {
     */
     @GetMapping("check-nickname")
     public void checkNickname(@Valid @ModelAttribute CheckNicknameRequest request) {
-        userService.checkNickname(request);
+        userService.checkNicknameAvailability(request);
     }
 
     /**
@@ -63,7 +58,7 @@ public class UserController {
      */
     @PutMapping("password")
     public void updatePassword(@Login Long id, @Valid @RequestBody PasswordRequest request) {
-        userService.updatePassword(id, request);
+        userService.changePassword(id, request);
     }
 
     /**
@@ -81,7 +76,7 @@ public class UserController {
      */
     @PostMapping("refresh")
     public LoginResponse refreshToken(@Valid @RequestBody TokenRefreshRequest request) {
-        return userService.refresh(request);
+        return userService.refreshAccessToken(request);
     }
 
     /**

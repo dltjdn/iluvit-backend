@@ -5,7 +5,6 @@ import FIS.iLUVit.domain.CommentHeart;
 import FIS.iLUVit.domain.User;
 import FIS.iLUVit.exception.CommentErrorResult;
 import FIS.iLUVit.exception.CommentException;
-import FIS.iLUVit.exception.UserException;
 import FIS.iLUVit.repository.CommentHeartRepository;
 import FIS.iLUVit.repository.CommentRepository;
 import FIS.iLUVit.repository.UserRepository;
@@ -24,7 +23,7 @@ public class CommentHeartService {
     private final UserRepository userRepository;
     private final CommentRepository commentRepository;
 
-    public Long save(Long userId, Long comment_id) {
+    public Long saveCommentHeart(Long userId, Long comment_id) {
         if (userId == null) {
             throw new CommentException(CommentErrorResult.UNAUTHORIZED_USER_ACCESS_HEART);
         }
@@ -41,7 +40,7 @@ public class CommentHeartService {
         return commentHeartRepository.save(commentHeart).getId();
     }
 
-    public Long delete(Long userId, Long comment_id) {
+    public Long deleteCommentHeart(Long userId, Long comment_id) {
         if (userId == null) {
             throw new CommentException(CommentErrorResult.UNAUTHORIZED_USER_ACCESS_HEART);
         }

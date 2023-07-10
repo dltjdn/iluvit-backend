@@ -28,7 +28,7 @@ public class BoardBookmarkController {
     */
     @GetMapping("main")
     public List<StoryDto> getAllBoardBookmark(@Login Long userId) {
-        return boardBookmarkService.search(userId);
+        return boardBookmarkService.findBoardBookmarkByUser(userId);
     }
 
     /**
@@ -37,7 +37,7 @@ public class BoardBookmarkController {
     */
     @PostMapping("{boardId}")
     public Long createBoardBookmark(@Login Long userId, @PathVariable("boardId") Long boardId) {
-        return boardBookmarkService.create(userId, boardId);
+        return boardBookmarkService.saveBoardBookmark(userId, boardId);
     }
 
     /**
@@ -46,7 +46,7 @@ public class BoardBookmarkController {
     */
     @DeleteMapping("{bookmarkId}")
     public Long deleteBoardBookmark(@Login Long userId, @PathVariable("bookmarkId") Long bookmarkId) {
-        return boardBookmarkService.delete(userId, bookmarkId);
+        return boardBookmarkService.deleteBoardBookmark(userId, bookmarkId);
     }
 
 }

@@ -32,24 +32,9 @@ public interface ParentRepository extends JpaRepository<Parent, Long> {
      */
     @Query("select parent " +
             "from Parent parent " +
-            "left join fetch parent.participations as participation " +
-            "left join fetch participation.ptDate as ptDate " +
-            "left join fetch ptDate.presentation as presentation " +
-            "left join fetch presentation.center as center " +
             "where parent.id = :userId")
     Parent findMyParticipation(@Param("userId") Long userId);
 
-    /*
-        부모 id로 내 대기를 조회합니다.
-     */
-    @Query("select parent " +
-            "from Parent parent " +
-            "left join fetch parent.waitings as waiting " +
-            "left join fetch waiting.ptDate as ptDate " +
-            "left join fetch ptDate.presentation as presentation " +
-            "left join fetch presentation.center as center " +
-            "where parent.id = :userId")
-    Parent findMyWaiting(@Param("userId") Long userId);
 
     /*
         참여 현황이 참여로 되어있고 부모 id로 참여 리스트 DTO를 조회합니다. (설명회 참여 현황이 참여로 되어있을 때)
@@ -102,14 +87,5 @@ public interface ParentRepository extends JpaRepository<Parent, Long> {
             "where p.id =:userId")
     Optional<Parent> findByIdWithChild(@Param("userId") Long userId);
 
-    /*
-        시설 즐겨찾기 id로 부모를 조회합니다.
-     */
-    @Query("select distinct p " +
-            "from Parent p " +
-            "left join fetch p.prefers pp " +
-            "left join fetch pp.center " +
-            "where p.id =:userId")
-    Optional<Parent> findByIdWithPreferWithCenter(@Param("userId") Long userId);
 
 }
