@@ -20,12 +20,10 @@ import java.util.List;
 public class AlarmService {
     private final AlarmRepository alarmRepository;
     private final UserRepository userRepository;
-    
+
     /**
-        작성날짜: 2023/07/07 7:35 PM
-        작성자: 이서우
-        작성내용: 활동 알림을 조회합니다
-    */
+     * 활동 알림을 조회합니다
+     */
     public Slice<Alarm> findActiveAlarmByUser(Long userId, Pageable pageable) {
         Slice<Alarm> alarms = alarmRepository.findActiveByUser(userId, pageable);
 
@@ -33,10 +31,8 @@ public class AlarmService {
     }
 
     /**
-        작성날짜: 2023/07/07 7:36 PM
-        작성자: 이서우
-        작성내용: 설명회 알림을 조회합니다
-    */
+     * 설명회 알림을 조회합니다
+     */
     public Slice<Alarm> findPresentationActiveAlarmByUser(Long userId, Pageable pageable) {
         Slice<Alarm> alarms = alarmRepository.findPresentationByUser(userId, pageable);
 
@@ -44,10 +40,8 @@ public class AlarmService {
     }
 
     /**
-        작성날짜: 2023/07/07 7:49 PM
-        작성자: 이서우
-        작성내용: 전체 알림 읽었다고 처리하기
-    */
+     * 전체 알림 읽었다고 처리하기
+     */
     public void readAlarm(Long userId) {
         if(userId == null)
             throw new UserException(UserErrorResult.NOT_LOGIN);
@@ -59,10 +53,8 @@ public class AlarmService {
     }
 
     /**
-        작성날짜: 2023/07/07 7:57 PM
-        작성자: 이서우
-        작성내용: 전체 알림 읽었는지 안 읽었는지 여부를 조회합니다
-    */
+     * 전체 알림 읽었는지 안 읽었는지 여부를 조회합니다
+     */
     public Boolean hasRead(Long userId) {
         if(userId == null)
             throw new UserException(UserErrorResult.NOT_LOGIN);
@@ -75,9 +67,7 @@ public class AlarmService {
     }
 
     /**
-     작성날짜: 2023/07/07 7:25 PM
-     작성자: 이서우
-     작성내용: 선택한 알림들을 삭제합니다
+     * 선택한 알림들을 삭제합니다
      */
     public void deleteSelectedAlarm(Long userId, List<Long> alarmIds) {
         if(userId == null)
@@ -87,9 +77,7 @@ public class AlarmService {
     }
 
     /**
-     작성날짜: 2023/07/07 7:26 PM
-     작성자: 이서우
-     작성내용: 모든 알림을 삭제합니다
+     * 모든 알림을 삭제합니다
      */
     public void deleteAllAlarm(Long userId){
         if(userId == null)

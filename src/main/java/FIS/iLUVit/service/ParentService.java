@@ -61,7 +61,7 @@ public class ParentService {
 
     /**
      * 작성자: 이승범
-     * 작성내용: 부모의 마이페이지 정보 업데이트
+     * 작성내용: 학부모 정보 수정
      */
     public ParentDetailResponse modifyParentInfo(Long id, ParentDetailRequest request) throws IOException {
 
