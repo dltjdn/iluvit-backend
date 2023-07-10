@@ -27,15 +27,6 @@ public interface UserRepository extends JpaRepository<User, Long> {
      */
     Optional<User> findByLoginIdOrNickName(String loginId, String nickName);
 
-    /*
-        교수 id가 사용자 id와 같고 설명회 종료날짜가 설명회 날짜보다 작거나 같은 Teacher를 불러옵니다.
-     */
-    @Query("select distinct teacher from Teacher teacher " +
-            "join fetch teacher.center as center " +
-            "join fetch center.presentations as presentation " +
-            "where teacher.id = :userId " +
-            "and presentation.endDate <= :date")
-    Optional<Teacher> findTeacherAndJoinPresentationById(@Param("userId") Long userId, @Param("date") LocalDate date);
 
     /*
         교수 id가 사용자 id와 같은 Teacher를 조회합니다.

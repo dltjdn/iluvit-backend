@@ -2,7 +2,6 @@ package FIS.iLUVit.controller;
 
 import FIS.iLUVit.config.argumentResolver.Login;
 import FIS.iLUVit.dto.scrap.*;
-import FIS.iLUVit.dto.scrap.*;
 import FIS.iLUVit.service.ScrapService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -31,7 +30,7 @@ public class ScrapController {
      */
     @PutMapping("post/{postId}")
     public void updateScrapPost(@Login Long userId, @PathVariable("postId") Long postId, @Valid @RequestBody List<ScrapDirUpdateRequest> request) {
-        scrapService.scrapPost(userId, postId, request);
+        scrapService.modifyScrapPost(userId, postId, request);
     }
 
     /**
@@ -49,7 +48,7 @@ public class ScrapController {
      */
     @GetMapping("dir")
     public List<ScrapInfoDto> getAllScrapDir(@Login Long id) {
-        return scrapService.findScrapDirListInfo(id);
+        return scrapService.findScrapDirList(id);
     }
 
     /**
@@ -58,7 +57,7 @@ public class ScrapController {
      */
     @PostMapping("dir")
     public List<ScrapInfoDto> createScrapDir(@Login Long id, @Valid @RequestBody ScrapDirRequest request) {
-        return scrapService.addScrapDir(id, request);
+        return scrapService.saveNewScrapDir(id, request);
     }
 
     /**
@@ -67,7 +66,7 @@ public class ScrapController {
      */
     @PutMapping("dir/name")
     public void updateScrapDir(@Login Long id, @Valid @RequestBody ScrapDirDetailRequest request) {
-        scrapService.updateScrapDirName(id, request);
+        scrapService.modifyScrapDirName(id, request);
     }
 
     /**
@@ -85,7 +84,7 @@ public class ScrapController {
      */
     @GetMapping("post/{postId}/dir")
     public List<ScrapInfoByPostDto> getScrapDirByPost(@Login Long userId, @PathVariable("postId") Long postId) {
-        return scrapService.findScrapListByPost(userId, postId);
+        return scrapService.findScrapDirListByPost(userId, postId);
     }
 
     /**
@@ -94,7 +93,7 @@ public class ScrapController {
      */
     @GetMapping("dir/{scrapDirId}/post")
     public Slice<ScrapPostPreviewResponse> getPostByScrapDir(@Login Long userId, @PathVariable("scrapDirId") Long scrapDirId, Pageable pageable) {
-        return scrapService.searchByScrap(userId, scrapDirId, pageable);
+        return scrapService.findPostByScrapDir(userId, scrapDirId, pageable);
     }
 
 }

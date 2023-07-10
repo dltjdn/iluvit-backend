@@ -42,6 +42,5 @@ public abstract class ReportDetail extends BaseEntity {
         this.reason = reason;
         this.date = LocalDate.now();
         this.time = LocalTime.now();
-        report.updateReportDetail(this);
     }
 }

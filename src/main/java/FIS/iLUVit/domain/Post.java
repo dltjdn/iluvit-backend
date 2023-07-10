@@ -49,16 +49,10 @@ public class Post extends BaseImageEntity {
     private User user;
 
     @OneToMany(mappedBy = "post")
-    private List<PostHeart> postHearts = new ArrayList<>();
-
-    @OneToMany(mappedBy = "post")
     private List<Comment> comments = new ArrayList<>();
 
-    @OneToMany(mappedBy = "post", cascade = CascadeType.ALL)
-    private List<ScrapPost> scrapPosts = new ArrayList<>();
-
     @Builder(toBuilder = true)
-    public Post(Long id, String title, String content, Boolean anonymous, LocalDate date, LocalTime time, Integer commentCnt, Integer heartCnt, Integer imgCnt, Integer videoCnt, LocalDateTime postCreateDate, LocalDateTime postUpdateDate, Board board, User user, List<PostHeart> postHearts, List<Comment> comments, List<ScrapPost> scrapPosts, Integer anonymousOrder) {
+    public Post(Long id, String title, String content, Boolean anonymous, LocalDate date, LocalTime time, Integer commentCnt, Integer heartCnt, Integer imgCnt, Integer videoCnt, LocalDateTime postCreateDate, LocalDateTime postUpdateDate, Board board, User user, List<Comment> comments, Integer anonymousOrder) {
         this.id = id;
         this.title = title;
         this.content = content;
@@ -73,9 +67,7 @@ public class Post extends BaseImageEntity {
         this.postUpdateDate = postUpdateDate;
         this.board = board;
         this.user = user;
-        this.postHearts = postHearts;
         this.comments = comments;
-        this.scrapPosts = scrapPosts;
         this.anonymousOrder = anonymousOrder;
     }
 
@@ -94,11 +86,6 @@ public class Post extends BaseImageEntity {
         this.user = user;
         this.postCreateDate = LocalDateTime.now();
         this.postUpdateDate = LocalDateTime.now();
-    }
-
-    public void updatePostHeart(PostHeart postHeart) {
-        this.postHearts.add(postHeart);
-        this.heartCnt++;
     }
 
     public void updateComment(Comment comment) {

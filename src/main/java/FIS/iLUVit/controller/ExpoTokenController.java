@@ -53,7 +53,7 @@ public class ExpoTokenController {
     @GetMapping("")
     public ExpoTokenDto getExpoToken(@Login Long userId,HttpServletRequest request) {
         String expoToken = request.getHeader("ExpoToken");
-        return expoTokenService.findById(userId, expoToken);
+        return expoTokenService.findExpoTokenByUser(userId, expoToken);
     }
 
     /**
@@ -65,7 +65,7 @@ public class ExpoTokenController {
     public void deleteExpoToken(@Login Long userId,
                        HttpServletRequest request) {
         String expoToken = request.getHeader("ExpoToken");
-        expoTokenService.deleteById(userId, expoToken);
+        expoTokenService.deleteExpoTokenByUser(userId, expoToken);
     }
 
 }

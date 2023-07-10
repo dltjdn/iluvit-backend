@@ -2,7 +2,6 @@ package FIS.iLUVit.service;
 
 import FIS.iLUVit.domain.alarms.Alarm;
 import FIS.iLUVit.domain.alarms.ConvertedToParticipateAlarm;
-import FIS.iLUVit.domain.alarms.PresentationFullAlarm;
 import FIS.iLUVit.dto.presentation.*;
 import FIS.iLUVit.domain.*;
 import FIS.iLUVit.domain.alarms.PresentationCreatedAlarm;
@@ -69,7 +68,7 @@ public class PresentationService {
     }
 
 
-    public Presentation saveInfoWithPtDate(PresentationDetailRequest request, Long userId) {
+    public Presentation savePresentationInfoWithPtDate(PresentationDetailRequest request, Long userId) {
         if(userId == null)
             throw new UserException(UserErrorResult.NOT_LOGIN);
 
@@ -100,7 +99,7 @@ public class PresentationService {
         return presentation;
     }
 
-    public Presentation saveImageWithPtDate(Long presentationId, List<MultipartFile> images, Long userId) {
+    public Presentation savePresentationImageWithPtDate(Long presentationId, List<MultipartFile> images, Long userId) {
         if (userId == null)
             throw new UserException(UserErrorResult.NOT_LOGIN);
         Presentation presentation = presentationRepository.findById(presentationId)
@@ -111,7 +110,7 @@ public class PresentationService {
         return presentation;
     }
 
-    public List<PresentationForTeacherResponse> findPresentationListByCenterId(Long userId, Long centerId, Pageable pageable) {
+    public List<PresentationForTeacherResponse> findPresentationListByCenter(Long userId, Long centerId, Pageable pageable) {
         //
         userRepository.findTeacherById(userId)
                 .orElseThrow(() -> new UserException("존재하지 않는 유저입니다"))
@@ -123,14 +122,14 @@ public class PresentationService {
                 }).collect(toList());
     }
 
-    public PresentationDetailResponse findPresentationDetail(Long presentationId) {
+    public PresentationDetailResponse findPresentationDetails(Long presentationId) {
         //
         Presentation presentation = presentationRepository.findByIdAndJoinPtDate(presentationId)
                 .orElseThrow(() -> new PresentationException("존재하지않는 설명회 입니다"));
         return new PresentationDetailResponse(presentation, imageService.getInfoImages(presentation));
     }
 
-    public Presentation modifyInfoWithPtDate(PresentationRequest request, Long userId) {
+    public Presentation modifyPresentationInfoWithPtDate(PresentationRequest request, Long userId) {
         //
         Presentation presentation = presentationRepository.findByIdAndJoinPtDate(request.getPresentationId())
                 .orElseThrow(() -> new PresentationException(PresentationErrorResult.NO_RESULT));
@@ -195,7 +194,7 @@ public class PresentationService {
         return presentation;
     }
 
-    public Presentation modifyImageWithPtDate(Long presentationId, List<MultipartFile> images, Long userId) {
+    public Presentation modifyPresentationImageWithPtDate(Long presentationId, List<MultipartFile> images, Long userId) {
         //
         Presentation presentation = presentationRepository.findById(presentationId)
                 .orElseThrow(() -> new PresentationException(PresentationErrorResult.NO_RESULT));
@@ -209,7 +208,7 @@ public class PresentationService {
         return presentation;
     }
 
-    public List<ParentDto> findPtDateParticipatingParents(Long userId, Long ptDateId) {
+    public List<ParentDto> findParentListWithRegisterParticipation(Long userId, Long ptDateId) {
         //
         PtDate ptDate = ptDateRepository.findByIdAndJoinParticipationForSearch(ptDateId)
                 .orElseThrow(() -> new PresentationException("존재하지 않는 설명회 회차 입니다."));
@@ -223,7 +222,7 @@ public class PresentationService {
 
     }
 
-    public List<ParentDto> findPtDateWaitingParents(Long userId, Long ptDateId) {
+    public List<ParentDto> findParentListWithWaitingParticipation(Long userId, Long ptDateId) {
         //
         PtDate ptDate = ptDateRepository.findByIdWithWaitingAndPresentationAndCenterAndParent(ptDateId)
                 .orElseThrow(() -> new PresentationException("존재하지 않는 설명회 회차 입니다."));
@@ -231,12 +230,12 @@ public class PresentationService {
                 .orElseThrow(() -> new UserException("존재하지 않는 유저입니다"))
                 .canRead(ptDate.getPresentation().getCenter().getId());
 
-        return ptDate.getWaitings().stream()
+        return waitingRepository.findByPtDate(ptDate).stream()
                 .map(participation -> new ParentDto(participation.getParent()))
                 .collect(Collectors.toList());
     }
 
-    public SliceImpl<PresentationForUserResponse> findByFilter(List<Area> areas, Theme theme, Integer interestedAge, KindOf kindOf, String searchContent, Pageable pageable) {
+    public SliceImpl<PresentationForUserResponse> findPresentationByFilter(List<Area> areas, Theme theme, Integer interestedAge, KindOf kindOf, String searchContent, Pageable pageable) {
         return presentationRepository.findByFilter(areas, theme, interestedAge, kindOf, searchContent, pageable);
     }
 }

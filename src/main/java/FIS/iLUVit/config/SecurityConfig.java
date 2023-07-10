@@ -54,6 +54,9 @@ public class SecurityConfig {
                 .antMatchers("/parent/signup/**").permitAll()
                 .antMatchers("/parent/**","/participation/**","/waiting/**","/center-bookmark/**")
                 .access("hasRole('PARENT')")
+                .antMatchers("/alarm/**", "/board-bookmark/**", "/board/**","/center/**", "/chat/**", "/child/**", "/comment/**", "/comment-heart/**", "/expo-token/**"
+                        , "/post/**", "/post-heart/**", "/presentation/**", "/report/**", "/review/**", "/review-heart/**", "/scrap/**", "/user/**", "/password/**")
+                .access("hasRole('TEACHER') or hasRole('DIRECTOR') or hasRole('PARENT')")
                 .anyRequest().permitAll();
         return http.build();
     }

@@ -28,7 +28,6 @@ public class ReviewHeart extends BaseEntity {
     public ReviewHeart(Review review, User user) {
         this.review = review;
         this.user = user;
-        review.getReviewHearts().add(this);
     }
 
     @Builder(toBuilder = true)

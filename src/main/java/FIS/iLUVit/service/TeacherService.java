@@ -1,6 +1,7 @@
 package FIS.iLUVit.service;
 
 import FIS.iLUVit.domain.alarms.Alarm;
+import FIS.iLUVit.domain.embeddable.Location;
 import FIS.iLUVit.dto.center.CenterDto;
 import FIS.iLUVit.dto.center.CenterRequest;
 import FIS.iLUVit.dto.teacher.SignupTeacherRequest;
@@ -59,7 +60,7 @@ public class TeacherService {
      * 작성자: 이승범
      * 작성내용: 선생의 마이페이지에 정보 조회
      */
-    public TeacherDetailResponse findDetail(Long id) throws IOException {
+    public TeacherDetailResponse findTeacherDetails(Long id) throws IOException {
 
         Teacher findTeacher = teacherRepository.findById(id)
                 .orElseThrow(() -> new UserException(UserErrorResult.NOT_VALID_TOKEN));
@@ -73,7 +74,7 @@ public class TeacherService {
      * 작성자: 이승범
      * 작성내용: 선생의 마이페이지에 정보 update
      */
-    public TeacherDetailResponse updateDetail(Long id, TeacherDetailRequest request) throws IOException {
+    public TeacherDetailResponse modifyTeacherInfo(Long id, TeacherDetailRequest request) throws IOException {
 
         Teacher findTeacher = teacherRepository.findById(id)
                 .orElseThrow(() -> new UserException(UserErrorResult.NOT_VALID_TOKEN));
@@ -114,10 +115,10 @@ public class TeacherService {
      * 작성자: 이승범
      * 작성내용: 교사 회원가입
      */
-    public Teacher signup(SignupTeacherRequest request) {
+    public Teacher signupTeacher(SignupTeacherRequest request) {
 
         // 회원가입 유효성 검사 및 비밀번호 해싱
-        String hashedPwd = userService.signupValidation(request.getPassword(), request.getPasswordCheck(), request.getLoginId(), request.getPhoneNum(), request.getNickname());
+        String hashedPwd = userService.hashAndValidatePwdForSignup(request.getPassword(), request.getPasswordCheck(), request.getLoginId(), request.getPhoneNum(), request.getNickname());
 
         // 교사 객체 생성
         Teacher teacher;
@@ -134,7 +135,8 @@ public class TeacherService {
             imageService.saveProfileImage(null, teacher);
             teacherRepository.save(teacher);
             // 시설에 원장들에게 알람보내기
-            center.getTeachers().forEach(t -> {
+            List<Teacher> teacherList = teacherRepository.findByCenter(center);
+            teacherList.forEach(t -> {
                 if (t.getAuth() == Auth.DIRECTOR) {
                     Alarm alarm = new CenterApprovalReceivedAlarm(t, Auth.TEACHER, t.getCenter());
                     alarmRepository.save(alarm);
@@ -171,7 +173,7 @@ public class TeacherService {
      * 작성자: 이승범
      * 작성내용: 시설에 등록신청
      */
-    public Teacher assignCenter(Long userId, Long centerId) {
+    public Teacher requestAssignCenterForTeacher(Long userId, Long centerId) {
         Teacher teacher = teacherRepository.findByIdAndNotAssign(userId)
                 .orElseThrow(() -> new SignupException(SignupErrorResult.ALREADY_BELONG_CENTER));
 
@@ -193,18 +195,20 @@ public class TeacherService {
      * 작성자: 이승범
      * 작성내용: 시설 탈퇴하기
      */
-    public Teacher escapeCenter(Long userId) {
+    public Teacher leaveCenterForTeacher(Long userId) {
 
-        Teacher escapedTeacher = teacherRepository.findByIdWithCenterWithTeacher(userId)
+        Teacher escapedTeacher = teacherRepository.findById(userId)
                 .orElseThrow(() -> new SignupException(SignupErrorResult.NOT_BELONG_CENTER));
 
+        List<Teacher> teacherList = teacherRepository.findByCenter(escapedTeacher.getCenter());
+
         // 시설에 속한 일반 교사들
-        List<Teacher> commons = escapedTeacher.getCenter().getTeachers().stream()
+        List<Teacher> commons = teacherList.stream()
                 .filter(teacher -> teacher.getAuth() == Auth.TEACHER)
                 .collect(Collectors.toList());
 
         // 시설에 속한 원장들
-        List<Teacher> directors = escapedTeacher.getCenter().getTeachers().stream()
+        List<Teacher> directors = teacherList.stream()
                 .filter(teacher -> teacher.getAuth() == Auth.DIRECTOR)
                 .collect(Collectors.toList());
 
@@ -227,13 +231,16 @@ public class TeacherService {
      */
     public List<TeacherInfoForAdminDto> findTeacherApprovalList(Long userId) {
 
-        // 로그인한 사용자가 원장인지 확인 및 원장으로 등록되어있는 시설에 모든 교사들 갖오기
-        Teacher director = teacherRepository.findDirectorByIdWithCenterWithTeacher(userId)
+        // 로그인한 사용자가 원장인지 확인
+        Teacher director = teacherRepository.findDirectorById(userId)
                 .orElseThrow(() -> new UserException(UserErrorResult.HAVE_NOT_AUTHORIZATION));
+
+        //원장으로 등록되어있는 시설에 모든 교사들 갖오기
+        List<Teacher> teacherList = teacherRepository.findByCenter(director.getCenter());
 
         List<TeacherInfoForAdminDto> response = new ArrayList<>();
 
-        director.getCenter().getTeachers().forEach(teacher -> {
+        teacherList.forEach(teacher -> {
             // 요청한 원장은 빼고 시설에 연관된 교사들 보여주기
             if (!Objects.equals(teacher.getId(), userId)) {
                 TeacherInfoForAdminDto teacherInfoForAdmin =
@@ -248,13 +255,14 @@ public class TeacherService {
      * 작성자: 이승범
      * 작성내용: 교사 승인
      */
-    public Teacher acceptTeacher(Long userId, Long teacherId) {
-        // 로그인한 사용자가 원장인지 확인 && 사용자 시설에 등록된 교사들 싹 다 가져오기
-        Teacher director = teacherRepository.findDirectorByIdWithCenterWithTeacher(userId)
+    public Teacher acceptTeacherRegistration(Long userId, Long teacherId) {
+        // 로그인한 사용자가 원장인지 확인
+        Teacher director = teacherRepository.findDirectorById(userId)
                 .orElseThrow(() -> new UserException(UserErrorResult.HAVE_NOT_AUTHORIZATION));
 
         // 승인하고자 하는 교사가 해당 시설에 속해 있는지 && 대기 상태인지 확인
-        Teacher acceptedTeacher = director.getCenter().getTeachers().stream()
+        List<Teacher> teacherList = teacherRepository.findByCenter(director.getCenter());
+        Teacher acceptedTeacher = teacherList.stream()
                 .filter(teacher -> Objects.equals(teacher.getId(), teacherId) && teacher.getApproval() == Approval.WAITING)
                 .findFirst()
                 .orElseThrow(() -> new UserException(UserErrorResult.NOT_VALID_REQUEST));
@@ -276,7 +284,7 @@ public class TeacherService {
      * 작성자: 이승범
      * 작성내용: 교사 삭제/승인거절
      */
-    public Teacher fireTeacher(Long userId, Long teacherId) {
+    public Teacher rejectTeacherRegistration(Long userId, Long teacherId) {
 
         // 로그인한 사용자가 원장인지 확인
         Teacher director = teacherRepository.findDirectorById(userId)
@@ -303,13 +311,12 @@ public class TeacherService {
      * 작성내용: 원장권한 부여
      */
     public Teacher mandateTeacher(Long userId, Long teacherId) {
-
-        // 사용자의 시설에 등록된 교사들 엮어서 가져오기
-        Teacher director = teacherRepository.findDirectorByIdWithCenterWithTeacher(userId)
+        // 로그인한 사용자가 원장인지 확인
+        Teacher director = teacherRepository.findDirectorById(userId)
                 .orElseThrow(() -> new UserException(UserErrorResult.HAVE_NOT_AUTHORIZATION));
 
-        //
-        Teacher mandatedTeacher = director.getCenter().getTeachers().stream()
+        List<Teacher> teacherList = teacherRepository.findByCenter(director.getCenter());
+        Teacher mandatedTeacher = teacherList.stream()
                 .filter(teacher -> Objects.equals(teacher.getId(), teacherId))
                 .filter(teacher -> teacher.getApproval() == Approval.ACCEPT)
                 .findFirst()
@@ -325,10 +332,11 @@ public class TeacherService {
      */
     public Teacher demoteTeacher(Long userId, Long teacherId) {
 
-        Teacher director = teacherRepository.findDirectorByIdWithCenterWithTeacher(userId)
+        Teacher director = teacherRepository.findDirectorById(userId)
                 .orElseThrow(() -> new UserException(UserErrorResult.HAVE_NOT_AUTHORIZATION));
 
-        Teacher demotedTeacher = director.getCenter().getTeachers().stream()
+        List<Teacher> teacherList = teacherRepository.findByCenter(director.getCenter());
+        Teacher demotedTeacher = teacherList.stream()
                 .filter(teacher -> Objects.equals(teacher.getId(), teacherId))
                 .findFirst()
                 .orElseThrow(() -> new UserException(UserErrorResult.NOT_VALID_REQUEST));
@@ -340,7 +348,7 @@ public class TeacherService {
     // 해당 시설과 연관된 게시판 bookmark 삭제
     private void deleteBookmarkByCenter(Teacher escapedTeacher) {
         if (escapedTeacher.getApproval() == Approval.ACCEPT) {
-            List<Board> boards = boardRepository.findByCenter(escapedTeacher.getCenter().getId());
+            List<Board> boards = boardRepository.findByCenterId(escapedTeacher.getCenter().getId());
             List<Long> boardIds = boards.stream()
                     .map(Board::getId)
                     .collect(Collectors.toList());
@@ -353,7 +361,7 @@ public class TeacherService {
      *   작성자: 이승범
      *   작성내용: 회원가입 과정에서 필요한 센터정보 가져오기
      */
-    public Slice<CenterDto> findCenterForSignup(CenterRequest request, Pageable pageable) {
+    public Slice<CenterDto> findCenterForSignupTeacher(CenterRequest request, Pageable pageable) {
         return centerRepository.findForSignup(request.getSido(), request.getSigungu(), request.getCenterName(), pageable);
     }
 
@@ -363,7 +371,7 @@ public class TeacherService {
      */
     public long withdrawTeacher(Long userId){
         userService.withdrawUser(userId); // 교사, 학부모 공톤 탈퇴 로직
-        escapeCenter(userId); // 연결된 시설 끊기 ( 해당 시설과 연관된 bookmark 삭제 )
+        leaveCenterForTeacher(userId); // 연결된 시설 끊기 ( 해당 시설과 연관된 bookmark 삭제 )
         return userId;
     }
 

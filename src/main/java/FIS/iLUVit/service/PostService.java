@@ -35,7 +35,6 @@ public class PostService {
     private final ImageService imageService;
     private final BoardRepository boardRepository;
     private final BoardBookmarkRepository boardBookmarkRepository;
-    private final PostHeartRepository postHeartRepository;
     private final ChatRoomRepository chatRoomRepository;
     private final AlarmRepository alarmRepository;
     private final ReportRepository reportRepository;
@@ -44,7 +43,7 @@ public class PostService {
 
 //    private final Integer heartCriteria = 2; // HOT 게시판 좋아요 기준
 
-    public Long savePost(PostRequest request, Long userId) {
+    public Long saveNewPost(PostRequest request, Long userId) {
         if (userId == null) {
             throw new UserException(UserErrorResult.NOT_VALID_TOKEN);
         }
@@ -70,7 +69,7 @@ public class PostService {
 
     }
 
-    public Long deleteById(Long postId, Long userId) {
+    public Long deletePost(Long postId, Long userId) {
         if (userId == null) {
             throw new UserException(UserErrorResult.NOT_VALID_TOKEN);
         }
@@ -110,7 +109,7 @@ public class PostService {
     }
 
 
-    public PostResponse findById(Long userId, Long postId) {
+    public PostResponse findPostByPostId(Long userId, Long postId) {
         // 게시글과 연관된 유저, 게시판, 시설 한 번에 끌고옴
         Post findPost = postRepository.findByIdWithUserAndBoardAndCenter(postId)
                 .orElseThrow(() -> new PostException(PostErrorResult.POST_NOT_EXIST));
@@ -120,7 +119,7 @@ public class PostService {
     }
 
     // [모두의 이야기 + 유저가 속한 센터의 이야기] 에서 통합 검색
-    public Slice<PostPreviewDto> searchByKeyword(String input, Long userId, Pageable pageable) {
+    public Slice<PostPreviewDto> searchPost(String input, Long userId, Pageable pageable) {
 
         if (userId == null) {
             throw new UserException(UserErrorResult.NOT_VALID_TOKEN);
@@ -152,7 +151,7 @@ public class PostService {
         return posts;
     }
 
-    public Slice<PostPreviewDto> searchByKeywordAndCenter(Long centerId, String input, Auth auth, Long userId, Pageable pageable) {
+    public Slice<PostPreviewDto> searchPostByCenter(Long centerId, String input, Auth auth, Long userId, Pageable pageable) {
         if (centerId != null) {
             if (auth == Auth.PARENT) {
                 // 학부모 유저일 때 아이와 연관된 센터의 아이디를 모두 가져옴
@@ -178,7 +177,7 @@ public class PostService {
         return posts;
     }
 
-    public Slice<PostPreviewDto> searchByKeywordAndBoard(Long boardId, String input, Pageable pageable) {
+    public Slice<PostPreviewDto> searchByBoard(Long boardId, String input, Pageable pageable) {
         Slice<PostPreviewDto> posts = postRepository.findByBoardAndKeyword(boardId, input, pageable);
         posts.forEach(g -> setPreviewImage(g));
         return posts;
@@ -199,13 +198,13 @@ public class PostService {
         preview.updatePreviewImage(infoImages);
     }
 
-    public Slice<PostPreviewDto> searchByUser(Long userId, Pageable pageable) {
+    public Slice<PostPreviewDto> findPostByUser(Long userId, Pageable pageable) {
         Slice<Post> posts = postRepository.findByUser(userId, pageable);
         Slice<PostPreviewDto> preview = posts.map(post -> new PostPreviewDto(post));
         return preview;
     }
 
-    public List<BoardPreviewDto> searchMainPreview(Long userId) {
+    public List<BoardPreviewDto> findBoardDetailsByPublic(Long userId) {
         List<BoardPreviewDto> boardPreviews = new ArrayList<>();
 
         // 비회원일 때 기본 게시판들의 id를 북마크처럼 디폴트로 제공, 회원일 땐 북마크를 통해서 제공
@@ -222,11 +221,11 @@ public class PostService {
         List<Post> hotPosts = postRepository.findTop3ByHeartCnt(Criteria.HOT_POST_HEART_CNT, PageRequest.of(0, 3));
         List<BoardPreviewDto> results = new ArrayList<>();
 
-        return getPreivewResult(hotPosts, results, boardPreviews);
+        return getPreviewResult(hotPosts, results, boardPreviews);
     }
 
 
-    public List<BoardPreviewDto> searchCenterMainPreview(Long userId, Long centerId) {
+    public List<BoardPreviewDto> findBoardDetailsByCenter(Long userId, Long centerId) {
         if (userId == null) {
             throw new UserException(UserErrorResult.NOT_VALID_TOKEN);
         }
@@ -262,7 +261,7 @@ public class PostService {
         List<Post> hotPosts = postRepository.findTop3ByHeartCntWithCenter(Criteria.HOT_POST_HEART_CNT, centerId, PageRequest.of(0, 3));
         List<BoardPreviewDto> results = new ArrayList<>();
 
-        return getPreivewResult(hotPosts, results, boardPreviews);
+        return getPreviewResult(hotPosts, results, boardPreviews);
     }
 
     private void getBoardPreviews(List<Bookmark> bookmarkList, List<BoardPreviewDto> boardPreviews) {
@@ -302,7 +301,7 @@ public class PostService {
     }
 
     @NotNull
-    private List<BoardPreviewDto> getPreivewResult(List<Post> hotPosts, List<BoardPreviewDto> results, List<BoardPreviewDto> boardPreviews) {
+    private List<BoardPreviewDto> getPreviewResult(List<Post> hotPosts, List<BoardPreviewDto> results, List<BoardPreviewDto> boardPreviews) {
         List<BoardPreviewDto.PostInfo> postInfoList = hotPosts.stream()
                 .map((Post post) -> {
                     BoardPreviewDto.PostInfo postInfo = new BoardPreviewDto.PostInfo(post);
@@ -320,7 +319,7 @@ public class PostService {
         return results;
     }
 
-    public void updateDate(Long userId, Long postId) {
+    public void pullUpPost(Long userId, Long postId) {
         if (userId == null) {
             throw new UserException(UserErrorResult.NOT_VALID_TOKEN);
         }
@@ -332,41 +331,9 @@ public class PostService {
         findPost.updateTime(LocalDateTime.now());
     }
 
-    public Slice<PostPreviewDto> findByHeartCnt(Long centerId, Pageable pageable) {
+    public Slice<PostPreviewDto> findPostByHeartCnt(Long centerId, Pageable pageable) {
         // heartCnt 가 n 개 이상이면 HOT 게시판에 넣어줍니다.
         return postRepository.findHotPosts(centerId, Criteria.HOT_POST_HEART_CNT, pageable);
-    }
-
-    /**
-        작성자: 이창윤
-        작성시간: 2022/06/27 1:40 PM
-        내용: 게시글에 이미 좋아요 눌렀는지 검증 후 저장
-    */
-    public Long savePostHeart(Long userId, Long postId) {
-        if (userId == null) {
-            throw new UserException(UserErrorResult.NOT_VALID_TOKEN);
-        }
-
-        Post findPost = postRepository.findById(postId)
-                .orElseThrow(() -> new PostException(PostErrorResult.POST_NOT_EXIST));
-
-        postHeartRepository.findByPostAndUser(userId, postId)
-                .ifPresent((ph) -> {
-                    throw new PostException(PostErrorResult.ALREADY_EXIST_HEART);
-                });
-
-        User findUser = userRepository.getById(userId);
-        PostHeart postHeart = new PostHeart(findUser, findPost);
-        return postHeartRepository.save(postHeart).getId();
-    }
-
-    public void deletePostHeart(Long userId, Long postId){
-        if (userId == null) {
-            throw new UserException(UserErrorResult.NOT_VALID_TOKEN);
-        }
-        PostHeart postHeart = postHeartRepository.findByPostAndUser(userId, postId)
-                .orElseThrow(() -> new PostException(PostErrorResult.POST_NOT_EXIST));
-        postHeartRepository.delete(postHeart);
     }
 
 }

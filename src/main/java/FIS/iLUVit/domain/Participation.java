@@ -55,8 +55,6 @@ public class Participation extends BaseEntity {
                 .status(Status.JOINED)
                 .build();
 
-        // 연관 관계 등록
-        parent.getParticipations().add(participation);
 
         // 연관 관계 등록 및 participationCnt + 1
         ptDate.acceptParticipation(participation);
@@ -82,9 +80,6 @@ public class Participation extends BaseEntity {
                 .ptDate(ptDate)
                 .status(Status.JOINED)
                 .build();
-
-        // 연관 관계 등록
-        parent.getParticipations().add(participation);
 
         // 연관 관계 등록 및 participationCnt + 1
         ptDate.acceptParticipation(participation);
