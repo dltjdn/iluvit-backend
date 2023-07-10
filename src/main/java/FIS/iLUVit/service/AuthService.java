@@ -37,7 +37,7 @@ public class AuthService {
     private String fromNumber;
 
     // 인증번호 제한시간(초)
-    private final Integer authValidTime = 60;
+    private final Integer authValidTime = 120;
 
     // 인증한 후 인증이 유지되는 시간(초)
     private final Integer authNumberValidTime = 60 * 60;
@@ -106,7 +106,7 @@ public class AuthService {
 
         if (request.getAuthKind().equals(AuthKind.updatePhoneNum)) {
             authNumber = authRepository
-                    .findByPhoneNumAndAuthNumAndAuthKindAndUserId(request.getPhoneNum(), request.getAuthNum(), request.getAuthKind(), userId)
+                    .findByPhoneNumAndAuthKindAndAuthNumAndUserId(request.getPhoneNum(), request.getAuthKind(),request.getAuthNum(), userId)
                     .orElseThrow(() -> new AuthNumberException(AuthNumberErrorResult.AUTHENTICATION_FAIL));
 
         } else {
@@ -167,7 +167,7 @@ public class AuthService {
      */
     public AuthNumber validateAuthNumber(String phoneNum, AuthKind authKind) {
         // 핸드폰 인증여부 확인
-        AuthNumber authComplete = authRepository.findAuthComplete(phoneNum, authKind)
+        AuthNumber authComplete = authRepository.findByPhoneNumAndAuthKindAndAuthTimeNotNull(phoneNum, authKind)
                 .orElseThrow(() -> new AuthNumberException(AuthNumberErrorResult.NOT_AUTHENTICATION));
         // 핸드폰 인증 후 일정시간이 지나면 무효화
         if (Duration.between(authComplete.getAuthTime(), LocalDateTime.now()).getSeconds() > authNumberValidTime) {
@@ -185,7 +185,7 @@ public class AuthService {
         // 4자리 랜덤 숫자 생성
         String authNum = createRandomNumber();
 
-        AuthNumber overlaps = authRepository.findOverlap(toNumber, authKind).orElse(null);
+        AuthNumber overlaps = authRepository.findByPhoneNumAndAuthKind(toNumber, authKind).orElse(null);
 
         // 인증번호 최초 요청인 경우 || 이미 인증번호를 받았지만 제한시간이 지난 경우
         if (overlaps == null || Duration.between(overlaps.getCreatedDate(), LocalDateTime.now()).getSeconds() > authValidTime) {
@@ -193,7 +193,7 @@ public class AuthService {
             // 이미 인증번호를 받았지만 제한시간이 지난 경우
             if (overlaps != null) {
                 // 예전 인증번호 관련 정보를 db에서 지우고
-                authRepository.deleteExpiredNumber(toNumber, authKind);
+                authRepository.deleteByPhoneNumAndAuthKind(toNumber, authKind);
             }
             // 인증번호 보내고
             requestCoolSMS(toNumber, authNum);
