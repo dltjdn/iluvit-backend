@@ -11,6 +11,7 @@ import FIS.iLUVit.exception.UserException;
 import FIS.iLUVit.repository.AlarmRepository;
 import FIS.iLUVit.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
+import org.apache.http.HttpStatus;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
 import org.springframework.data.domain.SliceImpl;
@@ -42,7 +43,7 @@ public class AlarmService {
         
         return new AlarmDetailResponseDto(
                 "활동 알림 조회 성공",
-                HttpServletResponse.SC_OK,
+                HttpStatus.SC_OK,
                 true,
                 alarmDetailDtos
         );
@@ -62,7 +63,7 @@ public class AlarmService {
 
         return new AlarmDetailResponseDto(
                 "설명회 알림 조회 성공",
-                HttpServletResponse.SC_OK,
+                HttpStatus.SC_OK,
                 true,
                 alarmDetailDtos
         );
@@ -82,7 +83,7 @@ public class AlarmService {
 
         return new AlarmResponseDto(
                 "전체 알림 읽음 처리 성공",
-                HttpServletResponse.SC_OK,
+                HttpStatus.SC_OK,
                 true
         );
         
@@ -102,7 +103,7 @@ public class AlarmService {
 
         return new AlarmReadResponseDto(
                 "전체 알림 읽었는지 안 읽었는지 여부 조회 성공",
-                HttpServletResponse.SC_OK,
+                HttpStatus.SC_OK,
                 true,
                 readAlarm
         );
@@ -121,7 +122,7 @@ public class AlarmService {
 
         return new AlarmResponseDto(
                 "선택한 알림 삭제 성공",
-                HttpServletResponse.SC_NO_CONTENT,
+                HttpStatus.SC_NO_CONTENT,
                 true
         );
     }
@@ -142,7 +143,7 @@ public class AlarmService {
 
         return new AlarmResponseDto(
                 "모든 알림 삭제 성공",
-                HttpServletResponse.SC_NO_CONTENT,
+                HttpStatus.SC_NO_CONTENT,
                 true
         );
     }

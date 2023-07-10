@@ -1,7 +1,9 @@
 package FIS.iLUVit.dto.alarm;
 
 import lombok.AllArgsConstructor;
+import lombok.Getter;
 
+@Getter
 @AllArgsConstructor
 public class AlarmReadResponseDto {
     private String message;
