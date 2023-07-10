@@ -21,7 +21,7 @@ public interface AlarmRepository extends JpaRepository<Alarm, Long> {
     */
     @Query("select alarm from Alarm alarm " +
             "where alarm.user.id =:userId and " +
-            "alarm.dtype <> 'PresentationFullAlarm' and alarm.dtype <> 'ConvertedToParticipateAlarm' and alarm.dtype <> 'PresentationCreatedAlarm' and alarm.dtype <> 'PresentationPeriodClosedAlarm' ")
+            "(alarm.dtype <> 'PresentationFullAlarm' and alarm.dtype <> 'ConvertedToParticipateAlarm' and alarm.dtype <> 'PresentationCreatedAlarm' and alarm.dtype <> 'PresentationPeriodClosedAlarm')")
     Slice<Alarm> findActiveByUser(@Param("userId") Long userId, Pageable pageable);
 
     /**
@@ -30,10 +30,9 @@ public interface AlarmRepository extends JpaRepository<Alarm, Long> {
      작성내용: 알림종류가 "설명회 가득참", "설명회 참여로 전환" ,"설명회 생성" , "설명회 기간 종료" 인 해당 사용자의 알림을 조회합니다
      */
     @Query("select alarm from Alarm alarm " +
-            "where alarm.user.id =:userId and " +
-            "alarm.dtype = 'PresentationFullAlarm' or alarm.dtype = 'ConvertedToParticipateAlarm' or alarm.dtype = 'PresentationCreatedAlarm' or alarm.dtype = 'PresentationPeriodClosedAlarm'")
+            "where alarm.user.id = :userId and " +
+            "(alarm.dtype = 'PresentationFullAlarm' or alarm.dtype = 'ConvertedToParticipateAlarm' or alarm.dtype = 'PresentationCreatedAlarm' or alarm.dtype = 'PresentationPeriodClosedAlarm')")
     Slice<Alarm> findPresentationByUser(@Param("userId") Long userId, Pageable pageable);
-
 
 
     /**
@@ -41,9 +40,6 @@ public interface AlarmRepository extends JpaRepository<Alarm, Long> {
         작성자: 이서우
         작성내용: 해당 사용자의 알람 id 리스트를 삭제합니다
     */
-//    @Modifying
-//    @Query("delete from Alarm alarm where alarm.id in :alarmIds and alarm.user.id = :userId")
-//    Integer deleteByIds(@Param("userId") Long userId, @Param("alarmIds") List<Long> alarmIds);
     void deleteByUserIdAndIdIn(Long userId, List<Long> alarmIds);
 
 

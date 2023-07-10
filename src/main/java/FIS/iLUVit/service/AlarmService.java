@@ -34,19 +34,10 @@ public class AlarmService {
         작성자: 이서우
         작성내용: 활동 알림을 조회합니다
     */
-    public AlarmDetailResponseDto findActiveAlarmByUser(Long userId, Pageable pageable) {
-        Slice<Alarm> alarmSlice = alarmRepository.findActiveByUser(userId, pageable);
-        SliceImpl<AlarmDetailDto> alarmDetailDtos = new SliceImpl<>(alarmSlice.stream()
-                .map(Alarm::exportAlarm)
-                .collect(Collectors.toList()),
-                pageable, alarmSlice.hasNext());
-        
-        return new AlarmDetailResponseDto(
-                "활동 알림 조회 성공",
-                HttpStatus.SC_OK,
-                true,
-                alarmDetailDtos
-        );
+    public Slice<Alarm> findActiveAlarmByUser(Long userId, Pageable pageable) {
+        Slice<Alarm> alarms = alarmRepository.findActiveByUser(userId, pageable);
+
+        return alarms;
     }
 
     /**
@@ -54,19 +45,10 @@ public class AlarmService {
         작성자: 이서우
         작성내용: 설명회 알림을 조회합니다
     */
-    public AlarmDetailResponseDto findPresentationActiveAlarmByUser(Long userId, Pageable pageable) {
-        Slice<Alarm> alarmSlice = alarmRepository.findPresentationByUser(userId, pageable);
-        SliceImpl<AlarmDetailDto> alarmDetailDtos = new SliceImpl<>(alarmSlice.stream()
-                .map(Alarm::exportAlarm)
-                .collect(Collectors.toList()),
-                pageable, alarmSlice.hasNext());
+    public Slice<Alarm> findPresentationActiveAlarmByUser(Long userId, Pageable pageable) {
+        Slice<Alarm> alarms = alarmRepository.findPresentationByUser(userId, pageable);
 
-        return new AlarmDetailResponseDto(
-                "설명회 알림 조회 성공",
-                HttpStatus.SC_OK,
-                true,
-                alarmDetailDtos
-        );
+        return alarms;
     }
 
     /**
@@ -74,18 +56,13 @@ public class AlarmService {
         작성자: 이서우
         작성내용: 전체 알림 읽었다고 처리하기
     */
-    public AlarmResponseDto readAlarm(Long userId) {
+    public void readAlarm(Long userId) {
         if(userId == null)
             throw new UserException(UserErrorResult.NOT_LOGIN);
+
         userRepository.findById(userId)
                 .orElseThrow(() -> new UserException(UserErrorResult.USER_NOT_EXIST))
                 .updateReadAlarm(Boolean.TRUE); // user의 readAlarm 필드를 true로 바꾼다
-
-        return new AlarmResponseDto(
-                "전체 알림 읽음 처리 성공",
-                HttpStatus.SC_OK,
-                true
-        );
         
     }
 
@@ -94,19 +71,15 @@ public class AlarmService {
         작성자: 이서우
         작성내용: 전체 알림 읽었는지 안 읽었는지 여부를 조회합니다
     */
-    public AlarmReadResponseDto hasRead(Long userId) {
+    public Boolean hasRead(Long userId) {
         if(userId == null)
             throw new UserException(UserErrorResult.NOT_LOGIN);
+
         Boolean readAlarm = userRepository.findById(userId)
                 .orElseThrow(() -> new UserException(UserErrorResult.USER_NOT_EXIST))
                 .getReadAlarm();
 
-        return new AlarmReadResponseDto(
-                "전체 알림 읽었는지 안 읽었는지 여부 조회 성공",
-                HttpStatus.SC_OK,
-                true,
-                readAlarm
-        );
+        return readAlarm;
     }
 
     /**
@@ -114,17 +87,11 @@ public class AlarmService {
      작성자: 이서우
      작성내용: 선택한 알림들을 삭제합니다
      */
-    public AlarmResponseDto deleteSelectedAlarm(Long userId, List<Long> alarmIds) {
+    public void deleteSelectedAlarm(Long userId, List<Long> alarmIds) {
         if(userId == null)
             throw new UserException(UserErrorResult.NOT_LOGIN);
 
         alarmRepository.deleteByUserIdAndIdIn(userId, alarmIds);
-
-        return new AlarmResponseDto(
-                "선택한 알림 삭제 성공",
-                HttpStatus.SC_NO_CONTENT,
-                true
-        );
     }
 
     /**
@@ -132,20 +99,15 @@ public class AlarmService {
      작성자: 이서우
      작성내용: 모든 알림을 삭제합니다
      */
-    public AlarmResponseDto deleteAllAlarm(Long userId){
-
+    public void deleteAllAlarm(Long userId){
         if(userId == null)
             throw new UserException(UserErrorResult.NOT_LOGIN);
+
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new UserException(UserErrorResult.NOT_VALID_TOKEN));
 
         alarmRepository.deleteAllByUser(user);
 
-        return new AlarmResponseDto(
-                "모든 알림 삭제 성공",
-                HttpStatus.SC_NO_CONTENT,
-                true
-        );
     }
 
 }
