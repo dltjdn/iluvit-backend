@@ -35,15 +35,11 @@ public interface AlarmRepository extends JpaRepository<Alarm, Long> {
     Slice<Alarm> findPresentationByUser(@Param("userId") Long userId, Pageable pageable);
 
 
-
     /**
         작성날짜: 2023/07/07 8:03 PM
         작성자: 이서우
         작성내용: 해당 사용자의 알람 id 리스트를 삭제합니다
     */
-//    @Modifying
-//    @Query("delete from Alarm alarm where alarm.id in :alarmIds and alarm.user.id = :userId")
-//    Integer deleteByIds(@Param("userId") Long userId, @Param("alarmIds") List<Long> alarmIds);
     void deleteByUserIdAndIdIn(Long userId, List<Long> alarmIds);
 
 
