@@ -1,26 +1,18 @@
 package FIS.iLUVit.service;
 
 import FIS.iLUVit.domain.User;
-import FIS.iLUVit.dto.alarm.AlarmReadResponseDto;
-import FIS.iLUVit.dto.alarm.AlarmResponseDto;
-import FIS.iLUVit.dto.alarm.AlarmDetailDto;
 import FIS.iLUVit.domain.alarms.Alarm;
-import FIS.iLUVit.dto.alarm.AlarmDetailResponseDto;
 import FIS.iLUVit.exception.UserErrorResult;
 import FIS.iLUVit.exception.UserException;
 import FIS.iLUVit.repository.AlarmRepository;
 import FIS.iLUVit.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
-import org.apache.http.HttpStatus;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
-import org.springframework.data.domain.SliceImpl;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import javax.servlet.http.HttpServletResponse;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Service
 @Transactional
