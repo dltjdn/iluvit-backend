@@ -2,6 +2,7 @@ package FIS.iLUVit.controller;
 
 import FIS.iLUVit.config.argumentResolver.Login;
 import FIS.iLUVit.dto.auth.AuthNumRequest;
+import FIS.iLUVit.dto.auth.FindLoginIdDto;
 import FIS.iLUVit.dto.auth.FindPasswordRequest;
 import FIS.iLUVit.service.AuthService;
 import lombok.RequiredArgsConstructor;
@@ -71,9 +72,10 @@ public class AuthController {
      * (아이디찾기) 인증번호 인증 후 유저 아이디 반환
      */
     @PostMapping("loginid")
-    public ResponseEntity<String> authenticateAuthNumForFindLoginId(@RequestBody AuthNumRequest request) {
+    public ResponseEntity<FindLoginIdDto> authenticateAuthNumForFindLoginId(@RequestBody AuthNumRequest request) {
         String blindLoginId = authService.authenticateAuthNumForFindLoginId(request);
-        return ResponseEntity.status(HttpStatus.OK).body(blindLoginId);
+        FindLoginIdDto findLoginIdDto = new FindLoginIdDto(blindLoginId);
+        return ResponseEntity.ok(findLoginIdDto);
     }
 
     /**
