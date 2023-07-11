@@ -72,9 +72,10 @@ public class AlarmController {
      * 전체 알림 읽었는지 안 읽었는지 여부를 조회합니다
      */
     @GetMapping("is-read")
-    public ResponseEntity<Boolean> hasRead(@Login Long userId){
+    public ResponseEntity<AlarmReadDto> hasRead(@Login Long userId){
         Boolean hasRead = alarmService.hasRead(userId);
-        return ResponseEntity.ok(hasRead);
+        AlarmReadDto alarmReadDto = new AlarmReadDto(hasRead);
+        return ResponseEntity.ok(alarmReadDto);
     }
 
     /**

@@ -39,7 +39,7 @@ public class User extends BaseImageEntity {
     @Embedded
     protected Location location;
 
-    protected Boolean readAlarm; // 알림 모두 읽음 or 안 읽은 알림 있음
+    protected Boolean readAlarm; // true = 알림 모두 읽음, false = 안 읽은 알림 있음
 
     @Enumerated(EnumType.STRING)
     protected Auth auth;                   // Teacher or Director or Parent

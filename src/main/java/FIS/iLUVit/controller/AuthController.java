@@ -77,7 +77,7 @@ public class AuthController {
     }
 
     /**
-     * (비밀번호 변경용 비밀번호찾기) 인증번호 인증 후 비밀번호 변경
+     * (비밀번호 변경용 비밀번호찾기) 인증이 완료된 핸드폰번호인지 확인 후 비밀번호 변경
      */
     @PostMapping("password")
     public ResponseEntity<Void> authenticateAuthNumForChangePwd(@RequestBody @Valid FindPasswordRequest request) {
