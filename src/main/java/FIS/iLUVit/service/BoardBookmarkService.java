@@ -1,5 +1,6 @@
 package FIS.iLUVit.service;
 
+import FIS.iLUVit.dto.board.BoardBookmarkIdDto;
 import FIS.iLUVit.dto.board.StoryDto;
 import FIS.iLUVit.domain.*;
 import FIS.iLUVit.exception.BookmarkErrorResult;
@@ -29,8 +30,7 @@ public class BoardBookmarkService {
     private final PostRepository postRepository;
 
     /**
-     * 작성자: 이창윤
-     * 작성내용: 유저가 즐겨찾기한 게시판 리스트를 반환합니다
+     * 즐겨찾는 게시판 전체 조회
      */
     public List<StoryDto> findBoardBookmarkByUser(Long userId) {
         if (userId == null) {
@@ -95,6 +95,40 @@ public class BoardBookmarkService {
     }
 
     /**
+     * 즐겨찾는 게시판 등록
+     */
+    public BoardBookmarkIdDto saveBoardBookmark(Long userId, Long boardId) {
+        if (userId == null) {
+            throw new BookmarkException(BookmarkErrorResult.UNAUTHORIZED_USER_ACCESS);
+        }
+        User findUser = userRepository.findById(userId)
+                .orElseThrow(() -> new BookmarkException(BookmarkErrorResult.USER_NOT_EXIST));
+        Board findBoard = boardRepository.findById(boardId)
+                .orElseThrow(() -> new BookmarkException(BookmarkErrorResult.BOARD_NOT_EXIST));
+        Bookmark bookmark = new Bookmark(findBoard, findUser);
+        Long boardBookmarkId = boardBookmarkRepository.save(bookmark).getId();
+
+        return new BoardBookmarkIdDto(boardBookmarkId);
+    }
+
+    /**
+     * 즐겨찾는 게시판 삭제
+     */
+    public Long deleteBoardBookmark(Long userId, Long bookmarkId) {
+        if (userId == null) {
+            throw new BookmarkException(BookmarkErrorResult.UNAUTHORIZED_USER_ACCESS);
+        }
+        Bookmark findBookmark = boardBookmarkRepository.findById(bookmarkId)
+                .orElseThrow(() -> new BookmarkException(BookmarkErrorResult.BOOKMARK_NOT_EXIST));
+        if (!Objects.equals(findBookmark.getUser().getId(), userId)) {
+            throw new BookmarkException(BookmarkErrorResult.UNAUTHORIZED_USER_ACCESS);
+        }
+        boardBookmarkRepository.delete(findBookmark);
+        return bookmarkId;
+    }
+
+
+    /**
      * 작성자: 이창윤
      * 작성내용: StoryDto를 업데이트합니다 ( 권장 되지 않음 )
      */
@@ -131,8 +165,7 @@ public class BoardBookmarkService {
     }
 
     /**
-     * 작성자: 이창윤
-     * 작성내용: 유저가 null일 경우 default를 반환합니다
+     * 유저가 null일 경우 default를 반환합니다 // 게시글 목록 한번에 불러오기 (비회원 전용)
      */
     public List<StoryDto> searchByDefault() {
         List<StoryDto> storyDtos = new ArrayList<>();
@@ -186,36 +219,5 @@ public class BoardBookmarkService {
                         tmp : b.getCenter()));
     }
 
-    /**
-     * 작성자: 이창윤
-     * 작성내용: 해당 게시판을 게시판 즐겨찾기에 등록합니다
-     */
-    public Long saveBoardBookmark(Long userId, Long boardId) {
-        if (userId == null) {
-            throw new BookmarkException(BookmarkErrorResult.UNAUTHORIZED_USER_ACCESS);
-        }
-        User findUser = userRepository.findById(userId)
-                .orElseThrow(() -> new BookmarkException(BookmarkErrorResult.USER_NOT_EXIST));
-        Board findBoard = boardRepository.findById(boardId)
-                .orElseThrow(() -> new BookmarkException(BookmarkErrorResult.BOARD_NOT_EXIST));
-        Bookmark bookmark = new Bookmark(findBoard, findUser);
-        return boardBookmarkRepository.save(bookmark).getId();
-    }
 
-    /**
-     * 작성자: 이창윤
-     * 작성내용: 해당 게시판의 게시판 즐겨찾기를 해제합니다
-     */
-    public Long deleteBoardBookmark(Long userId, Long bookmarkId) {
-        if (userId == null) {
-            throw new BookmarkException(BookmarkErrorResult.UNAUTHORIZED_USER_ACCESS);
-        }
-        Bookmark findBookmark = boardBookmarkRepository.findById(bookmarkId)
-                .orElseThrow(() -> new BookmarkException(BookmarkErrorResult.BOOKMARK_NOT_EXIST));
-        if (!Objects.equals(findBookmark.getUser().getId(), userId)) {
-            throw new BookmarkException(BookmarkErrorResult.UNAUTHORIZED_USER_ACCESS);
-        }
-        boardBookmarkRepository.delete(findBookmark);
-        return bookmarkId;
-   }
 }
