@@ -38,9 +38,11 @@ public class BoardService {
         List<Board> boards = boardRepository.findByCenterIsNull(); // 모두의 이야기 내 모든 게시판
         List<BoardListDto.BoardBookmarkDto> bookmarkList = new ArrayList<>();
         List<BoardListDto.BoardBookmarkDto> boardList = new ArrayList<>();
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new UserException(UserErrorResult.USER_NOT_EXIST));
 
         boards.forEach(board -> {
-            Optional<Bookmark> bookmark =  boardBookmarkRepository.findBoardBookmarkByUserAndBoard(userId, board.getId());
+            Optional<Bookmark> bookmark =  boardBookmarkRepository.findByUserAndBoard(user, board);
             if (bookmark.isEmpty()) { // 즐찾 안한 게시판들은 보드 리스트에 넣음
                 boardList.add(new BoardListDto.BoardBookmarkDto(board));
             } else { // 즐찾한 게시판들은 북마크 리스트에 넣음
@@ -64,9 +66,11 @@ public class BoardService {
         List<Board> boards = boardRepository.findByCenter(findCenter);  // 시설 이야기 모든 게시판
         List<BoardListDto.BoardBookmarkDto> bookmarkList = new ArrayList<>();
         List<BoardListDto.BoardBookmarkDto> boardList = new ArrayList<>();
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new UserException(UserErrorResult.USER_NOT_EXIST));
 
         boards.forEach(board -> {
-            Optional<Bookmark> bookmark =  boardBookmarkRepository.findBoardBookmarkByUserAndBoard(userId, board.getId());
+            Optional<Bookmark> bookmark =  boardBookmarkRepository.findByUserAndBoard(user, board);
             if (bookmark.isEmpty()) { // 즐찾 안한 게시판들은 보드 리스트에 넣음
                 boardList.add(new BoardListDto.BoardBookmarkDto(board));
             } else { // 즐찾한 게시판들은 북마크 리스트에 넣음

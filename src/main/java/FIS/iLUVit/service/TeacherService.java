@@ -349,10 +349,7 @@ public class TeacherService {
     private void deleteBookmarkByCenter(Teacher escapedTeacher) {
         if (escapedTeacher.getApproval() == Approval.ACCEPT) {
             List<Board> boards = boardRepository.findByCenter(escapedTeacher.getCenter());
-            List<Long> boardIds = boards.stream()
-                    .map(Board::getId)
-                    .collect(Collectors.toList());
-            boardBookmarkRepository.deleteAllByBoardAndUser(escapedTeacher.getId(), boardIds);
+            boardBookmarkRepository.deleteByUserAndBoardIn(escapedTeacher, boards);
         }
         // scrap 없애는 코드 추가
     }

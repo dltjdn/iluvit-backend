@@ -4,6 +4,8 @@ import FIS.iLUVit.dto.board.StoryDto;
 import FIS.iLUVit.domain.*;
 import FIS.iLUVit.exception.BookmarkErrorResult;
 import FIS.iLUVit.exception.BookmarkException;
+import FIS.iLUVit.exception.UserErrorResult;
+import FIS.iLUVit.exception.UserException;
 import FIS.iLUVit.repository.*;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -155,7 +157,15 @@ public class BoardBookmarkService {
      * 작성내용: 유저가 즐겨찾기한 게시판의 글을 매핑합니다
      */
     private Map<Center, List<Post>> mappingCenterPostByBoardBookmark(Long userId, Center tmp) {
-        return boardBookmarkRepository.findPostByBoard(userId).stream()
+        User user = userRepository.findById(userId)
+                .orElseThrow(()-> new UserException(UserErrorResult.USER_NOT_EXIST));
+
+        List<Post> posts = boardBookmarkRepository.findByUser(user).stream()
+                .map(boardBookmark -> boardBookmark.getBoard())
+                .map(board -> postRepository.findByBoard(board, Sort.by(Sort.Direction.DESC, "id")).get(0))
+                .collect(Collectors.toList());
+
+        return posts.stream()
                 .collect(Collectors.groupingBy(p -> p.getBoard().getCenter() == null ?
                         tmp : p.getBoard().getCenter()));
     }
@@ -165,7 +175,9 @@ public class BoardBookmarkService {
      * 작성내용: 유저의 즐겨찾기한 게시판을 매핑합니다
      */
     private Map<Center, List<Board>> mappingCenterBoardByBoardBookmark(Long userId, Center tmp) {
-        return boardBookmarkRepository.findByUserWithBoardAndCenter(userId)
+        User user = userRepository.findById(userId)
+                .orElseThrow(()-> new UserException(UserErrorResult.USER_NOT_EXIST));
+        return boardBookmarkRepository.findByUser(user)
                 .stream()
                 .map(bookmark -> bookmark.getBoard())
                 .collect(Collectors.toList())
