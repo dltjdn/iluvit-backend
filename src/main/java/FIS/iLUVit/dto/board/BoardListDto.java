@@ -37,18 +37,5 @@ public class BoardListDto {
         }
     }
 
-    public BoardListDto(Long centerId, String center_name) {
-        this.center_id = centerId;
-        this.center_name = center_name;
-    }
-
-    public void addBoardList(List<BoardBookmarkDto> boardList){
-        this.boardList = boardList;
-    }
-
-    public void addBookmarkList(List<BoardBookmarkDto> bookmarkList){
-        this.bookmarkList = bookmarkList;
-    }
-
 }
 

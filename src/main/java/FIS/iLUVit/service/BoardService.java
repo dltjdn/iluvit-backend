@@ -1,8 +1,8 @@
 package FIS.iLUVit.service;
 
+import FIS.iLUVit.dto.board.BoardIdDto;
 import FIS.iLUVit.dto.board.BoardListDto;
 import FIS.iLUVit.dto.board.BoardRequest;
-
 import FIS.iLUVit.dto.board.StoryPreviewDto;
 import FIS.iLUVit.domain.*;
 import FIS.iLUVit.domain.enumtype.Approval;
@@ -13,7 +13,6 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -30,8 +29,7 @@ public class BoardService {
     private final ChildRepository childRepository;
 
     /**
-     * 작성자: 이창윤
-     * 작성내용: 모두의 이야기의 게시판을 조회합니다
+     * 모두의 이야기 게시판 전체 조회
      */
     public BoardListDto findBoardByPublicList(Long userId) {
 
@@ -55,8 +53,7 @@ public class BoardService {
     }
 
     /**
-     * 작성자: 이창윤
-     * 작성내용: 시설 이야기의 게시판을 조회합니다
+     * 시설 이야기 게시판 전체 조회
      */
     public BoardListDto findAllBoardByCenter(Long userId, Long centerId) {
         Center findCenter = centerRepository.findById(centerId)
@@ -84,10 +81,38 @@ public class BoardService {
     }
 
     /**
-     * 작성자: 이창윤
-     * 작성내용: 새로운 게시판을 생성합니다
+     * 이야기 (모두의 이야기 + 유저가 속한 시설의 이야기) 전체 조회
      */
-    public Long saveNewBoard(Long userId, Long center_id, BoardRequest request) {
+    public List<StoryPreviewDto> findStoryPreviewList(Long userId) {
+        List<StoryPreviewDto> result = new ArrayList<>();
+        result.add(new StoryPreviewDto(null));
+        if (userId == null) {
+            return result;
+        }
+        User findUser = userRepository.findById(userId)
+                .orElseThrow(() -> new UserException(UserErrorResult.USER_NOT_EXIST));
+        if (findUser.getAuth() == Auth.PARENT) {
+            List<Child> children = userRepository.findChildrenWithCenter(userId);
+            List<StoryPreviewDto> storyPreviewDtoList = children.stream()
+                    .filter(child -> child.getCenter() != null && child.getApproval() == Approval.ACCEPT)
+                    .map(child -> new StoryPreviewDto(child.getCenter()))
+                    .collect(Collectors.toList());
+            result.addAll(storyPreviewDtoList);
+        } else {
+            Center findCenter = ((Teacher) findUser).getCenter();
+            Approval approval = ((Teacher) findUser).getApproval();
+            if (findCenter != null && approval == Approval.ACCEPT) {
+                StoryPreviewDto storyPreviewDto = new StoryPreviewDto(findCenter);
+                result.add(storyPreviewDto);
+            }
+        }
+        return result;
+    }
+
+    /**
+     * 게시판 생성
+     */
+    public BoardIdDto saveNewBoard(Long userId, Long center_id, BoardRequest request) {
         // userId 가 null 인 경우 게시판 생성 제한
         if (userId == null) {
             throw new BoardException(BoardErrorResult.UNAUTHORIZED_USER_ACCESS);
@@ -99,8 +124,9 @@ public class BoardService {
                     .ifPresent((b) -> {
                         throw new BoardException(BoardErrorResult.BOARD_NAME_DUPLICATION);
                     });
-            return boardRepository.save(Board.createBoard(
+            Long boardId = boardRepository.save(Board.createBoard(
                     request.getBoard_name(), request.getBoardKind(), null, false)).getId();
+            return new BoardIdDto(boardId);
         }
 
         // 센터가 존재하는 지 검사
@@ -133,14 +159,13 @@ public class BoardService {
 
         Board board = Board.createBoard(request.getBoard_name(), request.getBoardKind(), findCenter,false);
         Board savedBoard = boardRepository.save(board);
-        return savedBoard.getId();
+        return new BoardIdDto(savedBoard.getId());
     }
 
     /**
-     * 작성자: 이창윤
-     * 작성내용: 게시판을 삭제합니다
+     * 게시판 삭제
      */
-    public Long deleteBoardWithValidation(Long userId, Long boardId) {
+    public void deleteBoardWithValidation(Long userId, Long boardId) {
         // userId 가 null 인 경우 게시판 삭제 제한
         if (userId == null) {
             throw new BoardException(BoardErrorResult.UNAUTHORIZED_USER_ACCESS);
@@ -150,7 +175,7 @@ public class BoardService {
         Board findBoard = boardRepository.findById(boardId)
                 .orElseThrow(() -> new BoardException(BoardErrorResult.BOARD_NOT_EXIST));
 
-        /**
+        /*
          * 1. 학부모 -> 삭제 불가
          * 2. DIRECTOR 권한X -> 삭제 불가
          * 3. 센터 값X -> 삭제 불가
@@ -165,12 +190,10 @@ public class BoardService {
                 .ifPresent(u -> validateAuth(findBoard, u));
 
         boardRepository.delete(findBoard);
-        return boardId;
     }
 
     /**
-     * 작성자: 이창윤
-     * 작성내용: 게시판 삭제를 위한 권한을 조회합니다
+     * 게시판 삭제를 위한 권한 조회
      */
     private void validateAuth(Board findBoard, User u) {
         if (u.getAuth() == Auth.PARENT) {
@@ -187,36 +210,5 @@ public class BoardService {
                 throw new BoardException(BoardErrorResult.UNAUTHORIZED_USER_ACCESS);
             }
         }
-    }
-
-
-    /**
-     * 작성자: 이창윤
-     * 작성내용: 모두의 이야기 및 유저가 속한 시설의 이야기의 프리뷰를 조회합니다
-     */
-    public List<StoryPreviewDto> findStoryPreviewList(Long userId) {
-        List<StoryPreviewDto> result = new ArrayList<>();
-        result.add(new StoryPreviewDto(null));
-        if (userId == null) {
-            return result;
-        }
-        User findUser = userRepository.findById(userId)
-                .orElseThrow(() -> new UserException(UserErrorResult.USER_NOT_EXIST));
-        if (findUser.getAuth() == Auth.PARENT) {
-            List<Child> children = userRepository.findChildrenWithCenter(userId);
-            List<StoryPreviewDto> storyPreviewDtoList = children.stream()
-                    .filter(child -> child.getCenter() != null && child.getApproval() == Approval.ACCEPT)
-                    .map(child -> new StoryPreviewDto(child.getCenter()))
-                    .collect(Collectors.toList());
-            result.addAll(storyPreviewDtoList);
-        } else {
-            Center findCenter = ((Teacher) findUser).getCenter();
-            Approval approval = ((Teacher) findUser).getApproval();
-            if (findCenter != null && approval == Approval.ACCEPT) {
-               StoryPreviewDto storyPreviewDto = new StoryPreviewDto(findCenter);
-                result.add(storyPreviewDto);
-            }
-        }
-        return result;
     }
 }
