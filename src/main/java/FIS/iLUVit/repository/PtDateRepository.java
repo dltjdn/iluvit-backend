@@ -47,10 +47,4 @@ public interface PtDateRepository extends JpaRepository<PtDate, Long> {
     @Query("delete from PtDate ptdate where ptdate.id in :ptDateKeys")
     void deletePtDateByIds(@Param("ptDateKeys") Set<Long> ptDateKeysDeleteTarget);
 
-    /*
-        설명회 대기 등록을 위한 ptDate 정보를 가져옵니다.
-     */
-    @Query("select distinct ptDate from PtDate ptDate " +
-            "where ptDate.id = :id ")
-    Optional<PtDate> findByIdWith(@Param("id") Long id);
 }

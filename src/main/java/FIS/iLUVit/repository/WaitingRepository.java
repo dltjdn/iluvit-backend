@@ -16,6 +16,12 @@ import java.util.Optional;
 public interface WaitingRepository extends JpaRepository<Waiting, Long> {
 
     /*
+        waitingId와 userId 매개변수에 해당하는 조건을 만족하는 Waiting 엔티티를 조회합니다.
+     */
+    @Lock(LockModeType.PESSIMISTIC_WRITE)
+    Optional<Waiting> findWaitingByIdAndParent_Id(@Param("waitingId") Long waitingId, @Param("userId") Long userId);
+
+    /*
         대기중인 ptDate가 ptDate와 같고 가장 작은 waitingOrder 값을 가지는 Waiting을 조회합니다.
      */
 //    @Lock(LockModeType.PESSIMISTIC_WRITE)
@@ -24,6 +30,8 @@ public interface WaitingRepository extends JpaRepository<Waiting, Long> {
             "where waiting.ptDate = :ptDate " +
             "and waiting.waitingOrder = (select min(w.waitingOrder) from Waiting w where w.ptDate =:ptDate) ")
     Waiting findMinWaitingOrder(@Param("ptDate") PtDate ptDate);
+
+//    Waiting findTop1ByPtDateAndOrderByWaitingOrderAsc(@Param("ptDate") PtDate ptDate);
 
     /*
         대기중인 ptDate가 ptDate와 같고 대기중인 waitingOrder가 변경 숫자보다 작거나 같으면 Waiting 리스트를 불러옵니다.
@@ -42,15 +50,6 @@ public interface WaitingRepository extends JpaRepository<Waiting, Long> {
             "set waiting.waitingOrder = waiting.waitingOrder - :changeNum " +
             "where waiting.ptDate = :ptDate")
     void updateWaitingOrderForPtDateChange(@Param("changeNum") Integer changeNum, @Param("ptDate") PtDate ptDate);
-
-    /*
-        waitingId와 userId 매개변수에 해당하는 조건을 만족하는 Waiting 엔티티를 조회합니다.
-     */
-    @Lock(LockModeType.PESSIMISTIC_WRITE)
-    @Query("select waiting from Waiting waiting " +
-            "join fetch waiting.ptDate " +
-            "where waiting.id = :waitingId and waiting.parent.id = :userId")
-    Optional<Waiting> findByIdWithPtDate(@Param("waitingId") Long waitingId, @Param("userId") Long userId);
 
     /*
         대기중인 waitingOrder가 waitingOrder 값보다 크고 대기중인 ptDate와 일치한다면 waitingOrder를 1 빼서 업데이트시킵니다.
