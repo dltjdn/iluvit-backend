@@ -83,7 +83,7 @@ public class UserService {
         }
 
         // 핸드폰 인증확인
-        AuthNumber authComplete = authRepository.findAuthComplete(phoneNum, AuthKind.signup)
+        AuthNumber authComplete = authRepository.findByPhoneNumAndAuthKindAndAuthTimeNotNull(phoneNum, AuthKind.signup)
                 .orElseThrow(() -> new AuthNumberException(AuthNumberErrorResult.NOT_AUTHENTICATION));
 
         // 핸드폰 인증후 너무 많은 시간이 지났으면 인증 무효

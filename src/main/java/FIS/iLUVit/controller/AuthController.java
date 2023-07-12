@@ -2,9 +2,12 @@ package FIS.iLUVit.controller;
 
 import FIS.iLUVit.config.argumentResolver.Login;
 import FIS.iLUVit.dto.auth.AuthNumRequest;
+import FIS.iLUVit.dto.auth.FindLoginIdDto;
 import FIS.iLUVit.dto.auth.FindPasswordRequest;
 import FIS.iLUVit.service.AuthService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
@@ -21,66 +24,67 @@ public class AuthController {
      */
 
     /**
-     * 작성자: 이승범
-     * 작성내용: (회원가입) 인증번호 받기
+     * (회원가입) 인증번호 받기
      */
     @GetMapping("signup")
-    public void getAuthNumForSignup(@RequestParam String phoneNumber) {
+    public ResponseEntity<Void>  getAuthNumForSignup(@RequestParam String phoneNumber) {
         authService.sendAuthNumForSignup(phoneNumber);
+        return ResponseEntity.status(HttpStatus.OK).build();
     }
 
     /**
-     * 작성자: 이승범
-     * 작성내용: (아이디찾기) 인증번호 받기
+     * (아이디찾기) 인증번호 받기
      */
     @GetMapping("loginid")
-    public void getAuthNumForFindLoginId(@RequestParam String phoneNumber) {
+    public ResponseEntity<Void> getAuthNumForFindLoginId(@RequestParam String phoneNumber) {
         authService.sendAuthNumForFindLoginId(phoneNumber);
+        return ResponseEntity.status(HttpStatus.OK).build();
     }
 
     /**
-     * 작성자: 이승범
-     * 작성내용: (비밀번호찾기) 인증번호 받기
+     * (비밀번호찾기) 인증번호 받기
      */
     @GetMapping("password")
-    public void getAuthNumForFindPwd(@RequestParam String loginId, @RequestParam String phoneNumber) {
+    public ResponseEntity<Void> getAuthNumForFindPwd(@RequestParam String loginId, @RequestParam String phoneNumber) {
         authService.sendAuthNumberForFindPassword(loginId, phoneNumber);
+        return ResponseEntity.status(HttpStatus.OK).build();
     }
 
     /**
-     * 작성자: 이승범
-     * 작성내용: (핸드폰 변경) 인증번호 받기
+     * (핸드폰 번호 변경) 인증번호 받기
      */
     @GetMapping("phonenumber")
-    public void getAuthNumForUpdatePhoneNum(@Login Long userId, @RequestParam String phoneNumber) {
+    public ResponseEntity<Void> getAuthNumForUpdatePhoneNum(@Login Long userId, @RequestParam String phoneNumber) {
         authService.sendAuthNumForChangePhone(userId, phoneNumber);
+        return ResponseEntity.status(HttpStatus.OK).build();
     }
 
     /**
-     * 작성자: 이승범
-     * 작성내용: (회원가입, 비밀번호 찾기, 핸드폰번호 변경) 인증번호 인증
+     * (회원가입, 비밀번호찾기, 핸드폰번호 변경) 인증번호 인증
      */
     @PostMapping("")
-    public void authenticateAuthNum(@Login Long userId, @RequestBody AuthNumRequest request) {
+    public ResponseEntity<Void> authenticateAuthNum(@Login Long userId, @RequestBody AuthNumRequest request) {
         authService.authenticateAuthNum(userId, request);
+        return ResponseEntity.status(HttpStatus.OK).build();
     }
 
     /**
-     * 작성자: 이승범
-     * 작성내용: (아이디찾기) 인증번호 인증
+     * (아이디찾기) 인증번호 인증 후 유저 아이디 반환
      */
     @PostMapping("loginid")
-    public String authenticateAuthNumForFindLoginId(@RequestBody AuthNumRequest request) {
-        return authService.authenticateAuthNumForFindLoginId(request);
+    public ResponseEntity<FindLoginIdDto> authenticateAuthNumForFindLoginId(@RequestBody AuthNumRequest request) {
+        String blindLoginId = authService.authenticateAuthNumForFindLoginId(request);
+        FindLoginIdDto findLoginIdDto = new FindLoginIdDto(blindLoginId);
+        return ResponseEntity.ok(findLoginIdDto);
     }
 
     /**
-     * 작성자: 이승범
-     * 작성내용: (비밀번호 변경용 비밀번호찾기) 인증번호 인증
+     * (비밀번호 변경용 비밀번호찾기) 인증이 완료된 핸드폰번호인지 확인 후 비밀번호 변경
      */
     @PostMapping("password")
-    public void authenticateAuthNumForChangePwd(@RequestBody @Valid FindPasswordRequest request) {
+    public ResponseEntity<Void> authenticateAuthNumForChangePwd(@RequestBody @Valid FindPasswordRequest request) {
         authService.authenticateAuthNumForChangePwd(request);
+        return ResponseEntity.status(HttpStatus.OK).build();
     }
 
 }
