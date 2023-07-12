@@ -322,7 +322,7 @@ public class ChildService {
 
         // 없으면 해당 시설과 연관된 bookmark 싹 다 삭제
         if (sameCenterChildren.isEmpty()) {
-            List<Board> boards = boardRepository.findByCenterId(deletedChild.getCenter().getId());
+            List<Board> boards = boardRepository.findByCenter(deletedChild.getCenter());
             List<Long> boardIds = boards.stream()
                     .map(Board::getId)
                     .collect(Collectors.toList());

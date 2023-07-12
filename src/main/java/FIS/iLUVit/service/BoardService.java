@@ -61,7 +61,7 @@ public class BoardService {
                 .orElseThrow(() -> new CenterException(CenterErrorResult.CENTER_NOT_EXIST));
 
 
-        List<Board> boards = boardRepository.findByCenterId(centerId);  // 시설 이야기 모든 게시판
+        List<Board> boards = boardRepository.findByCenter(findCenter);  // 시설 이야기 모든 게시판
         List<BoardListDto.BoardBookmarkDto> bookmarkList = new ArrayList<>();
         List<BoardListDto.BoardBookmarkDto> boardList = new ArrayList<>();
 
@@ -91,7 +91,7 @@ public class BoardService {
 
         // 모두의 이야기에서 게시판 이름 중복성 검사 및 저장
         if (center_id == null) {
-            boardRepository.findByName(request.getBoard_name())
+            boardRepository.findByCenterIsNullAndName(request.getBoard_name())
                     .ifPresent((b) -> {
                         throw new BoardException(BoardErrorResult.BOARD_NAME_DUPLICATION);
                     });
@@ -121,7 +121,7 @@ public class BoardService {
         }
 
         // 시설의 이야기에서 게시판 이름 중복성 검사 및 저장
-        boardRepository.findByNameWithCenter(request.getBoard_name(), center_id)
+        boardRepository.findByCenterAndName(findCenter,request.getBoard_name())
                 .ifPresent((b) -> {
                     throw new BoardException(BoardErrorResult.BOARD_NAME_DUPLICATION);
                 });

@@ -209,7 +209,7 @@ public class PostService {
 
         // 비회원일 때 기본 게시판들의 id를 북마크처럼 디폴트로 제공, 회원일 땐 북마크를 통해서 제공
         if (userId == null) {
-            List<Board> boardList = boardRepository.findDefaultByModu();
+            List<Board> boardList = boardRepository.findByCenterIsNullAndIsDefaultTrue();
 
             addBoardPreviews(boardPreviews, boardList);
         } else {

@@ -128,7 +128,7 @@ public class ParentService {
         authRepository.deleteByPhoneNumAndAuthKind(request.getPhoneNum(), AuthKind.signup);
 
         // 모두의 이야기 default boards bookmark 추가하기
-        List<Board> defaultBoards = boardRepository.findDefaultByModu();
+        List<Board> defaultBoards = boardRepository.findByCenterIsNullAndIsDefaultTrue();
         for (Board defaultBoard : defaultBoards) {
             Bookmark bookmark = Bookmark.createBookmark(defaultBoard, parent);
             boardBookmarkRepository.save(bookmark);

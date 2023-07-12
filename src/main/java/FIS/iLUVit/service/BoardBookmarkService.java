@@ -7,11 +7,13 @@ import FIS.iLUVit.exception.BookmarkException;
 import FIS.iLUVit.repository.*;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.*;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 @Service
 @Transactional
@@ -22,6 +24,7 @@ public class BoardBookmarkService {
     private final BoardBookmarkRepository boardBookmarkRepository;
     private final UserRepository userRepository;
     private final BoardRepository boardRepository;
+    private final PostRepository postRepository;
 
     /**
      * 작성자: 이창윤
@@ -91,7 +94,7 @@ public class BoardBookmarkService {
 
     /**
      * 작성자: 이창윤
-     * 작성내용: StoryDto를 업데이트합니다
+     * 작성내용: StoryDto를 업데이트합니다 ( 권장 되지 않음 )
      */
     private void modifyStoryDto(List<Board> boardList, Map<Board, List<Post>> boardPostMap, StoryDto storyDto) {
         // 게시판이 없는 경우 == 게시글이 하나도 없는 경우 -> 빈 배열 넣어줌.
@@ -131,12 +134,17 @@ public class BoardBookmarkService {
      */
     public List<StoryDto> searchByDefault() {
         List<StoryDto> storyDtos = new ArrayList<>();
-        List<Board> defaultBoards = boardRepository.findDefaultByModu();
+        List<Board> defaultBoards = boardRepository.findByCenterIsNullAndIsDefaultTrue();
+
+        // 해당 게시판들에 있는 게시물 중 id 값이 가장 큰 게시물들 ( = 가장 최신 게시물 ) 을 반환한다
+        List<Post> posts = defaultBoards.stream()
+                .map((defaultBoard) -> postRepository.findByBoard(defaultBoard, Sort.by(Sort.Direction.DESC, "id")).get(0))
+                .collect(Collectors.toList());
 
         StoryDto storyDto = new StoryDto(null, "모두의 이야기");
-        Map<Board, List<Post>> boardPostMap = boardRepository.findPostByDefault()
-                .stream()
+        Map<Board, List<Post>> boardPostMap = posts.stream()
                 .collect(Collectors.groupingBy(post -> post.getBoard()));
+
         modifyStoryDto(defaultBoards, boardPostMap, storyDto);
         storyDtos.add(storyDto);
         return storyDtos;
