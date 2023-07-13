@@ -39,7 +39,7 @@ public class UserController {
     @GetMapping("check-loginid")
     public ResponseEntity<Void> checkLoginId(@RequestParam String loginId) {
         userService.checkLoginIdAvailability(loginId);
-        return ResponseEntity.status(HttpStatus.OK).build();
+        return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
     }
 
     /**
@@ -48,7 +48,7 @@ public class UserController {
     @GetMapping("check-nickname")
     public ResponseEntity<Void> checkNickname(@RequestParam String nickname) {
         userService.checkNicknameAvailability(nickname);
-        return ResponseEntity.status(HttpStatus.OK).build();
+        return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
     }
 
     /**
@@ -57,7 +57,7 @@ public class UserController {
     @PutMapping("password")
     public ResponseEntity<Void> updatePassword(@Login Long id, @Valid @RequestBody PasswordUpdateDto request) {
         userService.changePassword(id, request);
-        return ResponseEntity.status(HttpStatus.OK).build();
+        return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
     }
 
     /**
