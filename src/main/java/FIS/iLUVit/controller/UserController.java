@@ -7,7 +7,10 @@ import FIS.iLUVit.security.LoginResponse;
 import FIS.iLUVit.service.UserService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.catalina.valves.rewrite.RewriteCond;
 import org.springframework.core.env.Environment;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
@@ -30,8 +33,9 @@ public class UserController {
      * 작성내용: 유저 상세 조회
      */
     @GetMapping("user")
-    public UserResponse getUserDetails(@Login Long id) {
-        return userService.findUserDetails(id);
+    public ResponseEntity<UserResponse> getUserDetails(@Login Long id) {
+        UserResponse userResponse = userService.findUserDetails(id);
+        return ResponseEntity.status(HttpStatus.OK).body(userResponse);
     }
 
     /**
@@ -39,8 +43,9 @@ public class UserController {
     * 작성내용: 아이디 중복 조회
     */
     @GetMapping("check-loginid")
-    public void checkLoginId(@Valid @ModelAttribute CheckLoginIdRequest request) {
+    public ResponseEntity<Void> checkLoginId(@Valid @ModelAttribute CheckLoginIdRequest request) {
         userService.checkLoginIdAvailability(request);
+        return ResponseEntity.status(HttpStatus.OK).build();
     }
 
     /**
@@ -48,8 +53,9 @@ public class UserController {
     *   작성내용: 닉네임 중복 조회
     */
     @GetMapping("check-nickname")
-    public void checkNickname(@Valid @ModelAttribute CheckNicknameRequest request) {
+    public ResponseEntity<Void> checkNickname(@Valid @ModelAttribute CheckNicknameRequest request) {
         userService.checkNicknameAvailability(request);
+        return ResponseEntity.status(HttpStatus.OK).build();
     }
 
     /**
@@ -57,8 +63,9 @@ public class UserController {
      * 작성내용: 비밀번호 변경
      */
     @PutMapping("password")
-    public void updatePassword(@Login Long id, @Valid @RequestBody PasswordRequest request) {
+    public ResponseEntity<Void> updatePassword(@Login Long id, @Valid @RequestBody PasswordRequest request) {
         userService.changePassword(id, request);
+        return ResponseEntity.status(HttpStatus.OK).build();
     }
 
     /**
@@ -66,8 +73,9 @@ public class UserController {
      * 작성내용: 유저 로그인
      */
     @PostMapping("login")
-    public LoginResponse login(@RequestBody LoginRequest request) {
-        return userService.login(request);
+    public ResponseEntity<LoginResponse> login(@RequestBody LoginRequest request) {
+        LoginResponse loginResponse = userService.login(request);
+        return ResponseEntity.status(HttpStatus.CREATED).body(loginResponse);
     }
 
     /**
@@ -75,8 +83,10 @@ public class UserController {
      * 작성내용: 토큰 재발급
      */
     @PostMapping("refresh")
-    public LoginResponse refreshToken(@Valid @RequestBody TokenRefreshRequest request) {
-        return userService.refreshAccessToken(request);
+    public ResponseEntity<LoginResponse> refreshToken(@Valid @RequestBody TokenRefreshRequest request) {
+        LoginResponse loginResponse =  userService.refreshAccessToken(request);
+        return ResponseEntity.status(HttpStatus.OK).body(loginResponse);
+
     }
 
     /**
