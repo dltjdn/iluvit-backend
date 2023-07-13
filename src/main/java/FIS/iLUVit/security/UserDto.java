@@ -9,7 +9,7 @@ import lombok.NoArgsConstructor;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class LoginResponse {
+public class UserDto {
     private Long id;
     private String nickname;
     private Auth auth;
@@ -17,7 +17,7 @@ public class LoginResponse {
     private String accessToken;
     private String refreshToken;
 
-    public LoginResponse(User user) {
+    public UserDto(User user) {
         this.id = user.getId();
         this.nickname = user.getNickName();
         this.auth = user.getAuth();

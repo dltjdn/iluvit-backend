@@ -6,8 +6,8 @@ import FIS.iLUVit.dto.user.*;
 import FIS.iLUVit.exception.*;
 import FIS.iLUVit.repository.*;
 import FIS.iLUVit.security.JwtUtils;
-import FIS.iLUVit.security.LoginRequest;
-import FIS.iLUVit.security.LoginResponse;
+import FIS.iLUVit.security.LoginRequestDto;
+import FIS.iLUVit.security.UserDto;
 import FIS.iLUVit.security.uesrdetails.PrincipalDetails;
 import com.auth0.jwt.exceptions.JWTVerificationException;
 import lombok.RequiredArgsConstructor;
@@ -37,10 +37,8 @@ public class UserService {
     private final ExpoTokenRepository expoTokenRepository;
     private final AlarmService alarmService;
 
-
     /**
-     * 작성자: 이승범
-     * 작성내용: 사용자 기본정보(id, nickname, auth) 반환
+     * 사용자 기본정보(id, nickname, auth) 반환
      */
     public UserBasicInfoDto findUserDetails(Long id) {
         User findUser = userRepository.findById(id)
@@ -49,9 +47,28 @@ public class UserService {
     }
 
     /**
-    *   작성자: 이승범
-    *   작성내용: 비밀번호 변경
-    */
+     * 로그인아이디 중복 확인
+     */
+    public void checkLoginIdAvailability(String loginId) {
+        userRepository.findByLoginId(loginId)
+                .ifPresent((user)->{
+                    throw new UserException(UserErrorResult.ALREADY_LOGINID_EXIST);
+                });
+    }
+
+    /**
+     * 닉네임 중복 확인
+     */
+    public void checkNicknameAvailability(String nickname) {
+        userRepository.findByNickName(nickname)
+                .ifPresent((user)->{
+                    throw new UserException(UserErrorResult.ALREADY_NICKNAME_EXIST);
+                });
+    }
+
+    /**
+     * 비밀번호 변경
+     */
     public User changePassword(Long id, PasswordUpdateDto request) {
 
         User findUser = userRepository.findById(id)
@@ -68,38 +85,10 @@ public class UserService {
         return findUser;
     }
 
-    // 회원가입 학부모, 교사 공통 로직(유효성 검사 및 비밀번호 해싱)
-    public String hashAndValidatePwdForSignup(String password, String passwordCheck, String loginId, String phoneNum, String nickName) {
-
-        // 비밀번호 확인
-        if (!password.equals(passwordCheck)) {
-            throw new SignupException(SignupErrorResult.NOT_MATCH_PWDCHECK);
-        }
-
-        // 로그인 아이디, 닉네임 중복확인
-        User duplicatedUser = userRepository.findByLoginIdOrNickName(loginId, nickName).orElse(null);
-        if (duplicatedUser != null) {
-            throw new SignupException(SignupErrorResult.DUPLICATED_NICKNAME);
-        }
-
-        // 핸드폰 인증확인
-        AuthNumber authComplete = authRepository.findByPhoneNumAndAuthKindAndAuthTimeNotNull(phoneNum, AuthKind.signup)
-                .orElseThrow(() -> new AuthNumberException(AuthNumberErrorResult.NOT_AUTHENTICATION));
-
-        // 핸드폰 인증후 너무 많은 시간이 지났으면 인증 무효
-        if (Duration.between(authComplete.getAuthTime(), LocalDateTime.now()).getSeconds() > (60 * 60)) {
-            throw new AuthNumberException(AuthNumberErrorResult.EXPIRED);
-        }
-
-        return encoder.encode(password);
-    }
-
-
     /**
-     *   작성자: 이승범
-     *   작성내용: login service layer로 옮김
+     * 유저 로그인
      */
-    public LoginResponse login(LoginRequest request) {
+    public UserDto login(LoginRequestDto request) {
         // authenticationManager 이용한 아이디 및 비밀번호 확인
         Authentication authentication = authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(request.getLoginId(), request.getPassword()));
@@ -118,7 +107,7 @@ public class UserService {
                         () -> tokenPairRepository.save(tokenPair)
                 );
 
-        LoginResponse response = principal.getUser().getLoginInfo();
+        UserDto response = principal.getUser().getLoginInfo();
         response.setAccessToken(jwtUtils.addPrefix(jwt));
         response.setRefreshToken(jwtUtils.addPrefix(refresh));
 
@@ -128,10 +117,9 @@ public class UserService {
     }
 
     /**
-     *   작성자: 이승범
-     *   작성내용: refreshToken으로 accessToken를 재발급
+     * refreshToken으로 accessToken를 재발급
      */
-    public LoginResponse refreshAccessToken(TokenRefreshRequest request) {
+    public UserDto refreshAccessToken(TokenRefreshRequestDto request) {
 
         String requestRefreshToken = request.getRefreshToken().replace("Bearer ", "");
 
@@ -158,7 +146,7 @@ public class UserService {
             String refresh = jwtUtils.createRefreshToken(authentication);
             findTokenPair.updateToken(jwt, refresh);
 
-            LoginResponse response = principal.getUser().getLoginInfo();
+            UserDto response = principal.getUser().getLoginInfo();
             response.setAccessToken(jwtUtils.addPrefix(jwt));
             response.setRefreshToken(jwtUtils.addPrefix(refresh));
             return response;
@@ -170,26 +158,30 @@ public class UserService {
         }
     }
 
-    /**
-    *   작성자: 이승범
-    *   작성내용: 로그인아이디 중복 확인
-    */
-    public void checkLoginIdAvailability(String loginId) {
-        userRepository.findByLoginId(loginId)
-                .ifPresent((user)->{
-                    throw new UserException(UserErrorResult.ALREADY_LOGINID_EXIST);
-                });
-    }
+    // 회원가입 학부모, 교사 공통 로직(유효성 검사 및 비밀번호 해싱)
+    public String hashAndValidatePwdForSignup(String password, String passwordCheck, String loginId, String phoneNum, String nickName) {
 
-    /**
-    *   작성자: 이승범
-    *   작성내용: 닉네임 중복 확인
-    */
-    public void checkNicknameAvailability(String nickname) {
-        userRepository.findByNickName(nickname)
-                .ifPresent((user)->{
-                    throw new UserException(UserErrorResult.ALREADY_NICKNAME_EXIST);
-                });
+        // 비밀번호 확인
+        if (!password.equals(passwordCheck)) {
+            throw new SignupException(SignupErrorResult.NOT_MATCH_PWDCHECK);
+        }
+
+        // 로그인 아이디, 닉네임 중복확인
+        User duplicatedUser = userRepository.findByLoginIdOrNickName(loginId, nickName).orElse(null);
+        if (duplicatedUser != null) {
+            throw new SignupException(SignupErrorResult.DUPLICATED_NICKNAME);
+        }
+
+        // 핸드폰 인증확인
+        AuthNumber authComplete = authRepository.findByPhoneNumAndAuthKindAndAuthTimeNotNull(phoneNum, AuthKind.signup)
+                .orElseThrow(() -> new AuthNumberException(AuthNumberErrorResult.NOT_AUTHENTICATION));
+
+        // 핸드폰 인증후 너무 많은 시간이 지났으면 인증 무효
+        if (Duration.between(authComplete.getAuthTime(), LocalDateTime.now()).getSeconds() > (60 * 60)) {
+            throw new AuthNumberException(AuthNumberErrorResult.EXPIRED);
+        }
+
+        return encoder.encode(password);
     }
 
     /**
@@ -221,6 +213,5 @@ public class UserService {
 
         return userId;
     }
-
 
 }

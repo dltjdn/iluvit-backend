@@ -2,6 +2,8 @@ package FIS.iLUVit.controller;
 
 import FIS.iLUVit.config.argumentResolver.Login;
 import FIS.iLUVit.dto.user.*;
+import FIS.iLUVit.security.LoginRequestDto;
+import FIS.iLUVit.security.UserDto;
 import FIS.iLUVit.service.UserService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -58,6 +60,24 @@ public class UserController {
     public ResponseEntity<Void> updatePassword(@Login Long id, @Valid @RequestBody PasswordUpdateDto request) {
         userService.changePassword(id, request);
         return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
+    }
+
+    /**
+     * 유저 로그인
+     */
+    @PostMapping("login")
+    public ResponseEntity<UserDto> login(@RequestBody LoginRequestDto request) {
+        UserDto userDto = userService.login(request);
+        return ResponseEntity.status(HttpStatus.OK).body(userDto);
+    }
+
+    /**
+     * 토큰 재발급
+     */
+    @PostMapping("refresh")
+    public ResponseEntity<UserDto> refreshToken(@Valid @RequestBody TokenRefreshRequestDto request) {
+        UserDto userDto = userService.refreshAccessToken(request);
+        return ResponseEntity.status(HttpStatus.OK).body(userDto);
     }
 
     /**

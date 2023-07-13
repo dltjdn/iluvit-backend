@@ -8,7 +8,7 @@ import FIS.iLUVit.domain.enumtype.Approval;
 import FIS.iLUVit.domain.enumtype.Auth;
 import FIS.iLUVit.exception.CenterErrorResult;
 import FIS.iLUVit.exception.CenterException;
-import FIS.iLUVit.security.LoginResponse;
+import FIS.iLUVit.security.UserDto;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
@@ -100,7 +100,7 @@ public class Teacher extends User {
     }
 
     @Override
-    public LoginResponse getLoginInfo() {
+    public UserDto getLoginInfo() {
         return new LoginTeacherResponse(this);
     }
 

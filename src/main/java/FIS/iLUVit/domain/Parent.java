@@ -6,7 +6,7 @@ import FIS.iLUVit.dto.parent.ParentBasicInfoDto;
 import FIS.iLUVit.dto.user.UserBasicInfoDto;
 import FIS.iLUVit.domain.embeddable.Theme;
 import FIS.iLUVit.domain.enumtype.Auth;
-import FIS.iLUVit.security.LoginResponse;
+import FIS.iLUVit.security.UserDto;
 import lombok.*;
 import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
@@ -74,7 +74,7 @@ public class Parent extends User {
     }
 
     @Override
-    public LoginResponse getLoginInfo() {
+    public UserDto getLoginInfo() {
         return new LoginParentResponse(this);
     }
 

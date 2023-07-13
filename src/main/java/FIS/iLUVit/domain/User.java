@@ -3,7 +3,7 @@ package FIS.iLUVit.domain;
 import FIS.iLUVit.domain.embeddable.Location;
 import FIS.iLUVit.dto.user.UserBasicInfoDto;
 import FIS.iLUVit.domain.enumtype.Auth;
-import FIS.iLUVit.security.LoginResponse;
+import FIS.iLUVit.security.UserDto;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -65,8 +65,8 @@ public class User extends BaseImageEntity {
         return Objects.hash(id);
     }
 
-    public LoginResponse getLoginInfo() {
-        return new LoginResponse(this);
+    public UserDto getLoginInfo() {
+        return new UserDto(this);
     }
 
     public UserBasicInfoDto getUserInfo() {
