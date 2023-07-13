@@ -1,5 +1,6 @@
 package FIS.iLUVit.service;
 
+import FIS.iLUVit.domain.Parent;
 import FIS.iLUVit.domain.Participation;
 import FIS.iLUVit.domain.PtDate;
 import FIS.iLUVit.domain.Waiting;
@@ -15,6 +16,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 @Transactional
@@ -88,7 +90,8 @@ public class WaitingService {
             throw new WaitingException(WaitingErrorResult.WRONG_WAITINGID_REQUEST);
 
         // 검색 결과 없으면 오류 반환
-        Waiting waiting = waitingRepository.findWaitingByIdAndParent_Id(waitingId, userId)
+        Parent parent = parentRepository.findById(userId).orElseThrow(() -> new UserException(UserErrorResult.USER_NOT_EXIST));
+        Waiting waiting = waitingRepository.findByIdAndParent(waitingId, parent)
                 .orElseThrow(() -> new WaitingException(WaitingErrorResult.NO_RESULT));
 
         PtDate ptDate = waiting.getPtDate();
