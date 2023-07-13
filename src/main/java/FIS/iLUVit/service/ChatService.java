@@ -15,6 +15,7 @@ import org.springframework.data.domain.Slice;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
 import java.util.Objects;
 
 @Service
@@ -109,7 +110,10 @@ public class ChatService {
     }
 
     public Slice<ChatListDto> findChatRoomList(Long userId, Pageable pageable) {
-        Slice<ChatRoom> chatList = chatRoomRepository.findByUser(userId, pageable);
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new ChatException(ChatErrorResult.USER_NOT_EXIST));
+
+        Slice<ChatRoom> chatList = chatRoomRepository.findByReceiverOrderByUpdatedDateDesc(user, pageable);
         return chatList.map(c -> {
             ChatListDto chatListDto = new ChatListDto(c);
             String profileImage = imageService.getProfileImage(c.getSender());
@@ -119,10 +123,14 @@ public class ChatService {
     }
 
     public ChatDto findChatRoomDetails(Long userId, Long roomId, Pageable pageable) {
+
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new ChatException(ChatErrorResult.USER_NOT_EXIST));
+
         ChatRoom findRoom = chatRoomRepository.findById(roomId)
                 .orElseThrow(() -> new ChatException(ChatErrorResult.ROOM_NOT_EXIST));
 
-        Slice<Chat> chatList = chatRepository.findByChatRoom(userId, roomId, pageable);
+        Slice<Chat> chatList = chatRepository.findByChatRoomAndChatRoomReceiverOrderByCreatedDateDesc(findRoom, user, pageable);
 
         Slice<ChatDto.ChatInfo> chatInfos = chatList.map(ChatDto.ChatInfo::new);
         ChatDto chatDto = new ChatDto(findRoom, chatInfos);
