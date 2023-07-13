@@ -33,13 +33,7 @@ public class AlarmController {
      */
     @GetMapping("active")
     public ResponseEntity<Slice<AlarmDetailDto>> getActiveAlarm(@Login Long userId, Pageable pageable){
-        Slice<Alarm> alarms = alarmService.findActiveAlarmByUser(userId, pageable);
-
-        SliceImpl<AlarmDetailDto> alarmDetailDtos = new SliceImpl<>(alarms.stream()
-                .map(Alarm::exportAlarm)
-                .collect(Collectors.toList()),
-                pageable, alarms.hasNext());
-
+        Slice<AlarmDetailDto> alarmDetailDtos = alarmService.findActiveAlarmByUser(userId, pageable);
         return ResponseEntity.ok(alarmDetailDtos);
     }
 
@@ -48,14 +42,7 @@ public class AlarmController {
      */
     @GetMapping("presentation")
     public ResponseEntity<Slice<AlarmDetailDto>> getPresentationAlarm(@Login Long userId, Pageable pageable){
-        Slice<Alarm> alarms = alarmService.findPresentationActiveAlarmByUser(userId, pageable);
-
-
-        SliceImpl<AlarmDetailDto> alarmDetailDtos = new SliceImpl<>(alarms.stream()
-                .map(Alarm::exportAlarm)
-                .collect(Collectors.toList()),
-                pageable, alarms.hasNext());
-
+        Slice<AlarmDetailDto> alarmDetailDtos = alarmService.findPresentationActiveAlarmByUser(userId, pageable);
         return ResponseEntity.ok(alarmDetailDtos);
     }
 
@@ -73,8 +60,7 @@ public class AlarmController {
      */
     @GetMapping("is-read")
     public ResponseEntity<AlarmReadDto> hasRead(@Login Long userId){
-        Boolean hasRead = alarmService.hasRead(userId);
-        AlarmReadDto alarmReadDto = new AlarmReadDto(hasRead);
+        AlarmReadDto alarmReadDto = alarmService.hasRead(userId);
         return ResponseEntity.ok(alarmReadDto);
     }
 

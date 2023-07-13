@@ -73,8 +73,7 @@ public class AuthController {
      */
     @PostMapping("loginid")
     public ResponseEntity<FindLoginIdDto> authenticateAuthNumForFindLoginId(@RequestBody AuthNumRequest request) {
-        String blindLoginId = authService.authenticateAuthNumForFindLoginId(request);
-        FindLoginIdDto findLoginIdDto = new FindLoginIdDto(blindLoginId);
+        FindLoginIdDto findLoginIdDto = authService.authenticateAuthNumForFindLoginId(request);
         return ResponseEntity.ok(findLoginIdDto);
     }
 

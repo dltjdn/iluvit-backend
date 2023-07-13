@@ -1,6 +1,7 @@
 package FIS.iLUVit.service;
 
 import FIS.iLUVit.dto.auth.AuthNumRequest;
+import FIS.iLUVit.dto.auth.FindLoginIdDto;
 import FIS.iLUVit.dto.auth.FindPasswordRequest;
 import FIS.iLUVit.domain.AuthNumber;
 import FIS.iLUVit.domain.User;
@@ -126,7 +127,7 @@ public class AuthService {
     /**
      * (아이디찾기) 인증번호 인증 후 유저 아이디 반환
      */
-    public String authenticateAuthNumForFindLoginId(AuthNumRequest request) {
+    public FindLoginIdDto authenticateAuthNumForFindLoginId(AuthNumRequest request) {
 
         // 인증번호 인증
         AuthNumber authNumber = authenticateAuthNum(null, request);
@@ -137,7 +138,11 @@ public class AuthService {
         // 인증정보 삭제
         authRepository.delete(authNumber);
 
-        return blindLoginId(findUser.getLoginId());
+        String blindLoginId = blindLoginId(findUser.getLoginId());
+
+        FindLoginIdDto findLoginIdDto = new FindLoginIdDto(blindLoginId);
+
+        return findLoginIdDto;
     }
 
     /**
