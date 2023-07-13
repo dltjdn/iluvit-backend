@@ -29,8 +29,7 @@ public class UserController {
      */
 
     /**
-     * 작성자: 이승범
-     * 작성내용: 유저 상세 조회
+     * 유저 상세 조회
      */
     @GetMapping("user")
     public ResponseEntity<UserResponse> getUserDetails(@Login Long id) {
@@ -39,8 +38,7 @@ public class UserController {
     }
 
     /**
-    * 작성자: 이승범
-    * 작성내용: 아이디 중복 조회
+    * 아이디 중복 조회
     */
     @GetMapping("check-loginid")
     public ResponseEntity<Void> checkLoginId(@Valid @ModelAttribute CheckLoginIdRequest request) {
@@ -49,8 +47,7 @@ public class UserController {
     }
 
     /**
-    *   작성자: 이승범
-    *   작성내용: 닉네임 중복 조회
+    * 닉네임 중복 조회
     */
     @GetMapping("check-nickname")
     public ResponseEntity<Void> checkNickname(@Valid @ModelAttribute CheckNicknameRequest request) {
@@ -59,8 +56,7 @@ public class UserController {
     }
 
     /**
-     * 작성자: 이승범
-     * 작성내용: 비밀번호 변경
+     * 비밀번호 변경
      */
     @PutMapping("password")
     public ResponseEntity<Void> updatePassword(@Login Long id, @Valid @RequestBody PasswordRequest request) {
@@ -69,43 +65,16 @@ public class UserController {
     }
 
     /**
-     * 작성자: 이승범
-     * 작성내용: 유저 로그인
+     * 앱 버전 확인
      */
-    @PostMapping("login")
-    public ResponseEntity<LoginResponse> login(@RequestBody LoginRequest request) {
-        LoginResponse loginResponse = userService.login(request);
-        return ResponseEntity.status(HttpStatus.CREATED).body(loginResponse);
-    }
+    @GetMapping("version")
+    public ResponseEntity<VersionResponse> getVersion() {
+        String iosVersion = env.getProperty("version.ios");
+        String aosVersion = env.getProperty("version.aos");
 
-    /**
-     * 작성자: 이승범
-     * 작성내용: 토큰 재발급
-     */
-    @PostMapping("refresh")
-    public ResponseEntity<LoginResponse> refreshToken(@Valid @RequestBody TokenRefreshRequest request) {
-        LoginResponse loginResponse =  userService.refreshAccessToken(request);
-        return ResponseEntity.status(HttpStatus.OK).body(loginResponse);
+        VersionResponse versionResponse = new VersionResponse(iosVersion, aosVersion);
 
-    }
-
-    /**
-     *   작성자: 박찬희
-     *   작성내용: ios 앱 버전 확인
-     */
-    @GetMapping("version/ios")
-    public String iosVersion() {
-        return env.getProperty("version.ios");
-    }
-
-
-    /**
-     *   작성자: 박찬희
-     *   작성내용: aos 앱 버전 확인
-     */
-    @GetMapping("version/aos")
-    public String aosVersion() {
-        return env.getProperty("version.aos");
+        return ResponseEntity.status(HttpStatus.OK).body(versionResponse);
     }
 
 }
