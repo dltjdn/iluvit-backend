@@ -1,11 +1,13 @@
 package FIS.iLUVit.dto.board;
 
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import java.util.List;
 @Getter
 @NoArgsConstructor
+@AllArgsConstructor
 public class StoryDto {
     private Long center_id;
     private String story_name;
