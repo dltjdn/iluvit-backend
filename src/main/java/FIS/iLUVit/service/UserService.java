@@ -172,7 +172,9 @@ public class UserService {
         }
     }
 
-    // 회원가입 학부모, 교사 공통 로직(유효성 검사 및 비밀번호 해싱)
+    /**
+     * 입력받은 비밀번호를 해싱하여 유효성을 검사하고, 회원가입에 필요한 검증을 수행합니다 ( 교사, 학부모 공통 )
+     */
     public String hashAndValidatePwdForSignup(String password, String passwordCheck, String loginId, String phoneNum, String nickName) {
         // 비밀번호 확인
         if (!password.equals(passwordCheck)) {
@@ -189,7 +191,7 @@ public class UserService {
         AuthNumber authComplete = authRepository.findByPhoneNumAndAuthKindAndAuthTimeNotNull(phoneNum, AuthKind.signup)
                 .orElseThrow(() -> new AuthNumberException(AuthNumberErrorResult.NOT_AUTHENTICATION));
 
-        // 핸드폰 인증후 너무 많은 시간이 지났으면 인증 무효
+        // 핸드폰 인증 후 지정된 시간이 지나면 인증 무효
         if (Duration.between(authComplete.getAuthTime(), LocalDateTime.now()).getSeconds() > (60 * 60)) {
             throw new AuthNumberException(AuthNumberErrorResult.EXPIRED);
         }
