@@ -32,7 +32,7 @@ public class UserController {
     @GetMapping("user")
     public ResponseEntity<UserBasicInfoDto> getUserDetails(@Login Long id) {
         UserBasicInfoDto userBasicInfoDto = userService.findUserDetails(id);
-        return ResponseEntity.status(HttpStatus.OK).body(userBasicInfoDto);
+        return ResponseEntity.ok(userBasicInfoDto);
     }
 
     /**
@@ -68,7 +68,7 @@ public class UserController {
     @PostMapping("login")
     public ResponseEntity<UserDto> login(@RequestBody LoginRequestDto request) {
         UserDto userDto = userService.login(request);
-        return ResponseEntity.status(HttpStatus.OK).body(userDto);
+        return ResponseEntity.ok(userDto);
     }
 
     /**
@@ -77,7 +77,7 @@ public class UserController {
     @PostMapping("refresh")
     public ResponseEntity<UserDto> refreshToken(@Valid @RequestBody TokenRefreshRequestDto request) {
         UserDto userDto = userService.refreshAccessToken(request);
-        return ResponseEntity.status(HttpStatus.OK).body(userDto);
+        return ResponseEntity.ok(userDto);
     }
 
     /**
@@ -90,7 +90,7 @@ public class UserController {
 
         VersionInfoDto versionInfoDto = new VersionInfoDto(iosVersion, aosVersion);
 
-        return ResponseEntity.status(HttpStatus.OK).body(versionInfoDto);
+        return ResponseEntity.ok(versionInfoDto);
     }
 
 }

@@ -27,103 +27,117 @@ import java.util.List;
 @RequiredArgsConstructor
 public class UserService {
     private final UserRepository userRepository;
-    private final BCryptPasswordEncoder encoder;
     private final AuthRepository authRepository;
-    private final AuthenticationManager authenticationManager;
-    private final JwtUtils jwtUtils;
     private final TokenPairRepository tokenPairRepository;
+    private final ExpoTokenRepository expoTokenRepository;
     private final ScrapRepository scrapRepository;
     private final ScrapService scrapService;
-    private final ExpoTokenRepository expoTokenRepository;
     private final AlarmService alarmService;
+    private final BCryptPasswordEncoder encoder;
+    private final AuthenticationManager authenticationManager;
+    private final JwtUtils jwtUtils;
 
     /**
-     * 사용자 기본정보(id, nickname, auth) 반환
+     * 유저 기본정보( id, nickname, auth )를 반환합니다
      */
     public UserBasicInfoDto findUserDetails(Long id) {
+        // 유저 id로 유저 조회
         User findUser = userRepository.findById(id)
                 .orElseThrow(() -> new UserException(UserErrorResult.NOT_VALID_TOKEN));
+
+        // 유저의 기본 정보 반환
         return findUser.getUserInfo();
     }
 
     /**
-     * 로그인아이디 중복 확인
+     * 중복된 로그인 아이디일 경우 에러를 반환합니다
      */
     public void checkLoginIdAvailability(String loginId) {
+        // 로그인 아이디로 유저 조회
         userRepository.findByLoginId(loginId)
                 .ifPresent((user)->{
+                    // 이미 존재하는 아이디인 경우 예외 발생
                     throw new UserException(UserErrorResult.ALREADY_LOGINID_EXIST);
                 });
     }
 
     /**
-     * 닉네임 중복 확인
+     * 중복된 닉네임일 경우 에러를 반환힙니다
      */
     public void checkNicknameAvailability(String nickname) {
+        // 닉네임으로 유저 조회
         userRepository.findByNickName(nickname)
                 .ifPresent((user)->{
+                    // 이미 존재하는 닉네임인 경우 예외 발생
                     throw new UserException(UserErrorResult.ALREADY_NICKNAME_EXIST);
                 });
     }
 
     /**
-     * 비밀번호 변경
+     * 비밀번호를 변경합니다
      */
     public User changePassword(Long id, PasswordUpdateDto request) {
-
+        // 유저 id로 유저 정보 조회
         User findUser = userRepository.findById(id)
                 .orElseThrow(() -> new UserException(UserErrorResult.NOT_VALID_TOKEN));
 
+        // 기존 비밀번호와 유저가 입력한 현재 비밀번호를 확인
         if (!encoder.matches(request.getOriginPwd(), findUser.getPassword())) {
             throw new SignupException(SignupErrorResult.NOT_MATCH_PWD);
-        } else if (!request.getNewPwd().equals(request.getNewPwdCheck())) {
+        }
+        // 새 비밀번호 확인
+        if (!request.getNewPwd().equals(request.getNewPwdCheck())) {
             throw new SignupException(SignupErrorResult.NOT_MATCH_PWDCHECK);
         }
 
+        // 비밀번호 변경
         findUser.changePassword(encoder.encode(request.getNewPwd()));
 
         return findUser;
     }
 
     /**
-     * 유저 로그인
+     * 유저의 로그인 요청을 처리합니다
      */
     public UserDto login(LoginRequestDto request) {
-        // authenticationManager 이용한 아이디 및 비밀번호 확인
+        // 아이디 및 비밀번호 확인을 위해 authenticationManager를 사용하여 인증
         Authentication authentication = authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(request.getLoginId(), request.getPassword()));
 
         // 인증된 객체 생성
         PrincipalDetails principal = (PrincipalDetails) authentication.getPrincipal();
 
+        // JWT 생성
         String jwt = jwtUtils.createAccessToken(authentication);
         String refresh = jwtUtils.createRefreshToken(authentication);
         TokenPair tokenPair = TokenPair.createTokenPair(jwt, refresh, principal.getUser());
 
-        // 기존 토큰이 있으면 수정, 없으면 생성
+        // 기존 토큰이 있으면 업데이트하고, 없으면 새로 생성하여 저장
         tokenPairRepository.findByUserId(principal.getUser().getId())
                 .ifPresentOrElse(
                         (findTokenPair) -> findTokenPair.updateToken(jwt, refresh),
                         () -> tokenPairRepository.save(tokenPair)
                 );
 
+        // 응답에 필요한 유저 정보 생성
         UserDto response = principal.getUser().getLoginInfo();
         response.setAccessToken(jwtUtils.addPrefix(jwt));
         response.setRefreshToken(jwtUtils.addPrefix(refresh));
 
-        // 더 이상 튜토리얼이 진행되지 않도록 하기
+        // 튜토리얼 비활성화 처리
         principal.getUser().disableTutorial();
+
         return response;
     }
 
     /**
-     * refreshToken으로 accessToken를 재발급
+     * refreshToken으로 accessToken를 재발급합니다
      */
     public UserDto refreshAccessToken(TokenRefreshRequestDto request) {
-
+        //요청으로 받은 refreshToken 추출
         String requestRefreshToken = request.getRefreshToken().replace("Bearer ", "");
 
-        // 요청으로 받은 refreshToken 유효한지 확인
+        // 요청으로 받은 refreshToken의 유효성 확인
         jwtUtils.validateToken(requestRefreshToken);
 
         // 이전에 받았던 refreshToken과 일치하는지 확인(tokenPair 유저당 하나로 유지)
@@ -135,8 +149,7 @@ public class UserService {
             throw new JWTVerificationException("중복 로그인 되었습니다.");
         }
 
-        // 이전에 발급했던 AccessToken 만료되지 않았다면 refreshToken 탈취로 판단
-        // TokenPair 삭제 -> 다시 로그인 해야됨
+        // 이전에 발급한 AccessToken이 만료되었다면 refreshToken을 사용하여 갱신
         if (jwtUtils.isExpired(findTokenPair.getAccessToken())) {
             // refreshToken 유효하고, AccessToken 정상적으로 Expired 상태일때
             PrincipalDetails principal = new PrincipalDetails(findTokenPair.getUser());
@@ -149,10 +162,11 @@ public class UserService {
             UserDto response = principal.getUser().getLoginInfo();
             response.setAccessToken(jwtUtils.addPrefix(jwt));
             response.setRefreshToken(jwtUtils.addPrefix(refresh));
+
             return response;
 
         } else {
-            // accessToken이 아직 만료되지 않은 상태 -> 토큰 탈취로 판단 -> delete tokenPair
+            // 만료되지 않은 AccessToken인 경우, 토큰 탈취로 판단하여 tokenPair 삭제
             tokenPairRepository.delete(findTokenPair);
             throw new JWTVerificationException("유효하지 않은 시도입니다.");
         }
@@ -160,7 +174,6 @@ public class UserService {
 
     // 회원가입 학부모, 교사 공통 로직(유효성 검사 및 비밀번호 해싱)
     public String hashAndValidatePwdForSignup(String password, String passwordCheck, String loginId, String phoneNum, String nickName) {
-
         // 비밀번호 확인
         if (!password.equals(passwordCheck)) {
             throw new SignupException(SignupErrorResult.NOT_MATCH_PWDCHECK);
@@ -185,8 +198,7 @@ public class UserService {
     }
 
     /**
-     *   작성자: 이서우
-     *   작성내용: 회원 탈퇴 ( 교사, 학부모 공통 )
+     * 회원 탈퇴 요청을 처리합니다 ( 교사, 학부모 공통 )
      */
     public long withdrawUser(Long userId){
         // 유저 정보 삭제 & 게시글, 댓글, 채팅, 시설리뷰 작성자 '알 수 없음'
