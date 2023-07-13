@@ -1,6 +1,5 @@
 package FIS.iLUVit.dto.user;
 
-import FIS.iLUVit.domain.enumtype.Auth;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -8,8 +7,8 @@ import lombok.NoArgsConstructor;
 @Getter
 @NoArgsConstructor
 @AllArgsConstructor
-public class UserResponse {
-    private Long id;
-    private String nickname;
-    private Auth auth;
+public class VersionInfoDto {
+
+    private String iosVersion;
+    private String aosVersion;
 }

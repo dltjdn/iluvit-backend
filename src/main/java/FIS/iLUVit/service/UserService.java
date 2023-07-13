@@ -42,7 +42,7 @@ public class UserService {
      * 작성자: 이승범
      * 작성내용: 사용자 기본정보(id, nickname, auth) 반환
      */
-    public UserResponse findUserDetails(Long id) {
+    public UserBasicInfoDto findUserDetails(Long id) {
         User findUser = userRepository.findById(id)
                 .orElseThrow(() -> new UserException(UserErrorResult.NOT_VALID_TOKEN));
         return findUser.getUserInfo();
@@ -52,7 +52,7 @@ public class UserService {
     *   작성자: 이승범
     *   작성내용: 비밀번호 변경
     */
-    public User changePassword(Long id, PasswordRequest request) {
+    public User changePassword(Long id, PasswordUpdateDto request) {
 
         User findUser = userRepository.findById(id)
                 .orElseThrow(() -> new UserException(UserErrorResult.NOT_VALID_TOKEN));
@@ -174,8 +174,8 @@ public class UserService {
     *   작성자: 이승범
     *   작성내용: 로그인아이디 중복 확인
     */
-    public void checkLoginIdAvailability(CheckLoginIdRequest request) {
-        userRepository.findByLoginId(request.getLoginId())
+    public void checkLoginIdAvailability(String loginId) {
+        userRepository.findByLoginId(loginId)
                 .ifPresent((user)->{
                     throw new UserException(UserErrorResult.ALREADY_LOGINID_EXIST);
                 });
@@ -185,8 +185,8 @@ public class UserService {
     *   작성자: 이승범
     *   작성내용: 닉네임 중복 확인
     */
-    public void checkNicknameAvailability(CheckNicknameRequest request) {
-        userRepository.findByNickName(request.getNickname())
+    public void checkNicknameAvailability(String nickname) {
+        userRepository.findByNickName(nickname)
                 .ifPresent((user)->{
                     throw new UserException(UserErrorResult.ALREADY_NICKNAME_EXIST);
                 });
