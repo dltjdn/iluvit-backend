@@ -1,6 +1,6 @@
 package FIS.iLUVit.domain.alarms;
 
-import FIS.iLUVit.dto.alarm.AlarmDetailDto;
+import FIS.iLUVit.dto.alarm.AlarmDto;
 import FIS.iLUVit.domain.Comment;
 import FIS.iLUVit.domain.Post;
 import FIS.iLUVit.domain.User;
@@ -57,14 +57,14 @@ public class PostAlarm extends Alarm {
     }
 
     @Override
-    public AlarmDetailDto exportAlarm() {
+    public AlarmDto exportAlarm() {
         return centerId == null ?
                 new PostAlarmDto(id, boardName, createdDate, message, dtype, postId, anonymous, commentUserProfileImage, commentUserNickname, centerName, boardId, null) :
                 new PostAlarmDto(id, boardName, createdDate, message, dtype, postId, anonymous, commentUserProfileImage, commentUserNickname, centerName, boardId, centerId);
     }
 
     @Getter
-    public static class PostAlarmDto extends AlarmDetailDto {
+    public static class PostAlarmDto extends AlarmDto {
         protected Long postId;
         private Long centerId;
         private Long boardId;

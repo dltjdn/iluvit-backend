@@ -1,9 +1,9 @@
 package FIS.iLUVit.controller;
 
 import FIS.iLUVit.config.argumentResolver.Login;
-import FIS.iLUVit.dto.auth.AuthNumRequest;
-import FIS.iLUVit.dto.auth.FindLoginIdDto;
-import FIS.iLUVit.dto.auth.FindPasswordRequest;
+import FIS.iLUVit.dto.auth.AuthRequestDto;
+import FIS.iLUVit.dto.auth.LoginIdDto;
+import FIS.iLUVit.dto.auth.FindPasswordDto;
 import FIS.iLUVit.service.AuthService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -63,7 +63,7 @@ public class AuthController {
      * (회원가입, 비밀번호찾기, 핸드폰번호 변경) 인증번호 인증
      */
     @PostMapping("")
-    public ResponseEntity<Void> authenticateAuthNum(@Login Long userId, @RequestBody AuthNumRequest request) {
+    public ResponseEntity<Void> authenticateAuthNum(@Login Long userId, @RequestBody AuthRequestDto request) {
         authService.authenticateAuthNum(userId, request);
         return ResponseEntity.status(HttpStatus.OK).build();
     }
@@ -72,16 +72,16 @@ public class AuthController {
      * (아이디찾기) 인증번호 인증 후 유저 아이디 반환
      */
     @PostMapping("loginid")
-    public ResponseEntity<FindLoginIdDto> authenticateAuthNumForFindLoginId(@RequestBody AuthNumRequest request) {
-        FindLoginIdDto findLoginIdDto = authService.authenticateAuthNumForFindLoginId(request);
-        return ResponseEntity.ok(findLoginIdDto);
+    public ResponseEntity<LoginIdDto> authenticateAuthNumForFindLoginId(@RequestBody AuthRequestDto request) {
+        LoginIdDto loginIdDto = authService.authenticateAuthNumForFindLoginId(request);
+        return ResponseEntity.ok(loginIdDto);
     }
 
     /**
      * (비밀번호 변경용 비밀번호찾기) 인증이 완료된 핸드폰번호인지 확인 후 비밀번호 변경
      */
     @PostMapping("password")
-    public ResponseEntity<Void> authenticateAuthNumForChangePwd(@RequestBody @Valid FindPasswordRequest request) {
+    public ResponseEntity<Void> authenticateAuthNumForChangePwd(@RequestBody @Valid FindPasswordDto request) {
         authService.authenticateAuthNumForChangePwd(request);
         return ResponseEntity.status(HttpStatus.OK).build();
     }

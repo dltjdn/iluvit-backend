@@ -2,7 +2,7 @@ package FIS.iLUVit.service;
 
 import FIS.iLUVit.domain.User;
 import FIS.iLUVit.domain.alarms.Alarm;
-import FIS.iLUVit.dto.alarm.AlarmDetailDto;
+import FIS.iLUVit.dto.alarm.AlarmDto;
 import FIS.iLUVit.dto.alarm.AlarmReadDto;
 import FIS.iLUVit.exception.UserErrorResult;
 import FIS.iLUVit.exception.UserException;
@@ -28,9 +28,9 @@ public class AlarmService {
     /**
      * 활동 알림을 조회합니다
      */
-    public Slice<AlarmDetailDto> findActiveAlarmByUser(Long userId, Pageable pageable) {
+    public Slice<AlarmDto> findActiveAlarmByUser(Long userId, Pageable pageable) {
         Slice<Alarm> alarms = alarmRepository.findActiveByUser(userId, pageable);
-        SliceImpl<AlarmDetailDto> alarmDetailDtos = new SliceImpl<>(alarms.stream()
+        SliceImpl<AlarmDto> alarmDetailDtos = new SliceImpl<>(alarms.stream()
                 .map(Alarm::exportAlarm)
                 .collect(Collectors.toList()),
                 pageable, alarms.hasNext());
@@ -41,10 +41,10 @@ public class AlarmService {
     /**
      * 설명회 알림을 조회합니다
      */
-    public Slice<AlarmDetailDto> findPresentationActiveAlarmByUser(Long userId, Pageable pageable) {
+    public Slice<AlarmDto> findPresentationActiveAlarmByUser(Long userId, Pageable pageable) {
         Slice<Alarm> alarms = alarmRepository.findPresentationByUser(userId, pageable);
 
-        SliceImpl<AlarmDetailDto> alarmDetailDtos = new SliceImpl<>(alarms.stream()
+        SliceImpl<AlarmDto> alarmDetailDtos = new SliceImpl<>(alarms.stream()
                 .map(Alarm::exportAlarm)
                 .collect(Collectors.toList()),
                 pageable, alarms.hasNext());

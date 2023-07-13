@@ -29,12 +29,4 @@ public class StoryDto {
         }
     }
 
-    public StoryDto(Long center_id, String story_name) {
-        this.centerId = center_id;
-        this.storyName = story_name;
-    }
-
-    public void addBoardDtoList(List<BoardDto> boardDtoList){
-        this.boardDtoList = boardDtoList;
-    }
 }

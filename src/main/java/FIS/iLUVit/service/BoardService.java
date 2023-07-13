@@ -2,7 +2,7 @@ package FIS.iLUVit.service;
 
 import FIS.iLUVit.dto.board.BoardIdDto;
 import FIS.iLUVit.dto.board.BoardListDto;
-import FIS.iLUVit.dto.board.BoardRequest;
+import FIS.iLUVit.dto.board.BoardCreateDto;
 import FIS.iLUVit.dto.board.StoryPreviewDto;
 import FIS.iLUVit.domain.*;
 import FIS.iLUVit.domain.enumtype.Approval;
@@ -112,7 +112,7 @@ public class BoardService {
     /**
      * 게시판 생성
      */
-    public BoardIdDto saveNewBoard(Long userId, Long center_id, BoardRequest request) {
+    public BoardIdDto saveNewBoard(Long userId, Long center_id, BoardCreateDto request) {
         // userId 가 null 인 경우 게시판 생성 제한
         if (userId == null) {
             throw new BoardException(BoardErrorResult.UNAUTHORIZED_USER_ACCESS);

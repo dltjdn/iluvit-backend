@@ -1,12 +1,11 @@
 package FIS.iLUVit.domain.alarms;
 
-import FIS.iLUVit.dto.alarm.AlarmDetailDto;
+import FIS.iLUVit.dto.alarm.AlarmDto;
 import FIS.iLUVit.domain.User;
 import FIS.iLUVit.service.AlarmUtils;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
-import javax.persistence.Column;
 import javax.persistence.Entity;
 import java.time.LocalDateTime;
 
@@ -31,14 +30,14 @@ public class ChatAlarm extends Alarm {
     }
 
     @Override
-    public AlarmDetailDto exportAlarm() {
+    public AlarmDto exportAlarm() {
         return anonymous ? new ChatAlarmDto(id, createdDate, message, dtype, true, null, null, profileImage)
                 : new ChatAlarmDto(id, createdDate, message, dtype, false, senderId, senderName, profileImage);
     }
 
 
     @Getter
-    public static class ChatAlarmDto extends AlarmDetailDto {
+    public static class ChatAlarmDto extends AlarmDto {
         protected Boolean anonymous;
         protected Long senderId;
         protected String senderName;

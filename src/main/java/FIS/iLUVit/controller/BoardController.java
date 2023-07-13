@@ -3,7 +3,7 @@ package FIS.iLUVit.controller;
 import FIS.iLUVit.config.argumentResolver.Login;
 import FIS.iLUVit.dto.board.BoardIdDto;
 import FIS.iLUVit.dto.board.BoardListDto;
-import FIS.iLUVit.dto.board.BoardRequest;
+import FIS.iLUVit.dto.board.BoardCreateDto;
 import FIS.iLUVit.dto.board.StoryPreviewDto;
 import FIS.iLUVit.service.BoardService;
 import lombok.RequiredArgsConstructor;
@@ -57,8 +57,8 @@ public class BoardController {
      */
     @PostMapping("{centerId}")
     public ResponseEntity<BoardIdDto> createBoard(@Login Long userId, @PathVariable("centerId") Long centerId,
-                                                  @RequestBody @Valid BoardRequest boardRequest) {
-        BoardIdDto boardIdDto = boardService.saveNewBoard(userId, centerId, boardRequest);
+                                                  @RequestBody @Valid BoardCreateDto boardCreateDto) {
+        BoardIdDto boardIdDto = boardService.saveNewBoard(userId, centerId, boardCreateDto);
         return ResponseEntity.status(HttpStatus.CREATED).body(boardIdDto);
     }
 

@@ -1,13 +1,12 @@
 package FIS.iLUVit.domain.alarms;
 
-import FIS.iLUVit.dto.alarm.AlarmDetailDto;
+import FIS.iLUVit.dto.alarm.AlarmDto;
 import FIS.iLUVit.domain.Center;
 import FIS.iLUVit.domain.User;
 import FIS.iLUVit.service.AlarmUtils;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
-import javax.persistence.Column;
 import javax.persistence.Entity;
 import java.time.LocalDateTime;
 
@@ -28,12 +27,12 @@ public class CenterApprovalAcceptedAlarm extends Alarm{
     }
 
     @Override
-    public AlarmDetailDto exportAlarm() {
+    public AlarmDto exportAlarm() {
         return new CenterApprovalAcceptedAlarmDto(id, createdDate, message, dtype, centerId, centerName);
     }
 
     @Getter
-    public static class CenterApprovalAcceptedAlarmDto extends AlarmDetailDto {
+    public static class CenterApprovalAcceptedAlarmDto extends AlarmDto {
         protected Long centerId;
         protected String centerName;
 
