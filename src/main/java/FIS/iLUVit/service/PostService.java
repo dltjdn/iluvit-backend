@@ -318,7 +318,7 @@ public class PostService {
         results.add(new BoardPreviewDto(null, "HOT 게시판", postInfoList, BoardKind.NORMAL));
 
         boardPreviews = boardPreviews.stream()
-                .sorted(Comparator.comparing(BoardPreviewDto::getBoard_id)).collect(Collectors.toList());
+                .sorted(Comparator.comparing(BoardPreviewDto::getBoardId)).collect(Collectors.toList());
         results.addAll(boardPreviews);
 
         return results;

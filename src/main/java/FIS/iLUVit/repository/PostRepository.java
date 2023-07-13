@@ -15,8 +15,6 @@ import java.util.Optional;
 public interface PostRepository extends JpaRepository<Post, Long>, PostRepositoryCustom {
     List<Post> findByBoard(Board defaultBoard, Sort id);
 
-    List<Post> findByBoard(Board board);
-
     /*
         사용자, 게시판, 시설 id로 게시글을 조회합니다.
      */

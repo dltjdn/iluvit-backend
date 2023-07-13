@@ -28,7 +28,7 @@ public class BoardBookmarkService {
     private final UserRepository userRepository;
     private final BoardRepository boardRepository;
     private final PostRepository postRepository;
-    private final CenterRepository centerRepository;
+
 
     /**
      * 즐겨찾는 게시판 전체 조회
@@ -36,29 +36,45 @@ public class BoardBookmarkService {
     public List<StoryDto> findBoardBookmarkByUser(Long userId) {
 
         User user = userRepository.findById(userId)
-                .orElseThrow(()-> new UserException(UserErrorResult.USER_NOT_EXIST));
+                .orElseThrow(() -> new UserException(UserErrorResult.USER_NOT_EXIST));
 
-        // 유저가 즐겨찾기한 게시판별로 가장 최신 게시물들을 가져온다
-        List<Post> posts =boardBookmarkRepository.findByUser(user).stream()
+        // 북마크한 게시판들
+        List<Board> boards = boardBookmarkRepository.findByUser(user).stream()
                 .map(Bookmark::getBoard)
-                .map(board -> postRepository.findByBoard(board, Sort.by(Sort.Direction.DESC, "id")).get(0))
                 .collect(Collectors.toList());
 
-        Map<Center, List<Post>> centerPostMap = posts.stream()
-                .collect(Collectors.groupingBy(p -> {
-                    Center center = p.getBoard().getCenter();
-                    return center == null ? new Center() : center;
-                }));
+        // 게시판들과 게시판들이 속해있는 센터를 매핑한다 ( 모두의 이야기 게시판이면 new Center() 넣어준다 )
+        Map<Center, List<Board>> centerBoardMap = boards.stream()
+                .collect(Collectors.groupingBy((board -> {
+                    return board.getCenter()==null? new Center(): board.getCenter();
+                })));
 
         List<StoryDto> storyDtos = new ArrayList<>();
 
-        centerPostMap.forEach((center, postList) -> {
+        /*
+         * 시설별로 (시설-게시판리스트) 반복문 돈다
+         */
+        centerBoardMap.forEach((center, boardList) -> {
 
-            List<StoryDto.BoardDto> boardDtoList =  new ArrayList<>();
+            List<StoryDto.BoardDto> boardDtoList = new ArrayList<>();
 
-            // post별 board
-            postList.forEach((post)->{
-                StoryDto.BoardDto boardDto = new StoryDto.BoardDto(post.getBoard().getId(), post.getBoard().getName(), post.getTitle(), post.getId());
+            /*
+             * 게시판 별로 반복문 돈다
+             */
+            boardList.forEach(board -> {
+                Long boardId = board.getId();
+                String boardName = board.getName();
+                String postTitle = null;
+                Long postId = null;
+
+                List<Post> posts = postRepository.findByBoard(board, Sort.by(Sort.Direction.DESC, "id"));
+
+                if (!posts.isEmpty()) { // 게시판에 게시물이 하나도 없을수도 있으므로 검사해줘야한다
+                    postTitle = posts.get(0).getTitle(); // 게시판의 가장 최근 게시물 하나
+                    postId = posts.get(0).getId();
+                }
+
+                StoryDto.BoardDto boardDto = new StoryDto.BoardDto(boardId, boardName, postTitle, postId);
                 boardDtoList.add(boardDto);
             });
 
@@ -67,9 +83,10 @@ public class BoardBookmarkService {
             StoryDto storyDto = new StoryDto(center.getId(), storyName, boardDtoList);
 
             storyDtos.add(storyDto);
-
         });
+
         return storyDtos;
+
     }
 
     /**

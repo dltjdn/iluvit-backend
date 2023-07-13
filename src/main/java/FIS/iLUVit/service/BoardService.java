@@ -120,12 +120,12 @@ public class BoardService {
 
         // 모두의 이야기에서 게시판 이름 중복성 검사 및 저장
         if (center_id == null) {
-            boardRepository.findByCenterIsNullAndName(request.getBoard_name())
+            boardRepository.findByCenterIsNullAndName(request.getBoardName())
                     .ifPresent((b) -> {
                         throw new BoardException(BoardErrorResult.BOARD_NAME_DUPLICATION);
                     });
             Long boardId = boardRepository.save(Board.createBoard(
-                    request.getBoard_name(), request.getBoardKind(), null, false)).getId();
+                    request.getBoardName(), request.getBoardKind(), null, false)).getId();
             return new BoardIdDto(boardId);
         }
 
@@ -151,13 +151,13 @@ public class BoardService {
         }
 
         // 시설의 이야기에서 게시판 이름 중복성 검사 및 저장
-        boardRepository.findByCenterAndName(findCenter,request.getBoard_name())
+        boardRepository.findByCenterAndName(findCenter,request.getBoardName())
                 .ifPresent((b) -> {
                     throw new BoardException(BoardErrorResult.BOARD_NAME_DUPLICATION);
                 });
 
 
-        Board board = Board.createBoard(request.getBoard_name(), request.getBoardKind(), findCenter,false);
+        Board board = Board.createBoard(request.getBoardName(), request.getBoardKind(), findCenter,false);
         Board savedBoard = boardRepository.save(board);
         return new BoardIdDto(savedBoard.getId());
     }

@@ -55,11 +55,10 @@ public class BoardController {
     /**
      * 게시판 생성
      */
-    @PostMapping("")
-    public ResponseEntity<BoardIdDto> createBoard(@Login Long userId,
-                                                  @RequestParam(value = "center_id", required = false) Long center_id,
-                                                  @RequestBody @Valid BoardRequest request) {
-        BoardIdDto boardIdDto = boardService.saveNewBoard(userId, center_id, request);
+    @PostMapping("{centerId}")
+    public ResponseEntity<BoardIdDto> createBoard(@Login Long userId, @PathVariable("centerId") Long centerId,
+                                                  @RequestBody @Valid BoardRequest boardRequest) {
+        BoardIdDto boardIdDto = boardService.saveNewBoard(userId, centerId, boardRequest);
         return ResponseEntity.status(HttpStatus.CREATED).body(boardIdDto);
     }
 
