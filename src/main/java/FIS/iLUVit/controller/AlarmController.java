@@ -7,6 +7,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -45,9 +46,9 @@ public class AlarmController {
      * 전체 알림 읽음으로 업데이트
      */
     @PatchMapping("read")
-    public ResponseEntity<Void> readAlarm(@Login Long userId){
+    public ResponseEntity<Void> readAlarm(@Login Long userId) {
         alarmService.readAlarm(userId);
-        return ResponseEntity.noContent().build();
+        return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
     }
 
     /**
@@ -65,7 +66,7 @@ public class AlarmController {
     @DeleteMapping("")
     public ResponseEntity<Void> deleteAlarm(@Login Long userId, @RequestBody AlarmDeleteDto request) {
         alarmService.deleteSelectedAlarm(userId, request.getAlarmIds());
-        return ResponseEntity.noContent().build();
+        return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
     }
 
     /**
@@ -74,7 +75,6 @@ public class AlarmController {
     @DeleteMapping("all")
     public ResponseEntity<Void> deleteAllAlarm(@Login Long userId) {
         alarmService.deleteAllAlarm(userId);
-        return ResponseEntity.noContent().build();
-
+        return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
     }
 }

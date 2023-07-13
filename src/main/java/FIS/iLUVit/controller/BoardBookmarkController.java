@@ -1,7 +1,6 @@
 package FIS.iLUVit.controller;
 
 import FIS.iLUVit.config.argumentResolver.Login;
-//import FIS.iLUVit.controller.dto.BoardBookmarkDto;
 import FIS.iLUVit.dto.board.BoardBookmarkIdDto;
 import FIS.iLUVit.dto.board.StoryDto;
 import FIS.iLUVit.service.BoardBookmarkService;
@@ -47,7 +46,6 @@ public class BoardBookmarkController {
     @DeleteMapping("{bookmarkId}")
     public ResponseEntity<Void> deleteBoardBookmark(@Login Long userId, @PathVariable("bookmarkId") Long bookmarkId) {
         boardBookmarkService.deleteBoardBookmark(userId, bookmarkId);
-        return ResponseEntity.noContent().build();
+        return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
     }
-
 }

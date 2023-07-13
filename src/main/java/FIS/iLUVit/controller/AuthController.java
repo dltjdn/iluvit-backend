@@ -29,7 +29,7 @@ public class AuthController {
     @GetMapping("signup")
     public ResponseEntity<Void>  getAuthNumForSignup(@RequestParam String phoneNumber) {
         authService.sendAuthNumForSignup(phoneNumber);
-        return ResponseEntity.status(HttpStatus.OK).build();
+        return ResponseEntity.ok().build();
     }
 
     /**
@@ -38,7 +38,7 @@ public class AuthController {
     @GetMapping("loginid")
     public ResponseEntity<Void> getAuthNumForFindLoginId(@RequestParam String phoneNumber) {
         authService.sendAuthNumForFindLoginId(phoneNumber);
-        return ResponseEntity.status(HttpStatus.OK).build();
+        return ResponseEntity.ok().build();
     }
 
     /**
@@ -47,7 +47,7 @@ public class AuthController {
     @GetMapping("password")
     public ResponseEntity<Void> getAuthNumForFindPwd(@RequestParam String loginId, @RequestParam String phoneNumber) {
         authService.sendAuthNumberForFindPassword(loginId, phoneNumber);
-        return ResponseEntity.status(HttpStatus.OK).build();
+        return ResponseEntity.ok().build();
     }
 
     /**
@@ -56,7 +56,7 @@ public class AuthController {
     @GetMapping("phonenumber")
     public ResponseEntity<Void> getAuthNumForUpdatePhoneNum(@Login Long userId, @RequestParam String phoneNumber) {
         authService.sendAuthNumForChangePhone(userId, phoneNumber);
-        return ResponseEntity.status(HttpStatus.OK).build();
+        return ResponseEntity.ok().build();
     }
 
     /**
@@ -65,7 +65,7 @@ public class AuthController {
     @PostMapping("")
     public ResponseEntity<Void> authenticateAuthNum(@Login Long userId, @RequestBody AuthRequestDto request) {
         authService.authenticateAuthNum(userId, request);
-        return ResponseEntity.status(HttpStatus.OK).build();
+        return ResponseEntity.ok().build();
     }
 
     /**
@@ -83,7 +83,7 @@ public class AuthController {
     @PostMapping("password")
     public ResponseEntity<Void> authenticateAuthNumForChangePwd(@RequestBody @Valid FindPasswordDto request) {
         authService.authenticateAuthNumForChangePwd(request);
-        return ResponseEntity.status(HttpStatus.OK).build();
+        return ResponseEntity.ok().build();
     }
 
 }

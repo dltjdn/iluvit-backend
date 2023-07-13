@@ -68,7 +68,7 @@ public class BoardController {
     @DeleteMapping("{boardId}")
     public ResponseEntity<Void> deleteBoard(@Login Long userId, @PathVariable("boardId") Long boardId) {
         boardService.deleteBoardWithValidation(userId, boardId);
-        return ResponseEntity.noContent().build();
+        return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
     }
 
 }
