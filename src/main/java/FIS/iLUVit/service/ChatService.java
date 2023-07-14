@@ -15,7 +15,6 @@ import org.springframework.data.domain.Slice;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.List;
 import java.util.Objects;
 
 @Service
@@ -46,15 +45,15 @@ public class ChatService {
 
         User receiveUser;
 
-        Long post_id = request.getPost_id();
-        Long comment_id = request.getComment_id();
+        Long post_id = request.getPostId();
+        Long comment_id = request.getCommentId();
 
         Post findPost = postRepository.findById(post_id)
                 .orElseThrow(() -> new ChatException(ChatErrorResult.POST_NOT_EXIST));
 
         Boolean anonymousInfo;
 
-        if (request.getComment_id() != null) {
+        if (request.getCommentId() != null) {
             Comment findComment = commentRepository.findById(comment_id)
                     .orElseThrow(() -> new CommentException(CommentErrorResult.NO_EXIST_COMMENT));
             anonymousInfo = findComment.getAnonymous();
@@ -100,7 +99,7 @@ public class ChatService {
             throw new ChatException(ChatErrorResult.UNAUTHORIZED_USER_ACCESS);
         }
 
-        ChatRoom myRoom = chatRoomRepository.findById(request.getRoom_id())
+        ChatRoom myRoom = chatRoomRepository.findById(request.getRoomId())
                 .orElseThrow(() -> new ChatException(ChatErrorResult.ROOM_NOT_EXIST));
 
         if (myRoom.getReceiver() == null || myRoom.getSender() == null || myRoom.getSender().getNickName() == "알 수 없음") {
