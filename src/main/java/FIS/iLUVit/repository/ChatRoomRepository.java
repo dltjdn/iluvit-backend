@@ -9,7 +9,6 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
-
 import java.util.Collection;
 import java.util.Optional;
 
@@ -20,10 +19,6 @@ public interface ChatRoomRepository extends JpaRepository<ChatRoom, Long> {
      */
     Optional<ChatRoom> findByReceiverAndSenderAndPostAndAnonymous(User receiver, User sender, Post post, Boolean anonymous);
 
-
-//    @Query("select cr from ChatRoom cr " +
-//            "where cr.receiver.id = :userId order by cr.updatedDate desc ")
-//    Slice<ChatRoom> findByUser(@Param("userId") Long userId, Pageable pageable);
     /**
      * Receiver의 채팅방들을 수정일시를 기준으로 내림차순으로 조회합니다
      */

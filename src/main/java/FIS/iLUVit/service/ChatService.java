@@ -202,11 +202,12 @@ public class ChatService {
     }
 
     /**
-     *
+     * 대화방이 있는지 검증해준 후 없으면 새로 생성해준다
      */
     private ChatRoom validateChatRoom(User sendUser, User receiveUser, Long comment_id, Post post, Chat chat, Boolean anonymous) {
         ChatRoom chatRoom = chatRoomRepository.findByReceiverAndSenderAndPostAndAnonymous(receiveUser, sendUser, post, anonymous)
                 .orElse(null);
+
         if (chatRoom == null) {
             // 대화방 없으면 새로 생성
             chatRoom = new ChatRoom(receiveUser, sendUser, post, anonymous);

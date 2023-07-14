@@ -18,7 +18,6 @@ import org.springframework.web.bind.annotation.*;
 @RequiredArgsConstructor
 @RequestMapping("chat")
 public class ChatController {
-
     private final ChatService chatService;
 
     /**

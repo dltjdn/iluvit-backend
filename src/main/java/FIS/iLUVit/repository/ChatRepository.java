@@ -15,12 +15,6 @@ import java.util.List;
 
 public interface ChatRepository extends JpaRepository<Chat, Long> {
 
-//    @Query("select c from Chat c " +
-//            "join fetch c.chatRoom cr " +
-//            "where cr.id = :roomId " +
-//            "and cr.receiver.id = :userId order by c.createdDate desc ")
-//    Slice<Chat> findByChatRoom(@Param("userId") Long userId, @Param("chatroom") ChatRoom chatRoom, Pageable pageable);
-
     /**
      * Receiver의 채팅방 속 채팅을 생성일시를 기준으로 내림차순으로 조회합니다
      */

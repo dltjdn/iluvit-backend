@@ -13,7 +13,7 @@ import java.time.LocalTime;
 public class ChatDto {
     private Long roomId;
     private Long centerId;
-    private String centerName; // center_id null이면 모두의 이야기
+    private String centerName; // centerId null이면 모두의 이야기
     private Long boardId;
     private String boardName;
     private Long postId;
