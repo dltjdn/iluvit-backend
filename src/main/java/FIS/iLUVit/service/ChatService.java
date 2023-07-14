@@ -32,7 +32,10 @@ public class ChatService {
 
     private final AlarmRepository alarmRepository;
 
-    public Long saveNewChat(Long userId, ChatRequest request) {
+    /**
+     * 쪽지 작성 ( 대화방 생성 )
+     */
+    public void saveNewChat(Long userId, ChatRequest request) {
 
         if (userId == null) {
             throw new ChatException(ChatErrorResult.UNAUTHORIZED_USER_ACCESS);
@@ -85,79 +88,13 @@ public class ChatService {
         AlarmUtils.publishAlarmEvent(alarm);
 
         chatRepository.save(myChat);
-        Chat savedChat = chatRepository.save(partnerChat);
-
-        return savedChat.getId();
-
+        chatRepository.save(partnerChat);
     }
 
-    private ChatRoom validateChatRoom(User sendUser, User receiveUser, Long comment_id, Post post, Chat chat, Boolean anonymous) {
-        ChatRoom chatRoom = chatRoomRepository.findByReceiverAndSenderAndPostAndAnonymous(
-                        receiveUser, sendUser, post, anonymous)
-                .orElse(null);
-        if (chatRoom == null) {
-            // 대화방 없으면 새로 생성
-            chatRoom = new ChatRoom(receiveUser, sendUser, post, anonymous);
-            // 댓글 작성자와 쪽지 교환이면 comment 정보도 엮여줌.
-            if (comment_id != null) {
-                Comment findComment = commentRepository.getById(comment_id);
-                chatRoom.updateComment(findComment);
-            }
-            chatRoomRepository.save(chatRoom);
-        }
-        chat.updateChatRoom(chatRoom);
-        return chatRoom;
-    }
-
-    public Slice<ChatListDto> findChatRoomList(Long userId, Pageable pageable) {
-        User user = userRepository.findById(userId)
-                .orElseThrow(() -> new ChatException(ChatErrorResult.USER_NOT_EXIST));
-
-        Slice<ChatRoom> chatList = chatRoomRepository.findByReceiverOrderByUpdatedDateDesc(user, pageable);
-        return chatList.map(c -> {
-            ChatListDto chatListDto = new ChatListDto(c);
-            String profileImage = imageService.getProfileImage(c.getSender());
-            chatListDto.updateImage(profileImage);
-            return chatListDto;
-        });
-    }
-
-    public ChatDto findChatRoomDetails(Long userId, Long roomId, Pageable pageable) {
-
-        User user = userRepository.findById(userId)
-                .orElseThrow(() -> new ChatException(ChatErrorResult.USER_NOT_EXIST));
-
-        ChatRoom findRoom = chatRoomRepository.findById(roomId)
-                .orElseThrow(() -> new ChatException(ChatErrorResult.ROOM_NOT_EXIST));
-
-        Slice<Chat> chatList = chatRepository.findByChatRoomAndChatRoomReceiverOrderByCreatedDateDesc(findRoom, user, pageable);
-
-        Slice<ChatDto.ChatInfo> chatInfos = chatList.map(ChatDto.ChatInfo::new);
-        ChatDto chatDto = new ChatDto(findRoom, chatInfos);
-        String profileImage = imageService.getProfileImage(findRoom.getSender());
-        chatDto.updateImage(profileImage);
-        return chatDto;
-    }
-
-    public Long deleteChatRoom(Long userId, Long roomId) {
-        chatRoomRepository.findById(roomId)
-                .ifPresent(cr -> {
-                    if (cr.getReceiver() == null) {
-                        throw new ChatException(ChatErrorResult.WITHDRAWN_MEMBER);
-                    }
-                    if (!Objects.equals(cr.getReceiver().getId(), userId)) {
-                        throw new ChatException(ChatErrorResult.UNAUTHORIZED_USER_ACCESS);
-                    }
-                    if (cr.getPartner_id() != null) {
-                        chatRoomRepository.findById(cr.getPartner_id())
-                                .ifPresent(c -> c.updatePartnerId(null));
-                    }
-                });
-        chatRoomRepository.deleteById(roomId);
-        return roomId;
-    }
-
-    public Long saveChatInRoom(Long userId, ChatRoomRequest request) {
+    /**
+     * 쪽지 작성 ( 대화방 생성 후 쪽지 작성 )
+     */
+    public void saveChatInRoom(Long userId, ChatRoomRequest request) {
 
         if (userId == null) {
             throw new ChatException(ChatErrorResult.UNAUTHORIZED_USER_ACCESS);
@@ -205,10 +142,83 @@ public class ChatService {
                 .orElseThrow(() -> new UserException(UserErrorResult.USER_NOT_EXIST))
                 .updateReadAlarm(Boolean.FALSE);
 
-        Chat savedChat = chatRepository.save(myChat);
+        chatRepository.save(myChat);
         chatRepository.save(partnerChat);
-
-        return savedChat.getId();
     }
 
+    /**
+     * 대화방 전체 조회
+     */
+    public Slice<ChatListDto> findChatRoomList(Long userId, Pageable pageable) {
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new ChatException(ChatErrorResult.USER_NOT_EXIST));
+
+        Slice<ChatRoom> chatList = chatRoomRepository.findByReceiverOrderByUpdatedDateDesc(user, pageable);
+        return chatList.map(c -> {
+            ChatListDto chatListDto = new ChatListDto(c);
+            String profileImage = imageService.getProfileImage(c.getSender());
+            chatListDto.updateImage(profileImage);
+            return chatListDto;
+        });
+    }
+
+    /**
+     * 대화방 상세 조회
+     */
+    public ChatDto findChatRoomDetails(Long userId, Long roomId, Pageable pageable) {
+
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new ChatException(ChatErrorResult.USER_NOT_EXIST));
+
+        ChatRoom findRoom = chatRoomRepository.findById(roomId)
+                .orElseThrow(() -> new ChatException(ChatErrorResult.ROOM_NOT_EXIST));
+
+        Slice<Chat> chatList = chatRepository.findByChatRoomAndChatRoomReceiverOrderByCreatedDateDesc(findRoom, user, pageable);
+
+        Slice<ChatDto.ChatInfo> chatInfos = chatList.map(ChatDto.ChatInfo::new);
+        ChatDto chatDto = new ChatDto(findRoom, chatInfos);
+        String profileImage = imageService.getProfileImage(findRoom.getSender());
+        chatDto.updateImage(profileImage);
+        return chatDto;
+    }
+
+    /**
+     * 대화방 삭제
+     */
+    public void deleteChatRoom(Long userId, Long roomId) {
+        chatRoomRepository.findById(roomId)
+                .ifPresent(cr -> {
+                    if (cr.getReceiver() == null) {
+                        throw new ChatException(ChatErrorResult.WITHDRAWN_MEMBER);
+                    }
+                    if (!Objects.equals(cr.getReceiver().getId(), userId)) {
+                        throw new ChatException(ChatErrorResult.UNAUTHORIZED_USER_ACCESS);
+                    }
+                    if (cr.getPartner_id() != null) {
+                        chatRoomRepository.findById(cr.getPartner_id())
+                                .ifPresent(c -> c.updatePartnerId(null));
+                    }
+                });
+        chatRoomRepository.deleteById(roomId);
+    }
+
+    /**
+     *
+     */
+    private ChatRoom validateChatRoom(User sendUser, User receiveUser, Long comment_id, Post post, Chat chat, Boolean anonymous) {
+        ChatRoom chatRoom = chatRoomRepository.findByReceiverAndSenderAndPostAndAnonymous(receiveUser, sendUser, post, anonymous)
+                .orElse(null);
+        if (chatRoom == null) {
+            // 대화방 없으면 새로 생성
+            chatRoom = new ChatRoom(receiveUser, sendUser, post, anonymous);
+            // 댓글 작성자와 쪽지 교환이면 comment 정보도 엮여줌.
+            if (comment_id != null) {
+                Comment findComment = commentRepository.getById(comment_id);
+                chatRoom.updateComment(findComment);
+            }
+            chatRoomRepository.save(chatRoom);
+        }
+        chat.updateChatRoom(chatRoom);
+        return chatRoom;
+    }
 }
