@@ -113,7 +113,7 @@ public class UserService {
         TokenPair tokenPair = TokenPair.createTokenPair(jwt, refresh, principal.getUser());
 
         // 기존 토큰이 있으면 업데이트하고, 없으면 새로 생성하여 저장
-        tokenPairRepository.findByUserId(principal.getUser().getId())
+        tokenPairRepository.findByUser(principal.getUser())
                 .ifPresentOrElse(
                         (findTokenPair) -> findTokenPair.updateToken(jwt, refresh),
                         () -> tokenPairRepository.save(tokenPair)
@@ -142,7 +142,7 @@ public class UserService {
 
         // 이전에 받았던 refreshToken과 일치하는지 확인(tokenPair 유저당 하나로 유지)
         Long userId = jwtUtils.getUserIdFromToken(requestRefreshToken);
-        TokenPair findTokenPair = tokenPairRepository.findByUserIdWithUser(userId)
+        TokenPair findTokenPair = tokenPairRepository.findByUserId(userId)
                 .orElseThrow(() -> new JWTVerificationException("유효하지 않은 토큰입니다."));
 
         if (!requestRefreshToken.equals(findTokenPair.getRefreshToken())) {

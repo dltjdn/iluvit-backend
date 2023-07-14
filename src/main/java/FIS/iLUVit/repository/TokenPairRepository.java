@@ -1,6 +1,7 @@
 package FIS.iLUVit.repository;
 
 import FIS.iLUVit.domain.TokenPair;
+import FIS.iLUVit.domain.User;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
@@ -10,21 +11,15 @@ import java.util.Optional;
 
 public interface TokenPairRepository extends JpaRepository<TokenPair, Long> {
 
-    /*
-        공정토큰 사용자 id가 사용자 id와 같은 공정 토큰을 불러옵니다.
+    /**
+     * 유저 id로 TokenPair를 조회합니다
      */
-    @Query("select r " +
-            "from TokenPair r " +
-            "join fetch r.user u " +
-            "where u.id =:userId")
-    Optional<TokenPair> findByUserIdWithUser(@Param("userId") Long userId);
-
-    /*
-        공정토큰 사용자 id가 사용자 id와 같은 공정 토큰을 불러옵니다.
-     */
-    @Query("select r " +
-            "from TokenPair r " +
-            "where r.user.id =:userId")
     Optional<TokenPair> findByUserId(@Param("userId") Long userId);
+
+    /**
+     * 해당 유저의 TokenPair를 조회합니다
+     */
+    Optional<TokenPair> findByUser(User user);
+
 }
 
