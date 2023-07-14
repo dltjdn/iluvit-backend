@@ -4,11 +4,13 @@ import FIS.iLUVit.domain.Parent;
 import FIS.iLUVit.domain.Participation;
 import FIS.iLUVit.domain.PtDate;
 import FIS.iLUVit.domain.Waiting;
+import FIS.iLUVit.domain.enumtype.Status;
 import FIS.iLUVit.exception.*;
 import FIS.iLUVit.repository.ParentRepository;
 import FIS.iLUVit.repository.ParticipationRepository;
 import FIS.iLUVit.repository.PtDateRepository;
 import FIS.iLUVit.repository.WaitingRepository;
+import ch.qos.logback.core.status.StatusUtil;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -59,8 +61,8 @@ public class WaitingService {
             throw new PresentationException(PresentationErrorResult.PRESENTATION_NOT_OVERCAPACITY);
 
         // 설명회를 이미 신청 했을 경우 error Throw
-        String status = "JOINED";
-        List<Participation> participants = participationRepository.findByPtDateAndStatus(ptDateId, status);
+        Status status = Status.JOINED;
+        List<Participation> participants = participationRepository.findByPtDateIdAndStatus(ptDateId, status);
         participants.forEach(participation -> {
             if(participation.getParent().getId().equals(userId))
                 throw new PresentationException(PresentationErrorResult.ALREADY_PARTICIPATED_IN);
