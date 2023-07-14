@@ -44,7 +44,7 @@ public class ChildService {
     private final BoardRepository boardRepository;
     private final BoardBookmarkRepository boardBookmarkRepository;
     private final TeacherRepository teacherRepository;
-
+    private final UserRepository userRepository;
     private final AlarmRepository alarmRepository;
 
     /**
@@ -322,11 +322,10 @@ public class ChildService {
 
         // 없으면 해당 시설과 연관된 bookmark 싹 다 삭제
         if (sameCenterChildren.isEmpty()) {
-            List<Board> boards = boardRepository.findByCenterId(deletedChild.getCenter().getId());
-            List<Long> boardIds = boards.stream()
-                    .map(Board::getId)
-                    .collect(Collectors.toList());
-            boardBookmarkRepository.deleteAllByBoardAndUser(parentId, boardIds);
+            List<Board> boards = boardRepository.findByCenter(deletedChild.getCenter());
+            User user = userRepository.findById(parentId)
+                    .orElseThrow(() -> new UserException(UserErrorResult.USER_NOT_EXIST));
+            boardBookmarkRepository.deleteByUserAndBoardIn(user, boards);
         }
     }
 

@@ -1,8 +1,10 @@
 package FIS.iLUVit.repository;
 
+import FIS.iLUVit.domain.Board;
 import FIS.iLUVit.domain.Post;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
+import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -11,6 +13,7 @@ import java.util.List;
 import java.util.Optional;
 
 public interface PostRepository extends JpaRepository<Post, Long>, PostRepositoryCustom {
+    List<Post> findByBoard(Board defaultBoard, Sort id);
 
     /*
         사용자, 게시판, 시설 id로 게시글을 조회합니다.
@@ -38,15 +41,6 @@ public interface PostRepository extends JpaRepository<Post, Long>, PostRepositor
             nativeQuery = true)
     List<Post> findTop3(@Param("boardIds") List<Long> boardIds);
 
-    /*
-        게시판 id 리스트 중 최근 3개의 게시글 리스트를 불러옵니다.
-     */
-    @Query(value = "select * from " +
-            "(select row_number() over (partition by p.board_id order by p.createddate desc) as ranks, " +
-            "p.* from post p where p.board_id in :boardIds) as ranking " +
-            "where ranking.ranks <= 3 order by board_id, createddate desc ",
-            nativeQuery = true)
-    List<Post> findTop3_H2(@Param("boardIds") List<Long> boardIds);
 
     /*
         게시글 하트 개수가 가장 많은 3개의 게시글 리스트를 불러옵니다.

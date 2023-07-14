@@ -153,7 +153,7 @@ public class TeacherService {
             teacherRepository.save(teacher);
         }
         // 모두의 이야기 default boards bookmark 추가하기
-        List<Board> defaultBoards = boardRepository.findDefaultByModu();
+        List<Board> defaultBoards = boardRepository.findByCenterIsNullAndIsDefaultTrue();
         for (Board defaultBoard : defaultBoards) {
             Bookmark bookmark = Bookmark.createBookmark(defaultBoard, teacher);
             boardBookmarkRepository.save(bookmark);
@@ -271,7 +271,7 @@ public class TeacherService {
         acceptedTeacher.acceptTeacher();
 
         // center default boards bookmark 추가하기
-        List<Board> defaultBoards = boardRepository.findDefaultByCenter(director.getCenter().getId());
+        List<Board> defaultBoards = boardRepository.findByCenterAndIsDefaultTrue(director.getCenter());
         for (Board defaultBoard : defaultBoards) {
             Bookmark bookmark = Bookmark.createBookmark(defaultBoard, acceptedTeacher);
             boardBookmarkRepository.save(bookmark);
@@ -348,11 +348,8 @@ public class TeacherService {
     // 해당 시설과 연관된 게시판 bookmark 삭제
     private void deleteBookmarkByCenter(Teacher escapedTeacher) {
         if (escapedTeacher.getApproval() == Approval.ACCEPT) {
-            List<Board> boards = boardRepository.findByCenterId(escapedTeacher.getCenter().getId());
-            List<Long> boardIds = boards.stream()
-                    .map(Board::getId)
-                    .collect(Collectors.toList());
-            boardBookmarkRepository.deleteAllByBoardAndUser(escapedTeacher.getId(), boardIds);
+            List<Board> boards = boardRepository.findByCenter(escapedTeacher.getCenter());
+            boardBookmarkRepository.deleteByUserAndBoardIn(escapedTeacher, boards);
         }
         // scrap 없애는 코드 추가
     }
