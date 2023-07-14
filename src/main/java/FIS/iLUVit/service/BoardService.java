@@ -2,7 +2,6 @@ package FIS.iLUVit.service;
 
 import FIS.iLUVit.dto.board.BoardListDto;
 import FIS.iLUVit.dto.board.BoardRequest;
-
 import FIS.iLUVit.dto.board.StoryPreviewDto;
 import FIS.iLUVit.domain.*;
 import FIS.iLUVit.domain.enumtype.Approval;
@@ -185,7 +184,6 @@ public class BoardService {
         }
     }
 
-
     /**
      * 작성자: 이창윤
      * 작성내용: 모두의 이야기 및 유저가 속한 시설의 이야기의 프리뷰를 조회합니다
@@ -199,7 +197,7 @@ public class BoardService {
         User findUser = userRepository.findById(userId)
                 .orElseThrow(() -> new UserException(UserErrorResult.USER_NOT_EXIST));
         if (findUser.getAuth() == Auth.PARENT) {
-            List<Child> children = userRepository.findChildrenWithCenter(userId);
+            List<Child> children = childRepository.findByParentId(userId);
             List<StoryPreviewDto> storyPreviewDtoList = children.stream()
                     .filter(child -> child.getCenter() != null && child.getApproval() == Approval.ACCEPT)
                     .map(child -> new StoryPreviewDto(child.getCenter()))
@@ -215,4 +213,5 @@ public class BoardService {
         }
         return result;
     }
+
 }

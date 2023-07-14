@@ -33,9 +33,8 @@ public class ParticipationService {
     private final ParticipationRepository participationRepository;
     private final PtDateRepository ptDateRepository;
     private final ParentRepository parentRepository;
-    private final UserRepository userRepository;
+    private final TeacherRepository teacherRepository;
     private final ApplicationEventPublisher eventPublisher;
-
     private final AlarmRepository alarmRepository;
 
     public Long registerParticipation(Long userId, Long ptDateId) {
@@ -73,12 +72,20 @@ public class ParticipationService {
                 Participation.createAndRegister(parent, presentation, ptDate, participations)
         );
 
+//        if(ptDate.getAblePersonNum() <= ptDate.getParticipantCnt()){
+//            userRepository.findTeacherByCenter(presentation.getCenter()).forEach((user) -> {
+//                Alarm alarm = new PresentationFullAlarm(user, presentation, presentation.getCenter());
+//                alarmRepository.save(alarm);
+//                AlarmUtils.publishAlarmEvent(alarm);
+//
+//            });
+//        }
+
         if(ptDate.getAblePersonNum() <= ptDate.getParticipantCnt()){
-            userRepository.findTeacherByCenter(presentation.getCenter()).forEach((user) -> {
-                Alarm alarm = new PresentationFullAlarm(user, presentation, presentation.getCenter());
+            teacherRepository.findByCenter(presentation.getCenter()).forEach((teacher) -> {
+                Alarm alarm = new PresentationFullAlarm(teacher, presentation, presentation.getCenter());
                 alarmRepository.save(alarm);
                 AlarmUtils.publishAlarmEvent(alarm);
-
             });
         }
 
@@ -100,6 +107,7 @@ public class ParticipationService {
         if(ptDate.hasWaiting()){
             eventPublisher.publishEvent(new ParticipationCancelEvent(ptDate.getPresentation(), ptDate)); // 이벤트 리스너 호출
         }
+
         return participationId;
     }
 
@@ -127,18 +135,21 @@ public class ParticipationService {
     public Slice<ParticipationListDto> findRegisterParticipationByUser(Long userId, Pageable pageable){
         if(userId == null)
             throw new UserException(UserErrorResult.NOT_LOGIN);
+
         return parentRepository.findMyJoinParticipation(userId, pageable);
     }
 
     public Slice<ParticipationListDto> findCancelParticipationByUser(Long userId, Pageable pageable){
         if(userId == null)
             throw new UserException(UserErrorResult.NOT_LOGIN);
+
         return parentRepository.findMyCancelParticipation(userId, pageable);
     }
 
     public Slice<ParticipationListDto> findWaitingParticipationByUser(Long userId, Pageable pageable){
         if(userId == null)
             throw new UserException(UserErrorResult.NOT_LOGIN);
+
         return parentRepository.findMyWaiting(userId, pageable);
     }
 

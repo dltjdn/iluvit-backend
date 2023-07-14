@@ -45,10 +45,10 @@ public class PresentationService {
     private final PtDateRepository ptDateRepository;
     private final CenterRepository centerRepository;
     private final ImageService imageService;
-    private final UserRepository userRepository;
+    private final CenterBookmarkRepository centerBookmarkRepository;
+    private final TeacherRepository teacherRepository;
     private final WaitingRepository waitingRepository;
     private final ParticipationRepository participationRepository;
-
     private final AlarmRepository alarmRepository;
 
     public List<PresentationDetailResponse> findPresentationByCenterIdAndDate(Long centerId, Long userId) {
@@ -67,13 +67,12 @@ public class PresentationService {
                 .collect(toList());
     }
 
-
     public Presentation savePresentationInfoWithPtDate(PresentationDetailRequest request, Long userId) {
         if(userId == null)
             throw new UserException(UserErrorResult.NOT_LOGIN);
 
         // 리펙터링 필요 findById 를 통해서 그냥 canWrite 와 canRead 를 override 하기
-        userRepository.findTeacherById(userId)
+        teacherRepository.findById(userId)
                 .orElseThrow(() -> new UserException(UserErrorResult.USER_NOT_EXIST))
                 .canWrite(request.getCenterId());
         if (presentationRepository.findByCenterIdAndDate(request.getCenterId(), LocalDate.now()) != null)
@@ -90,7 +89,7 @@ public class PresentationService {
 
         presentationRepository.save(presentation);
 
-        userRepository.getUserPreferByCenterId(center).forEach(prefer -> {
+        centerBookmarkRepository.findByCenter(center).forEach(prefer -> {
             Alarm alarm = new PresentationCreatedAlarm(prefer.getParent(), presentation, center);
             alarmRepository.save(alarm);
             AlarmUtils.publishAlarmEvent(alarm);
@@ -112,7 +111,7 @@ public class PresentationService {
 
     public List<PresentationForTeacherResponse> findPresentationListByCenter(Long userId, Long centerId, Pageable pageable) {
         //
-        userRepository.findTeacherById(userId)
+        teacherRepository.findById(userId)
                 .orElseThrow(() -> new UserException("존재하지 않는 유저입니다"))
                 .canRead(centerId);
         return presentationRepository.findByCenterId(centerId, pageable)
@@ -133,7 +132,7 @@ public class PresentationService {
         //
         Presentation presentation = presentationRepository.findByIdAndJoinPtDate(request.getPresentationId())
                 .orElseThrow(() -> new PresentationException(PresentationErrorResult.NO_RESULT));
-        userRepository.findTeacherById(userId)
+        teacherRepository.findById(userId)
                 .orElseThrow(() -> new UserException(UserErrorResult.USER_NOT_EXIST))
                 .canWrite(presentation.getCenter().getId());
 
@@ -199,7 +198,7 @@ public class PresentationService {
         Presentation presentation = presentationRepository.findById(presentationId)
                 .orElseThrow(() -> new PresentationException(PresentationErrorResult.NO_RESULT));
 
-        userRepository.findTeacherById(userId)
+        teacherRepository.findById(userId)
                 .orElseThrow(() -> new UserException(UserErrorResult.USER_NOT_EXIST))
                 .canWrite(presentation.getCenter().getId());
 
@@ -212,21 +211,20 @@ public class PresentationService {
         //
         PtDate ptDate = ptDateRepository.findByIdAndJoinParticipationForSearch(ptDateId)
                 .orElseThrow(() -> new PresentationException("존재하지 않는 설명회 회차 입니다."));
-        userRepository.findTeacherById(userId)
+        teacherRepository.findById(userId)
                 .orElseThrow(() -> new UserException("존재하지 않는 유저입니다"))
                 .canRead(ptDate.getPresentation().getCenter().getId());
         return ptDate.getParticipations().stream()
                 .filter(participation -> participation.getStatus().equals(Status.JOINED))
                 .map(participation -> new ParentDto(participation.getParent()))
                 .collect(Collectors.toList());
-
     }
 
     public List<ParentDto> findParentListWithWaitingParticipation(Long userId, Long ptDateId) {
         //
         PtDate ptDate = ptDateRepository.findByIdWithWaitingAndPresentationAndCenterAndParent(ptDateId)
                 .orElseThrow(() -> new PresentationException("존재하지 않는 설명회 회차 입니다."));
-        userRepository.findTeacherById(userId)
+        teacherRepository.findById(userId)
                 .orElseThrow(() -> new UserException("존재하지 않는 유저입니다"))
                 .canRead(ptDate.getPresentation().getCenter().getId());
 
@@ -238,4 +236,5 @@ public class PresentationService {
     public SliceImpl<PresentationForUserResponse> findPresentationByFilter(List<Area> areas, Theme theme, Integer interestedAge, KindOf kindOf, String searchContent, Pageable pageable) {
         return presentationRepository.findByFilter(areas, theme, interestedAge, kindOf, searchContent, pageable);
     }
+
 }

@@ -30,8 +30,11 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 @Slf4j
 public class PostService {
+
     private final PostRepository postRepository;
     private final UserRepository userRepository;
+    private final TeacherRepository teacherRepository;
+    private final ChildRepository childRepository;
     private final ImageService imageService;
     private final BoardRepository boardRepository;
     private final BoardBookmarkRepository boardBookmarkRepository;
@@ -108,7 +111,6 @@ public class PostService {
         return postId;
     }
 
-
     public PostResponse findPostByPostId(Long userId, Long postId) {
         // 게시글과 연관된 유저, 게시판, 시설 한 번에 끌고옴
         Post findPost = postRepository.findByIdWithUserAndBoardAndCenter(postId)
@@ -133,7 +135,7 @@ public class PostService {
 
         if (auth == Auth.PARENT) {
             // 학부모 유저일 때 아이와 연관된 센터의 아이디를 모두 가져옴
-            centerIds = userRepository.findChildren(userId)
+            centerIds = childRepository.findByParentId(userId)
                     .stream().filter(c -> c.getCenter() != null).map(c -> c.getCenter().getId())
                     .collect(Collectors.toSet());
         } else {
@@ -155,7 +157,7 @@ public class PostService {
         if (centerId != null) {
             if (auth == Auth.PARENT) {
                 // 학부모 유저일 때 아이와 연관된 센터의 아이디를 모두 가져옴
-                Set<Long> centerIds = userRepository.findChildren(userId)
+                Set<Long> centerIds = childRepository.findByParentId(userId)
                         .stream().filter(c -> c.getCenter() != null).map(c -> c.getCenter().getId())
                         .collect(Collectors.toSet());
                 if (!centerIds.contains(centerId)) {
@@ -163,7 +165,7 @@ public class PostService {
                     throw new PostException(PostErrorResult.UNAUTHORIZED_USER_ACCESS);
                 }
             } else {
-                Teacher teacher = userRepository.findTeacherById(userId)
+                Teacher teacher = teacherRepository.findById(userId)
                         .orElseThrow(() -> new PostException(PostErrorResult.UNAUTHORIZED_USER_ACCESS));
                 // 교사 아이디 + center로 join fetch 조회한 결과가 없으면 Teacher의 Center가 null이므로 권한 X
                 if (!Objects.equals(teacher.getCenter().getId(), centerId)) {
@@ -223,7 +225,6 @@ public class PostService {
 
         return getPreviewResult(hotPosts, results, boardPreviews);
     }
-
 
     public List<BoardPreviewDto> findBoardDetailsByCenter(Long userId, Long centerId) {
         if (userId == null) {
