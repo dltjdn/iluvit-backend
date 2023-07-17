@@ -15,27 +15,34 @@ import java.util.Optional;
 
 public interface WaitingRepository extends JpaRepository<Waiting, Long> {
 
-    /*
-        대기중인 ptDate가 ptDate와 같고 가장 작은 waitingOrder 값을 가지는 Waiting을 조회합니다.
+    /**
+     * 해당 학부모로 Waiting 리스트를 조회합니다
      */
-//    @Lock(LockModeType.PESSIMISTIC_WRITE)
-    @Query("select waiting from Waiting waiting " +
-            "join fetch waiting.parent " +
-            "where waiting.ptDate = :ptDate " +
-            "and waiting.waitingOrder = (select min(w.waitingOrder) from Waiting w where w.ptDate =:ptDate) ")
-    Waiting findMinWaitingOrder(@Param("ptDate") PtDate ptDate);
+    List<Waiting> findByParent(Parent parent);
 
-    /*
-        대기중인 ptDate가 ptDate와 같고 대기중인 waitingOrder가 변경 숫자보다 작거나 같으면 Waiting 리스트를 불러옵니다.
+    /**
+     * 해당 설명회 회차로 Waiting 리스트를 조회합니다
      */
-    @Query("select distinct waiting from Waiting waiting " +
-            "join fetch waiting.ptDate as ptDate " +
-            "join fetch ptDate.participations " +
-            "where waiting.ptDate = :ptDate and waiting.waitingOrder <= :changeNum")
-    List<Waiting> findWaitingsByPtDateAndOrderNum(@Param("ptDate") PtDate ptDate, @Param("changeNum") Integer changeNum);
+    List<Waiting> findByPtDate(PtDate ptDate);
 
-    /*
-        대기중인 ptDate가 ptdate와 같으면 대기중인 waitingOrder의 값을 바뀐 숫자만큼 빼서 업데이트시킵니다. (은행 번호표 뽑고 기다리면 점점 내 차례오는거라고 생각하면됨)
+    /**
+     * 주어진 waitingId를 가지며 해당 학부모가 대기 신청한 Waiting 엔티티를 조화합니다
+     */
+    @Lock(LockModeType.PESSIMISTIC_WRITE)
+    Optional<Waiting> findByIdAndParent(Long waitingId, Parent parent);
+
+    /**
+     * 해당 설명회 회차에서 대기순번이 가장 낮은 Waiting 엔티티를 조회합니다
+     */
+    Waiting findFirstByPtDateOrderByWaitingOrderAsc(PtDate ptDate);
+
+    /**
+     * 해당 설명회 회차의 대기순번이 changeNum보다 같거나 작은 Waiting 리스트를 조회합니다
+     */
+    List<Waiting> findByPtDateAndWaitingOrderLessThanEqual(PtDate ptDate, Integer changeNum);
+
+    /**
+     * 주어진 ptDate에 해당하는 Waiting의 waitingOrder 값을 -changeNum 만큼 감소시킵니다
      */
     @Modifying
     @Query("update Waiting waiting " +
@@ -43,29 +50,13 @@ public interface WaitingRepository extends JpaRepository<Waiting, Long> {
             "where waiting.ptDate = :ptDate")
     void updateWaitingOrderForPtDateChange(@Param("changeNum") Integer changeNum, @Param("ptDate") PtDate ptDate);
 
-    /*
-        waitingId와 userId 매개변수에 해당하는 조건을 만족하는 Waiting 엔티티를 조회합니다.
-     */
-    @Lock(LockModeType.PESSIMISTIC_WRITE)
-    @Query("select waiting from Waiting waiting " +
-            "join fetch waiting.ptDate " +
-            "where waiting.id = :waitingId and waiting.parent.id = :userId")
-    Optional<Waiting> findByIdWithPtDate(@Param("waitingId") Long waitingId, @Param("userId") Long userId);
-
-    /*
-        대기중인 waitingOrder가 waitingOrder 값보다 크고 대기중인 ptDate와 일치한다면 waitingOrder를 1 빼서 업데이트시킵니다.
+    /**
+     * 주어진 ptDate에 해당하는 Waiting 중에서 waitingOrder 값이 주어진 waitingOrder보다 큰 엔티티들의 waitingOrder 값을 1씩 감소시킵니다
      */
     @Modifying
     @Query("update Waiting waiting " +
             "set waiting.waitingOrder = waiting.waitingOrder - 1 " +
             "where waiting.waitingOrder > :waitingOrder and waiting.ptDate = :ptDate ")
     void updateWaitingOrder(@Param("ptDate")PtDate ptDate, @Param("waitingOrder") Integer waitingOrder);
-
-    /*
-        부모로 Waiting 리스트를 조회합니다.
-     */
-    List<Waiting> findByParent(Parent parent);
-
-    List<Waiting> findByPtDate(PtDate ptDate);
 
 }

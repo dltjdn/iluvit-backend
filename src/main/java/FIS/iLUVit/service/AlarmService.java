@@ -2,6 +2,8 @@ package FIS.iLUVit.service;
 
 import FIS.iLUVit.domain.User;
 import FIS.iLUVit.domain.alarms.Alarm;
+import FIS.iLUVit.dto.alarm.AlarmDto;
+import FIS.iLUVit.dto.alarm.AlarmReadDto;
 import FIS.iLUVit.exception.UserErrorResult;
 import FIS.iLUVit.exception.UserException;
 import FIS.iLUVit.repository.AlarmRepository;
@@ -9,10 +11,12 @@ import FIS.iLUVit.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
+import org.springframework.data.domain.SliceImpl;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @Transactional
@@ -24,19 +28,28 @@ public class AlarmService {
     /**
      * 활동 알림을 조회합니다
      */
-    public Slice<Alarm> findActiveAlarmByUser(Long userId, Pageable pageable) {
+    public Slice<AlarmDto> findActiveAlarmByUser(Long userId, Pageable pageable) {
         Slice<Alarm> alarms = alarmRepository.findActiveByUser(userId, pageable);
+        SliceImpl<AlarmDto> alarmDetailDtos = new SliceImpl<>(alarms.stream()
+                .map(Alarm::exportAlarm)
+                .collect(Collectors.toList()),
+                pageable, alarms.hasNext());
 
-        return alarms;
+        return alarmDetailDtos;
     }
 
     /**
      * 설명회 알림을 조회합니다
      */
-    public Slice<Alarm> findPresentationActiveAlarmByUser(Long userId, Pageable pageable) {
+    public Slice<AlarmDto> findPresentationActiveAlarmByUser(Long userId, Pageable pageable) {
         Slice<Alarm> alarms = alarmRepository.findPresentationByUser(userId, pageable);
 
-        return alarms;
+        SliceImpl<AlarmDto> alarmDetailDtos = new SliceImpl<>(alarms.stream()
+                .map(Alarm::exportAlarm)
+                .collect(Collectors.toList()),
+                pageable, alarms.hasNext());
+
+        return alarmDetailDtos;
     }
 
     /**
@@ -55,15 +68,16 @@ public class AlarmService {
     /**
      * 전체 알림 읽었는지 안 읽었는지 여부를 조회합니다
      */
-    public Boolean hasRead(Long userId) {
+    public AlarmReadDto hasRead(Long userId) {
         if(userId == null)
             throw new UserException(UserErrorResult.NOT_LOGIN);
 
         Boolean readAlarm = userRepository.findById(userId)
                 .orElseThrow(() -> new UserException(UserErrorResult.USER_NOT_EXIST))
                 .getReadAlarm();
+        AlarmReadDto alarmReadDto = new AlarmReadDto(readAlarm);
 
-        return readAlarm;
+        return alarmReadDto;
     }
 
     /**

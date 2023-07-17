@@ -1,6 +1,6 @@
 package FIS.iLUVit.domain.alarms;
 
-import FIS.iLUVit.dto.alarm.AlarmDetailDto;
+import FIS.iLUVit.dto.alarm.AlarmDto;
 import FIS.iLUVit.domain.*;
 import FIS.iLUVit.service.AlarmUtils;
 import lombok.Getter;
@@ -34,12 +34,12 @@ public class ConvertedToParticipateAlarm extends Alarm {
     }
 
     @Override
-    public AlarmDetailDto exportAlarm() {
+    public AlarmDto exportAlarm() {
         return new PresentationConvertedToParticipateAlarmDto(id, createdDate, message, dtype, centerId, presentationId, centerName);
     }
 
     @Getter
-    public static class PresentationConvertedToParticipateAlarmDto extends AlarmDetailDto {
+    public static class PresentationConvertedToParticipateAlarmDto extends AlarmDto {
         protected Long presentationId;
         protected Long centerId;
         protected String centerName;

@@ -1,8 +1,10 @@
 package FIS.iLUVit.service;
 
+import FIS.iLUVit.domain.Parent;
 import FIS.iLUVit.domain.Participation;
 import FIS.iLUVit.domain.PtDate;
 import FIS.iLUVit.domain.Waiting;
+import FIS.iLUVit.domain.enumtype.Status;
 import FIS.iLUVit.exception.*;
 import FIS.iLUVit.repository.ParentRepository;
 import FIS.iLUVit.repository.ParticipationRepository;
@@ -27,11 +29,18 @@ public class WaitingService {
     private final ParentRepository parentRepository;
     private final ParticipationRepository participationRepository;
 
-    public Waiting watingParticipation(Long userId, Long ptDateId) {
+    /**
+     * 설명회 회차에 대기를 신청합니다
+     */
+    public void waitingParticipation(Long userId, Long ptDateId) {
         if(userId == null)
             throw new UserException(UserErrorResult.NOT_LOGIN);
-        // 학부모 조회
-        PtDate ptDate = ptDateRepository.findByIdWith(ptDateId)
+
+        // 잘못된 ptDateId로 요청 시 오류 반환
+        if(ptDateId < 0)
+            throw new PresentationException(PresentationErrorResult.WRONG_PTDATE_ID_REQUEST);
+
+        PtDate ptDate = ptDateRepository.findById(ptDateId)
                 .orElseThrow(() -> new PresentationException(PresentationErrorResult.WRONG_PTDATE_ID_REQUEST));
 
         // 설명회 신청기간이 지났을경우 error throw
@@ -40,7 +49,6 @@ public class WaitingService {
             throw new PresentationException(PresentationErrorResult.PARTICIPATION_PERIOD_PASSED);
 
         // 대기 등록을 이미 했을 경우 error Throw
-
         waitingRepository.findByPtDate(ptDate).forEach(waiting -> {
             if(waiting.getParent().getId().equals(userId))
                 throw new PresentationException(PresentationErrorResult.ALREADY_WAITED_IN);
@@ -50,8 +58,9 @@ public class WaitingService {
         if(ptDate.getAblePersonNum() > ptDate.getParticipantCnt())
             throw new PresentationException(PresentationErrorResult.PRESENTATION_NOT_OVERCAPACITY);
 
-        // 설명회를 이미 신텅 했을 경우 error Throw
-        List<Participation> participants = participationRepository.findByPtDateAndStatusJOINED(ptDateId);
+        // 설명회를 이미 신청 했을 경우 error Throw
+        Status status = Status.JOINED;
+        List<Participation> participants = participationRepository.findByPtDateAndStatus(ptDate, status);
         participants.forEach(participation -> {
             if(participation.getParent().getId().equals(userId))
                 throw new PresentationException(PresentationErrorResult.ALREADY_PARTICIPATED_IN);
@@ -66,12 +75,13 @@ public class WaitingService {
         ptDate.increaseWaitingCnt()
                 .acceptWaiting(waiting);
 
-        Waiting saved = waitingRepository.save(waiting);
-
-        return waiting;
+        waitingRepository.save(waiting);
     }
 
-    public Long cancelParticipation(Long waitingId, Long userId) {
+    /**
+     * 설명회 대기를 취소하고 대기 순서를 변경합니다
+     */
+    public void cancelParticipation(Long userId, Long waitingId) {
         if(userId == null)
             throw new UserException(UserErrorResult.NOT_LOGIN);
 
@@ -80,15 +90,14 @@ public class WaitingService {
             throw new WaitingException(WaitingErrorResult.WRONG_WAITINGID_REQUEST);
 
         // 검색 결과 없으면 오류 반환
-        Waiting waiting = waitingRepository.findByIdWithPtDate(waitingId, userId)
+        Parent parent = parentRepository.findById(userId).orElseThrow(() -> new UserException(UserErrorResult.USER_NOT_EXIST));
+        Waiting waiting = waitingRepository.findByIdAndParent(waitingId, parent)
                 .orElseThrow(() -> new WaitingException(WaitingErrorResult.NO_RESULT));
 
         PtDate ptDate = waiting.getPtDate();
         ptDate.decreaseWaitingCnt();
         waitingRepository.updateWaitingOrder(ptDate, waiting.getWaitingOrder());
         waitingRepository.delete(waiting);
-
-        return waitingId;
     }
 
 }

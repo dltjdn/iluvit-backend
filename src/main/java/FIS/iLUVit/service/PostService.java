@@ -44,6 +44,8 @@ public class PostService {
     private final ReportDetailRepository reportDetailRepository;
     private final CommentRepository commentRepository;
 
+    private final CenterRepository centerRepository;
+
 //    private final Integer heartCriteria = 2; // HOT 게시판 좋아요 기준
 
     public Long saveNewPost(PostRequest request, Long userId) {
@@ -211,11 +213,12 @@ public class PostService {
 
         // 비회원일 때 기본 게시판들의 id를 북마크처럼 디폴트로 제공, 회원일 땐 북마크를 통해서 제공
         if (userId == null) {
-            List<Board> boardList = boardRepository.findDefaultByModu();
-
+            List<Board> boardList = boardRepository.findByCenterIsNullAndIsDefaultTrue();
             addBoardPreviews(boardPreviews, boardList);
         } else {
-            List<Bookmark> bookmarkList = boardBookmarkRepository.findBoardByUser(userId);
+            User user = userRepository.findById(userId)
+                    .orElseThrow(()-> new UserException(UserErrorResult.USER_NOT_EXIST));
+            List<Bookmark> bookmarkList = boardBookmarkRepository.findByUserAndBoardCenterIsNull(user);
             getBoardPreviews(bookmarkList, boardPreviews);
         }
 
@@ -233,29 +236,31 @@ public class PostService {
 
         User findUser = userRepository.findById(userId)
                 .orElseThrow(() -> new UserException(UserErrorResult.USER_NOT_EXIST));
-        // 학부모 유저일 경우 아이를 통해 센터 정보를 가져옴
-        // 교사 유저일 경우 바로 센터 정보 가져옴
-        if (findUser.getAuth() == Auth.PARENT) {
-            boolean flag;
-            List<Long> centerIds = ((Parent) findUser).getChildren()
-                    .stream()
+
+        if (findUser.getAuth() == Auth.PARENT) { // 학부모 유저일 경우 아이를 통해 센터 정보를 가져옴
+            Parent parent = (Parent) findUser;
+            boolean flag = parent.getChildren().stream()
                     .filter(c -> c.getCenter() != null && c.getApproval() == Approval.ACCEPT)
-                    .map(c -> c.getCenter().getId())
-                    .collect(Collectors.toList());
-            flag = centerIds.stream().anyMatch(id -> Objects.equals(id, centerId));
+                    .map(Child::getCenter)
+                    .anyMatch(center -> center.getId().equals(centerId));
+
             if (!flag) {
                 throw new PostException(PostErrorResult.WAITING_OR_REJECT_CANNOT_ACCESS);
             }
 
-        } else {
-            Center center = ((Teacher) findUser).getCenter();
-            if (center == null || !Objects.equals(center.getId(), centerId)) {
+        } else {   // 교사 유저일 경우 바로 센터 정보 가져옴
+            Teacher teacher = (Teacher) findUser;
+            Center center = teacher.getCenter();
+
+            if (center == null || !center.getId().equals(centerId)) {
                 throw new PostException(PostErrorResult.UNAUTHORIZED_USER_ACCESS);
             }
         }
 
         List<BoardPreviewDto> boardPreviews = new ArrayList<>();
-        List<Bookmark> bookmarkList = boardBookmarkRepository.findBoardByUserAndCenter(userId, centerId);
+        Center center = centerRepository.findById(centerId)
+                .orElseThrow(() -> new CenterException(CenterErrorResult.CENTER_NOT_EXIST));
+        List<Bookmark> bookmarkList = boardBookmarkRepository.findByUserAndBoardCenter(findUser, center);
         getBoardPreviews(bookmarkList, boardPreviews);
 
         // HOT 게시판 정보 추가
@@ -314,7 +319,7 @@ public class PostService {
         results.add(new BoardPreviewDto(null, "HOT 게시판", postInfoList, BoardKind.NORMAL));
 
         boardPreviews = boardPreviews.stream()
-                .sorted(Comparator.comparing(BoardPreviewDto::getBoard_id)).collect(Collectors.toList());
+                .sorted(Comparator.comparing(BoardPreviewDto::getBoardId)).collect(Collectors.toList());
         results.addAll(boardPreviews);
 
         return results;

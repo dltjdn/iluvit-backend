@@ -132,7 +132,7 @@ public class ParentService {
         authRepository.deleteByPhoneNumAndAuthKind(request.getPhoneNum(), AuthKind.signup);
 
         // 모두의 이야기 default boards bookmark 추가하기
-        List<Board> defaultBoards = boardRepository.findDefaultByModu();
+        List<Board> defaultBoards = boardRepository.findByCenterIsNullAndIsDefaultTrue();
         for (Board defaultBoard : defaultBoards) {
             Bookmark bookmark = Bookmark.createBookmark(defaultBoard, parent);
             boardBookmarkRepository.save(bookmark);
@@ -169,7 +169,7 @@ public class ParentService {
 
         // 신청되어있는 설명회 대기 목록에서 빠지게 하기 ( 설명회 대기 취소 )
         waitingRepository.findByParent(parent).forEach(waiting-> {
-            waitingService.cancelParticipation(waiting.getId(), userId);
+            waitingService.cancelParticipation(userId, waiting.getId());
         });
 
         return userId;

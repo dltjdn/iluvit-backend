@@ -159,7 +159,7 @@ public class PresentationService {
                     // 추가 수용 가능 인원 숫자 체크
                     Integer changeNum = ptDateModifyDto.getAblePersonNum() - ptDate.getAblePersonNum();
                     // 추가 수용될 인원 추출
-                    List<Waiting> waitings = waitingRepository.findWaitingsByPtDateAndOrderNum(ptDate, changeNum);
+                    List<Waiting> waitings = waitingRepository.findByPtDateAndWaitingOrderLessThanEqual(ptDate, changeNum);
                     // 추가 수용될 인원 id 만 추출
                     List<Long> waitingIds = waitings.stream().map(Waiting::getId).collect(toList());
                     // 수용 인원들 waiting 에서 삭제

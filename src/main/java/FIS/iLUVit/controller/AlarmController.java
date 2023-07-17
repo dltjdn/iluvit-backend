@@ -1,19 +1,15 @@
 package FIS.iLUVit.controller;
 
 import FIS.iLUVit.config.argumentResolver.Login;
-import FIS.iLUVit.domain.alarms.Alarm;
 import FIS.iLUVit.dto.alarm.*;
 import FIS.iLUVit.service.AlarmService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
-import org.springframework.data.domain.SliceImpl;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.stream.Collectors;
 
 
 @Slf4j
@@ -32,14 +28,8 @@ public class AlarmController {
      * 활동 알림을 조회합니다
      */
     @GetMapping("active")
-    public ResponseEntity<Slice<AlarmDetailDto>> getActiveAlarm(@Login Long userId, Pageable pageable){
-        Slice<Alarm> alarms = alarmService.findActiveAlarmByUser(userId, pageable);
-
-        SliceImpl<AlarmDetailDto> alarmDetailDtos = new SliceImpl<>(alarms.stream()
-                .map(Alarm::exportAlarm)
-                .collect(Collectors.toList()),
-                pageable, alarms.hasNext());
-
+    public ResponseEntity<Slice<AlarmDto>> getActiveAlarm(@Login Long userId, Pageable pageable){
+        Slice<AlarmDto> alarmDetailDtos = alarmService.findActiveAlarmByUser(userId, pageable);
         return ResponseEntity.ok(alarmDetailDtos);
     }
 
@@ -47,15 +37,8 @@ public class AlarmController {
      * 설명회 알림을 조회합니다
      */
     @GetMapping("presentation")
-    public ResponseEntity<Slice<AlarmDetailDto>> getPresentationAlarm(@Login Long userId, Pageable pageable){
-        Slice<Alarm> alarms = alarmService.findPresentationActiveAlarmByUser(userId, pageable);
-
-
-        SliceImpl<AlarmDetailDto> alarmDetailDtos = new SliceImpl<>(alarms.stream()
-                .map(Alarm::exportAlarm)
-                .collect(Collectors.toList()),
-                pageable, alarms.hasNext());
-
+    public ResponseEntity<Slice<AlarmDto>> getPresentationAlarm(@Login Long userId, Pageable pageable){
+        Slice<AlarmDto> alarmDetailDtos = alarmService.findPresentationActiveAlarmByUser(userId, pageable);
         return ResponseEntity.ok(alarmDetailDtos);
     }
 
@@ -63,9 +46,9 @@ public class AlarmController {
      * 전체 알림 읽음으로 업데이트
      */
     @PatchMapping("read")
-    public ResponseEntity<Void> readAlarm(@Login Long userId){
+    public ResponseEntity<Void> readAlarm(@Login Long userId) {
         alarmService.readAlarm(userId);
-        return ResponseEntity.noContent().build();
+        return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
     }
 
     /**
@@ -73,8 +56,7 @@ public class AlarmController {
      */
     @GetMapping("is-read")
     public ResponseEntity<AlarmReadDto> hasRead(@Login Long userId){
-        Boolean hasRead = alarmService.hasRead(userId);
-        AlarmReadDto alarmReadDto = new AlarmReadDto(hasRead);
+        AlarmReadDto alarmReadDto = alarmService.hasRead(userId);
         return ResponseEntity.ok(alarmReadDto);
     }
 
@@ -82,9 +64,9 @@ public class AlarmController {
      * 선택한 알림들을 삭제합니다
      */
     @DeleteMapping("")
-    public ResponseEntity<Void> deleteAlarm(@Login Long userId, @RequestBody AlarmRequest request) {
+    public ResponseEntity<Void> deleteAlarm(@Login Long userId, @RequestBody AlarmDeleteDto request) {
         alarmService.deleteSelectedAlarm(userId, request.getAlarmIds());
-        return ResponseEntity.noContent().build();
+        return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
     }
 
     /**
@@ -93,7 +75,6 @@ public class AlarmController {
     @DeleteMapping("all")
     public ResponseEntity<Void> deleteAllAlarm(@Login Long userId) {
         alarmService.deleteAllAlarm(userId);
-        return ResponseEntity.noContent().build();
-
+        return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
     }
 }

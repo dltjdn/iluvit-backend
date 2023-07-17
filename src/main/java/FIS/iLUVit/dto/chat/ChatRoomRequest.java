@@ -1,7 +1,6 @@
 package FIS.iLUVit.dto.chat;
 
 import lombok.AllArgsConstructor;
-import lombok.Data;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -15,14 +14,5 @@ public class ChatRoomRequest {
     private String message;
 
     @NotBlank(message = "대화방 id 필요")
-    private Long room_id;
-
-    public void addMessage(String message){
-        this.message = message;
-    }
-
-    public void addRoomId(Long roomId){
-        this.room_id = roomId;
-    }
-
+    private Long roomId;
 }

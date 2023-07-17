@@ -1,6 +1,6 @@
 package FIS.iLUVit.domain.alarms;
 
-import FIS.iLUVit.dto.alarm.AlarmDetailDto;
+import FIS.iLUVit.dto.alarm.AlarmDto;
 import FIS.iLUVit.domain.BaseEntity;
 import FIS.iLUVit.domain.User;
 import lombok.Getter;
@@ -34,6 +34,6 @@ public abstract class Alarm extends BaseEntity {
         this.user = user.updateReadAlarm(Boolean.FALSE);
     }
 
-    public abstract AlarmDetailDto exportAlarm();
+    public abstract AlarmDto exportAlarm();
 
 }
