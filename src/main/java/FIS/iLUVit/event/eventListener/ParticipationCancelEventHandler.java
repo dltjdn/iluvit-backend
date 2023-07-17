@@ -27,7 +27,7 @@ public class ParticipationCancelEventHandler {
     public void changeWaitingToParticipation(ParticipationCancelEvent event){
         Presentation presentation = event.getPresentation();
         PtDate ptDate = event.getPtDate();
-        Waiting waiting = waitingRepository.findMinWaitingOrder(ptDate);
+        Waiting waiting = waitingRepository.findFirstByPtDateOrderByWaitingOrderAsc(ptDate);
         if (waiting == null) {
             ptDate.resetWaitingCnt();
             return;
