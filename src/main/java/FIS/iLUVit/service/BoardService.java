@@ -2,7 +2,6 @@ package FIS.iLUVit.service;
 
 import FIS.iLUVit.dto.board.BoardIdDto;
 import FIS.iLUVit.dto.board.BoardListDto;
-import FIS.iLUVit.dto.board.BoardRequest;
 import FIS.iLUVit.dto.board.BoardCreateDto;
 import FIS.iLUVit.dto.board.StoryPreviewDto;
 import FIS.iLUVit.domain.*;
