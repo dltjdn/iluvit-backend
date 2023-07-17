@@ -9,6 +9,8 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
@@ -28,108 +30,108 @@ public class ChildController {
      */
 
     /**
-     * 작성자: 이승범
-     * 작성내용: 아이 정보 전체 조회
+     * 아이 정보 전체 조회
      */
     @GetMapping("info")
-    public List<ChildDto> getAllChild(@Login Long id) {
-        return childService.findChildList(id);
+    public ResponseEntity<List<ChildDto>> getAllChild(@Login Long userId) {
+        List<ChildDto> childDtos = childService.findChildList(userId);
+        return ResponseEntity.ok(childDtos);
     }
 
     /**
-     * 작성자: 이승범
-     * 작성내용: 아이 정보 저장
+     * 아이 정보 저장
      */
     @PostMapping("")
-    public void createChild(@Login Long userId, @Valid @ModelAttribute ChildDetailRequest request) throws IOException {
+    public ResponseEntity<Void> createChild(@Login Long userId, @Valid @ModelAttribute ChildDetailRequest request) throws IOException {
         childService.saveNewChild(userId, request);
+        return ResponseEntity.status(HttpStatus.CREATED).build();
     }
 
     /**
-     * 작성자: 이승범
-     * 작성내용: 아이 정보 상세 조회
+     * 아이 정보 상세 조회
      */
     @GetMapping("{childId}")
-    public ChildDetailResponse getChildDetails(@Login Long userId, @PathVariable("childId") Long childId) {
-        return childService.findChildDetails(userId, childId);
+    public ResponseEntity<ChildDetailResponse> getChildDetails(@Login Long userId, @PathVariable("childId") Long childId) {
+        ChildDetailResponse childDetails = childService.findChildDetails(userId, childId);
+        return ResponseEntity.ok(childDetails);
     }
 
     /**
-     * 작성자: 이승범
-     * 작성내용: 아이 정보 수정
+     * 아이 정보 수정
      */
     @PutMapping("{childId}")
-    public ChildDetailResponse updateChild(@Login Long userId, @PathVariable("childId") Long childId,
-                                           @ModelAttribute ChildRequest request, Pageable pageable) throws IOException {
-        return childService.modifyChildInfo(userId, childId, request);
+    public ResponseEntity<ChildDetailResponse> updateChild(@Login Long userId, @PathVariable("childId") Long childId, @ModelAttribute ChildRequest request)  {
+        ChildDetailResponse childDetailResponse = childService.modifyChildInfo(userId, childId, request);
+        return ResponseEntity.ok(childDetailResponse);
     }
 
     /**
-     * 작성자: 이승범
-     * 작성내용: 아이 정보 삭제
+     * 아이 정보 삭제
      */
     @DeleteMapping("{childId}")
-    public List<ChildDto> deleteChild(@Login Long userId, @PathVariable("childId") Long childId) {
-        return childService.deleteChild(userId, childId);
+    //TODO 필요없ㅇ르 듯?
+    public ResponseEntity<List<ChildDto>> deleteChild(@Login Long userId, @PathVariable("childId") Long childId) {
+        List<ChildDto> childDtos = childService.deleteChild(userId, childId);
+        return ResponseEntity.ok(childDtos);
     }
 
     /**
-     * 작성자: 이승범
-     * 작성내용: 아이 추가용 시설 정보 조회
+     * 아이 추가용 시설 정보 조회
      */
     @GetMapping("search/center")
-    public Slice<CenterDto> getCenterForChild(@ModelAttribute CenterRequest request, Pageable pageable) {
-        return childService.findCenterForAddChild(request, pageable);
+    public ResponseEntity<Slice<CenterDto>> getCenterForChild(@ModelAttribute CenterRequest request, Pageable pageable) {
+        Slice<CenterDto> centerDtos = childService.findCenterForAddChild(request, pageable);
+        return ResponseEntity.ok(centerDtos);
     }
 
     /**
-     * 작성자: 이승범
-     * 작성내용: 아이 시설 대기 ( 아이 시설 승인 요청 )
+     * 아이 시설 대기 ( 아이 시설 승인 요청 )
      */
+    //TODO response 필요없을듯
     @PatchMapping("{childId}/center/{centerId}")
-    public Long assignCenterForChild(@Login Long userId, @PathVariable("childId") Long childId, @PathVariable("centerId") Long centerId) {
-        return childService.requestAssignCenterForChild(userId, childId, centerId).getCenter().getId();
+    public ResponseEntity<Long> assignCenterForChild(@Login Long userId, @PathVariable("childId") Long childId, @PathVariable("centerId") Long centerId) {
+        Long centerId2 = childService.requestAssignCenterForChild(userId, childId, centerId).getCenter().getId();
+        return ResponseEntity.ok(centerId2);
     }
 
     /**
-     * 작성자: 이승범
-     * 작성내용: 아이 시설 탈퇴
+     * 아이 시설 탈퇴
      */
     @PatchMapping("{childId}/center")
-    public void leaveCenterForChild(@Login Long userId, @PathVariable("childId") Long childId) {
+    public ResponseEntity<Void> leaveCenterForChild(@Login Long userId, @PathVariable("childId") Long childId) {
         childService.leaveCenterForChild(userId, childId);
+        return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
     }
-
 
     /**
      * TEACHER
      */
 
     /**
-     * 작성자: 이승범
-     * 작성내용: 아이 승인용 아이 정보 전체 조회
+     *  아이 승인용 아이 정보 전체 조회
      */
     @GetMapping("approval")
-    public List<ChildInfoForAdminDto> getChildForApproval(@Login Long userId) {
-        return childService.findChildApprovalList(userId);
+    public ResponseEntity<List<ChildInfoForAdminDto>> getChildForApproval(@Login Long userId) {
+        List<ChildInfoForAdminDto> childApprovalList = childService.findChildApprovalList(userId);
+        return ResponseEntity.ok(childApprovalList);
     }
 
     /**
-     * 작성자: 이승범
-     * 작성내용: 아이를 시설에 승인
+     * 아이를 시설에 승인
      */
     @PatchMapping("{childId}/accept")
-    public void acceptChild(@Login Long userId, @PathVariable("childId") Long childId) {
+    public ResponseEntity<Void> acceptChild(@Login Long userId, @PathVariable("childId") Long childId) {
         childService.acceptChildRegistration(userId, childId);
+        return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
     }
 
     /**
-     * 작성자: 이승범
-     * 작성내용: 시설에서 아이 삭제/승인거절
+     * 시설에서 아이 삭제/승인거절
      */
     @PatchMapping("{childId}/reject")
-    public void rejectChild(@Login Long userId, @PathVariable("childId") Long childId) {
+    public ResponseEntity<Void> rejectChild(@Login Long userId, @PathVariable("childId") Long childId) {
         childService.rejectChildRegistration(userId, childId);
+        return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
     }
 
 }
