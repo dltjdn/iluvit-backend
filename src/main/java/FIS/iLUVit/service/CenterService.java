@@ -36,6 +36,7 @@ public class CenterService {
     private final CenterBookmarkRepository centerBookmarkRepository;
     private final ParentRepository parentRepository;
     private final UserRepository userRepository;
+    private final TeacherRepository teacherRepository;
     private final MapService mapService;
 
     /**
@@ -103,7 +104,7 @@ public class CenterService {
         if(userId == null)
             throw new UserException(UserErrorResult.NOT_LOGIN);
 
-        Teacher teacher = userRepository.findTeacherById(userId)
+        Teacher teacher = teacherRepository.findById(userId)
                 .orElseThrow(() -> new UserException(UserErrorResult.USER_NOT_EXIST))
                 .canWrite(centerId);
         // 해당하는 center 없으면 RuntimeException 반환
@@ -121,7 +122,7 @@ public class CenterService {
         if(userId == null)
             throw new UserException(UserErrorResult.NOT_LOGIN);
 
-        Teacher teacher = userRepository.findTeacherById(userId)
+        Teacher teacher = teacherRepository.findById(userId)
                 .orElseThrow(() -> new UserException(UserErrorResult.USER_NOT_EXIST))
                 .canWrite(centerId);
         // 해당하는 center 없으면 RuntimeException 반환

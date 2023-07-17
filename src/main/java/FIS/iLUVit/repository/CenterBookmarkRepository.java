@@ -12,6 +12,11 @@ import java.util.Optional;
 
 public interface CenterBookmarkRepository extends JpaRepository<Prefer, Long> {
 
+    /**
+     * 해당 시설로 시설 즐겨찾기 리스트를 조회합니다
+     */
+    List<Prefer> findByCenter(Center center);
+
     /*
         부모 id와 시설 id별로 센터 즐겨찾기를 조회합니다.
      */
@@ -28,4 +33,5 @@ public interface CenterBookmarkRepository extends JpaRepository<Prefer, Long> {
     */
     //TODO 확인해보기
     Optional<Prefer> findByCenterAndParentId(Center center, Long userId);
+
 }

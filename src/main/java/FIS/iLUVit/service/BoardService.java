@@ -2,6 +2,7 @@ package FIS.iLUVit.service;
 
 import FIS.iLUVit.dto.board.BoardIdDto;
 import FIS.iLUVit.dto.board.BoardListDto;
+import FIS.iLUVit.dto.board.BoardRequest;
 import FIS.iLUVit.dto.board.BoardCreateDto;
 import FIS.iLUVit.dto.board.StoryPreviewDto;
 import FIS.iLUVit.domain.*;
@@ -92,7 +93,7 @@ public class BoardService {
         User findUser = userRepository.findById(userId)
                 .orElseThrow(() -> new UserException(UserErrorResult.USER_NOT_EXIST));
         if (findUser.getAuth() == Auth.PARENT) {
-            List<Child> children = userRepository.findChildrenWithCenter(userId);
+            List<Child> children = childRepository.findByParentId(userId);
             List<StoryPreviewDto> storyPreviewDtoList = children.stream()
                     .filter(child -> child.getCenter() != null && child.getApproval() == Approval.ACCEPT)
                     .map(child -> new StoryPreviewDto(child.getCenter()))
@@ -211,4 +212,5 @@ public class BoardService {
             }
         }
     }
+  
 }

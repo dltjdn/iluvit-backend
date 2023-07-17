@@ -4,15 +4,18 @@ import FIS.iLUVit.domain.Center;
 import FIS.iLUVit.domain.Child;
 import FIS.iLUVit.domain.Parent;
 import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
-import org.springframework.security.core.parameters.P;
 
 import java.util.List;
 import java.util.Optional;
 
 public interface ChildRepository extends JpaRepository<Child, Long> {
+
+    /**
+     * 해당 학부모 id로 아이 리스트를 조회합니다
+     */
+    List<Child> findByParentId(@Param("parentId") Long parentId);
 
     /*
         부모 id와 시설 id로 아이 리스트를 조회합니다.
@@ -62,6 +65,5 @@ public interface ChildRepository extends JpaRepository<Child, Long> {
         센터로 아이 리스트를 조회합니다.
      */
     List<Child> findByCenter(Center center);
-
 
 }
