@@ -9,7 +9,7 @@ import javax.validation.constraints.NotBlank;
 @Getter
 @NoArgsConstructor
 @AllArgsConstructor
-public class BoardCreateDto {
+public class BoardRequestDto {
     @NotBlank(message = "게시판 이름을 채워주세요.")
     private String boardName;
     private BoardKind boardKind;

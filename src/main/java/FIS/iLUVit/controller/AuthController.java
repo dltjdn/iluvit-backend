@@ -2,11 +2,10 @@ package FIS.iLUVit.controller;
 
 import FIS.iLUVit.config.argumentResolver.Login;
 import FIS.iLUVit.dto.auth.AuthRequestDto;
-import FIS.iLUVit.dto.auth.LoginIdDto;
-import FIS.iLUVit.dto.auth.FindPasswordDto;
+import FIS.iLUVit.dto.auth.AuthLoginIdDto;
+import FIS.iLUVit.dto.auth.AuthFindPasswordDto;
 import FIS.iLUVit.service.AuthService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -72,16 +71,16 @@ public class AuthController {
      * (아이디찾기) 인증번호 인증 후 유저 아이디 반환
      */
     @PostMapping("loginid")
-    public ResponseEntity<LoginIdDto> authenticateAuthNumForFindLoginId(@RequestBody AuthRequestDto request) {
-        LoginIdDto loginIdDto = authService.authenticateAuthNumForFindLoginId(request);
-        return ResponseEntity.ok(loginIdDto);
+    public ResponseEntity<AuthLoginIdDto> authenticateAuthNumForFindLoginId(@RequestBody AuthRequestDto request) {
+        AuthLoginIdDto authLoginIdDto = authService.authenticateAuthNumForFindLoginId(request);
+        return ResponseEntity.ok(authLoginIdDto);
     }
 
     /**
      * (비밀번호 변경용 비밀번호찾기) 인증이 완료된 핸드폰번호인지 확인 후 비밀번호 변경
      */
     @PostMapping("password")
-    public ResponseEntity<Void> authenticateAuthNumForChangePwd(@RequestBody @Valid FindPasswordDto request) {
+    public ResponseEntity<Void> authenticateAuthNumForChangePwd(@RequestBody @Valid AuthFindPasswordDto request) {
         authService.authenticateAuthNumForChangePwd(request);
         return ResponseEntity.ok().build();
     }

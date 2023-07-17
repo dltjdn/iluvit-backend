@@ -2,8 +2,8 @@ package FIS.iLUVit.service;
 
 import FIS.iLUVit.dto.board.BoardIdDto;
 import FIS.iLUVit.dto.board.BoardListDto;
-import FIS.iLUVit.dto.board.BoardCreateDto;
-import FIS.iLUVit.dto.board.StoryPreviewDto;
+import FIS.iLUVit.dto.board.BoardRequestDto;
+import FIS.iLUVit.dto.board.BoardStoryPreviewDto;
 import FIS.iLUVit.domain.*;
 import FIS.iLUVit.domain.enumtype.Approval;
 import FIS.iLUVit.domain.enumtype.Auth;
@@ -83,9 +83,9 @@ public class BoardService {
     /**
      * 이야기 (모두의 이야기 + 유저가 속한 시설의 이야기) 전체 조회
      */
-    public List<StoryPreviewDto> findStoryPreviewList(Long userId) {
-        List<StoryPreviewDto> result = new ArrayList<>();
-        result.add(new StoryPreviewDto(null));
+    public List<BoardStoryPreviewDto> findStoryPreviewList(Long userId) {
+        List<BoardStoryPreviewDto> result = new ArrayList<>();
+        result.add(new BoardStoryPreviewDto(null));
         if (userId == null) {
             return result;
         }
@@ -93,17 +93,17 @@ public class BoardService {
                 .orElseThrow(() -> new UserException(UserErrorResult.USER_NOT_EXIST));
         if (findUser.getAuth() == Auth.PARENT) {
             List<Child> children = childRepository.findByParentId(userId);
-            List<StoryPreviewDto> storyPreviewDtoList = children.stream()
+            List<BoardStoryPreviewDto> boardStoryPreviewDtoList = children.stream()
                     .filter(child -> child.getCenter() != null && child.getApproval() == Approval.ACCEPT)
-                    .map(child -> new StoryPreviewDto(child.getCenter()))
+                    .map(child -> new BoardStoryPreviewDto(child.getCenter()))
                     .collect(Collectors.toList());
-            result.addAll(storyPreviewDtoList);
+            result.addAll(boardStoryPreviewDtoList);
         } else {
             Center findCenter = ((Teacher) findUser).getCenter();
             Approval approval = ((Teacher) findUser).getApproval();
             if (findCenter != null && approval == Approval.ACCEPT) {
-                StoryPreviewDto storyPreviewDto = new StoryPreviewDto(findCenter);
-                result.add(storyPreviewDto);
+                BoardStoryPreviewDto boardStoryPreviewDto = new BoardStoryPreviewDto(findCenter);
+                result.add(boardStoryPreviewDto);
             }
         }
         return result;
@@ -112,7 +112,7 @@ public class BoardService {
     /**
      * 게시판 생성
      */
-    public BoardIdDto saveNewBoard(Long userId, Long center_id, BoardCreateDto request) {
+    public BoardIdDto saveNewBoard(Long userId, Long center_id, BoardRequestDto request) {
         // userId 가 null 인 경우 게시판 생성 제한
         if (userId == null) {
             throw new BoardException(BoardErrorResult.UNAUTHORIZED_USER_ACCESS);

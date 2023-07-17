@@ -7,7 +7,7 @@ import javax.validation.constraints.NotBlank;
 @Getter
 @NoArgsConstructor
 @AllArgsConstructor
-public class ChatRequest {
+public class ChatRoomRequestDto {
     @NotBlank(message = "메시지에 값을 채워주세요.")
     private String message;
 

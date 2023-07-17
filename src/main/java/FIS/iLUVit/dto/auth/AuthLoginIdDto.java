@@ -5,6 +5,6 @@ import lombok.Getter;
 
 @Getter
 @AllArgsConstructor
-public class LoginIdDto {
+public class AuthLoginIdDto {
     private String loginId;
 }
