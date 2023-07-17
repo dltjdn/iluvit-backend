@@ -10,13 +10,14 @@ import FIS.iLUVit.service.ChatService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("chat")
 public class ChatController {
-
     private final ChatService chatService;
 
     /**
@@ -24,49 +25,49 @@ public class ChatController {
      */
 
     /**
-     * 작성자: 이창윤
-     * 작성내용: 쪽지 작성 ( 대화방 생성 )
+     * 쪽지 작성 ( 대화방 생성 )
      */
     @PostMapping("")
-    public Long createChat(@Login Long userId, @RequestBody ChatRequest request) {
-        return chatService.saveNewChat(userId, request);
+    public ResponseEntity<Void> createChat(@Login Long userId, @RequestBody ChatRequest request) {
+        chatService.saveNewChat(userId, request);
+        return ResponseEntity.status(HttpStatus.CREATED).build();
     }
 
     /**
-     * 작성자: 이창윤
-     * 작성내용: 쪽지 작성 ( 대화방 생성 후 쪽지 작성 )
+     * 쪽지 작성 ( 대화방 생성 후 쪽지 작성 )
      */
     @PostMapping("in-room")
-    public Long createChatInRoom(@Login Long userId, @RequestBody ChatRoomRequest request) {
-        return chatService.saveChatInRoom(userId, request);
+    public ResponseEntity<Void> createChatInRoom(@Login Long userId, @RequestBody ChatRoomRequest request) {
+        chatService.saveChatInRoom(userId, request);
+        return ResponseEntity.status(HttpStatus.CREATED).build();
     }
 
     /**
-     * 작성자: 이창윤
-     * 작성내용: 대화방 전체 조회
+     * 대화방 전체 조회
      */
     @GetMapping("")
-    public Slice<ChatListDto> getAllChatRoom(@Login Long userId, Pageable pageable) {
-        return chatService.findChatRoomList(userId, pageable);
+    public ResponseEntity<Slice<ChatListDto>> getAllChatRoom(@Login Long userId, Pageable pageable) {
+        Slice<ChatListDto> chatListDtos = chatService.findChatRoomList(userId, pageable);
+        return ResponseEntity.ok(chatListDtos);
     }
 
     /**
-     * 작성자: 이창윤
-     * 작성내용: 대화방 상세 조회
+     * 대화방 상세 조회
      */
     @GetMapping("{roomId}")
-    public ChatDto getChatRoomDetails(@Login Long userId, @PathVariable("roomId") Long roomId,
+    public ResponseEntity<ChatDto> getChatRoomDetails(@Login Long userId, @PathVariable("roomId") Long roomId,
                                 Pageable pageable) {
-        return chatService.findChatRoomDetails(userId, roomId, pageable);
+        ChatDto chatDtos = chatService.findChatRoomDetails(userId, roomId, pageable);
+        return ResponseEntity.ok(chatDtos);
     }
 
     /**
-     * 작성자: 이창윤
-     * 작성내용: 대화방 삭제
+     * 대화방 삭제
      */
     @DeleteMapping("{roomId}")
-    public Long deleteChatRoom(@Login Long userId, @PathVariable("roomId") Long roomId) {
-        return chatService.deleteChatRoom(userId, roomId);
+    public ResponseEntity<Void> deleteChatRoom(@Login Long userId, @PathVariable("roomId") Long roomId) {
+        chatService.deleteChatRoom(userId, roomId);
+        return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
     }
 
 }
