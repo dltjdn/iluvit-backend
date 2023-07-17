@@ -12,11 +12,6 @@ import java.util.Optional;
 public interface TokenPairRepository extends JpaRepository<TokenPair, Long> {
 
     /**
-     * 유저 id로 TokenPair를 조회합니다
-     */
-    Optional<TokenPair> findByUserId(@Param("userId") Long userId);
-
-    /**
      * 해당 유저의 TokenPair를 조회합니다
      */
     Optional<TokenPair> findByUser(User user);

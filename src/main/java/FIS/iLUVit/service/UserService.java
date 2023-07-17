@@ -142,9 +142,9 @@ public class UserService {
 
         // 이전에 받았던 refreshToken과 일치하는지 확인(tokenPair 유저당 하나로 유지)
         Long userId = jwtUtils.getUserIdFromToken(requestRefreshToken);
-        TokenPair findTokenPair = tokenPairRepository.findByUserId(userId)
+        User user = userRepository.findById(userId).orElseThrow(() -> new UserException(UserErrorResult.USER_NOT_EXIST));
+        TokenPair findTokenPair = tokenPairRepository.findByUser(user)
                 .orElseThrow(() -> new JWTVerificationException("유효하지 않은 토큰입니다."));
-
         if (!requestRefreshToken.equals(findTokenPair.getRefreshToken())) {
             throw new JWTVerificationException("중복 로그인 되었습니다.");
         }
