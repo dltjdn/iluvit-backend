@@ -60,7 +60,7 @@ public class WaitingService {
 
         // 설명회를 이미 신청 했을 경우 error Throw
         Status status = Status.JOINED;
-        List<Participation> participants = participationRepository.findByPtDateIdAndStatus(ptDateId, status);
+        List<Participation> participants = participationRepository.findByPtDateAndStatus(ptDate, status);
         participants.forEach(participation -> {
             if(participation.getParent().getId().equals(userId))
                 throw new PresentationException(PresentationErrorResult.ALREADY_PARTICIPATED_IN);

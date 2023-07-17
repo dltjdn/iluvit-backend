@@ -2,6 +2,7 @@ package FIS.iLUVit.repository;
 
 import FIS.iLUVit.domain.Parent;
 import FIS.iLUVit.domain.Participation;
+import FIS.iLUVit.domain.PtDate;
 import FIS.iLUVit.domain.enumtype.Status;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
@@ -16,7 +17,7 @@ public interface ParticipationRepository extends JpaRepository<Participation, Lo
     /*
         참여 현황과 설명회 참여 날짜 id로 설명회 참여 리스트를 조회합니다.
      */
-    List<Participation> findByPtDateIdAndStatus(Long ptDateId, Status status);
+    List<Participation> findByPtDateAndStatus(PtDate ptDate, Status status);
 
     /*
         설명회 참여 현황이 참여로 되어 있고 설명회 참여 id와 설명회 참여한 부모 id로 설명회 참여를 조회합니다.
