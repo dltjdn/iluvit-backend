@@ -1,9 +1,9 @@
 package FIS.iLUVit.service;
 
 import FIS.iLUVit.domain.embeddable.Location;
-import FIS.iLUVit.dto.parent.ParentDetailRequest;
-import FIS.iLUVit.dto.parent.ParentDetailResponse;
-import FIS.iLUVit.dto.parent.SignupParentRequest;
+import FIS.iLUVit.dto.parent.ParentUpdateDto;
+import FIS.iLUVit.dto.parent.ParentDetailDto;
+import FIS.iLUVit.dto.parent.ParentSignupDto;
 import FIS.iLUVit.domain.*;
 import FIS.iLUVit.domain.embeddable.Theme;
 import FIS.iLUVit.domain.enumtype.AuthKind;
@@ -44,28 +44,25 @@ public class ParentService {
     private final WaitingRepository waitingRepository;
     private final WaitingService waitingService;
 
-
-
     /**
-     * 작성자: 이승범
-     * 작성내용: 부모의 마이페이지 정보 반환
+     *  학부모 정보 상세 조회
      */
-    public ParentDetailResponse findParentDetails(Long id) throws IOException {
+    public ParentDetailDto findParentDetails(Long userId) {
 
-        Parent findParent = parentRepository.findById(id)
-                .orElseThrow(() -> new UserException("유효하지 않은 토큰으로의 사용자 접근입니다."));
+        Parent findParent = parentRepository.findById(userId)
+                .orElseThrow(() -> new UserException(UserErrorResult.NOT_VALID_TOKEN));
 
-        ParentDetailResponse response = new ParentDetailResponse(findParent,imageService.getProfileImage(findParent));
-        return response;
+        ParentDetailDto parentDetailDto = new ParentDetailDto(findParent,imageService.getProfileImage(findParent));
+
+        return parentDetailDto;
     }
 
     /**
-     * 작성자: 이승범
-     * 작성내용: 학부모 정보 수정
+     *  학부모 정보 수정
      */
-    public ParentDetailResponse modifyParentInfo(Long id, ParentDetailRequest request) throws IOException {
+    public ParentDetailDto modifyParentInfo(Long userId, ParentUpdateDto request) throws IOException {
 
-        Parent findParent = parentRepository.findById(id)
+        Parent findParent = parentRepository.findById(userId)
                 .orElseThrow(() -> new UserException(UserErrorResult.NOT_VALID_TOKEN));
 
         // 관심사를 스트링에서 객체로 바꾸기
@@ -97,28 +94,25 @@ public class ParentService {
         Location location = new Location(loAndLat, hangjung);
         findParent.updateLocation(location);
 
-        ParentDetailResponse response = new ParentDetailResponse(findParent,imageService.getProfileImage(findParent));
+        ParentDetailDto response = new ParentDetailDto(findParent,imageService.getProfileImage(findParent));
         imageService.saveProfileImage(request.getProfileImg(), findParent);
         return response;
     }
 
     /**
-     * 작성자: 이승범
-     * 작성내용: 학부모 회원가입
+     * 학부모 생성 (학부모 회원가입)
      */
-    public Parent signupParent(SignupParentRequest request) {
+    public void signupParent(ParentSignupDto request) {
 
         String hashedPwd = userService.hashAndValidatePwdForSignup(request.getPassword(), request.getPasswordCheck(), request.getLoginId(), request.getPhoneNum(), request.getNickname());
         Parent parent = request.createParent(hashedPwd);
 
-        System.out.println("###########");
 
         Pair<Double, Double> loAndLat = mapService.convertAddressToLocation(request.getAddress());
         Pair<String, String> hangjung = mapService.getSidoSigunguByLocation(loAndLat.getFirst(), loAndLat.getSecond());
         Location location = new Location(loAndLat, hangjung);
         parent.updateLocation(location);
 
-        System.out.println("$$$$$$$$$");
 
         // default 스크랩 생성
         Scrap scrap = Scrap.createDefaultScrap(parent);
@@ -137,14 +131,12 @@ public class ParentService {
             Bookmark bookmark = Bookmark.createBookmark(defaultBoard, parent);
             boardBookmarkRepository.save(bookmark);
         }
-        return parent;
     }
 
     /**
-     *   작성자: 이서우
-     *   작성내용: 학부모 회원 탈퇴 ( 공통 제외 학부모만 가지고 있는 탈퇴 플로우)
+     * 학부모 회원 탈퇴  ( 공통 제외 학부모만 가지고 있는 탈퇴 플로우)
      */
-    public long withdrawParent(Long userId){
+    public void withdrawParent(Long userId){
         userService.withdrawUser(userId);  // 교사, 학부모 공톤 탈퇴 로직
 
         Parent parent = parentRepository.findById(userId)
@@ -155,12 +147,10 @@ public class ParentService {
             centerBookmarkService.deleteCenterBookmark(userId, centerBookmark.getCenter().getId());
         });
 
-
         // 아이 삭제 & 아이가 연관된 유치원 연관관계 끊기(해당 시설과 관련된 bookmark 모두 삭제)
         childRepository.findByParent(parent).forEach(child -> {
             childService.deleteChild(userId, child.getId());
         });
-
 
         // 신청되어있는 설명회 신청 목록에서 빠지게 하기 ( 설명회 신청 삭제 )
         participationRepository.findByParent(parent).forEach(participation -> {
@@ -171,8 +161,6 @@ public class ParentService {
         waitingRepository.findByParent(parent).forEach(waiting-> {
             waitingService.cancelParticipation(userId, waiting.getId());
         });
-
-        return userId;
     }
 
 }

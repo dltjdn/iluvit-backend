@@ -1,7 +1,7 @@
 package FIS.iLUVit.service;
 
 import FIS.iLUVit.domain.alarms.Alarm;
-import FIS.iLUVit.dto.parent.ParticipationListDto;
+import FIS.iLUVit.dto.participation.ParticipationDto;
 import FIS.iLUVit.domain.Parent;
 import FIS.iLUVit.domain.Participation;
 import FIS.iLUVit.domain.Presentation;
@@ -111,42 +111,42 @@ public class ParticipationService {
         return participationId;
     }
 
-    public Map<Status, List<ParticipationListDto>> findAllParticipationByUser(Long userId) {
+    public Map<Status, List<ParticipationDto>> findAllParticipationByUser(Long userId) {
         if(userId == null)
             throw new UserException(UserErrorResult.NOT_LOGIN);
         // 학부모 조회
         Parent parent = parentRepository.findMyParticipation(userId);
 
 
-        List<ParticipationListDto> participationListDtos = participationRepository.findByParent(parent).stream()
-                .map(ParticipationListDto::createDto)
+        List<ParticipationDto> participationDtos = participationRepository.findByParent(parent).stream()
+                .map(ParticipationDto::createDto)
                 .collect(Collectors.toList());
 
-        participationListDtos.addAll(
+        participationDtos.addAll(
                 parent.getWaitings().stream()
-                .map(ParticipationListDto::createDto)
+                .map(ParticipationDto::createDto)
                 .collect(Collectors.toList())
         );
 
-        return participationListDtos.stream()
-                .collect(Collectors.groupingBy(ParticipationListDto::getStatus));
+        return participationDtos.stream()
+                .collect(Collectors.groupingBy(ParticipationDto::getStatus));
     }
 
-    public Slice<ParticipationListDto> findRegisterParticipationByUser(Long userId, Pageable pageable){
+    public Slice<ParticipationDto> findRegisterParticipationByUser(Long userId, Pageable pageable){
         if(userId == null)
             throw new UserException(UserErrorResult.NOT_LOGIN);
 
         return parentRepository.findMyJoinParticipation(userId, pageable);
     }
 
-    public Slice<ParticipationListDto> findCancelParticipationByUser(Long userId, Pageable pageable){
+    public Slice<ParticipationDto> findCancelParticipationByUser(Long userId, Pageable pageable){
         if(userId == null)
             throw new UserException(UserErrorResult.NOT_LOGIN);
 
         return parentRepository.findMyCancelParticipation(userId, pageable);
     }
 
-    public Slice<ParticipationListDto> findWaitingParticipationByUser(Long userId, Pageable pageable){
+    public Slice<ParticipationDto> findWaitingParticipationByUser(Long userId, Pageable pageable){
         if(userId == null)
             throw new UserException(UserErrorResult.NOT_LOGIN);
 

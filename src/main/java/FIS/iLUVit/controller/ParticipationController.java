@@ -1,7 +1,7 @@
 package FIS.iLUVit.controller;
 
 import FIS.iLUVit.config.argumentResolver.Login;
-import FIS.iLUVit.dto.parent.ParticipationListDto;
+import FIS.iLUVit.dto.participation.ParticipationDto;
 import FIS.iLUVit.dto.presentation.PtDateRequest;
 import FIS.iLUVit.domain.enumtype.Status;
 import FIS.iLUVit.service.ParticipationService;
@@ -55,7 +55,7 @@ public class ParticipationController {
      */
     @GetMapping("")
     @ResponseStatus(HttpStatus.ACCEPTED)
-    public Map<Status, List<ParticipationListDto>> getAllParticipation(@Login Long userId){
+    public Map<Status, List<ParticipationDto>> getAllParticipation(@Login Long userId){
         return participationService.findAllParticipationByUser(userId);
     }
 
@@ -65,7 +65,7 @@ public class ParticipationController {
      */
     @GetMapping("join")
     @ResponseStatus(HttpStatus.ACCEPTED)
-    public Slice<ParticipationListDto> getRegisterParticipation(@Login Long userId, Pageable pageable){
+    public Slice<ParticipationDto> getRegisterParticipation(@Login Long userId, Pageable pageable){
         return participationService.findRegisterParticipationByUser(userId, pageable);
     }
 
@@ -75,7 +75,7 @@ public class ParticipationController {
      */
     @GetMapping("cancel")
     @ResponseStatus(HttpStatus.ACCEPTED)
-    public Slice<ParticipationListDto> getCancelParticipation(@Login Long userId, Pageable pageable){
+    public Slice<ParticipationDto> getCancelParticipation(@Login Long userId, Pageable pageable){
         return participationService.findCancelParticipationByUser(userId, pageable);
     }
 
@@ -85,7 +85,7 @@ public class ParticipationController {
      */
     @GetMapping("waiting")
     @ResponseStatus(HttpStatus.ACCEPTED)
-    public Slice<ParticipationListDto> getWaitingParticipation(@Login Long userId, Pageable pageable){
+    public Slice<ParticipationDto> getWaitingParticipation(@Login Long userId, Pageable pageable){
         return participationService.findWaitingParticipationByUser(userId, pageable);
     }
 

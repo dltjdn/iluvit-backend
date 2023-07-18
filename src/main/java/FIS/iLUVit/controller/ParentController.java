@@ -1,12 +1,14 @@
 package FIS.iLUVit.controller;
 
 import FIS.iLUVit.config.argumentResolver.Login;
-import FIS.iLUVit.dto.parent.ParentDetailRequest;
-import FIS.iLUVit.dto.parent.ParentDetailResponse;
-import FIS.iLUVit.dto.parent.SignupParentRequest;
+import FIS.iLUVit.dto.parent.ParentUpdateDto;
+import FIS.iLUVit.dto.parent.ParentDetailDto;
+import FIS.iLUVit.dto.parent.ParentSignupDto;
 import FIS.iLUVit.service.ParentService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
@@ -25,38 +27,38 @@ public class ParentController {
      */
 
     /**
-     * 작성자: 이승범
-     * 작성내용: 학부모 정보 상세 조회
+     *  학부모 정보 상세 조회
      */
     @GetMapping("")
-    public ParentDetailResponse getParentDetails(@Login Long id) throws IOException {
-        return parentService.findParentDetails(id);
+    public ResponseEntity<ParentDetailDto> getParentDetails(@Login Long userId){
+        ParentDetailDto parentDetails = parentService.findParentDetails(userId);
+        return ResponseEntity.ok(parentDetails);
     }
 
     /**
-     * 작성자: 이승범
-     * 작성내용: 학부모 정보 수정
+     *  학부모 정보 수정
      */
     @PatchMapping("")
-    public ParentDetailResponse updateParent(@Login Long id, @Valid @ModelAttribute ParentDetailRequest request) throws IOException {
-        return parentService.modifyParentInfo(id, request);
+    public ResponseEntity<ParentDetailDto> updateParent(@Login Long userId, @Valid @ModelAttribute ParentUpdateDto request) throws IOException {
+        ParentDetailDto parentDetailDto = parentService.modifyParentInfo(userId, request);
+        return ResponseEntity.ok(parentDetailDto);
     }
 
     /**
-     * 작성자: 이승범
-     * 작성내용: 학부모 생성 (학부모 회원가입)
+     * 학부모 생성 (학부모 회원가입)
      */
     @PostMapping("signup")
-    public void createParent(@RequestBody @Valid SignupParentRequest request) {
+    public ResponseEntity<Void> createParent(@RequestBody @Valid ParentSignupDto request) {
         parentService.signupParent(request);
+        return ResponseEntity.status(HttpStatus.CREATED).build();
     }
 
     /**
-     *   작성자: 이서우
-     *   작성내용: 학부모 회원 탈퇴
+     * 학부모 회원 탈퇴
      */
     @DeleteMapping("withdraw")
-    public Long deleteParent(@Login Long userId){
-        return parentService.withdrawParent(userId);
+    public ResponseEntity<Void> deleteParent(@Login Long userId){
+        parentService.withdrawParent(userId);
+        return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
     }
 }

@@ -51,8 +51,8 @@ public class ChildService {
      * 작성자: 이승범
      * 작성내용: 부모의 메인페이지에 필요한 아이들 정보 반환
      */
-    public List<ChildDto> findChildList(Long id) {
-        Parent findParent = parentRepository.findWithChildren(id)
+    public List<ChildDto> findChildList(Long userId) {
+        Parent findParent = parentRepository.findById(userId)
                 .orElseThrow(() -> new UserException(UserErrorResult.NOT_VALID_TOKEN));
 
         List<ChildDto> childDtos = new ArrayList<>();

@@ -1,4 +1,4 @@
-package FIS.iLUVit.dto.parent;
+package FIS.iLUVit.dto.participation;
 
 import FIS.iLUVit.domain.*;
 import FIS.iLUVit.domain.enumtype.Status;
@@ -10,7 +10,7 @@ import java.time.LocalDate;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class ParticipationListDto {
+public class ParticipationDto {
     private Long parentId;
     private Long participantId;
     private Long waitingId;
@@ -30,8 +30,7 @@ public class ParticipationListDto {
     private Integer ablePersonNum;
     private Integer participantCnt;
     private Status status;
-
-    public ParticipationListDto(Long parentId, Long participantId, Long ptDateId, Long presentationId, Long centerId, LocalDate presentationDate, String time, String centerProfileImage, String place, String content, String centerName, String tel, String address, String addressDetail, Integer ablePersonNum, Integer participantCnt, Status status) {
+    public ParticipationDto(Long parentId, Long participantId, Long ptDateId, Long presentationId, Long centerId, LocalDate presentationDate, String time, String centerProfileImage, String place, String content, String centerName, String tel, String address, String addressDetail, Integer ablePersonNum, Integer participantCnt, Status status) {
         this.parentId = parentId;
         this.participantId = participantId;
         this.ptDateId = ptDateId;
@@ -51,7 +50,7 @@ public class ParticipationListDto {
         this.status = status;
     }
 
-    public ParticipationListDto(Long parentId, Long waitingId, Long ptDateId, Long presentationId, Long centerId, LocalDate presentationDate, String time, String centerProfileImage, String place, String content, String centerName, String tel, String address, String addressDetail, Integer ablePersonNum, Integer participantCnt) {
+    public ParticipationDto(Long parentId, Long waitingId, Long ptDateId, Long presentationId, Long centerId, LocalDate presentationDate, String time, String centerProfileImage, String place, String content, String centerName, String tel, String address, String addressDetail, Integer ablePersonNum, Integer participantCnt) {
         this.parentId = parentId;
         this.waitingId = waitingId;
         this.ptDateId = ptDateId;
@@ -71,13 +70,13 @@ public class ParticipationListDto {
         this.status = Status.WAITING;
     }
 
-    public static ParticipationListDto createDto(Participation participation) {
+    public static ParticipationDto createDto(Participation participation) {
         PtDate ptDate = participation.getPtDate();
         Parent parent = participation.getParent();
         Presentation presentation = ptDate.getPresentation();
         Center center = presentation.getCenter();
 
-        return ParticipationListDto.builder()
+        return ParticipationDto.builder()
                 .parentId(parent.getId())
                 .participantId(participation.getId())
                 .ptDateId(ptDate.getId())
@@ -98,13 +97,13 @@ public class ParticipationListDto {
                 .build();
     }
 
-    public static ParticipationListDto createDto(Waiting waiting){
+    public static ParticipationDto createDto(Waiting waiting){
         PtDate ptDate = waiting.getPtDate();
         Parent parent = waiting.getParent();
         Presentation presentation = ptDate.getPresentation();
         Center center = presentation.getCenter();
 
-        return ParticipationListDto.builder()
+        return ParticipationDto.builder()
                 .parentId(parent.getId())
                 .participantId(waiting.getId())
                 .ptDateId(ptDate.getId())
