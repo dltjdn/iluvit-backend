@@ -13,6 +13,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import javax.sound.midi.VoiceStatus;
 import javax.validation.Valid;
 import java.io.IOException;
 import java.util.List;
@@ -39,7 +40,7 @@ public class ChildController {
     }
 
     /**
-     * 아이 정보 저장
+     * 아이 정보 저장 ( 아이 생성 )
      */
     @PostMapping("")
     public ResponseEntity<Void> createChild(@Login Long userId, @Valid @ModelAttribute ChildDetailRequest request) throws IOException {
@@ -66,13 +67,12 @@ public class ChildController {
     }
 
     /**
-     * 아이 정보 삭제
+     * 아이 삭제
      */
     @DeleteMapping("{childId}")
-    //TODO 필요없ㅇ르 듯?
-    public ResponseEntity<List<ChildDto>> deleteChild(@Login Long userId, @PathVariable("childId") Long childId) {
-        List<ChildDto> childDtos = childService.deleteChild(userId, childId);
-        return ResponseEntity.ok(childDtos);
+    public ResponseEntity<Void> deleteChild(@Login Long userId, @PathVariable("childId") Long childId) {
+       childService.deleteChild(userId, childId);
+        return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
     }
 
     /**
@@ -87,11 +87,10 @@ public class ChildController {
     /**
      * 아이 시설 대기 ( 아이 시설 승인 요청 )
      */
-    //TODO response 필요없을듯
     @PatchMapping("{childId}/center/{centerId}")
-    public ResponseEntity<Long> assignCenterForChild(@Login Long userId, @PathVariable("childId") Long childId, @PathVariable("centerId") Long centerId) {
-        Long centerId2 = childService.requestAssignCenterForChild(userId, childId, centerId).getCenter().getId();
-        return ResponseEntity.ok(centerId2);
+    public ResponseEntity<Void> assignCenterForChild(@Login Long userId, @PathVariable("childId") Long childId, @PathVariable("centerId") Long centerId) {
+        childService.requestAssignCenterForChild(userId, childId, centerId);
+        return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
     }
 
     /**
