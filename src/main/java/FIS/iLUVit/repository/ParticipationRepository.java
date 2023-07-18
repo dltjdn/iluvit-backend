@@ -14,26 +14,18 @@ import java.util.Optional;
 
 public interface ParticipationRepository extends JpaRepository<Participation, Long> {
 
-    /*
-        참여 현황과 설명회 참여 날짜 id로 설명회 참여 리스트를 조회합니다.
+    /**
+     * 해당하는 설명회 회차와 상태의 설명회 참여를 반환합니다
      */
     List<Participation> findByPtDateAndStatus(PtDate ptDate, Status status);
 
-    /*
-        설명회 참여 현황이 참여로 되어 있고 설명회 참여 id와 설명회 참여한 부모 id로 설명회 참여를 조회합니다.
+    /**
+     * 설명회 id와 상태, 부모에 해당하는 설명회 참여를 반환합니다
      */
-    @Query("select participation from Participation participation " +
-            "join fetch participation.ptDate as ptDate " +
-            "join fetch ptDate.presentation presentation " +
-            "join fetch participation.parent " +
-            "join fetch ptDate.participations " +
-            "where participation.id = :participationId " +
-            "and participation.status = FIS.iLUVit.domain.enumtype.Status.JOINED " +
-            "and participation.parent.id = :parentId")
-    Optional<Participation> findByIdAndStatusWithPtDate(@Param("participationId") Long participantId, @Param("parentId") Long parentId);
+    Optional<Participation> findByIdAndStatusAndParent(Long participationId,Status status, Parent parent);
 
-    /*
-        부모로 설명회 참여 리스트를 조회합니다.
-     */
+    /**
+      * 해당 부모의 설명회 참여 리스트를 조회합니다
+      */
     List<Participation> findByParent(Parent parent);
 }

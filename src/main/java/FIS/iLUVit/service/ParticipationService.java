@@ -1,11 +1,8 @@
 package FIS.iLUVit.service;
 
+import FIS.iLUVit.domain.*;
 import FIS.iLUVit.domain.alarms.Alarm;
 import FIS.iLUVit.dto.participation.ParticipationDto;
-import FIS.iLUVit.domain.Parent;
-import FIS.iLUVit.domain.Participation;
-import FIS.iLUVit.domain.Presentation;
-import FIS.iLUVit.domain.PtDate;
 import FIS.iLUVit.domain.alarms.PresentationFullAlarm;
 import FIS.iLUVit.domain.enumtype.Status;
 import FIS.iLUVit.event.ParticipationCancelEvent;
@@ -24,6 +21,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+import static FIS.iLUVit.domain.enumtype.Status.JOINED;
+
 @Service
 @Slf4j
 @RequiredArgsConstructor
@@ -36,6 +35,8 @@ public class ParticipationService {
     private final TeacherRepository teacherRepository;
     private final ApplicationEventPublisher eventPublisher;
     private final AlarmRepository alarmRepository;
+
+    private final UserRepository userRepository;
 
     public Long registerParticipation(Long userId, Long ptDateId) {
         if(userId == null)
@@ -63,7 +64,7 @@ public class ParticipationService {
         Parent parent = parentRepository.getById(userId);
 
         participations.forEach(participation -> {
-            if(participation.getStatus().equals(Status.JOINED) && participation.getParent().getId().equals(userId))
+            if(participation.getStatus().equals(JOINED) && participation.getParent().getId().equals(userId))
                 throw new PresentationException(PresentationErrorResult.ALREADY_PARTICIPATED_IN);
         });
 
@@ -71,15 +72,6 @@ public class ParticipationService {
         Participation participation = participationRepository.save(
                 Participation.createAndRegister(parent, presentation, ptDate, participations)
         );
-
-//        if(ptDate.getAblePersonNum() <= ptDate.getParticipantCnt()){
-//            userRepository.findTeacherByCenter(presentation.getCenter()).forEach((user) -> {
-//                Alarm alarm = new PresentationFullAlarm(user, presentation, presentation.getCenter());
-//                alarmRepository.save(alarm);
-//                AlarmUtils.publishAlarmEvent(alarm);
-//
-//            });
-//        }
 
         if(ptDate.getAblePersonNum() <= ptDate.getParticipantCnt()){
             teacherRepository.findByCenter(presentation.getCenter()).forEach((teacher) -> {
@@ -99,7 +91,10 @@ public class ParticipationService {
         if(participationId < 0)
             throw new ParticipationException(ParticipationErrorResult.WRONG_PARTICIPATIONID_REQUEST);
 
-        Participation participation = participationRepository.findByIdAndStatusWithPtDate(participationId, userId)
+        Parent parent = parentRepository.findById(userId)
+                .orElseThrow(() -> new UserException(UserErrorResult.USER_NOT_EXIST));
+
+        Participation participation = participationRepository.findByIdAndStatusAndParent(participationId, JOINED, parent)
                 .orElseThrow(() -> new ParticipationException(ParticipationErrorResult.NO_RESULT));
         // ptDate cnt 값을 1줄여야 한다.
         participation.cancel();
@@ -136,13 +131,17 @@ public class ParticipationService {
         if(userId == null)
             throw new UserException(UserErrorResult.NOT_LOGIN);
 
-        return parentRepository.findMyJoinParticipation(userId, pageable);
+        parentRepository.findMyJoinParticipation(userId, pageable);
+
+        //TODO dto 로직 옮기다
+        new ParticipationDto()
     }
 
     public Slice<ParticipationDto> findCancelParticipationByUser(Long userId, Pageable pageable){
         if(userId == null)
             throw new UserException(UserErrorResult.NOT_LOGIN);
 
+        //TODO dto 로직 옮기기
         return parentRepository.findMyCancelParticipation(userId, pageable);
     }
 
@@ -150,6 +149,7 @@ public class ParticipationService {
         if(userId == null)
             throw new UserException(UserErrorResult.NOT_LOGIN);
 
+        //TODO dto 로직 옮기기
         return parentRepository.findMyWaiting(userId, pageable);
     }
 
