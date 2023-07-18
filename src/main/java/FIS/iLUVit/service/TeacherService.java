@@ -74,7 +74,7 @@ public class TeacherService {
      * 작성자: 이승범
      * 작성내용: 선생의 마이페이지에 정보 update
      */
-    public TeacherDetailResponse modifyTeacherInfo(Long id, TeacherDetailRequest request) throws IOException {
+    public void modifyTeacherInfo(Long id, TeacherDetailRequest request) throws IOException {
 
         Teacher findTeacher = teacherRepository.findById(id)
                 .orElseThrow(() -> new UserException(UserErrorResult.NOT_VALID_TOKEN));
@@ -106,9 +106,6 @@ public class TeacherService {
 
         TeacherDetailResponse response = new TeacherDetailResponse(findTeacher,imageService.getProfileImage(findTeacher));
         imageService.saveProfileImage(request.getProfileImg(), findTeacher);
-
-
-        return response;
     }
 
     /**
@@ -366,10 +363,9 @@ public class TeacherService {
      *   작성자: 이서우
      *   작성내용: 교사 회원 탈퇴 ( 공통 제외 교사만 가지고 있는 탈퇴 플로우 )
      */
-    public long withdrawTeacher(Long userId){
+    public void withdrawTeacher(Long userId){
         userService.withdrawUser(userId); // 교사, 학부모 공톤 탈퇴 로직
         leaveCenterForTeacher(userId); // 연결된 시설 끊기 ( 해당 시설과 연관된 bookmark 삭제 )
-        return userId;
     }
 
 }
