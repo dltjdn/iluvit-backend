@@ -1,7 +1,6 @@
 package FIS.iLUVit.domain;
 
 import FIS.iLUVit.dto.parent.ParentDetailRequest;
-import FIS.iLUVit.dto.parent.ParentBasicInfoDto;
 import FIS.iLUVit.dto.user.UserBasicInfoDto;
 import FIS.iLUVit.domain.embeddable.Theme;
 import FIS.iLUVit.domain.enumtype.Auth;
@@ -79,9 +78,7 @@ public class Parent extends User {
 
     @Override
     public UserBasicInfoDto getUserInfo() {
-        return new ParentBasicInfoDto(id, nickName, auth);
+        return new UserBasicInfoDto(id, nickName, auth);
     }
-
-
 
 }
