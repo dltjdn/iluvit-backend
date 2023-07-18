@@ -115,8 +115,8 @@ public class ParticipationService {
         if(userId == null)
             throw new UserException(UserErrorResult.NOT_LOGIN);
         // 학부모 조회
-        Parent parent = parentRepository.findMyParticipation(userId);
-
+        Parent parent = parentRepository.findById(userId)
+                .orElseThrow(()-> new UserException(UserErrorResult.USER_NOT_EXIST));
 
         List<ParticipationDto> participationDtos = participationRepository.findByParent(parent).stream()
                 .map(ParticipationDto::createDto)

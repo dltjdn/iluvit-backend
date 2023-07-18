@@ -17,14 +17,6 @@ public interface ParentRepository extends JpaRepository<Parent, Long> {
      */
     Optional<Parent> findByNickName(String nickname);
 
-    /*
-        부모 id로 내 참여를 조회합니다.
-     */
-    @Query("select parent " +
-            "from Parent parent " +
-            "where parent.id = :userId")
-    Parent findMyParticipation(@Param("userId") Long userId);
-
 
     /*
         참여 현황이 참여로 되어있고 부모 id로 참여 리스트 DTO를 조회합니다. (설명회 참여 현황이 참여로 되어있을 때)
@@ -68,14 +60,7 @@ public interface ParentRepository extends JpaRepository<Parent, Long> {
             "where parent.id = :userId")
     Slice<ParticipationDto> findMyWaiting(@Param("userId") Long userId, Pageable pageable);
 
-    /*
-        아이 id로 부모를 조회합니다.
-     */
-    @Query("select distinct p " +
-            "from Parent p " +
-            "left join fetch p.children " +
-            "where p.id =:userId")
-    Optional<Parent> findByIdWithChild(@Param("userId") Long userId);
+
 
 
 }

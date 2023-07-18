@@ -252,7 +252,7 @@ public class ChildService {
         acceptedChild.accepted();
 
         // 승인하고자 하는 아이의 부모와 그 부모에 속한 모든 아이들 가져오기
-        Parent acceptedParent = parentRepository.findByIdWithChild(acceptedChild.getParent().getId())
+        Parent acceptedParent = parentRepository.findById(acceptedChild.getParent().getId())
                 .orElseThrow(() -> new UserException(UserErrorResult.NOT_VALID_REQUEST));
 
         // 승인 완료 알람이 학부모에게로 감
