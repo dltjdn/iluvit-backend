@@ -1,6 +1,5 @@
 package FIS.iLUVit.domain;
 
-import FIS.iLUVit.dto.parent.LoginParentResponse;
 import FIS.iLUVit.dto.parent.ParentDetailRequest;
 import FIS.iLUVit.dto.parent.ParentBasicInfoDto;
 import FIS.iLUVit.dto.user.UserBasicInfoDto;
@@ -75,7 +74,7 @@ public class Parent extends User {
 
     @Override
     public UserDto getLoginInfo() {
-        return new LoginParentResponse(this);
+        return new UserDto(this);
     }
 
     @Override
