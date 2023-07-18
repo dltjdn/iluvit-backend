@@ -1,8 +1,8 @@
 package FIS.iLUVit.service;
 
 import FIS.iLUVit.domain.alarms.Alarm;
-import FIS.iLUVit.dto.comment.CommentDto;
-import FIS.iLUVit.dto.comment.CommentRequest;
+import FIS.iLUVit.dto.comment.CommentResponseDto;
+import FIS.iLUVit.dto.comment.CommentRequestDto;
 import FIS.iLUVit.domain.Comment;
 import FIS.iLUVit.domain.Post;
 import FIS.iLUVit.domain.User;
@@ -32,7 +32,7 @@ public class CommentService {
 
     private final AlarmRepository alarmRepository;
 
-    public Long saveNewComment(Long userId, Long postId, Long p_commentId, CommentRequest request) {
+    public Long saveNewComment(Long userId, Long postId, Long p_commentId, CommentRequestDto request) {
         if (userId == null) {
             throw new CommentException(CommentErrorResult.UNAUTHORIZED_USER_ACCESS);
         }
@@ -113,8 +113,8 @@ public class CommentService {
         return commentId;
     }
 
-    public Slice<CommentDto> findCommentByUser(Long userId, Pageable pageable) {
+    public Slice<CommentResponseDto> findCommentByUser(Long userId, Pageable pageable) {
         // Comment -> CommentDTO 타입으로 변환
-        return commentRepository.findByUser(userId, pageable).map(CommentDto::new);
+        return commentRepository.findByUser(userId, pageable).map(CommentResponseDto::new);
     }
 }

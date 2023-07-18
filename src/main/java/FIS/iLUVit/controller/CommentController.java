@@ -1,8 +1,8 @@
 package FIS.iLUVit.controller;
 
 import FIS.iLUVit.config.argumentResolver.Login;
-import FIS.iLUVit.dto.comment.CommentDto;
-import FIS.iLUVit.dto.comment.CommentRequest;
+import FIS.iLUVit.dto.comment.CommentResponseDto;
+import FIS.iLUVit.dto.comment.CommentRequestDto;
 import FIS.iLUVit.service.CommentService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
@@ -26,11 +26,8 @@ public class CommentController {
      * 비고: comment_id 값이 null일 경우 댓글 작성, comment_id 값까지 보내는 경우 대댓글 작성
     */
     @PostMapping(value={"{postId}","{postId}/{commentId}"})
-    public Long createComment(@Login Long userId,
-                                @PathVariable("postId") Long postId,
-                                @PathVariable(required = false, value="commentId") Long commentId,
-                                @RequestBody CommentRequest request) {
-
+    public Long createComment(@Login Long userId, @PathVariable("postId") Long postId,
+                                @PathVariable(required = false, value="commentId") Long commentId, @RequestBody CommentRequestDto request) {
         return commentService.saveNewComment(userId, postId, commentId, request);
     }
 
@@ -42,8 +39,7 @@ public class CommentController {
     */
 
     @PatchMapping("{commentId}")
-    public Long deleteComment(@Login Long userId,
-                              @PathVariable("commentId") Long commentId) {
+    public Long deleteComment(@Login Long userId, @PathVariable("commentId") Long commentId) {
         return commentService.deleteComment(userId, commentId);
     }
 
@@ -52,9 +48,8 @@ public class CommentController {
      * 작성내용: 댓글 단 글 전체 조회
      */
     @GetMapping("mypage")
-    public Slice<CommentDto> getCommentByUser(@Login Long userId, Pageable pageable) {
+    public Slice<CommentResponseDto> getCommentByUser(@Login Long userId, Pageable pageable) {
         return commentService.findCommentByUser(userId, pageable);
-
     }
 
 }
