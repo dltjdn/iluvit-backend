@@ -11,7 +11,6 @@ import org.springframework.web.bind.annotation.*;
 @RequiredArgsConstructor
 @RequestMapping("comment-heart")
 public class CommentHeartController {
-
     private final CommentHeartService commentHeartService;
 
     /**

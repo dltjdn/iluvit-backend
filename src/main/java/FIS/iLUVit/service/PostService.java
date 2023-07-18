@@ -98,7 +98,7 @@ public class PostService {
         reportDetailRepository.setPostIsNull(postId);
 
         //------------------------댓글 관련------------------------//
-        List<Long> commentIds = commentRepository.findByPostId(postId).stream()
+        List<Long> commentIds = commentRepository.findByPost(findPost).stream()
                 .map(Comment::getId)
                 .collect(Collectors.toList());
         // 만약 게시글에 달린 댓글도 신고된 상태라면 해당 댓글의 신고내역의 target_id 를 null 값으로 만들어줘야함.

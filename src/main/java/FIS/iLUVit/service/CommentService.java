@@ -125,7 +125,8 @@ public class CommentService {
      * 댓글 단 글 전체 조회
      */
     public Slice<CommentPostDto> findCommentByUser(Long userId, Pageable pageable) {
+        User user = userRepository.findById(userId).orElseThrow(() -> new UserException(UserErrorResult.USER_NOT_EXIST));
         // Comment -> CommentDTO 타입으로 변환
-        return commentRepository.findByUser(userId, pageable).map(CommentPostDto::new);
+        return commentRepository.findByUser(user, pageable).map(CommentPostDto::new);
     }
 }
