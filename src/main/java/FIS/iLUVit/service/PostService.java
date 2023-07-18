@@ -137,7 +137,7 @@ public class PostService {
 
         if (auth == Auth.PARENT) {
             // 학부모 유저일 때 아이와 연관된 센터의 아이디를 모두 가져옴
-            centerIds = childRepository.findByParentId(userId)
+            centerIds = childRepository.findByParent( (Parent)findUser)
                     .stream().filter(c -> c.getCenter() != null).map(c -> c.getCenter().getId())
                     .collect(Collectors.toSet());
         } else {
@@ -159,7 +159,9 @@ public class PostService {
         if (centerId != null) {
             if (auth == Auth.PARENT) {
                 // 학부모 유저일 때 아이와 연관된 센터의 아이디를 모두 가져옴
-                Set<Long> centerIds = childRepository.findByParentId(userId)
+                User user = userRepository.findById(userId)
+                        .orElseThrow(() -> new UserException(UserErrorResult.NOT_VALID_TOKEN));
+                Set<Long> centerIds = childRepository.findByParent((Parent)user)
                         .stream().filter(c -> c.getCenter() != null).map(c -> c.getCenter().getId())
                         .collect(Collectors.toSet());
                 if (!centerIds.contains(centerId)) {

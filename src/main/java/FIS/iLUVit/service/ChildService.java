@@ -94,8 +94,11 @@ public class ChildService {
      * 아이 정보 상세 조회
      */
     public ChildDetailResponse findChildDetails(Long userId, Long childId) {
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new UserException(UserErrorResult.USER_NOT_EXIST));
+
         // 프로필 수정하고자 하는 아이 가져오기
-        Child child = childRepository.findByIdAndParentWithCenter(userId, childId)
+        Child child = childRepository.findByIdAndParent(childId, (Parent)user)
                 .orElseThrow(() -> new UserException(UserErrorResult.NOT_VALID_REQUEST));
 
         ChildDetailResponse childDetailResponse = new ChildDetailResponse(child,imageService.getProfileImage(child));
@@ -107,8 +110,11 @@ public class ChildService {
      * 아이 정보 수정
      */
     public ChildDetailResponse modifyChildInfo(Long userId, Long childId, ChildRequest request) {
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new UserException(UserErrorResult.USER_NOT_EXIST));
+
         // 수정하고자 하는 아이
-        Child updatedChild = childRepository.findByIdAndParentWithCenter(userId, childId)
+        Child updatedChild = childRepository.findByIdAndParent(childId,(Parent)user)
                 .orElseThrow(() -> new UserException(UserErrorResult.NOT_VALID_REQUEST));
 
         // 프로필 수정
@@ -126,9 +132,11 @@ public class ChildService {
      * 아이 삭제
      */
     public void deleteChild(Long userId, Long childId) {
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new UserException(UserErrorResult.USER_NOT_EXIST));
 
         // 요청 사용자가 등록한 모든 아이 가져오기
-        List<Child> childrenByUser = childRepository.findByUserWithCenter(userId);
+        List<Child> childrenByUser = childRepository.findByParent((Parent)user);
 
         // 삭제하고자 하는 아이
         Child deletedChild = childrenByUser.stream()
@@ -156,9 +164,11 @@ public class ChildService {
      * 아이 시설 대기 ( 아이 시설 승인 요청 )
      */
     public void requestAssignCenterForChild(Long userId, Long childId, Long centerId) {
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new UserException(UserErrorResult.USER_NOT_EXIST));
 
         // 승인 받고자 하는 아이
-        Child mappedChild = childRepository.findByIdAndParent(userId, childId)
+        Child mappedChild = childRepository.findByIdAndParent(childId,(Parent)user)
                 .orElseThrow(() -> new UserException(UserErrorResult.NOT_VALID_REQUEST));
 
         // 속해있는 시설이 있는 경우
@@ -185,8 +195,11 @@ public class ChildService {
      * 아이 시설 탈퇴
      */
     public void leaveCenterForChild(Long userId, Long childId) {
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new UserException(UserErrorResult.USER_NOT_EXIST));
+
         // 요청 사용자가 등록한 모든 아이 가져오기
-        List<Child> childrenByUser = childRepository.findByUserWithCenter(userId);
+        List<Child> childrenByUser = childRepository.findByParent((Parent) user);
 
         // 사용자의 아이중에 childId를 가진 아이가 있는지 검사
         Child exitedChild = childrenByUser.stream()
@@ -288,8 +301,8 @@ public class ChildService {
                 .orElseThrow(() -> new UserException(UserErrorResult.NOT_VALID_REQUEST));
 
 
-        // 식제하고자 하는 아이의 부모와 그 부모에 속한 모든 아이들 가져오기
-        List<Child> childrenByUser = childRepository.findByUserWithCenter(userId);
+        // 식제하고자 하는 아이의 부모에 속한 모든 아이들 가져오기
+        List<Child> childrenByUser = childRepository.findByParent(firedChild.getParent());
 
         // bookmark 처리
         deleteBookmarkByCenter(firedChild.getParent().getId(), childrenByUser, firedChild);

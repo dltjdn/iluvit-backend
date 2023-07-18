@@ -92,7 +92,7 @@ public class BoardService {
         User findUser = userRepository.findById(userId)
                 .orElseThrow(() -> new UserException(UserErrorResult.USER_NOT_EXIST));
         if (findUser.getAuth() == Auth.PARENT) {
-            List<Child> children = childRepository.findByParentId(userId);
+            List<Child> children = childRepository.findByParent( (Parent) findUser);
             List<BoardStoryPreviewDto> boardStoryPreviewDtoList = children.stream()
                     .filter(child -> child.getCenter() != null && child.getApproval() == Approval.ACCEPT)
                     .map(child -> new BoardStoryPreviewDto(child.getCenter()))
@@ -135,10 +135,10 @@ public class BoardService {
 
         // 시설의 이야기에서 센터에 속하지 않은 회원은 게시판 생성 불가
         User findUser = userRepository.findById(userId)
-                .orElseThrow(() -> new UserException("유저 아이디 오류"));
+                .orElseThrow(() -> new UserException(UserErrorResult.USER_NOT_EXIST));
 
         if (findUser.getAuth() == Auth.PARENT) {
-            boolean childless = childRepository.findByParentAndCenter(userId, center_id)
+            boolean childless = childRepository.findByParentAndCenter((Parent) findUser,findCenter)
                     .isEmpty();
             if (childless) {
                 throw new BoardException(BoardErrorResult.UNAUTHORIZED_USER_ACCESS);
