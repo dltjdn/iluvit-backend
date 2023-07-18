@@ -23,6 +23,9 @@ public class CommentHeartService {
     private final UserRepository userRepository;
     private final CommentRepository commentRepository;
 
+    /**
+     * 댓글 좋아요 등록
+     */
     public Long saveCommentHeart(Long userId, Long comment_id) {
         if (userId == null) {
             throw new CommentException(CommentErrorResult.UNAUTHORIZED_USER_ACCESS_HEART);
@@ -40,7 +43,10 @@ public class CommentHeartService {
         return commentHeartRepository.save(commentHeart).getId();
     }
 
-    public Long deleteCommentHeart(Long userId, Long comment_id) {
+    /**
+     * 댓글 좋아요 취소
+     */
+    public void deleteCommentHeart(Long userId, Long comment_id) {
         if (userId == null) {
             throw new CommentException(CommentErrorResult.UNAUTHORIZED_USER_ACCESS_HEART);
         }
@@ -50,10 +56,8 @@ public class CommentHeartService {
         if (commentHeart.getUser() == null || !Objects.equals(commentHeart.getUser().getId(), userId)) {
             throw new CommentException(CommentErrorResult.UNAUTHORIZED_USER_ACCESS_HEART);
         }
-        Long deletedId = commentHeart.getId();
         commentHeartRepository.delete(commentHeart);
         Comment comment = commentHeart.getComment();
         comment.minusHeartCnt();
-        return deletedId;
     }
 }

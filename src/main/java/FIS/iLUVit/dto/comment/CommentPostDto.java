@@ -8,7 +8,7 @@ import java.time.LocalTime;
 
 @Getter
 @NoArgsConstructor
-public class CommentResponseDto {
+public class CommentPostDto {
     private Long id;
     private LocalDate date;          // 게시글 작성 날짜
     private LocalTime time;          // 게시글 작성 시간
@@ -24,7 +24,7 @@ public class CommentResponseDto {
     private Long centerId; // 시설 아이디
     private String centerName; // 시설명
 
-    public CommentResponseDto(Comment c) {
+    public CommentPostDto(Comment c) {
         this.id = c.getId();
         this.date = c.getDate();
         this.time = c.getTime();
