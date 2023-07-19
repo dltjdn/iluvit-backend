@@ -194,11 +194,11 @@ public class ChildService {
      * 아이 시설 탈퇴
      */
     public void leaveCenterForChild(Long userId, Long childId) {
-        User user = userRepository.findById(userId)
+        Parent parent = parentRepository.findById(userId)
                 .orElseThrow(() -> new UserException(UserErrorResult.USER_NOT_EXIST));
 
         // 요청 사용자가 등록한 모든 아이 가져오기
-        List<Child> childrenByUser = childRepository.findByParent((Parent) user);
+        List<Child> childrenByUser = childRepository.findByParent(parent);
 
         // 사용자의 아이중에 childId를 가진 아이가 있는지 검사
         Child exitedChild = childrenByUser.stream()

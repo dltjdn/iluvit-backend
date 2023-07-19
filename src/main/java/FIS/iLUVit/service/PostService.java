@@ -239,7 +239,7 @@ public class PostService {
         User findUser = userRepository.findById(userId)
                 .orElseThrow(() -> new UserException(UserErrorResult.USER_NOT_EXIST));
 
-        if (findUser.getAuth() == Auth.PARENT) { // 학부모 유저일 경우 아이를 통해 센터 정보를 가져옴
+        if (findUser.getAuth() == Auth.PARENT && findUser instanceof Parent) { // 학부모 유저일 경우 아이를 통해 센터 정보를 가져옴
             Parent parent = (Parent) findUser;
             boolean flag = parent.getChildren().stream()
                     .filter(c -> c.getCenter() != null && c.getApproval() == Approval.ACCEPT)

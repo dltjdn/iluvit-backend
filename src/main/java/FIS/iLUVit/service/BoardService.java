@@ -91,16 +91,18 @@ public class BoardService {
         }
         User findUser = userRepository.findById(userId)
                 .orElseThrow(() -> new UserException(UserErrorResult.USER_NOT_EXIST));
-        if (findUser.getAuth() == Auth.PARENT) {
-            List<Child> children = childRepository.findByParent( (Parent) findUser);
+        if (findUser.getAuth() == Auth.PARENT && findUser instanceof Parent ) {
+            Parent parent = (Parent) findUser;
+            List<Child> children = childRepository.findByParent(parent);
             List<BoardStoryPreviewDto> boardStoryPreviewDtoList = children.stream()
                     .filter(child -> child.getCenter() != null && child.getApproval() == Approval.ACCEPT)
                     .map(child -> new BoardStoryPreviewDto(child.getCenter()))
                     .collect(Collectors.toList());
             result.addAll(boardStoryPreviewDtoList);
-        } else {
-            Center findCenter = ((Teacher) findUser).getCenter();
-            Approval approval = ((Teacher) findUser).getApproval();
+        } else if (findUser instanceof Teacher)  {
+            Teacher teacher = (Teacher) findUser;
+            Center findCenter = teacher.getCenter();
+            Approval approval = teacher.getApproval();
             if (findCenter != null && approval == Approval.ACCEPT) {
                 BoardStoryPreviewDto boardStoryPreviewDto = new BoardStoryPreviewDto(findCenter);
                 result.add(boardStoryPreviewDto);
@@ -137,13 +139,14 @@ public class BoardService {
         User findUser = userRepository.findById(userId)
                 .orElseThrow(() -> new UserException(UserErrorResult.USER_NOT_EXIST));
 
-        if (findUser.getAuth() == Auth.PARENT) {
-            boolean childless = childRepository.findByParentAndCenter((Parent) findUser,findCenter)
+        if (findUser.getAuth() == Auth.PARENT && findUser instanceof Parent) {
+            Parent parent = (Parent) findUser;
+            boolean childless = childRepository.findByParentAndCenter(parent, findCenter)
                     .isEmpty();
             if (childless) {
                 throw new BoardException(BoardErrorResult.UNAUTHORIZED_USER_ACCESS);
             }
-        } else {
+        } else if (findUser instanceof Teacher) {
             Teacher teacher = (Teacher) findUser;
             if (teacher.getCenter() == null || !Objects.equals(teacher.getCenter().getId(), center_id)) {
                 throw new BoardException(BoardErrorResult.UNAUTHORIZED_USER_ACCESS);
