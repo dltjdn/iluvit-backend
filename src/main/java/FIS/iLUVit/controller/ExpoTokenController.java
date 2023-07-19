@@ -29,21 +29,9 @@ public class ExpoTokenController {
      */
     @PostMapping("")
     @ResponseStatus(HttpStatus.CREATED)
-    public Long createExpoToken(@Login Long userId,
-            @RequestBody @Valid ExpoTokenRequest request) {
+    public Long createExpoToken(@Login Long userId, @RequestBody @Valid ExpoTokenRequest request) {
         return expoTokenService.saveToken(userId, request);
     }
-
-//    /**
-//     * 작성자: 이창윤
-//     * 푸쉬 알림 동의, 비동의 체크?
-//     */
-//    @PostMapping("/expoTokens/status")
-//    @ResponseStatus(HttpStatus.OK)
-//    public void modifyStatus(@Login Long userId,
-//                       @RequestBody @Valid ExpoTokenRequest request) {
-//        expoTokenService.modifyAcceptStatus(userId, request);
-//    }
 
     /**
      * 작성자: 이창윤
@@ -62,8 +50,7 @@ public class ExpoTokenController {
      */
     @DeleteMapping("")
     @ResponseStatus(HttpStatus.OK)
-    public void deleteExpoToken(@Login Long userId,
-                       HttpServletRequest request) {
+    public void deleteExpoToken(@Login Long userId, HttpServletRequest request) {
         String expoToken = request.getHeader("ExpoToken");
         expoTokenService.deleteExpoTokenByUser(userId, expoToken);
     }

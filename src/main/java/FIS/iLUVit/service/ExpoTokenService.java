@@ -19,7 +19,6 @@ import java.util.Objects;
 @Transactional
 @RequiredArgsConstructor
 public class ExpoTokenService {
-
     private final ExpoTokenRepository expoTokenRepository;
     private final UserRepository userRepository;
 
@@ -29,15 +28,10 @@ public class ExpoTokenService {
                 .user(findUser)
                 .token(request.getToken())
                 .accept(request.getAccept())
+                .deviceId(request.getDeviceId())
                 .build();
         ExpoToken savedToken = expoTokenRepository.save(token);
         return savedToken.getId();
-    }
-
-    public void modifyAcceptStatus(Long userId, ExpoTokenRequest request) {
-        ExpoToken expoToken = getExpoTokenWithUserException(request.getToken(), userId);
-
-        expoToken.modifyAcceptStatus(request.getAccept());
     }
 
     public ExpoTokenDto findExpoTokenByUser(Long userId, String expoToken) {
@@ -61,4 +55,5 @@ public class ExpoTokenService {
         User user = userRepository.getById(userId);
         expoTokenRepository.deleteByTokenAndUser(expoToken, user);
     }
+
 }
