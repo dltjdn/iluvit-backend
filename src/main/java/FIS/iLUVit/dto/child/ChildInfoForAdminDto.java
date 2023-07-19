@@ -11,19 +11,19 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class ChildInfoForAdminDto {
 
-    private Long child_id;
-    private String parent_name;
-    private String parent_phoneNum;
-    private String child_name;
-    private String child_profileImg;
+    private Long childId;
+    private String parentName;
+    private String parentPhoneNum;
+    private String childName;
+    private String childProfileImg;
     private Approval approval;
 
-    public ChildInfoForAdminDto(Child child,String child_profileImg) {
-        this.child_id = child.getId();
-        this.parent_name = child.getParent().getName();
-        this.parent_phoneNum = child.getParent().getPhoneNumber();
-        this.child_name = child.getName();
+    public ChildInfoForAdminDto(Child child,String childProfileImg) {
+        this.childId = child.getId();
+        this.parentName = child.getParent().getName();
+        this.parentPhoneNum = child.getParent().getPhoneNumber();
+        this.childName = child.getName();
         this.approval = child.getApproval();
-        this.child_profileImg = child_profileImg;
+        this.childProfileImg = childProfileImg;
     }
 }

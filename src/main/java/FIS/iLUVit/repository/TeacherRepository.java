@@ -67,7 +67,7 @@ public interface TeacherRepository extends JpaRepository<Teacher, Long> {
      */
     @Query("select t " +
             "from Teacher t " +
-            "where t.center.id =: centerId " +
+            "where t.center.id =:centerId " +
             "and t.approval = 'ACCEPT' ")
     List<Teacher> findByCenterWithApproval(@Param("centerId") Long centerId);
 

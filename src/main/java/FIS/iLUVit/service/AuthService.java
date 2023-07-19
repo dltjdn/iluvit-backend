@@ -1,8 +1,8 @@
 package FIS.iLUVit.service;
 
 import FIS.iLUVit.dto.auth.AuthRequestDto;
-import FIS.iLUVit.dto.auth.LoginIdDto;
-import FIS.iLUVit.dto.auth.FindPasswordDto;
+import FIS.iLUVit.dto.auth.AuthLoginIdDto;
+import FIS.iLUVit.dto.auth.AuthFindPasswordDto;
 import FIS.iLUVit.domain.AuthNumber;
 import FIS.iLUVit.domain.User;
 import FIS.iLUVit.domain.enumtype.AuthKind;
@@ -127,7 +127,7 @@ public class AuthService {
     /**
      * (아이디찾기) 인증번호 인증 후 유저 아이디 반환
      */
-    public LoginIdDto authenticateAuthNumForFindLoginId(AuthRequestDto request) {
+    public AuthLoginIdDto authenticateAuthNumForFindLoginId(AuthRequestDto request) {
 
         // 인증번호 인증
         AuthNumber authNumber = authenticateAuthNum(null, request);
@@ -140,15 +140,15 @@ public class AuthService {
 
         String blindLoginId = blindLoginId(findUser.getLoginId());
 
-        LoginIdDto loginIdDto = new LoginIdDto(blindLoginId);
+        AuthLoginIdDto authLoginIdDto = new AuthLoginIdDto(blindLoginId);
 
-        return loginIdDto;
+        return authLoginIdDto;
     }
 
     /**
      * (비밀번호 변경용 비밀번호찾기) 인증이 완료된 핸드폰번호인지 확인 후 비밀번호 변경
      */
-    public void authenticateAuthNumForChangePwd(FindPasswordDto request) {
+    public void authenticateAuthNumForChangePwd(AuthFindPasswordDto request) {
         // 비밀번호와 비밀번호 확인 불일치
         if (!request.getNewPwd().equals(request.getNewPwdCheck())) {
             throw new AuthNumberException(AuthNumberErrorResult.NOT_MATCH_CHECKPWD);

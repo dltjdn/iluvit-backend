@@ -18,7 +18,7 @@ import java.time.LocalDate;
 @AllArgsConstructor
 @NoArgsConstructor
 public class ChildDetailRequest {
-    private Long center_id;
+    private Long centerId;
     @NotBlank(message = "이름을 입력해주세요")
     private String name;
     @DateTimeFormat(pattern = "yyyy-MM-dd")
