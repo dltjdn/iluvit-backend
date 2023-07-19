@@ -1,6 +1,6 @@
 package FIS.iLUVit.dto.post;
 
-import FIS.iLUVit.dto.comment.CommentResponse;
+import FIS.iLUVit.dto.comment.CommentDto;
 import FIS.iLUVit.domain.Post;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -37,7 +37,7 @@ public class PostResponse {
     private String boardName;
     private String centerName;
 
-    private List<CommentResponse> comments;
+    private List<CommentDto> comments;
     private Integer commentCnt;
 
     private Long boardId;
@@ -83,7 +83,7 @@ public class PostResponse {
 
         this.comments = post.getComments().stream()
                 .filter(c -> c.getParentComment() == null)
-                .map(c -> new CommentResponse(c, userId)).collect(Collectors.toList());
+                .map(c -> new CommentDto(c, userId)).collect(Collectors.toList());
         this.commentCnt = post.getCommentCnt();
 
     }
