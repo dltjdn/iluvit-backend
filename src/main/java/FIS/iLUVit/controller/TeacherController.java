@@ -53,7 +53,7 @@ public class TeacherController {
     /**
      * 교사 정보 수정
      */
-    @PostMapping("")
+    @PatchMapping("")
     public ResponseEntity<Void> updateTeacher(@Login Long id, @Valid @ModelAttribute TeacherDetailRequest request) throws IOException {
         teacherService.modifyTeacherInfo(id, request);
         return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
