@@ -32,7 +32,7 @@ public class ParticipationController {
     @PostMapping("{ptDateId}")
     public ResponseEntity<Void> registerParticipation(@Login Long userId, @PathVariable("ptDateId") Long ptDateId){
         participationService.registerParticipation(userId, ptDateId);
-        return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
+        return ResponseEntity.status(HttpStatus.CREATED).build();
     }
 
     /**
