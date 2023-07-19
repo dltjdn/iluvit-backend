@@ -2,7 +2,7 @@ package FIS.iLUVit.service;
 
 import FIS.iLUVit.domain.alarms.Alarm;
 import FIS.iLUVit.dto.comment.CommentPostDto;
-import FIS.iLUVit.dto.comment.CommentRequestDto;
+import FIS.iLUVit.dto.comment.CommentCreateDto;
 import FIS.iLUVit.domain.Comment;
 import FIS.iLUVit.domain.Post;
 import FIS.iLUVit.domain.User;
@@ -34,7 +34,7 @@ public class CommentService {
     /**
      * 댓글 작성 (comment_id 값이 null일 경우 댓글 작성, comment_id 값까지 보내는 경우 대댓글 작성)
      */
-    public void saveNewComment(Long userId, Long postId, Long p_commentId, CommentRequestDto request) {
+    public void saveNewComment(Long userId, Long postId, Long p_commentId, CommentCreateDto request) {
 
         if (userId == null) {
             throw new CommentException(CommentErrorResult.UNAUTHORIZED_USER_ACCESS);

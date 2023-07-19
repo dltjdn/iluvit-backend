@@ -2,7 +2,7 @@ package FIS.iLUVit.controller;
 
 import FIS.iLUVit.config.argumentResolver.Login;
 import FIS.iLUVit.dto.comment.CommentPostDto;
-import FIS.iLUVit.dto.comment.CommentRequestDto;
+import FIS.iLUVit.dto.comment.CommentCreateDto;
 import FIS.iLUVit.service.CommentService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
@@ -27,7 +27,7 @@ public class CommentController {
     */
     @PostMapping(value={"{postId}","{postId}/{commentId}"})
     public ResponseEntity<Void> createComment(@Login Long userId, @PathVariable("postId") Long postId,
-                                @PathVariable(required = false, value="commentId") Long commentId, @RequestBody CommentRequestDto commentRequest) {
+                                @PathVariable(required = false, value="commentId") Long commentId, @RequestBody CommentCreateDto commentRequest) {
         commentService.saveNewComment(userId, postId, commentId, commentRequest);
         return ResponseEntity.status(HttpStatus.CREATED).build();
     }
