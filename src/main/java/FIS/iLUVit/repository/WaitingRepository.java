@@ -3,6 +3,8 @@ package FIS.iLUVit.repository;
 import FIS.iLUVit.domain.Parent;
 import FIS.iLUVit.domain.PtDate;
 import FIS.iLUVit.domain.Waiting;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Slice;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Lock;
 import org.springframework.data.jpa.repository.Modifying;
@@ -19,6 +21,8 @@ public interface WaitingRepository extends JpaRepository<Waiting, Long> {
      * 해당 학부모로 Waiting 리스트를 조회합니다
      */
     List<Waiting> findByParent(Parent parent);
+
+    Slice<Waiting> findByParent(Parent parent, Pageable pageable);
 
     /**
      * 해당 설명회 회차로 Waiting 리스트를 조회합니다

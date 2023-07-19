@@ -21,6 +21,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+import static FIS.iLUVit.domain.enumtype.Status.CANCELED;
 import static FIS.iLUVit.domain.enumtype.Status.JOINED;
 
 @Service
@@ -28,15 +29,13 @@ import static FIS.iLUVit.domain.enumtype.Status.JOINED;
 @RequiredArgsConstructor
 @Transactional // 기본 Required 트랜잭션들 다 엮인다.
 public class ParticipationService {
-
     private final ParticipationRepository participationRepository;
     private final PtDateRepository ptDateRepository;
     private final ParentRepository parentRepository;
     private final TeacherRepository teacherRepository;
     private final ApplicationEventPublisher eventPublisher;
     private final AlarmRepository alarmRepository;
-
-    private final UserRepository userRepository;
+    private final WaitingRepository waitingRepository;
 
     public Long registerParticipation(Long userId, Long ptDateId) {
         if(userId == null)
@@ -114,12 +113,12 @@ public class ParticipationService {
                 .orElseThrow(()-> new UserException(UserErrorResult.USER_NOT_EXIST));
 
         List<ParticipationDto> participationDtos = participationRepository.findByParent(parent).stream()
-                .map(ParticipationDto::createDto)
+                .map(ParticipationDto::createDtoByParticipation)
                 .collect(Collectors.toList());
 
         participationDtos.addAll(
                 parent.getWaitings().stream()
-                .map(ParticipationDto::createDto)
+                .map(ParticipationDto::createDtoByWaiting)
                 .collect(Collectors.toList())
         );
 
@@ -130,27 +129,39 @@ public class ParticipationService {
     public Slice<ParticipationDto> findRegisterParticipationByUser(Long userId, Pageable pageable){
         if(userId == null)
             throw new UserException(UserErrorResult.NOT_LOGIN);
+        Parent parent = parentRepository.findById(userId)
+                .orElseThrow(() -> new UserException(UserErrorResult.USER_NOT_EXIST));
 
-        parentRepository.findMyJoinParticipation(userId, pageable);
+        Slice<ParticipationDto> participationDtos = participationRepository.findByParentAndStatus(parent, JOINED, pageable)
+                .map(ParticipationDto::createDtoByParticipation);
 
-        //TODO dto 로직 옮기다
-        new ParticipationDto()
+        return participationDtos;
     }
 
     public Slice<ParticipationDto> findCancelParticipationByUser(Long userId, Pageable pageable){
         if(userId == null)
             throw new UserException(UserErrorResult.NOT_LOGIN);
 
-        //TODO dto 로직 옮기기
-        return parentRepository.findMyCancelParticipation(userId, pageable);
+        Parent parent = parentRepository.findById(userId)
+                .orElseThrow(() -> new UserException(UserErrorResult.USER_NOT_EXIST));
+
+        Slice<ParticipationDto> participationDtos = participationRepository.findByParentAndStatus(parent, CANCELED, pageable)
+                .map(ParticipationDto::createDtoByParticipation);
+
+        return participationDtos;
     }
 
     public Slice<ParticipationDto> findWaitingParticipationByUser(Long userId, Pageable pageable){
         if(userId == null)
             throw new UserException(UserErrorResult.NOT_LOGIN);
 
-        //TODO dto 로직 옮기기
-        return parentRepository.findMyWaiting(userId, pageable);
+        Parent parent = parentRepository.findById(userId)
+                .orElseThrow(() -> new UserException(UserErrorResult.USER_NOT_EXIST));
+
+        Slice<ParticipationDto> participationDtos = waitingRepository.findByParent(parent, pageable)
+                .map(ParticipationDto::createDtoByWaiting);
+
+        return participationDtos;
     }
 
 }

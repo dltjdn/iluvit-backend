@@ -70,7 +70,7 @@ public class ParticipationDto {
         this.status = Status.WAITING;
     }
 
-    public static ParticipationDto createDto(Participation participation) {
+    public static ParticipationDto createDtoByParticipation(Participation participation) {
         PtDate ptDate = participation.getPtDate();
         Parent parent = participation.getParent();
         Presentation presentation = ptDate.getPresentation();
@@ -97,7 +97,7 @@ public class ParticipationDto {
                 .build();
     }
 
-    public static ParticipationDto createDto(Waiting waiting){
+    public static ParticipationDto createDtoByWaiting(Waiting waiting){
         PtDate ptDate = waiting.getPtDate();
         Parent parent = waiting.getParent();
         Presentation presentation = ptDate.getPresentation();
@@ -105,7 +105,7 @@ public class ParticipationDto {
 
         return ParticipationDto.builder()
                 .parentId(parent.getId())
-                .participantId(waiting.getId())
+                .waitingId(waiting.getId())
                 .ptDateId(ptDate.getId())
                 .presentationId(presentation.getId())
                 .centerId(center.getId())

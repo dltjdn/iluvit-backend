@@ -60,7 +60,7 @@ public class ParentService {
     /**
      *  학부모 정보 수정
      */
-    public ParentDetailDto modifyParentInfo(Long userId, ParentUpdateDto request) throws IOException {
+    public void modifyParentInfo(Long userId, ParentUpdateDto request) throws IOException {
 
         Parent findParent = parentRepository.findById(userId)
                 .orElseThrow(() -> new UserException(UserErrorResult.NOT_VALID_TOKEN));
@@ -94,9 +94,9 @@ public class ParentService {
         Location location = new Location(loAndLat, hangjung);
         findParent.updateLocation(location);
 
-        ParentDetailDto response = new ParentDetailDto(findParent,imageService.getProfileImage(findParent));
+        new ParentDetailDto(findParent,imageService.getProfileImage(findParent));
         imageService.saveProfileImage(request.getProfileImg(), findParent);
-        return response;
+
     }
 
     /**
