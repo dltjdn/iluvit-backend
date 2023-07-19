@@ -28,7 +28,7 @@ public class CommentHeartService {
     /**
      * 댓글 좋아요 등록
      */
-    public Long saveCommentHeart(Long userId, Long commentId) {
+    public void saveCommentHeart(Long userId, Long commentId) {
         if (userId == null) {
             throw new CommentException(CommentErrorResult.UNAUTHORIZED_USER_ACCESS_HEART);
         }
@@ -47,8 +47,7 @@ public class CommentHeartService {
         CommentHeart commentHeart = new CommentHeart(findUser, findComment);
 
         findComment.plusHeartCnt();
-
-        return commentHeartRepository.save(commentHeart).getId();
+        commentHeartRepository.save(commentHeart);
     }
 
     /**

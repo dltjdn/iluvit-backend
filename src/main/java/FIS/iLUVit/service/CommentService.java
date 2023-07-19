@@ -34,7 +34,7 @@ public class CommentService {
     /**
      * 댓글 작성 (comment_id 값이 null일 경우 댓글 작성, comment_id 값까지 보내는 경우 대댓글 작성)
      */
-    public Long saveNewComment(Long userId, Long postId, Long p_commentId, CommentRequestDto request) {
+    public void saveNewComment(Long userId, Long postId, Long p_commentId, CommentRequestDto request) {
 
         if (userId == null) {
             throw new CommentException(CommentErrorResult.UNAUTHORIZED_USER_ACCESS);
@@ -86,8 +86,7 @@ public class CommentService {
             alarmRepository.save(alarm);
             AlarmUtils.publishAlarmEvent(alarm);
         }
-
-        return commentRepository.save(comment).getId();
+        commentRepository.save(comment);
     }
 
     /**

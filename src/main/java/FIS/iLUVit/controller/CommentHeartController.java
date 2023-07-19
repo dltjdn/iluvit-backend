@@ -21,9 +21,9 @@ public class CommentHeartController {
      * 댓글 좋아요 등록
      */
     @PostMapping("{commentId}")
-    public ResponseEntity<Long> createCommentHeart(@Login Long userId, @PathVariable Long commentId) {
-        Long newCommentId = commentHeartService.saveCommentHeart(userId, commentId);
-        return ResponseEntity.status(HttpStatus.CREATED).body(newCommentId);
+    public ResponseEntity<Void> createCommentHeart(@Login Long userId, @PathVariable Long commentId) {
+        commentHeartService.saveCommentHeart(userId, commentId);
+        return ResponseEntity.status(HttpStatus.CREATED).build();
     }
 
     /**

@@ -26,10 +26,10 @@ public class CommentController {
      * 댓글 작성 (comment_id 값이 null일 경우 댓글 작성, comment_id 값까지 보내는 경우 대댓글 작성)
     */
     @PostMapping(value={"{postId}","{postId}/{commentId}"})
-    public ResponseEntity<Long> createComment(@Login Long userId, @PathVariable("postId") Long postId,
+    public ResponseEntity<Void> createComment(@Login Long userId, @PathVariable("postId") Long postId,
                                 @PathVariable(required = false, value="commentId") Long commentId, @RequestBody CommentRequestDto commentRequest) {
-        Long newCommentId = commentService.saveNewComment(userId, postId, commentId, commentRequest);
-        return ResponseEntity.status(HttpStatus.CREATED).body(newCommentId);
+        commentService.saveNewComment(userId, postId, commentId, commentRequest);
+        return ResponseEntity.status(HttpStatus.CREATED).build();
     }
 
     /**
