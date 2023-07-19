@@ -30,45 +30,6 @@ public class ParticipationDto {
     private Integer ablePersonNum;
     private Integer participantCnt;
     private Status status;
-    public ParticipationDto(Long parentId, Long participantId, Long ptDateId, Long presentationId, Long centerId, LocalDate presentationDate, String time, String centerProfileImage, String place, String content, String centerName, String tel, String address, String addressDetail, Integer ablePersonNum, Integer participantCnt, Status status) {
-        this.parentId = parentId;
-        this.participantId = participantId;
-        this.ptDateId = ptDateId;
-        this.presentationId = presentationId;
-        this.centerId = centerId;
-        this.presentationDate = presentationDate;
-        this.time = time;
-        this.centerProfileImage = centerProfileImage;
-        this.place = place;
-        this.content = content;
-        this.centerName = centerName;
-        this.tel = tel;
-        this.address = address;
-        this.addressDetail = addressDetail;
-        this.ablePersonNum = ablePersonNum;
-        this.participantCnt = participantCnt;
-        this.status = status;
-    }
-
-    public ParticipationDto(Long parentId, Long waitingId, Long ptDateId, Long presentationId, Long centerId, LocalDate presentationDate, String time, String centerProfileImage, String place, String content, String centerName, String tel, String address, String addressDetail, Integer ablePersonNum, Integer participantCnt) {
-        this.parentId = parentId;
-        this.waitingId = waitingId;
-        this.ptDateId = ptDateId;
-        this.presentationId = presentationId;
-        this.centerId = centerId;
-        this.presentationDate = presentationDate;
-        this.time = time;
-        this.centerProfileImage = centerProfileImage;
-        this.place = place;
-        this.content = content;
-        this.centerName = centerName;
-        this.tel = tel;
-        this.address = address;
-        this.addressDetail = addressDetail;
-        this.ablePersonNum = ablePersonNum;
-        this.participantCnt = participantCnt;
-        this.status = Status.WAITING;
-    }
 
     public static ParticipationDto createDtoByParticipation(Participation participation) {
         PtDate ptDate = participation.getPtDate();

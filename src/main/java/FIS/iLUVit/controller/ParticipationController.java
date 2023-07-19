@@ -2,15 +2,15 @@ package FIS.iLUVit.controller;
 
 import FIS.iLUVit.config.argumentResolver.Login;
 import FIS.iLUVit.dto.participation.ParticipationDto;
-import FIS.iLUVit.dto.presentation.PtDateRequest;
 import FIS.iLUVit.domain.enumtype.Status;
+import FIS.iLUVit.dto.participation.ParticipationWithStatusDto;
 import FIS.iLUVit.service.ParticipationService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
 import org.springframework.http.HttpStatus;
-import org.springframework.validation.annotation.Validated;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -21,72 +21,62 @@ import java.util.Map;
 @Slf4j
 @RequestMapping("participation")
 public class ParticipationController {
-
     private final ParticipationService participationService;
 
     /**
      * PARENT
      */
-
     /**
-     * 작성자: 현승구
-     * 작성내용: 설명회 신청
+     * 설명회 신청
      */
-    @PostMapping("")
-    @ResponseStatus(HttpStatus.CREATED)
-    public Long registerParticipation(@Login Long userId, @RequestBody @Validated PtDateRequest dto){
-        return participationService.registerParticipation(userId, dto.getPtDateId());
+    @PostMapping("{ptDateId}")
+    public ResponseEntity<Void> registerParticipation(@Login Long userId, @PathVariable("ptDateId") Long ptDateId){
+        participationService.registerParticipation(userId, ptDateId);
+        return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
     }
 
     /**
-     * 작성자: 현승구
-     * 작성내용: 설명회 취소
-     * 비고: 대가자 있을 경우 자동 합류
+     * 설명회 취소 ( 대가자 있을 경우 자동 합류 )
      */
     @PatchMapping("{participationId}")
-    @ResponseStatus(HttpStatus.ACCEPTED)
-    public Long cancelParticipation(@Login Long userId, @PathVariable("participationId") Long participationId){
-        return participationService.cancelParticipation(userId, participationId);
+    public ResponseEntity<Void> cancelParticipation(@Login Long userId, @PathVariable("participationId") Long participationId){
+        participationService.cancelParticipation(userId, participationId);
+        return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
     }
 
     /**
-     * 작성자: 현승구
-     * 작성내용: 신청한/취소한 설명회 전체 조회
+     * 신청한/신청 취소한 설명회 전체 조회
      */
     @GetMapping("")
-    @ResponseStatus(HttpStatus.ACCEPTED)
-    public Map<Status, List<ParticipationDto>> getAllParticipation(@Login Long userId){
-        return participationService.findAllParticipationByUser(userId);
+    public ResponseEntity<List<ParticipationWithStatusDto>> getAllParticipation(@Login Long userId){
+        List<ParticipationWithStatusDto> participationWithStatusDtos = participationService.findAllParticipationByUser(userId);
+        return ResponseEntity.ok(participationWithStatusDtos);
     }
 
     /**
-     * 작성자: 현승구
-     * 작성내용: 신청한 설명회 전체 조회
+     * 신청한 설명회 전체 조회
      */
     @GetMapping("join")
-    @ResponseStatus(HttpStatus.ACCEPTED)
-    public Slice<ParticipationDto> getRegisterParticipation(@Login Long userId, Pageable pageable){
-        return participationService.findRegisterParticipationByUser(userId, pageable);
+    public ResponseEntity<Slice<ParticipationDto>> getRegisterParticipation(@Login Long userId, Pageable pageable){
+        Slice<ParticipationDto> participationDtos = participationService.findRegisterParticipationByUser(userId, pageable);
+        return ResponseEntity.ok(participationDtos);
     }
 
     /**
-     * 작성자: 현승구
-     * 작성내용: 신청을 취소한 설명회 전체 조회
+     * 신청 취소한 설명회 전체 조회
      */
     @GetMapping("cancel")
-    @ResponseStatus(HttpStatus.ACCEPTED)
-    public Slice<ParticipationDto> getCancelParticipation(@Login Long userId, Pageable pageable){
-        return participationService.findCancelParticipationByUser(userId, pageable);
+    public ResponseEntity<Slice<ParticipationDto>> getCancelParticipation(@Login Long userId, Pageable pageable){
+        Slice<ParticipationDto> participationDtos = participationService.findCancelParticipationByUser(userId, pageable);
+        return ResponseEntity.ok(participationDtos);
     }
 
     /**
-     * 작성자: 현승구
-     * 작성내용: 대기를 신청한 설명회 전체 조회
+     * 대기를 신청한 설명회 전체 조회
      */
     @GetMapping("waiting")
-    @ResponseStatus(HttpStatus.ACCEPTED)
-    public Slice<ParticipationDto> getWaitingParticipation(@Login Long userId, Pageable pageable){
-        return participationService.findWaitingParticipationByUser(userId, pageable);
+    public ResponseEntity<Slice<ParticipationDto>> getWaitingParticipation(@Login Long userId, Pageable pageable){
+        Slice<ParticipationDto> participationDtos = participationService.findWaitingParticipationByUser(userId, pageable);
+        return ResponseEntity.ok(participationDtos);
     }
-
 }
