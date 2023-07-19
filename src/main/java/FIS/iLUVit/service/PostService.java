@@ -98,7 +98,7 @@ public class PostService {
         reportDetailRepository.setPostIsNull(postId);
 
         //------------------------댓글 관련------------------------//
-        List<Long> commentIds = commentRepository.findByPostId(postId).stream()
+        List<Long> commentIds = commentRepository.findByPost(findPost).stream()
                 .map(Comment::getId)
                 .collect(Collectors.toList());
         // 만약 게시글에 달린 댓글도 신고된 상태라면 해당 댓글의 신고내역의 target_id 를 null 값으로 만들어줘야함.
@@ -137,7 +137,7 @@ public class PostService {
 
         if (auth == Auth.PARENT) {
             // 학부모 유저일 때 아이와 연관된 센터의 아이디를 모두 가져옴
-            centerIds = childRepository.findByParentId(userId)
+            centerIds = childRepository.findByParent( (Parent)findUser)
                     .stream().filter(c -> c.getCenter() != null).map(c -> c.getCenter().getId())
                     .collect(Collectors.toSet());
         } else {
@@ -159,7 +159,9 @@ public class PostService {
         if (centerId != null) {
             if (auth == Auth.PARENT) {
                 // 학부모 유저일 때 아이와 연관된 센터의 아이디를 모두 가져옴
-                Set<Long> centerIds = childRepository.findByParentId(userId)
+                User user = userRepository.findById(userId)
+                        .orElseThrow(() -> new UserException(UserErrorResult.NOT_VALID_TOKEN));
+                Set<Long> centerIds = childRepository.findByParent((Parent)user)
                         .stream().filter(c -> c.getCenter() != null).map(c -> c.getCenter().getId())
                         .collect(Collectors.toSet());
                 if (!centerIds.contains(centerId)) {
@@ -237,7 +239,7 @@ public class PostService {
         User findUser = userRepository.findById(userId)
                 .orElseThrow(() -> new UserException(UserErrorResult.USER_NOT_EXIST));
 
-        if (findUser.getAuth() == Auth.PARENT) { // 학부모 유저일 경우 아이를 통해 센터 정보를 가져옴
+        if (findUser.getAuth() == Auth.PARENT && findUser instanceof Parent) { // 학부모 유저일 경우 아이를 통해 센터 정보를 가져옴
             Parent parent = (Parent) findUser;
             boolean flag = parent.getChildren().stream()
                     .filter(c -> c.getCenter() != null && c.getApproval() == Approval.ACCEPT)

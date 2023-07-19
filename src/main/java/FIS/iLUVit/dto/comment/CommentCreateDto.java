@@ -6,7 +6,7 @@ import lombok.Getter;
 
 @Getter
 @AllArgsConstructor
-public class CommentRequest {
+public class CommentCreateDto {
     private String content;
     private Boolean anonymous;
 }

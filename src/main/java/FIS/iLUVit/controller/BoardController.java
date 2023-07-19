@@ -4,7 +4,7 @@ import FIS.iLUVit.config.argumentResolver.Login;
 import FIS.iLUVit.dto.board.BoardIdDto;
 import FIS.iLUVit.dto.board.BoardListDto;
 import FIS.iLUVit.dto.board.BoardCreateDto;
-import FIS.iLUVit.dto.board.StoryPreviewDto;
+import FIS.iLUVit.dto.board.BoardStoryPreviewDto;
 import FIS.iLUVit.service.BoardService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -47,8 +47,8 @@ public class BoardController {
      * 이야기 (모두의 이야기 + 유저가 속한 시설의 이야기) 전체 조회
      */
     @GetMapping("home")
-    public ResponseEntity<List<StoryPreviewDto>> getAllStory(@Login Long userId) {
-        List<StoryPreviewDto> storyPreviewList = boardService.findStoryPreviewList(userId);
+    public ResponseEntity<List<BoardStoryPreviewDto>> getAllStory(@Login Long userId) {
+        List<BoardStoryPreviewDto> storyPreviewList = boardService.findStoryPreviewList(userId);
         return ResponseEntity.ok(storyPreviewList);
     }
 

@@ -2,7 +2,7 @@ package FIS.iLUVit.controller;
 
 import FIS.iLUVit.config.argumentResolver.Login;
 import FIS.iLUVit.dto.board.BoardBookmarkIdDto;
-import FIS.iLUVit.dto.board.StoryDto;
+import FIS.iLUVit.dto.board.BoardStoryDto;
 import FIS.iLUVit.service.BoardBookmarkService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -26,9 +26,9 @@ public class BoardBookmarkController {
      * 즐겨찾는 게시판 전체 조회
     */
     @GetMapping("main")
-    public ResponseEntity<List<StoryDto>> getAllBoardBookmark(@Login Long userId) {
-        List<StoryDto> storyDtoList = boardBookmarkService.findBoardBookmarkByUser(userId);
-        return ResponseEntity.ok(storyDtoList);
+    public ResponseEntity<List<BoardStoryDto>> getAllBoardBookmark(@Login Long userId) {
+        List<BoardStoryDto> boardStoryDtoList = boardBookmarkService.findBoardBookmarkByUser(userId);
+        return ResponseEntity.ok(boardStoryDtoList);
     }
 
     /**

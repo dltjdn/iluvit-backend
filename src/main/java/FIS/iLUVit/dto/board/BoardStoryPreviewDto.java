@@ -9,12 +9,12 @@ import lombok.NoArgsConstructor;
 @Getter
 @NoArgsConstructor
 @AllArgsConstructor
-public class StoryPreviewDto {
+public class BoardStoryPreviewDto {
     private Long centerId;
     private String centerName;
     private String storyName;
 
-    public StoryPreviewDto(Center center) {
+    public BoardStoryPreviewDto(Center center) {
         if (center == null) {
             this.storyName = "모두의 이야기";
         } else {
