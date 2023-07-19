@@ -109,7 +109,7 @@ public class ChildService {
     /**
      * 아이 정보 수정
      */
-    public ChildDetailResponse modifyChildInfo(Long userId, Long childId, ChildRequest request) {
+    public void modifyChildInfo(Long userId, Long childId, ChildRequest request) {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new UserException(UserErrorResult.USER_NOT_EXIST));
 
@@ -125,7 +125,6 @@ public class ChildService {
         // 프로필 이미지 수정
         imageService.saveProfileImage(request.getProfileImg(), updatedChild);
 
-        return childDetailResponse;
     }
 
     /**

@@ -61,9 +61,9 @@ public class ChildController {
      * 아이 정보 수정
      */
     @PutMapping("{childId}")
-    public ResponseEntity<ChildDetailResponse> updateChild(@Login Long userId, @PathVariable("childId") Long childId, @ModelAttribute ChildRequest request)  {
-        ChildDetailResponse childDetailResponse = childService.modifyChildInfo(userId, childId, request);
-        return ResponseEntity.ok(childDetailResponse);
+    public ResponseEntity<Void> updateChild(@Login Long userId, @PathVariable("childId") Long childId, @ModelAttribute ChildRequest request)  {
+       childService.modifyChildInfo(userId, childId, request);
+        return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
     }
 
     /**
