@@ -43,6 +43,7 @@ public class TeacherService {
     private final AuthService authService;
     private UserService userService;
     private final CenterRepository centerRepository;
+    private final UserRepository userRepository;
     private final TeacherRepository teacherRepository;
     private final AuthRepository authRepository;
     private final BoardRepository boardRepository;
@@ -71,46 +72,6 @@ public class TeacherService {
     }
 
     /**
-     * 교사 정보를 수정합니다
-     */
-    public void modifyTeacherInfo(Long id, TeacherDetailRequest request) throws IOException {
-        // 유저 id로 교사 조회
-        Teacher findTeacher = teacherRepository.findById(id)
-                .orElseThrow(() -> new UserException(UserErrorResult.NOT_VALID_TOKEN));
-
-        // 유저 닉네임 중복 검사
-        if (!Objects.equals(findTeacher.getNickName(), request.getNickname())) {
-            // 입력된 닉네임과 기존 교사 닉네임이 다를 경우에만 중복 검사 수행
-            teacherRepository.findByNickName(request.getNickname())
-                    .ifPresent(teacher -> {
-                        throw new SignupException(SignupErrorResult.DUPLICATED_NICKNAME);
-                    });
-        }
-
-        // 핸드폰 번호도 변경하는 경우
-        if (request.getChangePhoneNum()) {
-            // 핸드폰 인증이 완료되었는지 검사
-            authService.validateAuthNumber(request.getPhoneNum(), AuthKind.updatePhoneNum);
-            // 핸드폰 번호와 함께 프로필 update
-            findTeacher.updateDetailWithPhoneNum(request);
-            // 인증번호 테이블에서 해당 번호의 인증 정보 삭제
-            authRepository.deleteByPhoneNumAndAuthKind(request.getPhoneNum(), AuthKind.updatePhoneNum);
-        } else { // 핸드폰 번호 변경은 변경하지 않는 경우
-            findTeacher.updateDetail(request);
-        }
-
-        // 주소를 좌표로 변환하고, 시도와 시군구 정보 가져오기
-        Pair<Double, Double> loAndLat = mapService.convertAddressToLocation(request.getAddress());
-        Pair<String, String> hangjung = mapService.getSidoSigunguByLocation(loAndLat.getFirst(), loAndLat.getSecond());
-        Location location = new Location(loAndLat, hangjung);
-
-        // 교사의 위치 정보 업데이트
-        findTeacher.updateLocation(location);
-        // 프로필 이미지 저장
-        imageService.saveProfileImage(request.getProfileImg(), findTeacher);
-    }
-
-    /**
      * 교사 회원가입을 수행합니다
      */
     public Teacher signupTeacher(SignupTeacherRequest request) {
@@ -122,7 +83,7 @@ public class TeacherService {
         // 시설을 선택한 경우
         if (request.getCenterId() != null) {
             // 선택한 시설 정보 가져오기
-            center = centerRepository.findByIdWithTeacher(request.getCenterId())
+            center = centerRepository.findById(request.getCenterId())
                     .orElseThrow(() -> new SignupException(SignupErrorResult.NOT_EXIST_CENTER));
         }
         // 교사 객체를 생성하고 시설과 연결
@@ -168,12 +129,60 @@ public class TeacherService {
         return teacher;
     }
 
+
+    /**
+     * 교사 정보를 변경합니다
+     */
+    public void modifyTeacherInfo(Long id, TeacherDetailRequest request) throws IOException {
+        // 유저 id로 교사 조회
+        Teacher findTeacher = teacherRepository.findById(id)
+                .orElseThrow(() -> new UserException(UserErrorResult.NOT_VALID_TOKEN));
+
+        // 유저 닉네임 중복 검사
+        if (!Objects.equals(findTeacher.getNickName(), request.getNickname())) {
+            // 입력된 닉네임과 기존 교사 닉네임이 다를 경우에만 중복 검사 수행
+            teacherRepository.findByNickName(request.getNickname())
+                    .ifPresent(teacher -> {
+                        throw new SignupException(SignupErrorResult.DUPLICATED_NICKNAME);
+                    });
+        }
+
+        // 핸드폰 번호도 변경하는 경우
+        if (request.getChangePhoneNum()) {
+            // 핸드폰 인증이 완료되었는지 검사
+            authService.validateAuthNumber(request.getPhoneNum(), AuthKind.updatePhoneNum);
+            // 핸드폰 번호와 함께 프로필 update
+            findTeacher.updateDetailWithPhoneNum(request);
+            // 인증번호 테이블에서 해당 번호의 인증 정보 삭제
+            authRepository.deleteByPhoneNumAndAuthKind(request.getPhoneNum(), AuthKind.updatePhoneNum);
+        } else { // 핸드폰 번호 변경은 변경하지 않는 경우
+            findTeacher.updateDetail(request);
+        }
+
+        // 주소를 좌표로 변환하고, 시도와 시군구 정보 가져오기
+        Pair<Double, Double> loAndLat = mapService.convertAddressToLocation(request.getAddress());
+        Pair<String, String> hangjung = mapService.getSidoSigunguByLocation(loAndLat.getFirst(), loAndLat.getSecond());
+        Location location = new Location(loAndLat, hangjung);
+
+        // 교사의 위치 정보 업데이트
+        findTeacher.updateLocation(location);
+        // 프로필 이미지 저장
+        imageService.saveProfileImage(request.getProfileImg(), findTeacher);
+    }
+
+    /**
+     * 시설 정보를 조회합니다
+     */
+    public Slice<CenterDto> findCenterForSignupTeacher(CenterRequest request, Pageable pageable) {
+        return centerRepository.findForSignup(request.getSido(), request.getSigungu(), request.getCenterName(), pageable);
+    }
+
     /**
      * 교사가 시설에 시설 등록 승인을 요청합니다
      */
     public Teacher requestAssignCenterForTeacher(Long userId, Long centerId) {
         // 교사 조회 및 시설 할당 여부 확인
-        Teacher teacher = teacherRepository.findByIdAndNotAssign(userId)
+        Teacher teacher = teacherRepository.findByIdAndCenterIsNull(userId)
                 .orElseThrow(() -> new SignupException(SignupErrorResult.ALREADY_BELONG_CENTER));
 
         // 시설과의 연관관계 맺기
@@ -181,7 +190,8 @@ public class TeacherService {
         teacher.assignCenter(center);
 
         // 승인 요청 알람이 해당 시설의 관리교사에게 전송
-        List<Teacher> directors = teacherRepository.findDirectorByCenter(centerId);
+        Auth auth = Auth.DIRECTOR;
+        List<Teacher> directors = teacherRepository.findByCenterAndAuth(center, auth);
         directors.forEach(director -> {
             Alarm alarm = new CenterApprovalReceivedAlarm(director, Auth.TEACHER, director.getCenter());
             alarmRepository.save(alarm);
@@ -231,7 +241,8 @@ public class TeacherService {
      */
     public List<TeacherInfoForAdminDto> findTeacherApprovalList(Long userId) {
         // user id로 관리교사인지 확인
-        Teacher director = teacherRepository.findDirectorById(userId)
+        Auth auth = Auth.DIRECTOR;
+        Teacher director = teacherRepository.findByIdAndAuth(userId, auth)
                 .orElseThrow(() -> new UserException(UserErrorResult.HAVE_NOT_AUTHORIZATION));
 
         // 관리교사로 등록 되어있는 시설의 교사 리스트 조회
@@ -258,7 +269,8 @@ public class TeacherService {
      */
     public Teacher acceptTeacherRegistration(Long userId, Long teacherId) {
         // user id로 관리교사인지 확인
-        Teacher director = teacherRepository.findDirectorById(userId)
+        Auth auth = Auth.DIRECTOR;
+        Teacher director = teacherRepository.findByIdAndAuth(userId, auth)
                 .orElseThrow(() -> new UserException(UserErrorResult.HAVE_NOT_AUTHORIZATION));
 
         // 승인하고자 하는 교사가 해당 시설에 속해 있는지 && 대기 상태인지 확인
@@ -286,7 +298,8 @@ public class TeacherService {
      */
     public Teacher rejectTeacherRegistration(Long userId, Long teacherId) {
         // user id로 관리교사인지 확인
-        Teacher director = teacherRepository.findDirectorById(userId)
+        Auth auth = Auth.DIRECTOR;
+        Teacher director = teacherRepository.findByIdAndAuth(userId, auth)
                 .orElseThrow(() -> new UserException(UserErrorResult.HAVE_NOT_AUTHORIZATION));
 
         // 승인 요청 거절/삭제 하고자 하는 교사 정보 조회
@@ -312,7 +325,8 @@ public class TeacherService {
      */
     public Teacher mandateTeacher(Long userId, Long teacherId) {
         // user id로 관리교사인지 확인
-        Teacher director = teacherRepository.findDirectorById(userId)
+        Auth auth = Auth.DIRECTOR;
+        Teacher director = teacherRepository.findByIdAndAuth(userId, auth)
                 .orElseThrow(() -> new UserException(UserErrorResult.HAVE_NOT_AUTHORIZATION));
 
         // 해당 시설에 소속된 교사 리스트 조회
@@ -335,7 +349,8 @@ public class TeacherService {
      */
     public Teacher demoteTeacher(Long userId, Long teacherId) {
         // user id로 관리교사인지 확인
-        Teacher director = teacherRepository.findDirectorById(userId)
+        Auth auth = Auth.DIRECTOR;
+        Teacher director = teacherRepository.findByIdAndAuth(userId, auth)
                 .orElseThrow(() -> new UserException(UserErrorResult.HAVE_NOT_AUTHORIZATION));
 
         // 해당 시설에 소속된 교사 리스트 조회
@@ -352,12 +367,6 @@ public class TeacherService {
         return demotedTeacher;
     }
 
-    /**
-     * 시설 정보를 조회합니다
-     */
-    public Slice<CenterDto> findCenterForSignupTeacher(CenterRequest request, Pageable pageable) {
-        return centerRepository.findForSignup(request.getSido(), request.getSigungu(), request.getCenterName(), pageable);
-    }
 
     /**
      * 교사 회원 탈퇴를 수행합니다 ( 공통 제외 교사만 가지고 있는 탈퇴 플로우 )

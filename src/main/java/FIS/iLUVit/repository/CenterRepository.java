@@ -9,10 +9,6 @@ import java.util.List;
 import java.util.Optional;
 
 public interface CenterRepository extends JpaRepository<Center, Long>, CenterRepositoryCustom {
-    /*
-    센터 id로 센터를 조회합니다
-     */
-    Optional <Center> findById(Long centerId);
 
     /*
         부모님 id별로 시설을 조회합니다.
