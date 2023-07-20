@@ -1,7 +1,7 @@
 package FIS.iLUVit.service;
 
 import FIS.iLUVit.dto.board.BoardBookmarkIdDto;
-import FIS.iLUVit.dto.board.StoryDto;
+import FIS.iLUVit.dto.board.BoardStoryDto;
 import FIS.iLUVit.domain.*;
 import FIS.iLUVit.exception.BookmarkErrorResult;
 import FIS.iLUVit.exception.BookmarkException;
@@ -16,7 +16,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.*;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 @Service
 @Transactional
@@ -33,7 +32,7 @@ public class BoardBookmarkService {
     /**
      * 즐겨찾는 게시판 전체 조회
      */
-    public List<StoryDto> findBoardBookmarkByUser(Long userId) {
+    public List<BoardStoryDto> findBoardBookmarkByUser(Long userId) {
 
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new UserException(UserErrorResult.USER_NOT_EXIST));
@@ -49,14 +48,14 @@ public class BoardBookmarkService {
                     return board.getCenter()==null? new Center(): board.getCenter();
                 })));
 
-        List<StoryDto> storyDtos = new ArrayList<>();
+        List<BoardStoryDto> boardStoryDtos = new ArrayList<>();
 
         /*
          * 시설별로 (시설-게시판리스트) 반복문 돈다
          */
         centerBoardMap.forEach((center, boardList) -> {
 
-            List<StoryDto.BoardDto> boardDtoList = new ArrayList<>();
+            List<BoardStoryDto.BoardDto> boardDtoList = new ArrayList<>();
 
             /*
              * 게시판 별로 반복문 돈다
@@ -74,18 +73,18 @@ public class BoardBookmarkService {
                     postId = posts.get(0).getId();
                 }
 
-                StoryDto.BoardDto boardDto = new StoryDto.BoardDto(boardId, boardName, postTitle, postId);
+                BoardStoryDto.BoardDto boardDto = new BoardStoryDto.BoardDto(boardId, boardName, postTitle, postId);
                 boardDtoList.add(boardDto);
             });
 
             String storyName = center.getId() == null ? "모두의 이야기" : center.getName(); // 센터 아이디 널이면 모두, 아니면 시설 이야기
 
-            StoryDto storyDto = new StoryDto(center.getId(), storyName, boardDtoList);
+            BoardStoryDto boardStoryDto = new BoardStoryDto(center.getId(), storyName, boardDtoList);
 
-            storyDtos.add(storyDto);
+            boardStoryDtos.add(boardStoryDto);
         });
 
-        return storyDtos;
+        return boardStoryDtos;
 
     }
 

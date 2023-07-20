@@ -1,10 +1,10 @@
 package FIS.iLUVit.service;
 
 import FIS.iLUVit.domain.alarms.Alarm;
-import FIS.iLUVit.dto.chat.ChatDto;
 import FIS.iLUVit.dto.chat.ChatListDto;
-import FIS.iLUVit.dto.chat.ChatRequest;
-import FIS.iLUVit.dto.chat.ChatRoomRequest;
+import FIS.iLUVit.dto.chat.ChatRoomDto;
+import FIS.iLUVit.dto.chat.ChatRoomRequestDto;
+import FIS.iLUVit.dto.chat.ChatRequestDto;
 import FIS.iLUVit.domain.*;
 import FIS.iLUVit.domain.alarms.ChatAlarm;
 import FIS.iLUVit.exception.*;
@@ -34,7 +34,7 @@ public class ChatService {
     /**
      * 쪽지 작성 ( 대화방 생성 )
      */
-    public void saveNewChat(Long userId, ChatRequest request) {
+    public void saveNewChat(Long userId, ChatRoomRequestDto request) {
 
         if (userId == null) {
             throw new ChatException(ChatErrorResult.UNAUTHORIZED_USER_ACCESS);
@@ -93,7 +93,7 @@ public class ChatService {
     /**
      * 쪽지 작성 ( 대화방 생성 후 쪽지 작성 )
      */
-    public void saveChatInRoom(Long userId, ChatRoomRequest request) {
+    public void saveChatInRoom(Long userId, ChatRequestDto request) {
 
         if (userId == null) {
             throw new ChatException(ChatErrorResult.UNAUTHORIZED_USER_ACCESS);
@@ -148,23 +148,23 @@ public class ChatService {
     /**
      * 대화방 전체 조회
      */
-    public Slice<ChatListDto> findChatRoomList(Long userId, Pageable pageable) {
+    public Slice<ChatRoomDto> findChatRoomList(Long userId, Pageable pageable) {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new ChatException(ChatErrorResult.USER_NOT_EXIST));
 
         Slice<ChatRoom> chatList = chatRoomRepository.findByReceiverOrderByUpdatedDateDesc(user, pageable);
         return chatList.map(c -> {
-            ChatListDto chatListDto = new ChatListDto(c);
+            ChatRoomDto chatRoomDto = new ChatRoomDto(c);
             String profileImage = imageService.getProfileImage(c.getSender());
-            chatListDto.updateImage(profileImage);
-            return chatListDto;
+            chatRoomDto.updateImage(profileImage);
+            return chatRoomDto;
         });
     }
 
     /**
      * 대화방 상세 조회
      */
-    public ChatDto findChatRoomDetails(Long userId, Long roomId, Pageable pageable) {
+    public ChatListDto findChatRoomDetails(Long userId, Long roomId, Pageable pageable) {
 
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new ChatException(ChatErrorResult.USER_NOT_EXIST));
@@ -174,11 +174,11 @@ public class ChatService {
 
         Slice<Chat> chatList = chatRepository.findByChatRoomAndChatRoomReceiverOrderByCreatedDateDesc(findRoom, user, pageable);
 
-        Slice<ChatDto.ChatInfo> chatInfos = chatList.map(ChatDto.ChatInfo::new);
-        ChatDto chatDto = new ChatDto(findRoom, chatInfos);
+        Slice<ChatListDto.ChatInfo> chatInfos = chatList.map(ChatListDto.ChatInfo::new);
+        ChatListDto chatListDto = new ChatListDto(findRoom, chatInfos);
         String profileImage = imageService.getProfileImage(findRoom.getSender());
-        chatDto.updateImage(profileImage);
-        return chatDto;
+        chatListDto.updateImage(profileImage);
+        return chatListDto;
     }
 
     /**

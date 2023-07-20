@@ -8,7 +8,7 @@ import java.util.List;
 @Getter
 @NoArgsConstructor
 @AllArgsConstructor
-public class StoryDto {
+public class BoardStoryDto {
     private Long centerId;
     private String storyName;
     private List<BoardDto> boardDtoList;

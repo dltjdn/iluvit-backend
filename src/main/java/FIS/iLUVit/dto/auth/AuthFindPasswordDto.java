@@ -9,7 +9,7 @@ import javax.validation.constraints.Pattern;
 @Getter
 @AllArgsConstructor
 @NoArgsConstructor
-public class FindPasswordDto {
+public class AuthFindPasswordDto {
     private String loginId;
     private String phoneNum;
     private String authNum;

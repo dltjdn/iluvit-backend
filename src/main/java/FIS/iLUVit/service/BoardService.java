@@ -3,7 +3,7 @@ package FIS.iLUVit.service;
 import FIS.iLUVit.dto.board.BoardIdDto;
 import FIS.iLUVit.dto.board.BoardListDto;
 import FIS.iLUVit.dto.board.BoardCreateDto;
-import FIS.iLUVit.dto.board.StoryPreviewDto;
+import FIS.iLUVit.dto.board.BoardStoryPreviewDto;
 import FIS.iLUVit.domain.*;
 import FIS.iLUVit.domain.enumtype.Approval;
 import FIS.iLUVit.domain.enumtype.Auth;
@@ -83,27 +83,29 @@ public class BoardService {
     /**
      * 이야기 (모두의 이야기 + 유저가 속한 시설의 이야기) 전체 조회
      */
-    public List<StoryPreviewDto> findStoryPreviewList(Long userId) {
-        List<StoryPreviewDto> result = new ArrayList<>();
-        result.add(new StoryPreviewDto(null));
+    public List<BoardStoryPreviewDto> findStoryPreviewList(Long userId) {
+        List<BoardStoryPreviewDto> result = new ArrayList<>();
+        result.add(new BoardStoryPreviewDto(null));
         if (userId == null) {
             return result;
         }
         User findUser = userRepository.findById(userId)
                 .orElseThrow(() -> new UserException(UserErrorResult.USER_NOT_EXIST));
-        if (findUser.getAuth() == Auth.PARENT) {
-            List<Child> children = childRepository.findByParentId(userId);
-            List<StoryPreviewDto> storyPreviewDtoList = children.stream()
+        if (findUser.getAuth() == Auth.PARENT && findUser instanceof Parent ) {
+            Parent parent = (Parent) findUser;
+            List<Child> children = childRepository.findByParent(parent);
+            List<BoardStoryPreviewDto> boardStoryPreviewDtoList = children.stream()
                     .filter(child -> child.getCenter() != null && child.getApproval() == Approval.ACCEPT)
-                    .map(child -> new StoryPreviewDto(child.getCenter()))
+                    .map(child -> new BoardStoryPreviewDto(child.getCenter()))
                     .collect(Collectors.toList());
-            result.addAll(storyPreviewDtoList);
-        } else {
-            Center findCenter = ((Teacher) findUser).getCenter();
-            Approval approval = ((Teacher) findUser).getApproval();
+            result.addAll(boardStoryPreviewDtoList);
+        } else if (findUser instanceof Teacher)  {
+            Teacher teacher = (Teacher) findUser;
+            Center findCenter = teacher.getCenter();
+            Approval approval = teacher.getApproval();
             if (findCenter != null && approval == Approval.ACCEPT) {
-                StoryPreviewDto storyPreviewDto = new StoryPreviewDto(findCenter);
-                result.add(storyPreviewDto);
+                BoardStoryPreviewDto boardStoryPreviewDto = new BoardStoryPreviewDto(findCenter);
+                result.add(boardStoryPreviewDto);
             }
         }
         return result;
@@ -135,15 +137,16 @@ public class BoardService {
 
         // 시설의 이야기에서 센터에 속하지 않은 회원은 게시판 생성 불가
         User findUser = userRepository.findById(userId)
-                .orElseThrow(() -> new UserException("유저 아이디 오류"));
+                .orElseThrow(() -> new UserException(UserErrorResult.USER_NOT_EXIST));
 
-        if (findUser.getAuth() == Auth.PARENT) {
-            boolean childless = childRepository.findByParentAndCenter(userId, center_id)
+        if (findUser.getAuth() == Auth.PARENT && findUser instanceof Parent) {
+            Parent parent = (Parent) findUser;
+            boolean childless = childRepository.findByParentAndCenter(parent, findCenter)
                     .isEmpty();
             if (childless) {
                 throw new BoardException(BoardErrorResult.UNAUTHORIZED_USER_ACCESS);
             }
-        } else {
+        } else if (findUser instanceof Teacher) {
             Teacher teacher = (Teacher) findUser;
             if (teacher.getCenter() == null || !Objects.equals(teacher.getCenter().getId(), center_id)) {
                 throw new BoardException(BoardErrorResult.UNAUTHORIZED_USER_ACCESS);
