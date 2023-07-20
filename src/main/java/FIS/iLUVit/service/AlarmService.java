@@ -2,6 +2,7 @@ package FIS.iLUVit.service;
 
 import FIS.iLUVit.domain.User;
 import FIS.iLUVit.domain.alarms.Alarm;
+import FIS.iLUVit.dto.alarm.AlarmDeleteDto;
 import FIS.iLUVit.dto.alarm.AlarmDto;
 import FIS.iLUVit.dto.alarm.AlarmReadDto;
 import FIS.iLUVit.exception.UserErrorResult;
@@ -56,25 +57,19 @@ public class AlarmService {
      * 전체 알림 읽었다고 처리하기
      */
     public void readAlarm(Long userId) {
-        if(userId == null)
-            throw new UserException(UserErrorResult.NOT_LOGIN);
-
         userRepository.findById(userId)
                 .orElseThrow(() -> new UserException(UserErrorResult.USER_NOT_EXIST))
                 .updateReadAlarm(Boolean.TRUE); // user의 readAlarm 필드를 true로 바꾼다
-        
     }
 
     /**
      * 전체 알림 읽었는지 안 읽었는지 여부를 조회합니다
      */
     public AlarmReadDto hasRead(Long userId) {
-        if(userId == null)
-            throw new UserException(UserErrorResult.NOT_LOGIN);
-
         Boolean readAlarm = userRepository.findById(userId)
                 .orElseThrow(() -> new UserException(UserErrorResult.USER_NOT_EXIST))
                 .getReadAlarm();
+
         AlarmReadDto alarmReadDto = new AlarmReadDto(readAlarm);
 
         return alarmReadDto;
@@ -83,9 +78,8 @@ public class AlarmService {
     /**
      * 선택한 알림들을 삭제합니다
      */
-    public void deleteSelectedAlarm(Long userId, List<Long> alarmIds) {
-        if(userId == null)
-            throw new UserException(UserErrorResult.NOT_LOGIN);
+    public void deleteSelectedAlarm(Long userId, AlarmDeleteDto alarmDeleteDto) {
+        List<Long> alarmIds = alarmDeleteDto.getAlarmIds();
 
         alarmRepository.deleteByUserIdAndIdIn(userId, alarmIds);
     }
@@ -93,15 +87,11 @@ public class AlarmService {
     /**
      * 모든 알림을 삭제합니다
      */
-    public void deleteAllAlarm(Long userId){
-        if(userId == null)
-            throw new UserException(UserErrorResult.NOT_LOGIN);
-
+    public void deleteAllAlarm(Long userId) {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new UserException(UserErrorResult.NOT_VALID_TOKEN));
 
         alarmRepository.deleteAllByUser(user);
-
     }
 
 }

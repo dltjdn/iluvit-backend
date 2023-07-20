@@ -62,8 +62,8 @@ public class AuthController {
      * (회원가입, 비밀번호찾기, 핸드폰번호 변경) 인증번호 인증
      */
     @PostMapping("")
-    public ResponseEntity<Void> authenticateAuthNum(@Login Long userId, @RequestBody AuthRequestDto request) {
-        authService.authenticateAuthNum(userId, request);
+    public ResponseEntity<Void> authenticateAuthNum(@Login Long userId, @RequestBody AuthRequestDto authRequestDto) {
+        authService.authenticateAuthNum(userId, authRequestDto);
         return ResponseEntity.ok().build();
     }
 
@@ -71,8 +71,8 @@ public class AuthController {
      * (아이디찾기) 인증번호 인증 후 유저 아이디 반환
      */
     @PostMapping("loginid")
-    public ResponseEntity<AuthLoginIdDto> authenticateAuthNumForFindLoginId(@RequestBody AuthRequestDto request) {
-        AuthLoginIdDto authLoginIdDto = authService.authenticateAuthNumForFindLoginId(request);
+    public ResponseEntity<AuthLoginIdDto> authenticateAuthNumForFindLoginId(@RequestBody AuthRequestDto authRequestDto) {
+        AuthLoginIdDto authLoginIdDto = authService.authenticateAuthNumForFindLoginId(authRequestDto);
         return ResponseEntity.ok(authLoginIdDto);
     }
 
@@ -80,8 +80,8 @@ public class AuthController {
      * (비밀번호 변경용 비밀번호찾기) 인증이 완료된 핸드폰번호인지 확인 후 비밀번호 변경
      */
     @PostMapping("password")
-    public ResponseEntity<Void> authenticateAuthNumForChangePwd(@RequestBody @Valid AuthFindPasswordDto request) {
-        authService.authenticateAuthNumForChangePwd(request);
+    public ResponseEntity<Void> authenticateAuthNumForChangePwd(@RequestBody @Valid AuthFindPasswordDto authFindPasswordDto) {
+        authService.authenticateAuthNumForChangePwd(authFindPasswordDto);
         return ResponseEntity.ok().build();
     }
 
