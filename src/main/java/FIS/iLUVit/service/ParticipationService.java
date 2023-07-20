@@ -43,9 +43,6 @@ public class ParticipationService {
      * 설명회 신청
      */
     public void registerParticipation(Long userId, Long ptDateId) {
-        if(userId == null)
-            throw new UserException(UserErrorResult.NOT_LOGIN);
-
         // 잘못된 설명회 회차 id일 경우
         PtDate ptDate = ptDateRepository.findByIdAndJoinParticipation(ptDateId)
                 .orElseThrow(() -> new PresentationException(PresentationErrorResult.WRONG_PTDATE_ID_REQUEST));
@@ -86,9 +83,6 @@ public class ParticipationService {
      * 설명회 취소 ( 대가자 있을 경우 자동 합류 )
      */
     public void cancelParticipation(Long userId, Long participationId) {
-        if(userId == null)
-            throw new UserException(UserErrorResult.NOT_LOGIN);
-
         if(participationId < 0)
             throw new ParticipationException(ParticipationErrorResult.WRONG_PARTICIPATIONID_REQUEST);
 
@@ -111,8 +105,6 @@ public class ParticipationService {
      * 신청한/취소한 설명회 전체 조회
      */
     public List<ParticipationWithStatusDto> findAllParticipationByUser(Long userId) {
-        if(userId == null)
-            throw new UserException(UserErrorResult.NOT_LOGIN);
         // 학부모 조회
         Parent parent = parentRepository.findById(userId)
                 .orElseThrow(()-> new UserException(UserErrorResult.USER_NOT_EXIST));
@@ -143,8 +135,6 @@ public class ParticipationService {
      * 신청한 설명회 전체 조회
      */
     public Slice<ParticipationDto> findRegisterParticipationByUser(Long userId, Pageable pageable){
-        if(userId == null)
-            throw new UserException(UserErrorResult.NOT_LOGIN);
         Parent parent = parentRepository.findById(userId)
                 .orElseThrow(() -> new UserException(UserErrorResult.USER_NOT_EXIST));
 
@@ -158,9 +148,6 @@ public class ParticipationService {
      * 신청을 취소한 설명회 전체 조회
      */
     public Slice<ParticipationDto> findCancelParticipationByUser(Long userId, Pageable pageable){
-        if(userId == null)
-            throw new UserException(UserErrorResult.NOT_LOGIN);
-
         Parent parent = parentRepository.findById(userId)
                 .orElseThrow(() -> new UserException(UserErrorResult.USER_NOT_EXIST));
 
@@ -174,9 +161,6 @@ public class ParticipationService {
      * 대기를 신청한 설명회 전체 조회
      */
     public Slice<ParticipationDto> findWaitingParticipationByUser(Long userId, Pageable pageable){
-        if(userId == null)
-            throw new UserException(UserErrorResult.NOT_LOGIN);
-
         Parent parent = parentRepository.findById(userId)
                 .orElseThrow(() -> new UserException(UserErrorResult.USER_NOT_EXIST));
 

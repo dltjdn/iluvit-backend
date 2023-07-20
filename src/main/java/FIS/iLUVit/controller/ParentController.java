@@ -39,8 +39,8 @@ public class ParentController {
      *  학부모 정보 수정
      */
     @PatchMapping("")
-    public ResponseEntity<Void> updateParent(@Login Long userId, @Valid @ModelAttribute ParentUpdateDto request) throws IOException {
-        parentService.modifyParentInfo(userId, request);
+    public ResponseEntity<Void> updateParent(@Login Long userId, @Valid @ModelAttribute ParentUpdateDto parentUpdateDto) throws IOException {
+        parentService.modifyParentInfo(userId, parentUpdateDto);
         return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
     }
 
@@ -48,8 +48,8 @@ public class ParentController {
      * 학부모 생성 (학부모 회원가입)
      */
     @PostMapping("signup")
-    public ResponseEntity<Void> createParent(@RequestBody @Valid ParentSignupDto request) {
-        parentService.signupParent(request);
+    public ResponseEntity<Void> createParent(@RequestBody @Valid ParentSignupDto parentSignupDto) {
+        parentService.signupParent(parentSignupDto);
         return ResponseEntity.status(HttpStatus.CREATED).build();
     }
 
