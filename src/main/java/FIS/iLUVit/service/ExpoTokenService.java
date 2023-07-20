@@ -1,7 +1,8 @@
 package FIS.iLUVit.service;
 
+import FIS.iLUVit.dto.expoToken.ExpoTokenDeviceIdDto;
 import FIS.iLUVit.dto.expoToken.ExpoTokenDto;
-import FIS.iLUVit.dto.expoToken.ExpoTokenRequest;
+import FIS.iLUVit.dto.expoToken.ExpoTokenCreateDto;
 import FIS.iLUVit.domain.ExpoToken;
 import FIS.iLUVit.domain.User;
 import FIS.iLUVit.exception.UserErrorResult;
@@ -22,7 +23,7 @@ public class ExpoTokenService {
     private final ExpoTokenRepository expoTokenRepository;
     private final UserRepository userRepository;
 
-    public Long saveToken(Long userId, ExpoTokenRequest request) {
+    public Long saveToken(Long userId, ExpoTokenCreateDto request) {
         User findUser = userRepository.getById(userId);
         ExpoToken token = ExpoToken.builder()
                 .user(findUser)
@@ -45,7 +46,7 @@ public class ExpoTokenService {
         ExpoToken expoToken = expoTokenRepository.findByTokenAndUser(token, user)
                 .orElseThrow(() -> new UserException(UserErrorResult.NOT_VALID_TOKEN));
 
-        if (!Objects.equals(expoToken.getUser().getId(), userId)) {
+        if (!expoToken.getUser().getId().equals(userId)) {
             throw new UserException(UserErrorResult.HAVE_NOT_AUTHORIZATION);
         }
         return expoToken;
@@ -54,6 +55,22 @@ public class ExpoTokenService {
     public void deleteExpoTokenByUser(Long userId, String expoToken) {
         User user = userRepository.getById(userId);
         expoTokenRepository.deleteByTokenAndUser(expoToken, user);
+    }
+
+    /**
+     * expoToken 비활성화 ( 회원가입 한 유저가 앱 삭제 후 재설치 할 때 사용 )
+     */
+    public void deactivateExpoToken(ExpoTokenDeviceIdDto expoTokenDeviceIdDto){
+        String deviceId = expoTokenDeviceIdDto.getDeviceId();
+        expoTokenRepository.updateExpoTokenDeactive(deviceId);
+    }
+
+    /**
+     * 비활성화 된 expoToken을 삭제한다
+     */
+    public void deleteDeactivatedExpoToken(ExpoTokenDeviceIdDto expoTokenDeviceIdDto){
+        String deviceId = expoTokenDeviceIdDto.getDeviceId();
+        expoTokenRepository.deleteByDeviceIdAndActive(deviceId, false);
     }
 
 }

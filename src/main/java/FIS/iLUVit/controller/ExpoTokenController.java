@@ -1,8 +1,9 @@
 package FIS.iLUVit.controller;
 
 import FIS.iLUVit.config.argumentResolver.Login;
+import FIS.iLUVit.dto.expoToken.ExpoTokenDeviceIdDto;
 import FIS.iLUVit.dto.expoToken.ExpoTokenDto;
-import FIS.iLUVit.dto.expoToken.ExpoTokenRequest;
+import FIS.iLUVit.dto.expoToken.ExpoTokenCreateDto;
 import FIS.iLUVit.service.ExpoTokenService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -29,7 +30,7 @@ public class ExpoTokenController {
      */
     @PostMapping("")
     @ResponseStatus(HttpStatus.CREATED)
-    public Long createExpoToken(@Login Long userId, @RequestBody @Valid ExpoTokenRequest request) {
+    public Long createExpoToken(@Login Long userId, @RequestBody @Valid ExpoTokenCreateDto request) {
         return expoTokenService.saveToken(userId, request);
     }
 
@@ -54,5 +55,24 @@ public class ExpoTokenController {
         String expoToken = request.getHeader("ExpoToken");
         expoTokenService.deleteExpoTokenByUser(userId, expoToken);
     }
+
+    /**
+     * expoToken 비활성화 ( 회원가입 한 유저가 앱 삭제 후 재설치 할 때 사용 )
+     */
+    @PatchMapping("deactivate")
+    public void deactivateToken( @RequestBody @Valid ExpoTokenDeviceIdDto expoTokenDeviceIdDto){
+        expoTokenService.deactivateExpoToken(expoTokenDeviceIdDto);
+    }
+
+
+    /**
+     * 비활성화 된 expoToken을 삭제한다
+     */
+    @DeleteMapping("deactivate")
+    public void deleteDeactivatedToken(@Login Long userId, @RequestBody @Valid ExpoTokenDeviceIdDto expoTokenDeviceIdDto){
+        expoTokenService.deleteDeactivatedExpoToken(expoTokenDeviceIdDto);
+    }
+
+
 
 }
