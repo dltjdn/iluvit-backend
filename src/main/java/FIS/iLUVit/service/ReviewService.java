@@ -41,7 +41,7 @@ public class ReviewService {
         return reviewDtoSlice;
     }
 
-    public Long saveNewReview(Long userId, ReviewDetailDto reviewCreateDTO) {
+    public void saveNewReview(Long userId, ReviewDetailDto reviewCreateDTO) {
 
         if (userId == null) {
             throw new UserException(UserErrorResult.NOT_VALID_TOKEN);
@@ -78,7 +78,6 @@ public class ReviewService {
         Review review = Review.createReview(reviewCreateDTO.getContent(), reviewCreateDTO.getScore(),
                 reviewCreateDTO.getAnonymous(), findUser, findCenter);
         findCenter.addScore(Score.Review); // 리뷰 작성 시 센터의 스코어 올림
-        return reviewRepository.save(review).getId();
     }
 
     public void modifyReview(Long reviewId, Long userId, String content) {
@@ -120,7 +119,7 @@ public class ReviewService {
         return reviewByCenterDtos;
     }
 
-    public Long saveComment(Long reviewId, String comment, Long teacherId) {
+    public void saveComment(Long reviewId, String comment, Long teacherId) {
         Review review = reviewRepository.findById(reviewId)
                 .orElseThrow(() -> new ReviewException(ReviewErrorResult.REVIEW_NOT_EXIST));
         Teacher teacher = teacherRepository.findById(teacherId)
@@ -138,7 +137,6 @@ public class ReviewService {
         }
 
         review.updateAnswer(comment, teacher);
-        return reviewId;
     }
 
     public void deleteComment(Long reviewId, Long teacherId) {

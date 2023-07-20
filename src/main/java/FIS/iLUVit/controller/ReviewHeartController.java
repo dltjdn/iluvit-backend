@@ -3,6 +3,8 @@ package FIS.iLUVit.controller;
 import FIS.iLUVit.config.argumentResolver.Login;
 import FIS.iLUVit.service.ReviewHeartService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -17,23 +19,24 @@ public class ReviewHeartController {
      */
 
     /**
-     * 작성자: 이창윤
-     * 내용: 리뷰 좋아요 등록
-    */
+     * 리뷰 좋아요 등록
+     */
     @PostMapping("{reviewId}")
-    public Long createReviewHeart(@PathVariable("reviewId") Long reviewId,
-                     @Login Long userId) {
-        return reviewHeartService.saveReviewHeart(reviewId, userId);
+    public ResponseEntity<Void> createReviewHeart(@PathVariable("reviewId") Long reviewId,
+                                            @Login Long userId) {
+        reviewHeartService.saveReviewHeart(reviewId, userId);
+        return ResponseEntity.status(HttpStatus.CREATED).build();
+
     }
 
     /**
-        작성자: 이창윤
-        내용: 리뷰 좋아요 취소
-    */
+     * 리뷰 좋아요 취소
+     */
     @DeleteMapping("{reviewId}")
-    public void deleteReviewHeart(@PathVariable("reviewId") Long reviewId,
+    public ResponseEntity<Void> deleteReviewHeart(@PathVariable("reviewId") Long reviewId,
                        @Login Long userId) {
         reviewHeartService.deleteReviewHeart(reviewId, userId);
+        return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
     }
 
 }

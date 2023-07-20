@@ -22,7 +22,7 @@ public class ReviewHeartService {
     private final ReviewRepository reviewRepository;
     private final UserRepository userRepository;
 
-    public Long saveReviewHeart(Long reviewId, Long userId) {
+    public void saveReviewHeart(Long reviewId, Long userId) {
         if (userId == null) {
             throw new ReviewException(ReviewErrorResult.UNAUTHORIZED_USER_ACCESS);
         }
@@ -35,7 +35,6 @@ public class ReviewHeartService {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new UserException(UserErrorResult.USER_NOT_EXIST));
         ReviewHeart reviewHeart = new ReviewHeart(findReview, user);
-        return reviewHeartRepository.save(reviewHeart).getId();
     }
 
     public void deleteReviewHeart(Long reviewId, Long userId) {
