@@ -33,7 +33,6 @@ public class CenterService {
     private final TeacherRepository teacherRepository;
     private final MapService mapService;
 
-
     /**
      * 시설 전체 조회
      */
@@ -75,7 +74,6 @@ public class CenterService {
      * 미리보기 배너 용 시설 상세 조회
      */
     public CenterBannerResponse findCenterBannerByCenter(Long userId, Long centerId) {
-
         Center center = centerRepository.findById(centerId)
                 .orElseThrow(() -> new CenterException(CenterErrorResult.CENTER_NOT_EXIST));
 
@@ -109,15 +107,16 @@ public class CenterService {
     /**
      * 시설 이미지 수정
      */
-    public void modifyCenterImage(Long centerId, Long userId, List<MultipartFile> infoImages, MultipartFile profileImage) {
-        if(userId == null)
-            throw new UserException(UserErrorResult.NOT_LOGIN);
-
+    public void modifyCenterImage(Long centerId, Long userId, CenterImageRequest centerImageRequest) {
         Teacher teacher = teacherRepository.findById(userId)
                 .orElseThrow(() -> new UserException(UserErrorResult.USER_NOT_EXIST))
                 .canWrite(centerId);
+
         // 해당하는 center 없으면 RuntimeException 반환
         Center center = teacher.getCenter();
+        List<MultipartFile> infoImages = centerImageRequest.getInfoImages();
+        MultipartFile profileImage = centerImageRequest.getProfileImage();
+
         imageService.saveInfoImages(infoImages, center);
         imageService.saveProfileImage(profileImage, center);
     }
@@ -126,9 +125,6 @@ public class CenterService {
      * 시설 정보 수정
      */
     public void modifyCenterInfo(Long userId, Long centerId, CenterDetailRequest centerDetailRequest) {
-        if(userId == null)
-            throw new UserException(UserErrorResult.NOT_LOGIN);
-
         Teacher teacher = teacherRepository.findById(userId)
                 .orElseThrow(() -> new UserException(UserErrorResult.USER_NOT_EXIST))
                 .canWrite(centerId);

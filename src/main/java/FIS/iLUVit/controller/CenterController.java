@@ -5,6 +5,7 @@ import FIS.iLUVit.dto.center.*;
 import FIS.iLUVit.dto.center.CenterAndDistancePreviewDto;
 import FIS.iLUVit.dto.center.CenterMapPreviewDto;
 import FIS.iLUVit.service.CenterService;
+import lombok.AllArgsConstructor;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Pageable;
@@ -15,6 +16,7 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import javax.validation.Valid;
 import java.util.List;
 
 @RestController
@@ -101,11 +103,10 @@ public class CenterController {
      * 시설 이미지 수정
      */
     @PatchMapping("{centerId}/image")
-    public ResponseEntity<Void> updateCenterImage( @Login Long userId,@PathVariable("centerId") Long centerId,
-                             @RequestPart(required = false) List<MultipartFile> infoImages,
-                             @RequestPart(required = false) MultipartFile profileImage){
+    public ResponseEntity<Void> updateCenterImage(@Login Long userId, @PathVariable("centerId") Long centerId,
+                                                  @Valid @ModelAttribute CenterImageRequest centerImageRequest){
 
-        centerService.modifyCenterImage(userId,centerId,infoImages, profileImage);
+        centerService.modifyCenterImage(userId, centerId, centerImageRequest);
 
         return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
     }
