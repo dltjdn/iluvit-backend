@@ -36,8 +36,8 @@ public class TeacherController {
      * 교사 정보 상세 조회
      */
     @GetMapping("")
-    public ResponseEntity<TeacherDetailResponse> getTeacherDetail(@Login Long id) throws IOException {
-        TeacherDetailResponse teacherDetailResponse = teacherService.findTeacherDetails(id);
+    public ResponseEntity<TeacherDetailResponse> getTeacherDetail(@Login Long userId) throws IOException {
+        TeacherDetailResponse teacherDetailResponse = teacherService.findTeacherDetails(userId);
         return ResponseEntity.ok(teacherDetailResponse);
     }
 
@@ -54,8 +54,8 @@ public class TeacherController {
      * 교사 정보 수정
      */
     @PatchMapping("")
-    public ResponseEntity<Void> updateTeacher(@Login Long id, @Valid @ModelAttribute TeacherDetailRequest request) throws IOException {
-        teacherService.modifyTeacherInfo(id, request);
+    public ResponseEntity<Void> updateTeacher(@Login Long userId, @Valid @ModelAttribute TeacherDetailRequest request) throws IOException {
+        teacherService.modifyTeacherInfo(userId, request);
         return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
     }
 

@@ -33,6 +33,8 @@ import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
+import static FIS.iLUVit.domain.enumtype.Auth.DIRECTOR;
+
 @Slf4j
 @Service
 @RequiredArgsConstructor
@@ -43,7 +45,6 @@ public class TeacherService {
     private final AuthService authService;
     private UserService userService;
     private final CenterRepository centerRepository;
-    private final UserRepository userRepository;
     private final TeacherRepository teacherRepository;
     private final AuthRepository authRepository;
     private final BoardRepository boardRepository;
@@ -60,9 +61,9 @@ public class TeacherService {
     /**
      * 교사의 상세 정보를 조회합니다
      */
-    public TeacherDetailResponse findTeacherDetails(Long id) throws IOException {
+    public TeacherDetailResponse findTeacherDetails(Long userId) throws IOException {
         // 유저 id로 교사 조회
-        Teacher findTeacher = teacherRepository.findById(id)
+        Teacher findTeacher = teacherRepository.findById(userId)
                 .orElseThrow(() -> new UserException(UserErrorResult.NOT_VALID_TOKEN));
 
         // 조회된 교사 정보와 프로필 이미지를 이용하여 TeacherDetailResponse 생성
@@ -80,13 +81,13 @@ public class TeacherService {
 
         // 시설 객체 초기화
         Center center = null;
-        // 시설을 선택한 경우
+        // 교사가 회원가입 시 시설을 선택한 경우
         if (request.getCenterId() != null) {
             // 선택한 시설 정보 가져오기
             center = centerRepository.findById(request.getCenterId())
                     .orElseThrow(() -> new SignupException(SignupErrorResult.NOT_EXIST_CENTER));
         }
-        // 교사 객체를 생성하고 시설과 연결
+        // 교사 객체를 생성하고 시설과 연결 ( 시설을 선택하지 않았으면 center = null )
         Teacher teacher = request.createTeacher(center, hashedPwd);
 
         // 주소를 좌표로 변환하고 시도와 시군구 정보 가져오기
@@ -105,7 +106,7 @@ public class TeacherService {
             // 시설의 관리교사에게 알림 보내기
             List<Teacher> teacherList = teacherRepository.findByCenter(center);
             teacherList.forEach(t -> {
-                if (t.getAuth() == Auth.DIRECTOR) {
+                if (t.getAuth() == DIRECTOR) {
                     Alarm alarm = new CenterApprovalReceivedAlarm(t, Auth.TEACHER, t.getCenter());
                     alarmRepository.save(alarm);
                     AlarmUtils.publishAlarmEvent(alarm);
@@ -133,9 +134,9 @@ public class TeacherService {
     /**
      * 교사 정보를 변경합니다
      */
-    public void modifyTeacherInfo(Long id, TeacherDetailRequest request) throws IOException {
+    public void modifyTeacherInfo(Long userId, TeacherDetailRequest request) throws IOException {
         // 유저 id로 교사 조회
-        Teacher findTeacher = teacherRepository.findById(id)
+        Teacher findTeacher = teacherRepository.findById(userId)
                 .orElseThrow(() -> new UserException(UserErrorResult.NOT_VALID_TOKEN));
 
         // 유저 닉네임 중복 검사
@@ -190,8 +191,7 @@ public class TeacherService {
         teacher.assignCenter(center);
 
         // 승인 요청 알람이 해당 시설의 관리교사에게 전송
-        Auth auth = Auth.DIRECTOR;
-        List<Teacher> directors = teacherRepository.findByCenterAndAuth(center, auth);
+        List<Teacher> directors = teacherRepository.findByCenterAndAuth(center, DIRECTOR);
         directors.forEach(director -> {
             Alarm alarm = new CenterApprovalReceivedAlarm(director, Auth.TEACHER, director.getCenter());
             alarmRepository.save(alarm);
@@ -212,18 +212,18 @@ public class TeacherService {
         // 교사와 연결된 시설의 교사 리스트 조회
         List<Teacher> teacherList = teacherRepository.findByCenter(escapedTeacher.getCenter());
 
-        // 시설에 속한 교사 필터링
+        // 시설에 속한 일반교사 필터링
         List<Teacher> commons = teacherList.stream()
                 .filter(teacher -> teacher.getAuth() == Auth.TEACHER)
                 .collect(Collectors.toList());
 
         // 시설에 속한 관리교사 필터링
         List<Teacher> directors = teacherList.stream()
-                .filter(teacher -> teacher.getAuth() == Auth.DIRECTOR)
+                .filter(teacher -> teacher.getAuth() == DIRECTOR)
                 .collect(Collectors.toList());
 
         // 일반 교사가 남아있을때 최후의 관리교사이 탈퇴하려면 남은 교사에게 관리교사 권한을 위임해야함
-        if (escapedTeacher.getAuth() == Auth.DIRECTOR && directors.size() == 1 && !commons.isEmpty()) {
+        if (escapedTeacher.getAuth() == DIRECTOR && directors.size() == 1 && !commons.isEmpty()) {
             throw new SignupException(SignupErrorResult.HAVE_TO_MANDATE);
         }
 
@@ -241,8 +241,7 @@ public class TeacherService {
      */
     public List<TeacherInfoForAdminDto> findTeacherApprovalList(Long userId) {
         // user id로 관리교사인지 확인
-        Auth auth = Auth.DIRECTOR;
-        Teacher director = teacherRepository.findByIdAndAuth(userId, auth)
+        Teacher director = teacherRepository.findByIdAndAuth(userId, DIRECTOR)
                 .orElseThrow(() -> new UserException(UserErrorResult.HAVE_NOT_AUTHORIZATION));
 
         // 관리교사로 등록 되어있는 시설의 교사 리스트 조회
@@ -269,8 +268,7 @@ public class TeacherService {
      */
     public Teacher acceptTeacherRegistration(Long userId, Long teacherId) {
         // user id로 관리교사인지 확인
-        Auth auth = Auth.DIRECTOR;
-        Teacher director = teacherRepository.findByIdAndAuth(userId, auth)
+        Teacher director = teacherRepository.findByIdAndAuth(userId, DIRECTOR)
                 .orElseThrow(() -> new UserException(UserErrorResult.HAVE_NOT_AUTHORIZATION));
 
         // 승인하고자 하는 교사가 해당 시설에 속해 있는지 && 대기 상태인지 확인
@@ -298,8 +296,7 @@ public class TeacherService {
      */
     public Teacher rejectTeacherRegistration(Long userId, Long teacherId) {
         // user id로 관리교사인지 확인
-        Auth auth = Auth.DIRECTOR;
-        Teacher director = teacherRepository.findByIdAndAuth(userId, auth)
+        Teacher director = teacherRepository.findByIdAndAuth(userId, DIRECTOR)
                 .orElseThrow(() -> new UserException(UserErrorResult.HAVE_NOT_AUTHORIZATION));
 
         // 승인 요청 거절/삭제 하고자 하는 교사 정보 조회
@@ -325,8 +322,7 @@ public class TeacherService {
      */
     public Teacher mandateTeacher(Long userId, Long teacherId) {
         // user id로 관리교사인지 확인
-        Auth auth = Auth.DIRECTOR;
-        Teacher director = teacherRepository.findByIdAndAuth(userId, auth)
+        Teacher director = teacherRepository.findByIdAndAuth(userId, DIRECTOR)
                 .orElseThrow(() -> new UserException(UserErrorResult.HAVE_NOT_AUTHORIZATION));
 
         // 해당 시설에 소속된 교사 리스트 조회
@@ -349,8 +345,7 @@ public class TeacherService {
      */
     public Teacher demoteTeacher(Long userId, Long teacherId) {
         // user id로 관리교사인지 확인
-        Auth auth = Auth.DIRECTOR;
-        Teacher director = teacherRepository.findByIdAndAuth(userId, auth)
+        Teacher director = teacherRepository.findByIdAndAuth(userId, DIRECTOR)
                 .orElseThrow(() -> new UserException(UserErrorResult.HAVE_NOT_AUTHORIZATION));
 
         // 해당 시설에 소속된 교사 리스트 조회
