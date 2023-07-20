@@ -18,7 +18,7 @@ public interface ExpoTokenRepository extends JpaRepository<ExpoToken, Long> {
     /*
         사용자로 expo 토큰 리스트를 조회합니다.
      */
-    List<ExpoToken> findByUser(User user);
+    List<ExpoToken> findByUserAndActive(User user, Boolean active);
 
     /*
         토큰과 사용자로 Expo 토큰을 삭제합니다.
@@ -43,9 +43,9 @@ public interface ExpoTokenRepository extends JpaRepository<ExpoToken, Long> {
     /**
      * 디바이스 id와 일치하는 엑스포 토큰을 비활성화한다
      */
-    @Modifying
+    @Modifying(clearAutomatically = true)
     @Query("UPDATE ExpoToken expoToken SET expoToken.active = false WHERE expoToken.deviceId = :deviceId")
-    void updateExpoTokenDeactive(String deviceId);
+    void updateExpoTokenDeactivated(String deviceId);
 
     /**
      * 디바이스 id 와 활성화 여부와 일치하는 엑스포 토큰을 삭제한다

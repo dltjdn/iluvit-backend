@@ -69,7 +69,7 @@ public class ExpoTokenController {
      * 비활성화 된 expoToken을 삭제한다
      */
     @DeleteMapping("deactivate")
-    public void deleteDeactivatedToken(@Login Long userId, @RequestBody @Valid ExpoTokenDeviceIdDto expoTokenDeviceIdDto){
+    public void deleteDeactivatedToken(@RequestBody @Valid ExpoTokenDeviceIdDto expoTokenDeviceIdDto){
         expoTokenService.deleteDeactivatedExpoToken(expoTokenDeviceIdDto);
     }
 

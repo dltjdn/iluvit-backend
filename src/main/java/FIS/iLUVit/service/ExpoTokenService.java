@@ -37,7 +37,7 @@ public class ExpoTokenService {
 
     public ExpoTokenDto findExpoTokenByUser(Long userId, String expoToken) {
         ExpoToken token = getExpoTokenWithUserException(expoToken, userId);
-        return new ExpoTokenDto(token.getId(), token.getToken(), token.getAccept());
+        return new ExpoTokenDto(token);
     }
 
     @NotNull
@@ -62,7 +62,7 @@ public class ExpoTokenService {
      */
     public void deactivateExpoToken(ExpoTokenDeviceIdDto expoTokenDeviceIdDto){
         String deviceId = expoTokenDeviceIdDto.getDeviceId();
-        expoTokenRepository.updateExpoTokenDeactive(deviceId);
+        expoTokenRepository.updateExpoTokenDeactivated(deviceId);
     }
 
     /**
