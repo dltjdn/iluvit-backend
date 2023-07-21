@@ -1,8 +1,9 @@
 package FIS.iLUVit.controller;
 
 import FIS.iLUVit.config.argumentResolver.Login;
+import FIS.iLUVit.dto.expoToken.ExpoTokenDeviceIdDto;
 import FIS.iLUVit.dto.expoToken.ExpoTokenDto;
-import FIS.iLUVit.dto.expoToken.ExpoTokenRequest;
+import FIS.iLUVit.dto.expoToken.ExpoTokenCreateDto;
 import FIS.iLUVit.service.ExpoTokenService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -29,21 +30,9 @@ public class ExpoTokenController {
      */
     @PostMapping("")
     @ResponseStatus(HttpStatus.CREATED)
-    public Long createExpoToken(@Login Long userId,
-            @RequestBody @Valid ExpoTokenRequest request) {
+    public Long createExpoToken(@Login Long userId, @RequestBody @Valid ExpoTokenCreateDto request) {
         return expoTokenService.saveToken(userId, request);
     }
-
-//    /**
-//     * 작성자: 이창윤
-//     * 푸쉬 알림 동의, 비동의 체크?
-//     */
-//    @PostMapping("/expoTokens/status")
-//    @ResponseStatus(HttpStatus.OK)
-//    public void modifyStatus(@Login Long userId,
-//                       @RequestBody @Valid ExpoTokenRequest request) {
-//        expoTokenService.modifyAcceptStatus(userId, request);
-//    }
 
     /**
      * 작성자: 이창윤
@@ -62,10 +51,27 @@ public class ExpoTokenController {
      */
     @DeleteMapping("")
     @ResponseStatus(HttpStatus.OK)
-    public void deleteExpoToken(@Login Long userId,
-                       HttpServletRequest request) {
+    public void deleteExpoToken(@Login Long userId, HttpServletRequest request) {
         String expoToken = request.getHeader("ExpoToken");
         expoTokenService.deleteExpoTokenByUser(userId, expoToken);
+    }
+
+    /**
+     * expoToken 비활성화 ( 회원가입 한 유저가 앱 삭제 후 재설치 할 때 사용 )
+     */
+    @PatchMapping("deactivate")
+    public void deactivateToken( @RequestBody @Valid ExpoTokenDeviceIdDto expoTokenDeviceIdDto){
+        expoTokenService.deactivateExpoToken(expoTokenDeviceIdDto);
+    }
+
+
+    /**
+     * 비활성화 된 expoToken을 삭제한다
+     */
+    @DeleteMapping("deactivate")
+    public void deleteDeactivatedToken(HttpServletRequest request){
+        String deviceId = request.getHeader("DeviceId");
+        expoTokenService.deleteDeactivatedExpoToken(deviceId);
     }
 
 }
