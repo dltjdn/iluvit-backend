@@ -47,7 +47,7 @@ public class ReviewService {
             throw new UserException(UserErrorResult.NOT_VALID_TOKEN);
         }
 
-        Parent findUser = parentRepository.findWithChildren(userId)
+        Parent findUser = parentRepository.findById(userId)
                 .orElseThrow(() -> new UserException(UserErrorResult.USER_NOT_EXIST));
 
         // 리뷰_등록_학부모의_아이가_센터에_속해있지_않음
