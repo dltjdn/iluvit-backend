@@ -6,10 +6,7 @@ import FIS.iLUVit.dto.center.*;
 import FIS.iLUVit.domain.embeddable.Score;
 import FIS.iLUVit.domain.embeddable.Theme;
 import FIS.iLUVit.domain.enumtype.KindOf;
-import FIS.iLUVit.exception.CenterErrorResult;
-import FIS.iLUVit.exception.CenterException;
-import FIS.iLUVit.exception.UserErrorResult;
-import FIS.iLUVit.exception.UserException;
+import FIS.iLUVit.exception.*;
 import FIS.iLUVit.repository.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.*;
@@ -18,13 +15,16 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 @Transactional
 @RequiredArgsConstructor
 public class CenterService {
 
+    private static final double EARTH_RADIUS_KM = 6371.0; // 지구 반지름 (단위: km)
     private final CenterRepository centerRepository;
     private final ImageService imageService;
     private final ReviewRepository reviewRepository;
@@ -32,6 +32,8 @@ public class CenterService {
     private final ParentRepository parentRepository;
     private final TeacherRepository teacherRepository;
     private final MapService mapService;
+
+
 
     /**
      * 시설 전체 조회
@@ -50,12 +52,50 @@ public class CenterService {
      * 유저가 설정한 필터 기반 시설 조회
      */
     public SliceImpl<CenterAndDistancePreviewDto> findCenterByFilterForMapList(long userId,  CenterSearchMapFilterDto centerSearchMapFilterDto, Pageable pageable) {
+        Parent parent = parentRepository.findById(userId)
+                .orElseThrow(() -> new UserException(UserErrorResult.USER_NOT_EXIST));
+
         double longitude = centerSearchMapFilterDto.getLongitude();
         double latitude = centerSearchMapFilterDto.getLatitude();
         List<Long> centerIds = centerSearchMapFilterDto.getCenterIds();
         KindOf kindOf = centerSearchMapFilterDto.getKindOf();
 
-        return centerRepository.findByFilterForMapList(longitude, latitude, userId, kindOf, centerIds, pageable);
+        List<Center> centerByFilter = null;
+        if(kindOf.equals(KindOf.ALL)){
+            centerByFilter = centerRepository.findByIdInOrderByScoreDescIdAsc(centerIds);
+        }else{
+            centerByFilter = centerRepository.findByIdInAndKindOfOrderByScoreDescIdAsc(centerIds, kindOf);
+        }
+
+        List<CenterAndDistancePreviewDto> centerAndDistancePreviewDtos = new ArrayList<>();
+
+        centerByFilter.forEach((center -> {
+
+            double avgScore = reviewRepository.findByCenter(center).stream()
+                    .mapToDouble(Review::getScore)
+                    .average()
+                    .orElse(0.0);// 또는 null
+
+            // 해당 유저 아이디가 센터북마크에 있는지 검증하는 로직
+            Optional<Prefer> prefer = centerBookmarkRepository.findByCenterAndParent(center, parent);
+
+            double distance = calculateDistance(latitude, longitude, center.getLatitude(), center.getLongitude());
+
+            CenterAndDistancePreviewDto centerAndDistancePreviewDto = new CenterAndDistancePreviewDto(center, distance, avgScore, prefer.isPresent());
+            centerAndDistancePreviewDtos.add(centerAndDistancePreviewDto);
+
+        }));
+
+        boolean hasNext = false;
+
+        if (centerAndDistancePreviewDtos.size() > pageable.getPageSize()) {
+            hasNext = true;
+            centerAndDistancePreviewDtos.remove(pageable.getPageSize());
+        }
+
+        return new SliceImpl<>(centerAndDistancePreviewDtos, pageable, hasNext);
+
+        //return centerRepository.findByFilterForMapList(longitude, latitude, userId, kindOf, centerIds, pageable);
     }
 
     /**
@@ -74,6 +114,9 @@ public class CenterService {
      * 미리보기 배너 용 시설 상세 조회
      */
     public CenterBannerResponse findCenterBannerByCenter(Long userId, Long centerId) {
+        Parent parent = parentRepository.findById(userId)
+                .orElseThrow(() -> new UserException(UserErrorResult.USER_NOT_EXIST));
+
         Center center = centerRepository.findById(centerId)
                 .orElseThrow(() -> new CenterException(CenterErrorResult.CENTER_NOT_EXIST));
 
@@ -83,7 +126,7 @@ public class CenterService {
         Double starAvg = Math.round(tempStarAvg * 10) / 10.0;
 
         // 현재 유저와 센터에 해당하는 북마크가 있을 시 센터 북마크 조회, 없을시 null
-        Prefer centerBookmark = centerBookmarkRepository.findByCenterAndParentId(center, userId)
+        Prefer centerBookmark = centerBookmarkRepository.findByCenterAndParent(center, parent)
                 .orElse(null);
 
 
@@ -133,6 +176,22 @@ public class CenterService {
         Pair<Double, Double> location = mapService.convertAddressToLocation(centerDetailRequest.getAddress());
         Pair<String, String> area = mapService.getSidoSigunguByLocation(location.getFirst(), location.getSecond());
         center.update(centerDetailRequest, location.getFirst(), location.getSecond(), area.getFirst(), area.getSecond());
+    }
+
+    /**
+     * 두 지점 사이의 거리를 계산하는 메서드
+     */
+    public static double calculateDistance(double lat1, double lon1, double lat2, double lon2) {
+        double dLat = Math.toRadians(lat2 - lat1);
+        double dLon = Math.toRadians(lon2 - lon1);
+
+        double a = Math.sin(dLat / 2) * Math.sin(dLat / 2)
+                + Math.cos(Math.toRadians(lat1)) * Math.cos(Math.toRadians(lat2))
+                * Math.sin(dLon / 2) * Math.sin(dLon / 2);
+
+        double c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+
+        return EARTH_RADIUS_KM * c;
     }
 
 }

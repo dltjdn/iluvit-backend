@@ -24,70 +24,6 @@ public class CenterRepositoryImpl extends CenterQueryMethod implements CenterRep
 
     private final JPAQueryFactory jpaQueryFactory;
 
-    /*
-        게시글 리스트를 조회합니다.
-     */
-    @Override
-    public Slice<CenterPreviewDto> findByFilter(List<Area> areas, Theme theme, Integer interestedAge, KindOf kindOf, Pageable pageable) {
-        List<CenterPreviewDto> content = jpaQueryFactory.select(new QCenterPreviewDto(center, review.score.avg()))
-                .from(center)
-                .leftJoin(center.reviews, review)
-                .where(areasIn(areas)
-                        .and(kindOfEq(kindOf))
-                        .and(themeEq(theme))
-                        .and(interestedAgeEq(interestedAge)))
-                .orderBy(center.score.desc(), center.id.asc())
-                .groupBy(center)
-                .offset(pageable.getOffset())
-                .limit(pageable.getPageSize() + 1)
-                .fetch();
-
-        boolean hasNext = false;
-        if (content.size() > pageable.getPageSize()) {
-            content.remove(pageable.getPageSize());
-            hasNext = true;
-        }
-        return new SliceImpl<>(content, pageable, hasNext);
-    }
-
-    @Override
-    public SliceImpl<CenterAndDistancePreviewDto> findByFilterForMapList(double longitude, double latitude, Long userId, KindOf kindOf, List<Long> centerIds, Pageable pageable) {
-        Expression<Double> latitudeEx = Expressions.constant(latitude);
-        Expression<Double> longitudeEx = Expressions.constant(longitude);
-        Expression<Double> param = Expressions.constant(6371.0);
-
-        NumberExpression<Double> distanceEx = acos(
-                sin(radians(latitudeEx)).multiply(sin(radians(center.latitude)))
-                        .add(cos(radians(latitudeEx)).multiply(cos(radians(center.latitude)))
-                                .multiply(cos(radians(longitudeEx).subtract(radians(center.longitude)))))).multiply(param);
-
-        List<CenterAndDistancePreviewDto> result =
-                jpaQueryFactory.select(
-                                new QCenterAndDistancePreviewDto(
-                                        distanceEx,
-                                        center.id, center.name, center.kindOf, center.estType, center.tel, center.startTime, center.endTime, center.minAge, center.maxAge, center.address, center.addressDetail, center.longitude, center.latitude, center.theme,
-                                        review.score.avg(),
-                                        center.profileImagePath, prefer.parent.id
-                                ))
-                        .from(center)
-                        .leftJoin(center.reviews, review)
-                        .leftJoin(center.prefers, prefer).on(prefer.parent.id.eq(userId))
-                        .where(kindOfEq(kindOf), center.id.in(centerIds))
-                        .groupBy(center)
-                        .orderBy(center.score.desc(), center.id.asc())
-                        .offset(pageable.getOffset())
-                        .limit(pageable.getPageSize() + 1)
-                        .fetch();
-
-        boolean hasNext = false;
-        if (result.size() > pageable.getPageSize()) {
-            hasNext = true;
-            result.remove(pageable.getPageSize());
-        }
-        return new SliceImpl<>(result, pageable, hasNext);
-
-    }
-
     @Override
     public List<CenterMapPreviewDto> findByFilterForMap(double longitude, double latitude, Double distance, String searchContent) {
 
@@ -128,6 +64,45 @@ public class CenterRepositoryImpl extends CenterQueryMethod implements CenterRep
 
         return result;
     }
+
+
+//    @Override
+//    public SliceImpl<CenterAndDistancePreviewDto> findByFilterForMapList(double longitude, double latitude, Long userId, KindOf kindOf, List<Long> centerIds, Pageable pageable) {
+//        Expression<Double> latitudeEx = Expressions.constant(latitude);
+//        Expression<Double> longitudeEx = Expressions.constant(longitude);
+//        Expression<Double> param = Expressions.constant(6371.0);
+//
+//        NumberExpression<Double> distanceEx = acos(
+//                sin(radians(latitudeEx)).multiply(sin(radians(center.latitude)))
+//                        .add(cos(radians(latitudeEx)).multiply(cos(radians(center.latitude)))
+//                                .multiply(cos(radians(longitudeEx).subtract(radians(center.longitude)))))).multiply(param);
+//
+//        List<CenterAndDistancePreviewDto> result =
+//                jpaQueryFactory.select(
+//                                new QCenterAndDistancePreviewDto(
+//                                        distanceEx,
+//                                        center.id, center.name, center.kindOf, center.estType, center.tel, center.startTime, center.endTime, center.minAge, center.maxAge, center.address, center.addressDetail, center.longitude, center.latitude, center.theme,
+//                                        review.score.avg(),
+//                                        center.profileImagePath, prefer.parent.id
+//                                ))
+//                        .from(center)
+//                        .leftJoin(center.reviews, review)
+//                        .leftJoin(center.prefers, prefer).on(prefer.parent.id.eq(userId))
+//                        .where(kindOfEq(kindOf), center.id.in(centerIds))
+//                        .groupBy(center)
+//                        .orderBy(center.score.desc(), center.id.asc())
+//                        .offset(pageable.getOffset())
+//                        .limit(pageable.getPageSize() + 1)
+//                        .fetch(); // select center.id,center.addrress from center where center.name=1;
+//
+//        boolean hasNext = false;
+//        if (result.size() > pageable.getPageSize()) {
+//            hasNext = true;
+//            result.remove(pageable.getPageSize());
+//        }
+//        return new SliceImpl<>(result, pageable, hasNext);
+//
+//    }
 
     @Override
     public List<CenterRecommendDto> findRecommendCenter(Theme theme, Location location, Pageable pageable) {

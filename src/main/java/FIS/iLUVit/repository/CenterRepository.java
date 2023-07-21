@@ -1,6 +1,7 @@
 package FIS.iLUVit.repository;
 
 import FIS.iLUVit.domain.Center;
+import FIS.iLUVit.domain.enumtype.KindOf;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -37,5 +38,7 @@ public interface CenterRepository extends JpaRepository<Center, Long>, CenterRep
             "and c.signed = true")
     Optional<Center> findByIdAndSigned(@Param("centerId") Long center_id);
 
+    List<Center> findByIdInAndKindOfOrderByScoreDescIdAsc(List<Long> centerIds, KindOf kindOf);
 
+    List<Center> findByIdInOrderByScoreDescIdAsc(List<Long> centerIds);
 }

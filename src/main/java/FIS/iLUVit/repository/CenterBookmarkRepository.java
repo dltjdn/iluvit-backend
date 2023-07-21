@@ -32,6 +32,6 @@ public interface CenterBookmarkRepository extends JpaRepository<Prefer, Long> {
         유저의 해당 센터 북마크를 조회한다.
     */
     //TODO 확인해보기
-    Optional<Prefer> findByCenterAndParentId(Center center, Long userId);
+    Optional<Prefer> findByCenterAndParent(Center center, Parent parent);
 
 }

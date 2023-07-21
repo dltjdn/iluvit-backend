@@ -24,14 +24,35 @@ public class CenterAndDistancePreviewDto {
     private String addressDetail;
     private Double longitude;               // 경도
     private Double latitude;                // 위도
+    private String profileImage;
     private Theme theme;
     private Double distance;
     private Double starAverage;
-    private String profileImage;
-    private Boolean prefer;
+    private Boolean hasPrefer;
+
+    public CenterAndDistancePreviewDto( Center center, Double distance, Double starAverage, Boolean hasPrefer) {
+        this.id = center.getId();
+        this.name = center.getName();
+        this.kindOf = center.getKindOf();
+        this.estType = center.getEstType();
+        this.tel = center.getTel();
+        this.startTime = center.getStartTime();
+        this.endTime = center.getEndTime();
+        this.minAge = center.getMinAge();
+        this.maxAge = center.getMaxAge();
+        this.address = center.getAddress();
+        this.addressDetail = center.getAddressDetail();
+        this.longitude = center.getLongitude();
+        this.latitude = center.getLatitude();
+        this.theme = center.getTheme();
+        this.profileImage = center.getProfileImagePath();
+        this.distance = distance;
+        this.starAverage = starAverage;
+        this.hasPrefer = hasPrefer;
+    }
 
     @QueryProjection
-    public CenterAndDistancePreviewDto(Center center, Double starAverage, Long prefer){
+    public CenterAndDistancePreviewDto(Center center, Double starAverage, Long hasPrefer){
         this.id = center.getId();
         this.name = center.getName();
         this.estType = center.getEstType();
@@ -47,12 +68,12 @@ public class CenterAndDistancePreviewDto {
         this.starAverage = starAverage;
         this.theme = center.getTheme();
         this.profileImage = center.getProfileImagePath();
-        this.prefer = prefer != null;
+        this.hasPrefer = hasPrefer != null;
     }
 
     @Builder
     @QueryProjection
-    public CenterAndDistancePreviewDto(Double distance, Long id, String name, KindOf kindOf, String estType, String tel, String startTime, String endTime, Integer minAge, Integer maxAge, String address, String addressDetail, Double longitude, Double latitude, Theme theme, Double starAverage, String profileImage, Long prefer) {
+    public CenterAndDistancePreviewDto(Double distance, Long id, String name, KindOf kindOf, String estType, String tel, String startTime, String endTime, Integer minAge, Integer maxAge, String address, String addressDetail, Double longitude, Double latitude, Theme theme, Double starAverage, String profileImage, Long hasPrefer) {
         this.id = id;
         this.name = name;
         this.kindOf = kindOf;
@@ -70,7 +91,7 @@ public class CenterAndDistancePreviewDto {
         this.distance = distance;
         this.starAverage = starAverage;
         this.profileImage = profileImage;
-        this.prefer = prefer != null;
+        this.hasPrefer = hasPrefer != null;
     }
 
     @QueryProjection
@@ -92,7 +113,7 @@ public class CenterAndDistancePreviewDto {
         this.distance = distance;
         this.starAverage = starAverage;
         this.profileImage = profileImage;
-        this.prefer = false;
+        this.hasPrefer = false;
     }
 
     @QueryProjection
@@ -113,27 +134,7 @@ public class CenterAndDistancePreviewDto {
         this.theme = center.getTheme();
         this.profileImage = center.getProfileImagePath();
         this.distance = distance;
-        this.prefer = false;
+        this.hasPrefer = false;
     }
 
-    public Double calculateDistance(double longitude, double latitude){
-        double theta = this.longitude - longitude;
-        double dist = Math.sin(deg2rad(this.latitude)) * Math.sin(deg2rad(latitude)) + Math.cos(deg2rad(this.latitude)) * Math.cos(deg2rad(latitude)) * Math.cos(deg2rad(theta));
-
-        dist = Math.acos(dist);
-        dist = rad2deg(dist);
-        dist = dist * 60 * 1.1515 * 1609.344;
-        this.distance = dist/1000.0;               //km 단위로 끊음
-        return this.distance;
-    }
-
-    // This function converts decimal degrees to radians
-    private double deg2rad(double deg) {
-        return (deg * Math.PI / 180.0);
-    }
-
-    // This function converts radians to decimal degrees
-    private double rad2deg(double rad) {
-        return (rad * 180 / Math.PI);
-    }
 }
