@@ -16,8 +16,10 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 @Transactional
@@ -44,8 +46,13 @@ public class CenterService {
         Double distance = centerSearchMapDto.getDistance();
         String searchContent = centerSearchMapDto.getSearchContent();
 
+        List<Center> centerByFilter = centerRepository.findByFilterForMap(longitude, latitude, distance, searchContent);
 
-        return centerRepository.findByFilterForMap(longitude, latitude, distance, searchContent);
+        List<CenterMapPreviewDto> centerMapPreviewDtos = centerByFilter.stream().map(center -> {
+            return new CenterMapPreviewDto(center.getId(), center.getName(), center.getLongitude(), center.getLatitude());
+        }).collect(Collectors.toList());
+
+        return centerMapPreviewDtos;
     }
 
     /**

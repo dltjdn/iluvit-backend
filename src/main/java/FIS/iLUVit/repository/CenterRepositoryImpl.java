@@ -1,11 +1,13 @@
 package FIS.iLUVit.repository;
 
+import FIS.iLUVit.domain.Center;
 import FIS.iLUVit.dto.center.*;
 import FIS.iLUVit.domain.embeddable.Location;
 import FIS.iLUVit.domain.embeddable.Area;
 import FIS.iLUVit.domain.embeddable.Theme;
 import FIS.iLUVit.domain.enumtype.KindOf;
 import com.querydsl.core.types.Expression;
+import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.core.types.dsl.Expressions;
 import com.querydsl.core.types.dsl.NumberExpression;
 import com.querydsl.jpa.impl.JPAQueryFactory;
@@ -13,6 +15,8 @@ import lombok.AllArgsConstructor;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
 import org.springframework.data.domain.SliceImpl;
+
+import java.util.ArrayList;
 import java.util.List;
 import static FIS.iLUVit.domain.QCenter.center;
 import static FIS.iLUVit.domain.QPrefer.prefer;
@@ -25,44 +29,30 @@ public class CenterRepositoryImpl extends CenterQueryMethod implements CenterRep
     private final JPAQueryFactory jpaQueryFactory;
 
     @Override
-    public List<CenterMapPreviewDto> findByFilterForMap(double longitude, double latitude, Double distance, String searchContent) {
+    public List<Center> findByFilterForMap(double longitude, double latitude, Double distance, String searchContent) {
 
-        Expression<Double> latitudeEx = Expressions.constant(latitude);
-        Expression<Double> longitudeEx = Expressions.constant(longitude);
-        Expression<Double> param = Expressions.constant(6371.0);
+        NumberExpression distanceEx = distanceRange(longitude, latitude); // 센터와 나의 위치간의 거리 계산
+        BooleanExpression namePredicate = center.name.contains(searchContent);
+        BooleanExpression kindOfPredicate = center.kindOf.eq(KindOf.ChildHouse).or(center.kindOf.eq(KindOf.Kindergarten));
 
-        NumberExpression<Double> distanceEx = acos(
-                sin(radians(latitudeEx)).multiply(sin(radians(center.latitude)))
-                        .add(cos(radians(latitudeEx)).multiply(cos(radians(center.latitude)))
-                                .multiply(cos(radians(longitudeEx).subtract(radians(center.longitude)))))).multiply(param);
+        List<Center> centers;
 
-        List<CenterMapPreviewDto> result = jpaQueryFactory.select(new QCenterMapPreviewDto(center.id, center.name, center.longitude, center.latitude))
-                .from(center)
-                .leftJoin(center.reviews, review)
-                .groupBy(center)
-                .where(centerNameEq(searchContent)
-                        , (kindOfEq(KindOf.Kindergarten).or(kindOfEq(KindOf.ChildHouse))))
-                .having(distanceEx.loe(distance))
-                .orderBy(center.score.desc())
-                .limit(100)
-                .fetch();
-
-
-        while (result.size() <= 10 && searchContent != null && !searchContent.equals("") && distance <= 1600) {
-            distance = distance * 3;
-            result = jpaQueryFactory.select(new QCenterMapPreviewDto(center.id, center.name, center.longitude, center.latitude))
+        while (true) {
+            centers = jpaQueryFactory.select(center)
                     .from(center)
-                    .leftJoin(center.reviews, review)
                     .groupBy(center)
-                    .where(centerNameEq(searchContent)
-                            , (kindOfEq(KindOf.Kindergarten).or(kindOfEq(KindOf.ChildHouse))))
+                    .where(namePredicate.and(kindOfPredicate))
                     .having(distanceEx.loe(distance))
                     .orderBy(center.score.desc())
                     .limit(100)
                     .fetch();
+
+            if(centers.size() > 10 || searchContent == null || searchContent.equals("") || distance > 1600) break;
+
+            distance = distance * 3;
         }
 
-        return result;
+        return centers;
     }
 
 

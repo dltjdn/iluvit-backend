@@ -41,4 +41,6 @@ public interface CenterRepository extends JpaRepository<Center, Long>, CenterRep
     List<Center> findByIdInAndKindOfOrderByScoreDescIdAsc(List<Long> centerIds, KindOf kindOf);
 
     List<Center> findByIdInOrderByScoreDescIdAsc(List<Long> centerIds);
+
+    List<Center> findByNameContainingAndKindOfInOrderByScoreDesc(String searchContent, List<KindOf> kindOfs);
 }

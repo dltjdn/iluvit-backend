@@ -1,5 +1,6 @@
 package FIS.iLUVit.repository;
 
+import FIS.iLUVit.domain.Center;
 import FIS.iLUVit.dto.center.CenterDto;
 import FIS.iLUVit.dto.center.CenterRecommendDto;
 import FIS.iLUVit.domain.embeddable.Location;
@@ -19,7 +20,7 @@ public interface CenterRepositoryCustom {
     /*
         지도에 대한 필터로 시설 지도 미리보기 DTO 리스트를 조회합니다.
     */
-    List<CenterMapPreviewDto> findByFilterForMap(double longitude, double latitude, Double distance, String searchContent);
+    List<Center> findByFilterForMap(double longitude, double latitude, Double distance, String searchContent);
 
     /*
         지도 리스트에 대한 필터로 시설과 거리 미리보기 DTO를 조회합니다.

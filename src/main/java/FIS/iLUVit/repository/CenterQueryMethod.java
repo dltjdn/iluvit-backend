@@ -4,6 +4,7 @@ import FIS.iLUVit.domain.embeddable.Area;
 import FIS.iLUVit.domain.embeddable.Theme;
 import FIS.iLUVit.domain.enumtype.KindOf;
 import FIS.iLUVit.exception.CenterException;
+import com.querydsl.core.types.Expression;
 import com.querydsl.core.types.dsl.*;
 
 import java.lang.reflect.InvocationTargetException;
@@ -69,13 +70,15 @@ public class CenterQueryMethod {
         위도와 경도를 사용하여 두 지점 사이의 거리를 계산하는 수식을 작성합니다. (Harversine 공식을 적용하여 지구상에서의 거리를 계산하고, 계산된 거리를 표현하는 NumberExpression 객체를 반환함)
      */
     protected NumberExpression distanceRange(double longitude, double latitude) {
-        NumberExpression<Double> distanceExpression =
-                acos(sin(radians(center.latitude)))
-                        .multiply(sin(radians(Expressions.constant(latitude)))
-                                .add(cos(radians(center.latitude))
-                                        .multiply(cos(radians(Expressions.constant(latitude)))
-                                                .multiply(cos(radians(center.longitude)).subtract(radians(Expressions.constant(longitude))))))).multiply(6371);
-        return distanceExpression;
+        Expression<Double> latitudeEx = Expressions.constant(latitude);
+        Expression<Double> longitudeEx = Expressions.constant(longitude);
+        Expression<Double> param = Expressions.constant(6371.0);
+
+        NumberExpression<Double> distanceEx = acos(
+                sin(radians(latitudeEx)).multiply(sin(radians(center.latitude)))
+                        .add(cos(radians(latitudeEx)).multiply(cos(radians(center.latitude)))
+                                .multiply(cos(radians(longitudeEx).subtract(radians(center.longitude)))))).multiply(param);
+        return distanceEx;
     }
 
     /*
@@ -100,11 +103,11 @@ public class CenterQueryMethod {
         return centerName == null ? null : center.name.contains(centerName);
     }
 
-    /*
-        사용자 ID를 기반으로 조건을 생성합니다. (사용자 ID가 null인 경우 null을 반환하며, 그렇지 않은 경우 주어진 사용자 ID와 pathBase 객체가 동일한지를 검사하는 조건을 생성하여 반환함)
-     */
-    protected BooleanExpression userIdEq(NumberPath<Long> pathBase, Long userId) {
-        return userId == null ? null : pathBase.eq(userId);
-    }
+//    /*
+//        사용자 ID를 기반으로 조건을 생성합니다. (사용자 ID가 null인 경우 null을 반환하며, 그렇지 않은 경우 주어진 사용자 ID와 pathBase 객체가 동일한지를 검사하는 조건을 생성하여 반환함)
+//     */
+//    protected BooleanExpression userIdEq(NumberPath<Long> pathBase, Long userId) {
+//        return userId == null ? null : pathBase.eq(userId);
+//    }
 
 }
