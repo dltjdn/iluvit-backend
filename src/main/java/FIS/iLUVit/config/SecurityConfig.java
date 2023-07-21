@@ -58,6 +58,7 @@ public class SecurityConfig {
                             , "/post/**", "/post-heart/**", "/presentation/**", "/report/**", "/review/**", "/review-heart/**", "/scrap/**", "/user/**", "/password/**")
                         .hasAnyRole("TEACHER", "DIRECTOR", "PARENT")
                     .anyRequest().permitAll();
+
         return http.build();
     }
 

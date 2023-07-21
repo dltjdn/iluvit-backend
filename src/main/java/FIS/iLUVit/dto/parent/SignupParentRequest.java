@@ -3,6 +3,8 @@ package FIS.iLUVit.dto.parent;
 import FIS.iLUVit.domain.Parent;
 import FIS.iLUVit.domain.embeddable.Theme;
 import FIS.iLUVit.domain.enumtype.Auth;
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.*;
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotNull;
@@ -34,6 +36,7 @@ public class SignupParentRequest {
     private String detailAddress;
     private Theme theme;
     @NotNull(message = "입력하지 않은 목록이 있습니다.")
+    @JsonProperty("interestAge")
     private Integer interestAge;
 
     public Parent createParent(String pwd) {
@@ -51,5 +54,10 @@ public class SignupParentRequest {
                 .auth(Auth.PARENT)
                 .readAlarm(true)
                 .build();
+    }
+
+    @JsonCreator
+    public SignupParentRequest(@JsonProperty("interestAge") Integer interestAge) {
+        this.interestAge = interestAge;
     }
 }
