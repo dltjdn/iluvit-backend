@@ -12,11 +12,11 @@ public interface ImageService {
 
     void saveProfileImage(MultipartFile image, BaseImageEntity entity);
 
-    String getProfileImage(BaseImageEntity entity);
+    //String getProfileImage(BaseImageEntity entity);
 
-    List<String> getInfoImages(BaseImageEntity entity);
+   // List<String> getInfoImages(BaseImageEntity entity);
 
-    String getProfileImage(String profileImagePath);
+    //String getProfileImage(String profileImagePath);
 
     List<String> getInfoImages(String infoImagePath);
 

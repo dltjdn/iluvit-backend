@@ -45,9 +45,9 @@ public class CenterResponse {
     private BasicInfra basicInfra;          // 기본시설
     private Theme theme;                    // 테마
     private String profileImage;
-    private List<String> infoImages = new ArrayList<>();
-    private List<String> programs = new ArrayList<>();
-    private List<String> addInfos = new ArrayList<>();
+    private List<String> infoImages;
+    private List<String> programs;
+    private List<String> addInfos;
 
     public CenterResponse(Center center,String profileImage,List<String> infoImages){
         this.id = center.getId();

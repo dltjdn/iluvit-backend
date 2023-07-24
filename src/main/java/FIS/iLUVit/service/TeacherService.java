@@ -65,7 +65,7 @@ public class TeacherService {
         Teacher findTeacher = teacherRepository.findById(id)
                 .orElseThrow(() -> new UserException(UserErrorResult.NOT_VALID_TOKEN));
 
-        TeacherDetailResponse response = new TeacherDetailResponse(findTeacher,imageService.getProfileImage(findTeacher));
+        TeacherDetailResponse response = new TeacherDetailResponse(findTeacher,findTeacher.getProfileImagePath());
 
         return response;
     }
@@ -104,7 +104,7 @@ public class TeacherService {
         Location location = new Location(loAndLat, hangjung);
         findTeacher.updateLocation(location);
 
-        TeacherDetailResponse response = new TeacherDetailResponse(findTeacher,imageService.getProfileImage(findTeacher));
+        TeacherDetailResponse response = new TeacherDetailResponse(findTeacher,findTeacher.getProfileImagePath());
         imageService.saveProfileImage(request.getProfileImg(), findTeacher);
 
 
@@ -244,7 +244,7 @@ public class TeacherService {
             // 요청한 원장은 빼고 시설에 연관된 교사들 보여주기
             if (!Objects.equals(teacher.getId(), userId)) {
                 TeacherInfoForAdminDto teacherInfoForAdmin =
-                        new TeacherInfoForAdminDto(teacher,imageService.getProfileImage(teacher));
+                        new TeacherInfoForAdminDto(teacher,teacher.getProfileImagePath());
                 response.add(teacherInfoForAdmin);
             }
         });

@@ -15,13 +15,6 @@ public class CenterSearchMapFilterDto {
     private double longitude;
     @NotNull
     private double latitude;     // 시설종류
-
     private List<Long> centerIds = new ArrayList<>();
 
-    @Builder
-    public CenterSearchMapFilterDto(double longitude, double latitude, List<Long> idList) {
-        this.longitude = longitude;
-        this.latitude = latitude;
-        this.centerIds = idList;
-    }
 }

@@ -190,16 +190,10 @@ public class PostService {
     }
 
     public PostResponse getPostResponseDto(Post post, Long userId) {
-//        String postDir = imageService.getPostDir(post.getId());
-//        List<String> encodedInfoImage = imageService.getEncodedInfoImage(postDir, post.getImgCnt());
-//        String userProfileDir = imageService.getUserProfileDir();
-//        String encodedProfileImage = imageService.getEncodedProfileImage(userProfileDir, post.getUser().getId());
-        return new PostResponse(post, imageService.getInfoImages(post), imageService.getProfileImage(post.getUser()), userId);
+        return new PostResponse(post, imageService.getInfoImages(post.getInfoImagePath()), post.getUser().getProfileImagePath(), userId);
     }
 
     public void setPreviewImage(PostPreviewDto preview) {
-//        String postDir = imageService.getPostDir(preview.getPost_id());
-//        List<String> encodedInfoImage = imageService.getEncodedInfoImage(postDir, preview.getImgCnt());
         List<String> infoImages = imageService.getInfoImages(preview.getPreviewImage());
         preview.updatePreviewImage(infoImages);
     }
@@ -299,7 +293,7 @@ public class PostService {
             List<BoardPreviewDto.PostInfo> postInfos = postList.stream()
                     .map(post -> {
                         BoardPreviewDto.PostInfo postInfo = new BoardPreviewDto.PostInfo(post);
-                        postInfo.addImagesInPostInfo(imageService.getInfoImages(post));
+                        postInfo.addImagesInPostInfo(imageService.getInfoImages(post.getInfoImagePath()));
                         return postInfo;
                     })
                     .collect(Collectors.toList());
@@ -313,7 +307,7 @@ public class PostService {
         List<BoardPreviewDto.PostInfo> postInfoList = hotPosts.stream()
                 .map((Post post) -> {
                     BoardPreviewDto.PostInfo postInfo = new BoardPreviewDto.PostInfo(post);
-                    postInfo.addImagesInPostInfo(imageService.getInfoImages(post));
+                    postInfo.addImagesInPostInfo(imageService.getInfoImages(post.getInfoImagePath()));
                     return postInfo;
                 })
                 .collect(Collectors.toList());

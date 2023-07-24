@@ -104,13 +104,15 @@ public class CenterService {
     /**
      * 시설 상세 조회
      */
-    public CenterResponse findCenterDetailsByCenter(Long id) {
-        Center center = centerRepository.findById(id)
-                .orElseThrow(() -> new CenterException("해당 센터 존재하지 않음"));
+    public CenterResponse findCenterDetailsByCenter(Long centerId) {
+        Center center = centerRepository.findById(centerId)
+                .orElseThrow(() -> new CenterException(CenterErrorResult.CENTER_NOT_EXIST));
+
         // Center 가 id 에 의해 조회 되었으므로 score에 1 추가
         center.addScore(Score.GET);
-        CenterResponse result = new CenterResponse(center,imageService.getProfileImage(center),imageService.getInfoImages(center));
-        return result;
+
+        CenterResponse centerResponse = new CenterResponse(center,center.getProfileImagePath(),imageService.getInfoImages(center.getInfoImagePath()));
+        return centerResponse;
     }
 
     /**
@@ -129,14 +131,15 @@ public class CenterService {
         Double starAvg = Math.round(tempStarAvg * 10) / 10.0;
 
         // 현재 유저와 센터에 해당하는 북마크가 있을 시 센터 북마크 조회, 없을시 null
-        Prefer centerBookmark = centerBookmarkRepository.findByCenterAndParent(center, parent)
-                .orElse(null);
+        Optional<Prefer> centerBookmark = centerBookmarkRepository.findByCenterAndParent(center, parent);
 
+        Boolean hasCenterBookmark = centerBookmark.isPresent();
 
         List<String> infoImages = imageService.getInfoImages(center.getInfoImagePath());
 
-        return new CenterBannerResponse(center.getId(),center.getName(), center.getSigned(), center.getRecruit(),centerBookmark, center.getProfileImagePath(), starAvg, infoImages);
+        CenterBannerResponse centerBannerResponse = new CenterBannerResponse(center, infoImages, hasCenterBookmark, starAvg);
 
+        return centerBannerResponse;
     }
 
     /**
@@ -144,10 +147,13 @@ public class CenterService {
      */
     public List<CenterRecommendDto> findRecommendCenterWithTheme(Long userId) {
         Parent parent = parentRepository.findById(userId)
-                .orElseThrow(() -> new UserException("해당 유저가 존재 하지 않습니다."));
+                .orElseThrow(() -> new UserException(UserErrorResult.USER_NOT_EXIST));
+
         Theme theme = parent.getTheme();
         Location location = parent.getLocation();
-        return centerRepository.findRecommendCenter(theme, location, PageRequest.of(0, 10, Sort.by("score")));
+        PageRequest pageRequest = PageRequest.of(0, 10, Sort.by("score"));
+
+        return centerRepository.findRecommendCenter(theme, location, pageRequest);
     }
 
     /**
@@ -158,13 +164,11 @@ public class CenterService {
                 .orElseThrow(() -> new UserException(UserErrorResult.USER_NOT_EXIST))
                 .canWrite(centerId);
 
-        // 해당하는 center 없으면 RuntimeException 반환
-        Center center = teacher.getCenter();
         List<MultipartFile> infoImages = centerImageRequest.getInfoImages();
         MultipartFile profileImage = centerImageRequest.getProfileImage();
 
-        imageService.saveInfoImages(infoImages, center);
-        imageService.saveProfileImage(profileImage, center);
+        imageService.saveInfoImages(infoImages, teacher.getCenter());
+        imageService.saveProfileImage(profileImage, teacher.getCenter());
     }
 
     /**
@@ -175,6 +179,7 @@ public class CenterService {
                 .orElseThrow(() -> new UserException(UserErrorResult.USER_NOT_EXIST))
                 .canWrite(centerId);
         // 해당하는 center 없으면 RuntimeException 반환
+
         Center center = teacher.getCenter();
         Pair<Double, Double> location = mapService.convertAddressToLocation(centerDetailRequest.getAddress());
         Pair<String, String> area = mapService.getSidoSigunguByLocation(location.getFirst(), location.getSecond());

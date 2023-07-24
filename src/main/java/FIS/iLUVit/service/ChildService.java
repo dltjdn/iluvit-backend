@@ -55,7 +55,7 @@ public class ChildService {
 
         findParent.getChildren().forEach(child -> {
             childDtos.add(
-                    new ChildDto(child, imageService.getProfileImage(child))
+                    new ChildDto(child, child.getProfileImagePath())
             );
         });
 
@@ -101,7 +101,7 @@ public class ChildService {
         Child child = childRepository.findByIdAndParent(childId, (Parent)user)
                 .orElseThrow(() -> new UserException(UserErrorResult.NOT_VALID_REQUEST));
 
-        ChildDetailResponse childDetailResponse = new ChildDetailResponse(child,imageService.getProfileImage(child));
+        ChildDetailResponse childDetailResponse = new ChildDetailResponse(child,child.getProfileImagePath());
 
         return childDetailResponse;
     }
@@ -120,7 +120,7 @@ public class ChildService {
         // 프로필 수정
         updatedChild.update(request.getName(), request.getBirthDate());
 
-        ChildDetailResponse childDetailResponse = new ChildDetailResponse(updatedChild, imageService.getProfileImage(updatedChild));
+        ChildDetailResponse childDetailResponse = new ChildDetailResponse(updatedChild, updatedChild.getProfileImagePath());
 
         // 프로필 이미지 수정
         imageService.saveProfileImage(request.getProfileImg(), updatedChild);
@@ -227,7 +227,7 @@ public class ChildService {
             // 해당시설에 대해 거절/삭제 당하지 않은 아이들만 보여주기
             if (child.getApproval() != Approval.REJECT) {
                 ChildInfoForAdminDto childInfo =
-                        new ChildInfoForAdminDto(child, imageService.getProfileImage(child));
+                        new ChildInfoForAdminDto(child, child.getProfileImagePath());
 
                 childInfoForAdminDtos.add(childInfo);
             }

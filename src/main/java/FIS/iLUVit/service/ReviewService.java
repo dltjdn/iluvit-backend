@@ -113,7 +113,7 @@ public class ReviewService {
                     review.getId(), review.getParent().getId(), review.getParent().getNickName(), review.getContent(), review.getScore(),
                     review.getCreateDate(), review.getCreateTime(), review.getUpdateDate(), review.getUpdateTime(),
                     teacherId, review.getAnswer(), review.getAnswerCreateDate(), review.getAnswerCreateTime(),
-                    review.getAnonymous(), reviewHeartNum, imageService.getProfileImage(review.getParent())
+                    review.getAnonymous(), reviewHeartNum, review.getParent().getProfileImagePath()
             );
         });
 

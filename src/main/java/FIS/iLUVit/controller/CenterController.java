@@ -92,7 +92,6 @@ public class CenterController {
      * 시설 정보 수정
      */
     @PatchMapping("{centerId}")
-
     public ResponseEntity<Void> updateCenterInfo(@Login Long userId, @PathVariable("centerId") Long centerId,
                                                  @RequestBody @Validated CenterDetailRequest centerDetailRequest){
 

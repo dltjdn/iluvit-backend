@@ -208,25 +208,25 @@ public class ImageServiceImpl implements ImageService {
         return targetKeys;
     }
 
-    public String getProfileImage(BaseImageEntity entity) {
-        String profileImagePath = entity.getProfileImagePath();
-        if (profileImagePath == null)
-            return null;
-        return profileImagePath;
-    }
+//    public String getProfileImage(BaseImageEntity entity) {
+//        String profileImagePath = entity.getProfileImagePath();
+//        if (profileImagePath == null)
+//            return null;
+//        return profileImagePath;
+//    }
 
-    public List<String> getInfoImages(BaseImageEntity entity) {
-        String infoImagePath = entity.getInfoImagePath();
-        if (infoImagePath == null || infoImagePath.equals(""))
-            return new ArrayList<>();
-        return List.of(infoImagePath.split(","));
-    }
+//    public List<String> getInfoImages(BaseImageEntity entity) {
+//        String infoImagePath = entity.getInfoImagePath();
+//        if (infoImagePath == null || infoImagePath.equals(""))
+//            return new ArrayList<>();
+//        return List.of(infoImagePath.split(","));
+//    }
 
-    public String getProfileImage(String profileImagePath) {
-        if(profileImagePath == null)
-            return null;
-        return profileImagePath;
-    }
+//    public String getProfileImage(String profileImagePath) {
+//        if(profileImagePath == null)
+//            return null;
+//        return profileImagePath;
+//    }
 
     public List<String> getInfoImages(String infoImagePath){
         if(infoImagePath == null || infoImagePath.equals(""))
