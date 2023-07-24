@@ -152,7 +152,11 @@ public class CenterService {
         Location location = parent.getLocation();
         PageRequest pageRequest = PageRequest.of(0, 10, Sort.by("score"));
 
-        return centerRepository.findRecommendCenter(theme, location, pageRequest);
+        List<CenterRecommendDto> centerRecommendDtos = centerRepository.findRecommendCenter(theme, location, pageRequest).stream()
+                .map(CenterRecommendDto::new) // Center를 CenterRecommendDto로 변환
+                .collect(Collectors.toList());
+
+        return centerRecommendDtos;
     }
 
     /**

@@ -23,6 +23,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
+import org.springframework.data.domain.SliceImpl;
 import org.springframework.data.util.Pair;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -355,11 +356,22 @@ public class TeacherService {
     }
 
     /**
-     *   작성자: 이승범
-     *   작성내용: 회원가입 과정에서 필요한 센터정보 가져오기
+     *    회원가입 과정에서 필요한 센터정보 가져오기
      */
     public Slice<CenterDto> findCenterForSignupTeacher(CenterRequest request, Pageable pageable) {
-        return centerRepository.findForSignup(request.getSido(), request.getSigungu(), request.getCenterName(), pageable);
+        List<Center> centers = centerRepository.findForSignup(request.getSido(), request.getSigungu(), request.getCenterName());
+
+        List<CenterDto> centerDtos = centers.stream()
+                .map(CenterDto::new) // Center를 CenterDto로 변환
+                .collect(Collectors.toList());
+
+        boolean hasNext = false;
+        if (centers.size() > pageable.getPageSize()) {
+            hasNext = true;
+            centers.remove(pageable.getPageSize());
+        }
+
+        return new SliceImpl<>(centerDtos, pageable, hasNext);
     }
 
     /**

@@ -1,5 +1,6 @@
 package FIS.iLUVit.dto.center;
 
+import FIS.iLUVit.domain.Center;
 import FIS.iLUVit.domain.embeddable.Area;
 import FIS.iLUVit.domain.embeddable.Theme;
 import FIS.iLUVit.domain.enumtype.KindOf;
@@ -25,25 +26,10 @@ public class CenterRecommendDto {
         this.profileImage = profileImage;
     }
 
-    @Getter
-    @NoArgsConstructor
-    public static class CenterSearchFilterDto {
-
-        @Size(min = 1, max = 3, message = "최소 1개 이상의 지역을 선택해야합니다")
-        private List<Area> areas = new ArrayList<>();
-        private Theme theme;
-        private Integer interestedAge;
-        private KindOf kindOf;                  // 시설 종류
-        private String searchContent;
-
-        @Builder
-        public CenterSearchFilterDto(List<Area> areas, Theme theme, Integer interestedAge, KindOf kindOf, String searchContent) {
-            this.areas = areas;
-            this.theme = theme;
-            this.interestedAge = interestedAge;
-            this.kindOf = kindOf;
-            this.searchContent = searchContent;
-        }
-
+    public CenterRecommendDto(Center center){
+        this.centerId = center.getId();
+        this.centerName = center.getName();
+        this.profileImage = center.getProfileImagePath();
     }
+
 }

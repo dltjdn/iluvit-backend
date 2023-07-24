@@ -17,6 +17,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
+import org.springframework.data.domain.SliceImpl;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -25,6 +26,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 
 @Slf4j
@@ -156,7 +158,18 @@ public class ChildService {
      * 아이 추가용 시설 정보 조회
      */
     public Slice<CenterDto> findCenterForAddChild(CenterRequest request, Pageable pageable) {
-        return centerRepository.findCenterForAddChild(request.getSido(), request.getSigungu(), request.getCenterName(), pageable);
+        List<CenterDto> centerDtos = centerRepository.findCenterForAddChild(request.getSido(), request.getSigungu(), request.getCenterName()).stream()
+                .map(CenterDto::new)
+                .collect(Collectors.toList());
+
+        boolean hasNext = false;
+        if (centerDtos.size() > pageable.getPageSize()) {
+            hasNext = true;
+            centerDtos.remove(pageable.getPageSize());
+        }
+
+        return new SliceImpl<>(centerDtos, pageable, hasNext);
+
     }
 
     /**

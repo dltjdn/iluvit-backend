@@ -1,5 +1,6 @@
 package FIS.iLUVit.dto.center;
 
+import FIS.iLUVit.domain.Center;
 import com.querydsl.core.annotations.QueryProjection;
 import lombok.Builder;
 import lombok.Getter;
@@ -18,5 +19,11 @@ public class CenterDto {
         this.id = id;
         this.name = centerName;
         this.address = centerAddress;
+    }
+
+    public CenterDto (Center center){
+        this.id = center.getId();
+        this.name = center.getName();
+        this.address = center.getAddress();
     }
 }

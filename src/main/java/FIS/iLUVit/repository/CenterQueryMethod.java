@@ -1,6 +1,7 @@
 package FIS.iLUVit.repository;
 
 import FIS.iLUVit.domain.embeddable.Area;
+import FIS.iLUVit.domain.embeddable.QTheme;
 import FIS.iLUVit.domain.embeddable.Theme;
 import FIS.iLUVit.domain.enumtype.KindOf;
 import FIS.iLUVit.exception.CenterException;
@@ -15,7 +16,6 @@ import static FIS.iLUVit.domain.QCenter.center;
 import static com.querydsl.core.types.dsl.MathExpressions.*;
 
 public class CenterQueryMethod {
-
     /*
         areas 리스트가 비어있는지 확인하여 비어있는 경우 null을 반환하고, 비어있지 않은 경우 center.area.in(areas)를 반환합니다.
      */
@@ -43,24 +43,26 @@ public class CenterQueryMethod {
     protected BooleanExpression themeEq(Theme theme) {
         try {
             if (theme == null) return null;
+
+            QTheme qTheme = center.theme;
+
             // 관심 목록 추출한 trueList
             List<String> trueList = theme.trueList();
             // BooleanExpression 초기화 => in 절도 사용 할 수 없다. theme 별로 나뉘어져 있으므로
+
             BooleanExpression booleanExpression = null;
+
             for (String name : trueList) {
                 // trueList 에 해당하는 BooleanExp 가져온다.
-                BooleanPath type = (BooleanPath) center.theme.getClass().getDeclaredField(name).get(center.theme);
-                Method eq = center.theme.getClass().getDeclaredField(name).getType().getMethod("eq", Boolean.class);
+                BooleanExpression expression = (BooleanExpression) qTheme.getClass().getField(name).get(qTheme);
                 if (booleanExpression == null) {
-                    eq.setAccessible(true);
-                    booleanExpression = (BooleanExpression) eq.invoke(type, true);
+                    booleanExpression = expression;
                 } else {
-                    eq.setAccessible(true);
-                    booleanExpression = booleanExpression.or((BooleanExpression) eq.invoke(type, true));
+                    booleanExpression = booleanExpression.or(expression);
                 }
             }
             return booleanExpression;
-        } catch (NoSuchFieldException | NoSuchMethodException | IllegalAccessException | InvocationTargetException e) {
+        } catch (NoSuchFieldException| IllegalAccessException e) {
             e.printStackTrace();
             throw new CenterException("센터 repository에서 오류");
         }
@@ -103,11 +105,5 @@ public class CenterQueryMethod {
         return centerName == null ? null : center.name.contains(centerName);
     }
 
-//    /*
-//        사용자 ID를 기반으로 조건을 생성합니다. (사용자 ID가 null인 경우 null을 반환하며, 그렇지 않은 경우 주어진 사용자 ID와 pathBase 객체가 동일한지를 검사하는 조건을 생성하여 반환함)
-//     */
-//    protected BooleanExpression userIdEq(NumberPath<Long> pathBase, Long userId) {
-//        return userId == null ? null : pathBase.eq(userId);
-//    }
 
 }
