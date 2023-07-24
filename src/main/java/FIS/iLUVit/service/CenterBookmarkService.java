@@ -34,7 +34,7 @@ public class CenterBookmarkService {
     private final ReviewRepository reviewRepository;
 
     /**
-     *  유저가 즐겨찾기한 시설을 조회합니다
+     * 즐겨찾는 시설 전체 조회
      */
     public Slice<CenterPreviewDto> findCentersByCenterBookmark(Long userId, Pageable pageable) {
         Parent parent = parentRepository.findById(userId)
@@ -67,10 +67,9 @@ public class CenterBookmarkService {
 
 
     /**
-     *   작성자: 이승범
-     *   작성내용: 해당 시설을 시설 즐겨찾기에 등록합니다
+     * 시설 즐겨찾기 등록
      */
-    public Prefer saveCenterBookmark(Long userId, Long centerId) {
+    public void saveCenterBookmark(Long userId, Long centerId) {
 
         centerBookmarkRepository.findByUserIdAndCenterId(userId, centerId)
                 .ifPresent(prefer -> {
@@ -82,15 +81,13 @@ public class CenterBookmarkService {
             Center center = centerRepository.getById(centerId);
             Prefer prefer = Prefer.createPrefer(parent, center);
             centerBookmarkRepository.saveAndFlush(prefer);
-            return prefer;
         } catch (DataIntegrityViolationException e) {
             throw new PreferException(PreferErrorResult.NOT_VALID_CENTER);
         }
     }
 
     /**
-     *   작성자: 이승범
-     *   작성내용: 해당 시설의 시설 즐겨찾기를 해제합니다
+     * 시설 즐겨찾기 해제
      */
     public void deleteCenterBookmark(Long userId, Long centerId) {
         Prefer deletedPrefer = centerBookmarkRepository.findByUserIdAndCenterId(userId, centerId)
