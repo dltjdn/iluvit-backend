@@ -3,6 +3,7 @@ package FIS.iLUVit.dto.alarm;
 import FIS.iLUVit.domain.enumtype.Accept;
 import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDate;
@@ -10,6 +11,7 @@ import java.time.LocalTime;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
+@Getter
 public class ScheduleByDateResponse {
     private Long schedule_id;       // 스케쥴 id
     private String a_code;          // 현장요원 코드
