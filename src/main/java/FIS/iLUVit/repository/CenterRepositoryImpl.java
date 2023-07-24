@@ -3,25 +3,20 @@ package FIS.iLUVit.repository;
 import FIS.iLUVit.domain.Center;
 import FIS.iLUVit.dto.center.*;
 import FIS.iLUVit.domain.embeddable.Location;
-import FIS.iLUVit.domain.embeddable.Area;
 import FIS.iLUVit.domain.embeddable.Theme;
 import FIS.iLUVit.domain.enumtype.KindOf;
-import com.querydsl.core.types.Expression;
 import com.querydsl.core.types.dsl.BooleanExpression;
-import com.querydsl.core.types.dsl.Expressions;
 import com.querydsl.core.types.dsl.NumberExpression;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.AllArgsConstructor;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
 import org.springframework.data.domain.SliceImpl;
-
-import java.util.ArrayList;
 import java.util.List;
 import static FIS.iLUVit.domain.QCenter.center;
 import static FIS.iLUVit.domain.QPrefer.prefer;
 import static FIS.iLUVit.domain.QReview.review;
-import static com.querydsl.core.types.dsl.MathExpressions.*;
+
 
 @AllArgsConstructor
 public class CenterRepositoryImpl extends CenterQueryMethod implements CenterRepositoryCustom {

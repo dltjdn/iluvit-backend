@@ -47,7 +47,4 @@ public class CenterDetailRequest {
     private List<String> programs = new ArrayList<>();
     private List<String> addInfos = new ArrayList<>();
 
-    public void addCenterAddress( String address){
-        this.address=address;
-    }
 }

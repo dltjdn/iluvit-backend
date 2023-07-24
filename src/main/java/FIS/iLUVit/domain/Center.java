@@ -125,7 +125,7 @@ public class Center extends BaseImageEntity {
         this.infoImagePath = infoImagePath;
     }
 
-    public void update(CenterDetailRequest requestDto, Double longitude, Double latitude, String sido, String sigungu) {
+    public void updateCenter(CenterDetailRequest requestDto, Double longitude, Double latitude, String sido, String sigungu) {
         this.name = requestDto.getName();
         this.owner = requestDto.getOwner();
         this.director = requestDto.getDirector();

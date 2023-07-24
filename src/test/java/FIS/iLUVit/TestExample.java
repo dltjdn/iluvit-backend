@@ -1,6 +1,6 @@
 package FIS.iLUVit;
 
-import FIS.iLUVit.service.ImageServiceImpl;
+import FIS.iLUVit.service.ImageService;
 import com.amazonaws.services.s3.AmazonS3Client;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
@@ -27,7 +27,7 @@ public class TestExample {
     private AmazonS3Client amazonS3Client;
 
     @InjectMocks
-    private ImageServiceImpl imageServiceImpl;
+    private ImageService imageService;
 
     @BeforeEach
     protected void setUp() throws Exception {

@@ -16,7 +16,6 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -181,9 +180,17 @@ public class CenterService {
         // 해당하는 center 없으면 RuntimeException 반환
 
         Center center = teacher.getCenter();
+
         Pair<Double, Double> location = mapService.convertAddressToLocation(centerDetailRequest.getAddress());
-        Pair<String, String> area = mapService.getSidoSigunguByLocation(location.getFirst(), location.getSecond());
-        center.update(centerDetailRequest, location.getFirst(), location.getSecond(), area.getFirst(), area.getSecond());
+
+        Double longitude = location.getFirst();
+        Double latitude = location.getSecond();
+
+        Pair<String, String> area = mapService.getSidoSigunguByLocation(longitude ,latitude);
+        String sido = area.getFirst();
+        String sigungu = area.getSecond();
+
+        center.updateCenter(centerDetailRequest,longitude, latitude, sido, sigungu);
     }
 
     /**

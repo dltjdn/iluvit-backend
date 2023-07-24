@@ -96,6 +96,7 @@ public class CenterController {
                                                  @RequestBody @Validated CenterDetailRequest centerDetailRequest){
 
         centerService.modifyCenterInfo(userId, centerId, centerDetailRequest);
+
         return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
     }
 
