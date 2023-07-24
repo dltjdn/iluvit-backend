@@ -56,44 +56,6 @@ public class CenterRepositoryImpl extends CenterQueryMethod implements CenterRep
     }
 
 
-//    @Override
-//    public SliceImpl<CenterAndDistancePreviewDto> findByFilterForMapList(double longitude, double latitude, Long userId, KindOf kindOf, List<Long> centerIds, Pageable pageable) {
-//        Expression<Double> latitudeEx = Expressions.constant(latitude);
-//        Expression<Double> longitudeEx = Expressions.constant(longitude);
-//        Expression<Double> param = Expressions.constant(6371.0);
-//
-//        NumberExpression<Double> distanceEx = acos(
-//                sin(radians(latitudeEx)).multiply(sin(radians(center.latitude)))
-//                        .add(cos(radians(latitudeEx)).multiply(cos(radians(center.latitude)))
-//                                .multiply(cos(radians(longitudeEx).subtract(radians(center.longitude)))))).multiply(param);
-//
-//        List<CenterAndDistancePreviewDto> result =
-//                jpaQueryFactory.select(
-//                                new QCenterAndDistancePreviewDto(
-//                                        distanceEx,
-//                                        center.id, center.name, center.kindOf, center.estType, center.tel, center.startTime, center.endTime, center.minAge, center.maxAge, center.address, center.addressDetail, center.longitude, center.latitude, center.theme,
-//                                        review.score.avg(),
-//                                        center.profileImagePath, prefer.parent.id
-//                                ))
-//                        .from(center)
-//                        .leftJoin(center.reviews, review)
-//                        .leftJoin(center.prefers, prefer).on(prefer.parent.id.eq(userId))
-//                        .where(kindOfEq(kindOf), center.id.in(centerIds))
-//                        .groupBy(center)
-//                        .orderBy(center.score.desc(), center.id.asc())
-//                        .offset(pageable.getOffset())
-//                        .limit(pageable.getPageSize() + 1)
-//                        .fetch(); // select center.id,center.addrress from center where center.name=1;
-//
-//        boolean hasNext = false;
-//        if (result.size() > pageable.getPageSize()) {
-//            hasNext = true;
-//            result.remove(pageable.getPageSize());
-//        }
-//        return new SliceImpl<>(result, pageable, hasNext);
-//
-//    }
-
     @Override
     public List<CenterRecommendDto> findRecommendCenter(Theme theme, Location location, Pageable pageable) {
         List<CenterRecommendDto> result = jpaQueryFactory.select(new QCenterRecommendDto(center.id, center.name, center.profileImagePath))

@@ -40,11 +40,10 @@ public class CenterService {
     /**
      * 시설 전체 조회
      */
-    public List<CenterMapPreviewDto> findCenterByFilterForMap(CenterSearchMapDto centerSearchMapDto){
+    public List<CenterMapPreviewDto> findCenterByFilterForMap(String searchContent, CenterSearchMapDto centerSearchMapDto){
         double longitude = centerSearchMapDto.getLongitude();
         double latitude = centerSearchMapDto.getLatitude();
         Double distance = centerSearchMapDto.getDistance();
-        String searchContent = centerSearchMapDto.getSearchContent();
 
         List<Center> centerByFilter = centerRepository.findByFilterForMap(longitude, latitude, distance, searchContent);
 
@@ -58,14 +57,13 @@ public class CenterService {
     /**
      * 유저가 설정한 필터 기반 시설 조회
      */
-    public SliceImpl<CenterAndDistancePreviewDto> findCenterByFilterForMapList(long userId,  CenterSearchMapFilterDto centerSearchMapFilterDto, Pageable pageable) {
+    public SliceImpl<CenterAndDistancePreviewDto> findCenterByFilterForMapList(long userId, KindOf kindOf, CenterSearchMapFilterDto centerSearchMapFilterDto, Pageable pageable) {
         Parent parent = parentRepository.findById(userId)
                 .orElseThrow(() -> new UserException(UserErrorResult.USER_NOT_EXIST));
 
         double longitude = centerSearchMapFilterDto.getLongitude();
         double latitude = centerSearchMapFilterDto.getLatitude();
         List<Long> centerIds = centerSearchMapFilterDto.getCenterIds();
-        KindOf kindOf = centerSearchMapFilterDto.getKindOf();
 
         List<Center> centerByFilter = null;
         if(kindOf.equals(KindOf.ALL)){
@@ -101,8 +99,6 @@ public class CenterService {
         }
 
         return new SliceImpl<>(centerAndDistancePreviewDtos, pageable, hasNext);
-
-        //return centerRepository.findByFilterForMapList(longitude, latitude, userId, kindOf, centerIds, pageable);
     }
 
     /**

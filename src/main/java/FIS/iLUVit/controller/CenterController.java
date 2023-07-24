@@ -1,6 +1,7 @@
 package FIS.iLUVit.controller;
 
 import FIS.iLUVit.config.argumentResolver.Login;
+import FIS.iLUVit.domain.enumtype.KindOf;
 import FIS.iLUVit.dto.center.*;
 import FIS.iLUVit.dto.center.CenterAndDistancePreviewDto;
 import FIS.iLUVit.dto.center.CenterMapPreviewDto;
@@ -35,8 +36,8 @@ public class CenterController {
      * 시설 전체 조회
      */
     @PostMapping("search/all")
-    public ResponseEntity<List<CenterMapPreviewDto>> getAllCenter(@RequestBody @Validated CenterSearchMapDto centerSearchMapDto){
-        List<CenterMapPreviewDto> centerByFilterForMap = centerService.findCenterByFilterForMap(centerSearchMapDto);
+    public ResponseEntity<List<CenterMapPreviewDto>> getAllCenter(@RequestParam("searchContent") String searchContent, @RequestBody @Validated CenterSearchMapDto centerSearchMapDto){
+        List<CenterMapPreviewDto> centerByFilterForMap = centerService.findCenterByFilterForMap(searchContent, centerSearchMapDto);
         return ResponseEntity.ok(centerByFilterForMap);
     }
 
@@ -45,8 +46,8 @@ public class CenterController {
      * 유저가 설정한 필터 기반 시설 조회
      */
     @PostMapping("search")
-    public ResponseEntity<SliceImpl<CenterAndDistancePreviewDto>> getCenterByFilter(@Login Long userId, @RequestBody @Validated CenterSearchMapFilterDto centerSearchMapFilterDto, Pageable pageable){
-        SliceImpl<CenterAndDistancePreviewDto> centerByFilterForMapList = centerService.findCenterByFilterForMapList(userId, centerSearchMapFilterDto, pageable);
+    public ResponseEntity<SliceImpl<CenterAndDistancePreviewDto>> getCenterByFilter(@Login Long userId, @RequestParam("kindOf") KindOf kindOf, @RequestBody @Validated CenterSearchMapFilterDto centerSearchMapFilterDto, Pageable pageable){
+        SliceImpl<CenterAndDistancePreviewDto> centerByFilterForMapList = centerService.findCenterByFilterForMapList(userId,kindOf, centerSearchMapFilterDto, pageable);
         return ResponseEntity.ok(centerByFilterForMapList);
     }
 

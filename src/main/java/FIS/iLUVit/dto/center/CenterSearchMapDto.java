@@ -16,7 +16,6 @@ public class CenterSearchMapDto {
     @NotNull
     private Double distance;
 
-    private String searchContent;
 
     @Builder
     public CenterSearchMapDto(double longitude, double latitude, Double distance) {
