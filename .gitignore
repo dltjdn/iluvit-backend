@@ -45,4 +45,5 @@ src/main/resources/application-prod.yml
 src/main/resources/application-map.yml
 src/main/resources/application-security.yml
 src/main/resources/application-http.yml
+src/main/resources/police-admin.yml
 src/test/resources
