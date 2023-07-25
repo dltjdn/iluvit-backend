@@ -13,7 +13,7 @@ import java.util.List;
 @Getter
 @Setter
 @NoArgsConstructor
-public class PostRequest {
+public class PostCreateRequest {
     @NotBlank(message = "제목을 입력해주세요.")
     private String title;                   // 게시글 제목
     @Lob
@@ -24,7 +24,7 @@ public class PostRequest {
     private Boolean anonymous;              // 익명
 
     @NotNull(message = "게시판 아이디 필요")
-    private Long board_id;// 게시판 아이디
+    private Long boardId;// 게시판 아이디
 
     private List<MultipartFile> images; // 게시판 이미지들
 }

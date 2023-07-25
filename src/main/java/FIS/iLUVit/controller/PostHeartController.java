@@ -18,8 +18,7 @@ public class PostHeartController {
      */
 
     /**
-     * 작성자: 이창윤
-     * 작성내용: 게시글 좋아요 등록
+     * 게시글 좋아요 등록
     */
     @PostMapping("{postId}")
     public Long createPostHeart(@Login Long userId, @PathVariable("postId") Long postId) {
@@ -27,9 +26,7 @@ public class PostHeartController {
     }
     
     /**
-     * 작성자: 이창윤
-     * 작성내용: 게시글 좋아요 취소
-     * 비고: 기존에 좋아요 눌렀던 상태여야 취소 가능
+     * 게시글 좋아요 취소 ( 기존에 좋아요 눌렀던 상태여야 취소 가능 )
     */
     @DeleteMapping("{postId}")
     public void deletePostHeart(@Login Long userId, @PathVariable("postId") Long postId){
