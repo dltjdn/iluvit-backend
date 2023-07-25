@@ -4,10 +4,7 @@ import FIS.iLUVit.domain.Center;
 import FIS.iLUVit.domain.Parent;
 import FIS.iLUVit.domain.Prefer;
 import FIS.iLUVit.domain.Review;
-import FIS.iLUVit.exception.PreferErrorResult;
-import FIS.iLUVit.exception.PreferException;
-import FIS.iLUVit.exception.UserErrorResult;
-import FIS.iLUVit.exception.UserException;
+import FIS.iLUVit.exception.*;
 import FIS.iLUVit.repository.CenterRepository;
 import FIS.iLUVit.repository.ParentRepository;
 import FIS.iLUVit.repository.CenterBookmarkRepository;
@@ -70,15 +67,17 @@ public class CenterBookmarkService {
      * 시설 즐겨찾기 등록
      */
     public void saveCenterBookmark(Long userId, Long centerId) {
+        Parent parent = parentRepository.findById(userId)
+                .orElseThrow(() -> new UserException(UserErrorResult.USER_NOT_EXIST));
+        Center center = centerRepository.findById(centerId)
+                        .orElseThrow(()-> new CenterException(CenterErrorResult.CENTER_NOT_EXIST));
 
-        centerBookmarkRepository.findByUserIdAndCenterId(userId, centerId)
+        centerBookmarkRepository.findByCenterAndParent(center, parent)
                 .ifPresent(prefer -> {
                     throw new PreferException(PreferErrorResult.ALREADY_PREFER);
                 });
 
         try {
-            Parent parent = parentRepository.getById(userId);
-            Center center = centerRepository.getById(centerId);
             Prefer prefer = Prefer.createPrefer(parent, center);
             centerBookmarkRepository.saveAndFlush(prefer);
         } catch (DataIntegrityViolationException e) {
@@ -90,7 +89,12 @@ public class CenterBookmarkService {
      * 시설 즐겨찾기 해제
      */
     public void deleteCenterBookmark(Long userId, Long centerId) {
-        Prefer deletedPrefer = centerBookmarkRepository.findByUserIdAndCenterId(userId, centerId)
+        Parent parent = parentRepository.findById(userId)
+                .orElseThrow(() -> new UserException(UserErrorResult.USER_NOT_EXIST));
+        Center center = centerRepository.findById(centerId)
+                .orElseThrow(()-> new CenterException(CenterErrorResult.CENTER_NOT_EXIST));
+
+        Prefer deletedPrefer = centerBookmarkRepository.findByCenterAndParent(center,parent)
                 .orElseThrow(() -> new PreferException(PreferErrorResult.NOT_VALID_CENTER));
 
         centerBookmarkRepository.delete(deletedPrefer);
