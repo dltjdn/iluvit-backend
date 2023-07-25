@@ -72,7 +72,7 @@ public class ChildService {
         Parent parent = parentRepository.getById(userId);
 
         // 시설 가져오기
-        Center center = centerRepository.findByIdAndSigned(request.getCenterId())
+        Center center = centerRepository.findByIdAndSigned(request.getCenterId(), true)
                 .orElseThrow(() -> new UserException(UserErrorResult.NOT_VALID_REQUEST));
 
         // 아이 등록
@@ -189,7 +189,7 @@ public class ChildService {
         }
 
         // 승인 요청 보내는 시설
-        Center center = centerRepository.findByIdAndSigned(centerId)
+        Center center = centerRepository.findByIdAndSigned(centerId, true)
                 .orElseThrow(() -> new CenterException(CenterErrorResult.CENTER_NOT_EXIST));
 
         mappedChild.mappingCenter(center);

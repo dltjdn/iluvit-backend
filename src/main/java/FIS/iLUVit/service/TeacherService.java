@@ -125,7 +125,7 @@ public class TeacherService {
         Teacher teacher;
         // 센터를 선택한 경우
         if (request.getCenterId() != null) {
-            Center center = centerRepository.findByIdWithTeacher(request.getCenterId())
+            Center center = centerRepository.findById(request.getCenterId())
                     .orElseThrow(() -> new SignupException(SignupErrorResult.NOT_EXIST_CENTER));
             teacher = request.createTeacher(center, hashedPwd);
 
