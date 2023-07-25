@@ -35,7 +35,6 @@ public class CenterService {
     private final MapService mapService;
 
 
-
     /**
      * 시설 전체 조회
      */
@@ -152,26 +151,12 @@ public class CenterService {
         Location location = parent.getLocation();
         PageRequest pageRequest = PageRequest.of(0, 10, Sort.by("score"));
 
+
         List<CenterRecommendDto> centerRecommendDtos = centerRepository.findRecommendCenter(theme, location, pageRequest).stream()
                 .map(CenterRecommendDto::new) // Center를 CenterRecommendDto로 변환
                 .collect(Collectors.toList());
 
         return centerRecommendDtos;
-    }
-
-    /**
-     * 시설 이미지 수정
-     */
-    public void modifyCenterImage(Long centerId, Long userId, CenterImageRequest centerImageRequest) {
-        Teacher teacher = teacherRepository.findById(userId)
-                .orElseThrow(() -> new UserException(UserErrorResult.USER_NOT_EXIST))
-                .canWrite(centerId);
-
-        List<MultipartFile> infoImages = centerImageRequest.getInfoImages();
-        MultipartFile profileImage = centerImageRequest.getProfileImage();
-
-        imageService.saveInfoImages(infoImages, teacher.getCenter());
-        imageService.saveProfileImage(profileImage, teacher.getCenter());
     }
 
     /**
@@ -196,6 +181,24 @@ public class CenterService {
 
         center.updateCenter(centerDetailRequest,longitude, latitude, sido, sigungu);
     }
+
+
+    /**
+     * 시설 이미지 수정
+     */
+    public void modifyCenterImage(Long userId, Long centerId, CenterImageRequest centerImageRequest) {
+        Teacher teacher = teacherRepository.findById(userId)
+                .orElseThrow(() -> new UserException(UserErrorResult.USER_NOT_EXIST))
+                .canWrite(centerId);
+
+
+        List<MultipartFile> infoImages = centerImageRequest.getInfoImages();
+        MultipartFile profileImage = centerImageRequest.getProfileImage();
+
+        imageService.saveInfoImages(infoImages, teacher.getCenter());
+        imageService.saveProfileImage(profileImage, teacher.getCenter());
+    }
+
 
     /**
      * 두 지점 사이의 거리를 계산하는 메서드

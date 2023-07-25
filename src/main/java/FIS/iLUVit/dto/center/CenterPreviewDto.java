@@ -50,25 +50,4 @@ public class CenterPreviewDto {
         this.profileImage = center.getProfileImagePath();
     }
 
-    @Builder
-    public CenterPreviewDto(Long id, String name, String owner, String director, String estType, String tel, String startTime, String endTime, Integer minAge, Integer maxAge, String address, String AddressDetail, Area area, Double longitude, Double latitude, Theme theme, String profileImage, Double starAverage) {
-        this.id = id;
-        this.name = name;
-        this.owner = owner;
-        this.director = director;
-        this.estType = estType;
-        this.tel = tel;
-        this.startTime = startTime;
-        this.endTime = endTime;
-        this.minAge = minAge;
-        this.maxAge = maxAge;
-        this.address = address;
-        this.addressDetail = addressDetail;
-        this.area = area;
-        this.longitude = longitude;
-        this.latitude = latitude;
-        this.theme = theme;
-        this.profileImage = profileImage;
-        this.starAverage = starAverage;
-    }
 }

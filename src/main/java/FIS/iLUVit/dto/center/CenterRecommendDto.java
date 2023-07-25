@@ -19,13 +19,6 @@ public class CenterRecommendDto {
     private String centerName;
     private String profileImage;
 
-    @QueryProjection
-    public CenterRecommendDto(Long centerId, String centerName, String profileImage) {
-        this.centerId = centerId;
-        this.centerName = centerName;
-        this.profileImage = profileImage;
-    }
-
     public CenterRecommendDto(Center center){
         this.centerId = center.getId();
         this.centerName = center.getName();
