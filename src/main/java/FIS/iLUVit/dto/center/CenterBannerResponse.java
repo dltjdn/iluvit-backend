@@ -18,9 +18,9 @@ public class CenterBannerResponse {
     private String profileImage;
     private List<String> infoImages;
     private Double starAverage;
-    private Boolean hasCenterBookmark;             // 시설 북마크 여부
+    private Boolean isCenterBookmark;             // 시설 북마크 여부
 
-    public CenterBannerResponse(Center center, List<String> infoImages, Boolean hasCenterBookmark, Double starAverage) {
+    public CenterBannerResponse(Center center, List<String> infoImages, Boolean isCenterBookmark, Double starAverage) {
         this.centerId = center.getId();
         this.name = center.getName();
         this.signed = center.getSigned();
@@ -28,6 +28,6 @@ public class CenterBannerResponse {
         this.profileImage = center.getProfileImagePath();
         this.infoImages = infoImages;
         this.starAverage = starAverage;
-        this.hasCenterBookmark = hasCenterBookmark;
+        this.isCenterBookmark = isCenterBookmark;
     }
 }
