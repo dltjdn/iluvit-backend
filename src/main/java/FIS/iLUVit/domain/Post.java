@@ -104,4 +104,6 @@ public class Post extends BaseImageEntity {
     public void plusAnonymousOrder() {
         this.anonymousOrder += 1;
     }
+
+    public void plusHeartCount() { this.heartCnt += 1;}
 }
