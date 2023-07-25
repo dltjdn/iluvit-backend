@@ -3,6 +3,8 @@ package FIS.iLUVit.service;
 import FIS.iLUVit.dto.alarm.PoliceLoginRequest;
 import FIS.iLUVit.dto.alarm.ScheduleByDateResponse;
 
+import FIS.iLUVit.exception.PoliceClientErrorResult;
+import FIS.iLUVit.exception.PoliceClientException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.ParameterizedTypeReference;
@@ -71,7 +73,7 @@ public class PoliceClientService {
             return responseEntity.getBody();
         } else {
             // API 호출에 실패한 경우에 대한 처리
-            throw new RuntimeException("API 요청 실패");
+            throw new PoliceClientException(PoliceClientErrorResult.REQUEST_TIMEOUT);
         }
     }
 
