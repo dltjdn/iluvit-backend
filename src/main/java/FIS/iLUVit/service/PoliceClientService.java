@@ -24,9 +24,9 @@ public class PoliceClientService {
     private static final String SCHEDULE_URL = BASE_URL + "/schedule";
     private final RestTemplate restTemplate;
 
-    @Value("${police-admin.username}")
+    @Value("${username}")
     private String username;
-    @Value("${police-admin.password}")
+    @Value("${password}")
     private String password;
 
     /**
