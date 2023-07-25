@@ -4,11 +4,11 @@ import FIS.iLUVit.domain.Center;
 import FIS.iLUVit.domain.Parent;
 import FIS.iLUVit.domain.Prefer;
 import FIS.iLUVit.domain.Review;
+import FIS.iLUVit.dto.center.CenterBookmarkResponse;
 import FIS.iLUVit.exception.*;
 import FIS.iLUVit.repository.CenterRepository;
 import FIS.iLUVit.repository.ParentRepository;
 import FIS.iLUVit.repository.CenterBookmarkRepository;
-import FIS.iLUVit.dto.center.CenterPreviewDto;
 import FIS.iLUVit.repository.ReviewRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.dao.DataIntegrityViolationException;
@@ -33,13 +33,13 @@ public class CenterBookmarkService {
     /**
      * 즐겨찾는 시설 전체 조회
      */
-    public Slice<CenterPreviewDto> findCentersByCenterBookmark(Long userId, Pageable pageable) {
+    public Slice<CenterBookmarkResponse> findCentersByCenterBookmark(Long userId, Pageable pageable) {
         Parent parent = parentRepository.findById(userId)
                 .orElseThrow(() -> new UserException(UserErrorResult.USER_NOT_EXIST));
 
         List<Prefer> centerBookmarks = centerBookmarkRepository.findByParent(parent);
 
-        List<CenterPreviewDto> centerPreviewDtos = new ArrayList<>();
+        List<CenterBookmarkResponse> centerBookmarkResponses = new ArrayList<>();
 
         centerBookmarks.forEach((centerBookmark)->{
             List<Review> reviews = reviewRepository.findByCenter(centerBookmark.getCenter());
@@ -50,7 +50,7 @@ public class CenterBookmarkService {
                     .average()
                     .orElse(0.0); // 만약 리뷰가 없는 경우 0.0을 반환
 
-            centerPreviewDtos.add(new CenterPreviewDto(centerBookmark.getCenter(), averageScore));
+            centerBookmarkResponses.add(new CenterBookmarkResponse(centerBookmark.getCenter(), averageScore));
         });
 
         boolean hasNext = false;
@@ -59,7 +59,7 @@ public class CenterBookmarkService {
             centerBookmarks.remove(pageable.getPageSize());
         }
 
-        return new SliceImpl<>(centerPreviewDtos, pageable, hasNext);
+        return new SliceImpl<>(centerBookmarkResponses, pageable, hasNext);
     }
 
 

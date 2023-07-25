@@ -1,18 +1,17 @@
 package FIS.iLUVit.dto.center;
 
 import FIS.iLUVit.domain.Center;
-import FIS.iLUVit.domain.embeddable.Area;
 import FIS.iLUVit.domain.embeddable.Theme;
-import com.querydsl.core.annotations.QueryProjection;
-import lombok.Builder;
+import FIS.iLUVit.domain.enumtype.KindOf;
 import lombok.Getter;
 
+
 @Getter
-public class CenterPreviewDto {
+public class CenterMapFilterResponse {
     private Long id;
     private String name;                    // 시설명
-    private String owner;                   // 대표자명
-    private String director;                // 원장명
+    private KindOf kindOf;
+
     private String estType;                 // 설립유형
     private String tel;                     // 전화번호
     private String startTime;               // 운영시작시간
@@ -21,19 +20,18 @@ public class CenterPreviewDto {
     private Integer maxAge;                 //
     private String address;                 // 주소
     private String addressDetail;
-    private Area area;
     private Double longitude;               // 경도
     private Double latitude;                // 위도
-    private Theme theme;
     private String profileImage;
+    private Theme theme;
+    private Double distance;
     private Double starAverage;
+    private Boolean isCenterBookmark;
 
-    @QueryProjection
-    public CenterPreviewDto(Center center, Double starAverage){
+    public CenterMapFilterResponse(Center center, Double distance, Double starAverage, Boolean isCenterBookmark) {
         this.id = center.getId();
         this.name = center.getName();
-        this.owner = center.getOwner();
-        this.director = center.getDirector();
+        this.kindOf = center.getKindOf();
         this.estType = center.getEstType();
         this.tel = center.getTel();
         this.startTime = center.getStartTime();
@@ -42,12 +40,14 @@ public class CenterPreviewDto {
         this.maxAge = center.getMaxAge();
         this.address = center.getAddress();
         this.addressDetail = center.getAddressDetail();
-        this.area = center.getArea();
         this.longitude = center.getLongitude();
         this.latitude = center.getLatitude();
         this.theme = center.getTheme();
-        this.starAverage = starAverage;
         this.profileImage = center.getProfileImagePath();
+        this.distance = distance;
+        this.starAverage = starAverage;
+        this.isCenterBookmark = isCenterBookmark;
     }
+
 
 }

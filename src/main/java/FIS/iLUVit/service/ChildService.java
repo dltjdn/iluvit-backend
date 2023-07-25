@@ -1,8 +1,8 @@
 package FIS.iLUVit.service;
 
 import FIS.iLUVit.domain.alarms.Alarm;
-import FIS.iLUVit.dto.center.CenterDto;
-import FIS.iLUVit.dto.center.CenterRequest;
+import FIS.iLUVit.dto.center.CenterBasicResponse;
+import FIS.iLUVit.dto.center.CenterBasicRequest;
 import FIS.iLUVit.dto.child.*;
 import FIS.iLUVit.domain.*;
 import FIS.iLUVit.domain.alarms.CenterApprovalAcceptedAlarm;
@@ -21,7 +21,6 @@ import org.springframework.data.domain.SliceImpl;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -157,18 +156,18 @@ public class ChildService {
     /**
      * 아이 추가용 시설 정보 조회
      */
-    public Slice<CenterDto> findCenterForAddChild(CenterRequest request, Pageable pageable) {
-        List<CenterDto> centerDtos = centerRepository.findCenterForAddChild(request.getSido(), request.getSigungu(), request.getCenterName()).stream()
-                .map(CenterDto::new)
+    public Slice<CenterBasicResponse> findCenterForAddChild(CenterBasicRequest request, Pageable pageable) {
+        List<CenterBasicResponse> centerBasicResponses = centerRepository.findCenterForAddChild(request.getSido(), request.getSigungu(), request.getCenterName()).stream()
+                .map(CenterBasicResponse::new)
                 .collect(Collectors.toList());
 
         boolean hasNext = false;
-        if (centerDtos.size() > pageable.getPageSize()) {
+        if (centerBasicResponses.size() > pageable.getPageSize()) {
             hasNext = true;
-            centerDtos.remove(pageable.getPageSize());
+            centerBasicResponses.remove(pageable.getPageSize());
         }
 
-        return new SliceImpl<>(centerDtos, pageable, hasNext);
+        return new SliceImpl<>(centerBasicResponses, pageable, hasNext);
 
     }
 

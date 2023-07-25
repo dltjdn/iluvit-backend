@@ -3,10 +3,9 @@ package FIS.iLUVit.controller;
 import FIS.iLUVit.config.argumentResolver.Login;
 import FIS.iLUVit.domain.enumtype.KindOf;
 import FIS.iLUVit.dto.center.*;
-import FIS.iLUVit.dto.center.CenterAndDistancePreviewDto;
-import FIS.iLUVit.dto.center.CenterMapPreviewDto;
+import FIS.iLUVit.dto.center.CenterMapFilterResponse;
+import FIS.iLUVit.dto.center.CenterMapResponse;
 import FIS.iLUVit.service.CenterService;
-import lombok.AllArgsConstructor;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Pageable;
@@ -15,7 +14,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.multipart.MultipartFile;
 
 import javax.validation.Valid;
 import java.util.List;
@@ -36,8 +34,8 @@ public class CenterController {
      * 시설 전체 조회
      */
     @PostMapping("search/all")
-    public ResponseEntity<List<CenterMapPreviewDto>> getAllCenter(@RequestParam("searchContent") String searchContent, @RequestBody @Validated CenterSearchMapDto centerSearchMapDto){
-        List<CenterMapPreviewDto> centerByFilterForMap = centerService.findCenterByFilterForMap(searchContent, centerSearchMapDto);
+    public ResponseEntity<List<CenterMapResponse>> getAllCenter(@RequestParam("searchContent") String searchContent, @RequestBody @Validated CenterMapRequest centerMapRequest){
+        List<CenterMapResponse> centerByFilterForMap = centerService.findCenterByFilterForMap(searchContent, centerMapRequest);
         return ResponseEntity.ok(centerByFilterForMap);
     }
 
@@ -46,8 +44,8 @@ public class CenterController {
      * 유저가 설정한 필터 기반 시설 조회
      */
     @PostMapping("search")
-    public ResponseEntity<SliceImpl<CenterAndDistancePreviewDto>> getCenterByFilter(@Login Long userId, @RequestParam("kindOf") KindOf kindOf, @RequestBody @Validated CenterSearchMapFilterDto centerSearchMapFilterDto, Pageable pageable){
-        SliceImpl<CenterAndDistancePreviewDto> centerByFilterForMapList = centerService.findCenterByFilterForMapList(userId,kindOf, centerSearchMapFilterDto, pageable);
+    public ResponseEntity<SliceImpl<CenterMapFilterResponse>> getCenterByFilter(@Login Long userId, @RequestParam("kindOf") KindOf kindOf, @RequestBody @Validated CenterMapFilterRequest centerMapFilterRequest, Pageable pageable){
+        SliceImpl<CenterMapFilterResponse> centerByFilterForMapList = centerService.findCenterByFilterForMapList(userId,kindOf, centerMapFilterRequest, pageable);
         return ResponseEntity.ok(centerByFilterForMapList);
     }
 
@@ -55,8 +53,8 @@ public class CenterController {
      * 시설 상세 조회
      */
     @GetMapping("{centerId}/info")
-    public ResponseEntity<CenterResponse> getCenterDetails(@PathVariable("centerId") Long centerId){
-        CenterResponse centerDetailsByCenter = centerService.findCenterDetailsByCenter(centerId);
+    public ResponseEntity<CenterDetailResponse> getCenterDetails(@PathVariable("centerId") Long centerId){
+        CenterDetailResponse centerDetailsByCenter = centerService.findCenterDetailsByCenter(centerId);
         return ResponseEntity.ok(centerDetailsByCenter);
     }
 
@@ -78,8 +76,8 @@ public class CenterController {
      *  추천 시설 전체 조회 ( 학부모가 선택한 관심 테마를 가지고 있는 시설 조회 )
      */
     @GetMapping("theme")
-    public ResponseEntity<List<CenterRecommendDto>> getAllCenterByTheme(@Login Long userId){
-        List<CenterRecommendDto> recommendCenterWithTheme = centerService.findRecommendCenterWithTheme(userId);
+    public ResponseEntity<List<CenterRecommendResponse>> getAllCenterByTheme(@Login Long userId){
+        List<CenterRecommendResponse> recommendCenterWithTheme = centerService.findRecommendCenterWithTheme(userId);
         return ResponseEntity.ok(recommendCenterWithTheme);
     }
 

@@ -2,8 +2,8 @@ package FIS.iLUVit.service;
 
 import FIS.iLUVit.domain.alarms.Alarm;
 import FIS.iLUVit.domain.embeddable.Location;
-import FIS.iLUVit.dto.center.CenterDto;
-import FIS.iLUVit.dto.center.CenterRequest;
+import FIS.iLUVit.dto.center.CenterBasicResponse;
+import FIS.iLUVit.dto.center.CenterBasicRequest;
 import FIS.iLUVit.dto.teacher.SignupTeacherRequest;
 import FIS.iLUVit.dto.teacher.TeacherDetailRequest;
 import FIS.iLUVit.dto.teacher.TeacherDetailResponse;
@@ -358,11 +358,11 @@ public class TeacherService {
     /**
      *    회원가입 과정에서 필요한 센터정보 가져오기
      */
-    public Slice<CenterDto> findCenterForSignupTeacher(CenterRequest request, Pageable pageable) {
+    public Slice<CenterBasicResponse> findCenterForSignupTeacher(CenterBasicRequest request, Pageable pageable) {
         List<Center> centers = centerRepository.findForSignup(request.getSido(), request.getSigungu(), request.getCenterName());
 
-        List<CenterDto> centerDtos = centers.stream()
-                .map(CenterDto::new) // Center를 CenterDto로 변환
+        List<CenterBasicResponse> centerBasicResponses = centers.stream()
+                .map(CenterBasicResponse::new) // Center를 CenterDto로 변환
                 .collect(Collectors.toList());
 
         boolean hasNext = false;
@@ -371,7 +371,7 @@ public class TeacherService {
             centers.remove(pageable.getPageSize());
         }
 
-        return new SliceImpl<>(centerDtos, pageable, hasNext);
+        return new SliceImpl<>(centerBasicResponses, pageable, hasNext);
     }
 
     /**

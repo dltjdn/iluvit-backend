@@ -7,12 +7,11 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 
 import java.time.LocalDate;
-import java.util.ArrayList;
 import java.util.List;
 
 @Getter
 @AllArgsConstructor
-public class CenterResponse {
+public class CenterDetailResponse {
     private Long id;
     private String name;                    // 시설명
     private String estType;                 // 설립유형
@@ -49,7 +48,7 @@ public class CenterResponse {
     private List<String> programs;
     private List<String> addInfos;
 
-    public CenterResponse(Center center,String profileImage,List<String> infoImages){
+    public CenterDetailResponse(Center center, String profileImage, List<String> infoImages){
         this.id = center.getId();
         this.name = center.getName();
         this.estType = center.getEstType();

@@ -1,12 +1,10 @@
 package FIS.iLUVit.controller;
 
 import FIS.iLUVit.config.argumentResolver.Login;
-import FIS.iLUVit.dto.center.CenterPreviewDto;
+import FIS.iLUVit.dto.center.CenterBookmarkResponse;
 import FIS.iLUVit.service.CenterBookmarkService;
-import FIS.iLUVit.service.ParentService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import okhttp3.Response;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -28,8 +26,8 @@ public class CenterBookmarkController {
      * 즐겨찾는 시설 전체 조회
      */
     @GetMapping("")
-    public ResponseEntity<Slice<CenterPreviewDto>> getAllCenterBookmark(@Login Long userId, Pageable pageable) {
-        Slice<CenterPreviewDto> centerPreviewDtos = centerBookmarkService.findCentersByCenterBookmark(userId, pageable);
+    public ResponseEntity<Slice<CenterBookmarkResponse>> getAllCenterBookmark(@Login Long userId, Pageable pageable) {
+        Slice<CenterBookmarkResponse> centerPreviewDtos = centerBookmarkService.findCentersByCenterBookmark(userId, pageable);
         return ResponseEntity.ok(centerPreviewDtos);
     }
 

@@ -38,30 +38,30 @@ public class CenterService {
     /**
      * 시설 전체 조회
      */
-    public List<CenterMapPreviewDto> findCenterByFilterForMap(String searchContent, CenterSearchMapDto centerSearchMapDto){
-        double longitude = centerSearchMapDto.getLongitude();
-        double latitude = centerSearchMapDto.getLatitude();
-        Double distance = centerSearchMapDto.getDistance();
+    public List<CenterMapResponse> findCenterByFilterForMap(String searchContent, CenterMapRequest centerMapRequest){
+        double longitude = centerMapRequest.getLongitude();
+        double latitude = centerMapRequest.getLatitude();
+        Double distance = centerMapRequest.getDistance();
 
         List<Center> centerByFilter = centerRepository.findByFilterForMap(longitude, latitude, distance, searchContent);
 
-        List<CenterMapPreviewDto> centerMapPreviewDtos = centerByFilter.stream().map(center -> {
-            return new CenterMapPreviewDto(center.getId(), center.getName(), center.getLongitude(), center.getLatitude());
+        List<CenterMapResponse> centerMapResponses = centerByFilter.stream().map(center -> {
+            return new CenterMapResponse(center.getId(), center.getName(), center.getLongitude(), center.getLatitude());
         }).collect(Collectors.toList());
 
-        return centerMapPreviewDtos;
+        return centerMapResponses;
     }
 
     /**
      * 유저가 설정한 필터 기반 시설 조회
      */
-    public SliceImpl<CenterAndDistancePreviewDto> findCenterByFilterForMapList(long userId, KindOf kindOf, CenterSearchMapFilterDto centerSearchMapFilterDto, Pageable pageable) {
+    public SliceImpl<CenterMapFilterResponse> findCenterByFilterForMapList(long userId, KindOf kindOf, CenterMapFilterRequest centerMapFilterRequest, Pageable pageable) {
         Parent parent = parentRepository.findById(userId)
                 .orElseThrow(() -> new UserException(UserErrorResult.USER_NOT_EXIST));
 
-        double longitude = centerSearchMapFilterDto.getLongitude();
-        double latitude = centerSearchMapFilterDto.getLatitude();
-        List<Long> centerIds = centerSearchMapFilterDto.getCenterIds();
+        double longitude = centerMapFilterRequest.getLongitude();
+        double latitude = centerMapFilterRequest.getLatitude();
+        List<Long> centerIds = centerMapFilterRequest.getCenterIds();
 
         List<Center> centerByFilter = null;
         if(kindOf.equals(KindOf.ALL)){
@@ -70,7 +70,7 @@ public class CenterService {
             centerByFilter = centerRepository.findByIdInAndKindOfOrderByScoreDescIdAsc(centerIds, kindOf);
         }
 
-        List<CenterAndDistancePreviewDto> centerAndDistancePreviewDtos = new ArrayList<>();
+        List<CenterMapFilterResponse> centerMapFilterResponses = new ArrayList<>();
 
         centerByFilter.forEach((center -> {
 
@@ -84,33 +84,33 @@ public class CenterService {
 
             double distance = calculateDistance(latitude, longitude, center.getLatitude(), center.getLongitude());
 
-            CenterAndDistancePreviewDto centerAndDistancePreviewDto = new CenterAndDistancePreviewDto(center, distance, avgScore, prefer.isPresent());
-            centerAndDistancePreviewDtos.add(centerAndDistancePreviewDto);
+            CenterMapFilterResponse centerMapFilterResponse = new CenterMapFilterResponse(center, distance, avgScore, prefer.isPresent());
+            centerMapFilterResponses.add(centerMapFilterResponse);
 
         }));
 
         boolean hasNext = false;
 
-        if (centerAndDistancePreviewDtos.size() > pageable.getPageSize()) {
+        if (centerMapFilterResponses.size() > pageable.getPageSize()) {
             hasNext = true;
-            centerAndDistancePreviewDtos.remove(pageable.getPageSize());
+            centerMapFilterResponses.remove(pageable.getPageSize());
         }
 
-        return new SliceImpl<>(centerAndDistancePreviewDtos, pageable, hasNext);
+        return new SliceImpl<>(centerMapFilterResponses, pageable, hasNext);
     }
 
     /**
      * 시설 상세 조회
      */
-    public CenterResponse findCenterDetailsByCenter(Long centerId) {
+    public CenterDetailResponse findCenterDetailsByCenter(Long centerId) {
         Center center = centerRepository.findById(centerId)
                 .orElseThrow(() -> new CenterException(CenterErrorResult.CENTER_NOT_EXIST));
 
         // Center 가 id 에 의해 조회 되었으므로 score에 1 추가
         center.addScore(Score.GET);
 
-        CenterResponse centerResponse = new CenterResponse(center,center.getProfileImagePath(),imageService.getInfoImages(center.getInfoImagePath()));
-        return centerResponse;
+        CenterDetailResponse centerDetailResponse = new CenterDetailResponse(center,center.getProfileImagePath(),imageService.getInfoImages(center.getInfoImagePath()));
+        return centerDetailResponse;
     }
 
     /**
@@ -143,7 +143,7 @@ public class CenterService {
     /**
      *  추천 시설 전체 조회 ( 학부모가 선택한 관심 테마를 가지고 있는 시설 조회 )
      */
-    public List<CenterRecommendDto> findRecommendCenterWithTheme(Long userId) {
+    public List<CenterRecommendResponse> findRecommendCenterWithTheme(Long userId) {
         Parent parent = parentRepository.findById(userId)
                 .orElseThrow(() -> new UserException(UserErrorResult.USER_NOT_EXIST));
 
@@ -152,11 +152,11 @@ public class CenterService {
         PageRequest pageRequest = PageRequest.of(0, 10, Sort.by("score"));
 
 
-        List<CenterRecommendDto> centerRecommendDtos = centerRepository.findRecommendCenter(theme, location, pageRequest).stream()
-                .map(CenterRecommendDto::new) // Center를 CenterRecommendDto로 변환
+        List<CenterRecommendResponse> centerRecommendResponses = centerRepository.findRecommendCenter(theme, location, pageRequest).stream()
+                .map(CenterRecommendResponse::new) // Center를 CenterRecommendDto로 변환
                 .collect(Collectors.toList());
 
-        return centerRecommendDtos;
+        return centerRecommendResponses;
     }
 
     /**

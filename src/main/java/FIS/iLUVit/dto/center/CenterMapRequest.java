@@ -8,7 +8,7 @@ import javax.validation.constraints.NotNull;
 
 @Getter
 @NoArgsConstructor
-public class CenterSearchMapDto {
+public class CenterMapRequest {
     @NotNull
     private double longitude;
     @NotNull
@@ -18,7 +18,7 @@ public class CenterSearchMapDto {
 
 
     @Builder
-    public CenterSearchMapDto(double longitude, double latitude, Double distance) {
+    public CenterMapRequest(double longitude, double latitude, Double distance) {
         this.longitude = longitude;
         this.latitude = latitude;
         this.distance = distance;

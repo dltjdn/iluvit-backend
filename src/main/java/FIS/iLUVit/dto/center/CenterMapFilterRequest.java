@@ -1,7 +1,5 @@
 package FIS.iLUVit.dto.center;
 
-import FIS.iLUVit.domain.enumtype.KindOf;
-import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import javax.validation.constraints.NotNull;
@@ -10,7 +8,7 @@ import java.util.List;
 
 @Getter
 @NoArgsConstructor
-public class CenterSearchMapFilterDto {
+public class CenterMapFilterRequest {
     @NotNull
     private double longitude;
     @NotNull
