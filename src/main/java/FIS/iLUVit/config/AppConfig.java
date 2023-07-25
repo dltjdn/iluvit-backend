@@ -5,14 +5,19 @@ import com.querydsl.jpa.impl.JPAQueryFactory;
 import net.nurigo.sdk.NurigoApp;
 import net.nurigo.sdk.message.service.DefaultMessageService;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.web.client.RestTemplateBuilder;
 import org.springframework.context.MessageSource;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.support.ReloadableResourceBundleMessageSource;
+import org.springframework.http.client.BufferingClientHttpRequestFactory;
+import org.springframework.http.client.SimpleClientHttpRequestFactory;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.web.client.RestTemplate;
 
 import javax.annotation.PostConstruct;
 import javax.persistence.EntityManager;
+import java.time.Duration;
 import java.util.TimeZone;
 
 @Configuration
@@ -48,6 +53,17 @@ public class AppConfig {
                                                        @Value("${coolsms.api_secret}") String api_secret,
                                                        @Value("${coolsms.domain}") String domain) {
         return NurigoApp.INSTANCE.initialize(api_key, api_secret, domain);
+    }
+
+    @Bean
+    public RestTemplate restTemplate(RestTemplateBuilder restTemplateBuilder) {
+        return restTemplateBuilder
+                .requestFactory(() ->
+                        new BufferingClientHttpRequestFactory(new SimpleClientHttpRequestFactory())
+                )
+                .setConnectTimeout(Duration.ofMillis(5000)) // connection-timeout
+                .setReadTimeout(Duration.ofMillis(5000)) // read-timeout
+                .build();
     }
 
 }
