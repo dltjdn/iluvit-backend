@@ -42,8 +42,7 @@ public class ScheduledNotificationService {
         // 관리교사에게 알림 보내기
         for (ScheduleByDateResponse response : scheduleResponses) {
             Long centerId = response.getCenterId();
-            List<Teacher> directors = Optional.ofNullable(teacherRepository.findDirectorByCenter(centerId))
-                            .orElseThrow(() -> new UserException(UserErrorResult.USER_NOT_EXIST));
+            List<Teacher> directors = teacherRepository.findDirectorByCenter(centerId);
             directors.forEach(director -> {
                 Alarm alarm = new AgentVisitedAlarm(director, Auth.DIRECTOR, director.getCenter());
                 alarmRepository.save(alarm);
