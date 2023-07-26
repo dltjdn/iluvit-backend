@@ -10,14 +10,17 @@ import org.springframework.context.MessageSource;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.support.ReloadableResourceBundleMessageSource;
+import org.springframework.http.MediaType;
 import org.springframework.http.client.BufferingClientHttpRequestFactory;
 import org.springframework.http.client.SimpleClientHttpRequestFactory;
+import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.web.client.RestTemplate;
 
 import javax.annotation.PostConstruct;
 import javax.persistence.EntityManager;
 import java.time.Duration;
+import java.util.Collections;
 import java.util.TimeZone;
 
 @Configuration
@@ -57,13 +60,22 @@ public class AppConfig {
 
     @Bean
     public RestTemplate restTemplate(RestTemplateBuilder restTemplateBuilder) {
-        return restTemplateBuilder
+        // Create a new instance of RestTemplate
+        RestTemplate restTemplate = restTemplateBuilder
                 .requestFactory(() ->
                         new BufferingClientHttpRequestFactory(new SimpleClientHttpRequestFactory())
                 )
                 .setConnectTimeout(Duration.ofMillis(5000)) // connection-timeout
                 .setReadTimeout(Duration.ofMillis(5000)) // read-timeout
                 .build();
-    }
 
+        // Add MappingJackson2HttpMessageConverter to handle JSON data
+        MappingJackson2HttpMessageConverter converter = new MappingJackson2HttpMessageConverter();
+        converter.setSupportedMediaTypes(Collections.singletonList(MediaType.APPLICATION_JSON));
+
+        // Add the converter to RestTemplate
+        restTemplate.getMessageConverters().add(converter);
+
+        return restTemplate;
+    }
 }

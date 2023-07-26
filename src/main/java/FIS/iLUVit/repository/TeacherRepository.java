@@ -2,6 +2,7 @@ package FIS.iLUVit.repository;
 
 import FIS.iLUVit.domain.Center;
 import FIS.iLUVit.domain.Teacher;
+import org.springframework.data.jpa.repository.EntityGraph;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -44,6 +45,7 @@ public interface TeacherRepository extends JpaRepository<Teacher, Long> {
     /*
         교수가 속한 시설 id가 시설 id와 같고 교수 auth가 DIRECTOR인 교수 리스트를 조회합니다.
      */
+    @EntityGraph(attributePaths = "center")
     @Query("select t " +
             "from Teacher t " +
             "where t.center.id =:centerId " +

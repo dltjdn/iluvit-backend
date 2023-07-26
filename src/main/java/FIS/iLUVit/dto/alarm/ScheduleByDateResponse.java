@@ -31,5 +31,3 @@ public class ScheduleByDateResponse {
     private String call_check_info; // 최근 통화 상태 정보(부재중 몇건 or 통화오류 이유)
     private Accept accept;          //일정 수락 여부
 }
-
-
