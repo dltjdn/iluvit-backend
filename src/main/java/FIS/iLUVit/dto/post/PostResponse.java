@@ -14,7 +14,6 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor
 public class PostResponse {
-
     private Long postId;
     private String title;
     private String content;
@@ -26,15 +25,14 @@ public class PostResponse {
     private int heartCnt;
     private int imgCnt;
     private String previewImage;
-    private String board_name;
+    private String boardName;
     private Long boardId;
     private LocalDate date;
     private LocalTime time;
     private Long centerId;
     private String centerName;
 
-    @QueryProjection
-    public PostResponse(Post post) {
+    public PostResponse(Post post, String previewImage) {
         this.postId = post.getId();
         this.title = post.getTitle();
         this.content = post.getContent();
@@ -45,21 +43,18 @@ public class PostResponse {
         this.commentCnt = post.getCommentCnt();
         this.heartCnt = post.getHeartCnt();
         this.imgCnt = post.getImgCnt();
-        this.board_name = post.getBoard().getName();
+        this.boardName = post.getBoard().getName();
         this.boardId = post.getBoard().getId();
         this.date = post.getDate();
         this.time = post.getTime();
-        this.previewImage = post.getInfoImagePath();
+        this.previewImage = previewImage;
 
         if (post.getBoard().getCenter() != null) {
             this.centerId = post.getBoard().getCenter().getId();
             this.centerName = post.getBoard().getCenter().getName();
         } else {
+            this.centerId = null;
             this.centerName = "모두의 이야기";
         }
-    }
-
-    public void updatePreviewImage(List<String> encodedInfoImage) {
-        this.previewImage = encodedInfoImage.isEmpty() ? null : encodedInfoImage.get(0);
     }
 }

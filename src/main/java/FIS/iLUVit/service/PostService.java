@@ -1,13 +1,13 @@
 package FIS.iLUVit.service;
 
-import FIS.iLUVit.dto.board.BoardPreviewDto;
-import FIS.iLUVit.dto.post.PostResponse;
-import FIS.iLUVit.dto.post.PostCreateRequest;
-import FIS.iLUVit.dto.post.PostDetailResponse;
 import FIS.iLUVit.domain.*;
 import FIS.iLUVit.domain.enumtype.Approval;
 import FIS.iLUVit.domain.enumtype.Auth;
 import FIS.iLUVit.domain.enumtype.BoardKind;
+import FIS.iLUVit.dto.board.BoardPreviewDto;
+import FIS.iLUVit.dto.post.PostCreateRequest;
+import FIS.iLUVit.dto.post.PostDetailResponse;
+import FIS.iLUVit.dto.post.PostResponse;
 import FIS.iLUVit.exception.*;
 import FIS.iLUVit.repository.*;
 import FIS.iLUVit.service.constant.Criteria;
@@ -117,58 +117,50 @@ public class PostService {
      * 내가 쓴 게시글 전체 조회
      */
     public Slice<PostResponse> findPostByUser(Long userId, Pageable pageable) {
-        Slice<PostResponse> postResponses = postRepository.findByUser(userId, pageable).map(PostResponse::new);
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new UserException(UserErrorResult.USER_NOT_EXIST));
+
+        Slice<Post> posts = postRepository.findByUser(user, pageable);
+
+        Slice<PostResponse> postResponses = getPostResponses(posts);
+
         return postResponses;
-    }
-
-    /**
-     * 장터글 끌어올리기
-     */
-    public void pullUpPost(Long userId, Long postId) {
-
-        Post findPost = postRepository.findById(postId)
-                .orElseThrow(() -> new PostException(PostErrorResult.POST_NOT_EXIST));
-        if (!Objects.equals(findPost.getUser().getId(), userId)) {
-            throw new PostException(PostErrorResult.UNAUTHORIZED_USER_ACCESS);
-        }
-        findPost.updateTime(LocalDateTime.now());
     }
 
     /**
      * 게시글 제목+내용 검색 ( [모두의 이야기 + 유저가 속한 센터의 이야기] 에서 통합 검색 )
      */
-    public Slice<PostResponse> searchPost(String input, Long userId, Pageable pageable) {
+    public Slice<PostResponse> searchPost(Long userId, String keyword, Pageable pageable) {
 
-        User findUser = userRepository.findById(userId)
+        User user = userRepository.findById(userId)
                 .orElseThrow(() -> new UserException(UserErrorResult.USER_NOT_EXIST));
-        Auth auth = findUser.getAuth();
 
-        Set<Long> centerIds = new HashSet<>();
+        List<Center> centers = new ArrayList<>();
 
-        if (auth == Auth.PARENT) {
+        if (user.getAuth() == Auth.PARENT) {
             // 학부모 유저일 때 아이와 연관된 센터의 아이디를 모두 가져옴
-            centerIds = childRepository.findByParent( (Parent)findUser)
-                    .stream().filter(c -> c.getCenter() != null).map(c -> c.getCenter().getId())
-                    .collect(Collectors.toSet());
+            centers = childRepository.findByParent((Parent)user).stream()
+                    .map(Child::getCenter)
+                    .filter(Objects::nonNull)
+                    .collect(Collectors.toList());
         } else {
             // 교사 유저는 연관된 센터 가져옴
-            Center center = ((Teacher)findUser).getCenter();
-            if (center != null)
-                centerIds.add(center.getId());
-
+            Center center = ((Teacher)user).getCenter();
+            if (center != null) centers.add(center);
         }
 
         // 센터의 게시판 + 모두의 게시판(centerId == null) 키워드 검색
-        Slice<PostResponse> posts = postRepository.findInCenterByKeyword(centerIds, input, pageable);
-        // 끌어온 게시글에 이미지 있으면 프리뷰용 이미지 넣어줌
-        posts.forEach(g -> setPreviewImage(g));
-        return posts;
-    }
+        Slice<Post> posts = postRepository.findInCenterByKeyword(centers, keyword, pageable);
 
+        // 끌어온 게시글에 이미지 있으면 프리뷰용 이미지 넣어줌
+        Slice<PostResponse> postResponses = getPostResponses(posts);
+
+        return postResponses;
+    }
     /**
      * 게시글 제목+내용+시설 검색 (각 시설 별 검색)
      */
-    public Slice<PostResponse> searchPostByCenter(Long centerId, String input, Auth auth, Long userId, Pageable pageable) {
+    public Slice<PostResponse> searchPostByCenter(Long centerId, String keyword, Auth auth, Long userId, Pageable pageable) {
         if (centerId != null) {
             if (auth == Auth.PARENT) {
                 // 학부모 유저일 때 아이와 연관된 센터의 아이디를 모두 가져옴
@@ -178,7 +170,6 @@ public class PostService {
                         .stream().filter(c -> c.getCenter() != null).map(c -> c.getCenter().getId())
                         .collect(Collectors.toSet());
                 if (!centerIds.contains(centerId)) {
-                    log.warn("Set {} 에 센터 아이디가 없음", centerIds);
                     throw new PostException(PostErrorResult.UNAUTHORIZED_USER_ACCESS);
                 }
             } else {
@@ -191,20 +182,23 @@ public class PostService {
             }
         }
         // 센터 아이디 null 인 경우 모두의 이야기 안에서 검색됨
-        Slice<PostResponse> posts = postRepository.findByCenterAndKeyword(centerId, input, pageable);
-        posts.forEach(g -> setPreviewImage(g));
-        return posts;
+        Slice<Post> posts = postRepository.findByCenterAndKeyword(centerId, keyword, pageable);
+
+        Slice<PostResponse> postResponses = getPostResponses(posts);
+
+        return postResponses;
     }
 
     /**
      * 게시글 제목+내용+보드 검색 (각 게시판 별 검색)
      */
     public Slice<PostResponse> searchByBoard(Long boardId, String input, Pageable pageable) {
-        Slice<PostResponse> posts = postRepository.findByBoardAndKeyword(boardId, input, pageable);
-        posts.forEach(g -> setPreviewImage(g));
-        return posts;
-    }
+        Slice<Post> posts = postRepository.findByBoardAndKeyword(boardId, input, pageable);
 
+        Slice<PostResponse> postResponses = getPostResponses(posts);
+
+        return postResponses;
+    }
 
     /**
      * 모두의 이야기 게시판 전체 조회
@@ -212,19 +206,19 @@ public class PostService {
     public List<BoardPreviewDto> findBoardDetailsByPublic(Long userId) {
         List<BoardPreviewDto> boardPreviews = new ArrayList<>();
 
-        // 비회원일 때 기본 게시판들의 id를 북마크처럼 디폴트로 제공, 회원일 땐 북마크를 통해서 제공
-        if (userId == null) {
-            List<Board> boardList = boardRepository.findByCenterIsNullAndIsDefaultTrue();
-            addBoardPreviews(boardPreviews, boardList);
-        } else {
-            User user = userRepository.findById(userId)
-                    .orElseThrow(()-> new UserException(UserErrorResult.USER_NOT_EXIST));
-            List<Bookmark> bookmarkList = boardBookmarkRepository.findByUserAndBoardCenterIsNull(user);
-            getBoardPreviews(bookmarkList, boardPreviews);
-        }
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new UserException(UserErrorResult.USER_NOT_EXIST));
+
+        List<Bookmark> bookmarkList = boardBookmarkRepository.findByUserAndBoardCenterIsNull(user);
+
+        List<Board> boardList = bookmarkList.stream()
+                .map(bookmark -> bookmark.getBoard())
+                .collect(Collectors.toList());
+
+        addBoardPreviews(boardPreviews, boardList);
 
         // HOT 게시판 정보 추가
-        List<Post> hotPosts = postRepository.findTop3ByHeartCnt(Criteria.HOT_POST_HEART_CNT, PageRequest.of(0, 3));
+        List<Post> hotPosts = postRepository.findHotPostsByHeartCnt(Criteria.HOT_POST_HEART_CNT,null, PageRequest.of(0, 3));
         List<BoardPreviewDto> results = new ArrayList<>();
 
         return getPreviewResult(hotPosts, results, boardPreviews);
@@ -262,10 +256,15 @@ public class PostService {
         Center center = centerRepository.findById(centerId)
                 .orElseThrow(() -> new CenterException(CenterErrorResult.CENTER_NOT_EXIST));
         List<Bookmark> bookmarkList = boardBookmarkRepository.findByUserAndBoardCenter(findUser, center);
-        getBoardPreviews(bookmarkList, boardPreviews);
+
+        List<Board> boardList = bookmarkList.stream()
+                .map(bookmark -> bookmark.getBoard())
+                .collect(Collectors.toList());
+
+        addBoardPreviews(boardPreviews, boardList);
 
         // HOT 게시판 정보 추가
-        List<Post> hotPosts = postRepository.findTop3ByHeartCntWithCenter(Criteria.HOT_POST_HEART_CNT, centerId, PageRequest.of(0, 3));
+        List<Post> hotPosts = postRepository.findHotPostsByHeartCnt(Criteria.HOT_POST_HEART_CNT, centerId, PageRequest.of(0, 3));
         List<BoardPreviewDto> results = new ArrayList<>();
 
         return getPreviewResult(hotPosts, results, boardPreviews);
@@ -276,50 +275,62 @@ public class PostService {
      */
     public Slice<PostResponse> findPostByHeartCnt(Long centerId, Pageable pageable) {
         // heartCnt 가 n 개 이상이면 HOT 게시판에 넣어줍니다.
-        return postRepository.findHotPosts(centerId, Criteria.HOT_POST_HEART_CNT, pageable);
-    }
+        Slice<Post> posts = postRepository.findHotPosts(centerId, Criteria.HOT_POST_HEART_CNT, pageable);
 
-    public PostDetailResponse getPostResponseDto(Post post, Long userId) {
-        return new PostDetailResponse(post, imageService.getInfoImages(post), imageService.getProfileImage(post.getUser()), userId);
+        Slice<PostResponse> postResponses = getPostResponses(posts);
+        return postResponses;
     }
-
-    public void setPreviewImage(PostResponse preview) {
-        List<String> infoImages = imageService.getInfoImages(preview.getPreviewImage());
-        preview.updatePreviewImage(infoImages);
-    }
-
 
     /**
      *  게시글 상세 조회
      */
     public PostDetailResponse findPostByPostId(Long userId, Long postId) {
-        // 게시글과 연관된 유저, 게시판, 시설 한 번에 끌고옴
-        Post findPost = postRepository.findByIdWithUserAndBoardAndCenter(postId)
+
+        Post post = postRepository.findById(postId)
                 .orElseThrow(() -> new PostException(PostErrorResult.POST_NOT_EXIST));
 
-        // 첨부된 이미지 파일, 게시글에 달린 댓글 지연 로딩으로 가져와 DTO 생성
-        return getPostResponseDto(findPost, userId);
+        List<String> infoImages = imageService.getInfoImages(post);
+        String profileImage = imageService.getProfileImage(post.getUser());
+
+        PostDetailResponse postDetailResponse = new PostDetailResponse(post, infoImages, profileImage, userId);
+
+        return postDetailResponse;
     }
 
+    /**
+     * 장터글 끌어올리기
+     */
+    public void pullUpPost(Long userId, Long postId) {
+        Post post = postRepository.findById(postId)
+                .orElseThrow(() -> new PostException(PostErrorResult.POST_NOT_EXIST));
 
-    private void getBoardPreviews(List<Bookmark> bookmarkList, List<BoardPreviewDto> boardPreviews) {
-        List<Board> boardList = bookmarkList.stream()
-                .map(bookmark -> bookmark.getBoard())
-                .collect(Collectors.toList());
+        if (post.getUser().getId().equals(userId)) {
+            throw new PostException(PostErrorResult.UNAUTHORIZED_USER_ACCESS);
+        }
 
-        addBoardPreviews(boardPreviews, boardList);
+        // 장터글 끌어올리기 (postUpdateDate 현재시간으로 업데이트)
+        post.updateTime(LocalDateTime.now());
     }
 
-    private void addBoardPreviews(List<BoardPreviewDto> boardPreviews, List<Board> boardList) {
-        List<Long> boardIds = boardList
-                .stream().map(Board::getId)
-                .collect(Collectors.toList());
+    /**
+     * Post -> PostResposne
+     */
+    @NotNull
+    private Slice<PostResponse> getPostResponses(Slice<Post> posts) {
+        Slice<PostResponse> postResponses = posts.map(post -> {
+            String previewImage = imageService.getInfoImages(post.getInfoImagePath()).get(0);
+            return new PostResponse(post, previewImage);
+        });
+        return postResponses;
+    }
 
-        List<Post> top4 = postRepository.findTop3(boardIds);
-        Map<Board, List<Post>> boardPostMap = top4.stream()
+    private void addBoardPreviews(List<BoardPreviewDto> boardPreviews, List<Board> boards) {
+
+        List<Post> top3Posts = postRepository.findFirst3ByBoardInOrderByBoardIdAscCreatedDateDesc(boards);
+        Map<Board, List<Post>> boardPostMap = top3Posts.stream()
                 .collect(Collectors.groupingBy(post -> post.getBoard()));
 
-        for (Board board : boardList) {
+        for (Board board : boards) {
             if (!boardPostMap.containsKey(board)) {
                 boardPostMap.put(board, new ArrayList<>());
             }
