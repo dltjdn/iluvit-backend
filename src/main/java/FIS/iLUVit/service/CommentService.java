@@ -43,7 +43,7 @@ public class CommentService {
         User findUser = userRepository.findById(userId)
                 .orElseThrow(() -> new UserException(UserErrorResult.USER_NOT_EXIST));
 
-        Post findPost = postRepository.findByIdWithBoard(postId)
+        Post findPost = postRepository.findById(postId)
                 .orElseThrow(() -> new PostException(PostErrorResult.POST_NOT_EXIST));
 
         // anonymous false 일 때 order = null

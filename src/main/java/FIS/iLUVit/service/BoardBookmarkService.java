@@ -65,7 +65,7 @@ public class BoardBookmarkService {
                 String postTitle = null;
                 Long postId = null;
 
-                List<Post> posts = postRepository.findByBoard(board, Sort.by(Sort.Direction.DESC, "id"));
+                List<Post> posts = postRepository.findByBoardOrderByIdDesc(board);
 
                 if (!posts.isEmpty()) { // 게시판에 게시물이 하나도 없을수도 있으므로 검사해줘야한다
                     postTitle = posts.get(0).getTitle(); // 게시판의 가장 최근 게시물 하나
