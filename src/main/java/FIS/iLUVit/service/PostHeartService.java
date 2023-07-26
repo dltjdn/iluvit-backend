@@ -22,32 +22,33 @@ public class PostHeartService {
      * 게시글 좋아요 등록
      */
     public void savePostHeart(Long userId, Long postId) {
-        if (userId == null) {
-            throw new UserException(UserErrorResult.NOT_VALID_TOKEN);
-        }
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new UserException(UserErrorResult.USER_NOT_EXIST));
 
-        Post findPost = postRepository.findById(postId)
+        Post post = postRepository.findById(postId)
                 .orElseThrow(() -> new PostException(PostErrorResult.POST_NOT_EXIST));
 
-        postHeartRepository.findByPostAndUser(userId, postId)
+        postHeartRepository.findByUserAndPost(user, post)
                 .ifPresent((ph) -> {
                     throw new PostException(PostErrorResult.ALREADY_EXIST_HEART);
                 });
 
-        User findUser = userRepository.getById(userId);
-        PostHeart postHeart = new PostHeart(findUser, findPost);
-        postHeartRepository.save(postHeart);
+        postHeartRepository.save(new PostHeart(user, post));
     }
 
     /**
      * 게시글 좋아요 취소 ( 기존에 좋아요 눌렀던 상태여야 취소 가능 )
      */
     public void deletePostHeart(Long userId, Long postId){
-        if (userId == null) {
-            throw new UserException(UserErrorResult.NOT_VALID_TOKEN);
-        }
-        PostHeart postHeart = postHeartRepository.findByPostAndUser(userId, postId)
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new UserException(UserErrorResult.USER_NOT_EXIST));
+
+        Post post = postRepository.findById(postId)
                 .orElseThrow(() -> new PostException(PostErrorResult.POST_NOT_EXIST));
+
+        PostHeart postHeart = postHeartRepository.findByUserAndPost(user, post)
+                .orElseThrow(() -> new PostException(PostErrorResult.POST_NOT_EXIST));
+
         postHeartRepository.delete(postHeart);
     }
 
