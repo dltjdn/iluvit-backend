@@ -11,26 +11,26 @@ import java.util.Optional;
 
 public interface ReportRepository extends JpaRepository<Report, Long> {
 
-    /*
-        targetId로 Report를 불러옵니다.
+    /**
+     * targetId에 해당하는 신고내역 조회합니다
      */
     Optional<Report> findByTargetId(Long targetId);
 
-    /*
-        postId에 해당하는 게시물 ID를 가진 Report 객체들의 targetId 속성을 null로, status 속성을 "DELETE"로 업데이트합니다.
+    /**
+     * target Id에 해당하는 신고내역의 targetId를 null로 하고 상태를 DELETE로 업데이트한다
      */
     @Modifying(clearAutomatically = true)
-    @Query("update Report r " +
-            "set r.targetId = null, r.status = 'DELETE' "+
-            "where r.targetId =:postId ")
-    void setTargetIsNullAndStatusIsDelete(@Param("postId") Long postId);
+    @Query("UPDATE Report r " +
+            "SET r.targetId = null, r.status = 'DELETE' "+
+            "WHERE r.targetId = :targetId ")
+    void setTargetIsNullAndStatusIsDelete(Long targetId);
 
-    /*
-        commentIds에 해당하는 댓글 ID를 가진 Report 객체들의 targetId 속성을 null로, status 속성을 "DELETE"로 업데이트합니다.
+    /**
+     * target Id 리스트에 해당하는 신고내역의 targetId를 null로 하고 상태를 DELETE로 업데이트한다
      */
     @Modifying(clearAutomatically = true)
-    @Query("update Report r " +
-            "set r.targetId = null, r.status = 'DELETE' "+
-            "where r.targetId in :commentIds")
-    void setTargetIsNullAndStatusIsDelete(@Param("commentIds") List<Long> commentIds);
+    @Query("UPDATE Report r " +
+            "SET r.targetId = null, r.status = 'DELETE' "+
+            "WHERE r.targetId in :targetIds")
+    void setTargetIsNullAndStatusIsDelete(List<Long> targetIds);
 }

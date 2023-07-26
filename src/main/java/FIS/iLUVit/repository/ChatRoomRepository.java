@@ -24,12 +24,10 @@ public interface ChatRoomRepository extends JpaRepository<ChatRoom, Long> {
      */
     Slice<ChatRoom> findByReceiverOrderByUpdatedDateDesc(User receiver, Pageable pageable);
 
-
     /**
-     * @@@ postservcie 건드릴 때 사라질수도
-     * 채팅방에서 주어진 게시물 아이디들과 일치하는 게시물이나 댓글을 null로 만듭니다
+     * 해당 게시물 아이디와 일치하는 채팅방의 게시물과 댓글 id를 null로 만듭니다
      */
     @Modifying(clearAutomatically = true)
-    @Query("update ChatRoom cr set cr.post.id = null, cr.comment.id = null where cr.post.id in :postIds ")
-    void setPostIsNull(@Param("postIds") Collection<Long> postIds);
+    @Query("UPDATE ChatRoom cr SET cr.post.id = null, cr.comment.id = null WHERE cr.post.id = :postId ")
+    void setPostIsNull(Long postId);
 }

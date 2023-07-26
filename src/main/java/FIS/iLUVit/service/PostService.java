@@ -50,84 +50,82 @@ public class PostService {
     /**
      * 게시글 저장
      */
-    public Long saveNewPost(PostCreateRequest request, Long userId) {
+    public void saveNewPost(Long userId, PostCreateRequest postCreateRequest) {
 
-        User findUser = userRepository.findById(userId)
+        User user = userRepository.findById(userId)
                 .orElseThrow(() -> new UserException(UserErrorResult.USER_NOT_EXIST));
-        Board findBoard = boardRepository.findById(request.getBoardId())
+
+        Board board = boardRepository.findById(postCreateRequest.getBoardId())
                 .orElseThrow(() -> new BoardException(BoardErrorResult.BOARD_NOT_EXIST));
 
-        if (findBoard.getBoardKind() == BoardKind.NOTICE) {
-            if (findUser.getAuth() == Auth.PARENT) {
+        // 학부모는 공지 게시판에 게시글 쓸 수 없다
+        if (board.getBoardKind() == BoardKind.NOTICE && user.getAuth() == Auth.PARENT ) {
                 throw new PostException(PostErrorResult.PARENT_NOT_ACCESS_NOTICE);
-            }
         }
-        List<MultipartFile> images = request.getImages();
-        Integer imgSize = (images == null ? 0 : images.size());
-        Post post = new Post(request.getTitle(), request.getContent(), request.getAnonymous(),
-                0, 0, 0, imgSize, 0, findBoard, findUser);
-        Post savedPost = postRepository.save(post); // 게시글 저장 -> Id 생김
+
+        List<MultipartFile> images = postCreateRequest.getImages();
+
+        Post post = new Post(postCreateRequest.getTitle(), postCreateRequest.getContent(), postCreateRequest.getAnonymous(),
+                0, 0, 0, images.size(), 0, board, user);
+
+        postRepository.save(post);
+
         imageService.saveInfoImages(images, post);
 
-        return savedPost.getId();
-
     }
-
 
     /**
      *  게시글 삭제
      */
-    public Long deletePost(Long postId, Long userId) {
-        User findUser = userRepository.findById(userId)
+    public void deletePost(Long postId, Long userId) {
+        User user = userRepository.findById(userId)
                 .orElseThrow(() -> new UserException(UserErrorResult.USER_NOT_EXIST));
-        Post findPost = postRepository.findById(postId)
+        Post post = postRepository.findById(postId)
                 .orElseThrow(() -> new PostException(PostErrorResult.POST_NOT_EXIST));
 
-        List<Long> postIds = List.of(postId);
-        // 게시글과 연관된 모든 채팅방의 post_id(fk) 를 null 값으로 만들어줘야함.
-        chatRoomRepository.setPostIsNull(postIds);
-        // 게시글과 연관된 모든 알람의 post_id(fk) 를 null 값으로 만들어줘야함.
-        alarmRepository.setPostIsNull(postId);
-
-        // 2022-09-20 최민아
-        //------------------------신고 관련------------------------//
-        // 게시글과 연관된 모든 신고내역의 target_id 를 null 값으로 만들어줘야함.
-        reportRepository.setTargetIsNullAndStatusIsDelete(postId);
-        // 게시글과 연관된 모든 신고상세내역의 target_post_id(fk) 를 null 값으로 만들어줘야함.
-        reportDetailRepository.setPostIsNull(postId);
-
-        //------------------------댓글 관련------------------------//
-        List<Long> commentIds = commentRepository.findByPost(findPost).stream()
-                .map(Comment::getId)
-                .collect(Collectors.toList());
-        // 만약 게시글에 달린 댓글도 신고된 상태라면 해당 댓글의 신고내역의 target_id 를 null 값으로 만들어줘야함.
-        reportRepository.setTargetIsNullAndStatusIsDelete(commentIds);
-        // 만약 게시글에 달린 댓글도 신고된 상태라면 해당 댓글의 신고상세내역의 target_comment_id 를 null 값으로 만들어줘야함.
-        reportDetailRepository.setCommentIsNull(commentIds);
-
-        if (!Objects.equals(findPost.getUser().getId(), findUser.getId())) {
+        // 게시글을 쓴 사람만 삭제할 수 있다
+        if (!post.getUser().equals(user)) {
             throw new PostException(PostErrorResult.UNAUTHORIZED_USER_ACCESS);
         }
-        postRepository.delete(findPost);
-        return postId;
+
+        // 게시글과 연관된 모든 채팅방의 post_id를 null
+        chatRoomRepository.setPostIsNull(postId);
+
+        // 게시글과 연관된 모든 알람의 post_id를 null
+        alarmRepository.setPostIsNull(postId);
+
+        // 게시글과 연관된 모든 신고내역의 target_id 를 null
+        reportRepository.setTargetIsNullAndStatusIsDelete(postId);
+
+        // 게시글과 연관된 모든 신고상세내역의 target_post_id(fk) 를 null
+        reportDetailRepository.setPostIsNull(postId);
+
+        List<Long> commentIds = commentRepository.findByPost(post).stream()
+                .map(Comment::getId)
+                .collect(Collectors.toList());
+
+        // 만약 게시글에 달린 댓글도 신고된 상태라면 해당 댓글의 신고내역의 target_id 를 null
+        reportRepository.setTargetIsNullAndStatusIsDelete(commentIds);
+
+        // 만약 게시글에 달린 댓글도 신고된 상태라면 해당 댓글의 신고상세내역의 target_comment_id 를 null
+        reportDetailRepository.setCommentIsNull(commentIds);
+
+        postRepository.delete(post);
     }
 
     /**
      * 내가 쓴 게시글 전체 조회
      */
     public Slice<PostResponse> findPostByUser(Long userId, Pageable pageable) {
-        Slice<Post> posts = postRepository.findByUser(userId, pageable);
-        Slice<PostResponse> preview = posts.map(post -> new PostResponse(post));
-        return preview;
+        Slice<PostResponse> postResponses = postRepository.findByUser(userId, pageable).map(PostResponse::new);
+        return postResponses;
     }
 
     /**
      * 장터글 끌어올리기
      */
     public void pullUpPost(Long userId, Long postId) {
-        if (userId == null) {
-            throw new UserException(UserErrorResult.NOT_VALID_TOKEN);
-        }
+
         Post findPost = postRepository.findById(postId)
                 .orElseThrow(() -> new PostException(PostErrorResult.POST_NOT_EXIST));
         if (!Objects.equals(findPost.getUser().getId(), userId)) {
@@ -140,10 +138,6 @@ public class PostService {
      * 게시글 제목+내용 검색 ( [모두의 이야기 + 유저가 속한 센터의 이야기] 에서 통합 검색 )
      */
     public Slice<PostResponse> searchPost(String input, Long userId, Pageable pageable) {
-
-        if (userId == null) {
-            throw new UserException(UserErrorResult.NOT_VALID_TOKEN);
-        }
 
         User findUser = userRepository.findById(userId)
                 .orElseThrow(() -> new UserException(UserErrorResult.USER_NOT_EXIST));
@@ -240,9 +234,6 @@ public class PostService {
      * 시설별 이야기 게시판 전체 조회
      */
     public List<BoardPreviewDto> findBoardDetailsByCenter(Long userId, Long centerId) {
-        if (userId == null) {
-            throw new UserException(UserErrorResult.NOT_VALID_TOKEN);
-        }
 
         User findUser = userRepository.findById(userId)
                 .orElseThrow(() -> new UserException(UserErrorResult.USER_NOT_EXIST));

@@ -35,7 +35,7 @@ public class PostController {
      */
     @PostMapping("")
     public ResponseEntity<Void> createPost(@Login Long userId, @ModelAttribute @Validated PostCreateRequest postCreateRequest) {
-        postService.saveNewPost(postCreateRequest, userId);
+        postService.saveNewPost(userId, postCreateRequest);
         return ResponseEntity.status(HttpStatus.CREATED).build();
     }
 

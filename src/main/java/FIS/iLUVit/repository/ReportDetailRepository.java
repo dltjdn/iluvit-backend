@@ -29,17 +29,17 @@ public interface ReportDetailRepository extends JpaRepository<ReportDetail, Long
             "and rdc.comment.id =:targetId ")
     Optional<ReportDetail> findByUserIdAndTargetCommentId(@Param("userId") Long userId, @Param("targetId") Long targetId);
 
-    /*
-        postId에 해당하는 게시물 ID를 가진 ReportDetailPost 객체들의 post 속성을 null로 업데이트합니다.
+    /**
+     * post Id에 해당하는 신고상세내역의 post를 null로 업데이트한다
      */
     @Modifying(clearAutomatically = true)
-    @Query("update ReportDetailPost  rdp set rdp.post = null where rdp.post.id =:postId")
-    void setPostIsNull(@Param("postId") Long postId);
+    @Query("UPDATE ReportDetailPost rdp SET rdp.post = null WHERE rdp.post.id =:postId")
+    void setPostIsNull(Long postId);
 
-    /*
-        commentIds에 해당하는 댓글 ID를 가진 ReportDetailComment 객체들의 comment 속성을 null로 업데이트합니다.
+    /**
+     * commnetId 리스트에 해당하는 신고상세내역의 comment를 null로 업데이트 한다
      */
     @Modifying(clearAutomatically = true)
-    @Query("update ReportDetailComment  rdc set rdc.comment = null where rdc.comment.id in :commentIds")
-    void setCommentIsNull(@Param("commentIds") List<Long> commentIds);
+    @Query("UPDATE ReportDetailComment rdc SET rdc.comment = null WHERE rdc.comment.id in :commentIds")
+    void setCommentIsNull(List<Long> commentIds);
 }
