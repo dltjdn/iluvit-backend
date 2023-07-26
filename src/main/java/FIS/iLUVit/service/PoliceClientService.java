@@ -44,9 +44,7 @@ public class PoliceClientService {
         PoliceLoginRequest loginRequest = new PoliceLoginRequest(username, password);
         HttpEntity<PoliceLoginRequest> requestEntity = new HttpEntity<>(loginRequest, headers);
 
-        log.info("로그인 API 호출 실행");
         ResponseEntity<Void> responseEntity = restTemplate.exchange(LOGIN_URL, HttpMethod.POST, requestEntity, Void.class);
-        log.info("로그인 API 호출 완료");
 
         // 응답 헤더에서 세션 토큰 추출
         List<String> setCookieHeaders = responseEntity.getHeaders().get("Set-Cookie");
@@ -75,7 +73,6 @@ public class PoliceClientService {
 
         HttpEntity<String> requestEntity = new HttpEntity<>(headers);
 
-        log.info("날짜별 스케줄 조회 API 호출 실행");
 
         ResponseEntity<Map<String, List<ScheduleByDateResponse>>> responseEntity = restTemplate.exchange(
                 SCHEDULE_URL + "?date=" + date.toString(),
@@ -83,7 +80,6 @@ public class PoliceClientService {
                 requestEntity,
                 new ParameterizedTypeReference<Map<String, List<ScheduleByDateResponse>>>() {}
         );
-        log.info("날짜별 스케줄 조회 API 호출 완료");
 
         // 응답 값에서 스케줄 정보를 가져와서 반환
         if (responseEntity.getStatusCode().is2xxSuccessful()) {

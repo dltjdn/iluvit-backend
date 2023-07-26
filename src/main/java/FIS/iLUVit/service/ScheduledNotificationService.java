@@ -31,16 +31,13 @@ public class ScheduledNotificationService {
     /**
      * 내일 현장요원이 방문하는 시설의 관리교사에게 알림 보내기
      */
-//    @Scheduled(cron = "0 0 10 * * ?")
-    @Scheduled(fixedRate = 600000)
+    @Scheduled(cron = "0 0 10 * * ?")
     public void sendRegularAgentVisitNotification() {
         // 내일 날짜 계산
-//        LocalDate tomorrow = LocalDate.now().plus(1, ChronoUnit.DAYS);
-        LocalDate tomorrow = LocalDate.of(2023, 7, 26);
+        LocalDate tomorrow = LocalDate.now().plus(1, ChronoUnit.DAYS);
 
         // 내일 날짜에 대한 스케줄 데이터 가져오기
         List<ScheduleByDateResponse> scheduleResponses = policeClientService.getScheduleByDate(tomorrow);
-        log.info("내일 스케줄 받아오기");
 
         // 관리교사에게 알림 보내기
         for (ScheduleByDateResponse response : scheduleResponses) {
@@ -48,10 +45,8 @@ public class ScheduledNotificationService {
             log.info("시설 아이디 = " + centerId);
             List<Teacher> directors = Optional.ofNullable(teacherRepository.findDirectorByCenter(centerId))
                             .orElseThrow(() -> new UserException(UserErrorResult.USER_NOT_EXIST));
-            log.info("관리교사 리스트와 시설 아이디" + directors.toString() + centerId);
             directors.forEach(director -> {
                 Alarm alarm = new AgentVisitedAlarm(director, Auth.DIRECTOR, director.getCenter());
-                log.info("관리교사 로그인아이디 = " + director.getLoginId());
                 alarmRepository.save(alarm);
                 AlarmUtils.publishAlarmEvent(alarm);
             });
