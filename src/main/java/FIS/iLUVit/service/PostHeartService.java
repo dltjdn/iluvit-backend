@@ -21,7 +21,7 @@ public class PostHeartService {
     /**
      * 게시글 좋아요 등록
      */
-    public Long savePostHeart(Long userId, Long postId) {
+    public void savePostHeart(Long userId, Long postId) {
         if (userId == null) {
             throw new UserException(UserErrorResult.NOT_VALID_TOKEN);
         }
@@ -36,7 +36,7 @@ public class PostHeartService {
 
         User findUser = userRepository.getById(userId);
         PostHeart postHeart = new PostHeart(findUser, findPost);
-        return postHeartRepository.save(postHeart).getId();
+        postHeartRepository.save(postHeart);
     }
 
     /**

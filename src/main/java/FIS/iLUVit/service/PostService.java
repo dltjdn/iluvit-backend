@@ -30,7 +30,6 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 @Slf4j
 public class PostService {
-
     private final PostRepository postRepository;
     private final UserRepository userRepository;
     private final TeacherRepository teacherRepository;
@@ -43,8 +42,8 @@ public class PostService {
     private final ReportRepository reportRepository;
     private final ReportDetailRepository reportDetailRepository;
     private final CommentRepository commentRepository;
-
     private final CenterRepository centerRepository;
+    private final ParentRepository parentRepository;
 
 
     /**
@@ -138,21 +137,23 @@ public class PostService {
         List<Center> centers = new ArrayList<>();
 
         if (user.getAuth() == Auth.PARENT) {
-            // 학부모 유저일 때 아이와 연관된 센터의 아이디를 모두 가져옴
+
+            // 학부모 유저일 때 아이와 연관된 센터를 모두 가져옴
             centers = childRepository.findByParent((Parent)user).stream()
                     .map(Child::getCenter)
                     .filter(Objects::nonNull)
                     .collect(Collectors.toList());
         } else {
-            // 교사 유저는 연관된 센터 가져옴
-            Center center = ((Teacher)user).getCenter();
+            Teacher teacher = teacherRepository.findById(userId)
+                    .orElseThrow(() -> new UserException(UserErrorResult.USER_NOT_EXIST));
+            Center center = teacher.getCenter();
+
             if (center != null) centers.add(center);
         }
 
         // 센터의 게시판 + 모두의 게시판(centerId == null) 키워드 검색
         Slice<Post> posts = postRepository.findInCenterByKeyword(centers, keyword, pageable);
 
-        // 끌어온 게시글에 이미지 있으면 프리뷰용 이미지 넣어줌
         Slice<PostResponse> postResponses = getPostResponses(posts);
 
         return postResponses;
@@ -160,23 +161,32 @@ public class PostService {
     /**
      * 게시글 제목+내용+시설 검색 (각 시설 별 검색)
      */
-    public Slice<PostResponse> searchPostByCenter(Long centerId, String keyword, Auth auth, Long userId, Pageable pageable) {
+    public Slice<PostResponse> searchPostByCenter(Long userId, Long centerId, String keyword, Pageable pageable) {
+        User user = userRepository.findById(userId).
+                orElseThrow(() -> new UserException(UserErrorResult.USER_NOT_EXIST));
+
         if (centerId != null) {
-            if (auth == Auth.PARENT) {
-                // 학부모 유저일 때 아이와 연관된 센터의 아이디를 모두 가져옴
-                User user = userRepository.findById(userId)
-                        .orElseThrow(() -> new UserException(UserErrorResult.NOT_VALID_TOKEN));
-                Set<Long> centerIds = childRepository.findByParent((Parent)user)
-                        .stream().filter(c -> c.getCenter() != null).map(c -> c.getCenter().getId())
-                        .collect(Collectors.toSet());
-                if (!centerIds.contains(centerId)) {
+
+            Center center = centerRepository.findById(centerId)
+                    .orElseThrow(() -> new CenterException(CenterErrorResult.CENTER_NOT_EXIST));
+
+            if (user.getAuth() == Auth.PARENT) {
+
+                //부모의 아이들이 속해있는 센터 리스트에 해당 센터가 있는지 확인
+                boolean hasAccess = childRepository.findByParent((Parent)user).stream()
+                        .map(Child::getCenter)
+                        .filter(Objects::nonNull)
+                        .anyMatch(center::equals);
+
+                if (!hasAccess) {
                     throw new PostException(PostErrorResult.UNAUTHORIZED_USER_ACCESS);
                 }
+
             } else {
                 Teacher teacher = teacherRepository.findById(userId)
-                        .orElseThrow(() -> new PostException(PostErrorResult.UNAUTHORIZED_USER_ACCESS));
-                // 교사 아이디 + center로 join fetch 조회한 결과가 없으면 Teacher의 Center가 null이므로 권한 X
-                if (!Objects.equals(teacher.getCenter().getId(), centerId)) {
+                        .orElseThrow(() -> new UserException(UserErrorResult.USER_NOT_EXIST));
+
+                if (!teacher.getCenter().equals(center)) {
                     throw new PostException(PostErrorResult.UNAUTHORIZED_USER_ACCESS);
                 }
             }
@@ -193,11 +203,43 @@ public class PostService {
      * 게시글 제목+내용+보드 검색 (각 게시판 별 검색)
      */
     public Slice<PostResponse> searchByBoard(Long boardId, String input, Pageable pageable) {
+        boardRepository.findById(boardId)
+                .orElseThrow(() -> new BoardException(BoardErrorResult.BOARD_NOT_EXIST));
+
         Slice<Post> posts = postRepository.findByBoardAndKeyword(boardId, input, pageable);
 
         Slice<PostResponse> postResponses = getPostResponses(posts);
 
         return postResponses;
+    }
+
+    /**
+     * HOT 게시판 게시글 전체 조회
+     */
+    public Slice<PostResponse> findPostByHeartCnt(Long centerId, Pageable pageable) {
+
+        // heartCnt 가 10개 이상이면 HOT 게시판에 넣어줍니다.
+        Slice<Post> posts = postRepository.findHotPosts(centerId, Criteria.HOT_POST_HEART_CNT, pageable);
+
+        Slice<PostResponse> postResponses = getPostResponses(posts);
+
+        return postResponses;
+    }
+
+    /**
+     *  게시글 상세 조회
+     */
+    public PostDetailResponse findPostByPostId(Long userId, Long postId) {
+
+        Post post = postRepository.findById(postId)
+                .orElseThrow(() -> new PostException(PostErrorResult.POST_NOT_EXIST));
+
+        List<String> infoImages = imageService.getInfoImages(post);
+        String profileImage = imageService.getProfileImage(post.getUser());
+
+        PostDetailResponse postDetailResponse = new PostDetailResponse(post, infoImages, profileImage, userId);
+
+        return postDetailResponse;
     }
 
     /**
@@ -270,32 +312,7 @@ public class PostService {
         return getPreviewResult(hotPosts, results, boardPreviews);
     }
 
-    /**
-     * HOT 게시판 게시글 전체 조회
-     */
-    public Slice<PostResponse> findPostByHeartCnt(Long centerId, Pageable pageable) {
-        // heartCnt 가 n 개 이상이면 HOT 게시판에 넣어줍니다.
-        Slice<Post> posts = postRepository.findHotPosts(centerId, Criteria.HOT_POST_HEART_CNT, pageable);
 
-        Slice<PostResponse> postResponses = getPostResponses(posts);
-        return postResponses;
-    }
-
-    /**
-     *  게시글 상세 조회
-     */
-    public PostDetailResponse findPostByPostId(Long userId, Long postId) {
-
-        Post post = postRepository.findById(postId)
-                .orElseThrow(() -> new PostException(PostErrorResult.POST_NOT_EXIST));
-
-        List<String> infoImages = imageService.getInfoImages(post);
-        String profileImage = imageService.getProfileImage(post.getUser());
-
-        PostDetailResponse postDetailResponse = new PostDetailResponse(post, infoImages, profileImage, userId);
-
-        return postDetailResponse;
-    }
 
     /**
      * 장터글 끌어올리기
