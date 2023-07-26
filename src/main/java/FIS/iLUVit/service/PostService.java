@@ -51,9 +51,6 @@ public class PostService {
      * 게시글 저장
      */
     public Long saveNewPost(PostCreateRequest request, Long userId) {
-        if (userId == null) {
-            throw new UserException(UserErrorResult.NOT_VALID_TOKEN);
-        }
 
         User findUser = userRepository.findById(userId)
                 .orElseThrow(() -> new UserException(UserErrorResult.USER_NOT_EXIST));
@@ -81,10 +78,6 @@ public class PostService {
      *  게시글 삭제
      */
     public Long deletePost(Long postId, Long userId) {
-        if (userId == null) {
-            throw new UserException(UserErrorResult.NOT_VALID_TOKEN);
-        }
-
         User findUser = userRepository.findById(userId)
                 .orElseThrow(() -> new UserException(UserErrorResult.USER_NOT_EXIST));
         Post findPost = postRepository.findById(postId)
