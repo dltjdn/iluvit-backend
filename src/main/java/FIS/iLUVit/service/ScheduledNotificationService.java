@@ -31,7 +31,7 @@ public class ScheduledNotificationService {
     /**
      * 내일 현장요원이 방문하는 시설의 관리교사에게 알림 보내기
      */
-    @Scheduled(cron = "0 0 10 * * ?")
+    @Scheduled(cron = "0 0 15 * * ?")
     public void sendRegularAgentVisitNotification() {
         // 내일 날짜 계산
         LocalDate tomorrow = LocalDate.now().plus(1, ChronoUnit.DAYS);
