@@ -11,12 +11,14 @@ public class CenterMapPreviewDto {
     private String name;                    // 시설명
     private Double longitude;               // 경도
     private Double latitude;                // 위도
+    private Boolean signed;                 // 원장 가입 유무
 
     @QueryProjection
-    public CenterMapPreviewDto(Long id, String name, Double longitude, Double latitude) {
+    public CenterMapPreviewDto(Long id, String name, Double longitude, Double latitude, Boolean signed) {
         this.id = id;
         this.name = name;
         this.longitude = longitude;
         this.latitude = latitude;
+        this.signed = signed;
     }
 }

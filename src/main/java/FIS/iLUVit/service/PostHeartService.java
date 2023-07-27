@@ -24,29 +24,26 @@ public class PostHeartService {
      내용: 게시글에 이미 좋아요 눌렀는지 검증 후 저장
      */
     public Long savePostHeart(Long userId, Long postId) {
-        if (userId == null) {
-            throw new UserException(UserErrorResult.NOT_VALID_TOKEN);
-        }
 
         Post findPost = postRepository.findById(postId)
                 .orElseThrow(() -> new PostException(PostErrorResult.POST_NOT_EXIST));
 
+        // 이미 좋아요 누른 게시물이면 에러
         postHeartRepository.findByPostAndUser(userId, postId)
-                .ifPresent((ph) -> {
-                    throw new PostException(PostErrorResult.ALREADY_EXIST_HEART);
-                });
+                .ifPresent((ph) -> {throw new PostException(PostErrorResult.ALREADY_EXIST_HEART);});
 
         User findUser = userRepository.getById(userId);
+
         PostHeart postHeart = new PostHeart(findUser, findPost);
+        findPost.plusHeartCount(); // 좋아요 수 +1
+
         return postHeartRepository.save(postHeart).getId();
     }
 
     public void deletePostHeart(Long userId, Long postId){
-        if (userId == null) {
-            throw new UserException(UserErrorResult.NOT_VALID_TOKEN);
-        }
         PostHeart postHeart = postHeartRepository.findByPostAndUser(userId, postId)
                 .orElseThrow(() -> new PostException(PostErrorResult.POST_NOT_EXIST));
+
         postHeartRepository.delete(postHeart);
     }
 
