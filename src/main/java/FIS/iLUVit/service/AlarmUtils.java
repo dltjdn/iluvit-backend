@@ -42,8 +42,8 @@ public class AlarmUtils {
         return messageSource.getMessage(code, args, null);
     }
 
-    public static AlarmEvent publishAlarmEvent(Alarm alarm){
-        AlarmEvent alarmEvent = new AlarmEvent(alarm);
+    public static AlarmEvent publishAlarmEvent(Alarm alarm, String title) {
+        AlarmEvent alarmEvent = new AlarmEvent(alarm, title);
         eventPublisher.publishEvent(alarmEvent);
         return alarmEvent;
     }

@@ -46,7 +46,8 @@ public class ScheduledNotificationService {
             directors.forEach(director -> {
                 Alarm alarm = new AgentVisitedAlarm(director, Auth.DIRECTOR, director.getCenter());
                 alarmRepository.save(alarm);
-                AlarmUtils.publishAlarmEvent(alarm);
+                String type = "지문등록";
+                AlarmUtils.publishAlarmEvent(alarm, type);
             });
         }
     }

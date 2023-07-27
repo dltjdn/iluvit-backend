@@ -140,8 +140,8 @@ public class TeacherService {
                 if (t.getAuth() == Auth.DIRECTOR) {
                     Alarm alarm = new CenterApprovalReceivedAlarm(t, Auth.TEACHER, t.getCenter());
                     alarmRepository.save(alarm);
-                    AlarmUtils.publishAlarmEvent(alarm);
-                }
+                    String type = "아이러빗";
+                    AlarmUtils.publishAlarmEvent(alarm, type);                }
             });
         } else {   // 센터를 선택하지 않은 경우
             teacher = request.createTeacher(null, hashedPwd);
@@ -186,7 +186,8 @@ public class TeacherService {
         directors.forEach(director -> {
             Alarm alarm = new CenterApprovalReceivedAlarm(director, Auth.TEACHER, director.getCenter());
             alarmRepository.save(alarm);
-            AlarmUtils.publishAlarmEvent(alarm);
+            String type = "아이러빗";
+            AlarmUtils.publishAlarmEvent(alarm, type);
         });
         return teacher;
     }
