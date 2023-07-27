@@ -70,7 +70,6 @@ public class PostService {
         postRepository.save(post);
 
         imageService.saveInfoImages(images, post);
-
     }
 
     /**
@@ -127,7 +126,7 @@ public class PostService {
     }
 
     /**
-     * 게시글 제목+내용 검색 ( [모두의 이야기 + 유저가 속한 센터의 이야기] 에서 통합 검색 )
+     * [모두의 이야기 + 유저가 속한 센터의 이야기] 에서  게시글 제목+내용 검색
      */
     public Slice<PostResponse> searchPost(Long userId, String keyword, Pageable pageable) {
 
@@ -137,7 +136,6 @@ public class PostService {
         List<Center> centers = new ArrayList<>();
 
         if (user.getAuth() == Auth.PARENT) {
-
             // 학부모 유저일 때 아이와 연관된 센터를 모두 가져옴
             centers = childRepository.findByParent((Parent)user).stream()
                     .map(Child::getCenter)
@@ -158,19 +156,21 @@ public class PostService {
 
         return postResponses;
     }
+
     /**
-     * 게시글 제목+내용+시설 검색 (각 시설 별 검색)
+     * [시설 이야기] or [모두의 이야기] 에서 게시글 제목+내용 검색
      */
     public Slice<PostResponse> searchPostByCenter(Long userId, Long centerId, String keyword, Pageable pageable) {
         User user = userRepository.findById(userId).
                 orElseThrow(() -> new UserException(UserErrorResult.USER_NOT_EXIST));
 
+        // 시설 이야기일 때 유저가 그 시설과 관계되어있는지 검증하는 로직
         if (centerId != null) {
 
             Center center = centerRepository.findById(centerId)
                     .orElseThrow(() -> new CenterException(CenterErrorResult.CENTER_NOT_EXIST));
 
-            if (user.getAuth() == Auth.PARENT) {
+            if (user.getAuth() == Auth.PARENT) { // 학부모일 때
 
                 //부모의 아이들이 속해있는 센터 리스트에 해당 센터가 있는지 확인
                 boolean hasAccess = childRepository.findByParent((Parent)user).stream()
@@ -182,7 +182,7 @@ public class PostService {
                     throw new PostException(PostErrorResult.UNAUTHORIZED_USER_ACCESS);
                 }
 
-            } else {
+            } else { // 선생님일 때
                 Teacher teacher = teacherRepository.findById(userId)
                         .orElseThrow(() -> new UserException(UserErrorResult.USER_NOT_EXIST));
 
@@ -191,7 +191,8 @@ public class PostService {
                 }
             }
         }
-        // 센터 아이디 null 인 경우 모두의 이야기 안에서 검색됨
+
+        // 시설 id not null -> 시설이야기 안에서 검색, 시설 id null -> 모두의 이야기 안에서 검색
         Slice<Post> posts = postRepository.findByCenterAndKeyword(centerId, keyword, pageable);
 
         Slice<PostResponse> postResponses = getPostResponses(posts);
@@ -200,7 +201,7 @@ public class PostService {
     }
 
     /**
-     * 게시글 제목+내용+보드 검색 (각 게시판 별 검색)
+     * 각 게시판 별 게시글 제목+내용 검색
      */
     public Slice<PostResponse> searchByBoard(Long boardId, String input, Pageable pageable) {
         boardRepository.findById(boardId)

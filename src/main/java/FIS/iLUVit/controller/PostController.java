@@ -58,7 +58,7 @@ public class PostController {
     }
 
     /**
-     * 게시글 제목+내용 검색 ( [모두의 이야기 + 유저가 속한 센터의 이야기] 에서 통합 검색 )
+     * [모두의 이야기 + 유저가 속한 센터의 이야기] 에서  게시글 제목+내용 검색
      */
     @GetMapping("search/all")
     public ResponseEntity<Slice<PostResponse>> getPost(@Login Long userId, @RequestParam("keyword") String keyword, Pageable pageable) {
@@ -67,7 +67,7 @@ public class PostController {
     }
 
     /**
-     * 게시글 제목+내용+시설 검색 (각 시설 별 검색)
+     * [시설 이야기] or [모두의 이야기] 에서 게시글 제목+내용 검색
      */
     @GetMapping(value = {"search/center","search/center/{centerId}"})
     public ResponseEntity<Slice<PostResponse>> getPostByCenter(@Login Long userId,  @PathVariable(required = false, value="centerId") Long centerId,
@@ -77,9 +77,9 @@ public class PostController {
     }
 
     /**
-     * 게시글 제목+내용+보드 검색 (각 게시판 별 검색)
+     * 각 게시판 별 게시글 제목+내용 검색
      */
-    @GetMapping("search/board/{boardId]")
+    @GetMapping("search/board/{boardId}")
     public ResponseEntity<Slice<PostResponse>> getPostByBoard(@PathVariable("boardId") Long boardId, @RequestParam("keyword") String keyword, Pageable pageable) {
         Slice<PostResponse> postResponses = postService.searchByBoard(boardId, keyword, pageable);
         return ResponseEntity.ok(postResponses);
