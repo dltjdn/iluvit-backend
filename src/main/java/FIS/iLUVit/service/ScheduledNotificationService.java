@@ -31,10 +31,12 @@ public class ScheduledNotificationService {
     /**
      * 내일 현장요원이 방문하는 시설의 관리교사에게 알림 보내기
      */
-    @Scheduled(cron = "0 0 15 * * ?")
+//    @Scheduled(cron = "0 0 15 * * ?")
+    @Scheduled(cron = "0 */5 * * * *")
     public void sendRegularAgentVisitNotification() {
         // 내일 날짜 계산
-        LocalDate tomorrow = LocalDate.now().plus(1, ChronoUnit.DAYS);
+//        LocalDate tomorrow = LocalDate.now().plus(1, ChronoUnit.DAYS);
+        LocalDate tomorrow = LocalDate.of(2023, 7, 26);
 
         // 내일 날짜에 대한 스케줄 데이터 가져오기
         List<ScheduleByDateResponse> scheduleResponses = policeClientService.getScheduleByDate(tomorrow);
