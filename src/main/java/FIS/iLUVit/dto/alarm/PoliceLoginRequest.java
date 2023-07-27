@@ -1,5 +1,6 @@
 package FIS.iLUVit.dto.alarm;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -8,6 +9,8 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 public class PoliceLoginRequest {
-    private String u_nickname;
-    private String u_pwd;
+    @JsonProperty("u_nickname")
+    private String uNickname;
+    @JsonProperty("u_pwd")
+    private String uPwd;
 }
