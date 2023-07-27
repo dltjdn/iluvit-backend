@@ -75,7 +75,7 @@ public class TeacherService {
     /**
      * 교사 회원가입을 수행합니다
      */
-    public Teacher signupTeacher(SignupTeacherRequest request) {
+    public void signupTeacher(SignupTeacherRequest request) {
         // 회원가입 유효성 검사 및 비밀번호 해싱
         String hashedPwd = userService.hashAndValidatePwdForSignup(request.getPassword(), request.getPasswordCheck(), request.getLoginId(), request.getPhoneNum(), request.getNickname());
 
@@ -102,18 +102,6 @@ public class TeacherService {
         // 교사 정보 저장
         teacherRepository.save(teacher);
 
-        if (center != null) {   // 시설을 선택한 경우
-            // 시설의 관리교사에게 알림 보내기
-            List<Teacher> teacherList = teacherRepository.findByCenter(center);
-            teacherList.forEach(t -> {
-                if (t.getAuth() == DIRECTOR) {
-                    Alarm alarm = new CenterApprovalReceivedAlarm(t, Auth.TEACHER, t.getCenter());
-                    alarmRepository.save(alarm);
-                    AlarmUtils.publishAlarmEvent(alarm);
-                }
-            });
-        }
-
         // 모두의 이야기 default boards bookmark 추가
         List<Board> defaultBoards = boardRepository.findByCenterIsNullAndIsDefaultTrue();
         for (Board defaultBoard : defaultBoards) {
@@ -127,7 +115,17 @@ public class TeacherService {
         // 사용이 끝난 인증번호 삭제
         authRepository.deleteByPhoneNumAndAuthKind(request.getPhoneNum(), AuthKind.signup);
 
-        return teacher;
+        if (teacher.getCenter() != null) { // 교사가 시설에 소속된 경우
+            // 시설의 관리교사에게 알림 보내기
+            List<Teacher> teacherList = teacherRepository.findByCenter(center);
+            teacherList.forEach(t -> {
+                if (t.getAuth() == DIRECTOR) {
+                    Alarm alarm = new CenterApprovalReceivedAlarm(t, Auth.TEACHER, t.getCenter());
+                    alarmRepository.save(alarm);
+                    AlarmUtils.publishAlarmEvent(alarm);
+                }
+            });
+        }
     }
 
 
