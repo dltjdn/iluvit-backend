@@ -9,8 +9,10 @@ import lombok.NoArgsConstructor;
 public class AlarmEvent {
 
     private Alarm alarm;
+    private String type;
 
-    public AlarmEvent(Alarm alarm) {
+    public AlarmEvent(Alarm alarm, String type) {
         this.alarm = alarm;
+        this.type = type;
     }
 }

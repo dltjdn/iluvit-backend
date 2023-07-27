@@ -54,6 +54,8 @@ jobs:
           echo "${{ secrets.SECRET_YML }}" > ./application-secret.yml
           touch ./application-security.yml
           echo "${{ secrets.SECURITY_YML }}" > ./application-security.yml
+          touch ./application-auth.yml
+          echo "${{ secrets.AUTH_YML }}" > ./application-auth.yml
 
 
       # (4) Gradle build (Test 제외)
