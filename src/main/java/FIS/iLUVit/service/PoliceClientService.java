@@ -53,7 +53,6 @@ public class PoliceClientService {
                 // 헤더에서 세션 토큰 추출
                 if (setCookieHeader.startsWith("JSESSIONID")) {
                     String sessionToken = setCookieHeader.split(";")[0]; // 세션 토큰 추출
-                    log.info("sessionToken = " + sessionToken);
                     return sessionToken;
                 }
             }
