@@ -1,13 +1,11 @@
 package FIS.iLUVit.service;
 
+import FIS.iLUVit.domain.*;
 import FIS.iLUVit.domain.alarms.Alarm;
-import FIS.iLUVit.dto.parent.ParticipationListDto;
-import FIS.iLUVit.domain.Parent;
-import FIS.iLUVit.domain.Participation;
-import FIS.iLUVit.domain.Presentation;
-import FIS.iLUVit.domain.PtDate;
+import FIS.iLUVit.dto.participation.ParticipationDto;
 import FIS.iLUVit.domain.alarms.PresentationFullAlarm;
 import FIS.iLUVit.domain.enumtype.Status;
+import FIS.iLUVit.dto.participation.ParticipationWithStatusDto;
 import FIS.iLUVit.event.ParticipationCancelEvent;
 import FIS.iLUVit.exception.*;
 import FIS.iLUVit.repository.*;
@@ -20,39 +18,41 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
+
+import static FIS.iLUVit.domain.enumtype.Status.CANCELED;
+import static FIS.iLUVit.domain.enumtype.Status.JOINED;
 
 @Service
 @Slf4j
 @RequiredArgsConstructor
 @Transactional // 기본 Required 트랜잭션들 다 엮인다.
 public class ParticipationService {
-
     private final ParticipationRepository participationRepository;
     private final PtDateRepository ptDateRepository;
     private final ParentRepository parentRepository;
     private final TeacherRepository teacherRepository;
     private final ApplicationEventPublisher eventPublisher;
     private final AlarmRepository alarmRepository;
+    private final WaitingRepository waitingRepository;
 
-    public Long registerParticipation(Long userId, Long ptDateId) {
-        if(userId == null)
-            throw new UserException(UserErrorResult.NOT_LOGIN);
-
-        // 잘못된 설명회 회차 id일 경우 error throw
+    /**
+     * 설명회 신청
+     */
+    public void registerParticipation(Long userId, Long ptDateId) {
+        // 잘못된 설명회 회차 id일 경우
         PtDate ptDate = ptDateRepository.findByIdAndJoinParticipation(ptDateId)
                 .orElseThrow(() -> new PresentationException(PresentationErrorResult.WRONG_PTDATE_ID_REQUEST));
 
-        // 설명회 신청기간이 지났을경우 error throw
+        // 설명회 신청기간이 지났을경우
         if(LocalDate.now().isAfter(ptDate.getPresentation().getEndDate()))
             // 핵심 비지니스 로직 => 설명회 canRegister
             throw new PresentationException(PresentationErrorResult.PARTICIPATION_PERIOD_PASSED);
 
-        // 설명회 수용인원이 초과일 경우 error throw
-        // 이름 잘만들기
-        // isCapacityOver(
+        // 설명회 수용인원이 초과일 경우
         if(ptDate.getParticipantCnt() >= ptDate.getAblePersonNum())
             throw new PresentationException(PresentationErrorResult.PRESENTATION_OVERCAPACITY);
 
@@ -63,23 +63,12 @@ public class ParticipationService {
         Parent parent = parentRepository.getById(userId);
 
         participations.forEach(participation -> {
-            if(participation.getStatus().equals(Status.JOINED) && participation.getParent().getId().equals(userId))
+            if(participation.getStatus().equals(JOINED) && participation.getParent().getId().equals(userId))
                 throw new PresentationException(PresentationErrorResult.ALREADY_PARTICIPATED_IN);
         });
 
         // 설명회 등록
-        Participation participation = participationRepository.save(
-                Participation.createAndRegister(parent, presentation, ptDate, participations)
-        );
-
-//        if(ptDate.getAblePersonNum() <= ptDate.getParticipantCnt()){
-//            userRepository.findTeacherByCenter(presentation.getCenter()).forEach((user) -> {
-//                Alarm alarm = new PresentationFullAlarm(user, presentation, presentation.getCenter());
-//                alarmRepository.save(alarm);
-//                AlarmUtils.publishAlarmEvent(alarm);
-//
-//            });
-//        }
+        participationRepository.save(Participation.createAndRegister(parent, presentation, ptDate, participations));
 
         if(ptDate.getAblePersonNum() <= ptDate.getParticipantCnt()){
             teacherRepository.findByCenter(presentation.getCenter()).forEach((teacher) -> {
@@ -88,69 +77,97 @@ public class ParticipationService {
                 AlarmUtils.publishAlarmEvent(alarm);
             });
         }
-
-        return participation.getId();
     }
 
-    public Long cancelParticipation(Long userId, Long participationId) {
-        if(userId == null)
-            throw new UserException(UserErrorResult.NOT_LOGIN);
-
+    /**
+     * 설명회 취소 ( 대가자 있을 경우 자동 합류 )
+     */
+    public void cancelParticipation(Long userId, Long participationId) {
         if(participationId < 0)
             throw new ParticipationException(ParticipationErrorResult.WRONG_PARTICIPATIONID_REQUEST);
 
-        Participation participation = participationRepository.findByIdAndStatusWithPtDate(participationId, userId)
+        Parent parent = parentRepository.findById(userId)
+                .orElseThrow(() -> new UserException(UserErrorResult.USER_NOT_EXIST));
+
+        Participation participation = participationRepository.findByIdAndStatusAndParent(participationId, JOINED, parent)
                 .orElseThrow(() -> new ParticipationException(ParticipationErrorResult.NO_RESULT));
-        // ptDate cnt 값을 1줄여야 한다.
-        participation.cancel();
+
+        participation.cancel(); // ptDate cnt 값을 1줄여야 한다.
+
         PtDate ptDate = participation.getPtDate();
+
         if(ptDate.hasWaiting()){
             eventPublisher.publishEvent(new ParticipationCancelEvent(ptDate.getPresentation(), ptDate)); // 이벤트 리스너 호출
         }
-
-        return participationId;
     }
 
-    public Map<Status, List<ParticipationListDto>> findAllParticipationByUser(Long userId) {
-        if(userId == null)
-            throw new UserException(UserErrorResult.NOT_LOGIN);
+    /**
+     * 신청한/취소한 설명회 전체 조회
+     */
+    public List<ParticipationWithStatusDto> findAllParticipationByUser(Long userId) {
         // 학부모 조회
-        Parent parent = parentRepository.findMyParticipation(userId);
+        Parent parent = parentRepository.findById(userId)
+                .orElseThrow(()-> new UserException(UserErrorResult.USER_NOT_EXIST));
 
-
-        List<ParticipationListDto> participationListDtos = participationRepository.findByParent(parent).stream()
-                .map(ParticipationListDto::createDto)
+        List<ParticipationDto> participationDtos = participationRepository.findByParent(parent).stream()
+                .map(ParticipationDto::createDtoByParticipation)
                 .collect(Collectors.toList());
 
-        participationListDtos.addAll(
+        participationDtos.addAll(
                 parent.getWaitings().stream()
-                .map(ParticipationListDto::createDto)
+                .map(ParticipationDto::createDtoByWaiting)
                 .collect(Collectors.toList())
         );
 
-        return participationListDtos.stream()
-                .collect(Collectors.groupingBy(ParticipationListDto::getStatus));
+        Map<Status, List<ParticipationDto>> statusParticipationMap = participationDtos.stream()
+                .collect(Collectors.groupingBy(ParticipationDto::getStatus));
+
+        List<ParticipationWithStatusDto> participationWithStatusDtos = new ArrayList<>();
+
+        statusParticipationMap.forEach((status, participationDtoList)-> {
+            participationWithStatusDtos.add(new ParticipationWithStatusDto(status, participationDtoList));
+        });
+
+        return participationWithStatusDtos;
     }
 
-    public Slice<ParticipationListDto> findRegisterParticipationByUser(Long userId, Pageable pageable){
-        if(userId == null)
-            throw new UserException(UserErrorResult.NOT_LOGIN);
+    /**
+     * 신청한 설명회 전체 조회
+     */
+    public Slice<ParticipationDto> findRegisterParticipationByUser(Long userId, Pageable pageable){
+        Parent parent = parentRepository.findById(userId)
+                .orElseThrow(() -> new UserException(UserErrorResult.USER_NOT_EXIST));
 
-        return parentRepository.findMyJoinParticipation(userId, pageable);
+        Slice<ParticipationDto> participationDtos = participationRepository.findByParentAndStatus(parent, JOINED, pageable)
+                .map(ParticipationDto::createDtoByParticipation);
+
+        return participationDtos;
     }
 
-    public Slice<ParticipationListDto> findCancelParticipationByUser(Long userId, Pageable pageable){
-        if(userId == null)
-            throw new UserException(UserErrorResult.NOT_LOGIN);
+    /**
+     * 신청을 취소한 설명회 전체 조회
+     */
+    public Slice<ParticipationDto> findCancelParticipationByUser(Long userId, Pageable pageable){
+        Parent parent = parentRepository.findById(userId)
+                .orElseThrow(() -> new UserException(UserErrorResult.USER_NOT_EXIST));
 
-        return parentRepository.findMyCancelParticipation(userId, pageable);
+        Slice<ParticipationDto> participationDtos = participationRepository.findByParentAndStatus(parent, CANCELED, pageable)
+                .map(ParticipationDto::createDtoByParticipation);
+
+        return participationDtos;
     }
 
-    public Slice<ParticipationListDto> findWaitingParticipationByUser(Long userId, Pageable pageable){
-        if(userId == null)
-            throw new UserException(UserErrorResult.NOT_LOGIN);
+    /**
+     * 대기를 신청한 설명회 전체 조회
+     */
+    public Slice<ParticipationDto> findWaitingParticipationByUser(Long userId, Pageable pageable){
+        Parent parent = parentRepository.findById(userId)
+                .orElseThrow(() -> new UserException(UserErrorResult.USER_NOT_EXIST));
 
-        return parentRepository.findMyWaiting(userId, pageable);
+        Slice<ParticipationDto> participationDtos = waitingRepository.findByParent(parent, pageable)
+                .map(ParticipationDto::createDtoByWaiting);
+
+        return participationDtos;
     }
 
 }

@@ -47,8 +47,8 @@ public class ChildService {
     /**
      * 아이 정보 전체 조회
      */
-    public List<ChildDto> findChildList(Long id) {
-        Parent findParent = parentRepository.findWithChildren(id)
+    public List<ChildDto> findChildList(Long userId) {
+        Parent findParent = parentRepository.findById(userId)
                 .orElseThrow(() -> new UserException(UserErrorResult.NOT_VALID_TOKEN));
 
         List<ChildDto> childDtos = new ArrayList<>();
@@ -77,7 +77,8 @@ public class ChildService {
         Child newChild = request.createChild(center, parent);
 
         // 아이 승인 요청 알람이 해당 시설에 승인된 교사들에게 감
-        List<Teacher> teacherList = teacherRepository.findByCenterWithApproval(center.getId());
+        Approval approval = Approval.ACCEPT;
+        List<Teacher> teacherList = teacherRepository.findByCenterAndApproval(center, approval);
         teacherList.forEach(teacher -> {
             Alarm alarm = new CenterApprovalReceivedAlarm(teacher, Auth.PARENT, teacher.getCenter());
             alarmRepository.save(alarm);
@@ -181,7 +182,8 @@ public class ChildService {
 
         mappedChild.mappingCenter(center);
 
-        List<Teacher> teacherList = teacherRepository.findByCenterWithApproval(centerId);
+        Approval approval = Approval.ACCEPT;
+        List<Teacher> teacherList = teacherRepository.findByCenterAndApproval(center, approval);
 
         teacherList.forEach(teacher -> {
             Alarm alarm = new CenterApprovalReceivedAlarm(teacher, Auth.PARENT, teacher.getCenter());
@@ -217,7 +219,8 @@ public class ChildService {
      */
     public List<ChildInfoForAdminDto> findChildApprovalList(Long userId) {
         // 사용자가 속한 시설의 아이들 끌어오기
-        Teacher teacher = teacherRepository.findByIdWithCenterWithChildWithParent(userId)
+        Approval approval = Approval.ACCEPT;
+        Teacher teacher = teacherRepository.findByIdAndApproval(userId, approval)
                 .orElseThrow(() -> new UserException(UserErrorResult.HAVE_NOT_AUTHORIZATION));
 
         List<ChildInfoForAdminDto> childInfoForAdminDtos = new ArrayList<>();
@@ -239,9 +242,9 @@ public class ChildService {
      * 아이를 시설에 승인
      */
     public void acceptChildRegistration(Long userId, Long childId) {
-
         // 사용자가 등록된 시설과 연관된 아이들 목록 가져오기
-        Teacher teacher = teacherRepository.findByIdWithCenterWithChildWithParent(userId)
+        Approval approval = Approval.ACCEPT;
+        Teacher teacher = teacherRepository.findByIdAndApproval(userId, approval)
                 .orElseThrow(() -> new UserException(UserErrorResult.HAVE_NOT_AUTHORIZATION));
         // childId에 해당하는 아이가 시설에 승인 대기중인지 확인
         List<Child> childList = childRepository.findByCenter(teacher.getCenter());
@@ -254,7 +257,7 @@ public class ChildService {
         acceptedChild.accepted();
 
         // 승인하고자 하는 아이의 부모와 그 부모에 속한 모든 아이들 가져오기
-        Parent acceptedParent = parentRepository.findByIdWithChild(acceptedChild.getParent().getId())
+        Parent acceptedParent = parentRepository.findById(acceptedChild.getParent().getId())
                 .orElseThrow(() -> new UserException(UserErrorResult.NOT_VALID_REQUEST));
 
         // 승인 완료 알람이 학부모에게로 감
@@ -287,9 +290,9 @@ public class ChildService {
      * 시설에서 아이 삭제/승인거절
      */
     public void rejectChildRegistration(Long userId, Long childId) {
-
         // 사용자가 등록된 시설과 연관된 아이들 목록 가져오기
-        Teacher teacher = teacherRepository.findByIdWithCenterWithChildWithParent(userId)
+        Approval approval = Approval.ACCEPT;
+        Teacher teacher = teacherRepository.findByIdAndApproval(userId, approval)
                 .orElseThrow(() -> new UserException(UserErrorResult.HAVE_NOT_AUTHORIZATION));
 
         // childId 검증

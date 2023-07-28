@@ -87,9 +87,7 @@ public class UserController {
     public ResponseEntity<VersionInfoDto> getVersion() {
         String iosVersion = env.getProperty("version.ios");
         String aosVersion = env.getProperty("version.aos");
-
         VersionInfoDto versionInfoDto = new VersionInfoDto(iosVersion, aosVersion);
-
         return ResponseEntity.ok(versionInfoDto);
     }
 

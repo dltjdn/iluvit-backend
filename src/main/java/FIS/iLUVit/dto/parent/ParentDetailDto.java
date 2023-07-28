@@ -9,7 +9,7 @@ import lombok.NoArgsConstructor;
 @Getter
 @AllArgsConstructor
 @NoArgsConstructor
-public class ParentDetailResponse {
+public class ParentDetailDto {
     private String nickname;
     private String phoneNumber;
     private String emailAddress;
@@ -20,7 +20,7 @@ public class ParentDetailResponse {
     private String profileImg;
     private String name;
 
-    public ParentDetailResponse(Parent parent, String profileImg) {
+    public ParentDetailDto(Parent parent, String profileImg) {
         this.nickname = parent.getNickName();
         this.phoneNumber = parent.getPhoneNumber();
         this.emailAddress = parent.getEmailAddress();

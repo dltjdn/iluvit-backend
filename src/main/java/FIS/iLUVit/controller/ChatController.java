@@ -28,8 +28,8 @@ public class ChatController {
      * 쪽지 작성 ( 대화방 생성 )
      */
     @PostMapping("")
-    public ResponseEntity<Void> createChat(@Login Long userId, @RequestBody ChatRoomRequestDto request) {
-        chatService.saveNewChat(userId, request);
+    public ResponseEntity<Void> createChat(@Login Long userId, @RequestBody ChatRoomRequestDto chatRoomRequestDto) {
+        chatService.saveNewChat(userId, chatRoomRequestDto);
         return ResponseEntity.status(HttpStatus.CREATED).build();
     }
 
@@ -37,8 +37,8 @@ public class ChatController {
      * 쪽지 작성 ( 대화방 생성 후 쪽지 작성 )
      */
     @PostMapping("in-room")
-    public ResponseEntity<Void> createChatInRoom(@Login Long userId, @RequestBody ChatRequestDto request) {
-        chatService.saveChatInRoom(userId, request);
+    public ResponseEntity<Void> createChatInRoom(@Login Long userId, @RequestBody ChatRequestDto chatRequestDto) {
+        chatService.saveChatInRoom(userId, chatRequestDto);
         return ResponseEntity.status(HttpStatus.CREATED).build();
     }
 
@@ -55,8 +55,7 @@ public class ChatController {
      * 대화방 상세 조회
      */
     @GetMapping("{roomId}")
-    public ResponseEntity<ChatListDto> getChatRoomDetails(@Login Long userId, @PathVariable("roomId") Long roomId,
-                                                          Pageable pageable) {
+    public ResponseEntity<ChatListDto> getChatRoomDetails(@Login Long userId, @PathVariable("roomId") Long roomId, Pageable pageable) {
         ChatListDto chatListDtos = chatService.findChatRoomDetails(userId, roomId, pageable);
         return ResponseEntity.ok(chatListDtos);
     }

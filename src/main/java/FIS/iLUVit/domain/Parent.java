@@ -1,8 +1,6 @@
 package FIS.iLUVit.domain;
 
-import FIS.iLUVit.dto.parent.LoginParentResponse;
-import FIS.iLUVit.dto.parent.ParentDetailRequest;
-import FIS.iLUVit.dto.parent.ParentBasicInfoDto;
+import FIS.iLUVit.dto.parent.ParentUpdateDto;
 import FIS.iLUVit.dto.user.UserBasicInfoDto;
 import FIS.iLUVit.domain.embeddable.Theme;
 import FIS.iLUVit.domain.enumtype.Auth;
@@ -10,7 +8,6 @@ import FIS.iLUVit.security.UserDto;
 import lombok.*;
 import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
-
 import javax.persistence.*;
 import java.util.ArrayList;
 import java.util.List;
@@ -52,7 +49,7 @@ public class Parent extends User {
         this.readAlarm = readAlarm;
     }
 
-    public void updateDetail(ParentDetailRequest request, Theme theme) {
+    public void updateDetail(ParentUpdateDto request, Theme theme) {
         this.name = request.getName();
         this.nickName = request.getNickname();
         this.emailAddress = request.getEmailAddress();
@@ -62,7 +59,7 @@ public class Parent extends User {
         this.theme = theme;
     }
 
-    public void updateDetailWithPhoneNum(ParentDetailRequest request, Theme theme) {
+    public void updateDetailWithPhoneNum(ParentUpdateDto request, Theme theme) {
         this.name = request.getName();
         this.nickName = request.getNickname();
         this.phoneNumber = request.getPhoneNum();
@@ -75,14 +72,12 @@ public class Parent extends User {
 
     @Override
     public UserDto getLoginInfo() {
-        return new LoginParentResponse(this);
+        return new UserDto(this);
     }
 
     @Override
     public UserBasicInfoDto getUserInfo() {
-        return new ParentBasicInfoDto(id, nickName, auth);
+        return new UserBasicInfoDto(id, nickName, auth);
     }
-
-
 
 }

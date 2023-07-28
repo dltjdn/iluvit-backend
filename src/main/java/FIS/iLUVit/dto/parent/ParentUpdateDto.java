@@ -12,7 +12,7 @@ import javax.validation.constraints.Size;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class ParentDetailRequest {
+public class ParentUpdateDto {
     @NotEmpty(message = "입력하지 않은 목록이 있습니다.")
     private String name;
     @NotEmpty(message = "입력하지 않은 목록이 있습니다.")

@@ -43,8 +43,8 @@ public class ChildController {
      * 아이 정보 저장 ( 아이 생성 )
      */
     @PostMapping("")
-    public ResponseEntity<Void> createChild(@Login Long userId, @Valid @ModelAttribute ChildDetailRequest request) throws IOException {
-        childService.saveNewChild(userId, request);
+    public ResponseEntity<Void> createChild(@Login Long userId, @Valid @ModelAttribute ChildDetailRequest childDetailRequest){
+        childService.saveNewChild(userId, childDetailRequest);
         return ResponseEntity.status(HttpStatus.CREATED).build();
     }
 
@@ -61,8 +61,8 @@ public class ChildController {
      * 아이 정보 수정
      */
     @PutMapping("{childId}")
-    public ResponseEntity<Void> updateChild(@Login Long userId, @PathVariable("childId") Long childId, @ModelAttribute ChildRequest request)  {
-       childService.modifyChildInfo(userId, childId, request);
+    public ResponseEntity<Void> updateChild(@Login Long userId, @PathVariable("childId") Long childId, @ModelAttribute ChildRequest childRequest)  {
+       childService.modifyChildInfo(userId, childId, childRequest);
         return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
     }
 
@@ -79,8 +79,8 @@ public class ChildController {
      * 아이 추가용 시설 정보 조회
      */
     @GetMapping("search/center")
-    public ResponseEntity<Slice<CenterDto>> getCenterForChild(@ModelAttribute CenterRequest request, Pageable pageable) {
-        Slice<CenterDto> centerDtos = childService.findCenterForAddChild(request, pageable);
+    public ResponseEntity<Slice<CenterDto>> getCenterForChild(@ModelAttribute CenterRequest centerRequest, Pageable pageable) {
+        Slice<CenterDto> centerDtos = childService.findCenterForAddChild(centerRequest, pageable);
         return ResponseEntity.ok(centerDtos);
     }
 

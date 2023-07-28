@@ -33,7 +33,6 @@ public class BoardBookmarkService {
      * 즐겨찾는 게시판 전체 조회
      */
     public List<BoardStoryDto> findBoardBookmarkByUser(Long userId) {
-
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new UserException(UserErrorResult.USER_NOT_EXIST));
 
@@ -92,33 +91,29 @@ public class BoardBookmarkService {
      * 즐겨찾는 게시판 등록
      */
     public BoardBookmarkIdDto saveBoardBookmark(Long userId, Long boardId) {
-        if (userId == null) {
-            throw new BookmarkException(BookmarkErrorResult.UNAUTHORIZED_USER_ACCESS);
-        }
         User findUser = userRepository.findById(userId)
                 .orElseThrow(() -> new BookmarkException(BookmarkErrorResult.USER_NOT_EXIST));
+
         Board findBoard = boardRepository.findById(boardId)
                 .orElseThrow(() -> new BookmarkException(BookmarkErrorResult.BOARD_NOT_EXIST));
-        Bookmark bookmark = new Bookmark(findBoard, findUser);
-        Long boardBookmarkId = boardBookmarkRepository.save(bookmark).getId();
 
-        return new BoardBookmarkIdDto(boardBookmarkId);
+        Bookmark bookmark = boardBookmarkRepository.save(new Bookmark(findBoard, findUser));
+
+        return new BoardBookmarkIdDto(bookmark.getId());
     }
 
     /**
      * 즐겨찾는 게시판 삭제
      */
-    public Long deleteBoardBookmark(Long userId, Long bookmarkId) {
-        if (userId == null) {
-            throw new BookmarkException(BookmarkErrorResult.UNAUTHORIZED_USER_ACCESS);
-        }
+    public void deleteBoardBookmark(Long userId, Long bookmarkId) {
         Bookmark findBookmark = boardBookmarkRepository.findById(bookmarkId)
                 .orElseThrow(() -> new BookmarkException(BookmarkErrorResult.BOOKMARK_NOT_EXIST));
-        if (!Objects.equals(findBookmark.getUser().getId(), userId)) {
+
+        if (!findBookmark.getUser().getId().equals(userId)) {
             throw new BookmarkException(BookmarkErrorResult.UNAUTHORIZED_USER_ACCESS);
         }
+
         boardBookmarkRepository.delete(findBookmark);
-        return bookmarkId;
     }
 
 
