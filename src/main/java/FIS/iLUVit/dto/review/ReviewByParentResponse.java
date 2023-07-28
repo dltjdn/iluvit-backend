@@ -10,7 +10,7 @@ import java.time.LocalTime;
 @Getter
 @NoArgsConstructor
 @AllArgsConstructor
-public class ReviewByParentDto {
+public class ReviewByParentResponse {
     private Long reviewId;
     private Long centerId;
     private String centerName;
@@ -21,7 +21,7 @@ public class ReviewByParentDto {
     private LocalDate updateDate;
     private LocalTime updateTime;
 
-    public ReviewByParentDto(Review review) {
+    public ReviewByParentResponse(Review review) {
         this.reviewId = review.getId();
         this.centerId = review.getCenter().getId();
         this.centerName = review.getCenter().getName();

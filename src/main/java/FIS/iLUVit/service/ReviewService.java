@@ -1,8 +1,8 @@
 package FIS.iLUVit.service;
 
-import FIS.iLUVit.dto.review.ReviewByCenterDto;
-import FIS.iLUVit.dto.review.ReviewByParentDto;
-import FIS.iLUVit.dto.review.ReviewDetailDto;
+import FIS.iLUVit.dto.review.ReviewByCenterResponse;
+import FIS.iLUVit.dto.review.ReviewByParentResponse;
+import FIS.iLUVit.dto.review.ReviewDetailRequest;
 import FIS.iLUVit.domain.*;
 import FIS.iLUVit.domain.embeddable.Score;
 import FIS.iLUVit.domain.enumtype.Approval;
@@ -32,16 +32,16 @@ public class ReviewService {
     private final CenterRepository centerRepository;
     private final ImageService imageService;
 
-    public Slice<ReviewByParentDto> findReviewListByParent(Long userId, Pageable pageable) {
+    public Slice<ReviewByParentResponse> findReviewListByParent(Long userId, Pageable pageable) {
         Slice<Review> reviews = reviewRepository.findByParent(userId, pageable);
 
-        Slice<ReviewByParentDto> reviewDtoSlice = reviews
-                .map(review -> new ReviewByParentDto(review));
+        Slice<ReviewByParentResponse> reviewDtoSlice = reviews
+                .map(review -> new ReviewByParentResponse(review));
 
         return reviewDtoSlice;
     }
 
-    public void saveNewReview(Long userId, ReviewDetailDto reviewCreateDTO) {
+    public void saveNewReview(Long userId, ReviewDetailRequest reviewCreateDTO) {
 
         if (userId == null) {
             throw new UserException(UserErrorResult.NOT_VALID_TOKEN);
@@ -98,17 +98,17 @@ public class ReviewService {
         reviewRepository.delete(findReview);
     }
 
-    public Slice<ReviewByCenterDto> findReviewByCenter(Long centerId, Pageable pageable) {
+    public Slice<ReviewByCenterResponse> findReviewByCenter(Long centerId, Pageable pageable) {
         // getParent 지연 로딩 쿼리 막음
         Slice<Review> reviews = reviewRepository.findByCenterId(centerId, pageable);
 
-        Slice<ReviewByCenterDto> reviewByCenterDtos = reviews.map(review -> {
+        Slice<ReviewByCenterResponse> reviewByCenterDtos = reviews.map(review -> {
 
             int reviewHeartNum = reviewHeartRepository.findByReview(review).size();
 
             Long teacherId = review.getTeacher() == null ? null : review.getTeacher().getId();
 
-            return new ReviewByCenterDto(
+            return new ReviewByCenterResponse(
                     review.getId(), review.getParent().getId(), review.getParent().getNickName(), review.getContent(), review.getScore(),
                     review.getCreateDate(), review.getCreateTime(), review.getUpdateDate(), review.getUpdateTime(),
                     teacherId, review.getAnswer(), review.getAnswerCreateDate(), review.getAnswerCreateTime(),
