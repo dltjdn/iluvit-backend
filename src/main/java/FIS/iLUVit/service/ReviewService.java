@@ -32,6 +32,33 @@ public class ReviewService {
     private final CenterRepository centerRepository;
     private final ImageService imageService;
 
+    /**
+     * 해당 시설의 리뷰를 조회하여 조회된 리뷰 리스트를 dto를 반환합니다
+     */
+    public Slice<ReviewByCenterResponse> findReviewByCenter(Long centerId, Pageable pageable) {
+        // getParent 지연 로딩 쿼리 막음
+        Slice<Review> reviews = reviewRepository.findByCenterId(centerId, pageable);
+
+        Slice<ReviewByCenterResponse> reviewByCenterDtos = reviews.map(review -> {
+
+            int reviewHeartNum = reviewHeartRepository.findByReview(review).size();
+
+            Long teacherId = review.getTeacher() == null ? null : review.getTeacher().getId();
+
+            return new ReviewByCenterResponse(
+                    review.getId(), review.getParent().getId(), review.getParent().getNickName(), review.getContent(), review.getScore(),
+                    review.getCreateDate(), review.getCreateTime(), review.getUpdateDate(), review.getUpdateTime(),
+                    teacherId, review.getAnswer(), review.getAnswerCreateDate(), review.getAnswerCreateTime(),
+                    review.getAnonymous(), reviewHeartNum, imageService.getProfileImage(review.getParent())
+            );
+        });
+
+        return reviewByCenterDtos;
+    }
+
+    /**
+     * 사용자가 작성한 리뷰 리스트를 조회하고 dto를 반환합니다
+     */
     public Slice<ReviewByParentResponse> findReviewListByParent(Long userId, Pageable pageable) {
         Slice<Review> reviews = reviewRepository.findByParent(userId, pageable);
 
@@ -41,6 +68,9 @@ public class ReviewService {
         return reviewDtoSlice;
     }
 
+    /**
+     * 리뷰를 등록합니다
+     */
     public void saveNewReview(Long userId, ReviewDetailRequest reviewCreateDTO) {
 
         if (userId == null) {
@@ -80,6 +110,9 @@ public class ReviewService {
         findCenter.addScore(Score.Review); // 리뷰 작성 시 센터의 스코어 올림
     }
 
+    /**
+     * 리뷰를 수정합니다
+     */
     public void modifyReview(Long reviewId, Long userId, String content) {
         Review findReview = reviewRepository.findById(reviewId).orElseThrow(
                 () -> new ReviewException(ReviewErrorResult.REVIEW_NOT_EXIST));
@@ -89,6 +122,9 @@ public class ReviewService {
         findReview.updateContent(content);
     }
 
+    /**
+     * 리뷰를 삭제합니다
+     */
     public void deleteReview(Long reviewId, Long userId) {
         Review findReview = reviewRepository.findById(reviewId)
                 .orElseThrow(() -> new ReviewException(ReviewErrorResult.REVIEW_NOT_EXIST));
@@ -98,27 +134,9 @@ public class ReviewService {
         reviewRepository.delete(findReview);
     }
 
-    public Slice<ReviewByCenterResponse> findReviewByCenter(Long centerId, Pageable pageable) {
-        // getParent 지연 로딩 쿼리 막음
-        Slice<Review> reviews = reviewRepository.findByCenterId(centerId, pageable);
-
-        Slice<ReviewByCenterResponse> reviewByCenterDtos = reviews.map(review -> {
-
-            int reviewHeartNum = reviewHeartRepository.findByReview(review).size();
-
-            Long teacherId = review.getTeacher() == null ? null : review.getTeacher().getId();
-
-            return new ReviewByCenterResponse(
-                    review.getId(), review.getParent().getId(), review.getParent().getNickName(), review.getContent(), review.getScore(),
-                    review.getCreateDate(), review.getCreateTime(), review.getUpdateDate(), review.getUpdateTime(),
-                    teacherId, review.getAnswer(), review.getAnswerCreateDate(), review.getAnswerCreateTime(),
-                    review.getAnonymous(), reviewHeartNum, imageService.getProfileImage(review.getParent())
-            );
-        });
-
-        return reviewByCenterDtos;
-    }
-
+    /**
+     * 리뷰의 답글을 등록합니다
+     */
     public void saveComment(Long reviewId, String comment, Long teacherId) {
         Review review = reviewRepository.findById(reviewId)
                 .orElseThrow(() -> new ReviewException(ReviewErrorResult.REVIEW_NOT_EXIST));
@@ -139,6 +157,9 @@ public class ReviewService {
         review.updateAnswer(comment, teacher);
     }
 
+    /**
+     * 리뷰의 답글을 삭제합니다
+     */
     public void deleteComment(Long reviewId, Long teacherId) {
         Review review = reviewRepository.findById(reviewId)
                 .orElseThrow(() -> new ReviewException(ReviewErrorResult.REVIEW_NOT_EXIST));
