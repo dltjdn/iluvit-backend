@@ -48,9 +48,9 @@ public class ScrapController {
      * 스크랩 폴더 전체 조회
      */
     @GetMapping("dir")
-    public ResponseEntity<List<ScrapInfoDto>> getAllScrapDir(@Login Long id) {
-        List<ScrapInfoDto> scrapInfoDtos = scrapService.findScrapDirList(id);
-        return ResponseEntity.ok().body(scrapInfoDtos);
+    public ResponseEntity<List<ScrapDirResponse>> getAllScrapDir(@Login Long userId) {
+        List<ScrapDirResponse> scrapDirResponses = scrapService.findScrapDirList(userId);
+        return ResponseEntity.ok().body(scrapDirResponses);
     }
 
     /**
@@ -58,17 +58,17 @@ public class ScrapController {
      */
     // TODO 프론트에게 문의 -> 불필요 시 응답객체 삭제
     @PostMapping("dir")
-    public ResponseEntity<List<ScrapInfoDto>> createScrapDir(@Login Long id, @Valid @RequestBody ScrapDirRequest request) {
-        List<ScrapInfoDto> scrapInfoDtos = scrapService.saveNewScrapDir(id, request);
-        return ResponseEntity.status(HttpStatus.OK).body(scrapInfoDtos);
+    public ResponseEntity<List<ScrapDirResponse>> createScrapDir(@Login Long userId, @Valid @RequestBody ScrapDirRequest request) {
+        List<ScrapDirResponse> scrapDirResponses = scrapService.saveNewScrapDir(userId, request);
+        return ResponseEntity.status(HttpStatus.OK).body(scrapDirResponses);
     }
 
     /**
      * 스크랩 폴더 이름 수정
      */
     @PutMapping("dir/name")
-    public ResponseEntity<Void> updateScrapDir(@Login Long id, @Valid @RequestBody ScrapDirDetailRequest request) {
-        scrapService.modifyScrapDirName(id, request);
+    public ResponseEntity<Void> updateScrapDir(@Login Long userId, @Valid @RequestBody ScrapDirDetailRequest request) {
+        scrapService.modifyScrapDirName(userId, request);
         return ResponseEntity.ok().build();
     }
 
@@ -77,26 +77,26 @@ public class ScrapController {
      */
     // TODO 프론트에게 문의 -> 불필요 시 응답객체 삭제
     @DeleteMapping("dir/{scrapDirId}")
-    public ResponseEntity<List<ScrapInfoDto>>  deleteScrapDir(@Login Long userId, @PathVariable("scrapDirId") Long scrapDirId) {
-        List<ScrapInfoDto> scrapInfoDtos = scrapService.deleteScrapDir(userId, scrapDirId);
-        return ResponseEntity.status(HttpStatus.OK).body(scrapInfoDtos);
+    public ResponseEntity<List<ScrapDirResponse>> deleteScrapDir(@Login Long userId, @PathVariable("scrapDirId") Long scrapDirId) {
+        List<ScrapDirResponse> scrapDirResponses = scrapService.deleteScrapDir(userId, scrapDirId);
+        return ResponseEntity.status(HttpStatus.OK).body(scrapDirResponses);
     }
 
     /**
      * 게시물 별 스크랩 폴더 전체 조회
      */
     @GetMapping("post/{postId}/dir")
-    public ResponseEntity<List<ScrapInfoByPostDto>> getScrapDirByPost(@Login Long userId, @PathVariable("postId") Long postId) {
-        List<ScrapInfoByPostDto> scrapInfoByPostDtos = scrapService.findScrapDirListByPost(userId, postId);
-        return ResponseEntity.ok().body(scrapInfoByPostDtos);
+    public ResponseEntity<List<ScrapDirByPostResponse>> getScrapDirByPost(@Login Long userId, @PathVariable("postId") Long postId) {
+        List<ScrapDirByPostResponse> scrapDirByPostResponses = scrapService.findScrapDirListByPost(userId, postId);
+        return ResponseEntity.ok().body(scrapDirByPostResponses);
     }
 
     /**
      * 스크랩 폴더별 게시물 전체 조회
      */
     @GetMapping("dir/{scrapDirId}/post")
-    public ResponseEntity<Slice<ScrapPostPreviewResponse>> getPostByScrapDir(@Login Long userId, @PathVariable("scrapDirId") Long scrapDirId, Pageable pageable) {
-        Slice<ScrapPostPreviewResponse> scrapPostPreviewResponses = scrapService.findPostByScrapDir(userId, scrapDirId, pageable);
+    public ResponseEntity<Slice<PostByScrapDirResponse>> getPostByScrapDir(@Login Long userId, @PathVariable("scrapDirId") Long scrapDirId, Pageable pageable) {
+        Slice<PostByScrapDirResponse> scrapPostPreviewResponses = scrapService.findPostByScrapDir(userId, scrapDirId, pageable);
         return ResponseEntity.ok().body(scrapPostPreviewResponses);
     }
 

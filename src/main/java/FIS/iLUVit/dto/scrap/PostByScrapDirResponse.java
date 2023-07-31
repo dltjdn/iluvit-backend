@@ -10,7 +10,7 @@ import java.time.LocalTime;
 @Getter
 @AllArgsConstructor
 @NoArgsConstructor
-public class ScrapPostPreviewResponse {
+public class PostByScrapDirResponse {
     private Long post_id;
     private String title;
     private String content;
@@ -33,7 +33,7 @@ public class ScrapPostPreviewResponse {
 
     private Long scrapPost_id;
 
-    public ScrapPostPreviewResponse(ScrapPost sp) {
+    public PostByScrapDirResponse(ScrapPost sp) {
         this.scrapPost_id = sp.getId();
         this.post_id = sp.getPost().getId();
         this.title = sp.getPost().getTitle();
