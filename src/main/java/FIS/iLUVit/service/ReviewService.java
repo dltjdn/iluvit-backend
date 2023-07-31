@@ -36,8 +36,10 @@ public class ReviewService {
      * 해당 시설의 리뷰를 조회하여 조회된 리뷰 리스트를 dto를 반환합니다
      */
     public Slice<ReviewByCenterResponse> findReviewByCenter(Long centerId, Pageable pageable) {
-        // getParent 지연 로딩 쿼리 막음
-        Slice<Review> reviews = reviewRepository.findByCenterId(centerId, pageable);
+        Center findCenter = centerRepository.findById(centerId)
+                .orElseThrow(() -> new CenterException(CenterErrorResult.CENTER_NOT_EXIST));
+
+        Slice<Review> reviews = reviewRepository.findByCenterOrderByCreatedDate(findCenter, pageable);
 
         Slice<ReviewByCenterResponse> reviewByCenterDtos = reviews.map(review -> {
 
@@ -60,10 +62,13 @@ public class ReviewService {
      * 사용자가 작성한 리뷰 리스트를 조회하고 dto를 반환합니다
      */
     public Slice<ReviewByParentResponse> findReviewListByParent(Long userId, Pageable pageable) {
-        Slice<Review> reviews = reviewRepository.findByParent(userId, pageable);
+        Parent parent = parentRepository.findById(userId)
+                .orElseThrow(() -> new UserException(UserErrorResult.USER_NOT_EXIST));
+
+        Slice<Review> reviews = reviewRepository.findByParent(parent, pageable);
 
         Slice<ReviewByParentResponse> reviewDtoSlice = reviews
-                .map(review -> new ReviewByParentResponse(review));
+                .map(ReviewByParentResponse::new);
 
         return reviewDtoSlice;
     }
@@ -99,7 +104,7 @@ public class ReviewService {
                 .orElseThrow(() -> new CenterException(CenterErrorResult.CENTER_NOT_EXIST));
 
         // 유저가 시설에 작성한 리뷰가 이미 존재하는 지 검증
-        reviewRepository.findByUserAndCenter(userId, reviewCreateDTO.getCenterId())
+        reviewRepository.findByParentAndCenter(findUser, findCenter)
                 .ifPresent((r) -> {
                     log.info("r.getId : " + r.getId().toString());
                     throw new ReviewException(ReviewErrorResult.NO_MORE_THAN_ONE_REVIEW);
@@ -107,6 +112,8 @@ public class ReviewService {
 
         Review review = Review.createReview(reviewCreateDTO.getContent(), reviewCreateDTO.getScore(),
                 reviewCreateDTO.getAnonymous(), findUser, findCenter);
+        reviewRepository.save(review);
+
         findCenter.addScore(Score.Review); // 리뷰 작성 시 센터의 스코어 올림
     }
 
