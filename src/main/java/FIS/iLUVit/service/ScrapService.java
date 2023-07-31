@@ -7,6 +7,8 @@ import FIS.iLUVit.domain.ScrapPost;
 import FIS.iLUVit.domain.User;
 import FIS.iLUVit.exception.ScrapErrorResult;
 import FIS.iLUVit.exception.ScrapException;
+import FIS.iLUVit.exception.UserErrorResult;
+import FIS.iLUVit.exception.UserException;
 import FIS.iLUVit.repository.PostRepository;
 import FIS.iLUVit.repository.ScrapPostRepository;
 import FIS.iLUVit.repository.ScrapRepository;
@@ -35,39 +37,39 @@ public class ScrapService {
     private final ScrapPostRepository scrapPostRepository;
 
     /**
-     * 작성자: 이승범
-     * 작성내용: 스크랩 폴더 목록 가져오기
+     * 스크랩 폴더 목록 가져오기
      */
-    public List<ScrapDirResponse> findScrapDirList(Long id) {
-        List<Scrap> scraps = scrapRepository.findScrapsByUserWithScrapPosts(id);
+    public List<ScrapDirResponse> findScrapDirList(Long userId) {
+        List<Scrap> scraps = scrapRepository.findScrapsByUserWithScrapPosts(userId);
         List<ScrapDirResponse> scrapDirResponseList = new ArrayList<>();
 
-        scraps.forEach(scrap -> {
+        for (Scrap scrap : scraps) {
             scrapDirResponseList.add(new ScrapDirResponse(scrap));
-        });
+        }
         return scrapDirResponseList;
     }
 
     /**
-     * 작성자: 이승범
-     * 작성내용: 스크랩 폴더 추가하기
+     * 스크랩 폴더 추가하기
      */
-    public List<ScrapDirResponse> saveNewScrapDir(Long id, ScrapDirRequest request) {
-        User user = userRepository.getById(id);
+    public List<ScrapDirResponse> saveNewScrapDir(Long userId, ScrapDirRequest request) {
+        User user = userRepository.findById(userId).orElseThrow(() -> new UserException(UserErrorResult.USER_NOT_EXIST));
+
         Scrap newScrap = Scrap.createScrap(user, request.getName());
         scrapRepository.save(newScrap);
+
         // 스크랩 파일을 추가한 상태의 전체 스크랩 파일 목록 가져오기
-        return findScrapDirList(id);
+        return findScrapDirList(userId);
     }
 
     /**
-     * 작성자: 이승범
-     * 작성내용: 스크랩 폴더 삭제하기
+     * 스크랩 폴더 삭제하기
      */
-    public List<ScrapDirResponse>  deleteScrapDir(Long userId, Long scrapId) {
+    public List<ScrapDirResponse> deleteScrapDir(Long userId, Long scrapId) {
         Scrap scrapDir = scrapRepository.findScrapByIdAndUserId(scrapId, userId)
                 .orElseThrow(() -> new ScrapException(ScrapErrorResult.NOT_VALID_SCRAP));
 
+        // 조회된 스크랩 폴더가 기본 폴더인 경우 삭제 불가능
         if (scrapDir.getIsDefault()) {
             throw new ScrapException(ScrapErrorResult.CANT_DELETE_DEFAULT);
         }
@@ -78,28 +80,27 @@ public class ScrapService {
     }
 
     /**
-     * 작성자: 이승범
-     * 작성내용: 스크랩 폴더 이름 바꾸기
+     * 스크랩 폴더 이름 바꾸기
      */
-    public Scrap modifyScrapDirName(Long id, ScrapDirDetailRequest request) {
-        Scrap findScrap = scrapRepository.findScrapByIdAndUserId(request.getScrapId(), id)
+    public void modifyScrapDirName(Long userId, ScrapDirDetailRequest request) {
+        Scrap findScrap = scrapRepository.findScrapByIdAndUserId(request.getScrapId(), userId)
                 .orElseThrow(() -> new ScrapException(ScrapErrorResult.NOT_VALID_SCRAP));
+
+        // 조회된 스크랩 폴더의 이름을 요청된 dirName으로 수정
         findScrap.updateScrapDirName(request.getDirName());
-        return findScrap;
     }
 
     /**
-     * 작성자: 이승범
-     * 작성내용: 게시물 스크랩하기
+     * 게시물 스크랩하기
      */
-    public List<Scrap> modifyScrapPost(Long userId, Long postId, List<ScrapDirUpdateRequest> scrapInfos) {
-        // 사용자의 스크랩폴더 목록을 가져온다.
+    public void modifyScrapPost(Long userId, Long postId, List<ScrapDirUpdateRequest> scrapInfos) {
+        // 사용자의 스크랩폴더 목록을 가져오기
         List<Scrap> scraps = scrapRepository.findScrapsByUserWithScrapPosts(userId);
-        // 게시물 정보가져오기
+        // 수정할 게시물 정보가져오기
         Post post = postRepository.findById(postId)
                 .orElseThrow(() -> new ScrapException(ScrapErrorResult.NOT_VALID_POST));
 
-        // request 스크랩 폴더 목록들을 사용자의 스크랩 폴더 목록과 비교
+        // request로 넘어온 스크랩 폴더 목록들을 사용자의 스크랩 폴더 목록과 비교
         scrapInfos.forEach(scrapInfo -> {
             boolean isFindScrap = false;
             for (Scrap scrap : scraps) {
@@ -124,40 +125,43 @@ public class ScrapService {
                     break;
                 }
             }
-            // db에서 가져온 사용자 스크랩 정보와 request 스크랩 정보가 일치하지 않는경우 예외처리
+            // DB에서 가져온 사용자 스크랩 정보와 request 스크랩 정보가 일치하지 않는 경우
             if (!isFindScrap)
                 throw new ScrapException(ScrapErrorResult.NOT_VALID_SCRAP);
         });
-        return scraps;
     }
 
     /**
-     * 작성자: 이승범
-     * 작성내용: 스크랩한 게시물 스크랩 폴더에서 삭제
+     * 스크랩한 게시물 스크랩 폴더에서 삭제
      */
     public void deleteScrapPost(Long userId, Long scrapPostId) {
         // 스크랩폴더에 해당 게시물의 저장정보 조회
         ScrapPost scrapPost = scrapPostRepository.findByScrapAndPost(userId, scrapPostId)
                 .orElseThrow(() -> new ScrapException(ScrapErrorResult.NOT_VALID_SCRAPPOST));
+
         scrapPostRepository.delete(scrapPost);
     }
 
     /**
-     * 작성자: 이승범
-     * 작성내용: 해당 게시물에 대한 스크랩폴더 상태 목록 보여주기
+     * 해당 게시물에 대한 스크랩 폴더 상태 목록 보여주기
      */
     public List<ScrapDirByPostResponse> findScrapDirListByPost(Long userId, Long postId) {
         List<Scrap> scrapListByUser = scrapRepository.findScrapsByUserWithScrapPosts(userId);
+
+        // 사용자의 모든 스크랩 폴더에 대해 ScrapDirByPostResponse 목록으로 변환
         return scrapListByUser.stream()
                 .map(scrap -> new ScrapDirByPostResponse(scrap, postId))
                 .collect(Collectors.toList());
     }
+
     /**
-     *   작성자: 이승범
-     *   작성내용: 해당 스크랩 폴더의 게시물들 preview 보여주기
+     * 해당 스크랩 폴더의 게시물들 preview 보여주기
      */
     public Slice<PostByScrapDirResponse> findPostByScrapDir(Long userId, Long scrapId, Pageable pageable) {
         Slice<ScrapPost> scrapPosts = scrapPostRepository.findByScrapWithPost(userId, scrapId, pageable);
+
+        // 조회된 ScrapPost 목록을 PostByScrapDirResponse로 변환하여 반환
         return scrapPosts.map(PostByScrapDirResponse::new);
     }
+
 }
