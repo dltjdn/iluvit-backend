@@ -11,13 +11,13 @@ import java.util.Optional;
 
 public interface ReportRepository extends JpaRepository<Report, Long> {
 
-    /*
-        targetId로 Report를 불러옵니다.
+    /**
+     * 해당 신고할 대상(게시글, 댓글) id로 신고를 조회합니다
      */
     Optional<Report> findByTargetId(Long targetId);
 
-    /*
-        postId에 해당하는 게시물 ID를 가진 Report 객체들의 targetId 속성을 null로, status 속성을 "DELETE"로 업데이트합니다.
+    /**
+     * 해당 post id를 가진 신고의 target id를 null로, status를 DELETE로 변경합니다
      */
     @Modifying(clearAutomatically = true)
     @Query("update Report r " +
@@ -25,8 +25,8 @@ public interface ReportRepository extends JpaRepository<Report, Long> {
             "where r.targetId =:postId ")
     void setTargetIsNullAndStatusIsDelete(@Param("postId") Long postId);
 
-    /*
-        commentIds에 해당하는 댓글 ID를 가진 Report 객체들의 targetId 속성을 null로, status 속성을 "DELETE"로 업데이트합니다.
+    /**
+     * 해당 comment id를 가진 신고의 target id를 null로, status를 DELETE로 변경합니다
      */
     @Modifying(clearAutomatically = true)
     @Query("update Report r " +

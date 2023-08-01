@@ -21,8 +21,7 @@ public class ReportController {
      */
 
     /**
-     * 작성자: 최민아
-     * 작성내용: 신고하기
+     * 부적절한 게시글 혹은 댓글 신고하기
      */
     @PostMapping("")
     public Long createReport(@Login Long userId, @RequestBody ReportRequest request){
