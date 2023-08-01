@@ -147,7 +147,10 @@ public class ScrapService {
      */
     public void deleteScrapPost(Long userId, Long scrapPostId) {
         // 스크랩폴더에 해당 게시물의 저장정보 조회
-        ScrapPost scrapPost = scrapPostRepository.findByScrapAndPost(userId, scrapPostId)
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new UserException(UserErrorResult.USER_NOT_EXIST));
+
+        ScrapPost scrapPost = scrapPostRepository.findByIdAndScrap_User(scrapPostId, user)
                 .orElseThrow(() -> new ScrapException(ScrapErrorResult.NOT_VALID_SCRAPPOST));
 
         scrapPostRepository.delete(scrapPost);
@@ -172,7 +175,9 @@ public class ScrapService {
      * 해당 스크랩 폴더의 게시물들 preview 보여주기
      */
     public Slice<PostByScrapDirResponse> findPostByScrapDir(Long userId, Long scrapId, Pageable pageable) {
-        Slice<ScrapPost> scrapPosts = scrapPostRepository.findByScrapWithPost(userId, scrapId, pageable);
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new UserException(UserErrorResult.USER_NOT_EXIST));
+        Slice<ScrapPost> scrapPosts = scrapPostRepository.findByScrap_IdAndScrap_User(scrapId, user, pageable);
 
         // 조회된 ScrapPost 목록을 PostByScrapDirResponse로 변환하여 반환
         return scrapPosts.map(PostByScrapDirResponse::new);
