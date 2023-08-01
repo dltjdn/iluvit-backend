@@ -28,7 +28,7 @@ public class ReportService {
     /**
      * 부적절한 게시글 혹은 댓글 신고하기
      */
-    public Long registerReport(Long userId, ReportRequest request) {
+    public void registerReport(Long userId, ReportRequest request) {
         if (userId == null){
             throw new UserException(UserErrorResult.NOT_VALID_TOKEN);
         }
@@ -110,7 +110,5 @@ public class ReportService {
                 findReport.plusCount();
             }
         }
-
-        return reportDetailId;
     }
 }
