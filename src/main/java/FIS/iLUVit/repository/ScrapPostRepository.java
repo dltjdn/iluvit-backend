@@ -1,6 +1,7 @@
 package FIS.iLUVit.repository;
 
 import FIS.iLUVit.domain.ScrapPost;
+import FIS.iLUVit.domain.User;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -24,6 +25,8 @@ public interface ScrapPostRepository extends JpaRepository<ScrapPost, Long> {
             "and s.user.id =:userId")
     Slice<ScrapPost> findByScrapWithPost(@Param("userId") Long userId, @Param("scrapId") Long scrapId, Pageable pageable);
 
+    Slice<ScrapPost> findByScrap_IdAndScrap_User(Long scrapId, User user, Pageable pageable);
+
     /**
      * 해당 사용자 id와 스크랩 게시글 id로 스크랩된 게시글을 조회합니다
      */
@@ -33,4 +36,6 @@ public interface ScrapPostRepository extends JpaRepository<ScrapPost, Long> {
             "where sp.id =:scrapPostId " +
             "and s.user.id =:userId")
     Optional<ScrapPost> findByScrapAndPost(@Param("userId") Long userId, @Param("scrapPostId") Long scrapPostId);
+
+    Optional<ScrapPost> findByIdAndScrap_User(Long scrapPostId, User user);
 }
