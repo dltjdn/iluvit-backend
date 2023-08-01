@@ -56,11 +56,10 @@ public class ScrapController {
     /**
      * 스크랩 폴더 생성
      */
-    // TODO 프론트에게 문의 -> 불필요 시 응답객체 삭제
     @PostMapping("dir")
-    public ResponseEntity<List<ScrapDirResponse>> createScrapDir(@Login Long userId, @Valid @RequestBody ScrapDirRequest request) {
-        List<ScrapDirResponse> scrapDirResponses = scrapService.saveNewScrapDir(userId, request);
-        return ResponseEntity.status(HttpStatus.OK).body(scrapDirResponses);
+    public ResponseEntity<ScrapIdResponse> createScrapDir(@Login Long userId, @Valid @RequestBody ScrapDirRequest request) {
+        ScrapIdResponse scrapIdResponse = scrapService.saveNewScrapDir(userId, request);
+        return ResponseEntity.status(HttpStatus.CREATED).body(scrapIdResponse);
     }
 
     /**
@@ -75,11 +74,10 @@ public class ScrapController {
     /**
      * 스크랩 폴더 삭제
      */
-    // TODO 프론트에게 문의 -> 불필요 시 응답객체 삭제
     @DeleteMapping("dir/{scrapDirId}")
-    public ResponseEntity<List<ScrapDirResponse>> deleteScrapDir(@Login Long userId, @PathVariable("scrapDirId") Long scrapDirId) {
-        List<ScrapDirResponse> scrapDirResponses = scrapService.deleteScrapDir(userId, scrapDirId);
-        return ResponseEntity.status(HttpStatus.OK).body(scrapDirResponses);
+    public ResponseEntity<Void> deleteScrapDir(@Login Long userId, @PathVariable("scrapDirId") Long scrapDirId) {
+        scrapService.deleteScrapDir(userId, scrapDirId);
+        return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
     }
 
     /**

@@ -55,21 +55,22 @@ public class ScrapService {
     /**
      * 스크랩 폴더 추가하기
      */
-    public List<ScrapDirResponse> saveNewScrapDir(Long userId, ScrapDirRequest request) {
+    public ScrapIdResponse saveNewScrapDir(Long userId, ScrapDirRequest request) {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new UserException(UserErrorResult.USER_NOT_EXIST));
 
         Scrap newScrap = Scrap.createScrap(user, request.getName());
         scrapRepository.save(newScrap);
+        ScrapIdResponse scrapIdResponse = new ScrapIdResponse(newScrap.getId());
 
         // 스크랩 파일을 추가한 상태의 전체 스크랩 파일 목록 가져오기
-        return findScrapDirList(userId);
+        return scrapIdResponse;
     }
 
     /**
      * 스크랩 폴더 삭제하기
      */
-    public List<ScrapDirResponse> deleteScrapDir(Long userId, Long scrapId) {
+    public void deleteScrapDir(Long userId, Long scrapId) {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new UserException(UserErrorResult.USER_NOT_EXIST));
         Scrap scrapDir = scrapRepository.findByIdAndUser(scrapId, user)
@@ -81,8 +82,6 @@ public class ScrapService {
         }
 
         scrapRepository.delete(scrapDir);
-
-        return findScrapDirList(userId);
     }
 
     /**
