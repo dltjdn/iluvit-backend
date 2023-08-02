@@ -41,7 +41,7 @@ public class ScrapController {
     @DeleteMapping("post/{scrapPostId}")
     public ResponseEntity<Void> deleteScrapPost(@Login Long userId, @PathVariable("scrapPostId") Long scrapPostId) {
         scrapService.deleteScrapPost(userId, scrapPostId);
-        return ResponseEntity.ok().build();
+        return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
     }
 
     /**
@@ -68,7 +68,7 @@ public class ScrapController {
     @PutMapping("dir/name")
     public ResponseEntity<Void> updateScrapDir(@Login Long userId, @Valid @RequestBody ScrapDirDetailRequest request) {
         scrapService.modifyScrapDirName(userId, request);
-        return ResponseEntity.ok().build();
+        return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
     }
 
     /**
