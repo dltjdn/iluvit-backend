@@ -99,8 +99,9 @@ public class PostController {
      *  게시글 상세 조회
      */
     @GetMapping("{postId}")
-    public PostDetailResponse getPostDetails(@Login Long userId, @PathVariable("postId") Long postId) {
-        return postService.findPostByPostId(userId, postId);
+    public ResponseEntity<PostDetailResponse> getPostDetails(@Login Long userId, @PathVariable("postId") Long postId) {
+        PostDetailResponse postDetailResponse = postService.findPostByPostId(userId, postId);
+        return ResponseEntity.ok(postDetailResponse);
     }
 
     /**
