@@ -29,7 +29,7 @@ public class PostHeartService {
                 .orElseThrow(() -> new PostException(PostErrorResult.POST_NOT_EXIST));
 
         postHeartRepository.findByUserAndPost(user, post)
-                .ifPresent((ph) -> {
+                .ifPresent((postHeart) -> {
                     throw new PostException(PostErrorResult.ALREADY_EXIST_HEART);
                 });
 
