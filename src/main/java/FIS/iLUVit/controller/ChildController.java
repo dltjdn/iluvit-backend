@@ -1,8 +1,8 @@
 package FIS.iLUVit.controller;
 
 import FIS.iLUVit.config.argumentResolver.Login;
-import FIS.iLUVit.dto.center.CenterDto;
-import FIS.iLUVit.dto.center.CenterRequest;
+import FIS.iLUVit.dto.center.CenterBasicResponse;
+import FIS.iLUVit.dto.center.CenterBasicRequest;
 import FIS.iLUVit.dto.child.*;
 import FIS.iLUVit.service.ChildService;
 import lombok.RequiredArgsConstructor;
@@ -13,9 +13,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import javax.sound.midi.VoiceStatus;
 import javax.validation.Valid;
-import java.io.IOException;
 import java.util.List;
 
 @Slf4j
@@ -79,8 +77,8 @@ public class ChildController {
      * 아이 추가용 시설 정보 조회
      */
     @GetMapping("search/center")
-    public ResponseEntity<Slice<CenterDto>> getCenterForChild(@ModelAttribute CenterRequest centerRequest, Pageable pageable) {
-        Slice<CenterDto> centerDtos = childService.findCenterForAddChild(centerRequest, pageable);
+    public ResponseEntity<Slice<CenterBasicResponse>> getCenterForChild(@ModelAttribute CenterBasicRequest centerBasicRequest, Pageable pageable) {
+        Slice<CenterBasicResponse> centerDtos = childService.findCenterForAddChild(centerBasicRequest, pageable);
         return ResponseEntity.ok(centerDtos);
     }
 

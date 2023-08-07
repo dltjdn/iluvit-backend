@@ -1,8 +1,8 @@
 package FIS.iLUVit.service;
 
 import FIS.iLUVit.domain.alarms.Alarm;
-import FIS.iLUVit.dto.center.CenterDto;
-import FIS.iLUVit.dto.center.CenterRequest;
+import FIS.iLUVit.dto.center.CenterBasicResponse;
+import FIS.iLUVit.dto.center.CenterBasicRequest;
 import FIS.iLUVit.dto.child.*;
 import FIS.iLUVit.domain.*;
 import FIS.iLUVit.domain.alarms.CenterApprovalAcceptedAlarm;
@@ -17,14 +17,15 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
+import org.springframework.data.domain.SliceImpl;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 
 @Slf4j
@@ -55,7 +56,7 @@ public class ChildService {
 
         findParent.getChildren().forEach(child -> {
             childDtos.add(
-                    new ChildDto(child, imageService.getProfileImage(child))
+                    new ChildDto(child, child.getProfileImagePath())
             );
         });
 
@@ -70,7 +71,7 @@ public class ChildService {
         Parent parent = parentRepository.getById(userId);
 
         // 시설 가져오기
-        Center center = centerRepository.findByIdAndSigned(request.getCenterId())
+        Center center = centerRepository.findByIdAndSigned(request.getCenterId(), true)
                 .orElseThrow(() -> new UserException(UserErrorResult.NOT_VALID_REQUEST));
 
         // 아이 등록
@@ -102,7 +103,7 @@ public class ChildService {
         Child child = childRepository.findByIdAndParent(childId, (Parent)user)
                 .orElseThrow(() -> new UserException(UserErrorResult.NOT_VALID_REQUEST));
 
-        ChildDetailResponse childDetailResponse = new ChildDetailResponse(child,imageService.getProfileImage(child));
+        ChildDetailResponse childDetailResponse = new ChildDetailResponse(child,child.getProfileImagePath());
 
         return childDetailResponse;
     }
@@ -121,7 +122,7 @@ public class ChildService {
         // 프로필 수정
         updatedChild.update(request.getName(), request.getBirthDate());
 
-        ChildDetailResponse childDetailResponse = new ChildDetailResponse(updatedChild, imageService.getProfileImage(updatedChild));
+        ChildDetailResponse childDetailResponse = new ChildDetailResponse(updatedChild, updatedChild.getProfileImagePath());
 
         // 프로필 이미지 수정
         imageService.saveProfileImage(request.getProfileImg(), updatedChild);
@@ -156,8 +157,19 @@ public class ChildService {
     /**
      * 아이 추가용 시설 정보 조회
      */
-    public Slice<CenterDto> findCenterForAddChild(CenterRequest request, Pageable pageable) {
-        return centerRepository.findCenterForAddChild(request.getSido(), request.getSigungu(), request.getCenterName(), pageable);
+    public Slice<CenterBasicResponse> findCenterForAddChild(CenterBasicRequest request, Pageable pageable) {
+        List<CenterBasicResponse> centerBasicResponses = centerRepository.findCenterForAddChild(request.getSido(), request.getSigungu(), request.getCenterName()).stream()
+                .map(CenterBasicResponse::new)
+                .collect(Collectors.toList());
+
+        boolean hasNext = false;
+        if (centerBasicResponses.size() > pageable.getPageSize()) {
+            hasNext = true;
+            centerBasicResponses.remove(pageable.getPageSize());
+        }
+
+        return new SliceImpl<>(centerBasicResponses, pageable, hasNext);
+
     }
 
     /**
@@ -177,7 +189,7 @@ public class ChildService {
         }
 
         // 승인 요청 보내는 시설
-        Center center = centerRepository.findByIdAndSigned(centerId)
+        Center center = centerRepository.findByIdAndSigned(centerId, true)
                 .orElseThrow(() -> new CenterException(CenterErrorResult.CENTER_NOT_EXIST));
 
         mappedChild.mappingCenter(center);
@@ -230,7 +242,7 @@ public class ChildService {
             // 해당시설에 대해 거절/삭제 당하지 않은 아이들만 보여주기
             if (child.getApproval() != Approval.REJECT) {
                 ChildInfoForAdminDto childInfo =
-                        new ChildInfoForAdminDto(child, imageService.getProfileImage(child));
+                        new ChildInfoForAdminDto(child, child.getProfileImagePath());
 
                 childInfoForAdminDtos.add(childInfo);
             }

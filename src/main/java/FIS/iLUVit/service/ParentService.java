@@ -52,7 +52,7 @@ public class ParentService {
         Parent findParent = parentRepository.findById(userId)
                 .orElseThrow(() -> new UserException(UserErrorResult.NOT_VALID_TOKEN));
 
-        ParentDetailDto parentDetailDto = new ParentDetailDto(findParent,imageService.getProfileImage(findParent));
+        ParentDetailDto parentDetailDto = new ParentDetailDto(findParent,findParent.getProfileImagePath());
 
         return parentDetailDto;
     }
@@ -94,7 +94,7 @@ public class ParentService {
         Location location = new Location(loAndLat, hangjung);
         findParent.updateLocation(location);
 
-        new ParentDetailDto(findParent,imageService.getProfileImage(findParent));
+        new ParentDetailDto(findParent,findParent.getProfileImagePath());
         imageService.saveProfileImage(request.getProfileImg(), findParent);
 
     }
