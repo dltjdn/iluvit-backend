@@ -12,7 +12,7 @@ public class CenterMapFilterRequest {
     @NotNull
     private double longitude;
     @NotNull
-    private double latitude;     // 시설종류
-    private List<Long> centerIds = new ArrayList<>();
+    private double latitude;
+    private List<Long> centerIds;
 
 }

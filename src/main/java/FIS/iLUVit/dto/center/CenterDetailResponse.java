@@ -17,15 +17,15 @@ public class CenterDetailResponse {
     private String estType;                 // 설립유형
     private String estDate;                 // 개원일
     private String tel;                     // 전화번호
-    private String director;
+    private String director;                // 원장
     private String homepage;                // 홈페이지 주소
     private String startTime;               // 운영시작시간
     private String endTime;                 // 운영종료시간
-    private Integer minAge;                 // 시설이 관리하는 연령대
-    private Integer maxAge;                 //
+    private Integer minAge;                 // 시설이 관리하는 최소 나이
+    private Integer maxAge;                 // 시설이 관리하는 최대 나이
     private String address;                 // 주소
-    private String addressDetail;
-    private Area area;
+    private String addressDetail;           // 상세 주소
+    private Area area;                      // 시도, 시군구
     private Double longitude;               // 경도
     private Double latitude;                // 위도
     private String offerService;            // 제공서비스 (, 로 구분)

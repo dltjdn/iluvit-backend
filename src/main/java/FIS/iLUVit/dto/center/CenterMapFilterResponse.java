@@ -10,23 +10,22 @@ import lombok.Getter;
 public class CenterMapFilterResponse {
     private Long id;
     private String name;                    // 시설명
-    private KindOf kindOf;
-
+    private KindOf kindOf;                  // 시설 종류
     private String estType;                 // 설립유형
     private String tel;                     // 전화번호
     private String startTime;               // 운영시작시간
     private String endTime;                 // 운영종료시간
-    private Integer minAge;                 // 시설이 관리하는 연령대
-    private Integer maxAge;                 //
+    private Integer minAge;                 // 시설이 관리하는 최소 연령
+    private Integer maxAge;                 // 시설이 관리하는 최대 연령
     private String address;                 // 주소
-    private String addressDetail;
+    private String addressDetail;           // 상세 주소
     private Double longitude;               // 경도
     private Double latitude;                // 위도
-    private String profileImage;
-    private Theme theme;
-    private Double distance;
-    private Double starAverage;
-    private Boolean isCenterBookmark;
+    private String profileImage;            // 프로필 이미지
+    private Theme theme;                    // 테마
+    private Double distance;                // 시설과 내 현위치 간 거리
+    private Double starAverage;             // 시설 평점
+    private Boolean isCenterBookmark;       // 시설 즐겨찾기 여부
 
     public CenterMapFilterResponse(Center center, Double distance, Double starAverage, Boolean isCenterBookmark) {
         this.id = center.getId();
