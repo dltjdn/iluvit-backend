@@ -20,17 +20,17 @@ public interface ReportRepository extends JpaRepository<Report, Long> {
      * 해당 post id를 가진 신고의 target id를 null로, status를 DELETE로 변경합니다
      */
     @Modifying(clearAutomatically = true)
-    @Query("update Report r " +
-            "set r.targetId = null, r.status = 'DELETE' "+
-            "where r.targetId =:postId ")
+    @Query("UPDATE Report r " +
+            "SET r.targetId = null, r.status = 'DELETE' "+
+            "WHERE r.targetId =:postId ")
     void setTargetIsNullAndStatusIsDelete(@Param("postId") Long postId);
 
     /**
      * 해당 comment id를 가진 신고의 target id를 null로, status를 DELETE로 변경합니다
      */
     @Modifying(clearAutomatically = true)
-    @Query("update Report r " +
-            "set r.targetId = null, r.status = 'DELETE' "+
-            "where r.targetId in :commentIds")
+    @Query("UPDATE Report r " +
+            "SET r.targetId = null, r.status = 'DELETE' "+
+            "WHERE r.targetId in :commentIds")
     void setTargetIsNullAndStatusIsDelete(@Param("commentIds") List<Long> commentIds);
 }
