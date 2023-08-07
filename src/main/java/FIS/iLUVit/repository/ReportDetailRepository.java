@@ -15,7 +15,7 @@ public interface ReportDetailRepository extends JpaRepository<ReportDetail, Long
     /**
      * 해당 사용자와 신고할 대상(게시글, 댓글) id로 ReportDetail을 조회합니다
      */
-    Optional<ReportDetail> findByUserAndReport_TargetId(User user, Long targetId);
+    Optional<ReportDetail> findByUserAndReportTargetId(User user, Long targetId);
 
     /**
      * postId에 해당하는 게시물 ID를 가진 ReportDetailPost 객체들의 post 속성을 null로 업데이트합니다

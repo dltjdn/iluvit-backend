@@ -50,7 +50,7 @@ public class ReportService {
                     .orElseThrow(() -> new UserException(UserErrorResult.USER_NOT_EXIST));
 
             // 해당 게시글을 유저가 이미 신고했으면 중복으로 신고 불가능
-            reportDetailRepository.findByUserAndReport_TargetId(findUser, request.getTargetId())
+            reportDetailRepository.findByUserAndReportTargetId(findUser, request.getTargetId())
                     .ifPresent(rd -> {
                         throw new ReportException(ReportErrorResult.ALREADY_EXIST_POST_REPORT);
                     });
@@ -85,7 +85,7 @@ public class ReportService {
                     .orElseThrow(() -> new UserException(UserErrorResult.USER_NOT_EXIST));
 
             // 해당 댓글을 이미 신고했으면 중복으로 신고 불가능
-            reportDetailRepository.findByUserAndReport_TargetId(findUser, request.getTargetId())
+            reportDetailRepository.findByUserAndReportTargetId(findUser, request.getTargetId())
                     .ifPresent(rd -> {
                         throw new ReportException(ReportErrorResult.ALREADY_EXIST_COMMENT_REPORT);
                     });
