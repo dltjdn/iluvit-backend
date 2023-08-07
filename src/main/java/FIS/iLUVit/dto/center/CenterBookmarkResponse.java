@@ -27,7 +27,6 @@ public class CenterBookmarkResponse {
     private String profileImage;
     private Double starAverage;
 
-    @QueryProjection
     public CenterBookmarkResponse(Center center, Double starAverage){
         this.id = center.getId();
         this.name = center.getName();

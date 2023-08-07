@@ -16,7 +16,6 @@ public class CenterMapRequest {
     @NotNull
     private Double distance;
 
-
     @Builder
     public CenterMapRequest(double longitude, double latitude, Double distance) {
         this.longitude = longitude;

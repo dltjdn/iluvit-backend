@@ -7,19 +7,11 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 @Getter
-@Builder
 @NoArgsConstructor
 public class CenterBasicResponse {
     private Long id;
     private String name;
     private String address;
-
-    @QueryProjection
-    public CenterBasicResponse(Long id, String centerName, String centerAddress) {
-        this.id = id;
-        this.name = centerName;
-        this.address = centerAddress;
-    }
 
     public CenterBasicResponse(Center center){
         this.id = center.getId();
