@@ -149,7 +149,7 @@ public class ScrapService {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new UserException(UserErrorResult.USER_NOT_EXIST));
 
-        ScrapPost scrapPost = scrapPostRepository.findByIdAndScrap_User(scrapPostId, user)
+        ScrapPost scrapPost = scrapPostRepository.findByIdAndScrapUser(scrapPostId, user)
                 .orElseThrow(() -> new ScrapException(ScrapErrorResult.NOT_VALID_SCRAPPOST));
 
         scrapPostRepository.delete(scrapPost);
@@ -176,7 +176,7 @@ public class ScrapService {
     public Slice<PostByScrapDirResponse> findPostByScrapDir(Long userId, Long scrapId, Pageable pageable) {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new UserException(UserErrorResult.USER_NOT_EXIST));
-        Slice<ScrapPost> scrapPosts = scrapPostRepository.findByScrap_IdAndScrap_User(scrapId, user, pageable);
+        Slice<ScrapPost> scrapPosts = scrapPostRepository.findByScrapIdAndScrapUser(scrapId, user, pageable);
 
         // 조회된 ScrapPost 목록을 PostByScrapDirResponse로 변환하여 반환
         return scrapPosts.map(PostByScrapDirResponse::new);

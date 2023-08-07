@@ -13,11 +13,11 @@ public interface ScrapPostRepository extends JpaRepository<ScrapPost, Long> {
     /**
      * 해당 사용자 id와 스크랩 폴더 id로 스크랩된 게시글을 조회합니다
      */
-    Slice<ScrapPost> findByScrap_IdAndScrap_User(Long scrapId, User user, Pageable pageable);
+    Slice<ScrapPost> findByScrapIdAndScrapUser(Long scrapId, User user, Pageable pageable);
 
     /**
      * 해당 사용자 id와 스크랩 게시글 id로 스크랩된 게시글을 조회합니다
      */
-    Optional<ScrapPost> findByIdAndScrap_User(Long scrapPostId, User user);
+    Optional<ScrapPost> findByIdAndScrapUser(Long scrapPostId, User user);
 
 }
