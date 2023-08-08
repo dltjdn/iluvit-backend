@@ -59,7 +59,7 @@ public class ReviewController {
     @PatchMapping("{reviewId}")
     public ResponseEntity<Void> updateReview(@Login Long userId, @PathVariable("reviewId") Long reviewId,
                              @RequestBody ReviewContentRequest reviewContentRequest) {
-        reviewService.modifyReview(reviewId, userId, reviewContentRequest.getContent());
+        reviewService.modifyReview(reviewId, userId, reviewContentRequest);
         return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
     }
 
@@ -84,7 +84,7 @@ public class ReviewController {
     @PostMapping("{reviewId}/comment")
     public ResponseEntity<Void> createComment(@Login Long teacherId, @PathVariable("reviewId") Long reviewId,
                                 @RequestBody ReviewCommentRequest reviewCommentRequest) {
-        reviewService.saveComment(reviewId, reviewCommentRequest.getComment(), teacherId);
+        reviewService.saveComment(reviewId, reviewCommentRequest, teacherId);
         return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
     }
 

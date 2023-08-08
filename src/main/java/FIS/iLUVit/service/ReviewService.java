@@ -1,9 +1,7 @@
 package FIS.iLUVit.service;
 
-import FIS.iLUVit.dto.review.ReviewByCenterResponse;
-import FIS.iLUVit.dto.review.ReviewByParentResponse;
-import FIS.iLUVit.dto.review.ReviewCommentRequest;
-import FIS.iLUVit.dto.review.ReviewCreateRequest;
+import FIS.iLUVit.controller.ReviewController;
+import FIS.iLUVit.dto.review.*;
 import FIS.iLUVit.domain.*;
 import FIS.iLUVit.domain.embeddable.Score;
 import FIS.iLUVit.domain.enumtype.Approval;
@@ -121,13 +119,13 @@ public class ReviewService {
     /**
      * 리뷰를 수정합니다
      */
-    public void modifyReview(Long reviewId, Long userId, String content) {
+    public void modifyReview(Long reviewId, Long userId, ReviewContentRequest reviewContentRequest) {
         Review findReview = reviewRepository.findById(reviewId).orElseThrow(
                 () -> new ReviewException(ReviewErrorResult.REVIEW_NOT_EXIST));
         if (!Objects.equals(findReview.getParent().getId(), userId)) {
             throw new ReviewException(ReviewErrorResult.UNAUTHORIZED_USER_ACCESS);
         }
-        findReview.updateContent(content);
+        findReview.updateContent(reviewContentRequest.getContent());
     }
 
     /**
@@ -145,7 +143,7 @@ public class ReviewService {
     /**
      * 리뷰의 답글을 등록합니다
      */
-    public void saveComment(Long reviewId, String comment, Long teacherId) {
+    public void saveComment(Long reviewId, ReviewCommentRequest reviewCommentRequest, Long teacherId) {
         Review review = reviewRepository.findById(reviewId)
                 .orElseThrow(() -> new ReviewException(ReviewErrorResult.REVIEW_NOT_EXIST));
         Teacher teacher = teacherRepository.findById(teacherId)
@@ -162,7 +160,7 @@ public class ReviewService {
             throw new ReviewException(ReviewErrorResult.UNAUTHORIZED_USER_ACCESS);
         }
 
-        review.updateAnswer(comment, teacher);
+        review.updateAnswer(reviewCommentRequest.getComment(), teacher);
     }
 
     /**
