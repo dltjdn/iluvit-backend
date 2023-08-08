@@ -102,18 +102,18 @@ public class ReviewService {
         Center findCenter = centerRepository.findById(reviewCreateRequest.getCenterId())
                 .orElseThrow(() -> new CenterException(CenterErrorResult.CENTER_NOT_EXIST));
 
+        findCenter.addScore(Score.Review); // 리뷰 작성 시 센터의 스코어 올림
+
+
         // 유저가 시설에 작성한 리뷰가 이미 존재하는 지 검증
         reviewRepository.findByParentAndCenter(findUser, findCenter)
-                .ifPresent((r) -> {
-                    log.info("r.getId : " + r.getId().toString());
+                .ifPresent((existingReview) -> {
                     throw new ReviewException(ReviewErrorResult.NO_MORE_THAN_ONE_REVIEW);
                 });
 
         Review review = Review.createReview(reviewCreateRequest.getContent(), reviewCreateRequest.getScore(),
                 reviewCreateRequest.getAnonymous(), findUser, findCenter);
         reviewRepository.save(review);
-
-        findCenter.addScore(Score.Review); // 리뷰 작성 시 센터의 스코어 올림
     }
 
     /**
@@ -148,8 +148,6 @@ public class ReviewService {
                 .orElseThrow(() -> new ReviewException(ReviewErrorResult.REVIEW_NOT_EXIST));
         Teacher teacher = teacherRepository.findById(teacherId)
                 .orElseThrow(() -> new UserException(UserErrorResult.USER_NOT_EXIST));
-        log.info("teacher.getCenter() : " + teacher.getCenter().toString());
-        log.info("review.getCenter() : " + review.getCenter().toString());
         if (!teacher.getApproval().equals(Approval.ACCEPT)) {
             throw new ReviewException(ReviewErrorResult.APPROVAL_INCOMPLETE);
         }
