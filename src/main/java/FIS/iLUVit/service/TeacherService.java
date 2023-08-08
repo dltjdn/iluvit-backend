@@ -68,7 +68,7 @@ public class TeacherService {
                 .orElseThrow(() -> new UserException(UserErrorResult.NOT_VALID_TOKEN));
 
         // 조회된 교사 정보와 프로필 이미지를 이용하여 TeacherDetailResponse 생성
-        TeacherDetailResponse teacherDetailResponse = new TeacherDetailResponse(findTeacher,imageService.getProfileImage(findTeacher));
+        TeacherDetailResponse teacherDetailResponse = new TeacherDetailResponse(findTeacher,findTeacher.getProfileImagePath());
 
         return teacherDetailResponse;
     }
