@@ -2,7 +2,8 @@ package FIS.iLUVit.service;
 
 import FIS.iLUVit.dto.review.ReviewByCenterResponse;
 import FIS.iLUVit.dto.review.ReviewByParentResponse;
-import FIS.iLUVit.dto.review.ReviewDetailRequest;
+import FIS.iLUVit.dto.review.ReviewCommentRequest;
+import FIS.iLUVit.dto.review.ReviewCreateRequest;
 import FIS.iLUVit.domain.*;
 import FIS.iLUVit.domain.embeddable.Score;
 import FIS.iLUVit.domain.enumtype.Approval;
@@ -76,7 +77,7 @@ public class ReviewService {
     /**
      * 리뷰를 등록합니다
      */
-    public void saveNewReview(Long userId, ReviewDetailRequest reviewCreateDTO) {
+    public void saveNewReview(Long userId, ReviewCreateRequest reviewCreateRequest) {
 
         if (userId == null) {
             throw new UserException(UserErrorResult.NOT_VALID_TOKEN);
@@ -90,7 +91,7 @@ public class ReviewService {
         boolean flag = false;
         for (Child child : children) {
             if (child.getCenter() != null) {
-                if (Objects.equals(child.getCenter().getId(), reviewCreateDTO.getCenterId())) {
+                if (Objects.equals(child.getCenter().getId(), reviewCreateRequest.getCenterId())) {
                     flag = true;
                     break;
                 }
@@ -100,7 +101,7 @@ public class ReviewService {
             throw new ReviewException(ReviewErrorResult.UNAUTHORIZED_USER_ACCESS);
         }
 
-        Center findCenter = centerRepository.findById(reviewCreateDTO.getCenterId())
+        Center findCenter = centerRepository.findById(reviewCreateRequest.getCenterId())
                 .orElseThrow(() -> new CenterException(CenterErrorResult.CENTER_NOT_EXIST));
 
         // 유저가 시설에 작성한 리뷰가 이미 존재하는 지 검증
@@ -110,8 +111,8 @@ public class ReviewService {
                     throw new ReviewException(ReviewErrorResult.NO_MORE_THAN_ONE_REVIEW);
                 });
 
-        Review review = Review.createReview(reviewCreateDTO.getContent(), reviewCreateDTO.getScore(),
-                reviewCreateDTO.getAnonymous(), findUser, findCenter);
+        Review review = Review.createReview(reviewCreateRequest.getContent(), reviewCreateRequest.getScore(),
+                reviewCreateRequest.getAnonymous(), findUser, findCenter);
         reviewRepository.save(review);
 
         findCenter.addScore(Score.Review); // 리뷰 작성 시 센터의 스코어 올림

@@ -7,7 +7,7 @@ import lombok.NoArgsConstructor;
 @Getter
 @AllArgsConstructor
 @NoArgsConstructor
-public class ReviewDetailRequest {
+public class ReviewCreateRequest {
     private Long centerId;
     private String content;
     private Integer score;

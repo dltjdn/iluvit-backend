@@ -48,8 +48,8 @@ public class ReviewController {
      * 리뷰 등록
      */
     @PostMapping("")
-    public ResponseEntity<Void> createReview(@Login Long userId, @RequestBody ReviewDetailRequest reviewCreateDTO) {
-        reviewService.saveNewReview(userId, reviewCreateDTO);
+    public ResponseEntity<Void> createReview(@Login Long userId, @RequestBody ReviewCreateRequest reviewCreateRequest) {
+        reviewService.saveNewReview(userId, reviewCreateRequest);
         return ResponseEntity.status(HttpStatus.CREATED).build();
     }
 
