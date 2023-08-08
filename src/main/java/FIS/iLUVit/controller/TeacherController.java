@@ -63,8 +63,8 @@ public class TeacherController {
      * 교사 회원가입, 교사 이직용 시설 정보 조회
      */
     @GetMapping("search/center")
-    public ResponseEntity<Slice<CenterDto>> getCenterForTeacher(@ModelAttribute CenterRequest request, Pageable pageable) {
-        Slice<CenterDto> centerDtos = teacherService.findCenterForSignupTeacher(request, pageable);
+    public ResponseEntity<Slice<CenterBasicResponse>> getCenterForTeacher(@ModelAttribute CenterBasicRequest centerBasicRequest, Pageable pageable) {
+        Slice<CenterBasicResponse> centerDtos = teacherService.findCenterForSignupTeacher(centerBasicRequest, pageable);
         return ResponseEntity.ok(centerDtos);
     }
 
