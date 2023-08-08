@@ -1,7 +1,7 @@
 <div align="center">
-<p align="center"><img src="img_1.png"></p>
+<p align="center"><img src="icon.png"></p>
 
-![img.png](img.png)
+![img.png](logo.png)
 <h1>아이러빗 Backend</h1>
 
 ## 🏫 [아이러빗 바로가기][iluvit-link]
