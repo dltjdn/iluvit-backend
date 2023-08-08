@@ -33,7 +33,7 @@ public class ReviewHeartService {
                 .orElseThrow(() -> new UserException(UserErrorResult.USER_NOT_EXIST));
 
         reviewHeartRepository.findByReviewAndUser(review, user)
-                .ifPresent(m -> {
+                .ifPresent(existingReviewHeart -> {
                     throw new ReviewException(ReviewErrorResult.NO_MORE_THAN_ONE_REVIEW_HEART);
                 });
         ReviewHeart reviewHeart = new ReviewHeart(review, user);
