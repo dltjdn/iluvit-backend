@@ -29,10 +29,6 @@ public class ReportService {
      * 부적절한 게시글 혹은 댓글 신고하기
      */
     public void registerReport(Long userId, ReportRequest request) {
-        if (userId == null){
-            throw new UserException(UserErrorResult.NOT_VALID_TOKEN);
-        }
-
         // 신고자 정보
         User findUser = userRepository.findById(userId)
                 .orElseThrow(() -> new UserException(UserErrorResult.USER_NOT_EXIST));
