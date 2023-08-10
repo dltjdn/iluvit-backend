@@ -47,12 +47,9 @@ public class BlackUserService {
         List<ReportReasonResponse> reasonResponses = new ArrayList<>();
 
         for(Report report : reports) {
-            ReportType reportType = report.getType();
-            LocalDateTime reportDate = report.getCreatedDate();
             ReportDetail reportDetail = reportDetailRepository.findByReportId(report.getId());
             ReportReason reportReason = reportDetail.getReason();
-
-            ReportReasonResponse reasonResponse = new ReportReasonResponse(reportType, reportDate, reportReason);
+            ReportReasonResponse reasonResponse = new ReportReasonResponse(report.getType(), report.getCreatedDate(), reportReason);
             reasonResponses.add(reasonResponse);
         }
         BlockedReasonResponse response = new BlockedReasonResponse(blackUser.getUserStatus(), blackUser.getCreatedDate(), reasonResponses);
