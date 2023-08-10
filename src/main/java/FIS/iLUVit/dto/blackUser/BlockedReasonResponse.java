@@ -11,7 +11,7 @@ import java.util.List;
 @Getter
 @AllArgsConstructor
 public class BlockedReasonResponse {
-    private UserStatus status;
+    private UserStatus status;              // 차단된 유저의 상태
     private LocalDateTime blockedDate;      // 이용제한 혹은 영구정지를 당한 일시
     private List<ReportReasonResponse> report;
 

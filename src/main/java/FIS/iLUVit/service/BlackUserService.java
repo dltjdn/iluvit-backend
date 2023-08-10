@@ -48,11 +48,11 @@ public class BlackUserService {
 
         for(Report report : reports) {
             ReportType reportType = report.getType();
-            LocalDateTime writtenDate = report.getCreatedDate();
+            LocalDateTime reportDate = report.getCreatedDate();
             ReportDetail reportDetail = reportDetailRepository.findByReportId(report.getId());
             ReportReason reportReason = reportDetail.getReason();
 
-            ReportReasonResponse reasonResponse = new ReportReasonResponse(reportType, writtenDate, reportReason);
+            ReportReasonResponse reasonResponse = new ReportReasonResponse(reportType, reportDate, reportReason);
             reasonResponses.add(reasonResponse);
         }
         BlockedReasonResponse response = new BlockedReasonResponse(blackUser.getUserStatus(), blackUser.getCreatedDate(), reasonResponses);
