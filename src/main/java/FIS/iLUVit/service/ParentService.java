@@ -43,8 +43,7 @@ public class ParentService {
     private final ParticipationRepository participationRepository;
     private final WaitingRepository waitingRepository;
     private final WaitingService waitingService;
-
-    private final BlackUserRepository blackUserRepository;
+    private final BlackUserService blackUserService;
 
 
 
@@ -109,17 +108,8 @@ public class ParentService {
      * 작성내용: 학부모 회원가입
      */
     public Parent signupParent(SignupParentRequest request) {
-        //현재 영구정지, 관리자에 의한 이용제한, 신고 누적 3회에 대한 이용제한 유저는 가입 불가
-        blackUserRepository.findRestrictedByPhoneNumber(request.getPhoneNum())
-                .ifPresent(blackUser -> {
-                    throw new UserException(UserErrorResult.USER_IS_BLACK);
-                });
-
-        // 탈퇴 후 15일이 지나지 않은 유저는 가입 불가
-        blackUserRepository.findByPhoneNumberAndUserStatus(request.getPhoneNum(), UserStatus.WITHDRAWN)
-                .ifPresent(blackUser -> {
-                    throw new UserException(UserErrorResult.USER_IS_WITHDRAWN);
-                });
+        // 블랙 유저 검증
+        blackUserService.isValidUser(request.getPhoneNum());
 
         String hashedPwd = userService.hashAndValidatePwdForSignup(request.getPassword(), request.getPasswordCheck(), request.getLoginId(), request.getPhoneNum(), request.getNickname());
         Parent parent = request.createParent(hashedPwd);
