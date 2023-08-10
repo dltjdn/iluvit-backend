@@ -42,4 +42,9 @@ public interface ReportDetailRepository extends JpaRepository<ReportDetail, Long
     @Modifying(clearAutomatically = true)
     @Query("update ReportDetailComment  rdc set rdc.comment = null where rdc.comment.id in :commentIds")
     void setCommentIsNull(@Param("commentIds") List<Long> commentIds);
+
+    /**
+     * 해당 Report Id로 ReportDetail을 조회합니다
+     */
+    ReportDetail findByReportId(Long reportId);
 }

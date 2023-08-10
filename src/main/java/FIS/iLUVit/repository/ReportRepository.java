@@ -1,5 +1,6 @@
 package FIS.iLUVit.repository;
 
+import FIS.iLUVit.domain.enumtype.ReportStatus;
 import FIS.iLUVit.domain.reports.Report;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
@@ -33,4 +34,9 @@ public interface ReportRepository extends JpaRepository<Report, Long> {
             "set r.targetId = null, r.status = 'DELETE' "+
             "where r.targetId in :commentIds")
     void setTargetIsNullAndStatusIsDelete(@Param("commentIds") List<Long> commentIds);
+
+    /**
+     * 해당 사용자와 신고상태로 신고 리스트를 조회합니다
+     */
+    List<Report> findByTargetUserIdAndStatus(Long userId, ReportStatus status);
 }
