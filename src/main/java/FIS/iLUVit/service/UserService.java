@@ -23,7 +23,6 @@ import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.List;
 
-import static FIS.iLUVit.domain.enumtype.UserStatus.WITHDRAWN;
 
 @Service
 @Transactional
@@ -53,9 +52,12 @@ public class UserService {
                     throw new UserException(UserErrorResult.USER_IS_BLACK);
                 });
 
-        User findUser = userRepository.findById(userId)
+        User user = userRepository.findById(userId)
                 .orElseThrow(() -> new UserException(UserErrorResult.NOT_VALID_TOKEN));
-        return findUser.getUserInfo();
+
+        UserResponse userResponse = new UserResponse(user.getId(), user.getNickName(), user.getAuth());
+
+        return userResponse;
     }
 
     /**
@@ -134,7 +136,7 @@ public class UserService {
                         () -> tokenPairRepository.save(tokenPair)
                 );
 
-        LoginResponse response = principal.getUser().getLoginInfo();
+        LoginResponse response = new LoginResponse(principal.getUser());
         response.setAccessToken(jwtUtils.addPrefix(jwt));
         response.setRefreshToken(jwtUtils.addPrefix(refresh));
 
@@ -174,7 +176,8 @@ public class UserService {
             String refresh = jwtUtils.createRefreshToken(authentication);
             findTokenPair.updateToken(jwt, refresh);
 
-            LoginResponse response = principal.getUser().getLoginInfo();
+            LoginResponse response = new LoginResponse(principal.getUser());
+
             response.setAccessToken(jwtUtils.addPrefix(jwt));
             response.setRefreshToken(jwtUtils.addPrefix(refresh));
             return response;

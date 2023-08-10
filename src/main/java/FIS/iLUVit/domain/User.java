@@ -65,14 +65,6 @@ public class User extends BaseImageEntity {
         return Objects.hash(id);
     }
 
-    public LoginResponse getLoginInfo() {
-        return new LoginResponse(this);
-    }
-
-    public UserResponse getUserInfo() {
-        return new UserResponse(id, nickName, auth);
-    }
-
     public User updateReadAlarm(Boolean readAlarm) {
         this.readAlarm = readAlarm;
         return this;
