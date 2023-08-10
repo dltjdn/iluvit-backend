@@ -4,6 +4,7 @@ import FIS.iLUVit.domain.BlackUser;
 import FIS.iLUVit.domain.User;
 import FIS.iLUVit.domain.enumtype.ReportReason;
 import FIS.iLUVit.domain.enumtype.ReportStatus;
+import FIS.iLUVit.domain.enumtype.UserStatus;
 import FIS.iLUVit.domain.reports.Report;
 import FIS.iLUVit.domain.reports.ReportDetail;
 import FIS.iLUVit.dto.blackUser.BlockedReasonResponse;
@@ -56,5 +57,19 @@ public class BlackUserService {
         BlockedReasonResponse response = new BlockedReasonResponse(blackUser.getUserStatus(), formattedBlackUserDate, reasonResponses);
 
         return response;
+    }
+
+    public void isValidUser(String phoneNum) {
+        //현재 영구정지, 관리자에 의한 이용제한, 신고 누적 3회에 대한 이용제한 유저는 가입 불가
+        blackUserRepository.findRestrictedByPhoneNumber(phoneNum)
+                .ifPresent(blackUser -> {
+                    throw new UserException(UserErrorResult.USER_IS_BLACK);
+                });
+
+        // 탈퇴 후 15일이 지나지 않은 유저는 가입 불가
+        blackUserRepository.findByPhoneNumberAndUserStatus(phoneNum, UserStatus.WITHDRAWN)
+                .ifPresent(blackUser -> {
+                    throw new UserException(UserErrorResult.USER_IS_WITHDRAWN);
+                });
     }
 }

@@ -2,6 +2,7 @@ package FIS.iLUVit.service;
 
 import FIS.iLUVit.domain.alarms.Alarm;
 import FIS.iLUVit.domain.embeddable.Location;
+import FIS.iLUVit.domain.enumtype.UserStatus;
 import FIS.iLUVit.dto.center.CenterDto;
 import FIS.iLUVit.dto.center.CenterRequest;
 import FIS.iLUVit.dto.teacher.SignupTeacherRequest;
@@ -53,8 +54,8 @@ public class TeacherService {
     private final BoardBookmarkRepository boardBookmarkRepository;
     private final ScrapRepository scrapRepository;
     private final MapService mapService;
-
     private final AlarmRepository alarmRepository;
+    private final BlackUserService blackUserService;
 
     /**
      * 작성자: 이승범
@@ -116,6 +117,8 @@ public class TeacherService {
      * 작성내용: 교사 회원가입
      */
     public Teacher signupTeacher(SignupTeacherRequest request) {
+        // 블랙 유저 검증
+        blackUserService.isValidUser(request.getPhoneNum());
 
         // 회원가입 유효성 검사 및 비밀번호 해싱
         String hashedPwd = userService.hashAndValidatePwdForSignup(request.getPassword(), request.getPasswordCheck(), request.getLoginId(), request.getPhoneNum(), request.getNickname());
