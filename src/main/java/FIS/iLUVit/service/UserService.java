@@ -36,14 +36,21 @@ public class UserService {
     private final ScrapService scrapService;
     private final ExpoTokenRepository expoTokenRepository;
     private final AlarmService alarmService;
+    private final BlackUserRepository blackUserRepository;
 
 
     /**
      * 작성자: 이승범
-     * 작성내용: 사용자 기본정보(id, nickname, auth) 반환
+     * 작성내용: 사용자 기본정보(userId, nickname, auth) 반환
      */
-    public UserResponse findUserDetails(Long id) {
-        User findUser = userRepository.findById(id)
+    public UserResponse findUserDetails(Long userId) {
+        // 블랙유저인지 검증
+        blackUserRepository.findByUserId(userId)
+                .ifPresent(blackUser -> {
+                    throw new UserException(UserErrorResult.USER_IS_BLACK);
+                });
+
+        User findUser = userRepository.findById(userId)
                 .orElseThrow(() -> new UserException(UserErrorResult.NOT_VALID_TOKEN));
         return findUser.getUserInfo();
     }
@@ -100,6 +107,12 @@ public class UserService {
      *   작성내용: login service layer로 옮김
      */
     public LoginResponse login(LoginRequest request) {
+        // 블랙유저인지 검증
+        blackUserRepository.findByLoginId(request.getLoginId())
+                .ifPresent(blackUser -> {
+                    throw new UserException(UserErrorResult.USER_IS_BLACK);
+                });
+
         // authenticationManager 이용한 아이디 및 비밀번호 확인
         Authentication authentication = authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(request.getLoginId(), request.getPassword()));

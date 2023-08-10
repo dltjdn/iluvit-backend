@@ -16,6 +16,7 @@ public enum UserErrorResult implements ErrorResult {
     HAVE_NOT_AUTHORIZATION(HttpStatus.FORBIDDEN, "해당 요청에 대한 권한이 없습니다."),
     ALREADY_LOGINID_EXIST(HttpStatus.BAD_REQUEST, "이미 존재하는 아이디입니다."),
     ALREADY_NICKNAME_EXIST(HttpStatus.BAD_REQUEST, "이미 존재하는 닉네임입니다."),
+    USER_IS_BLACK(HttpStatus.EXPECTATION_FAILED, "차단된 유저입니다"),
     ;
 
     private final HttpStatus httpStatus;
