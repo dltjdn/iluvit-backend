@@ -9,7 +9,7 @@ import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("black")
+@RequestMapping("black-user")
 public class BlackUserController {
 
     private final BlackUserService blackUserService;
