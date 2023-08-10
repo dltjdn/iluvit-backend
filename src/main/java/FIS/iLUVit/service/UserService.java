@@ -12,6 +12,7 @@ import FIS.iLUVit.security.LoginResponse;
 import FIS.iLUVit.security.uesrdetails.PrincipalDetails;
 import com.auth0.jwt.exceptions.JWTVerificationException;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -46,10 +47,10 @@ public class UserService {
      * 작성내용: 사용자 기본정보(userId, nickname, auth) 반환
      */
     public UserResponse findUserDetails(Long userId) {
-        // 블랙유저인지 검증
+        // 블랙 유저 검증
         blackUserRepository.findByUserId(userId)
                 .ifPresent(blackUser -> {
-                    throw new UserException(UserErrorResult.USER_IS_BLACK);
+                    throw new UserException(UserErrorResult.USER_IS_BLACK_OR_WITHDRAWN);
                 });
 
         User user = userRepository.findById(userId)
@@ -112,8 +113,8 @@ public class UserService {
      *   작성내용: login service layer로 옮김
      */
     public LoginResponse login(LoginRequest request) {
-        // 블랙유저인지 검증
-        blackUserRepository.findByLoginId(request.getLoginId())
+        // 영구정지, 관리자에 의한 이용제한, 신고 누적 3회에 대한 이용제한 유저인지 검증
+        blackUserRepository.findRestrictedByLoginId(request.getLoginId())
                 .ifPresent(blackUser -> {
                     throw new UserException(UserErrorResult.USER_IS_BLACK);
                 });
