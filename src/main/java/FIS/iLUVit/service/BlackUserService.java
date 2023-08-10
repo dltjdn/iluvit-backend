@@ -4,7 +4,6 @@ import FIS.iLUVit.domain.BlackUser;
 import FIS.iLUVit.domain.User;
 import FIS.iLUVit.domain.enumtype.ReportReason;
 import FIS.iLUVit.domain.enumtype.ReportStatus;
-import FIS.iLUVit.domain.enumtype.ReportType;
 import FIS.iLUVit.domain.reports.Report;
 import FIS.iLUVit.domain.reports.ReportDetail;
 import FIS.iLUVit.dto.blackUser.BlockedReasonResponse;
@@ -18,7 +17,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -40,19 +39,21 @@ public class BlackUserService {
         BlackUser blackUser = blackUserRepository.findByLoginId(loginId)
                 .orElseThrow(() -> new BlackUserException(BlackUserResult.BLACK_USER_NOT_EXIST));
         Long userId = blackUser.getUserId();
-        User user = userRepository.findById(userId)
-                .orElseThrow(() -> new UserException(UserErrorResult.USER_NOT_EXIST));
 
-        List<Report> reports = reportRepository.findByTargetUserAndStatus(user, ReportStatus.DELETE);
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+
+        List<Report> reports = reportRepository.findByTargetUserIdAndStatus(userId, ReportStatus.DELETE);
         List<ReportReasonResponse> reasonResponses = new ArrayList<>();
 
         for(Report report : reports) {
+            String formattedReportDate = report.getCreatedDate().format(formatter);
             ReportDetail reportDetail = reportDetailRepository.findByReportId(report.getId());
             ReportReason reportReason = reportDetail.getReason();
-            ReportReasonResponse reasonResponse = new ReportReasonResponse(report.getType(), report.getCreatedDate(), reportReason);
+            ReportReasonResponse reasonResponse = new ReportReasonResponse(report.getType(), formattedReportDate, reportReason);
             reasonResponses.add(reasonResponse);
         }
-        BlockedReasonResponse response = new BlockedReasonResponse(blackUser.getUserStatus(), blackUser.getCreatedDate(), reasonResponses);
+        String formattedBlackUserDate = blackUser.getCreatedDate().format(formatter);
+        BlockedReasonResponse response = new BlockedReasonResponse(blackUser.getUserStatus(), formattedBlackUserDate, reasonResponses);
 
         return response;
     }
