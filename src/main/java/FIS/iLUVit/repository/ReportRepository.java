@@ -39,4 +39,7 @@ public interface ReportRepository extends JpaRepository<Report, Long> {
      * 해당 사용자와 신고상태로 신고 리스트를 조회합니다
      */
     List<Report> findByTargetUserIdAndStatus(Long userId, ReportStatus status);
+
+    @Query("SELECT r.targetUser, COUNT(r) FROM Report r WHERE r.status = :status GROUP BY r.targetUser, r.status")
+    List<Object[]> countReportsByUserAndStatus(@Param("status") ReportStatus status);
 }
