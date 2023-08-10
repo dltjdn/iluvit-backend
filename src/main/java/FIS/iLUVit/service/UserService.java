@@ -2,6 +2,7 @@ package FIS.iLUVit.service;
 
 import FIS.iLUVit.domain.*;
 import FIS.iLUVit.domain.enumtype.AuthKind;
+import FIS.iLUVit.domain.enumtype.UserStatus;
 import FIS.iLUVit.dto.user.*;
 import FIS.iLUVit.exception.*;
 import FIS.iLUVit.repository.*;
@@ -21,6 +22,8 @@ import org.springframework.transaction.annotation.Transactional;
 import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.List;
+
+import static FIS.iLUVit.domain.enumtype.UserStatus.WITHDRAWN;
 
 @Service
 @Transactional
@@ -210,16 +213,18 @@ public class UserService {
      *   작성내용: 회원 탈퇴 ( 교사, 학부모 공통 )
      */
     public long withdrawUser(Long userId){
-        // 유저 정보 삭제 & 게시글, 댓글, 채팅, 시설리뷰 작성자 '알 수 없음'
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new UserException(UserErrorResult.NOT_VALID_TOKEN));
 
+        // 15일 동안 재가입 방지를 위해 블랙 유저에 저장
+        blackUserRepository.save(new BlackUser(user, UserStatus.WITHDRAWN));
+
+        // id 제외 유저 정보 삭제
         user.deletePersonalInfo();
 
-
+        // 스크랩 폴더 삭제 -> 스크랩한 포스트 casecade 됨
         List<Scrap> scrapDirs = scrapRepository.findByUser(user);
 
-        // 스크랩 폴더 삭제 -> 스크랩한 포스트 casecade 됨
         scrapDirs.forEach(scrapDir -> {
             if(scrapDir.getIsDefault() == false){
                 scrapService.deleteScrapDir(userId, scrapDir.getId());

@@ -42,4 +42,20 @@ public class BlackUser extends BaseImageEntity {
     @Enumerated(EnumType.STRING)
     private UserStatus userStatus;      // Suspended, Restricted or Withdrawn
 
+    public BlackUser(User user, UserStatus userStatus) {
+        this.userId = user.getId();
+        this.nickName = user.getNickName();
+        this.loginId = user.getLoginId();
+        this.password = user.getPassword();
+        this.phoneNumber = user.getPhoneNumber();
+        this.emailAddress = user.getEmailAddress();
+        this.name = user.getName();
+        this.address = user.getAddress();
+        this.detailAddress = user.getDetailAddress();
+        this.readAlarm = user.getReadAlarm();
+        this.location = user.getLocation();
+        this.auth = user.getAuth();
+        this.dtype = user.getDtype();
+        this.userStatus = userStatus;
+    }
 }
