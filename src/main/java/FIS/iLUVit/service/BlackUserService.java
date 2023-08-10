@@ -35,9 +35,9 @@ public class BlackUserService {
     /**
      * 차단 정보를 조회합니다
      */
-    public BlockedReasonResponse getBlockedReason(Long blackUserId) {
+    public BlockedReasonResponse getBlockedReason(String loginId) {
 
-        BlackUser blackUser = blackUserRepository.findById(blackUserId)
+        BlackUser blackUser = blackUserRepository.findByLoginId(loginId)
                 .orElseThrow(() -> new UserException(UserErrorResult.USER_NOT_EXIST));
         Long userId = blackUser.getUserId();
         User user = userRepository.findById(userId)

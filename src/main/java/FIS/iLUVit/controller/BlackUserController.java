@@ -17,9 +17,9 @@ public class BlackUserController {
     /**
      * 차단 정보 조회
      */
-    @GetMapping("{blackUserId}")
-    public ResponseEntity<BlockedReasonResponse> getBlockedReason(@PathVariable("blackUserId") Long blackUserId) {
-        BlockedReasonResponse response = blackUserService.getBlockedReason(blackUserId);
+    @GetMapping("{loginId}")
+    public ResponseEntity<BlockedReasonResponse> getBlockedReason(@PathVariable("loginId") String loginId) {
+        BlockedReasonResponse response = blackUserService.getBlockedReason(loginId);
         return ResponseEntity.status(HttpStatus.OK).body(response);
     }
 }
