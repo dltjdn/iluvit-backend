@@ -21,7 +21,7 @@
 
 ## Commit Convention
 `ex ) git commit -m "[FEAT] 회원가입 기능 완료 #1"`
-- `[CHORE]` : 동작에 영향 없는 코드 or 변경 없는 변경사항(주석 추가 등)
+- `[CHORE]` : 동작에 영향 없는 코드, 작은 수정
 - `[FEAT]` : 새로운 기능 구현
 - `[ADD]` : Feat 이외의 부수적인 코드 추가, 라이브러리 추가, 새로운 파일 생성
 - `[FIX]` : 버그, 오류 해결
@@ -31,9 +31,10 @@
 - `[RENAME]` : 파일 이름 변경시
 - `[REFACTOR]` : 전면 수정
 - `[MERGE]`: 다른 브랜치와 병합
-- `[STYLE]`: 코드가 아닌 스타일 변경을 하는 경우
+- `[STYLE]`: 코드가 아닌 스타일 변경을 하는 경우 or 주석 추가
 - `[INIT]`: Initial Commit을 하는 경우
 
+<br><br>
 
 ## Branch Strategy
 - `[develop branch]` : prod 서버 배포 단위 branch
@@ -50,6 +51,8 @@
 6. merge된 작업이 있을 경우, 다른 브랜치에서 작업ㅠㄱ>을 진행 중이던 개발자는 본인의 브랜치로 merge된 작업을 Pull 받아온다.
 7. 종료된 Issue와 Pull Request의 Label과 Project를 관리한다.
 ```
+
+<br><br>
 
 ## ERD
 ![]()
