@@ -44,7 +44,7 @@ public class User extends BaseImageEntity {
     @Enumerated(EnumType.STRING)
     protected Auth auth;                   // Teacher or Director or Parent
 
-    @Column(name = "dtype", insertable = false, updatable = false)
+    @Column(name = "dtype")
     protected String dtype;               // Teacher or Parent
 
 
@@ -63,14 +63,6 @@ public class User extends BaseImageEntity {
     @Override
     public int hashCode() {
         return Objects.hash(id);
-    }
-
-    public LoginResponse getLoginInfo() {
-        return new LoginResponse(this);
-    }
-
-    public UserResponse getUserInfo() {
-        return new UserResponse(id, nickName, auth);
     }
 
     public User updateReadAlarm(Boolean readAlarm) {
@@ -98,7 +90,7 @@ public class User extends BaseImageEntity {
         this.address = null;
         this.name=null;
         this.detailAddress = null;
-        this.profileImagePath = "";
+        this.profileImagePath = "basic";
         this.infoImagePath = null;
         this.imgCnt = null;
         this.location = null;

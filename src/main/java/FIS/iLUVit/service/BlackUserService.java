@@ -94,4 +94,18 @@ public class BlackUserService {
         // 사용자의 개인 정보를 삭제
         user.deletePersonalInfo();
     }
+
+    public void isValidUser(String phoneNum) {
+        //현재 영구정지, 관리자에 의한 이용제한, 신고 누적 3회에 대한 이용제한 유저는 가입 불가
+        blackUserRepository.findRestrictedByPhoneNumber(phoneNum)
+                .ifPresent(blackUser -> {
+                    throw new UserException(UserErrorResult.USER_IS_BLACK);
+                });
+
+        // 탈퇴 후 15일이 지나지 않은 유저는 가입 불가
+        blackUserRepository.findByPhoneNumberAndUserStatus(phoneNum, UserStatus.WITHDRAWN)
+                .ifPresent(blackUser -> {
+                    throw new UserException(UserErrorResult.USER_IS_WITHDRAWN);
+                });
+
 }
