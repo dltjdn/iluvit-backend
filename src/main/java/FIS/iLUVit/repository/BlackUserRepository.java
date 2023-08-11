@@ -5,6 +5,7 @@ import FIS.iLUVit.domain.enumtype.UserStatus;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 
+import javax.swing.text.html.Option;
 import java.util.Optional;
 
 public interface BlackUserRepository extends JpaRepository<BlackUser, Long> {
@@ -18,6 +19,13 @@ public interface BlackUserRepository extends JpaRepository<BlackUser, Long> {
      * 해당 유저아이디로 블랙유저를 조회합니다
      */
     Optional<BlackUser> findByUserId(Long userId);
+
+    /**
+     * 해당 닉네임으로 블랙유저를 조회합니다
+     */
+    Optional<BlackUser> findByNickName(String nickName);
+
+    Optional<BlackUser> findByPhoneNumber(String phoneNumber);
 
     /**
      * 해당 핸드폰 번호와 유저 상태로 블랙 유저를 조회합니다

@@ -23,6 +23,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
 
 
 @Service
@@ -195,10 +196,15 @@ public class UserService {
     *   작성내용: 로그인아이디 중복 확인
     */
     public void checkLoginIdAvailability(CheckLoginIdRequest request) {
-        userRepository.findByLoginId(request.getLoginId())
-                .ifPresent((user)->{
-                    throw new UserException(UserErrorResult.ALREADY_LOGINID_EXIST);
-                });
+
+        Optional<BlackUser> blackUser = blackUserRepository.findByLoginId((request.getLoginId()));
+        Optional<User> user = userRepository.findByLoginId((request.getLoginId()));
+
+        // 블랙 유저나 유저에 있는 로그인 아이디면 가입불가
+        if (blackUser.isPresent() || user.isPresent()) {
+            throw new UserException(UserErrorResult.ALREADY_LOGINID_EXIST);
+        }
+
     }
 
     /**
@@ -206,10 +212,14 @@ public class UserService {
     *   작성내용: 닉네임 중복 확인
     */
     public void checkNicknameAvailability(CheckNicknameRequest request) {
-        userRepository.findByNickName(request.getNickname())
-                .ifPresent((user)->{
-                    throw new UserException(UserErrorResult.ALREADY_NICKNAME_EXIST);
-                });
+
+        Optional<BlackUser> blackUser = blackUserRepository.findByNickName((request.getNickname()));
+        Optional<User> user = userRepository.findByNickName((request.getNickname()));
+
+        // 블랙 유저나 유저에 있는 닉네임이면 가입불가
+        if (blackUser.isPresent() || user.isPresent()) {
+            throw new UserException(UserErrorResult.ALREADY_NICKNAME_EXIST);
+        }
     }
 
     /**
