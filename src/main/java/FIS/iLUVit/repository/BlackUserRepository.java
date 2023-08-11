@@ -5,6 +5,8 @@ import FIS.iLUVit.domain.enumtype.UserStatus;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 
+import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Optional;
 
 public interface BlackUserRepository extends JpaRepository<BlackUser, Long> {
@@ -23,6 +25,12 @@ public interface BlackUserRepository extends JpaRepository<BlackUser, Long> {
      * 해당 핸드폰 번호와 유저 상태로 블랙 유저를 조회합니다
      */
     Optional<BlackUser> findByPhoneNumberAndUserStatus(String phoneNumber, UserStatus userStatus);
+
+
+    /**
+     * 해당 상태의 특정 날짜 이전의 블랙 유저를 조회합니다
+     */
+    List<BlackUser> findByCreatedDateBeforeAndUserStatus(LocalDateTime dateTime, UserStatus userStatus);
 
     /**
      * 해당 핸드폰 번호를 가지고 유저 상태가 영구정지/관리자에 의한 이용제한/신고누적 3회 이용제한인 블랙 유저를 조회합니다
