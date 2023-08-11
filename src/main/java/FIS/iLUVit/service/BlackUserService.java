@@ -13,6 +13,7 @@ import FIS.iLUVit.exception.*;
 import FIS.iLUVit.repository.BlackUserRepository;
 import FIS.iLUVit.repository.ReportDetailRepository;
 import FIS.iLUVit.repository.ReportRepository;
+
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.scheduling.annotation.Scheduled;
@@ -28,7 +29,6 @@ import java.util.List;
 @RequiredArgsConstructor
 @Slf4j
 public class BlackUserService {
-
     private final BlackUserRepository blackUserRepository;
     private final ReportRepository reportRepository;
     private final ReportDetailRepository reportDetailRepository;
@@ -74,13 +74,16 @@ public class BlackUserService {
         // 각 사용자별로 신고 횟수 확인 후 누적횟수에 따른 블랙유저로 등록
         for (Object[] userReportRow : userReportCounts) {
             User user = (User) userReportRow[0];
-            int reportCount = (int) userReportRow[1];
-            if (reportCount >= THRESHOLD_FOR_RESTRICTION && reportCount <= THRESHOLD_FOR_SUSPENDED) {
-                // 신고 누적 횟수가 이용제한 한계에 도달한 경우, 사용자를 이용제한 상태로 변경
-                processBlacklistUser(user, UserStatus.RESTRICTED_REPORT);
-            } else if (reportCount >= THRESHOLD_FOR_SUSPENDED) {
-                // 신고 누적 횟수가 영구정지 한계에 도달한 경우, 사용자를 영구정지 상태로 변경
-                processBlacklistUser(user, UserStatus.SUSPENDED);
+            Long reportCount = (Long) userReportRow[1];
+            int reportCountInt = reportCount.intValue();
+            if(user.getPhoneNumber() != null) {
+                if (reportCountInt >= THRESHOLD_FOR_RESTRICTION && reportCountInt <= THRESHOLD_FOR_SUSPENDED) {
+                    // 신고 누적 횟수가 이용제한 한계에 도달한 경우, 사용자를 이용제한 상태로 변경
+                    processBlacklistUser(user, UserStatus.RESTRICTED_SEVEN_DAYS);
+                } else if (reportCountInt >= THRESHOLD_FOR_SUSPENDED) {
+                    // 신고 누적 횟수가 영구정지 한계에 도달한 경우, 사용자를 영구정지 상태로 변경
+                    processBlacklistUser(user, UserStatus.BAN);
+                }
             }
         }
     }
@@ -107,5 +110,5 @@ public class BlackUserService {
                 .ifPresent(blackUser -> {
                     throw new UserException(UserErrorResult.USER_IS_WITHDRAWN);
                 });
-
+    }
 }

@@ -11,9 +11,6 @@ import javax.persistence.*;
 
 @Entity
 @Getter
-@Inheritance(strategy = InheritanceType.JOINED)
-@DiscriminatorColumn
-@DiscriminatorValue("null")
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Table(name = "black_user")
 public class BlackUser extends BaseImageEntity {
@@ -22,6 +19,7 @@ public class BlackUser extends BaseImageEntity {
     @GeneratedValue
     private Long id;
 
+    @Column(unique = true)
     private Long userId;              // 사용자 기본키
     private String nickName;          // 닉네임
     private String loginId;           // 로그인 아이디
@@ -36,7 +34,7 @@ public class BlackUser extends BaseImageEntity {
     private Location location;
     @Enumerated(EnumType.STRING)
     private Auth auth;                  // Teacher, Director or Parent
-    @Column(name = "dtype", insertable = false, updatable = false)
+    @Column(name = "dtype")
     private String dtype;               // Teacher or Parent
 
     @Enumerated(EnumType.STRING)
@@ -56,6 +54,9 @@ public class BlackUser extends BaseImageEntity {
         this.location = user.getLocation();
         this.auth = user.getAuth();
         this.dtype = user.getDtype();
+        this.profileImagePath = user.getProfileImagePath();
+        this.infoImagePath = user.getInfoImagePath();
+        this.imgCnt = user.getImgCnt();
         this.userStatus = userStatus;
     }
 }
