@@ -1,6 +1,7 @@
 package FIS.iLUVit.service;
 
 import FIS.iLUVit.domain.embeddable.Location;
+import FIS.iLUVit.domain.enumtype.UserStatus;
 import FIS.iLUVit.dto.parent.ParentDetailRequest;
 import FIS.iLUVit.dto.parent.ParentDetailResponse;
 import FIS.iLUVit.dto.parent.SignupParentRequest;
@@ -26,7 +27,6 @@ import java.util.Objects;
 @Transactional
 @RequiredArgsConstructor
 public class ParentService {
-
     private final UserService userService;
     private final ImageService imageService;
     private final AuthService authService;
@@ -43,6 +43,7 @@ public class ParentService {
     private final ParticipationRepository participationRepository;
     private final WaitingRepository waitingRepository;
     private final WaitingService waitingService;
+    private final BlackUserService blackUserService;
 
 
 
@@ -107,18 +108,18 @@ public class ParentService {
      * 작성내용: 학부모 회원가입
      */
     public Parent signupParent(SignupParentRequest request) {
+        // 블랙 유저 검증
+        blackUserService.isValidUser(request.getPhoneNum());
 
         String hashedPwd = userService.hashAndValidatePwdForSignup(request.getPassword(), request.getPasswordCheck(), request.getLoginId(), request.getPhoneNum(), request.getNickname());
         Parent parent = request.createParent(hashedPwd);
 
-        System.out.println("###########");
 
         Pair<Double, Double> loAndLat = mapService.convertAddressToLocation(request.getAddress());
         Pair<String, String> hangjung = mapService.getSidoSigunguByLocation(loAndLat.getFirst(), loAndLat.getSecond());
         Location location = new Location(loAndLat, hangjung);
         parent.updateLocation(location);
 
-        System.out.println("$$$$$$$$$");
 
         // default 스크랩 생성
         Scrap scrap = Scrap.createDefaultScrap(parent);
