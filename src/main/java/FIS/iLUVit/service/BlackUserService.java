@@ -93,7 +93,7 @@ public class BlackUserService {
         // 7일 뒤 RESTRICTED_REPORT인 blackUser 삭제 및 User로 복귀
         LocalDateTime sevenDaysAgo = LocalDateTime.now().minusDays(7);
 
-        List<BlackUser> blackUsersByRestriectdReport = blackUserRepository.findByCreatedDateBeforeAndUserStatus(sevenDaysAgo, UserStatus.RESTRICTED_REPORT);
+        List<BlackUser> blackUsersByRestriectdReport = blackUserRepository.findByCreatedDateBeforeAndUserStatus(sevenDaysAgo, UserStatus.RESTRICTED_SEVEN_DAYS);
 
         blackUsersByRestriectdReport.forEach(blackUser -> {
             User user = userRepository.findById(blackUser.getUserId())
@@ -103,12 +103,6 @@ public class BlackUserService {
 
         blackUserRepository.deleteAll(blackUsersByRestriectdReport);
 
-        //6개월 뒤 RESTRICTED_ADMIN 인 blakcUser 삭제
-        LocalDateTime sixMonthsAgo = LocalDateTime.now().minusMonths(6);
-
-        List<BlackUser> blackUsersByRestrictedAdmin = blackUserRepository.findByCreatedDateBeforeAndUserStatus(sixMonthsAgo, UserStatus.RESTRICTED_ADMIN);
-
-        blackUserRepository.deleteAll(blackUsersByRestrictedAdmin);
 
     }
 
