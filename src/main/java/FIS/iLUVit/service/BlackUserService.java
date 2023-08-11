@@ -66,7 +66,7 @@ public class BlackUserService {
     /**
      * 신고 누적으로 인한 블랙유저를 등록합니다
      */
-    @Scheduled(cron = "0 */4 * * * *") // 4시간 마다 실행
+    @Scheduled(cron = "0 0 */4 * * *") // 4시간 마다 실행
     public void makeBlackUserUponReportThreshold() {
         // 사용자별 신고 횟수 정보 조회
         List<Object[]> userReportCounts = reportRepository.countReportsByUserAndStatus(ReportStatus.DELETE);
