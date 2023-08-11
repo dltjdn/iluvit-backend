@@ -1,9 +1,7 @@
 package FIS.iLUVit.domain;
 
 import FIS.iLUVit.domain.embeddable.Location;
-import FIS.iLUVit.dto.user.UserResponse;
 import FIS.iLUVit.domain.enumtype.Auth;
-import FIS.iLUVit.security.LoginResponse;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -28,12 +26,18 @@ public class User extends BaseImageEntity {
 
     @Column(unique = true)
     protected String loginId;             // 로그인 할때 입력할 아이디
+
     protected String password;            // 비밀번호
+
     @Column(unique = true)
     protected String phoneNumber;         // 핸드폰 번호
+
     protected String emailAddress;        // 이메일
+
     protected String name;                // 잔짜 이름
+
     protected String address;             // 주소
+
     protected String detailAddress;       // 상세주소
 
     @Embedded
@@ -47,11 +51,9 @@ public class User extends BaseImageEntity {
     @Column(name = "dtype")
     protected String dtype;               // Teacher or Parent
 
-
     public void changePassword(String newPwd) {
         this.password = newPwd;
     }
-
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -96,5 +98,22 @@ public class User extends BaseImageEntity {
         this.location = null;
         this.auth=null;
         this.dtype=null;
+    }
+
+    public void restorePersonalInfo(BlackUser blackUser){
+        this.nickName = blackUser.getNickName();
+        this.loginId = blackUser.getLoginId();
+        this.password = blackUser.getPassword();
+        this.phoneNumber = blackUser.getPhoneNumber();
+        this.emailAddress = blackUser.getEmailAddress();
+        this.address = blackUser.getAddress();
+        this.name = blackUser.getName() ;
+        this.detailAddress = blackUser.getDetailAddress();
+        this.profileImagePath = blackUser.getProfileImagePath();
+        this.infoImagePath = blackUser.getInfoImagePath();
+        this.imgCnt = blackUser.getImgCnt();
+        this.location = blackUser.getLocation();
+        this.auth = blackUser.getAuth();
+        this.dtype = blackUser.getDtype();
     }
 }

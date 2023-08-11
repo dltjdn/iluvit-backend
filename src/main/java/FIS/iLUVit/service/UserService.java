@@ -23,6 +23,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
 
 
 @Service
@@ -40,6 +41,8 @@ public class UserService {
     private final ExpoTokenRepository expoTokenRepository;
     private final AlarmService alarmService;
     private final BlackUserRepository blackUserRepository;
+    private final BlackUserService blackUserService;
+
 
 
     /**
@@ -113,10 +116,10 @@ public class UserService {
      *   작성내용: login service layer로 옮김
      */
     public LoginResponse login(LoginRequest request) {
-        // 영구정지, 관리자에 의한 이용제한, 신고 누적 3회에 대한 이용제한 유저인지 검증
+        // 영구정지, 일주일간 이용제한인 유저인지 검증
         blackUserRepository.findRestrictedByLoginId(request.getLoginId())
                 .ifPresent(blackUser -> {
-                    throw new UserException(UserErrorResult.USER_IS_BLACK);
+                    throw new UserException(UserErrorResult.USER_IS_BLACK_OR_WITHDRAWN);
                 });
 
         // authenticationManager 이용한 아이디 및 비밀번호 확인
@@ -195,10 +198,15 @@ public class UserService {
     *   작성내용: 로그인아이디 중복 확인
     */
     public void checkLoginIdAvailability(CheckLoginIdRequest request) {
-        userRepository.findByLoginId(request.getLoginId())
-                .ifPresent((user)->{
-                    throw new UserException(UserErrorResult.ALREADY_LOGINID_EXIST);
-                });
+
+        Optional<BlackUser> blackUser = blackUserRepository.findByLoginId((request.getLoginId()));
+        Optional<User> user = userRepository.findByLoginId((request.getLoginId()));
+
+        // 블랙 유저나 유저에 있는 로그인 아이디면 가입불가
+        if (blackUser.isPresent() || user.isPresent()) {
+            throw new UserException(UserErrorResult.ALREADY_LOGINID_EXIST);
+        }
+
     }
 
     /**
@@ -206,10 +214,14 @@ public class UserService {
     *   작성내용: 닉네임 중복 확인
     */
     public void checkNicknameAvailability(CheckNicknameRequest request) {
-        userRepository.findByNickName(request.getNickname())
-                .ifPresent((user)->{
-                    throw new UserException(UserErrorResult.ALREADY_NICKNAME_EXIST);
-                });
+
+        Optional<BlackUser> blackUser = blackUserRepository.findByNickName((request.getNickname()));
+        Optional<User> user = userRepository.findByNickName((request.getNickname()));
+
+        // 블랙 유저나 유저에 있는 닉네임이면 가입불가
+        if (blackUser.isPresent() || user.isPresent()) {
+            throw new UserException(UserErrorResult.ALREADY_NICKNAME_EXIST);
+        }
     }
 
     /**
