@@ -41,6 +41,8 @@ public class UserService {
     private final ExpoTokenRepository expoTokenRepository;
     private final AlarmService alarmService;
     private final BlackUserRepository blackUserRepository;
+    private final BlackUserService blackUserService;
+
 
 
     /**
@@ -114,10 +116,10 @@ public class UserService {
      *   작성내용: login service layer로 옮김
      */
     public LoginResponse login(LoginRequest request) {
-        // 영구정지, 관리자에 의한 이용제한, 신고 누적 3회에 대한 이용제한 유저인지 검증
+        // 영구정지, 일주일간 이용제한인 유저인지 검증
         blackUserRepository.findRestrictedByLoginId(request.getLoginId())
                 .ifPresent(blackUser -> {
-                    throw new UserException(UserErrorResult.USER_IS_BLACK);
+                    throw new UserException(UserErrorResult.USER_IS_BLACK_OR_WITHDRAWN);
                 });
 
         // authenticationManager 이용한 아이디 및 비밀번호 확인
