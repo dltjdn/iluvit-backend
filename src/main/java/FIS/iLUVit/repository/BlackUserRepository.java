@@ -37,7 +37,7 @@ public interface BlackUserRepository extends JpaRepository<BlackUser, Long> {
      */
     @Query("SELECT blackUser FROM BlackUser blackUser " +
             "WHERE blackUser.phoneNumber = :phoneNumber AND " +
-            "(blackUser.userStatus = 'SUSPENDED' OR blackUser.userStatus = 'RESTRICTED_ADMIN' OR blackUser.userStatus = 'RESTRICTED_REPORT') ")
+            "(blackUser.userStatus = 'BAN' OR blackUser.userStatus = 'RESTRICTED_SEVEN_DAYS') ")
     Optional<BlackUser> findRestrictedByPhoneNumber(String phoneNumber);
 
     /**
@@ -45,6 +45,6 @@ public interface BlackUserRepository extends JpaRepository<BlackUser, Long> {
      */
     @Query("SELECT blackUser FROM BlackUser blackUser " +
             "WHERE blackUser.loginId = :loginId AND " +
-            "(blackUser.userStatus = 'SUSPENDED' OR blackUser.userStatus = 'RESTRICTED_ADMIN' OR blackUser.userStatus = 'RESTRICTED_REPORT') ")
+            "(blackUser.userStatus = 'BAN' OR blackUser.userStatus = 'RESTRICTED_SEVEN_DAYS') ")
     Optional<BlackUser> findRestrictedByLoginId(String loginId);
 }
