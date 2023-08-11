@@ -15,9 +15,11 @@ import FIS.iLUVit.repository.ReportDetailRepository;
 import FIS.iLUVit.repository.ReportRepository;
 import FIS.iLUVit.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
@@ -28,9 +30,9 @@ import java.util.List;
 public class BlackUserService {
 
     private final BlackUserRepository blackUserRepository;
-    private final UserRepository userRepository;
     private final ReportRepository reportRepository;
     private final ReportDetailRepository reportDetailRepository;
+    private final UserRepository userRepository;
 
     /**
      * 차단 정보를 조회합니다
@@ -59,6 +61,9 @@ public class BlackUserService {
         return response;
     }
 
+    /**
+     * 블랙 유저인지 검증합니다
+     */
     public void isValidUser(String phoneNum) {
         //현재 영구정지, 일주일간 이용제한에 대한 이용제한 유저는 가입 불가
         blackUserRepository.findRestrictedByPhoneNumber(phoneNum)
@@ -72,4 +77,33 @@ public class BlackUserService {
                     throw new UserException(UserErrorResult.USER_IS_WITHDRAWN);
                 });
     }
+
+    /**
+     * 블랙 유저 디비를 매일 자정마다 정리합니다
+     */
+    @Scheduled(cron = "0 0 0 * * ?")  // 매일 자정에 실행
+    public void deleteOldData() {
+        // 15일 뒤 WITHDRAWN인 blackUser 삭제
+        LocalDateTime fifteenDaysAgo = LocalDateTime.now().minusDays(15);
+
+        List<BlackUser> blackUsersByWithDrawn = blackUserRepository.findByCreatedDateBeforeAndUserStatus(fifteenDaysAgo, UserStatus.WITHDRAWN);
+
+        blackUserRepository.deleteAll(blackUsersByWithDrawn);
+
+        // 7일 뒤 RESTRICTED_REPORT인 blackUser 삭제 및 User로 복귀
+        LocalDateTime sevenDaysAgo = LocalDateTime.now().minusDays(7);
+
+        List<BlackUser> blackUsersByRestriectdReport = blackUserRepository.findByCreatedDateBeforeAndUserStatus(sevenDaysAgo, UserStatus.RESTRICTED_SEVEN_DAYS);
+
+        blackUsersByRestriectdReport.forEach(blackUser -> {
+            User user = userRepository.findById(blackUser.getUserId())
+                    .orElseThrow(() -> new UserException(UserErrorResult.USER_NOT_EXIST));
+            user.restorePersonalInfo(blackUser);
+        });
+
+        blackUserRepository.deleteAll(blackUsersByRestriectdReport);
+
+
+    }
+
 }
