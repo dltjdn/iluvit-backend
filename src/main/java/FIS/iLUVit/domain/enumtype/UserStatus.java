@@ -5,5 +5,3 @@ public enum UserStatus {
     WITHDRAWN,              // 회원탈퇴
     RESTRICTED_SEVEN_DAYS   // 일주일간 이용제한
 }
-
-
