@@ -54,7 +54,7 @@ public class BlackUserService {
             reasonResponses.add(reasonResponse);
         }
         String formattedBlackUserDate = blackUser.getCreatedDate().format(formatter);
-        BlockedReasonResponse response = new BlockedReasonResponse(blackUser.getUserStatus(), formattedBlackUserDate, reasonResponses);
+        BlockedReasonResponse response = new BlockedReasonResponse(blackUser.getNickName(), blackUser.getUserStatus(), formattedBlackUserDate, reasonResponses);
 
         return response;
     }
