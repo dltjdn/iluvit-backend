@@ -25,6 +25,8 @@ public interface BlackUserRepository extends JpaRepository<BlackUser, Long> {
      */
     Optional<BlackUser> findByNickName(String nickName);
 
+    Optional<BlackUser> findByPhoneNumber(String phoneNumber);
+
     /**
      * 해당 핸드폰 번호와 유저 상태로 블랙 유저를 조회합니다
      */
