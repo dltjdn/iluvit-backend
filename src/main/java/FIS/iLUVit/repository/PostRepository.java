@@ -78,5 +78,5 @@ public interface PostRepository extends JpaRepository<Post, Long>, PostRepositor
     /**
      * 해당 유저로 게시글을 조회합니다
      */
-    Optional<Post> findByUser(User user);
+    List<Post> findByUser(User user);
 }
