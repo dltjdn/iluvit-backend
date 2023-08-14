@@ -45,7 +45,7 @@ public class PostResponse {
 
     private Boolean canDelete;
 
-    public PostResponse(Post post, List<String> encodedImages, String encodedProfileImage, Long userId) {
+    public PostResponse(Post post, List<String> infoImages, String profileImage,Long userId, List<CommentResponse> commentResponses) {
         this.id = post.getId();
         if (post.getUser() != null) {
             if (Objects.equals(post.getUser().getId(), userId)) {
@@ -66,10 +66,10 @@ public class PostResponse {
         this.title = post.getTitle();
         this.content = post.getContent();
 
-        this.profileImage = encodedProfileImage;
-        this.images = encodedImages;
+        this.profileImage = profileImage;
+        this.images = infoImages;
 
-        this.imgCnt = encodedImages.size();
+        this.imgCnt = infoImages.size();
         this.heartCnt = post.getHeartCnt();
 
         if (post.getBoard() != null) {
@@ -81,9 +81,7 @@ public class PostResponse {
             }
         }
 
-        this.comments = post.getComments().stream()
-                .filter(c -> c.getParentComment() == null)
-                .map(c -> new CommentResponse(c, userId)).collect(Collectors.toList());
+        this.comments = commentResponses;
         this.commentCnt = post.getCommentCnt();
 
     }

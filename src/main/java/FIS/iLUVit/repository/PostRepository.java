@@ -53,16 +53,18 @@ public interface PostRepository extends JpaRepository<Post, Long>, PostRepositor
         게시글 하트 개수가 가장 많은 3개의 게시글 리스트를 불러옵니다.
      */
     @Query("select p from Post p join p.board b " +
-            "where b.center.id is null and p.heartCnt >= :heartCnt order by p.postCreateDate desc ")
-    List<Post> findTop3ByHeartCnt(@Param("heartCnt") int heartCnt, Pageable pageable);
+            "where b.center.id is null and p.heartCnt >= :heartCnt and p.user not in :blockedUsers " +
+            "order by p.postCreateDate desc ")
+    List<Post> findTop3ByHeartCnt(@Param("heartCnt") int heartCnt, List<User> blockedUsers, Pageable pageable);
 
     /*
         시설에 있는 게시글중 하트가 가장 많은 3개의 게시글 리스트를 불러옵니다.
      */
     @Query("select p from Post p join p.board b " +
-            "where b.center.id = :centerId and p.heartCnt >= :heartCnt order by p.postCreateDate desc ")
+            "where b.center.id = :centerId and p.heartCnt >= :heartCnt and p.user not in :blockedUsers " +
+            "order by p.postCreateDate desc ")
     List<Post> findTop3ByHeartCntWithCenter(@Param("heartCnt") int heartCnt, @Param("centerId") Long centerId,
-                                            Pageable pageable);
+                                            List<User> blockedUser, Pageable pageable);
 
 
     /*
