@@ -54,8 +54,8 @@ public interface AlarmRepository extends JpaRepository<Alarm, Long> {
      */
     @Modifying
     @Transactional
-    @Query("DELETE FROM PostAlarm a WHERE a.user = :userId AND a.postId = :postId")
-    void deleteByUserAndPostId(User user, Long postId);
+    @Query("DELETE FROM PostAlarm a WHERE a.commentUserNickname = :commentUserNickname AND a.postId = :postId")
+    void deleteByBlockedUserAndPostId(String commentUserNickname, Long postId);
 
     /**
      * 해당 유저와 발신자 기본키로 채팅 알림을 삭제합니다

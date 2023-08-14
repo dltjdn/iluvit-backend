@@ -56,10 +56,10 @@ public class BlockedService {
      * 차단당한 유저와 관련된 알림을 삭제합니다
      */
     private void deleteAlarmForBlockedUser(User blockingUser, User blockedUser) {
-        // 차단당한 유저가 작성한 게시글로부터 받은 알림 삭제
-        Post post = postRepository.findByUser(blockedUser)
+        // 차단한 유저가 작성한 게시글에 차단당한 유저가 댓글을 작성하여 발행한 알림 삭제
+        Post post = postRepository.findByUser(blockingUser)
                 .orElseThrow(() -> new PostException(PostErrorResult.NO_POST_FOUND));
-        alarmRepository.deleteByUserAndPostId(blockingUser, post.getId());
+        alarmRepository.deleteByBlockedUserAndPostId(blockedUser.getNickName(), post.getId());
 
         // 차단당한 유저로부터 받은 쪽지에 대한 알림 삭제
         alarmRepository.deleteByUserAndSenderId(blockingUser, blockedUser.getId());
