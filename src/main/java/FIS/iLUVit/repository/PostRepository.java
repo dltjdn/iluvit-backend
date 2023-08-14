@@ -76,4 +76,9 @@ public interface PostRepository extends JpaRepository<Post, Long>, PostRepositor
             "left join fetch b.center " +
             "where p.id = :postId")
     Optional<Post> findByIdWithBoard(@Param("postId") Long postId);
+
+    /**
+     * 해당 유저로 게시글을 조회합니다
+     */
+    Optional<Post> findByUser(User user);
 }

@@ -2,13 +2,13 @@ package FIS.iLUVit.repository;
 
 import FIS.iLUVit.domain.User;
 import FIS.iLUVit.domain.alarms.Alarm;
-import org.springframework.boot.autoconfigure.security.SecurityProperties;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -48,4 +48,20 @@ public interface AlarmRepository extends JpaRepository<Alarm, Long> {
         사용자별로 알람을 삭제합니다.
     */
     void deleteAllByUser(User user);
+
+    /**
+     * 해당 유저와 게시글 기본키로 댓글 알림을 삭제합니다
+     */
+    @Modifying
+    @Transactional
+    @Query("DELETE FROM PostAlarm a WHERE a.commentUserNickname = :commentUserNickname AND a.postId = :postId")
+    void deleteByBlockedUserAndPostId(String commentUserNickname, Long postId);
+
+    /**
+     * 해당 유저와 발신자 기본키로 채팅 알림을 삭제합니다
+     */
+    @Modifying
+    @Transactional
+    @Query("DELETE FROM ChatAlarm a WHERE a.user = :user AND a.senderId = :senderId")
+    void deleteByUserAndSenderId(User user, Long senderId);
 }
