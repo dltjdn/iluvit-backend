@@ -19,8 +19,38 @@ import java.util.Optional;
 @Transactional
 public class BlockedService {
 
+    private final BlockedRepository blockedRepository;
+    private final UserRepository userRepository;
     private final AlarmRepository alarmRepository;
     private final PostRepository postRepository;
+
+    /**
+     * 차단 관계를 생성합니다
+     */
+    public void createBlocked(Long blockingUserId, Long blockedUserId) {
+        // 차단 관계를 생성할 유저들의 정보 조회
+        User blockingUser = userRepository.findById(blockingUserId)
+                .orElseThrow(() -> new UserException(UserErrorResult.USER_NOT_EXIST));
+        User blockedUser = userRepository
+                .findById(blockedUserId).orElseThrow(() -> new UserException(UserErrorResult.USER_NOT_EXIST));
+
+        // 이미 차단된 경우 예외 발생
+        Optional<Blocked> existingBlocked = blockedRepository.findByBlockingUserAndBlockedUser(blockingUser, blockedUser);
+        if(existingBlocked.isPresent()) {
+            throw new BlockedException(BlockedErrorResult.ALREADY_BLOCKED_EXIST);
+        }
+
+        // 차단 정보 생성
+        Blocked blocked = Blocked.builder()
+                .blockingUser(blockingUser)
+                .blockedUser(blockedUser)
+                .build();
+        // 차단 정보 저장
+        blockedRepository.save(blocked);
+
+        // 차단당한 유저와 관련된 알림 삭제
+        deleteAlarmForBlockedUser(blockingUser, blockedUser);
+    }
 
     /**
      * 차단당한 유저와 관련된 알림을 삭제합니다
