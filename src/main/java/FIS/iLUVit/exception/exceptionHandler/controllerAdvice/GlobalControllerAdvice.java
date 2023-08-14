@@ -220,4 +220,16 @@ public class GlobalControllerAdvice extends ResponseEntityExceptionHandler {
         return makeErrorResponseEntity(e.getErrorResult());
     }
 
+    @ExceptionHandler(BlockedException.class)
+    public ResponseEntity<ErrorResponse> blockedErrorResult(BlockedException e) {
+        log.warn("[BlockedErrorResult] ex", e);
+        return makeErrorResponseEntity(e.getErrorResult());
+    }
+
+    @ExceptionHandler(BlackUserException.class)
+    public ResponseEntity<ErrorResponse> blockedErrorResult(BlackUserException e) {
+        log.warn("[BlackUserException] ex", e);
+        return makeErrorResponseEntity(e.getErrorResult());
+    }
+
 }
