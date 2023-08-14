@@ -1,14 +1,13 @@
 package FIS.iLUVit.domain;
 
-import lombok.AccessLevel;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import javax.persistence.*;
 
 @Entity
 @Getter
+@Builder
+@AllArgsConstructor
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Blocked extends BaseEntity {
     @Id
@@ -22,12 +21,5 @@ public class Blocked extends BaseEntity {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "blocked_user_id")
     private User blockedUser;                // 차단 당한 사람
-
-    @Builder
-    public Blocked(Long id, User blockingUser, User blockedUser) {
-        this.id = id;
-        this.blockingUser = blockingUser;
-        this.blockedUser = blockedUser;
-    }
 
 }
