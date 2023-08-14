@@ -62,6 +62,6 @@ public interface AlarmRepository extends JpaRepository<Alarm, Long> {
      */
     @Modifying
     @Transactional
-    @Query("DELETE FROM ChatAlarm a WHERE a.user = :userId AND a.senderId = :senderId")
+    @Query("DELETE FROM ChatAlarm a WHERE a.user = :user AND a.senderId = :senderId")
     void deleteByUserAndSenderId(User user, Long senderId);
 }

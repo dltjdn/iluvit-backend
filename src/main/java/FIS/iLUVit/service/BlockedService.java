@@ -9,6 +9,7 @@ import FIS.iLUVit.repository.BlockedRepository;
 import FIS.iLUVit.repository.PostRepository;
 import FIS.iLUVit.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -17,6 +18,7 @@ import java.util.Optional;
 @Service
 @RequiredArgsConstructor
 @Transactional
+@Slf4j
 public class BlockedService {
 
     private final BlockedRepository blockedRepository;
@@ -47,7 +49,6 @@ public class BlockedService {
                 .build();
         // 차단 정보 저장
         blockedRepository.save(blocked);
-
         // 차단당한 유저와 관련된 알림 삭제
         deleteAlarmForBlockedUser(blockingUser, blockedUser);
     }
