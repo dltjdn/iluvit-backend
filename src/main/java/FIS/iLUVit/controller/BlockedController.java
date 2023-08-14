@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("blocked")
+@RequestMapping("user-block")
 public class BlockedController {
 
     private final BlockedService blockedService;
