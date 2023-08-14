@@ -134,8 +134,15 @@ public class ChatService {
     public ChatDto findChatRoomDetails(Long userId, Long roomId, Pageable pageable) {
         ChatRoom findRoom = chatRoomRepository.findById(roomId)
                 .orElseThrow(() -> new ChatException(ChatErrorResult.ROOM_NOT_EXIST));
+        User receiverUser = userRepository.findById(userId)
+                .orElseThrow(() -> new UserException(UserErrorResult.USER_NOT_EXIST));
 
-        Slice<Chat> chatList = chatRepository.findByChatRoom(userId, roomId, pageable);
+        // 쪽지를 받은 유저가 자신이 차단한 유저를 조회
+        List<User> blockedUsers = blockedRepository.findByBlockingUser(receiverUser).stream()
+                .map(Blocked::getBlockedUser)
+                .collect(Collectors.toList());
+
+        Slice<Chat> chatList = chatRepository.findByChatRoom(userId, blockedUsers, roomId, pageable);
 
         Slice<ChatDto.ChatInfo> chatInfos = chatList.map(ChatDto.ChatInfo::new);
         ChatDto chatDto = new ChatDto(findRoom, chatInfos);
