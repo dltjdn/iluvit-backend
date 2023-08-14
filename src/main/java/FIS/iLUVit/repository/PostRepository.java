@@ -1,6 +1,7 @@
 package FIS.iLUVit.repository;
 
 import FIS.iLUVit.domain.Post;
+import FIS.iLUVit.domain.User;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -73,4 +74,9 @@ public interface PostRepository extends JpaRepository<Post, Long>, PostRepositor
             "left join fetch b.center " +
             "where p.id = :postId")
     Optional<Post> findByIdWithBoard(@Param("postId") Long postId);
+
+    /**
+     * 해당 유저로 게시글을 조회합니다
+     */
+    Optional<Post> findByUser(User user);
 }
