@@ -109,11 +109,9 @@ public class PostController {
      * 작성내용: 게시글 제목+내용+보드 검색 (각 게시판 별 검색)
      */
     @GetMapping("search/in-board")
-    public Slice<PostPreviewDto> getPostByBoard(
-            @RequestParam("board_id") Long boardId,
-            @RequestParam("input") String keyword,
-            Pageable pageable) {
-        return postService.searchByBoard(boardId, keyword, pageable);
+    public Slice<PostPreviewDto> getPostByBoard(@Login Long userId, @RequestParam("board_id") Long boardId,
+                                                @RequestParam("input") String keyword, Pageable pageable) {
+        return postService.searchByBoard(userId, boardId, keyword, pageable);
     }
 
     /**

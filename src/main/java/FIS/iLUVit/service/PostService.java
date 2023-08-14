@@ -122,13 +122,9 @@ public class PostService {
     // [모두의 이야기 + 유저가 속한 센터의 이야기] 에서 통합 검색
     public Slice<PostPreviewDto> searchPost(String input, Long userId, Pageable pageable) {
 
-        if (userId == null) {
-            throw new UserException(UserErrorResult.NOT_VALID_TOKEN);
-        }
-
-        User findUser = userRepository.findById(userId)
+        User user = userRepository.findById(userId)
                 .orElseThrow(() -> new UserException(UserErrorResult.USER_NOT_EXIST));
-        Auth auth = findUser.getAuth();
+        Auth auth = user.getAuth();
 
         Set<Long> centerIds = new HashSet<>();
 
@@ -139,20 +135,28 @@ public class PostService {
                     .collect(Collectors.toSet());
         } else {
             // 교사 유저는 연관된 센터 가져옴
-            Center center = ((Teacher)findUser).getCenter();
+            Center center = ((Teacher)user).getCenter();
             if (center != null)
                 centerIds.add(center.getId());
 
         }
 
+        // 유저가 차단한 유저를 조회한다
+        List<User> blockedUsers = blockedRepository.findByBlockingUser(user).stream()
+                .map(Blocked::getBlockedUser)
+                .collect(Collectors.toList());
+
         // 센터의 게시판 + 모두의 게시판(centerId == null) 키워드 검색
-        Slice<PostPreviewDto> posts = postRepository.findInCenterByKeyword(centerIds, input, pageable);
+        Slice<PostPreviewDto> posts = postRepository.findInCenterByKeyword(centerIds, input, blockedUsers, pageable);
         // 끌어온 게시글에 이미지 있으면 프리뷰용 이미지 넣어줌
         posts.forEach(g -> setPreviewImage(g));
         return posts;
     }
 
     public Slice<PostPreviewDto> searchPostByCenter(Long centerId, String input, Auth auth, Long userId, Pageable pageable) {
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new UserException(UserErrorResult.USER_NOT_EXIST));
+
         if (centerId != null) {
             if (auth == Auth.PARENT) {
                 // 학부모 유저일 때 아이와 연관된 센터의 아이디를 모두 가져옴
@@ -172,14 +176,27 @@ public class PostService {
                 }
             }
         }
+
+        // 유저가 차단한 유저를 조회한다
+        List<User> blockedUsers = blockedRepository.findByBlockingUser(user).stream()
+                .map(Blocked::getBlockedUser)
+                .collect(Collectors.toList());
         // 센터 아이디 null 인 경우 모두의 이야기 안에서 검색됨
-        Slice<PostPreviewDto> posts = postRepository.findByCenterAndKeyword(centerId, input, pageable);
+        Slice<PostPreviewDto> posts = postRepository.findByCenterAndKeyword(centerId, input, blockedUsers, pageable);
         posts.forEach(g -> setPreviewImage(g));
         return posts;
     }
 
-    public Slice<PostPreviewDto> searchByBoard(Long boardId, String input, Pageable pageable) {
-        Slice<PostPreviewDto> posts = postRepository.findByBoardAndKeyword(boardId, input, pageable);
+    public Slice<PostPreviewDto> searchByBoard(Long userId, Long boardId, String input, Pageable pageable) {
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new UserException(UserErrorResult.USER_NOT_EXIST));
+
+        // 유저가 차단한 유저를 조회한다
+        List<User> blockedUsers = blockedRepository.findByBlockingUser(user).stream()
+                .map(Blocked::getBlockedUser)
+                .collect(Collectors.toList());
+
+        Slice<PostPreviewDto> posts = postRepository.findByBoardAndKeyword(boardId, input, blockedUsers, pageable);
         posts.forEach(g -> setPreviewImage(g));
         return posts;
     }

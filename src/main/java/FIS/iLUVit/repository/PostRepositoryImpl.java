@@ -26,12 +26,12 @@ public class PostRepositoryImpl extends PostQueryMethod implements PostRepositor
         시설 id가 주어진 시설 id 리스트에 속하거나 null인지를 확인하고 keywordContains 메서드를 호출하여 키워드 검색을 적용하여 게시글 미리보기 DTO 객체를 불러옵니다.
      */
     @Override
-    public Slice<PostPreviewDto> findInCenterByKeyword(Collection<Long> centerIds, String keyword, Pageable pageable) {
+    public Slice<PostPreviewDto> findInCenterByKeyword(Collection<Long> centerIds, String keyword, List<User> blockedUsers, Pageable pageable) {
         List<PostPreviewDto> posts = jpaQueryFactory.select(new QPostPreviewDto(post))
                 .from(post)
                 .join(post.board, board).fetchJoin()
                 .leftJoin(board.center, center).fetchJoin()
-                .where(centerIdIn(centerIds).or(center.id.isNull()), keywordContains(keyword))
+                .where(centerIdIn(centerIds).or(center.id.isNull()), keywordContains(keyword), post.user.notIn(blockedUsers))
                 .orderBy(post.createdDate.desc())
                 .offset(pageable.getOffset())
                 .limit(pageable.getPageSize() + 1)
@@ -49,12 +49,12 @@ public class PostRepositoryImpl extends PostQueryMethod implements PostRepositor
         시설 id가 주어진 시설 id와 동일한지 확인하고 keywordContains 메서드를 호출하여 키워드 검색을 적용하여 게시글 미리보기 DTO 객체를 불러옵니다.
      */
     @Override
-    public Slice<PostPreviewDto> findByCenterAndKeyword(Long centerId, String keyword, Pageable pageable) {
+    public Slice<PostPreviewDto> findByCenterAndKeyword(Long centerId, String keyword, List<User> blockedUsers, Pageable pageable) {
         List<PostPreviewDto> posts = jpaQueryFactory.select(new QPostPreviewDto(post))
                 .from(post)
                 .join(post.board, board).fetchJoin()
                 .leftJoin(board.center, center).fetchJoin()
-                .where(centerIdEq(centerId), keywordContains(keyword))
+                .where(centerIdEq(centerId), keywordContains(keyword), post.user.notIn(blockedUsers))
                 .orderBy(post.createdDate.desc())
                 .offset(pageable.getOffset())
                 .limit(pageable.getPageSize() + 1)
@@ -73,11 +73,11 @@ public class PostRepositoryImpl extends PostQueryMethod implements PostRepositor
         시설 id가 주어진 시설 id 값과 같은지 확인하고 keywordContains 메서드를 호출하여 키워드 검색을 적용하여 게시글 미리보기 DTO 객체를 불러옵니다.
      */
     @Override
-    public Slice<PostPreviewDto> findByBoardAndKeyword(Long boardId, String keyword, Pageable pageable) {
+    public Slice<PostPreviewDto> findByBoardAndKeyword(Long boardId, String keyword, List<User> blockedUsers, Pageable pageable) {
         List<PostPreviewDto> posts = jpaQueryFactory.select(new QPostPreviewDto(post))
                 .from(post)
                 .join(post.board, board).fetchJoin()
-                .where(board.id.eq(boardId), keywordContains(keyword))
+                .where(board.id.eq(boardId), keywordContains(keyword), post.user.notIn(blockedUsers))
                 .orderBy(post.postUpdateDate.desc())
                 .offset(pageable.getOffset())
                 .limit(pageable.getPageSize() + 1)
