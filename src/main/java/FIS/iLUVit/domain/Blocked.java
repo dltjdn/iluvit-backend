@@ -22,4 +22,11 @@ public class Blocked extends BaseEntity {
     @JoinColumn(name = "blocked_user_id")
     private User blockedUser;                // 차단 당한 사람
 
+    public static Blocked createBlocked(User blockingUser, User blockedUser){
+        return Blocked.builder()
+                .blockingUser(blockingUser)
+                .blockedUser(blockedUser)
+                .build();
+    }
+
 }
