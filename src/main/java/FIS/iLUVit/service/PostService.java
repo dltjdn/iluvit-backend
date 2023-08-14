@@ -40,6 +40,7 @@ public class PostService {
     private final ReportRepository reportRepository;
     private final ReportDetailRepository reportDetailRepository;
     private final CommentRepository commentRepository;
+    private final BlockedRepository blockedRepository;
 
 //    private final Integer heartCriteria = 2; // HOT 게시판 좋아요 기준
 
@@ -207,18 +208,19 @@ public class PostService {
     public List<BoardPreviewDto> findBoardDetailsByPublic(Long userId) {
         List<BoardPreviewDto> boardPreviews = new ArrayList<>();
 
-        // 비회원일 때 기본 게시판들의 id를 북마크처럼 디폴트로 제공, 회원일 땐 북마크를 통해서 제공
-        if (userId == null) {
-            List<Board> boardList = boardRepository.findDefaultByModu();
+        List<Bookmark> bookmarkList = boardBookmarkRepository.findBoardByUser(userId);
+        getBoardPreviews(bookmarkList, boardPreviews);
 
-            addBoardPreviews(boardPreviews, boardList);
-        } else {
-            List<Bookmark> bookmarkList = boardBookmarkRepository.findBoardByUser(userId);
-            getBoardPreviews(bookmarkList, boardPreviews);
-        }
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new UserException(UserErrorResult.USER_NOT_EXIST));
 
-        // HOT 게시판 정보 추가
-        List<Post> hotPosts = postRepository.findTop3ByHeartCnt(Criteria.HOT_POST_HEART_CNT, PageRequest.of(0, 3));
+        // 유저가 차단한 유저를 조회한다
+        List<User> blockedUsers = blockedRepository.findByBlockingUser(user).stream()
+                .map(Blocked::getBlockedUser)
+                .collect(Collectors.toList());
+
+        // HOT 게시판 정보 추가 ( 유저가 차단한 유저 리스트를 넘겨주어 해당 게시물은 조회되지 않게 한다)
+        List<Post> hotPosts = postRepository.findTop3ByHeartCnt(Criteria.HOT_POST_HEART_CNT, blockedUsers, PageRequest.of(0, 3));
         List<BoardPreviewDto> results = new ArrayList<>();
 
         return getPreviewResult(hotPosts, results, boardPreviews);
@@ -226,17 +228,13 @@ public class PostService {
 
 
     public List<BoardPreviewDto> findBoardDetailsByCenter(Long userId, Long centerId) {
-        if (userId == null) {
-            throw new UserException(UserErrorResult.NOT_VALID_TOKEN);
-        }
-
-        User findUser = userRepository.findById(userId)
+        User user = userRepository.findById(userId)
                 .orElseThrow(() -> new UserException(UserErrorResult.USER_NOT_EXIST));
         // 학부모 유저일 경우 아이를 통해 센터 정보를 가져옴
         // 교사 유저일 경우 바로 센터 정보 가져옴
-        if (findUser.getAuth() == Auth.PARENT) {
+        if (user.getAuth() == Auth.PARENT) {
             boolean flag;
-            List<Long> centerIds = ((Parent) findUser).getChildren()
+            List<Long> centerIds = ((Parent) user).getChildren()
                     .stream()
                     .filter(c -> c.getCenter() != null && c.getApproval() == Approval.ACCEPT)
                     .map(c -> c.getCenter().getId())
@@ -247,7 +245,7 @@ public class PostService {
             }
 
         } else {
-            Center center = ((Teacher) findUser).getCenter();
+            Center center = ((Teacher) user).getCenter();
             if (center == null || !Objects.equals(center.getId(), centerId)) {
                 throw new PostException(PostErrorResult.UNAUTHORIZED_USER_ACCESS);
             }
@@ -257,8 +255,13 @@ public class PostService {
         List<Bookmark> bookmarkList = boardBookmarkRepository.findBoardByUserAndCenter(userId, centerId);
         getBoardPreviews(bookmarkList, boardPreviews);
 
+        // 유저가 차단한 유저를 조회한다
+        List<User> blockedUsers = blockedRepository.findByBlockingUser(user).stream()
+                .map(Blocked::getBlockedUser)
+                .collect(Collectors.toList());
+
         // HOT 게시판 정보 추가
-        List<Post> hotPosts = postRepository.findTop3ByHeartCntWithCenter(Criteria.HOT_POST_HEART_CNT, centerId, PageRequest.of(0, 3));
+        List<Post> hotPosts = postRepository.findTop3ByHeartCntWithCenter(Criteria.HOT_POST_HEART_CNT, centerId, blockedUsers, PageRequest.of(0, 3));
         List<BoardPreviewDto> results = new ArrayList<>();
 
         return getPreviewResult(hotPosts, results, boardPreviews);
@@ -331,9 +334,17 @@ public class PostService {
         findPost.updateTime(LocalDateTime.now());
     }
 
-    public Slice<PostPreviewDto> findPostByHeartCnt(Long centerId, Pageable pageable) {
+    public Slice<PostPreviewDto> findPostByHeartCnt(Long userId, Long centerId, Pageable pageable) {
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new UserException(UserErrorResult.USER_NOT_EXIST));
+
+        // 유저가 차단한 유저를 조회한다
+        List<User> blockedUsers = blockedRepository.findByBlockingUser(user).stream()
+                .map(Blocked::getBlockedUser)
+                .collect(Collectors.toList());
+
         // heartCnt 가 n 개 이상이면 HOT 게시판에 넣어줍니다.
-        return postRepository.findHotPosts(centerId, Criteria.HOT_POST_HEART_CNT, pageable);
+        return postRepository.findHotPosts(centerId, Criteria.HOT_POST_HEART_CNT, blockedUsers, pageable);
     }
 
 }

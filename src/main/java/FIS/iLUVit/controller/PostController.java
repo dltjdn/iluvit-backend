@@ -139,8 +139,8 @@ public class PostController {
      * 작성내용: HOT 게시판 게시글 전체 조회
      */
     @GetMapping("search/hot-board")
-    public Slice<PostPreviewDto> getPostByHotBoard(@RequestParam(value = "center_id", required = false) Long centerId, Pageable pageable) {
-        return postService.findPostByHeartCnt(centerId, pageable);
+    public Slice<PostPreviewDto> getPostByHotBoard(@Login Long userId, @RequestParam(value = "center_id", required = false) Long centerId, Pageable pageable) {
+        return postService.findPostByHeartCnt(userId, centerId, pageable);
     }
 
     /**

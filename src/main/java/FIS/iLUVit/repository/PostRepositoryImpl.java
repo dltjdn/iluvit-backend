@@ -1,5 +1,7 @@
 package FIS.iLUVit.repository;
 
+import FIS.iLUVit.domain.Blocked;
+import FIS.iLUVit.domain.User;
 import FIS.iLUVit.dto.post.PostPreviewDto;
 import FIS.iLUVit.dto.post.QPostPreviewDto;
 import com.querydsl.jpa.impl.JPAQueryFactory;
@@ -94,12 +96,12 @@ public class PostRepositoryImpl extends PostQueryMethod implements PostRepositor
         시설 id가 주어진 시설 id와 같고 게시글 엔티티의 하트 개수가 주어진 하트 개수보다 크거나 같은지 확인하여 게시글 미리보기 DTO를 불러옵니다.
      */
     @Override
-    public Slice<PostPreviewDto> findHotPosts(Long centerId, Integer heartCnt, Pageable pageable) {
+    public Slice<PostPreviewDto> findHotPosts(Long centerId, Integer heartCnt, List<User> blockedUsers, Pageable pageable) {
         List<PostPreviewDto> posts = jpaQueryFactory.select(new QPostPreviewDto(post))
                 .from(post)
                 .join(post.board, board).fetchJoin()
                 .leftJoin(board.center, center).fetchJoin()
-                .where(centerIdEq(centerId), post.heartCnt.goe(heartCnt))
+                .where(centerIdEq(centerId), post.heartCnt.goe(heartCnt), post.user.notIn(blockedUsers))
                 .orderBy(post.postCreateDate.desc())
                 .offset(pageable.getOffset())
                 .limit(pageable.getPageSize() + 1)
