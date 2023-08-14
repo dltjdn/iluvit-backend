@@ -201,6 +201,7 @@ public class PostService {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new UserException(UserErrorResult.USER_NOT_EXIST));
 
+        // 유저가 차단한 유저를 조회한다
         List<User> blockedUsers = getBlockedUsers(user);
 
         List<CommentResponse> commentResponses = new ArrayList<>();
