@@ -1,6 +1,7 @@
 package FIS.iLUVit.domain;
 
 import lombok.AccessLevel;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -16,10 +17,17 @@ public class Blocked extends BaseEntity {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "blocker_id")
-    private User blocker;              // 차단한 사람
+    private User blockingUser;              // 차단한 사람
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "blocked_id")
-    private User blocked;                // 차단 당한 사람
+    private User blockedUser;                // 차단 당한 사람
+
+    @Builder
+    public Blocked(Long id, User blockingUser, User blockedUser) {
+        this.id = id;
+        this.blockingUser = blockingUser;
+        this.blockedUser = blockedUser;
+    }
 
 }
