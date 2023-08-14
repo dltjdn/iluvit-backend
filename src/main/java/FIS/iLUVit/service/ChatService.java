@@ -10,12 +10,15 @@ import FIS.iLUVit.domain.alarms.ChatAlarm;
 import FIS.iLUVit.exception.*;
 import FIS.iLUVit.repository.*;
 import lombok.RequiredArgsConstructor;
+import org.springframework.cglib.core.Block;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
 import java.util.Objects;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -27,6 +30,7 @@ public class ChatService {
     private final PostRepository postRepository;
     private final CommentRepository commentRepository;
     private final ChatRoomRepository chatRoomRepository;
+    private final BlockedRepository blockedRepository;
     private final ImageService imageService;
 
     private final AlarmRepository alarmRepository;
@@ -79,10 +83,18 @@ public class ChatService {
         myRoom.updatePartnerId(partnerRoom.getId());
         partnerRoom.updatePartnerId(myRoom.getId());
 
-        Alarm alarm = new ChatAlarm(receiveUser, sendUser, anonymousInfo);
-        alarmRepository.save(alarm);
-        String type = "아이러빗";
-        AlarmUtils.publishAlarmEvent(alarm, type);
+        // 쪽지를 받은 유저가 자신이 차단한 유저를 조회
+        List<User> blockedUsers = blockedRepository.findByBlockingUser(receiveUser).stream()
+                .map(Blocked::getBlockedUser)
+                .collect(Collectors.toList());
+
+        // 쪽지를 보낸 유저가 쪽지를 받는 유저에게 차단된 상태라면 알림을 발행하지 않음
+        if(!blockedUsers.contains(sendUser)) {
+            Alarm alarm = new ChatAlarm(receiveUser, sendUser, anonymousInfo);
+            alarmRepository.save(alarm);
+            String type = "아이러빗";
+            AlarmUtils.publishAlarmEvent(alarm, type);
+        }
 
         chatRepository.save(myChat);
         Chat savedChat = chatRepository.save(partnerChat);
@@ -122,8 +134,15 @@ public class ChatService {
     public ChatDto findChatRoomDetails(Long userId, Long roomId, Pageable pageable) {
         ChatRoom findRoom = chatRoomRepository.findById(roomId)
                 .orElseThrow(() -> new ChatException(ChatErrorResult.ROOM_NOT_EXIST));
+        User receiverUser = userRepository.findById(userId)
+                .orElseThrow(() -> new UserException(UserErrorResult.USER_NOT_EXIST));
 
-        Slice<Chat> chatList = chatRepository.findByChatRoom(userId, roomId, pageable);
+        // 쪽지를 받은 유저가 자신이 차단한 유저를 조회
+        List<User> blockedUsers = blockedRepository.findByBlockingUser(receiverUser).stream()
+                .map(Blocked::getBlockedUser)
+                .collect(Collectors.toList());
+
+        Slice<Chat> chatList = chatRepository.findByChatRoom(userId, blockedUsers, roomId, pageable);
 
         Slice<ChatDto.ChatInfo> chatInfos = chatList.map(ChatDto.ChatInfo::new);
         ChatDto chatDto = new ChatDto(findRoom, chatInfos);
