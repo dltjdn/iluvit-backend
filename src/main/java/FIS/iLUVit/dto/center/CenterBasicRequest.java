@@ -7,7 +7,7 @@ import lombok.*;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class CenterRequest {
+public class CenterBasicRequest {
     private String sido;
     private String sigungu;
     private String centerName;

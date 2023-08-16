@@ -1,55 +1,32 @@
 package FIS.iLUVit.repository;
 
-import FIS.iLUVit.dto.center.CenterDto;
-import FIS.iLUVit.dto.center.CenterRecommendDto;
+import FIS.iLUVit.domain.Center;
 import FIS.iLUVit.domain.embeddable.Location;
-import FIS.iLUVit.domain.embeddable.Area;
 import FIS.iLUVit.domain.embeddable.Theme;
-import FIS.iLUVit.domain.enumtype.KindOf;
-import FIS.iLUVit.dto.center.CenterAndDistancePreviewDto;
-import FIS.iLUVit.dto.center.CenterMapPreviewDto;
-import FIS.iLUVit.dto.center.CenterPreviewDto;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Slice;
-import org.springframework.data.domain.SliceImpl;
 
 import java.util.List;
 
 public interface CenterRepositoryCustom {
-
-    /*
-        필터로 시설 미리보기 DTO를 조회합니다.
+    /**
+     * 일정 거리 내의 시설 전체 조회 + 검색어 있으면 검색어에 해당하는 시설 조회
      */
-    Slice<CenterPreviewDto> findByFilter(List<Area> areas, Theme theme, Integer interestedAge, KindOf kindOf, Pageable pageable);
+    List<Center> findByFilterForMap(double longitude, double latitude, Double distance, String searchContent);
 
-    /*
-        지도 리스트에 대한 필터로 시설과 거리 미리보기 DTO를 조회합니다.
+    /**
+     *  해당 시도, 시군구에서 학부모가 선택한 관심 테마를 가지고 있는 시설 조회
      */
-    SliceImpl<CenterAndDistancePreviewDto> findByFilterForMapList(double longitude, double latitude, Long userId, KindOf kindOf, List<Long> centerIds, Pageable pageable);
+    List<Center> findRecommendCenter(Theme theme, Location location, Pageable pageable);
 
-
-    /*
-        지도에 대한 필터로 시설 지도 미리보기 DTO 리스트를 조회합니다.
+    /**
+     * 회원가입 과정에서 시설정보 가져오기
      */
-    List<CenterMapPreviewDto> findByFilterForMap(double longitude, double latitude, Double distance, String searchContent);
+    List<Center> findForSignup(String sido, String sigungu, String centerName);
 
-    /*
-        추천 시설로 시설 추천 DTO 리스트를 조회합니다.
+    /**
+     * 아이추가 과정에서 필요한 센터정보 가져오기
      */
-    List<CenterRecommendDto> findRecommendCenter(Theme theme, Location location, Pageable pageable);
+    List<Center> findCenterForAddChild(String sido, String sigungu, String centerName);
 
-    /*
-        회원가입을 위해 시설 DTO를 조회합니다.
-     */
-    Slice<CenterDto> findForSignup(String sido, String sigungu, String centerName, Pageable pageable);
 
-    /*
-        자녀 추가를 위한 시설로 시설 DTO를 조회합니다.
-     */
-    Slice<CenterDto> findCenterForAddChild(String sido, String sigungu, String centerName, Pageable pageable);
-
-    /*
-        시설 즐겨찾기로 시설 미리보기 DTO를 조회합니다.
-     */
-    Slice<CenterPreviewDto> findByPrefer(Long userId, Pageable pageable);
 }

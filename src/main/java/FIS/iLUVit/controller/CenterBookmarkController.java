@@ -1,11 +1,12 @@
 package FIS.iLUVit.controller;
 
 import FIS.iLUVit.config.argumentResolver.Login;
-import FIS.iLUVit.dto.center.CenterPreviewDto;
+import FIS.iLUVit.dto.center.CenterBookmarkResponse;
 import FIS.iLUVit.service.CenterBookmarkService;
-import FIS.iLUVit.service.ParentService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
@@ -22,30 +23,30 @@ public class CenterBookmarkController {
      */
 
     /**
-     * 작성자: 이승범
-     * 작성내용: 즐겨찾는 시설 전체 조회
+     * 즐겨찾는 시설 전체 조회
      */
     @GetMapping("")
-    public Slice<CenterPreviewDto> getAllCenterBookmark(@Login Long userId, Pageable pageable) {
-        return centerBookmarkService.findCentersByCenterBookmark(userId, pageable);
+    public ResponseEntity<Slice<CenterBookmarkResponse>> getAllCenterBookmark(@Login Long userId, Pageable pageable) {
+        Slice<CenterBookmarkResponse> centerPreviewDtos = centerBookmarkService.findCentersByCenterBookmark(userId, pageable);
+        return ResponseEntity.ok(centerPreviewDtos);
     }
 
     /**
-     * 작성자: 이승범
-     * 작성내용: 시설 즐겨찾기 등록
+     * 시설 즐겨찾기 등록
      */
     @PostMapping("{centerId}")
-    public void createCenterBookmark(@Login Long userId, @PathVariable("centerId") Long centerId) {
+    public ResponseEntity<Void> createCenterBookmark(@Login Long userId, @PathVariable("centerId") Long centerId) {
         centerBookmarkService.saveCenterBookmark(userId, centerId);
+        return ResponseEntity.status(HttpStatus.CREATED).build();
     }
 
     /**
-     * 작성자: 이승범
-     * 작성내용: 시설 즐겨찾기 해제
+     * 시설 즐겨찾기 해제
      */
     @DeleteMapping("{centerId}")
-    public void deleteCenterBookmark(@Login Long userId, @PathVariable("centerId") Long centerId) {
+    public ResponseEntity<Void> deleteCenterBookmark(@Login Long userId, @PathVariable("centerId") Long centerId) {
         centerBookmarkService.deleteCenterBookmark(userId, centerId);
+        return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
     }
 
 }

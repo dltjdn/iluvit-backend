@@ -144,6 +144,7 @@ public class ReviewService {
      * 리뷰의 답글을 등록합니다
      */
     public void saveComment(Long reviewId, ReviewCommentRequest reviewCommentRequest, Long teacherId) {
+   
         Review review = reviewRepository.findById(reviewId)
                 .orElseThrow(() -> new ReviewException(ReviewErrorResult.REVIEW_NOT_EXIST));
         Teacher teacher = teacherRepository.findById(teacherId)

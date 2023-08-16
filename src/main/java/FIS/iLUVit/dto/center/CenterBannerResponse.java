@@ -1,6 +1,6 @@
 package FIS.iLUVit.dto.center;
 
-import FIS.iLUVit.domain.Prefer;
+import FIS.iLUVit.domain.Center;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -18,16 +18,16 @@ public class CenterBannerResponse {
     private String profileImage;
     private List<String> infoImages;
     private Double starAverage;
-    private Boolean prefer;             // 시설 북마크 여부
+    private Boolean isCenterBookmark;             // 시설 북마크 여부
 
-    public CenterBannerResponse(Long centerId, String name, Boolean signed, Boolean recruit , Prefer prefer, String profileImage, Double starAverage, List<String> infoImages) {
-        this.centerId = centerId;
-        this.name = name;
-        this.signed = signed;
-        this.recruit = recruit;
-        this.starAverage = starAverage;
+    public CenterBannerResponse(Center center, List<String> infoImages, Boolean isCenterBookmark, Double starAverage) {
+        this.centerId = center.getId();
+        this.name = center.getName();
+        this.signed = center.getSigned();
+        this.recruit = center.getRecruit();
+        this.profileImage = center.getProfileImagePath();
         this.infoImages = infoImages;
-        this.profileImage = profileImage;
-        this.prefer = prefer != null;
+        this.starAverage = starAverage;
+        this.isCenterBookmark = isCenterBookmark;
     }
 }

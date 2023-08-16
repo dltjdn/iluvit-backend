@@ -5,7 +5,9 @@ import lombok.*;
 import javax.persistence.Embeddable;
 import java.lang.reflect.Field;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Embeddable
 @NoArgsConstructor
@@ -50,17 +52,21 @@ public class Theme {
     @Builder.Default
     private Boolean genius = false;                 // 양재
 
-    // 필터링 사용하기 위해서 관심 목록만 뽑아내기
-    public List<String> trueList() throws IllegalAccessException {
-        List<String> trueList = new ArrayList<>();
-        Field[] fields = Theme.class.getDeclaredFields();
-        for(Field field : fields){
-            field.setAccessible(true);
-            if(field.get(this) != null && (Boolean) field.get(this)){
-                trueList.add(field.getName());
-            }
-        }
-        return trueList;
+    /**
+     * true인 테마리스트를 조회합니다
+     */
+    public List<String> trueList() {
+        return Arrays.stream(Theme.class.getDeclaredFields())// Theme 클래스의 필드들을 가져오기
+                .filter(field -> {
+                    try {
+                        field.setAccessible(true); // 접근 허용
+                        return field.get(this) != null && (Boolean) field.get(this); // 필드가 true라면
+                    } catch (IllegalAccessException e) {
+                        return false;
+                    }
+                })
+                .map(Field::getName) // 그 필드의 이름을 반환
+                .collect(Collectors.toList());
     }
 
 }

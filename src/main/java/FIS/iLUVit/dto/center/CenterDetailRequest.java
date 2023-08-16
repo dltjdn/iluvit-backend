@@ -29,7 +29,7 @@ public class CenterDetailRequest {
     private Integer maxAge;                 //
     @NotNull(message = "시설 주소는 비어있지 않아야 합니다")
     private String address;                 // 주소
-    private String addressDetail;
+    private String addressDetail;           // 상세 주소
     private String zipcode;                 // 우편번호
     @NotNull(message = "제공 서비스는 null 값이 아니여야 합니다")
     private String offerService;            // 제공서비스 (, 로 구분)
@@ -47,7 +47,4 @@ public class CenterDetailRequest {
     private List<String> programs = new ArrayList<>();
     private List<String> addInfos = new ArrayList<>();
 
-    public void addCenterAddress( String address){
-        this.address=address;
-    }
 }

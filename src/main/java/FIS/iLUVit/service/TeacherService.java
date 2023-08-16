@@ -2,8 +2,8 @@ package FIS.iLUVit.service;
 
 import FIS.iLUVit.domain.alarms.Alarm;
 import FIS.iLUVit.domain.embeddable.Location;
-import FIS.iLUVit.dto.center.CenterDto;
-import FIS.iLUVit.dto.center.CenterRequest;
+import FIS.iLUVit.dto.center.CenterBasicResponse;
+import FIS.iLUVit.dto.center.CenterBasicRequest;
 import FIS.iLUVit.dto.teacher.SignupTeacherRequest;
 import FIS.iLUVit.dto.teacher.TeacherDetailRequest;
 import FIS.iLUVit.dto.teacher.TeacherDetailResponse;
@@ -23,6 +23,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
+import org.springframework.data.domain.SliceImpl;
 import org.springframework.data.util.Pair;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -67,7 +68,7 @@ public class TeacherService {
                 .orElseThrow(() -> new UserException(UserErrorResult.NOT_VALID_TOKEN));
 
         // 조회된 교사 정보와 프로필 이미지를 이용하여 TeacherDetailResponse 생성
-        TeacherDetailResponse teacherDetailResponse = new TeacherDetailResponse(findTeacher,imageService.getProfileImage(findTeacher));
+        TeacherDetailResponse teacherDetailResponse = new TeacherDetailResponse(findTeacher,findTeacher.getProfileImagePath());
 
         return teacherDetailResponse;
     }
@@ -172,10 +173,22 @@ public class TeacherService {
     /**
      * 시설 정보를 조회합니다
      */
-    public Slice<CenterDto> findCenterForSignupTeacher(CenterRequest request, Pageable pageable) {
-        return centerRepository.findForSignup(request.getSido(), request.getSigungu(), request.getCenterName(), pageable);
-    }
+    public Slice<CenterBasicResponse> findCenterForSignupTeacher(CenterBasicRequest request, Pageable pageable) {
+        List<Center> centers = centerRepository.findForSignup(request.getSido(), request.getSigungu(), request.getCenterName());
 
+        List<CenterBasicResponse> centerBasicResponses = centers.stream()
+                .map(CenterBasicResponse::new) // Center를 CenterDto로 변환
+                .collect(Collectors.toList());
+
+        boolean hasNext = false;
+        if (centers.size() > pageable.getPageSize()) {
+            hasNext = true;
+            centers.remove(pageable.getPageSize());
+        }
+
+        return new SliceImpl<>(centerBasicResponses, pageable, hasNext);
+    }
+ 
     /**
      * 교사가 시설에 시설 등록 승인을 요청합니다
      */
@@ -253,7 +266,7 @@ public class TeacherService {
             if (!Objects.equals(teacher.getId(), userId)) {
                 // 각 교사에 대한 정보를 포함한 Dto 객체 생성
                 TeacherInfoForAdminDto teacherInfoForAdmin =
-                        new TeacherInfoForAdminDto(teacher,imageService.getProfileImage(teacher));
+                        new TeacherInfoForAdminDto(teacher,teacher.getProfileImagePath());
                 response.add(teacherInfoForAdmin);
             }
         });

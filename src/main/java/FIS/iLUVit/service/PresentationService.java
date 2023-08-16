@@ -125,7 +125,7 @@ public class PresentationService {
         //
         Presentation presentation = presentationRepository.findByIdAndJoinPtDate(presentationId)
                 .orElseThrow(() -> new PresentationException("존재하지않는 설명회 입니다"));
-        return new PresentationDetailResponse(presentation, imageService.getInfoImages(presentation));
+        return new PresentationDetailResponse(presentation, imageService.getInfoImages(presentation.getInfoImagePath()));
     }
 
     public Presentation modifyPresentationInfoWithPtDate(PresentationRequest request, Long userId) {
