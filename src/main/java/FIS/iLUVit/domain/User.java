@@ -57,9 +57,9 @@ public class User extends BaseImageEntity {
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+        if (o == null || !(o instanceof User)) return false;
         User user = (User) o;
-        return id.equals(user.id);
+        return id.equals(user.getId());
     }
 
     @Override
