@@ -8,13 +8,12 @@ import lombok.NoArgsConstructor;
 @Getter
 @AllArgsConstructor
 @NoArgsConstructor
-public class ScrapInfoDto {
+public class ScrapDirResponse {
+    private Long scrapId;
+    private String name;
+    private Integer postsNum;
 
-        private Long scrapId;
-        private String name;
-        private Integer postsNum;
-
-        public ScrapInfoDto(Scrap scrap) {
+    public ScrapDirResponse(Scrap scrap) {
             scrapId = scrap.getId();
             name = scrap.getName();
             postsNum = scrap.getScrapPosts().size();

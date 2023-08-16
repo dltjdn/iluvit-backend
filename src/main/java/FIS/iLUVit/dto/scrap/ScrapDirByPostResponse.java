@@ -9,12 +9,12 @@ import java.util.Objects;
 @Getter
 @AllArgsConstructor
 @NoArgsConstructor
-public class ScrapInfoByPostDto {
+public class ScrapDirByPostResponse {
     private Long scrapId;
     private String name;
     private Boolean hasPost;
 
-    public ScrapInfoByPostDto(Scrap scrap, Long postId) {
+    public ScrapDirByPostResponse(Scrap scrap, Long postId) {
         scrapId = scrap.getId();
         name = scrap.getName();
         hasPost = false;
