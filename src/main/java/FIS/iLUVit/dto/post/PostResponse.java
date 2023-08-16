@@ -21,9 +21,9 @@ public class PostResponse {
     private String nickname; // 작성자 닉네임
     private Long userId; // 작성자 id
     private String profileImage; // 작성자 프로필 이미지
-    private int commentCnt;
-    private int heartCnt;
-    private int imgCnt;
+    private Integer commentCnt;
+    private Integer heartCnt;
+    private Integer imgCnt;
     private String previewImage;
     private String boardName;
     private Long boardId;
