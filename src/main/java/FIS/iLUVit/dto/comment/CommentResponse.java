@@ -25,10 +25,41 @@ public class CommentResponse {
     private LocalTime time;
     private Boolean anonymous;
     private Boolean canDelete;
-
+    private Boolean isBlocked;  // 댓글 차단 여부
     private List<CommentResponse> answers;
 
-    public CommentResponse(Comment comment, Long userId) {
+    public CommentResponse(Comment comment, Long userId, List<CommentResponse> subComments, Boolean isBlocked) {
+        this.id = comment.getId();
+        User writer = comment.getUser();
+        if (writer != null) {
+            if (Objects.equals(writer.getId(), userId)) {
+                this.canDelete = true;
+            } else {
+                this.canDelete = false;
+            }
+
+            if (comment.getAnonymous()) {
+                if (comment.getAnonymousOrder().equals(-1)) {
+                    this.nickname = "익명(작성자)";
+                } else {
+                    this.nickname = "익명" + comment.getAnonymousOrder();
+                }
+            } else {
+                this.profileImage = writer.getProfileImagePath();
+                this.writer_id = writer.getId();
+                this.nickname = writer.getNickName();
+            }
+        }
+        this.heartCnt = comment.getHeartCnt();
+        this.anonymous = comment.getAnonymous();
+        this.content = comment.getContent();
+        this.date = comment.getDate();
+        this.time = comment.getTime();
+        this.isBlocked = isBlocked;
+        this.answers = subComments;
+    }
+
+    public CommentResponse(Comment comment, Long userId, Boolean isBlocked) {
         this.id = comment.getId();
         User writer = comment.getUser();
         if (writer != null) {
@@ -55,9 +86,8 @@ public class CommentResponse {
         this.content = comment.getContent();
         this.date = comment.getDate();
         this.time = comment.getTime();
-        this.answers = comment.getSubComments().stream()
-                .map(c -> new CommentResponse(c, userId))
-                .collect(Collectors.toList());
+        this.isBlocked = isBlocked;
+        this.answers = null;
     }
 }
 

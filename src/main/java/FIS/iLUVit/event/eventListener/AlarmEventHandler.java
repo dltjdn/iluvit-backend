@@ -28,11 +28,12 @@ public class AlarmEventHandler {
     @EventListener(AlarmEvent.class)
     public void saveAlarm(AlarmEvent alarmEvent) {
         Alarm alarm = alarmEvent.getAlarm();
+        String type = alarmEvent.getType();
         User user = alarm.getUser();
 
         List<ExpoToken> expoTokens = expoTokenRepository.findByUserAndActive(user, true);
 
-        ExpoServerResponse response = ExpoServerUtils.sendToExpoServer(expoTokens, alarm.getMessage());
+        ExpoServerResponse response = ExpoServerUtils.sendToExpoServer(expoTokens, type, alarm.getMessage());
 
         handleTokenSendingError(response);
     }
