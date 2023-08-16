@@ -251,7 +251,12 @@ public class PostService {
         getBoardPreviews(bookmarkList, boardPreviews, blockedUserIds);
 
         // HOT 게시판 정보 추가 ( 유저가 차단한 유저 리스트를 넘겨주어 해당 게시물은 조회되지 않게 한다)
-        List<Post> hotPosts = postRepository.findTop3ByHeartCnt(Criteria.HOT_POST_HEART_CNT, blockedUserIds);
+        List<Post> hotPosts = null;
+        if(blockedUserIds.size() == 0){
+            hotPosts = postRepository.findTop3ByHeartCnt(Criteria.HOT_POST_HEART_CNT);
+        }else{
+            hotPosts = postRepository.findTop3ByHeartCnt(Criteria.HOT_POST_HEART_CNT, blockedUserIds);
+        }
 
         List<BoardPreviewDto> results = new ArrayList<>();
 
@@ -291,7 +296,13 @@ public class PostService {
         getBoardPreviews(bookmarkList, boardPreviews, blockedUserIds);
 
         // HOT 게시판 정보 추가
-        List<Post> hotPosts = postRepository.findTop3ByHeartCntWithCenter(Criteria.HOT_POST_HEART_CNT, centerId, blockedUserIds);
+        List<Post> hotPosts = null;
+        if(blockedUserIds.size() == 0){
+            hotPosts = postRepository.findTop3ByHeartCntWithCenter(Criteria.HOT_POST_HEART_CNT, centerId);
+        }else{
+            hotPosts = postRepository.findTop3ByHeartCntWithCenter(Criteria.HOT_POST_HEART_CNT, centerId, blockedUserIds);
+        }
+
         List<BoardPreviewDto> results = new ArrayList<>();
 
         return getPreviewResult(hotPosts, results, boardPreviews);
@@ -310,7 +321,12 @@ public class PostService {
                 .stream().map(Board::getId)
                 .collect(Collectors.toList());
 
-        List<Post> top4 = postRepository.findTop3(boardIds,blockedUserIds);
+        List<Post> top4 = null;
+        if( blockedUserIds.size() == 0){
+            top4 = postRepository.findTop3(boardIds);
+        }else{
+            top4 = postRepository.findTop3(boardIds,blockedUserIds);
+        }
 
         Map<Board, List<Post>> boardPostMap = top4.stream()
                 .collect(Collectors.groupingBy(post -> post.getBoard()));
