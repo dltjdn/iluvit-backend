@@ -63,8 +63,10 @@ public class PostService {
 
         List<MultipartFile> images = postCreateRequest.getImages();
 
+        Integer imageSize = images == null? 0 : images.size();
+
         Post post = new Post(postCreateRequest.getTitle(), postCreateRequest.getContent(), postCreateRequest.getAnonymous(),
-                0, 0, 0, images.size(), 0, board, user);
+                0, 0, 0, imageSize, 0, board, user);
 
         postRepository.save(post);
 
@@ -126,6 +128,7 @@ public class PostService {
      * [모두의 이야기 + 유저가 속한 센터의 이야기] 에서  게시글 제목+내용 검색
      */
     public Slice<PostResponse> searchPost(Long userId, String keyword, Pageable pageable) {
+        if(keyword == null || keyword == "") throw new PostException(PostErrorResult.NO_KEYWORD);
 
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new UserException(UserErrorResult.USER_NOT_EXIST));
@@ -156,6 +159,8 @@ public class PostService {
      * [시설 이야기] or [모두의 이야기] 에서 게시글 제목+내용 검색
      */
     public Slice<PostResponse> searchPostByCenter(Long userId, Long centerId, String keyword, Pageable pageable) {
+        if(keyword == null || keyword == "") throw new PostException(PostErrorResult.NO_KEYWORD);
+
         User user = userRepository.findById(userId).
                 orElseThrow(() -> new UserException(UserErrorResult.USER_NOT_EXIST));
 
@@ -310,7 +315,10 @@ public class PostService {
     @NotNull
     private Slice<PostResponse> getPostResponses(Slice<Post> posts) {
         return posts.map(post -> {
-            String previewImage = imageService.getInfoImages(post.getInfoImagePath()).get(0);
+
+            List<String> infoImages = imageService.getInfoImages(post.getInfoImagePath());
+            String previewImage = null;
+            if(infoImages.size() != 0) previewImage = infoImages.get(0);
             return new PostResponse(post, previewImage);
         });
     }
