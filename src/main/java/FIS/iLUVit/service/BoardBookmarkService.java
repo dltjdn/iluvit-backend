@@ -4,6 +4,8 @@ import FIS.iLUVit.dto.board.StoryDto;
 import FIS.iLUVit.domain.*;
 import FIS.iLUVit.exception.BookmarkErrorResult;
 import FIS.iLUVit.exception.BookmarkException;
+import FIS.iLUVit.exception.UserErrorResult;
+import FIS.iLUVit.exception.UserException;
 import FIS.iLUVit.repository.*;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -22,15 +24,13 @@ public class BoardBookmarkService {
     private final BoardBookmarkRepository boardBookmarkRepository;
     private final UserRepository userRepository;
     private final BoardRepository boardRepository;
+    private final BlockedRepository blockedRepository;
 
     /**
      * 작성자: 이창윤
      * 작성내용: 유저가 즐겨찾기한 게시판 리스트를 반환합니다
      */
-    public List<StoryDto> findBoardBookmarkByUser(Long userId) {
-        if (userId == null) {
-            return searchByDefault();
-        }
+    public List<StoryDto> findBoardBookmarkByUser(Long userId){
         List<StoryDto> storyDtos2 = new ArrayList<>();
         // stream groupingBy가 null 키 값을 허용하지 않아서 임시 값으로 생성한 센터 -> tmp = 모두의 이야기 센터
         Center tmp = new Center();
@@ -39,8 +39,9 @@ public class BoardBookmarkService {
         Map<Center, List<Board>> centerBoardMap = mappingCenterBoardByBoardBookmark(userId, tmp);
 
         // 유저의 즐찾 게시판에서 최신 글 하나씩 뽑아옴.
-        // 최신 글 리스트를 센터로 그루핑함.
+        // 최신 글 리스트를 센터로 그루핑함
         Map<Center, List<Post>> centerPostMap = mappingCenterPostByBoardBookmark(userId, tmp);
+
 
         // 센터-게시글 맵의 키에서 북마크의 센터(센터-게시판 맵)가 없으면 빈 배열과 함께 넣어줌.
         centerBoardMap.keySet()
@@ -147,7 +148,15 @@ public class BoardBookmarkService {
      * 작성내용: 유저가 즐겨찾기한 게시판의 글을 매핑합니다
      */
     private Map<Center, List<Post>> mappingCenterPostByBoardBookmark(Long userId, Center tmp) {
-        return boardBookmarkRepository.findPostByBoard(userId).stream()
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new UserException(UserErrorResult.USER_NOT_EXIST));
+
+        List<Long> blockedUserIds = blockedRepository.findByBlockingUser(user).stream()
+                .map(Blocked::getBlockedUser)
+                .map(User::getId)
+                .collect(Collectors.toList());
+
+        return boardBookmarkRepository.findPostByBoard(userId, blockedUserIds).stream()
                 .collect(Collectors.groupingBy(p -> p.getBoard().getCenter() == null ?
                         tmp : p.getBoard().getCenter()));
     }
