@@ -35,7 +35,6 @@ public class ChatService {
     private final BlockedRepository blockedRepository;
     private final AlarmRepository alarmRepository;
     private final ImageService imageService;
-    private static final String BLACK_USER_NICKNAME = "알 수 없음";
 
     public Long saveNewChat(Long userId, ChatRequest request) {
         if (userId == null) {
@@ -85,9 +84,7 @@ public class ChatService {
         partnerRoom.updatePartnerId(myRoom.getId());
 
         // 쪽지를 받은 유저가 자신이 차단한 유저를 조회
-        List<User> blockedUsers = blockedRepository.findByBlockingUser(receiveUser).stream()
-                .map(Blocked::getBlockedUser)
-                .collect(Collectors.toList());
+        List<User> blockedUsers = getBlockedUsers(receiveUser);
 
         // 쪽지를 보낸 유저가 쪽지를 받는 유저에게 차단된 상태라면 알림을 발행하지 않음
         if(!blockedUsers.contains(sendUser)) {
@@ -118,6 +115,7 @@ public class ChatService {
             }
             chatRoomRepository.save(chatRoom);
         }
+
         chat.updateChatRoom(chatRoom);
         return chatRoom;
     }
@@ -141,10 +139,7 @@ public class ChatService {
         User senderUser = findRoom.getSender();
 
         // 쪽지를 받은 유저가 자신이 차단한 유저를 조회
-        List<User> blockedUsers = blockedRepository.findByBlockingUser(receiverUser)
-                .stream()
-                .map(Blocked::getBlockedUser)
-                .collect(Collectors.toList());
+        List<User> blockedUsers = getBlockedUsers(receiverUser);
 
         Slice<Chat> chatList;
         // 채팅 상대방이 사용자에게 차단된 상태인지 여부
@@ -217,31 +212,48 @@ public class ChatService {
         User sendUser = userRepository.getById(userId);
         User receiveUser = userRepository.getById(partnerUserId);
         Chat myChat = new Chat(request.getMessage(), receiveUser, sendUser);
-        Chat partnerChat = new Chat(request.getMessage(), receiveUser, sendUser);
 
         myChat.updateChatRoom(myRoom);
 
-        // 삭제된 대화방이면 새로 생성
-        ChatRoom partnerRoom;
-        if (myRoom.getPartner_id() == null) {
-            partnerRoom = new ChatRoom(receiveUser, sendUser, myRoom.getPost(), myRoom.getAnonymous());
-            chatRoomRepository.save(partnerRoom);
-        } else {
-            partnerRoom = chatRoomRepository.findById(myRoom.getPartner_id())
-                    .orElseThrow(() -> new ChatException(ChatErrorResult.ROOM_NOT_EXIST));
+        // 쪽지를 받은 유저가 자신이 차단한 유저를 조회
+        List<User> blockedUsers = getBlockedUsers(receiveUser);
+
+        // 쪽지를 보낸 유저가 쪽지를 받는 유저에게 차단된 상태가 아니라면 실행
+        if (!blockedUsers.contains(sendUser)) {
+            // 삭제된 대화방이면 새로 생성
+            ChatRoom partnerRoom;
+            if (myRoom.getPartner_id() == null) {
+                partnerRoom = new ChatRoom(receiveUser, sendUser, myRoom.getPost(), myRoom.getAnonymous());
+                chatRoomRepository.save(partnerRoom);
+            } else {
+                partnerRoom = chatRoomRepository.findById(myRoom.getPartner_id())
+                        .orElseThrow(() -> new ChatException(ChatErrorResult.ROOM_NOT_EXIST));
+            }
+
+            partnerRoom.updatePartnerId(myRoom.getId());
+
+            Chat partnerChat = new Chat(request.getMessage(), receiveUser, sendUser);
+            partnerChat.updateChatRoom(partnerRoom);
+            chatRepository.save(partnerChat);
         }
-        myRoom.updatePartnerId(partnerRoom.getId());
-        partnerRoom.updatePartnerId(myRoom.getId());
-        partnerChat.updateChatRoom(partnerRoom);
 
         userRepository.findById(partnerUserId)
                 .orElseThrow(() -> new UserException(UserErrorResult.USER_NOT_EXIST))
                 .updateReadAlarm(Boolean.FALSE);
 
         Chat savedChat = chatRepository.save(myChat);
-        chatRepository.save(partnerChat);
 
         return savedChat.getId();
+    }
+
+    /**
+     * 해당 유저가 차단한 유저 리스트를 조회하여 반환합니다
+     */
+    private List<User> getBlockedUsers(User user) {
+        return blockedRepository.findByBlockingUser(user)
+                .stream()
+                .map(Blocked::getBlockedUser)
+                .collect(Collectors.toList());
     }
 
 }
