@@ -237,16 +237,17 @@ public class PostService {
     }
 
     public List<BoardPreviewDto> findBoardDetailsByPublic(Long userId) {
-        List<BoardPreviewDto> boardPreviews = new ArrayList<>();
-
-        List<Bookmark> bookmarkList = boardBookmarkRepository.findBoardByUser(userId);
-        getBoardPreviews(bookmarkList, boardPreviews);
-
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new UserException(UserErrorResult.USER_NOT_EXIST));
 
         // 유저가 차단한 유저를 조회한다
         List<Long> blockedUserIds = getBlockedUserIds(user);
+
+        List<BoardPreviewDto> boardPreviews = new ArrayList<>();
+
+        List<Bookmark> bookmarkList = boardBookmarkRepository.findBoardByUser(userId);
+
+        getBoardPreviews(bookmarkList, boardPreviews, blockedUserIds);
 
         // HOT 게시판 정보 추가 ( 유저가 차단한 유저 리스트를 넘겨주어 해당 게시물은 조회되지 않게 한다)
         List<Post> hotPosts = postRepository.findTop3ByHeartCnt(Criteria.HOT_POST_HEART_CNT, blockedUserIds);
@@ -283,10 +284,10 @@ public class PostService {
 
         List<BoardPreviewDto> boardPreviews = new ArrayList<>();
         List<Bookmark> bookmarkList = boardBookmarkRepository.findBoardByUserAndCenter(userId, centerId);
-        getBoardPreviews(bookmarkList, boardPreviews);
-
         // 유저가 차단한 유저를 조회한다
         List<Long> blockedUserIds = getBlockedUserIds(user);
+
+        getBoardPreviews(bookmarkList, boardPreviews, blockedUserIds);
 
         // HOT 게시판 정보 추가
         List<Post> hotPosts = postRepository.findTop3ByHeartCntWithCenter(Criteria.HOT_POST_HEART_CNT, centerId, blockedUserIds);
@@ -295,20 +296,20 @@ public class PostService {
         return getPreviewResult(hotPosts, results, boardPreviews);
     }
 
-    private void getBoardPreviews(List<Bookmark> bookmarkList, List<BoardPreviewDto> boardPreviews) {
+    private void getBoardPreviews(List<Bookmark> bookmarkList, List<BoardPreviewDto> boardPreviews, List<Long> blockedUserIds) {
         List<Board> boardList = bookmarkList.stream()
                 .map(bookmark -> bookmark.getBoard())
                 .collect(Collectors.toList());
 
-        addBoardPreviews(boardPreviews, boardList);
+        addBoardPreviews(boardPreviews, boardList, blockedUserIds);
     }
 
-    private void addBoardPreviews(List<BoardPreviewDto> boardPreviews, List<Board> boardList) {
+    private void addBoardPreviews(List<BoardPreviewDto> boardPreviews, List<Board> boardList, List<Long> blockedUserIds) {
         List<Long> boardIds = boardList
                 .stream().map(Board::getId)
                 .collect(Collectors.toList());
 
-        List<Post> top4 = postRepository.findTop3(boardIds);
+        List<Post> top4 = postRepository.findTop3(boardIds,blockedUserIds);
         Map<Board, List<Post>> boardPostMap = top4.stream()
                 .collect(Collectors.groupingBy(post -> post.getBoard()));
 

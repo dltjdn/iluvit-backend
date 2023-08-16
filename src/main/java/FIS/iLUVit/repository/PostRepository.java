@@ -34,10 +34,11 @@ public interface PostRepository extends JpaRepository<Post, Long>, PostRepositor
      */
     @Query(value = "select * from " +
             "(select row_number() over (partition by p.board_id order by p.created_date desc) as ranks, " +
-            "p.* from post p where p.board_id in :boardIds) as ranking " +
-            "where ranking.ranks <= 3 order by board_id, created_date desc ",
+            "p.* from post p where p.board_id in :boardIds and p.user_id not in :blockedUserIds) as ranking " +
+            "where ranking.ranks <= 3 " +
+            "order by board_id, created_date desc ",
             nativeQuery = true)
-    List<Post> findTop3(@Param("boardIds") List<Long> boardIds);
+    List<Post> findTop3(@Param("boardIds") List<Long> boardIds, @Param("blockedUserIds") List<Long> blockedUserIds);
 
     /*
         게시판 id 리스트 중 최근 3개의 게시글 리스트를 불러옵니다.
