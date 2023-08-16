@@ -33,7 +33,7 @@ public interface BoardBookmarkRepository extends JpaRepository<Bookmark, Long> {
     @Query("select p from Post p join fetch p.board b where p.id in " +
             "(select max(p.id) from Post p where p.board.id in " +
             "(select b.board.id from Bookmark b where b.user.id = :userId) " +
-            "group by p.board.id) and p.board.id = b.id and p.user.id not in :blockedUserIds ")
+            "group by p.board.id) and p.board.id = b.id and (:blockedUserIds is null or p.user.id not in :blockedUserIds) ")
     List<Post> findPostByBoard(@Param("userId") Long userId, @Param("blockedUserIds") List<Long> blockedUserIds);
 
     /*

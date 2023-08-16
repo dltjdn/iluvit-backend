@@ -34,27 +34,17 @@ public interface PostRepository extends JpaRepository<Post, Long>, PostRepositor
      */
     @Query(value = "select * from " +
             "(select row_number() over (partition by p.board_id order by p.created_date desc) as ranks, " +
-            "p.* from post p where p.board_id in :boardIds and p.user_id not in :blockedUserIds) as ranking " +
+            "p.* from post p where p.board_id in :boardIds and (:blockedUserIds is null or p.user_id not in :blockedUserIds)) as ranking " +
             "where ranking.ranks <= 3 " +
             "order by board_id, created_date desc ",
             nativeQuery = true)
     List<Post> findTop3(@Param("boardIds") List<Long> boardIds, @Param("blockedUserIds") List<Long> blockedUserIds);
 
     /*
-        게시판 id 리스트 중 최근 3개의 게시글 리스트를 불러옵니다.
-     */
-    @Query(value = "select * from " +
-            "(select row_number() over (partition by p.board_id order by p.createddate desc) as ranks, " +
-            "p.* from post p where p.board_id in :boardIds) as ranking " +
-            "where ranking.ranks <= 3 order by board_id, createddate desc ",
-            nativeQuery = true)
-    List<Post> findTop3_H2(@Param("boardIds") List<Long> boardIds);
-
-    /*
         게시글 하트 개수가 가장 많은 3개의 게시글 리스트를 불러옵니다.
      */
     @Query("select p from Post p join p.board b " +
-            "where b.center is null and p.heartCnt >= :heartCnt and p.user.id not in :blockedUserIds " +
+            "where b.center is null and p.heartCnt >= :heartCnt and (:blockedUserIds is null or p.user.id not in :blockedUserIds) " +
             "order by p.postCreateDate desc ")
     List<Post> findTop3ByHeartCnt(@Param("heartCnt") int heartCnt, @Param("blockedUserIds") List<Long> blockedUserIds);
 
@@ -62,7 +52,7 @@ public interface PostRepository extends JpaRepository<Post, Long>, PostRepositor
         시설에 있는 게시글중 하트가 가장 많은 3개의 게시글 리스트를 불러옵니다.
      */
     @Query("select p from Post p join p.board b " +
-            "where b.center.id = :centerId and p.heartCnt >= :heartCnt and p.user.id not in :blockedUserIds " +
+            "where b.center.id = :centerId and p.heartCnt >= :heartCnt and (:blockedUserIds is null or p.user.id not in :blockedUserIds) " +
             "order by p.postCreateDate desc ")
     List<Post> findTop3ByHeartCntWithCenter(@Param("heartCnt") int heartCnt, @Param("centerId") Long centerId,
                                             @Param("blockedUserIds") List<Long> blockedUserIds);

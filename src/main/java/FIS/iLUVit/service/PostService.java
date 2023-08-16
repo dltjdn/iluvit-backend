@@ -247,6 +247,7 @@ public class PostService {
 
         List<Bookmark> bookmarkList = boardBookmarkRepository.findBoardByUser(userId);
 
+
         getBoardPreviews(bookmarkList, boardPreviews, blockedUserIds);
 
         // HOT 게시판 정보 추가 ( 유저가 차단한 유저 리스트를 넘겨주어 해당 게시물은 조회되지 않게 한다)
@@ -310,6 +311,7 @@ public class PostService {
                 .collect(Collectors.toList());
 
         List<Post> top4 = postRepository.findTop3(boardIds,blockedUserIds);
+
         Map<Board, List<Post>> boardPostMap = top4.stream()
                 .collect(Collectors.groupingBy(post -> post.getBoard()));
 
