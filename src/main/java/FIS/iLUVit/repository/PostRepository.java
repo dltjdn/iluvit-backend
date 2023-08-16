@@ -15,7 +15,7 @@ public interface PostRepository extends JpaRepository<Post, Long>, PostRepositor
     /**
      * 해당 게시판의 게시물 리스트를 조회한다
      */
-    List<Post> findByBoardOrderByIdDesc(Board board);
+    List<Post> findByBoardOrderByPostUpdateDateDesc(Board board);
 
     /**
      * 해당 유저의 게시물 리스트를 조회한다
