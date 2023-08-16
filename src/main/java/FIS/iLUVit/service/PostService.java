@@ -338,7 +338,7 @@ public class PostService {
                 .collect(Collectors.toList());
 
         // 핫 게시판 정보를 boardPreviewDtos에 추가
-        boardPreviewDtos.add(new BoardPreviewDto(null, "HOT 게시판", postInfoList, BoardKind.NORMAL));
+        boardPreviewDtos.add(new BoardPreviewDto(null, "HOT 게시판", BoardKind.NORMAL, postInfoList));
 
         return boardPreviewDtos;
     }
@@ -355,6 +355,7 @@ public class PostService {
 
         // 추출한 게시판들의 게시물을 조회
         List<Post> posts = postRepository.findByBoardIn(boards);
+        System.out.println("@@@@@@@@@@@"+posts);
 
         // 게시판별로 게시물들을 그룹화하여 매핑
         Map<Board, List<Post>> boardPostMap = posts.stream()
@@ -370,7 +371,7 @@ public class PostService {
                             .map(post -> new BoardPreviewDto.PostInfo(post, imageService.getInfoImages(post)))
                             .collect(Collectors.toList());
 
-                    return new BoardPreviewDto(board.getId(), board.getName(), postInfos, board.getBoardKind());
+                    return new BoardPreviewDto(board.getId(), board.getName(),board.getBoardKind(),  postInfos);
                 })
                 .sorted(Comparator.comparing(BoardPreviewDto::getBoardId))
                 .collect(Collectors.toList());

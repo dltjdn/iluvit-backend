@@ -16,8 +16,8 @@ public class BoardPreviewDto {
 
     private Long boardId;
     private String boardName;
-    private List<PostInfo> postInfoList;
     private BoardKind boardKind;
+    private List<PostInfo> postInfoList;
 
     @Getter
     @NoArgsConstructor
