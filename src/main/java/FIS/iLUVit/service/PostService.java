@@ -201,11 +201,11 @@ public class PostService {
     /**
      * 각 게시판 별 게시글 제목+내용 검색
      */
-    public Slice<PostResponse> searchByBoard(Long boardId, String input, Pageable pageable) {
+    public Slice<PostResponse> searchByBoard(Long boardId, String keyword, Pageable pageable) {
         boardRepository.findById(boardId)
                 .orElseThrow(() -> new BoardException(BoardErrorResult.BOARD_NOT_EXIST));
 
-        Slice<Post> posts = postRepository.findByBoardAndKeyword(boardId, input, pageable);
+        Slice<Post> posts = postRepository.findByBoardAndKeyword(boardId, keyword, pageable);
 
         return getPostResponses(posts);
     }
