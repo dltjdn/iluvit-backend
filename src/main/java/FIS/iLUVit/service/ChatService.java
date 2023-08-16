@@ -35,6 +35,7 @@ public class ChatService {
     private final BlockedRepository blockedRepository;
     private final AlarmRepository alarmRepository;
     private final ImageService imageService;
+    private static final String BLACK_USER_NICKNAME = "알 수 없음";
 
     public Long saveNewChat(Long userId, ChatRequest request) {
         if (userId == null) {
@@ -147,7 +148,7 @@ public class ChatService {
 
         Slice<Chat> chatList;
         // 채팅 상대방이 사용자에게 차단된 상태인지 여부
-        boolean isBlocked;
+        boolean opponentIsBlocked;
 
         // 차단 관계 유무에 따른 채팅 리스트 조회
         if (blockedUsers.contains(senderUser)) {
@@ -155,17 +156,17 @@ public class ChatService {
             Blocked blocked = blockedRepository.findByBlockingUserAndBlockedUser(receiverUser, senderUser)
                     .orElseThrow(() -> new BlockedException(BlockedErrorResult.NOT_EXIST_BLOCKED));
             LocalDateTime blockedDate = blocked.getCreatedDate();
-            isBlocked = true;
+            opponentIsBlocked = true;
             // 차단된 이후의 채팅은 조회하지 않음
             chatList = chatRepository.findByChatRoom(userId, roomId, blockedDate, pageable);
         } else {
             // 쪽지를 보낸 유저와 차단관계가 없는 경우
             chatList = chatRepository.findByChatRoom(userId, roomId, pageable);
-            isBlocked = false;
+            opponentIsBlocked = false;
         }
 
         Slice<ChatDto.ChatInfo> chatInfos = chatList.map(ChatDto.ChatInfo::new);
-        ChatDto chatDto = new ChatDto(findRoom, chatInfos, isBlocked);
+        ChatDto chatDto = new ChatDto(findRoom, chatInfos, opponentIsBlocked);
         String profileImage = imageService.getProfileImage(findRoom.getSender());
         chatDto.updateImage(profileImage);
         return chatDto;
