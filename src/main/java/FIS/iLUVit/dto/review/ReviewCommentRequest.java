@@ -8,7 +8,7 @@ import javax.persistence.Lob;
 @Getter
 @NoArgsConstructor
 @AllArgsConstructor
-public class ReviewCommentDto {
+public class ReviewCommentRequest {
 
     @Lob
     private String comment;
