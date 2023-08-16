@@ -151,11 +151,12 @@ public class BoardBookmarkService {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new UserException(UserErrorResult.USER_NOT_EXIST));
 
-        List<User> blockedUsers = blockedRepository.findByBlockingUser(user).stream()
+        List<Long> blockedUserIds = blockedRepository.findByBlockingUser(user).stream()
                 .map(Blocked::getBlockedUser)
+                .map(User::getId)
                 .collect(Collectors.toList());
 
-        return boardBookmarkRepository.findPostByBoard(userId, blockedUsers).stream()
+        return boardBookmarkRepository.findPostByBoard(userId, blockedUserIds).stream()
                 .collect(Collectors.groupingBy(p -> p.getBoard().getCenter() == null ?
                         tmp : p.getBoard().getCenter()));
     }
