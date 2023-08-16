@@ -10,12 +10,13 @@ import FIS.iLUVit.domain.alarms.ChatAlarm;
 import FIS.iLUVit.exception.*;
 import FIS.iLUVit.repository.*;
 import lombok.RequiredArgsConstructor;
-import org.springframework.cglib.core.Block;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
@@ -23,6 +24,7 @@ import java.util.stream.Collectors;
 @Service
 @RequiredArgsConstructor
 @Transactional
+@Slf4j
 public class ChatService {
 
     private final ChatRepository chatRepository;
@@ -31,12 +33,10 @@ public class ChatService {
     private final CommentRepository commentRepository;
     private final ChatRoomRepository chatRoomRepository;
     private final BlockedRepository blockedRepository;
+    private final AlarmRepository alarmRepository;
     private final ImageService imageService;
 
-    private final AlarmRepository alarmRepository;
-
     public Long saveNewChat(Long userId, ChatRequest request) {
-
         if (userId == null) {
             throw new ChatException(ChatErrorResult.UNAUTHORIZED_USER_ACCESS);
         }
@@ -67,7 +67,7 @@ public class ChatService {
             receiveUser = findPost.getUser();
         }
 
-        if(receiveUser.getNickName() == "알 수 없음"){
+        if(receiveUser.getNickName().equals("알 수 없음")){
             throw new ChatException(ChatErrorResult.WITHDRAWN_MEMBER);
         }
 
@@ -137,15 +137,35 @@ public class ChatService {
         User receiverUser = userRepository.findById(userId)
                 .orElseThrow(() -> new UserException(UserErrorResult.USER_NOT_EXIST));
 
+        User senderUser = findRoom.getSender();
+
         // 쪽지를 받은 유저가 자신이 차단한 유저를 조회
-        List<User> blockedUsers = blockedRepository.findByBlockingUser(receiverUser).stream()
+        List<User> blockedUsers = blockedRepository.findByBlockingUser(receiverUser)
+                .stream()
                 .map(Blocked::getBlockedUser)
                 .collect(Collectors.toList());
 
-        Slice<Chat> chatList = chatRepository.findByChatRoom(userId, blockedUsers, roomId, pageable);
+        Slice<Chat> chatList;
+        // 채팅 상대방이 사용자에게 차단된 상태인지 여부
+        boolean isBlocked;
+
+        // 차단 관계 유무에 따른 채팅 리스트 조회
+        if (blockedUsers.contains(senderUser)) {
+            // 쪽지를 보낸 유저가 차단된 유저인 경우
+            Blocked blocked = blockedRepository.findByBlockingUserAndBlockedUser(receiverUser, senderUser)
+                    .orElseThrow(() -> new BlockedException(BlockedErrorResult.NOT_EXIST_BLOCKED));
+            LocalDateTime blockedDate = blocked.getCreatedDate();
+            isBlocked = true;
+            // 차단된 이후의 채팅은 조회하지 않음
+            chatList = chatRepository.findByChatRoom(userId, roomId, blockedDate, pageable);
+        } else {
+            // 쪽지를 보낸 유저와 차단관계가 없는 경우
+            chatList = chatRepository.findByChatRoom(userId, roomId, pageable);
+            isBlocked = false;
+        }
 
         Slice<ChatDto.ChatInfo> chatInfos = chatList.map(ChatDto.ChatInfo::new);
-        ChatDto chatDto = new ChatDto(findRoom, chatInfos);
+        ChatDto chatDto = new ChatDto(findRoom, chatInfos, isBlocked);
         String profileImage = imageService.getProfileImage(findRoom.getSender());
         chatDto.updateImage(profileImage);
         return chatDto;
@@ -178,7 +198,7 @@ public class ChatService {
         ChatRoom myRoom = chatRoomRepository.findById(request.getRoom_id())
                 .orElseThrow(() -> new ChatException(ChatErrorResult.ROOM_NOT_EXIST));
 
-        if (myRoom.getReceiver() == null || myRoom.getSender() == null || myRoom.getSender().getNickName() == "알 수 없음") {
+        if (myRoom.getReceiver() == null || myRoom.getSender() == null || myRoom.getSender().getNickName().equals("알 수 없음")) {
             throw new ChatException(ChatErrorResult.WITHDRAWN_MEMBER);
         }
 
