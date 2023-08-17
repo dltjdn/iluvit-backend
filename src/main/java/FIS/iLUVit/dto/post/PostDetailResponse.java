@@ -37,13 +37,13 @@ public class PostDetailResponse {
     private String boardName;
     private String centerName;
 
-    private List<CommentDto> comments;
-    private Integer commentCnt;
-
     private Long boardId;
     private Long centerId;
 
     private Boolean canDelete;
+    private Integer commentCnt;
+    private List<CommentDto> comments;
+
 
     public PostDetailResponse(Post post, List<String> encodedImages, String encodedProfileImage, Long userId) {
         this.id = post.getId();

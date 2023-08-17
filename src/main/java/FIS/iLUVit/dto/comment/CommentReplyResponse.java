@@ -5,16 +5,14 @@ import FIS.iLUVit.domain.User;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+
 import java.time.LocalDate;
 import java.time.LocalTime;
-import java.util.List;
 import java.util.Objects;
-import java.util.stream.Collectors;
-
 @Getter
 @AllArgsConstructor
 @NoArgsConstructor
-public class CommentDto {
+public class CommentReplyResponse {
     private Long id;
     private Long writerId;
     private String nickName;
@@ -25,9 +23,8 @@ public class CommentDto {
     private LocalTime time;
     private Boolean anonymous;
     private Boolean canDelete;
-    private List<CommentReplyResponse> answers;
 
-    public CommentDto(Comment comment, Long userId) {
+    public CommentReplyResponse(Comment comment, Long userId) {
         this.id = comment.getId();
         User writer = comment.getUser();
         if (writer != null) {
@@ -54,9 +51,5 @@ public class CommentDto {
         this.content = comment.getContent();
         this.date = comment.getDate();
         this.time = comment.getTime();
-        this.answers = comment.getSubComments().stream()
-                .map(c -> new CommentReplyResponse(c, userId))
-                .collect(Collectors.toList());
     }
 }
-
