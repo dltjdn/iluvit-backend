@@ -31,8 +31,8 @@ public interface ChildRepository extends JpaRepository<Child, Long> {
     @Query("select c " +
             "from Child c " +
             "left join fetch c.center " +
-            "where c.id =:childId " +
-            "and c.parent.id =:userId")
+            "where c.id = :childId " +
+            "and c.parent.id = :userId")
     Optional<Child> findByIdAndParentWithCenter(@Param("userId") Long userId, @Param("childId") Long childId);
 
     /*
@@ -40,8 +40,8 @@ public interface ChildRepository extends JpaRepository<Child, Long> {
      */
     @Query("select c " +
             "from Child c " +
-            "where c.id =:childId " +
-            "and c.parent.id =:userId")
+            "where c.id = :childId " +
+            "and c.parent.id = :userId")
     Optional<Child> findByIdAndParent(@Param("userId") Long userId, @Param("childId") Long childId);
 
     /*
@@ -50,7 +50,7 @@ public interface ChildRepository extends JpaRepository<Child, Long> {
     @Query("select c " +
             "from Child c " +
             "left join fetch c.center " +
-            "where c.parent.id =:userId")
+            "where c.parent.id = :userId")
     List<Child> findByUserWithCenter(@Param("userId") Long userId);
 
     /*

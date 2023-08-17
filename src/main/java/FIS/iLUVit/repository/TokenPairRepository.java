@@ -16,7 +16,7 @@ public interface TokenPairRepository extends JpaRepository<TokenPair, Long> {
     @Query("select r " +
             "from TokenPair r " +
             "join fetch r.user u " +
-            "where u.id =:userId")
+            "where u.id = :userId")
     Optional<TokenPair> findByUserIdWithUser(@Param("userId") Long userId);
 
     /*
@@ -24,7 +24,7 @@ public interface TokenPairRepository extends JpaRepository<TokenPair, Long> {
      */
     @Query("select r " +
             "from TokenPair r " +
-            "where r.user.id =:userId")
+            "where r.user.id = :userId")
     Optional<TokenPair> findByUserId(@Param("userId") Long userId);
 }
 
