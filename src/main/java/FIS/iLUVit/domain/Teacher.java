@@ -99,16 +99,6 @@ public class Teacher extends User {
         return this;
     }
 
-    @Override
-    public LoginResponse getLoginInfo() {
-        return new LoginTeacherResponse(this);
-    }
-
-    @Override
-    public UserResponse getUserInfo() {
-        return new TeacherResponse(id, nickName, auth, center, approval);
-    }
-
     public void beDirector() {
         this.auth = Auth.DIRECTOR;
     }

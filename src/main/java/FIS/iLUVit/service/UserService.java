@@ -2,6 +2,7 @@ package FIS.iLUVit.service;
 
 import FIS.iLUVit.domain.*;
 import FIS.iLUVit.domain.enumtype.AuthKind;
+import FIS.iLUVit.domain.enumtype.UserStatus;
 import FIS.iLUVit.dto.user.*;
 import FIS.iLUVit.exception.*;
 import FIS.iLUVit.repository.*;
@@ -11,6 +12,7 @@ import FIS.iLUVit.security.LoginResponse;
 import FIS.iLUVit.security.uesrdetails.PrincipalDetails;
 import com.auth0.jwt.exceptions.JWTVerificationException;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -21,6 +23,8 @@ import org.springframework.transaction.annotation.Transactional;
 import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
+
 
 @Service
 @Transactional
@@ -36,16 +40,28 @@ public class UserService {
     private final ScrapService scrapService;
     private final ExpoTokenRepository expoTokenRepository;
     private final AlarmService alarmService;
+    private final BlackUserRepository blackUserRepository;
+    private final BlackUserService blackUserService;
+
 
 
     /**
      * 작성자: 이승범
-     * 작성내용: 사용자 기본정보(id, nickname, auth) 반환
+     * 작성내용: 사용자 기본정보(userId, nickname, auth) 반환
      */
-    public UserResponse findUserDetails(Long id) {
-        User findUser = userRepository.findById(id)
+    public UserResponse findUserDetails(Long userId) {
+        // 블랙 유저 검증
+        blackUserRepository.findByUserId(userId)
+                .ifPresent(blackUser -> {
+                    throw new UserException(UserErrorResult.USER_IS_BLACK_OR_WITHDRAWN);
+                });
+
+        User user = userRepository.findById(userId)
                 .orElseThrow(() -> new UserException(UserErrorResult.NOT_VALID_TOKEN));
-        return findUser.getUserInfo();
+
+        UserResponse userResponse = new UserResponse(user.getId(), user.getNickName(), user.getAuth());
+
+        return userResponse;
     }
 
     /**
@@ -100,6 +116,12 @@ public class UserService {
      *   작성내용: login service layer로 옮김
      */
     public LoginResponse login(LoginRequest request) {
+        // 영구정지, 일주일간 이용제한인 유저인지 검증
+        blackUserRepository.findRestrictedByLoginId(request.getLoginId())
+                .ifPresent(blackUser -> {
+                    throw new UserException(UserErrorResult.USER_IS_BLACK_OR_WITHDRAWN);
+                });
+
         // authenticationManager 이용한 아이디 및 비밀번호 확인
         Authentication authentication = authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(request.getLoginId(), request.getPassword()));
@@ -118,7 +140,7 @@ public class UserService {
                         () -> tokenPairRepository.save(tokenPair)
                 );
 
-        LoginResponse response = principal.getUser().getLoginInfo();
+        LoginResponse response = new LoginResponse(principal.getUser());
         response.setAccessToken(jwtUtils.addPrefix(jwt));
         response.setRefreshToken(jwtUtils.addPrefix(refresh));
 
@@ -158,7 +180,8 @@ public class UserService {
             String refresh = jwtUtils.createRefreshToken(authentication);
             findTokenPair.updateToken(jwt, refresh);
 
-            LoginResponse response = principal.getUser().getLoginInfo();
+            LoginResponse response = new LoginResponse(principal.getUser());
+
             response.setAccessToken(jwtUtils.addPrefix(jwt));
             response.setRefreshToken(jwtUtils.addPrefix(refresh));
             return response;
@@ -175,10 +198,15 @@ public class UserService {
     *   작성내용: 로그인아이디 중복 확인
     */
     public void checkLoginIdAvailability(CheckLoginIdRequest request) {
-        userRepository.findByLoginId(request.getLoginId())
-                .ifPresent((user)->{
-                    throw new UserException(UserErrorResult.ALREADY_LOGINID_EXIST);
-                });
+
+        Optional<BlackUser> blackUser = blackUserRepository.findByLoginId((request.getLoginId()));
+        Optional<User> user = userRepository.findByLoginId((request.getLoginId()));
+
+        // 블랙 유저나 유저에 있는 로그인 아이디면 가입불가
+        if (blackUser.isPresent() || user.isPresent()) {
+            throw new UserException(UserErrorResult.ALREADY_LOGINID_EXIST);
+        }
+
     }
 
     /**
@@ -186,10 +214,14 @@ public class UserService {
     *   작성내용: 닉네임 중복 확인
     */
     public void checkNicknameAvailability(CheckNicknameRequest request) {
-        userRepository.findByNickName(request.getNickname())
-                .ifPresent((user)->{
-                    throw new UserException(UserErrorResult.ALREADY_NICKNAME_EXIST);
-                });
+
+        Optional<BlackUser> blackUser = blackUserRepository.findByNickName((request.getNickname()));
+        Optional<User> user = userRepository.findByNickName((request.getNickname()));
+
+        // 블랙 유저나 유저에 있는 닉네임이면 가입불가
+        if (blackUser.isPresent() || user.isPresent()) {
+            throw new UserException(UserErrorResult.ALREADY_NICKNAME_EXIST);
+        }
     }
 
     /**
@@ -197,16 +229,18 @@ public class UserService {
      *   작성내용: 회원 탈퇴 ( 교사, 학부모 공통 )
      */
     public long withdrawUser(Long userId){
-        // 유저 정보 삭제 & 게시글, 댓글, 채팅, 시설리뷰 작성자 '알 수 없음'
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new UserException(UserErrorResult.NOT_VALID_TOKEN));
 
+        // 15일 동안 재가입 방지를 위해 블랙 유저에 저장
+        blackUserRepository.save(new BlackUser(user, UserStatus.WITHDRAWN));
+
+        // id 제외 유저 정보 삭제
         user.deletePersonalInfo();
 
-
+        // 스크랩 폴더 삭제 -> 스크랩한 포스트 casecade 됨
         List<Scrap> scrapDirs = scrapRepository.findByUser(user);
 
-        // 스크랩 폴더 삭제 -> 스크랩한 포스트 casecade 됨
         scrapDirs.forEach(scrapDir -> {
             if(scrapDir.getIsDefault() == false){
                 scrapService.deleteScrapDir(userId, scrapDir.getId());

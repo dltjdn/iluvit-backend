@@ -10,16 +10,21 @@ import FIS.iLUVit.domain.alarms.ChatAlarm;
 import FIS.iLUVit.exception.*;
 import FIS.iLUVit.repository.*;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Objects;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
 @Transactional
+@Slf4j
 public class ChatService {
 
     private final ChatRepository chatRepository;
@@ -27,12 +32,11 @@ public class ChatService {
     private final PostRepository postRepository;
     private final CommentRepository commentRepository;
     private final ChatRoomRepository chatRoomRepository;
+    private final BlockedRepository blockedRepository;
+    private final AlarmRepository alarmRepository;
     private final ImageService imageService;
 
-    private final AlarmRepository alarmRepository;
-
     public Long saveNewChat(Long userId, ChatRequest request) {
-
         if (userId == null) {
             throw new ChatException(ChatErrorResult.UNAUTHORIZED_USER_ACCESS);
         }
@@ -63,7 +67,7 @@ public class ChatService {
             receiveUser = findPost.getUser();
         }
 
-        if(receiveUser.getNickName() == "알 수 없음"){
+        if(receiveUser.getNickName().equals("알 수 없음")){
             throw new ChatException(ChatErrorResult.WITHDRAWN_MEMBER);
         }
 
@@ -79,9 +83,16 @@ public class ChatService {
         myRoom.updatePartnerId(partnerRoom.getId());
         partnerRoom.updatePartnerId(myRoom.getId());
 
-        Alarm alarm = new ChatAlarm(receiveUser, sendUser, anonymousInfo);
-        alarmRepository.save(alarm);
-        AlarmUtils.publishAlarmEvent(alarm);
+        // 쪽지를 받은 유저가 자신이 차단한 유저를 조회
+        List<User> blockedUsers = getBlockedUsers(receiveUser);
+
+        // 쪽지를 보낸 유저가 쪽지를 받는 유저에게 차단된 상태라면 알림을 발행하지 않음
+        if(!blockedUsers.contains(sendUser)) {
+            Alarm alarm = new ChatAlarm(receiveUser, sendUser, anonymousInfo);
+            alarmRepository.save(alarm);
+            String type = "아이러빗";
+            AlarmUtils.publishAlarmEvent(alarm, type);
+        }
 
         chatRepository.save(myChat);
         Chat savedChat = chatRepository.save(partnerChat);
@@ -104,6 +115,7 @@ public class ChatService {
             }
             chatRoomRepository.save(chatRoom);
         }
+
         chat.updateChatRoom(chatRoom);
         return chatRoom;
     }
@@ -121,11 +133,35 @@ public class ChatService {
     public ChatDto findChatRoomDetails(Long userId, Long roomId, Pageable pageable) {
         ChatRoom findRoom = chatRoomRepository.findById(roomId)
                 .orElseThrow(() -> new ChatException(ChatErrorResult.ROOM_NOT_EXIST));
+        User receiverUser = userRepository.findById(userId)
+                .orElseThrow(() -> new UserException(UserErrorResult.USER_NOT_EXIST));
 
-        Slice<Chat> chatList = chatRepository.findByChatRoom(userId, roomId, pageable);
+        User senderUser = findRoom.getSender();
+
+        // 쪽지를 받은 유저가 자신이 차단한 유저를 조회
+        List<User> blockedUsers = getBlockedUsers(receiverUser);
+
+        Slice<Chat> chatList;
+        // 채팅 상대방이 사용자에게 차단된 상태인지 여부
+        boolean opponentIsBlocked;
+
+        // 차단 관계 유무에 따른 채팅 리스트 조회
+        if (blockedUsers.contains(senderUser)) {
+            // 쪽지를 보낸 유저가 차단된 유저인 경우
+            Blocked blocked = blockedRepository.findByBlockingUserAndBlockedUser(receiverUser, senderUser)
+                    .orElseThrow(() -> new BlockedException(BlockedErrorResult.NOT_EXIST_BLOCKED));
+            LocalDateTime blockedDate = blocked.getCreatedDate();
+            opponentIsBlocked = true;
+            // 차단된 이후의 채팅은 조회하지 않음
+            chatList = chatRepository.findByChatRoom(userId, roomId, blockedDate, pageable);
+        } else {
+            // 쪽지를 보낸 유저와 차단관계가 없는 경우
+            chatList = chatRepository.findByChatRoom(userId, roomId, pageable);
+            opponentIsBlocked = false;
+        }
 
         Slice<ChatDto.ChatInfo> chatInfos = chatList.map(ChatDto.ChatInfo::new);
-        ChatDto chatDto = new ChatDto(findRoom, chatInfos);
+        ChatDto chatDto = new ChatDto(findRoom, chatInfos, opponentIsBlocked);
         String profileImage = imageService.getProfileImage(findRoom.getSender());
         chatDto.updateImage(profileImage);
         return chatDto;
@@ -158,7 +194,7 @@ public class ChatService {
         ChatRoom myRoom = chatRoomRepository.findById(request.getRoom_id())
                 .orElseThrow(() -> new ChatException(ChatErrorResult.ROOM_NOT_EXIST));
 
-        if (myRoom.getReceiver() == null || myRoom.getSender() == null || myRoom.getSender().getNickName() == "알 수 없음") {
+        if (myRoom.getReceiver() == null || myRoom.getSender() == null || myRoom.getSender().getNickName().equals("알 수 없음")) {
             throw new ChatException(ChatErrorResult.WITHDRAWN_MEMBER);
         }
 
@@ -176,31 +212,48 @@ public class ChatService {
         User sendUser = userRepository.getById(userId);
         User receiveUser = userRepository.getById(partnerUserId);
         Chat myChat = new Chat(request.getMessage(), receiveUser, sendUser);
-        Chat partnerChat = new Chat(request.getMessage(), receiveUser, sendUser);
 
         myChat.updateChatRoom(myRoom);
 
-        // 삭제된 대화방이면 새로 생성
-        ChatRoom partnerRoom;
-        if (myRoom.getPartner_id() == null) {
-            partnerRoom = new ChatRoom(receiveUser, sendUser, myRoom.getPost(), myRoom.getAnonymous());
-            chatRoomRepository.save(partnerRoom);
-        } else {
-            partnerRoom = chatRoomRepository.findById(myRoom.getPartner_id())
-                    .orElseThrow(() -> new ChatException(ChatErrorResult.ROOM_NOT_EXIST));
+        // 쪽지를 받은 유저가 자신이 차단한 유저를 조회
+        List<User> blockedUsers = getBlockedUsers(receiveUser);
+
+        // 쪽지를 보낸 유저가 쪽지를 받는 유저에게 차단된 상태가 아니라면 실행
+        if (!blockedUsers.contains(sendUser)) {
+            // 삭제된 대화방이면 새로 생성
+            ChatRoom partnerRoom;
+            if (myRoom.getPartner_id() == null) {
+                partnerRoom = new ChatRoom(receiveUser, sendUser, myRoom.getPost(), myRoom.getAnonymous());
+                chatRoomRepository.save(partnerRoom);
+            } else {
+                partnerRoom = chatRoomRepository.findById(myRoom.getPartner_id())
+                        .orElseThrow(() -> new ChatException(ChatErrorResult.ROOM_NOT_EXIST));
+            }
+
+            partnerRoom.updatePartnerId(myRoom.getId());
+
+            Chat partnerChat = new Chat(request.getMessage(), receiveUser, sendUser);
+            partnerChat.updateChatRoom(partnerRoom);
+            chatRepository.save(partnerChat);
         }
-        myRoom.updatePartnerId(partnerRoom.getId());
-        partnerRoom.updatePartnerId(myRoom.getId());
-        partnerChat.updateChatRoom(partnerRoom);
 
         userRepository.findById(partnerUserId)
                 .orElseThrow(() -> new UserException(UserErrorResult.USER_NOT_EXIST))
                 .updateReadAlarm(Boolean.FALSE);
 
         Chat savedChat = chatRepository.save(myChat);
-        chatRepository.save(partnerChat);
 
         return savedChat.getId();
+    }
+
+    /**
+     * 해당 유저가 차단한 유저 리스트를 조회하여 반환합니다
+     */
+    private List<User> getBlockedUsers(User user) {
+        return blockedRepository.findByBlockingUser(user)
+                .stream()
+                .map(Blocked::getBlockedUser)
+                .collect(Collectors.toList());
     }
 
 }

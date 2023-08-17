@@ -77,7 +77,8 @@ public class ParticipationService {
             userRepository.findTeacherByCenter(presentation.getCenter()).forEach((user) -> {
                 Alarm alarm = new PresentationFullAlarm(user, presentation, presentation.getCenter());
                 alarmRepository.save(alarm);
-                AlarmUtils.publishAlarmEvent(alarm);
+                String type = "아이러빗";
+                AlarmUtils.publishAlarmEvent(alarm, type);
 
             });
         }

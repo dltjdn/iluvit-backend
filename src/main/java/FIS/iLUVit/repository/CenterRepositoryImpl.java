@@ -100,7 +100,8 @@ public class CenterRepositoryImpl extends CenterQueryMethod implements CenterRep
                         .add(cos(radians(latitudeEx)).multiply(cos(radians(center.latitude)))
                                 .multiply(cos(radians(longitudeEx).subtract(radians(center.longitude)))))).multiply(param);
 
-        List<CenterMapPreviewDto> result = jpaQueryFactory.select(new QCenterMapPreviewDto(center.id, center.name, center.longitude, center.latitude))
+        List<CenterMapPreviewDto> result = jpaQueryFactory.select(new QCenterMapPreviewDto(center.id, center.name, center.longitude, center.latitude, center.signed
+                ))
                 .from(center)
                 .leftJoin(center.reviews, review)
                 .groupBy(center)
@@ -114,7 +115,7 @@ public class CenterRepositoryImpl extends CenterQueryMethod implements CenterRep
 
         while (result.size() <= 10 && searchContent != null && !searchContent.equals("") && distance <= 1600) {
             distance = distance * 3;
-            result = jpaQueryFactory.select(new QCenterMapPreviewDto(center.id, center.name, center.longitude, center.latitude))
+            result = jpaQueryFactory.select(new QCenterMapPreviewDto(center.id, center.name, center.longitude, center.latitude, center.signed))
                     .from(center)
                     .leftJoin(center.reviews, review)
                     .groupBy(center)
