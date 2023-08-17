@@ -23,7 +23,7 @@ public interface PresentationRepository extends JpaRepository<Presentation, Long
             "(p.id, p.startDate, p.endDate, p.place, p.content, p.imgCnt, p.videoCnt, p.infoImagePath, pd.id, pd.date, pd.time, pd.ablePersonNum, pd.participantCnt, pd.waitingCnt) " +
             "from Presentation p " +
             "join p.ptDates as pd " +
-            "where p.center.id =:centerId " +
+            "where p.center.id = :centerId " +
             "and :date <= p.endDate")
     List<PresentationWithPtDatesDto> findByCenterAndDateWithPtDates(@Param("centerId") Long centerId, @Param("date") LocalDate date);
 
@@ -34,9 +34,9 @@ public interface PresentationRepository extends JpaRepository<Presentation, Long
             "(p.id, p.startDate, p.endDate, p.place, p.content, p.imgCnt, p.videoCnt, p.infoImagePath, pd.id, pd.date, pd.time, pd.ablePersonNum, pd.participantCnt, pd.waitingCnt, participation.id ,waiting.id) " +
             "from Presentation p " +
             "join p.ptDates as pd " +
-            "left join pd.participations as participation on participation.parent.id =:userId and participation.status = FIS.iLUVit.domain.enumtype.Status.JOINED " +
+            "left join pd.participations as participation on participation.parent.id = :userId and participation.status = FIS.iLUVit.domain.enumtype.Status.JOINED " +
             "left join pd.waitings as waiting on waiting.parent.id =:userId " +
-            "where p.center.id =:centerId " +
+            "where p.center.id = :centerId " +
             "and p.startDate <= :date " +
             "and :date <= p.endDate")
     List<PresentationWithPtDatesDto> findByCenterAndDateWithPtDates(@Param("centerId") Long centerId, @Param("date") LocalDate date, @Param("userId") Long userId);

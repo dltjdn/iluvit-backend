@@ -20,8 +20,8 @@ public interface ScrapPostRepository extends JpaRepository<ScrapPost, Long> {
             "join fetch sp.post p " +
             "join fetch p.user u " +
             "join fetch p.board " +
-            "where s.id =:scrapId " +
-            "and s.user.id =:userId")
+            "where s.id = :scrapId " +
+            "and s.user.id = :userId")
     Slice<ScrapPost> findByScrapWithPost(@Param("userId") Long userId, @Param("scrapId") Long scrapId, Pageable pageable);
 
     /*
@@ -30,7 +30,7 @@ public interface ScrapPostRepository extends JpaRepository<ScrapPost, Long> {
     @Query("select sp " +
             "from ScrapPost sp " +
             "join sp.scrap s " +
-            "where sp.id =:scrapPostId " +
-            "and s.user.id =:userId")
+            "where sp.id = :scrapPostId " +
+            "and s.user.id = :userId")
     Optional<ScrapPost> findByScrapAndPost(@Param("userId") Long userId, @Param("scrapPostId") Long scrapPostId);
 }

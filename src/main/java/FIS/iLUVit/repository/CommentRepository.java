@@ -33,6 +33,6 @@ public interface CommentRepository extends JpaRepository<Comment, Long> {
         댓글 id로 댓글 리스트를 조회합니다.
      */
     @Query("select c from Comment c " +
-            "where c.post.id =:postId ")
+            "where c.post.id = :postId ")
     List<Comment> findByPostId(@Param("postId") Long postId);
 }
