@@ -34,11 +34,6 @@ public class ExpoTokenService {
         return savedToken.getId();
     }
 
-    public void modifyAcceptStatus(Long userId, ExpoTokenRequest request) {
-        ExpoToken expoToken = getExpoTokenWithUserException(request.getToken(), userId);
-
-        expoToken.modifyAcceptStatus(request.getAccept());
-    }
 
     public ExpoTokenDto findExpoTokenByUser(Long userId, String expoToken) {
         ExpoToken token = getExpoTokenWithUserException(expoToken, userId);

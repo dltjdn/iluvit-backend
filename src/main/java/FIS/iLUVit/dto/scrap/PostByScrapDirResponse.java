@@ -10,48 +10,48 @@ import java.time.LocalTime;
 @Getter
 @AllArgsConstructor
 @NoArgsConstructor
-public class ScrapPostPreviewResponse {
-    private Long post_id;
+public class PostByScrapDirResponse {
+    private Long postId;
     private String title;
     private String content;
     private Boolean anonymous;
-    private String nickname; // 작성자 닉네임
-    private Long user_id; // 작성자 id
+    private String nickname;    // 작성자 닉네임
+    private Long userId;        // 작성자 id
     private int commentCnt;
     private int heartCnt;
     private int imgCnt;
 
     private String previewImage;
-    private Long board_id;
-    private String board_name;
+    private Long boardId;
+    private String boardName;
 
     private LocalDate date;
     private LocalTime time;
 
-    private Long center_id;
-    private String center_name;
+    private Long centerId;
+    private String centerName;
 
-    private Long scrapPost_id;
+    private Long scrapPostId;
 
-    public ScrapPostPreviewResponse(ScrapPost sp) {
-        this.scrapPost_id = sp.getId();
-        this.post_id = sp.getPost().getId();
+    public PostByScrapDirResponse(ScrapPost sp) {
+        this.scrapPostId = sp.getId();
+        this.postId = sp.getPost().getId();
         this.title = sp.getPost().getTitle();
         this.content = sp.getPost().getContent();
         this.anonymous = sp.getPost().getAnonymous();
         this.nickname = sp.getPost().getUser().getNickName();
-        this.user_id = sp.getPost().getUser().getId();
+        this.userId = sp.getPost().getUser().getId();
         this.commentCnt = sp.getPost().getCommentCnt();
         this.heartCnt = sp.getPost().getHeartCnt();
         this.imgCnt = sp.getPost().getImgCnt();
-        this.board_id = sp.getPost().getBoard().getId();
-        this.board_name = sp.getPost().getBoard().getName();
+        this.boardId = sp.getPost().getBoard().getId();
+        this.boardName = sp.getPost().getBoard().getName();
         this.date = sp.getPost().getDate();
         this.time = sp.getPost().getTime();
 
         if (sp.getPost().getBoard().getCenter() != null) {
-            this.center_id = sp.getPost().getBoard().getCenter().getId();
-            this.center_name = sp.getPost().getBoard().getCenter().getName();
+            this.centerId = sp.getPost().getBoard().getCenter().getId();
+            this.centerName = sp.getPost().getBoard().getCenter().getName();
         }
     }
 }

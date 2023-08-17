@@ -1,6 +1,7 @@
 package FIS.iLUVit.repository;
 
 import FIS.iLUVit.domain.Center;
+import FIS.iLUVit.domain.enumtype.KindOf;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -9,33 +10,20 @@ import java.util.List;
 import java.util.Optional;
 
 public interface CenterRepository extends JpaRepository<Center, Long>, CenterRepositoryCustom {
-    /*
-    센터 id로 센터를 조회합니다
-     */
-    Optional <Center> findById(Long centerId);
 
-    /*
-        부모님 id별로 시설을 조회합니다.
+    /**
+     * 아이디와 원장 가입 유무로 시설을 조회합니다
      */
-    @Query("select ct from Child c join c.center ct join c.parent p where p.id = :userId")
-    List<Center> findByUser(@Param("userId") Long userId);
+    Optional<Center> findByIdAndSigned(Long centerId, Boolean signed);
 
-    /*
-        시설 id별로 시설을 조회합니다.
+    /**
+     * 시설 아이디 리스트와 종류로 시설을 조회합니다 ( 점수 기준으로 내림차순 후 아이디 기준으로 오름차순 )
      */
-    @Query("select distinct c " +
-            "from Center c " +
-            "where c.id =:centerId")
-    Optional<Center> findByIdWithTeacher(@Param("centerId") Long centerId);
+    List<Center> findByIdInAndKindOfOrderByScoreDescIdAsc(List<Long> centerIds, KindOf kindOf);
 
-    /*
-        시승인이 ACCEPT이고 서명이 되어있다면 id별로 시설을 조회합니다.
+    /**
+     * 시설 아이디 리스트로 시설을 조회합니다 ( 점수 기준으로 내림차순 후 아이디 기준으로 오름차순 )
      */
-    @Query("select distinct c " +
-            "from Center c " +
-            "where c.id =:centerId " +
-            "and c.signed = true")
-    Optional<Center> findByIdAndSigned(@Param("centerId") Long center_id);
-
+    List<Center> findByIdInOrderByScoreDescIdAsc(List<Long> centerIds);
 
 }

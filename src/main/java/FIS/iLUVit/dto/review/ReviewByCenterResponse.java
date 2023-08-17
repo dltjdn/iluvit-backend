@@ -9,7 +9,7 @@ import java.time.LocalTime;
 @Getter
 @NoArgsConstructor
 @AllArgsConstructor
-public class ReviewByCenterDto {
+public class ReviewByCenterResponse {
     private Long id;
     private Long parentId;
     private String username;

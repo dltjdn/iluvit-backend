@@ -49,6 +49,10 @@ dependencies {
 	testCompileOnly 'junit:junit:4.13'
 	testRuntimeOnly 'org.junit.vintage:junit-vintage-engine'
 
+	// webClient 사용
+	implementation 'org.springframework.boot:spring-boot-starter-webflux'
+
+
 	//slackWebHook
 	implementation 'com.github.maricn:logback-slack-appender:1.4.0'
 

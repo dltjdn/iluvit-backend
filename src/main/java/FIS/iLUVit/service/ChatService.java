@@ -153,10 +153,10 @@ public class ChatService {
                 .orElseThrow(() -> new ChatException(ChatErrorResult.USER_NOT_EXIST));
 
         Slice<ChatRoom> chatList = chatRoomRepository.findByReceiverOrderByUpdatedDateDesc(user, pageable);
-        return chatList.map(c -> {
-            ChatRoomDto chatRoomDto = new ChatRoomDto(c);
-            String profileImage = imageService.getProfileImage(c.getSender());
-            chatRoomDto.updateImage(profileImage);
+        return chatList.map(chat -> {
+            ChatRoomDto chatRoomDto = new ChatRoomDto(chat);
+            String profileImagePath = chat.getSender().getProfileImagePath();
+            if (profileImagePath != null) chatRoomDto.updateImage(profileImagePath);
             return chatRoomDto;
         });
     }
@@ -176,8 +176,8 @@ public class ChatService {
 
         Slice<ChatListDto.ChatInfo> chatInfos = chatList.map(ChatListDto.ChatInfo::new);
         ChatListDto chatListDto = new ChatListDto(findRoom, chatInfos);
-        String profileImage = imageService.getProfileImage(findRoom.getSender());
-        chatListDto.updateImage(profileImage);
+        String profileImagePath = findRoom.getSender().getProfileImagePath();
+        if(profileImagePath != null) chatListDto.updateImage(profileImagePath);
         return chatListDto;
     }
 

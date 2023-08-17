@@ -12,25 +12,25 @@ import java.util.Optional;
 public interface ReportRepository extends JpaRepository<Report, Long> {
 
     /**
-     * targetId에 해당하는 신고내역 조회합니다
+     * 해당 신고할 대상(게시글, 댓글) id로 신고를 조회합니다
      */
     Optional<Report> findByTargetId(Long targetId);
 
     /**
-     * target Id에 해당하는 신고내역의 targetId를 null로 하고 상태를 DELETE로 업데이트한다
+     * 해당 post id를 가진 신고의 target id를 null로, status를 DELETE로 변경합니다
      */
     @Modifying(clearAutomatically = true)
     @Query("UPDATE Report r " +
             "SET r.targetId = null, r.status = 'DELETE' "+
-            "WHERE r.targetId = :targetId ")
-    void setTargetIsNullAndStatusIsDelete(Long targetId);
+            "WHERE r.targetId =:postId ")
+    void setTargetIsNullAndStatusIsDelete(@Param("postId") Long postId);
 
     /**
-     * target Id 리스트에 해당하는 신고내역의 targetId를 null로 하고 상태를 DELETE로 업데이트한다
+     * 해당 comment id를 가진 신고의 target id를 null로, status를 DELETE로 변경합니다
      */
     @Modifying(clearAutomatically = true)
     @Query("UPDATE Report r " +
             "SET r.targetId = null, r.status = 'DELETE' "+
-            "WHERE r.targetId in :targetIds")
-    void setTargetIsNullAndStatusIsDelete(List<Long> targetIds);
+            "WHERE r.targetId in :commentIds")
+    void setTargetIsNullAndStatusIsDelete(@Param("commentIds") List<Long> commentIds);
 }

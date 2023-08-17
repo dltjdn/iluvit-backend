@@ -7,7 +7,6 @@ import lombok.NoArgsConstructor;
 @Getter
 @AllArgsConstructor
 @NoArgsConstructor
-public class ScrapPostRequest {
-    private Long postId;
-    private Long scrapId;
+public class ScrapIdResponse {
+    private Long ScrapId;
 }
