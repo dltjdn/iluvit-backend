@@ -35,7 +35,7 @@ public class AlarmEventHandler {
 
         ExpoServerResponse response = ExpoServerUtils.sendToExpoServer(expoTokens, type, alarm.getMessage());
 
-        handleTokenSendingError(response);
+        if(response != null ) handleTokenSendingError(response);
     }
 
     /**
