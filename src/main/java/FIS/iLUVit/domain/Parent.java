@@ -73,7 +73,14 @@ public class Parent extends User {
         this.theme = theme;
     }
 
+    @Override
+    public LoginResponse getLoginInfo() {
+        return new LoginParentResponse(this);
+    }
 
-
+    @Override
+    public UserResponse getUserInfo() {
+        return new ParentResponse(id, nickName, auth);
+    }
 
 }
