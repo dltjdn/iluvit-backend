@@ -18,7 +18,7 @@ public interface AlarmRepository extends JpaRepository<Alarm, Long> {
         알람 dtype이 설명회 전체 알람이 아니고 참여 알람으로 전환되지 않고 설명회 생성 알람이 아니고 설명회 기간 종료 알람이 아닌 것들중에서 사용자별로 조회합니다.
     */
     @Query("select alarm from Alarm alarm " +
-            "where alarm.user.id =:userId and " +
+            "where alarm.user.id = :userId and " +
             "alarm.dtype <> 'PresentationFullAlarm' and alarm.dtype <> 'ConvertedToParticipateAlarm' and alarm.dtype <> 'PresentationCreatedAlarm' and alarm.dtype <> 'PresentationPeriodClosedAlarm' ")
     Slice<Alarm> findActiveByUser(@Param("userId") Long userId, Pageable pageable);
 
@@ -26,7 +26,7 @@ public interface AlarmRepository extends JpaRepository<Alarm, Long> {
         사용자 id별로 설명회 알람을 조회합니다.
     */
     @Query("select alarm from Alarm alarm " +
-            "where alarm.user.id =:userId and " +
+            "where alarm.user.id = :userId and " +
             "(alarm.dtype = 'PresentationFullAlarm' or alarm.dtype = 'ConvertedToParticipateAlarm' or alarm.dtype = 'PresentationCreatedAlarm' or alarm.dtype = 'PresentationPeriodClosedAlarm')")
     Slice<Alarm> findPresentationByUser(@Param("userId") Long userId, Pageable pageable);
 

@@ -25,7 +25,7 @@ public interface CenterRepository extends JpaRepository<Center, Long>, CenterRep
      */
     @Query("select distinct c " +
             "from Center c " +
-            "where c.id =:centerId")
+            "where c.id = :centerId")
     Optional<Center> findByIdWithTeacher(@Param("centerId") Long centerId);
 
     /*
@@ -33,7 +33,7 @@ public interface CenterRepository extends JpaRepository<Center, Long>, CenterRep
      */
     @Query("select distinct c " +
             "from Center c " +
-            "where c.id =:centerId " +
+            "where c.id = :centerId " +
             "and c.signed = true")
     Optional<Center> findByIdAndSigned(@Param("centerId") Long center_id);
 
