@@ -1,16 +1,14 @@
 package FIS.iLUVit.repository;
 
-import FIS.iLUVit.dto.post.PostPreviewDto;
-import FIS.iLUVit.dto.post.QPostPreviewDto;
+import FIS.iLUVit.domain.Center;
+import FIS.iLUVit.domain.Post;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.AllArgsConstructor;
+import org.jetbrains.annotations.NotNull;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
 import org.springframework.data.domain.SliceImpl;
-
-import java.util.Collection;
 import java.util.List;
-
 import static FIS.iLUVit.domain.QBoard.board;
 import static FIS.iLUVit.domain.QCenter.center;
 import static FIS.iLUVit.domain.QPost.post;
@@ -20,35 +18,31 @@ public class PostRepositoryImpl extends PostQueryMethod implements PostRepositor
 
     private final JPAQueryFactory jpaQueryFactory;
 
-    /*
-        시설 id가 주어진 시설 id 리스트에 속하거나 null인지를 확인하고 keywordContains 메서드를 호출하여 키워드 검색을 적용하여 게시글 미리보기 DTO 객체를 불러옵니다.
+    /**
+     *  유저가 속한 시설 게시판들 + 모두의 게시판(center == null)에서 해당 키워드를 포함하는 게시글들을 조회합니다
+     *  ( 게시글 생성 날짜 내림차순 정렬 )
      */
     @Override
-    public Slice<PostPreviewDto> findInCenterByKeyword(Collection<Long> centerIds, String keyword, Pageable pageable) {
-        List<PostPreviewDto> posts = jpaQueryFactory.select(new QPostPreviewDto(post))
+    public Slice<Post> findInCenterByKeyword(List<Center> centers, String keyword, Pageable pageable) {
+        List<Post> posts = jpaQueryFactory.select(post)
                 .from(post)
                 .join(post.board, board).fetchJoin()
                 .leftJoin(board.center, center).fetchJoin()
-                .where(centerIdIn(centerIds).or(center.id.isNull()), keywordContains(keyword))
+                .where(center.in(centers).or(center.isNull()), keywordContains(keyword))
                 .orderBy(post.createdDate.desc())
                 .offset(pageable.getOffset())
                 .limit(pageable.getPageSize() + 1)
                 .fetch();
-        boolean hasNext = false;
 
-        if(posts.size() > pageable.getPageSize()){
-            posts.remove(pageable.getPageSize());
-            hasNext = true;
-        }
-        return new SliceImpl<>(posts, pageable, hasNext);
+        return convertToSlice(posts, pageable);
     }
 
-    /*
-        시설 id가 주어진 시설 id와 동일한지 확인하고 keywordContains 메서드를 호출하여 키워드 검색을 적용하여 게시글 미리보기 DTO 객체를 불러옵니다.
+    /**
+     * 해당 시설 게시판 or 모두의 게시판에서 해당 키워드를 포함하는 게시글들을 조회합니다
      */
     @Override
-    public Slice<PostPreviewDto> findByCenterAndKeyword(Long centerId, String keyword, Pageable pageable) {
-        List<PostPreviewDto> posts = jpaQueryFactory.select(new QPostPreviewDto(post))
+    public Slice<Post> findByCenterAndKeyword(Long centerId, String keyword, Pageable pageable) {
+        List<Post> posts = jpaQueryFactory.select(post)
                 .from(post)
                 .join(post.board, board).fetchJoin()
                 .leftJoin(board.center, center).fetchJoin()
@@ -58,21 +52,15 @@ public class PostRepositoryImpl extends PostQueryMethod implements PostRepositor
                 .limit(pageable.getPageSize() + 1)
                 .fetch();
 
-        boolean hasNext = false;
-
-        if(posts.size() > pageable.getPageSize()){
-            posts.remove(pageable.getPageSize());
-            hasNext = true;
-        }
-        return new SliceImpl<>(posts, pageable, hasNext);
+        return convertToSlice(posts, pageable);
     }
 
-    /*
-        시설 id가 주어진 시설 id 값과 같은지 확인하고 keywordContains 메서드를 호출하여 키워드 검색을 적용하여 게시글 미리보기 DTO 객체를 불러옵니다.
-     */
+   /**
+    * 해당 게시판에서 해당 키워드를 포함하는 게시글들을 모두 조회합니다
+    */
     @Override
-    public Slice<PostPreviewDto> findByBoardAndKeyword(Long boardId, String keyword, Pageable pageable) {
-        List<PostPreviewDto> posts = jpaQueryFactory.select(new QPostPreviewDto(post))
+    public Slice<Post> findByBoardAndKeyword(Long boardId, String keyword, Pageable pageable) {
+        List<Post> posts = jpaQueryFactory.select(post)
                 .from(post)
                 .join(post.board, board).fetchJoin()
                 .where(board.id.eq(boardId), keywordContains(keyword))
@@ -81,21 +69,15 @@ public class PostRepositoryImpl extends PostQueryMethod implements PostRepositor
                 .limit(pageable.getPageSize() + 1)
                 .fetch();
 
-        boolean hasNext = false;
-
-        if(posts.size() > pageable.getPageSize()){
-            posts.remove(pageable.getPageSize());
-            hasNext = true;
-        }
-        return new SliceImpl<>(posts, pageable, hasNext);
+        return convertToSlice(posts, pageable);
     }
 
-    /*
-        시설 id가 주어진 시설 id와 같고 게시글 엔티티의 하트 개수가 주어진 하트 개수보다 크거나 같은지 확인하여 게시글 미리보기 DTO를 불러옵니다.
+    /**
+     * 해당 시설 게시판 or 모두의 게시판에서 좋아요 수가 일정개수 이상인 게시글들을 반환합니다
      */
     @Override
-    public Slice<PostPreviewDto> findHotPosts(Long centerId, Integer heartCnt, Pageable pageable) {
-        List<PostPreviewDto> posts = jpaQueryFactory.select(new QPostPreviewDto(post))
+    public Slice<Post> findHotPosts(Long centerId, Integer heartCnt, Pageable pageable) {
+        List<Post> posts = jpaQueryFactory.select(post)
                 .from(post)
                 .join(post.board, board).fetchJoin()
                 .leftJoin(board.center, center).fetchJoin()
@@ -105,12 +87,20 @@ public class PostRepositoryImpl extends PostQueryMethod implements PostRepositor
                 .limit(pageable.getPageSize() + 1)
                 .fetch();
 
-        boolean hasNext = false;
+        return convertToSlice(posts, pageable);
+    }
 
-        if(posts.size() > pageable.getPageSize()){
+    /**
+     *  List -> SliceImp
+     */
+    @NotNull
+    private static SliceImpl<Post> convertToSlice(List<Post> posts, Pageable pageable) {
+        boolean hasNext = posts.size() > pageable.getPageSize();
+
+        if (hasNext) {
             posts.remove(pageable.getPageSize());
-            hasNext = true;
         }
+
         return new SliceImpl<>(posts, pageable, hasNext);
     }
 }

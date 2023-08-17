@@ -3,14 +3,16 @@ package FIS.iLUVit.controller;
 import FIS.iLUVit.config.argumentResolver.Login;
 import FIS.iLUVit.domain.enumtype.Auth;
 import FIS.iLUVit.dto.board.BoardPreviewDto;
-import FIS.iLUVit.dto.post.PostPreviewDto;
-import FIS.iLUVit.dto.post.PostRequest;
 import FIS.iLUVit.dto.post.PostResponse;
+import FIS.iLUVit.dto.post.PostCreateRequest;
+import FIS.iLUVit.dto.post.PostDetailResponse;
 import FIS.iLUVit.service.PostService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
@@ -28,128 +30,107 @@ public class PostController {
      * COMMON
      */
 
-//    /**
-//     * 작성자: 이창윤
-//     * 작성시간: 2022/06/27 11:31 AM
-//     * 내용: multipart/form-data 형식으로 변환된 request, 이미지 파일 리스트 images 파라미터로 게시글 저장
-//     */
-//    @PostMapping(value = "", consumes = {MediaType.APPLICATION_JSON_VALUE, MediaType.MULTIPART_FORM_DATA_VALUE})
-//    public Long registerPost(@Login Long userId,
-//                             @RequestPart(required = false) List<MultipartFile> images,
-//                             @RequestPart @Validated PostRequest request) {
-//        return postService.savePost(request, images, userId);
-//    }
-
     /**
-     * 작성자: 이창윤
-     * 내용: 게시글 저장
+     * 게시글 저장
      */
     @PostMapping("")
-    public Long createPost(@Login Long userId,
-                                 @ModelAttribute @Validated PostRequest request) {
-        return postService.saveNewPost(request, userId);
+    public ResponseEntity<Void> createPost(@Login Long userId, @ModelAttribute @Validated PostCreateRequest postCreateRequest) {
+        postService.saveNewPost(userId, postCreateRequest);
+        return ResponseEntity.status(HttpStatus.CREATED).build();
     }
 
     /**
-     * 작성자: 이창윤
-     * 작성내용: 게시글 삭제
+     *  게시글 삭제
      */
     @DeleteMapping("{postId}")
-    public Long deletePost(@Login Long userId, @PathVariable("postId") Long postId) {
-        return postService.deletePost(postId, userId);
+    public ResponseEntity<Void> deletePost(@Login Long userId, @PathVariable("postId") Long postId) {
+        postService.deletePost(postId, userId);
+        return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
     }
 
     /**
-     * 작성자: 이창윤
-     * 작성내용: 내가 쓴 게시글 전체 조회
+     * 내가 쓴 게시글 전체 조회
      */
     @GetMapping("mypage")
-    public Slice<PostPreviewDto> getPostByUser(@Login Long userId, Pageable pageable) {
-        return postService.findPostByUser(userId, pageable);
+    public ResponseEntity<Slice<PostResponse>> getPostByUser(@Login Long userId, Pageable pageable) {
+        Slice<PostResponse> postResponse = postService.findPostByUser(userId, pageable);
+        return ResponseEntity.ok(postResponse);
     }
 
     /**
-     * 작성자: 이창윤
-     * 내용: 장터글 끌어올리기
-     * 비고: 현재 시간으로 업데이트
-     */
-    @PutMapping("{postId}/update")
-    public void pullUp(@Login Long userId, @PathVariable("postId") Long postId) {
-        postService.pullUpPost(userId, postId);
-    }
-
-    /**
-     * 작성자: 이창윤
-     * 작성내용: 게시글 제목+내용 검색(전체 게시판[모게 + 속한 시설] 검색)
-     * 비고: input -> 제목 + 내용 검색 키워드, auth -> 유저 권한
+     * [모두의 이야기 + 유저가 속한 센터의 이야기] 에서  게시글 제목+내용 검색
      */
     @GetMapping("search/all")
-    public Slice<PostPreviewDto> getPost(@Login Long userId,
-                                            @RequestParam("input") String keyword,
-                                            Pageable pageable) {
-        return postService.searchPost(keyword, userId, pageable);
+    public ResponseEntity<Slice<PostResponse>> getPost(@Login Long userId, @RequestParam("keyword") String keyword, Pageable pageable) {
+        Slice<PostResponse> postResponses = postService.searchPost(userId, keyword, pageable);
+        return ResponseEntity.ok(postResponses);
     }
 
     /**
-     * 작성자: 이창윤
-     * 작성내용: 게시글 제목+내용+시설 검색 (각 시설 별 검색)
+     * [시설 이야기] or [모두의 이야기] 에서 게시글 제목+내용 검색
      */
-    @GetMapping("search/in-center")
-    public Slice<PostPreviewDto> getPostByCenter(
-            @Login Long userId,
-            @RequestParam("center_id") Long centerId,
-            @RequestParam("input") String keyword,
-            @RequestParam("auth") Auth auth,
-            Pageable pageable) {
-        return postService.searchPostByCenter(centerId, keyword, auth, userId, pageable);
+    @GetMapping(value = {"search/center","search/center/{centerId}"})
+    public ResponseEntity<Slice<PostResponse>> getPostByCenter(@Login Long userId,  @PathVariable(required = false, value="centerId") Long centerId,
+            @RequestParam("keyword") String keyword, Pageable pageable) {
+        Slice<PostResponse> postResponses = postService.searchPostByCenter( userId, centerId, keyword, pageable);
+        return ResponseEntity.ok(postResponses);
     }
 
     /**
-     * 작성자: 이창윤
-     * 작성내용: 게시글 제목+내용+보드 검색 (각 게시판 별 검색)
+     * 각 게시판 별 게시글 제목+내용 검색
      */
-    @GetMapping("search/in-board")
-    public Slice<PostPreviewDto> getPostByBoard(
-            @RequestParam("board_id") Long boardId,
-            @RequestParam("input") String keyword,
-            Pageable pageable) {
-        return postService.searchByBoard(boardId, keyword, pageable);
+    @GetMapping("search/board/{boardId}")
+    public ResponseEntity<Slice<PostResponse>> getPostByBoard(@PathVariable("boardId") Long boardId, @RequestParam("keyword") String keyword, Pageable pageable) {
+        Slice<PostResponse> postResponses = postService.searchByBoard(boardId, keyword, pageable);
+        return ResponseEntity.ok(postResponses);
     }
 
+
     /**
-     * 작성자: 이창윤
-     * 작성내용: 모두의 이야기 게시판 전체 조회
+     * HOT 게시판 게시글 전체 조회
      */
-    @GetMapping("public-main")
-    public List<BoardPreviewDto> getBoardDetailsByPublic(@Login Long userId) {
-        return postService.findBoardDetailsByPublic(userId);
+    @GetMapping(value={"search/hot-board", "search/hot-board/{centerId}"})
+    public ResponseEntity<Slice<PostResponse>> getPostByHotBoard( @PathVariable(required = false, value="centerId") Long centerId, Pageable pageable) {
+        Slice<PostResponse> postResponses = postService.findPostByHeartCnt(centerId, pageable);
+        return ResponseEntity.ok(postResponses);
     }
 
     /**
-     * 작성자: 이창윤
-     * 직성내용: 시설별 이야기 게시판 전체 조회
-     */
-    @GetMapping("center-main")
-    public List<BoardPreviewDto> getBoardDetailsByCenter(@Login Long userId, @RequestParam("center_id") Long centerId) {
-        return postService.findBoardDetailsByCenter(userId, centerId);
-    }
-
-    /**
-     * 작성자: 이창윤
-     * 작성내용: HOT 게시판 게시글 전체 조회
-     */
-    @GetMapping("search/hot-board")
-    public Slice<PostPreviewDto> getPostByHotBoard(@RequestParam(value = "center_id", required = false) Long centerId, Pageable pageable) {
-        return postService.findPostByHeartCnt(centerId, pageable);
-    }
-
-    /**
-     * 작성자: 이창윤
-     * 작성내용: 게시글 상세 조회
+     *  게시글 상세 조회
      */
     @GetMapping("{postId}")
-    public PostResponse getPostDetails(@Login Long userId, @PathVariable("postId") Long postId) {
-        return postService.findPostByPostId(userId, postId);
+    public ResponseEntity<PostDetailResponse> getPostDetails(@Login Long userId, @PathVariable("postId") Long postId) {
+        PostDetailResponse postDetailResponse = postService.findPostByPostId(userId, postId);
+        return ResponseEntity.ok(postDetailResponse);
     }
+
+    /**
+     * 모두의 이야기 게시판 전체 조회
+     */
+    @GetMapping("story")
+    public ResponseEntity<List<BoardPreviewDto>> getBoardDetailsByPublic(@Login Long userId) {
+        List<BoardPreviewDto> boardPreviewDtos = postService.findBoardDetailsByPublic(userId);
+        return ResponseEntity.ok(boardPreviewDtos);
+    }
+
+    /**
+     * 시설별 이야기 게시판 전체 조회
+     */
+    @GetMapping("story/{centerId}")
+    public ResponseEntity<List<BoardPreviewDto>> getBoardDetailsByCenter(@Login Long userId, @PathVariable("centerId") Long centerId) {
+        List<BoardPreviewDto> boardPreviewDtos = postService.findBoardDetailsByCenter(userId, centerId);
+        return ResponseEntity.ok(boardPreviewDtos);
+    }
+
+
+    /**
+     * 장터글 끌어올리기
+     */
+    @PatchMapping ("{postId}/update")
+    public ResponseEntity<Void> pullUp(@Login Long userId, @PathVariable("postId") Long postId) {
+        postService.pullUpPost(userId, postId);
+        return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
+    }
+
 
 }

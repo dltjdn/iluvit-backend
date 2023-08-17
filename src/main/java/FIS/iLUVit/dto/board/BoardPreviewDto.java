@@ -16,8 +16,8 @@ public class BoardPreviewDto {
 
     private Long boardId;
     private String boardName;
-    private List<PostInfo> postInfoList;
     private BoardKind boardKind;
+    private List<PostInfo> postInfoList;
 
     @Getter
     @NoArgsConstructor
@@ -29,9 +29,9 @@ public class BoardPreviewDto {
         private Boolean anonymous;
         private Integer heartCnt;
         private Integer commentCnt;
-        private List<String> images = new ArrayList<>();
+        private List<String> images;
 
-        public PostInfo(Post post) {
+        public PostInfo(Post post, List<String> images) {
             this.postId = post.getId();
             this.title = post.getTitle();
             this.content = post.getContent();
@@ -45,10 +45,7 @@ public class BoardPreviewDto {
             this.anonymous = post.getAnonymous();
             this.heartCnt = post.getHeartCnt();
             this.commentCnt = post.getCommentCnt();
-        }
-
-        public void addImagesInPostInfo(List<String> images){
-            this.images= images;
+            this.images = images;
         }
     }
 

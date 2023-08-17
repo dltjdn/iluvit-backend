@@ -1,70 +1,38 @@
 package FIS.iLUVit.repository;
 
 import FIS.iLUVit.domain.Board;
+import FIS.iLUVit.domain.Center;
 import FIS.iLUVit.domain.Post;
+import FIS.iLUVit.domain.User;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
-import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
-import org.springframework.data.repository.query.Param;
 
 import java.util.List;
-import java.util.Optional;
 
 public interface PostRepository extends JpaRepository<Post, Long>, PostRepositoryCustom {
-    List<Post> findByBoard(Board defaultBoard, Sort id);
-
-    /*
-        사용자, 게시판, 시설 id로 게시글을 조회합니다.
+    /**
+     * 해당 게시판의 게시물 리스트를 조회한다
      */
-    @Query("select p from Post p " +
-            "left join fetch p.user u " +
-            "left join fetch p.board b " +
-            "left join fetch b.center c " +
-            "where p.id = :postId")
-    Optional<Post> findByIdWithUserAndBoardAndCenter(@Param("postId") Long postId);
+    List<Post> findByBoardOrderByPostUpdateDateDesc(Board board);
 
-    /*
-        사용자 id로 게시글을 조회합니다.
+    /**
+     * 해당 유저의 게시물 리스트를 조회한다
      */
-    @Query(value = "select p from Post p join fetch p.user u join fetch p.board b where u.id = :userId")
-    Slice<Post> findByUser(@Param("userId") Long userId, Pageable pageable);
+    Slice<Post> findByUser(User user, Pageable pageable);
 
-    /*
-        게시판 id 리스트 중 최근 3개의 게시글을 불러옵니다.
+    /**
+     * 해당 게시판들을 포함하는 게시물들을 조회한다
      */
-    @Query(value = "select * from " +
-            "(select row_number() over (partition by p.board_id order by p.created_date desc) as ranks, " +
-            "p.* from post p where p.board_id in :boardIds) as ranking " +
-            "where ranking.ranks <= 3 order by board_id, created_date desc ",
-            nativeQuery = true)
-    List<Post> findTop3(@Param("boardIds") List<Long> boardIds);
+    List<Post> findByBoardIn(List<Board> boards);
 
-
-    /*
-        게시글 하트 개수가 가장 많은 3개의 게시글 리스트를 불러옵니다.
+    /**
+     * 일정 좋아요 개수 이상의 게시물을 조회한다 ( 센터가 null이면 모든 게시물, 센터가 null이 아니면 해당 센터의 게시물 )
      */
-    @Query("select p from Post p join p.board b " +
-            "where b.center.id is null and p.heartCnt >= :heartCnt order by p.postCreateDate desc ")
-    List<Post> findTop3ByHeartCnt(@Param("heartCnt") int heartCnt, Pageable pageable);
+    @Query("SELECT p FROM Post p JOIN p.board b " +
+            "WHERE (:center IS NULL OR b.center = :center) AND p.heartCnt >= :heartCnt " +
+            "ORDER BY p.postCreateDate DESC ")
+    List<Post> findHotPostsByHeartCnt(int heartCnt, Center center, Pageable pageable);
 
-    /*
-        시설에 있는 게시글중 하트가 가장 많은 3개의 게시글 리스트를 불러옵니다.
-     */
-    @Query("select p from Post p join p.board b " +
-            "where b.center.id = :centerId and p.heartCnt >= :heartCnt order by p.postCreateDate desc ")
-    List<Post> findTop3ByHeartCntWithCenter(@Param("heartCnt") int heartCnt, @Param("centerId") Long centerId,
-                                            Pageable pageable);
-
-
-    /*
-        게시판에 있는 게시글 id로 게시글을 불러옵니다.
-     */
-    @Query("select p " +
-            "from Post p " +
-            "join fetch p.board b " +
-            "left join fetch b.center " +
-            "where p.id = :postId")
-    Optional<Post> findByIdWithBoard(@Param("postId") Long postId);
 }
