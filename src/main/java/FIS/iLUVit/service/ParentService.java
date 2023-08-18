@@ -125,9 +125,9 @@ public class ParentService {
         Scrap scrap = Scrap.createDefaultScrap(parent);
 
         imageService.saveProfileImage(null, parent);
-        System.out.println("#########"+parent.getId());
+
         parentRepository.save(parent);
-        System.out.println("@@@@@@@@@@@"+parent.getId());
+
         scrapRepository.save(scrap);
 
         // 사용이 끝난 인증번호를 테이블에서 지우기
