@@ -127,6 +127,7 @@ public class ParentService {
         imageService.saveProfileImage(null, parent);
 
         parentRepository.save(parent);
+
         scrapRepository.save(scrap);
 
         // 사용이 끝난 인증번호를 테이블에서 지우기
