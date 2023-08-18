@@ -118,17 +118,17 @@ public class TeacherService {
      */
     public Teacher signupTeacher(SignupTeacherRequest request) {
         // 블랙 유저 검증
-        //blackUserService.isValidUser(request.getPhoneNum());
+        blackUserService.isValidUser(request.getPhoneNum());
 
         // 회원가입 유효성 검사 및 비밀번호 해싱
         String hashedPwd = userService.hashAndValidatePwdForSignup(request.getPassword(), request.getPasswordCheck(), request.getLoginId(), request.getPhoneNum(), request.getNickname());
 
         // 교사 객체 생성
         Teacher teacher;
-        System.out.println("((((((((((((");
+
         // 센터를 선택한 경우
         if (request.getCenterId() != null) {
-            System.out.println("2))))))))))))");
+
             Center center = centerRepository.findByIdWithTeacher(request.getCenterId())
                     .orElseThrow(() -> new SignupException(SignupErrorResult.NOT_EXIST_CENTER));
             teacher = request.createTeacher(center, hashedPwd);
@@ -138,9 +138,9 @@ public class TeacherService {
             Location location = new Location(loAndLat, hangjung);
             teacher.updateLocation(location);
             imageService.saveProfileImage(null, teacher);
-            System.out.println("여기서여기서여기서");
+
             teacherRepository.save(teacher);
-            System.out.println("터지니터지역");
+
             // 시설에 원장들에게 알람보내기
             List<Teacher> teacherList = teacherRepository.findByCenter(center);
             teacherList.forEach(t -> {
@@ -150,29 +150,28 @@ public class TeacherService {
                     String type = "아이러빗";
                     AlarmUtils.publishAlarmEvent(alarm, type);                }
             });
-            System.out.println("333333333");
-        } else {
-            System.out.println(")))))))))))#");// 센터를 선택하지 않은 경우
+
+        } else {// 센터를 선택하지 않은 경우
             teacher = request.createTeacher(null, hashedPwd);
             Pair<Double, Double> loAndLat = mapService.convertAddressToLocation(request.getAddress());
             Pair<String, String> hangjung = mapService.getSidoSigunguByLocation(loAndLat.getFirst(), loAndLat.getSecond());
             Location location = new Location(loAndLat, hangjung);
             teacher.updateLocation(location);
-            System.out.println("4444444444");
+
             teacherRepository.save(teacher);
         }
-        System.out.println("**********");
+
         // 모두의 이야기 default boards bookmark 추가하기
         List<Board> defaultBoards = boardRepository.findDefaultByModu();
         for (Board defaultBoard : defaultBoards) {
             Bookmark bookmark = Bookmark.createBookmark(defaultBoard, teacher);
             boardBookmarkRepository.save(bookmark);
         }
-        System.out.println("$$$$$$$$$$");
+
         // default 스크랩 생성
         Scrap scrap = Scrap.createDefaultScrap(teacher);
         scrapRepository.save(scrap);
-        System.out.println("^^^^^^^^^^^^");
+
         // 사용이 끝난 인증번호 지우기
         authRepository.deleteByPhoneNumAndAuthKind(request.getPhoneNum(), AuthKind.signup);
 
