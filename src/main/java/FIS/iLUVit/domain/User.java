@@ -50,7 +50,7 @@ public class User extends BaseImageEntity {
     @Enumerated(EnumType.STRING)
     protected Auth auth;                   // Teacher or Director or Parent
 
-    @Column(name = "dtype")
+    @Column(name = "dtype", insertable = false, updatable = false)
     protected String dtype;               // Teacher or Parent
 
     public void changePassword(String newPwd) {
