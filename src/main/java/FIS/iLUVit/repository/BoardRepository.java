@@ -44,7 +44,7 @@ public interface BoardRepository extends JpaRepository<Board, Long> {
     @Query("select b " +
             "from Board b " +
             "join fetch b.center c " +
-            "where c.id =:centerId " +
+            "where c.id = :centerId " +
             "and b.isDefault = true")
     List<Board> findDefaultByCenter(@Param("centerId") Long centerId);
 

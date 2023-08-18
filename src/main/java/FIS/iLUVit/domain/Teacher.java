@@ -117,6 +117,16 @@ public class Teacher extends User {
         this.approval = Approval.ACCEPT;
     }
 
+    @Override
+    public LoginResponse getLoginInfo() {
+        return new LoginTeacherResponse(this);
+    }
+
+    @Override
+    public UserResponse getUserInfo() {
+        return new TeacherResponse(id, nickName, auth, center, approval);
+    }
+
     public void beTeacher() {
         this.auth = Auth.TEACHER;
     }

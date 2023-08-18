@@ -23,7 +23,7 @@ public interface ReportRepository extends JpaRepository<Report, Long> {
     @Modifying(clearAutomatically = true)
     @Query("update Report r " +
             "set r.targetId = null, r.status = 'DELETE' "+
-            "where r.targetId =:postId ")
+            "where r.targetId = :postId ")
     void setTargetIsNullAndStatusIsDelete(@Param("postId") Long postId);
 
     /*
