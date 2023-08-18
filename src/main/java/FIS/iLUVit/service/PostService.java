@@ -247,8 +247,9 @@ public class PostService {
 
         List<Bookmark> bookmarkList = boardBookmarkRepository.findBoardByUser(userId);
 
-
+        System.out.println("$$$$$$$$$");
         getBoardPreviews(bookmarkList, boardPreviews, blockedUserIds);
+        System.out.println("********");
 
         // HOT 게시판 정보 추가 ( 유저가 차단한 유저 리스트를 넘겨주어 해당 게시물은 조회되지 않게 한다)
         List<Post> hotPosts = null;
@@ -257,6 +258,7 @@ public class PostService {
         }else{
             hotPosts = postRepository.findTop3ByHeartCnt(Criteria.HOT_POST_HEART_CNT, blockedUserIds);
         }
+        System.out.println("(((((((((((((");
 
         List<BoardPreviewDto> results = new ArrayList<>();
 
@@ -309,17 +311,21 @@ public class PostService {
     }
 
     private void getBoardPreviews(List<Bookmark> bookmarkList, List<BoardPreviewDto> boardPreviews, List<Long> blockedUserIds) {
+        System.out.println("aaaaaaaaa");
         List<Board> boardList = bookmarkList.stream()
                 .map(bookmark -> bookmark.getBoard())
                 .collect(Collectors.toList());
+        System.out.println("bbbbbbb");
 
         addBoardPreviews(boardPreviews, boardList, blockedUserIds);
+        System.out.println("jjjjjjj");
     }
 
     private void addBoardPreviews(List<BoardPreviewDto> boardPreviews, List<Board> boardList, List<Long> blockedUserIds) {
         List<Long> boardIds = boardList
                 .stream().map(Board::getId)
                 .collect(Collectors.toList());
+        System.out.println("ccccc");
 
         List<Post> top4 = null;
         if( blockedUserIds.size() == 0){
@@ -327,27 +333,34 @@ public class PostService {
         }else{
             top4 = postRepository.findTop3(boardIds,blockedUserIds);
         }
+        System.out.println("ddddd");
 
         Map<Board, List<Post>> boardPostMap = top4.stream()
                 .collect(Collectors.groupingBy(post -> post.getBoard()));
+        System.out.println("eeeee");
 
         for (Board board : boardList) {
             if (!boardPostMap.containsKey(board)) {
                 boardPostMap.put(board, new ArrayList<>());
             }
         }
+        System.out.println("ffffff"+boardPostMap);
 
         boardPostMap.forEach((board, postList) -> {
+            System.out.println("yyyyyy"+postList);
             List<BoardPreviewDto.PostInfo> postInfos = postList.stream()
                     .map(post -> {
+                        System.out.println("zzzzzz"+post.getUser().getId()+post.getUser().getNickName());
                         BoardPreviewDto.PostInfo postInfo = new BoardPreviewDto.PostInfo(post);
                         postInfo.addImagesInPostInfo(imageService.getInfoImages(post));
                         return postInfo;
                     })
                     .collect(Collectors.toList());
+            System.out.println("iiiiiiiii");
 
             boardPreviews.add(new BoardPreviewDto(board.getId(), board.getName(), postInfos, board.getBoardKind()));
         });
+        System.out.println("__________");
     }
 
     @NotNull
