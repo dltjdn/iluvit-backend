@@ -31,7 +31,7 @@ public class AlarmEventHandler {
         String type = alarmEvent.getType();
         User user = alarm.getUser();
 
-        List<ExpoToken> expoTokens = expoTokenRepository.findByUser(user);
+        List<ExpoToken> expoTokens = expoTokenRepository.findByUserAndActive(user, true);
 
         ExpoServerResponse response = ExpoServerUtils.sendToExpoServer(expoTokens, type, alarm.getMessage());
 
