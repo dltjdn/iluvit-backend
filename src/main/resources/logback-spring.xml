@@ -48,7 +48,7 @@
 
     <!-- profile 에 따라 slack 에 전송 -->
     <appender name="DEV_SLACK_ERROR" class="com.github.maricn.logback.SlackAppender">
-        <webhookUri>${DEV_SLACK_WEBHOOK_URI}</webhookUri>
+        <webhookUri>https://hooks.slack.com/services/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</webhookUri>
         <channel>#iluvit-dev-error</channel>
         <layout class="ch.qos.logback.classic.PatternLayout">
             <pattern>${LOG_PATTERN_FILE}</pattern>
