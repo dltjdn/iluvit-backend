@@ -1,7 +1,7 @@
 # Iluvit Backend Team
 > 어린이집/유치원 정보 모두 모아 보고싶다면? <br>
 > [![play store badge](http://img.shields.io/badge/Play%20Store-414141?style=flat-square&logo=google-play&link=https://play.google.com/store/apps/details?id=org.sopt.havit)](https://play.google.com/store/apps/details?id=com.iluvit.app&hl=ko-KR) 
-> [![app store badge](http://img.shields.io/badge/App%20Store-0D96F6?logoColor=white&style=flat-square&logo=appstore&link=https://apps.apple.com/us/app/havit/id1607518014)](https://apps.apple.com/kr/)
+> [![app store badge](http://img.shields.io/badge/App%20Store-0D96F6?logoColor=white&style=flat-square&logo=appstore&link=https://apps.apple.com/us/app/havit/id1607518014)](https://apps.apple.com/kr/app/%EC%95%84%EC%9D%B4%EB%9F%AC%EB%B9%97/id6450625509)
 
 <br>
 
