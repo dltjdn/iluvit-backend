@@ -205,11 +205,11 @@ public class PostService {
 
         post.getComments().forEach(comment -> {
             List<CommentResponse> subCommentResponses = comment.getSubComments().stream()
-                    .map(subComment -> blockedUserIds.contains(subComment.getUser()) ?
+                    .map(subComment -> blockedUserIds.contains(subComment.getUser().getId()) ?
                             new CommentResponse(subComment, userId, true) : new CommentResponse(subComment, userId, false))
                     .collect(Collectors.toList());
 
-            if(blockedUserIds.contains(comment.getUser())){
+            if(blockedUserIds.contains(comment.getUser().getId())){
                 commentResponses.add(new CommentResponse(comment, userId, subCommentResponses, true));
             }else{
                 commentResponses.add(new CommentResponse(comment, userId, subCommentResponses, false));

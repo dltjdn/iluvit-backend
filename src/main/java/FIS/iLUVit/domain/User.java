@@ -107,7 +107,6 @@ public class User extends BaseImageEntity {
         this.imgCnt = null;
         this.location = null;
         this.auth=null;
-        this.dtype=null;
     }
 
     public void restorePersonalInfo(BlackUser blackUser){
@@ -124,6 +123,5 @@ public class User extends BaseImageEntity {
         this.imgCnt = blackUser.getImgCnt();
         this.location = blackUser.getLocation();
         this.auth = blackUser.getAuth();
-        this.dtype = blackUser.getDtype();
     }
 }

@@ -118,7 +118,7 @@ public class TeacherService {
      */
     public Teacher signupTeacher(SignupTeacherRequest request) {
         // 블랙 유저 검증
-        //blackUserService.isValidUser(request.getPhoneNum());
+        blackUserService.isValidUser(request.getPhoneNum());
 
         // 회원가입 유효성 검사 및 비밀번호 해싱
         String hashedPwd = userService.hashAndValidatePwdForSignup(request.getPassword(), request.getPasswordCheck(), request.getLoginId(), request.getPhoneNum(), request.getNickname());
@@ -138,7 +138,7 @@ public class TeacherService {
             Location location = new Location(loAndLat, hangjung);
             teacher.updateLocation(location);
             imageService.saveProfileImage(null, teacher);
-   ;
+
             teacherRepository.save(teacher);
 
             // 시설에 원장들에게 알람보내기

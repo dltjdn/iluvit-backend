@@ -1,11 +1,13 @@
 package FIS.iLUVit.dto.board;
 
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import java.util.List;
 @Getter
 @NoArgsConstructor
+@AllArgsConstructor
 public class StoryDto {
     private Long center_id;
     private String story_name;
@@ -25,14 +27,5 @@ public class StoryDto {
             this.post_title = post_title;
             this.post_id = post_id;
         }
-    }
-
-    public StoryDto(Long center_id, String story_name) {
-        this.center_id = center_id;
-        this.story_name = story_name;
-    }
-
-    public void addBoardDtoList(List<BoardDto> boardDtoList){
-        this.boardDtoList = boardDtoList;
     }
 }
