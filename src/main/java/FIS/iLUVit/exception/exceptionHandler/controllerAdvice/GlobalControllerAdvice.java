@@ -91,14 +91,14 @@ public class GlobalControllerAdvice extends ResponseEntityExceptionHandler {
      */
     @ExceptionHandler(InvalidDataAccessApiUsageException.class)
     public ResponseEntity<ErrorResponse> illegalExHandler(InvalidDataAccessApiUsageException e) {
-        log.warn("[exceptionHandler] {}", e);
+        log.warn("[ExceptionHandler] {}", e);
         return ResponseEntity.status(HttpStatus.FORBIDDEN)
                 .body(new ErrorResponse(HttpStatus.FORBIDDEN, "쿼리파라미터가 null 입니다. 토큰이 유효한지 확인해보세요"));
     }
 
     @ExceptionHandler(JWTVerificationException.class)
     public ResponseEntity<ErrorResponse> jwtVerificationException(JWTVerificationException e) {
-        log.warn("[JWTVerificationException] {}", e.getMessage());
+        log.warn("[JwtVerificationException] {}", e.getMessage());
         return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
                 .body(new ErrorResponse(HttpStatus.UNAUTHORIZED, e.getMessage()));
     }
@@ -142,7 +142,7 @@ public class GlobalControllerAdvice extends ResponseEntityExceptionHandler {
      */
     @ExceptionHandler(SignupException.class)
     public ResponseEntity<ErrorResponse> signupExceptionHandler(SignupException e) {
-        log.warn("[signupExceptionHandler] {}", e);
+        log.warn("[SignupExceptionHandler] {}", e);
         return makeErrorResponseEntity(e.getErrorResult());
     }
 
