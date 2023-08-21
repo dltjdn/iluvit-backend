@@ -281,6 +281,24 @@ public class GlobalControllerAdvice extends ResponseEntityExceptionHandler {
     }
 
     /**
+     * Image 관련 에러 등록
+     */
+    @ExceptionHandler(ImageException.class)
+    public ResponseEntity<ErrorResponse> imageErrorResult(ImageException e) {
+        log.warn("[ImageException] ex", e);
+        return makeErrorResponseEntity(e.getErrorResult());
+    }
+
+    /**
+     * PoliceClient 관련 에러 등록
+     */
+    @ExceptionHandler(PoliceClientException.class)
+    public ResponseEntity<ErrorResponse> policeClientErrorResult(PoliceClientException e) {
+        log.warn("[PoliceClientException] ex", e);
+        return makeErrorResponseEntity(e.getErrorResult());
+    }
+
+    /**
      * ErrorResult -> ErrorResponse
      */
     private ResponseEntity<ErrorResponse> makeErrorResponseEntity(ErrorResult errorResult) {
