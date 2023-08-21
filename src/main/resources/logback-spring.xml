@@ -1,32 +1,108 @@
-<?xml version="1.0" encoding="UTF-8" ?>
+<?xml version="1.0" encoding="UTF-8"?>
 <configuration>
-<springProperty name="SLACK_WEBHOOK_URI" source="logging.slack.webhook-uri"/>
-<appender name="SLACK" class="com.github.maricn.logback.SlackAppender">
-    <webhookUri>${SLACK_WEBHOOK_URI}</webhookUri>
-    <layout class="ch.qos.logback.classic.PatternLayout">
-        <pattern>\n%msg %n</pattern>
-    </layout>
-    <username>Error Log</username>
-    <iconEmoji>:warning:</iconEmoji>
-    <colorCoding>true</colorCoding>
-</appender>
 
-<!-- Consol appender 설정 -->
-<appender name="Console" class="ch.qos.logback.core.ConsoleAppender">
-    <encoder>
-        <Pattern>%d %-5level %logger{35} - %msg%n</Pattern>
-    </encoder>
-</appender>
+    <!-- 로그 설정 -->
+    <property name="LOG_DIR" value="./logs"/>
+    <property name="LOG_PATH_NAME" value="${LOG_DIR}/data/"/>
+    <property name="ERROR_LOG_PATH_NAME" value="${LOG_DIR}/error/"/>
+    <property name="LOG_PATTERN_CONSOLE" value="%d{yyyy-MM-dd HH:mm:ss}:%-3relative][%thread] %highlight([ %-5level]) | %cyan(%logger{35}) - %msg%n" />
+    <property name="LOG_PATTERN_FILE" value="[%d{yyyy-MM-dd HH:mm:ss}:%-3relative][%thread] %-5level %logger{35} - %msg%n" />
+    <property name="MAX_HISTORY" value="365" />
+    <springProperty name="DEV_SLACK_WEBHOOK_URI" source="dev.webhook-uri"/>
+    <springProperty name="PROD_SLACK_WEBHOOK_URI" source="prod.webhook-uri"/>
 
-<appender name="ASYNC_SLACK" class="ch.qos.logback.classic.AsyncAppender">
-    <appender-ref ref="SLACK"/>
-    <filter class="ch.qos.logback.classic.filter.ThresholdFilter">
-        <level>ERROR</level>
-    </filter>
-</appender>
+    <!-- 콘솔 출력 -->
+    <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
+        <encoder>
+            <pattern>${LOG_PATTERN_CONSOLE}</pattern>
+        </encoder>
+    </appender>
 
-<root level="INFO">
-    <appender-ref ref="Console" />
-    <appender-ref ref="ASYNC_SLACK"/>
-</root>
+    <!-- 파일로 저장-->
+    <appender name="DATA" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <!-- 일자별로 로그파일 적용하기 -->
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <fileNamePattern>${LOG_PATH_NAME}data_%d{yyyyMMdd}.log</fileNamePattern>
+            <maxHistory>${MAX_HISTORY}</maxHistory> <!-- 일자별 백업파일의 보관기간 -->
+        </rollingPolicy>
+        <encoder>
+            <pattern>${LOG_PATTERN_FILE}</pattern>
+        </encoder>
+    </appender>
+
+    <!-- 에러의 경우는 별도 파일 저장 -->
+    <appender name="ERROR" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <filter class="ch.qos.logback.classic.filter.LevelFilter">
+            <level>ERROR</level>
+            <onMatch>ACCEPT</onMatch>
+            <onMismatch>DENY</onMismatch>
+        </filter>
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy"> <!-- .gz,.zip 등을 넣으면 자동 일자별 로그파일 압축가능 -->
+            <fileNamePattern>${ERROR_LOG_PATH_NAME}error_%d{yyyyMMdd}.log</fileNamePattern>
+            <maxHistory>${MAX_HISTORY}</maxHistory>
+        </rollingPolicy>
+        <encoder>
+            <pattern>${LOG_PATTERN_FILE}</pattern>
+        </encoder>
+    </appender>
+
+    <!-- profile 에 따라 slack 에 전송 -->
+    <appender name="DEV_SLACK_ERROR" class="com.github.maricn.logback.SlackAppender">
+        <webhookUri>${DEV_SLACK_WEBHOOK_URI}</webhookUri>
+        <channel>#iluvit-dev-error</channel>
+        <layout class="ch.qos.logback.classic.PatternLayout">
+            <pattern>${LOG_PATTERN_FILE}</pattern>
+        </layout>
+        <username>❕DEV SERVER ERROR </username>
+        <iconEmoji>:warning:</iconEmoji>
+        <colorCoding>true</colorCoding>
+    </appender>
+    <appender name="DEV_ASYNC_SLACK_ERROR" class="ch.qos.logback.classic.AsyncAppender">
+        <appender-ref ref="DEV_SLACK_ERROR"/>
+        <filter class="ch.qos.logback.classic.filter.ThresholdFilter">
+            <level>WARN</level>
+        </filter>
+    </appender>
+
+    <!-- profile 에 따라 slack 에 전송 -->
+    <appender name="PROD_SLACK_ERROR" class="com.github.maricn.logback.SlackAppender">
+        <webhookUri>${PROD_SLACK_WEBHOOK_URI}</webhookUri>
+        <channel>#iluvit-prod-error</channel>
+        <layout class="ch.qos.logback.classic.PatternLayout">
+            <pattern>${LOG_PATTERN_FILE}</pattern>
+        </layout>
+        <username>❗PROD SERVER ERROR </username>
+        <iconEmoji>:fire:</iconEmoji>
+        <colorCoding>true</colorCoding>
+    </appender>
+    <appender name="PROD_ASYNC_SLACK_ERROR" class="ch.qos.logback.classic.AsyncAppender">
+        <appender-ref ref="PROD_SLACK_ERROR"/>
+        <filter class="ch.qos.logback.classic.filter.ThresholdFilter">
+            <level>WARN</level>
+        </filter>
+    </appender>
+
+    <springProfile name="dev">
+        <logger name="FIS.iLUVit" level="INFO" additivity="false">
+            <appender-ref ref="STDOUT"/>
+            <appender-ref ref="DATA"/>
+        </logger>
+        <logger name="FIS.iLUVit" level="ERROR" additivity="false">
+               <appender-ref ref="ERROR"/>
+               <appender-ref ref="DEV_ASYNC_SLACK_ERROR"/> <!-- 추가 -->
+        </logger>
+    </springProfile>
+    <springProfile name="prod">
+        <logger name="FIS.iLUVit" level="INFO" additivity="false">
+            <appender-ref ref="STDOUT"/>
+            <appender-ref ref="DATA"/>
+        </logger>
+        <logger name="FIS.iLUVit" level="ERROR" additivity="false">
+            <appender-ref ref="ERROR"/>
+            <appender-ref ref="PROD_ASYNC_SLACK_ERROR"/> <!-- 추가 -->
+        </logger>
+    </springProfile>
+
+
+
 </configuration>
