@@ -123,7 +123,8 @@ public class TeacherService {
                 if (t.getAuth() == DIRECTOR) {
                     Alarm alarm = new CenterApprovalReceivedAlarm(t, Auth.TEACHER, t.getCenter());
                     alarmRepository.save(alarm);
-                    AlarmUtils.publishAlarmEvent(alarm);
+                    String type = "아이러빗";
+                    AlarmUtils.publishAlarmEvent(alarm, type);
                 }
             });
         }
@@ -206,7 +207,8 @@ public class TeacherService {
         directors.forEach(director -> {
             Alarm alarm = new CenterApprovalReceivedAlarm(director, Auth.TEACHER, director.getCenter());
             alarmRepository.save(alarm);
-            AlarmUtils.publishAlarmEvent(alarm);
+            String type = "아이러빗";
+            AlarmUtils.publishAlarmEvent(alarm, type);
         });
 
         return teacher;

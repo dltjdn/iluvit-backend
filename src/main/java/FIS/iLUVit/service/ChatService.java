@@ -84,7 +84,8 @@ public class ChatService {
 
         Alarm alarm = new ChatAlarm(receiveUser, sendUser, anonymousInfo);
         alarmRepository.save(alarm);
-        AlarmUtils.publishAlarmEvent(alarm);
+        String type = "아이러빗";
+        AlarmUtils.publishAlarmEvent(alarm, type);
 
         chatRepository.save(myChat);
         chatRepository.save(partnerChat);

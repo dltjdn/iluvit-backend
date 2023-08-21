@@ -27,7 +27,7 @@ public class ExpoServerUtils {
         private String body;
     }
 
-    public static ExpoServerResponse sendToExpoServer(List<ExpoToken> expoTokens, String message) {
+    public static ExpoServerResponse sendToExpoServer(List<ExpoToken> expoTokens, String type, String message) {
         // accept true 인 것만 모으기
         List<String> recipients = expoTokens.stream()
                 .filter(ExpoToken::getAccept)
@@ -38,7 +38,7 @@ public class ExpoServerUtils {
             return null;
         }
 
-        String title = "아이러빗 알림";
+        String title = type + " 알림";
 
         RequestBody body = new RequestBody();
         body.setTo(recipients);

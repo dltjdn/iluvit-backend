@@ -84,7 +84,8 @@ public class CommentService {
         if (!userId.equals(findPost.getUser().getId())) { // 본인 게시글에 댓글단 건 알림 X
             Alarm alarm = new PostAlarm(findPost.getUser(), findPost, comment);
             alarmRepository.save(alarm);
-            AlarmUtils.publishAlarmEvent(alarm);
+            String type = "아이러빗";
+            AlarmUtils.publishAlarmEvent(alarm, type);
         }
         commentRepository.save(comment);
     }

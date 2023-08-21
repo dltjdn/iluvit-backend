@@ -92,7 +92,8 @@ public class PresentationService {
         centerBookmarkRepository.findByCenter(center).forEach(prefer -> {
             Alarm alarm = new PresentationCreatedAlarm(prefer.getParent(), presentation, center);
             alarmRepository.save(alarm);
-            AlarmUtils.publishAlarmEvent(alarm);
+            String type = "아이러빗";
+            AlarmUtils.publishAlarmEvent(alarm, type);
         });
 
         return presentation;
@@ -172,7 +173,8 @@ public class PresentationService {
 
                         Alarm alarm = new ConvertedToParticipateAlarm(waiting.getParent(), presentation, presentation.getCenter());
                         alarmRepository.save(alarm);
-                        AlarmUtils.publishAlarmEvent(alarm);
+                        String type = "아이러빗";
+                        AlarmUtils.publishAlarmEvent(alarm, type);
 
                         participationRepository.save(andRegisterForWaitings);
                     });
