@@ -103,6 +103,7 @@ public class ChildService {
      * 작성내용: 아이 프로필 조회
      */
     public ChildDetailResponse findChildDetails(Long userId, Long childId) {
+        //log.error("controller error log");
         // 프로필 수정하고자 하는 아이 가져오기
         Child child = childRepository.findByIdAndParentWithCenter(userId, childId)
                 .orElseThrow(() -> new UserException(UserErrorResult.NOT_VALID_REQUEST));

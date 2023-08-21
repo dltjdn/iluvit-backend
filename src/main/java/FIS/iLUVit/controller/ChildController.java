@@ -51,6 +51,7 @@ public class ChildController {
      */
     @GetMapping("{childId}")
     public ChildDetailResponse getChildDetails(@Login Long userId, @PathVariable("childId") Long childId) {
+        log.error("ERROR");
         return childService.findChildDetails(userId, childId);
     }
 

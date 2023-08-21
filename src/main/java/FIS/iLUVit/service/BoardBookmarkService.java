@@ -41,8 +41,7 @@ public class BoardBookmarkService {
         // 유저의 즐찾 게시판에서 최신 글 하나씩 뽑아옴.
         // 최신 글 리스트를 센터로 그루핑함
         Map<Center, List<Post>> centerPostMap = mappingCenterPostByBoardBookmark(userId, tmp);
-        System.out.println("***********"+centerPostMap);
-
+;
 
         // 센터-게시글 맵의 키에서 북마크의 센터(센터-게시판 맵)가 없으면 빈 배열과 함께 넣어줌.
         centerBoardMap.keySet()
@@ -55,7 +54,7 @@ public class BoardBookmarkService {
 
         // 센터(이야기)-게시글리스트 Map 루프 돌림.
         centerPostMap.forEach((center, postList) -> {
-            System.out.println("#########"+center+"######"+postList);
+
             StoryDto storyDto;
             // (~의 이야기안의 게시판 + 최신글 1개씩) DTO를 모아 리스트로 만듬.
             Map<Board, List<Post>> boardPostMap = postList.stream()
