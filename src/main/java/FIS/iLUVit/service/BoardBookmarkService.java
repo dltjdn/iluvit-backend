@@ -34,7 +34,6 @@ public class BoardBookmarkService {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new UserException(UserErrorResult.USER_NOT_EXIST));
 
-
         List<Long> blockedUserIds = blockedRepository.findByBlockingUser(user).stream()
                 .map(Blocked::getBlockedUser)
                 .map(User::getId)
@@ -69,7 +68,6 @@ public class BoardBookmarkService {
                 String postTitle = null;
                 Long postId = null;
 
-                System.out.println("^^^^^^"+blockedUserIds);
                 List<Post> posts;
                 if(blockedUserIds.isEmpty()){
                     posts = postRepository.findByBoardOrderByPostUpdateDateDesc(board);

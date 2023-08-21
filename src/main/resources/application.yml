@@ -56,5 +56,5 @@ logging:
   level:
     org.hibernate.SQL: info
     FIS.iLUVit: info
-    FIS.iLUVit.controller: error
+    FIS.iLUVit.controller: warn
     FIS.iLUVit.service: warn
