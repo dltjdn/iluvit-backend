@@ -41,9 +41,6 @@ public class UserService {
     private final ExpoTokenRepository expoTokenRepository;
     private final AlarmService alarmService;
     private final BlackUserRepository blackUserRepository;
-    private final BlackUserService blackUserService;
-
-
 
     /**
      * 작성자: 이승범
@@ -59,9 +56,7 @@ public class UserService {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new UserException(UserErrorResult.NOT_VALID_TOKEN));
 
-        UserResponse userResponse = new UserResponse(user.getId(), user.getNickName(), user.getAuth());
-
-        return userResponse;
+        return user.getUserInfo();
     }
 
     /**
@@ -110,7 +105,6 @@ public class UserService {
         return encoder.encode(password);
     }
 
-
     /**
      *   작성자: 이승범
      *   작성내용: login service layer로 옮김
@@ -140,7 +134,7 @@ public class UserService {
                         () -> tokenPairRepository.save(tokenPair)
                 );
 
-        LoginResponse response = new LoginResponse(principal.getUser());
+        LoginResponse response = principal.getUser().getLoginInfo();
         response.setAccessToken(jwtUtils.addPrefix(jwt));
         response.setRefreshToken(jwtUtils.addPrefix(refresh));
 
@@ -180,7 +174,7 @@ public class UserService {
             String refresh = jwtUtils.createRefreshToken(authentication);
             findTokenPair.updateToken(jwt, refresh);
 
-            LoginResponse response = new LoginResponse(principal.getUser());
+            LoginResponse response = principal.getUser().getLoginInfo();
 
             response.setAccessToken(jwtUtils.addPrefix(jwt));
             response.setRefreshToken(jwtUtils.addPrefix(refresh));
@@ -255,6 +249,5 @@ public class UserService {
 
         return userId;
     }
-
 
 }

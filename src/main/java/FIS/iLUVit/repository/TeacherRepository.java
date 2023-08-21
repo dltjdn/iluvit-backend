@@ -22,7 +22,7 @@ public interface TeacherRepository extends JpaRepository<Teacher, Long> {
      */
     @Query("select distinct t " +
             "from Teacher t " +
-            "where t.id =:userId " +
+            "where t.id = :userId " +
             "and t.approval = 'ACCEPT'")
     Optional<Teacher> findByIdWithCenterWithChildWithParent(@Param("userId") Long userId);
 
@@ -31,15 +31,13 @@ public interface TeacherRepository extends JpaRepository<Teacher, Long> {
      */
     @Query("select t " +
             "from Teacher t " +
-            "where t.id =:userId " +
+            "where t.id = :userId " +
             "and t.center is null")
     Optional<Teacher> findByIdAndNotAssign(@Param("userId") Long userId);
 
     /*
         센터별 교사 리스트를 조회합니다
      */
-    @Query("select t from Teacher t where t.center.id =:centerId")
-    List<Center> findByCenter(@Param("centerId") Long centerId);
     List<Teacher> findByCenter(Center center);
 
     /*
@@ -48,7 +46,7 @@ public interface TeacherRepository extends JpaRepository<Teacher, Long> {
     @EntityGraph(attributePaths = "center")
     @Query("select t " +
             "from Teacher t " +
-            "where t.center.id =:centerId " +
+            "where t.center.id = :centerId " +
             "and t.auth = 'DIRECTOR'")
     List<Teacher> findDirectorByCenter(@Param("centerId") Long centerId);
 
@@ -57,7 +55,7 @@ public interface TeacherRepository extends JpaRepository<Teacher, Long> {
      */
     @Query("select t " +
             "from Teacher t " +
-            "where t.id =:userId " +
+            "where t.id = :userId " +
             "and t.auth = 'DIRECTOR'")
     Optional<Teacher> findDirectorById(@Param("userId") Long userId);
 
@@ -67,7 +65,7 @@ public interface TeacherRepository extends JpaRepository<Teacher, Long> {
      */
     @Query("select t " +
             "from Teacher t " +
-            "where t.center.id =: centerId " +
+            "where t.center.id = :centerId " +
             "and t.approval = 'ACCEPT' ")
     List<Teacher> findByCenterWithApproval(@Param("centerId") Long centerId);
 

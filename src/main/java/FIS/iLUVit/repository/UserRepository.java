@@ -72,7 +72,7 @@ public interface UserRepository extends JpaRepository<User, Long> {
         특정 센터에 속한 교수를 조회하여 User 리스트로 불러옵니다.
      */
     @Query("select teacher from Teacher teacher " +
-            "where teacher.center =:center")
+            "where teacher.center = :center")
     List<User> findTeacherByCenter(@Param("center") Center center);
 
     /*

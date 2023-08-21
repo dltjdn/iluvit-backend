@@ -16,8 +16,8 @@ public interface ReportDetailRepository extends JpaRepository<ReportDetail, Long
      */
     @Query("select rdp " +
             "from ReportDetailPost rdp " +
-            "where rdp.user.id =:userId " +
-            "and rdp.post.id =:targetId ")
+            "where rdp.user.id = :userId " +
+            "and rdp.post.id = :targetId ")
     Optional<ReportDetail> findByUserIdAndTargetPostId(@Param("userId") Long userId, @Param("targetId") Long targetId);
 
     /*
@@ -25,15 +25,15 @@ public interface ReportDetailRepository extends JpaRepository<ReportDetail, Long
      */
     @Query("select rdc " +
             "from ReportDetailComment rdc " +
-            "where rdc.user.id =:userId " +
-            "and rdc.comment.id =:targetId ")
+            "where rdc.user.id = :userId " +
+            "and rdc.comment.id = :targetId ")
     Optional<ReportDetail> findByUserIdAndTargetCommentId(@Param("userId") Long userId, @Param("targetId") Long targetId);
 
     /*
         postId에 해당하는 게시물 ID를 가진 ReportDetailPost 객체들의 post 속성을 null로 업데이트합니다.
      */
     @Modifying(clearAutomatically = true)
-    @Query("update ReportDetailPost  rdp set rdp.post = null where rdp.post.id =:postId")
+    @Query("update ReportDetailPost  rdp set rdp.post = null where rdp.post.id = :postId")
     void setPostIsNull(@Param("postId") Long postId);
 
     /*

@@ -2,6 +2,8 @@ package FIS.iLUVit.domain;
 
 import FIS.iLUVit.domain.embeddable.Location;
 import FIS.iLUVit.domain.enumtype.Auth;
+import FIS.iLUVit.dto.user.UserResponse;
+import FIS.iLUVit.security.LoginResponse;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -48,7 +50,7 @@ public class User extends BaseImageEntity {
     @Enumerated(EnumType.STRING)
     protected Auth auth;                   // Teacher or Director or Parent
 
-    @Column(name = "dtype")
+    @Column(name = "dtype", insertable = false, updatable = false)
     protected String dtype;               // Teacher or Parent
 
     public void changePassword(String newPwd) {
@@ -65,6 +67,14 @@ public class User extends BaseImageEntity {
     @Override
     public int hashCode() {
         return Objects.hash(id);
+    }
+
+    public LoginResponse getLoginInfo() {
+        return new LoginResponse(this);
+    }
+
+    public UserResponse getUserInfo() {
+        return new UserResponse(id, nickName, auth);
     }
 
     public User updateReadAlarm(Boolean readAlarm) {

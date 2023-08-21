@@ -17,7 +17,7 @@ public interface ScrapRepository extends JpaRepository<Scrap, Long> {
     @Query("select distinct s " +
             "from Scrap s " +
             "left join fetch s.scrapPosts " +
-            "where s.user.id =:userId")
+            "where s.user.id = :userId")
     List<Scrap> findScrapsByUserWithScrapPosts(@Param("userId") Long userId);
 
     /*
