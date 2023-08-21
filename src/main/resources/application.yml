@@ -58,4 +58,3 @@ logging:
     FIS.iLUVit: info
     FIS.iLUVit.controller: warn
     FIS.iLUVit.service: warn
-    FIS.iLUVit.exception : warn
