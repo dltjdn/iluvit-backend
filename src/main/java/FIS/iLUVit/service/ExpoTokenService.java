@@ -69,8 +69,7 @@ public class ExpoTokenService {
     /**
      * 비활성화 된 expoToken을 삭제한다
      */
-    public void deleteDeactivatedExpoToken(ExpoTokenDeviceIdRequest expoTokenDeviceIdRequest){
-        String deviceId = expoTokenDeviceIdRequest.getDeviceId();
+    public void deleteDeactivatedExpoToken(String deviceId){
         expoTokenRepository.deleteByDeviceIdAndActive(deviceId, false);
     }
 }
