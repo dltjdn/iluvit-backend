@@ -8,8 +8,8 @@
     <property name="LOG_PATTERN_CONSOLE" value="%d{yyyy-MM-dd HH:mm:ss}:%-3relative][%thread] %highlight([ %-5level]) | %cyan(%logger{35}) - %msg%n" />
     <property name="LOG_PATTERN_FILE" value="[%d{yyyy-MM-dd HH:mm:ss}:%-3relative][%thread] %-5level %logger{35} - %msg%n" />
     <property name="MAX_HISTORY" value="365" />
-    <springProperty name="DEV_SLACK_WEBHOOK_URI" source="dev.webhook-uri"/>
-    <springProperty name="PROD_SLACK_WEBHOOK_URI" source="prod.webhook-uri"/>
+<!--    <springProperty name="DEV_SLACK_WEBHOOK_URI" source="dev.webhook-uri"/>-->
+<!--    <springProperty name="PROD_SLACK_WEBHOOK_URI" source="prod.webhook-uri"/>-->
 
     <!-- 콘솔 출력 -->
     <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
@@ -66,7 +66,7 @@
 
     <!-- profile 에 따라 slack 에 전송 -->
     <appender name="PROD_SLACK_ERROR" class="com.github.maricn.logback.SlackAppender">
-        <webhookUri>${PROD_SLACK_WEBHOOK_URI}</webhookUri>
+        <webhookUri>https://hooks.slack.com/services/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</webhookUri>
         <channel>#iluvit-prod-error</channel>
         <layout class="ch.qos.logback.classic.PatternLayout">
             <pattern>${LOG_PATTERN_FILE}</pattern>
