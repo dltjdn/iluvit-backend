@@ -57,8 +57,7 @@ public class AuthController {
     }
 
     /**
-     * 작성자: 이승범
-     * 작성내용: (회원가입, 비밀번호 찾기, 핸드폰번호 변경) 인증번호 인증
+     * (회원가입, 비밀번호 찾기) 인증번호 인증
      */
     @PostMapping("")
     public void authenticateAuthNum(@RequestBody AuthNumRequest request) {
@@ -66,12 +65,11 @@ public class AuthController {
     }
 
     /**
-     * 작성자: 이승범
-     * 작성내용: (회원가입, 비밀번호 찾기, 핸드폰번호 변경) 인증번호 인증
+     * (핸드폰번호 변경) 인증번호 인증
      */
     @PostMapping("phonenum")
-    public void authenticateAuthNumByPhoneNum(@Login Long userId, @RequestBody AuthNumRequest request) {
-        authService.authenticateAuthNumByPhoneNum(userId, request);
+    public void authenticateAuthNumForChangingPhoneNum(@Login Long userId, @RequestBody AuthNumRequest request) {
+        authService.authenticateAuthNumForChangingPhoneNum(userId, request);
     }
 
     /**

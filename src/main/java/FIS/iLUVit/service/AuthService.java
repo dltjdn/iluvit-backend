@@ -126,7 +126,7 @@ public class AuthService {
      * 작성자: 이승범
      * 작성내용: 핸드폰번호 변경을 위한 인증번호 인증
      */
-    public AuthNumber authenticateAuthNumByPhoneNum(Long userId, AuthNumRequest request) {
+    public AuthNumber authenticateAuthNumForChangingPhoneNum(Long userId, AuthNumRequest request) {
 
         if (! request.getAuthKind().equals(AuthKind.updatePhoneNum)){
             throw new AuthNumberException(AuthNumberErrorResult.NOT_MATCH_AUTHKIND);
