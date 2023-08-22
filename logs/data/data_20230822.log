@@ -1,0 +1,9 @@
+[2023-08-22 11:30:27:462][main] INFO  FIS.iLUVit.ILuVitApplication - Starting ILuVitApplication using Java 17.0.5 on iyunaui-MacBookAir.local with PID 51585 (/Users/iyuna/IdeaProjects/ILUVIT_BACK/build/classes/java/main started by iyuna in /Users/iyuna/IdeaProjects/ILUVIT_BACK)
+[2023-08-22 11:30:27:464][main] INFO  FIS.iLUVit.ILuVitApplication - The following 7 profiles are active: "secret", "s3", "map", "security", "http", "auth", "prod"
+[2023-08-22 11:30:31:4723][main] INFO  FIS.iLUVit.ILuVitApplication - Started ILuVitApplication in 4.631 seconds (JVM running for 5.122)
+[2023-08-22 11:30:52:25973][http-nio-8081-exec-1] INFO  FIS.iLUVit.aspect.trace.Trace - [UUID: 18b71b98-4608-4b5, user: null, request: /child/463 method: GET] |--> Optional org.springframework.data.repository.CrudRepository.findById(Object)
+[2023-08-22 11:30:52:26080][http-nio-8081-exec-1] INFO  FIS.iLUVit.aspect.trace.Trace - [UUID: 18b71b98-4608-4b5, user: null, request: /child/463 method: GET] |<--Optional org.springframework.data.repository.CrudRepository.findById(Object) time = 107ms
+[2023-08-22 11:30:52:26080][http-nio-8081-exec-1] WARN  F.i.security.JwtAuthorizationFilter - [JwtAuthorizationFilter] token 파싱 실패 : 유효하지 않은 토큰입니다.
+[2023-08-22 11:31:21:281][main] INFO  FIS.iLUVit.ILuVitApplication - Starting ILuVitApplication using Java 17.0.5 on iyunaui-MacBookAir.local with PID 51622 (/Users/iyuna/IdeaProjects/ILUVIT_BACK/build/classes/java/main started by iyuna in /Users/iyuna/IdeaProjects/ILUVIT_BACK)
+[2023-08-22 11:31:21:282][main] INFO  FIS.iLUVit.ILuVitApplication - The following 7 profiles are active: "secret", "s3", "map", "security", "http", "auth", "dev"
+[2023-08-22 11:31:25:4314][main] INFO  FIS.iLUVit.ILuVitApplication - Started ILuVitApplication in 4.249 seconds (JVM running for 4.515)
