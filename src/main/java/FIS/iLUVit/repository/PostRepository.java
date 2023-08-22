@@ -23,6 +23,11 @@ public interface PostRepository extends JpaRepository<Post, Long>, PostRepositor
     Slice<Post> findByUser(User user, Pageable pageable);
 
     /**
+     * 해당 유저로 게시글을 조회합니다
+     */
+    List<Post> findByUser(User user);
+
+    /**
      * 해당 게시판들을 포함하는 게시물들을 조회한다
      */
     List<Post> findByBoardIn(List<Board> boards);

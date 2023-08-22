@@ -15,8 +15,8 @@ public enum PostErrorResult implements ErrorResult {
     UNAUTHORIZED_USER_ACCESS(HttpStatus.FORBIDDEN, "권한 없는 유저입니다."),
     ALREADY_EXIST_HEART(HttpStatus.BAD_REQUEST, "이미 좋아요한 게시글입니다."),
     WAITING_OR_REJECT_CANNOT_ACCESS(HttpStatus.FORBIDDEN, "해당 시설에 대해 권한이 없거나 승인 대기 혹은 거부된 회원의 요청입니다."),
-    NO_KEYWORD(HttpStatus.BAD_REQUEST, "검색어를 입력해주세요.")
-
+    NO_KEYWORD(HttpStatus.BAD_REQUEST, "검색어를 입력해주세요."),
+    NO_POST_FOUND(HttpStatus.BAD_REQUEST, "해당 유저가 작성한 게시글이 없습니다."),
     ;
 
     private final HttpStatus httpStatus;

@@ -15,7 +15,10 @@ import org.springframework.data.domain.Slice;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Objects;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -27,9 +30,8 @@ public class ChatService {
     private final PostRepository postRepository;
     private final CommentRepository commentRepository;
     private final ChatRoomRepository chatRoomRepository;
-    private final ImageService imageService;
-
     private final AlarmRepository alarmRepository;
+    private final BlockedRepository blockedRepository;
 
     /**
      * 쪽지 작성 ( 대화방 생성 )
@@ -82,10 +84,18 @@ public class ChatService {
         myRoom.updatePartnerId(partnerRoom.getId());
         partnerRoom.updatePartnerId(myRoom.getId());
 
-        Alarm alarm = new ChatAlarm(receiveUser, sendUser, anonymousInfo);
-        alarmRepository.save(alarm);
-        String type = "아이러빗";
-        AlarmUtils.publishAlarmEvent(alarm, type);
+        // 쪽지를 받은 유저가 자신이 차단한 유저를 조회
+        List<User> blockedUsers = blockedRepository.findByBlockingUser(receiveUser).stream()
+                .map(Blocked::getBlockedUser)
+                .collect(Collectors.toList());
+
+        // 쪽지를 보낸 유저가 쪽지를 받는 유저에게 차단된 상태라면 알림을 발행하지 않음
+        if(!blockedUsers.contains(sendUser)) {
+            Alarm alarm = new ChatAlarm(receiveUser, sendUser, anonymousInfo);
+            alarmRepository.save(alarm);
+            String type = "아이러빗";
+            AlarmUtils.publishAlarmEvent(alarm, type);
+        }
 
         chatRepository.save(myChat);
         chatRepository.save(partnerChat);
@@ -167,19 +177,45 @@ public class ChatService {
      */
     public ChatListDto findChatRoomDetails(Long userId, Long roomId, Pageable pageable) {
 
-        User user = userRepository.findById(userId)
+        User receiverUser = userRepository.findById(userId)
                 .orElseThrow(() -> new ChatException(ChatErrorResult.USER_NOT_EXIST));
 
         ChatRoom findRoom = chatRoomRepository.findById(roomId)
                 .orElseThrow(() -> new ChatException(ChatErrorResult.ROOM_NOT_EXIST));
 
-        Slice<Chat> chatList = chatRepository.findByChatRoomAndChatRoomReceiverOrderByCreatedDateDesc(findRoom, user, pageable);
+        User senderUser = findRoom.getSender();
+
+        // 쪽지를 받은 유저가 자신이 차단한 유저를 조회
+        List<User> blockedUsers = blockedRepository.findByBlockingUser(receiverUser)
+                .stream()
+                .map(Blocked::getBlockedUser)
+                .collect(Collectors.toList());
+
+        Slice<Chat> chatList;
+        // 채팅 상대방이 사용자에게 차단된 상태인지 여부
+        boolean opponentIsBlocked;
+
+        // 차단 관계 유무에 따른 채팅 리스트 조회
+        if (blockedUsers.contains(senderUser)) {
+            // 쪽지를 보낸 유저가 차단된 유저인 경우
+            Blocked blocked = blockedRepository.findByBlockingUserAndBlockedUser(receiverUser, senderUser)
+                    .orElseThrow(() -> new BlockedException(BlockedErrorResult.NOT_EXIST_BLOCKED));
+            LocalDateTime blockedDate = blocked.getCreatedDate();
+            opponentIsBlocked = true;
+            // 차단된 이후의 채팅은 조회하지 않음
+            chatList = chatRepository.findByChatRoom(userId, roomId, blockedDate, pageable);
+        } else {
+            // 쪽지를 보낸 유저와 차단관계가 없는 경우
+            chatList = chatRepository.findByChatRoom(userId, roomId, pageable);
+            opponentIsBlocked = false;
+        }
 
         Slice<ChatListDto.ChatInfo> chatInfos = chatList.map(ChatListDto.ChatInfo::new);
-        ChatListDto chatListDto = new ChatListDto(findRoom, chatInfos);
-        String profileImagePath = findRoom.getSender().getProfileImagePath();
-        if(profileImagePath != null) chatListDto.updateImage(profileImagePath);
-        return chatListDto;
+        ChatListDto chatDto = new ChatListDto(findRoom, chatInfos, opponentIsBlocked);
+        String profileImagePath = senderUser.getProfileImagePath();
+        if(profileImagePath != null) chatDto.updateImage(profileImagePath);
+
+        return chatDto;
     }
 
     /**
@@ -222,4 +258,5 @@ public class ChatService {
         chat.updateChatRoom(chatRoom);
         return chatRoom;
     }
+
 }
