@@ -53,6 +53,7 @@ public class TeacherService {
     private final ScrapRepository scrapRepository;
     private final MapService mapService;
     private final AlarmRepository alarmRepository;
+    private final BlackUserService blackUserService;
 
     @Autowired
     public void setUserService(UserService userService){
@@ -77,6 +78,9 @@ public class TeacherService {
      * 교사 회원가입을 수행합니다
      */
     public void signupTeacher(SignupTeacherRequest request) {
+        // 블랙 유저 검증
+        blackUserService.isValidUser(request.getPhoneNum());
+
         // 회원가입 유효성 검사 및 비밀번호 해싱
         String hashedPwd = userService.hashAndValidatePwdForSignup(request.getPassword(), request.getPasswordCheck(), request.getLoginId(), request.getPhoneNum(), request.getNickname());
 

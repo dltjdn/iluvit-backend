@@ -18,7 +18,7 @@ public interface AlarmRepository extends JpaRepository<Alarm, Long> {
      * 알림종류가 "설명회 가득참", "설명회 참여로 전환" ,"설명회 생성" , "설명회 기간 종료" 가 아닌 해당 사용자의 알림을 조회합니다
      */
     @Query("SELECT alarm FROM Alarm alarm " +
-            "WHERE alarm.user.id =:userId AND " +
+            "WHERE alarm.user.id = :userId AND " +
             "(alarm.dtype <> 'PresentationFullAlarm' AND alarm.dtype <> 'ConvertedToParticipateAlarm' AND alarm.dtype <> 'PresentationCreatedAlarm' AND alarm.dtype <> 'PresentationPeriodClosedAlarm')")
     Slice<Alarm> findActiveByUser(Long userId, Pageable pageable);
 

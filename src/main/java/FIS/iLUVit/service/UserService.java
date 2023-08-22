@@ -2,6 +2,7 @@ package FIS.iLUVit.service;
 
 import FIS.iLUVit.domain.*;
 import FIS.iLUVit.domain.enumtype.AuthKind;
+import FIS.iLUVit.domain.enumtype.UserStatus;
 import FIS.iLUVit.dto.user.*;
 import FIS.iLUVit.exception.*;
 import FIS.iLUVit.repository.*;
@@ -21,6 +22,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 @Transactional
@@ -36,41 +38,49 @@ public class UserService {
     private final BCryptPasswordEncoder encoder;
     private final AuthenticationManager authenticationManager;
     private final JwtUtils jwtUtils;
+    private final BlackUserRepository blackUserRepository;
 
     /**
      * 유저 기본정보( id, nickname, auth )를 반환합니다
      */
-    public UserBasicInfoDto findUserDetails(Long id) {
+    public UserBasicInfoDto findUserDetails(Long userId) {
+        // 블랙 유저 검증
+        blackUserRepository.findByUserId(userId)
+                .ifPresent(blackUser -> {
+                            throw new UserException(UserErrorResult.USER_IS_BLACK_OR_WITHDRAWN);
+                });
         // 유저 id로 유저 조회
-        User findUser = userRepository.findById(id)
+        User user = userRepository.findById(userId)
                 .orElseThrow(() -> new UserException(UserErrorResult.NOT_VALID_TOKEN));
 
         // 유저의 기본 정보 반환
-        return findUser.getUserInfo();
+        return user.getUserInfo();
     }
 
     /**
      * 중복된 로그인 아이디일 경우 에러를 반환합니다
      */
     public void checkLoginIdAvailability(String loginId) {
-        // 로그인 아이디로 유저 조회
-        userRepository.findByLoginId(loginId)
-                .ifPresent((user)->{
-                    // 이미 존재하는 아이디인 경우 예외 발생
-                    throw new UserException(UserErrorResult.ALREADY_LOGINID_EXIST);
-                });
+        Optional<BlackUser> blackUser = blackUserRepository.findByLoginId((loginId));
+        Optional<User> user = userRepository.findByLoginId(loginId);
+
+        // 블랙 유저나 유저에 있는 로그인 아이디면 가입불가
+        if (blackUser.isPresent() || user.isPresent()) {
+            throw new UserException(UserErrorResult.ALREADY_LOGINID_EXIST);
+        }
     }
 
     /**
      * 중복된 닉네임일 경우 에러를 반환힙니다
      */
     public void checkNicknameAvailability(String nickname) {
-        // 닉네임으로 유저 조회
-        userRepository.findByNickName(nickname)
-                .ifPresent((user)->{
-                    // 이미 존재하는 닉네임인 경우 예외 발생
-                    throw new UserException(UserErrorResult.ALREADY_NICKNAME_EXIST);
-                });
+        Optional<BlackUser> blackUser = blackUserRepository.findByNickName(nickname);
+        Optional<User> user = userRepository.findByNickName(nickname);
+
+        // 블랙 유저나 유저에 있는 닉네임이면 가입불가
+        if (blackUser.isPresent() || user.isPresent()) {
+            throw new UserException(UserErrorResult.ALREADY_NICKNAME_EXIST);
+        }
     }
 
     /**
@@ -100,6 +110,12 @@ public class UserService {
      * 유저의 로그인 요청을 처리합니다
      */
     public UserDto login(LoginRequestDto request) {
+        // 영구정지, 관리자에 의한 이용제한, 신고 누적 3회에 대한 이용제한 유저인지 검증
+        blackUserRepository.findRestrictedByLoginId(request.getLoginId())
+                .ifPresent(blackUser -> {
+                    throw new UserException(UserErrorResult.USER_IS_BLACK);
+                });
+
         // 아이디 및 비밀번호 확인을 위해 authenticationManager를 사용하여 인증
         Authentication authentication = authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(request.getLoginId(), request.getPassword()));
@@ -206,10 +222,13 @@ public class UserService {
         // 유저 정보 삭제 & 게시글, 댓글, 채팅, 시설리뷰 작성자 '알 수 없음'
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new UserException(UserErrorResult.NOT_VALID_TOKEN));
+        // 15일 동안 재가입 방지를 위해 블랙 유저에 저장
+        blackUserRepository.save(new BlackUser(user, UserStatus.WITHDRAWN));
 
+        // id 제외 유저 정보 삭제
         user.deletePersonalInfo();
 
-
+        // 스크랩 폴더 삭제 -> 스크랩한 포스트 casecade 됨
         List<Scrap> scrapDirs = scrapRepository.findByUser(user);
 
         // 스크랩 폴더 삭제 -> 스크랩한 포스트 casecade 됨
@@ -221,7 +240,6 @@ public class UserService {
 
         //유저 알람 전체 삭제
         alarmService.deleteAllAlarm(userId);
-
         //유저의 expoToken 모두 삭제
         expoTokenRepository.deleteAllByUser(user);
 
