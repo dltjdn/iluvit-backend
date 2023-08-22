@@ -57,8 +57,10 @@ jobs:
           touch ./application-auth.yml
           echo "${{ secrets.AUTH_YML }}" > ./application-auth.yml  
           cd ../
-          mkdir /logs/data
-          mkdir /logs/error
+          mkdir logs
+          cd logs
+          mkdir data
+          mkdir error
       
 
       # (4) Gradle build (Test 제외)
