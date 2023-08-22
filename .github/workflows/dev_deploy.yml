@@ -55,12 +55,10 @@ jobs:
           touch ./application-security.yml
           echo "${{ secrets.SECURITY_YML }}" > ./application-security.yml
           touch ./application-auth.yml
-          echo "${{ secrets.AUTH_YML }}" > ./application-auth.yml
-          cd .
-          mkdir logs
-          cd logs
-          mkdir data
-          mkdir error
+          echo "${{ secrets.AUTH_YML }}" > ./application-auth.yml   
+          mkdir ./logs/data
+          mkdir ./logs/error
+      
 
       # (4) Gradle build (Test 제외)
       - name: Build with Gradle
