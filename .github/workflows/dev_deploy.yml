@@ -4,6 +4,9 @@ on:
   push:
     branches:
       - release
+  pull_reqeust:
+    branches:
+      - release
 
 env:
   AWS_REGION: ap-northeast-2
@@ -40,6 +43,8 @@ jobs:
       - name: make gitignore files
         run: |
           cd ./src/main/resources
+          touch ./logback-spring.xml
+          echo "${{ secrets.LOGBACK_XML }}" > ./logback-spring.xml  
           touch ./application.properties
           echo "${{ secrets.PROPERTIES }}" > ./application.properties
           touch ./application-dev.yml
