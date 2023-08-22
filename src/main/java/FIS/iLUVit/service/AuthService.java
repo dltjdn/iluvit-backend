@@ -102,22 +102,39 @@ public class AuthService {
 
     /**
      * 작성자: 이승범
-     * 작성내용: (회원가입, 비밀번호 찾기, 핸드폰번호 변경을 위한) 인증번호 인증
+     * 작성내용: 회원가입, 비밀번호 찾기를 위한 인증번호 인증
      */
-    public AuthNumber authenticateAuthNum(Long userId, AuthNumRequest request) {
-
-        AuthNumber authNumber;
-
-        if (request.getAuthKind().equals(AuthKind.updatePhoneNum)) {
-            authNumber = authRepository
-                    .findByPhoneNumAndAuthNumAndAuthKindAndUserId(request.getPhoneNum(), request.getAuthNum(), request.getAuthKind(), userId)
-                    .orElseThrow(() -> new AuthNumberException(AuthNumberErrorResult.AUTHENTICATION_FAIL));
-
-        } else {
-            authNumber = authRepository
-                    .findByPhoneNumAndAuthNumAndAuthKind(request.getPhoneNum(), request.getAuthNum(), request.getAuthKind())
-                    .orElseThrow(() -> new AuthNumberException(AuthNumberErrorResult.AUTHENTICATION_FAIL));
+    public AuthNumber authenticateAuthNum(AuthNumRequest request) {
+        AuthKind authKind = request.getAuthKind();
+        if (authKind != AuthKind.signup && authKind != AuthKind.findPwd && authKind != AuthKind.findLoginId) {
+            throw new AuthNumberException(AuthNumberErrorResult.NOT_MATCH_AUTHKIND);
         }
+
+        AuthNumber authNumber = authRepository
+                .findByPhoneNumAndAuthNumAndAuthKind(request.getPhoneNum(), request.getAuthNum(), request.getAuthKind())
+                .orElseThrow(() -> new AuthNumberException(AuthNumberErrorResult.AUTHENTICATION_FAIL));
+
+        if (Duration.between(authNumber.getCreatedDate(), LocalDateTime.now()).getSeconds() > authValidTime) {
+            throw new AuthNumberException(AuthNumberErrorResult.EXPIRED);
+        } else {
+            authNumber.AuthComplete();
+        }
+        return authNumber;
+    }
+
+    /**
+     * 작성자: 이승범
+     * 작성내용: 핸드폰번호 변경을 위한 인증번호 인증
+     */
+    public AuthNumber authenticateAuthNumForChangingPhoneNum(Long userId, AuthNumRequest request) {
+
+        if (! request.getAuthKind().equals(AuthKind.updatePhoneNum)){
+            throw new AuthNumberException(AuthNumberErrorResult.NOT_MATCH_AUTHKIND);
+        }
+
+        AuthNumber authNumber = authRepository
+                .findByPhoneNumAndAuthNumAndAuthKindAndUserId(request.getPhoneNum(), request.getAuthNum(), request.getAuthKind(), userId)
+                .orElseThrow(() -> new AuthNumberException(AuthNumberErrorResult.AUTHENTICATION_FAIL));
 
         if (Duration.between(authNumber.getCreatedDate(), LocalDateTime.now()).getSeconds() > authValidTime) {
             throw new AuthNumberException(AuthNumberErrorResult.EXPIRED);
@@ -134,7 +151,7 @@ public class AuthService {
     public String authenticateAuthNumForFindLoginId(AuthNumRequest request) {
 
         // request와 일치하는 유효한 인증번호가 있는지 검공
-        AuthNumber authNumber = authenticateAuthNum(null, request);
+        AuthNumber authNumber = authenticateAuthNum(request);
 
         User findUser = userRepository.findByPhoneNumber(authNumber.getPhoneNum())
                 .orElseThrow(() -> new AuthNumberException(AuthNumberErrorResult.NOT_SIGNUP_PHONE));
