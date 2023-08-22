@@ -35,8 +35,8 @@ jobs:
       - name: Grant execute permission for gradlew
         run: chmod +x gradlew
 
-      ## gitignore한 파일 생성해주기
-      ## (3) create application.properties
+      # gitignore한 파일 생성해주기
+      # (3) create application.properties
       - name: make gitignore files
         run: |
           cd ./src/main/resources
