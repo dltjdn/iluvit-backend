@@ -37,7 +37,7 @@ jobs:
 
       ## gitignore한 파일 생성해주기
       ## (3) create application.properties
-      - name: make resources file
+      - name: make gitignore files
         run: |
           cd ./src/main/resources
           touch ./application.properties
@@ -56,7 +56,11 @@ jobs:
           echo "${{ secrets.SECURITY_YML }}" > ./application-security.yml
           touch ./application-auth.yml
           echo "${{ secrets.AUTH_YML }}" > ./application-auth.yml
-
+          cd .
+          mkdir logs
+          cd logs
+          mkdir data
+          mkdir error
 
       # (4) Gradle build (Test 제외)
       - name: Build with Gradle
