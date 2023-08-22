@@ -39,8 +39,6 @@ jobs:
       ## (3) create application.properties
       - name: make gitignore files
         run: |
-          mkdir -p ./logs/error
-          mkdir -p ./logs/data
           cd ./src/main/resources
           touch ./application.properties
           echo "${{ secrets.PROPERTIES }}" > ./application.properties
