@@ -45,4 +45,5 @@ src/main/resources/application-map.yml
 src/main/resources/application-security.yml
 src/main/resources/application-http.yml
 src/main/resources/application-auth.yml
+src/main/resources/logback-spring.xml
 src/test/resources
