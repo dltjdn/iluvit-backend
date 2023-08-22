@@ -56,9 +56,6 @@ jobs:
           echo "${{ secrets.SECURITY_YML }}" > ./application-security.yml
           touch ./application-auth.yml
           echo "${{ secrets.AUTH_YML }}" > ./application-auth.yml  
-          touch ./logback-spring.xml
-          echo "${{ secrets.LOGBACK_XML }}" > ./logback-spring.xml  
-          
     
 
       # (4) Gradle build (Test 제외)
