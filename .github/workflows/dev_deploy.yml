@@ -4,7 +4,7 @@ on:
   push:
     branches:
       - release
-  pull_reqeust:
+  pull_request:
     branches:
       - release
 

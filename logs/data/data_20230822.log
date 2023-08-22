@@ -31,3 +31,5 @@
 [2023-08-22 12:31:10:380][main] INFO  FIS.iLUVit.ILuVitApplication - Starting ILuVitApplication using Java 17.0.5 on iyunaui-MacBookAir.local with PID 53597 (/Users/iyuna/IdeaProjects/ILUVIT_BACK/build/classes/java/main started by iyuna in /Users/iyuna/IdeaProjects/ILUVIT_BACK)
 [2023-08-22 12:31:10:383][main] INFO  FIS.iLUVit.ILuVitApplication - The following 7 profiles are active: "secret", "s3", "map", "security", "http", "auth", "dev"
 [2023-08-22 12:31:14:4665][main] INFO  FIS.iLUVit.ILuVitApplication - Started ILuVitApplication in 4.577 seconds (JVM running for 4.919)
+[2023-08-22 12:44:04:271][main] INFO  FIS.iLUVit.ILuVitApplication - Starting ILuVitApplication using Java 17.0.5 on iyunaui-MacBookAir.local with PID 54956 (/Users/iyuna/IdeaProjects/ILUVIT_BACK/build/classes/java/main started by iyuna in /Users/iyuna/IdeaProjects/ILUVIT_BACK)
+[2023-08-22 12:44:04:272][main] INFO  FIS.iLUVit.ILuVitApplication - The following 7 profiles are active: "secret", "s3", "map", "security", "http", "auth", "dev"
