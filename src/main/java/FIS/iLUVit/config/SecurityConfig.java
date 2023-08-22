@@ -55,7 +55,7 @@ public class SecurityConfig {
                     .antMatchers("/parent/**","/participation/**","/waiting/**","/center-bookmark/**").hasRole("PARENT")
                     .antMatchers(HttpMethod.PATCH,"/expo-tokens/deactivate").permitAll()
                     .antMatchers("/alarm/**", "/board-bookmark/**", "/board/**","/center/**", "/chat/**", "/child/**", "/comment/**", "/comment-heart/**", "/expo-token/**"
-                            , "/post/**", "/post-heart/**", "/presentation/**", "/report/**", "/review/**", "/review-heart/**", "/scrap/**", "/user/**", "/password/**")
+                            , "/post/**", "/post-heart/**", "/presentation/**", "/report/**", "/review/**", "/review-heart/**", "/scrap/**", "/user/**", "/password/**","/auth/phonenum/**")
                         .hasAnyRole("TEACHER", "DIRECTOR", "PARENT")
                     .anyRequest().permitAll();
 
