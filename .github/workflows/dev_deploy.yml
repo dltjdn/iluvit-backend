@@ -43,6 +43,8 @@ jobs:
       - name: make gitignore files
         run: |
           cd ./src/main/resources
+          touch ./logback-spring.xml
+          echo "${{ secrets.LOGBACK_XML }}" > ./logback-spring.xml
           touch ./application.properties
           echo "${{ secrets.PROPERTIES }}" > ./application.properties
           touch ./application-dev.yml
@@ -59,6 +61,7 @@ jobs:
           echo "${{ secrets.SECURITY_YML }}" > ./application-security.yml
           touch ./application-auth.yml
           echo "${{ secrets.AUTH_YML }}" > ./application-auth.yml  
+    
 
       # (4) Gradle build (Test 제외)
       - name: Build with Gradle
