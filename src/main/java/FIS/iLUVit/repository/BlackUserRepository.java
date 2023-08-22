@@ -16,7 +16,6 @@ public interface BlackUserRepository extends JpaRepository<BlackUser, Long> {
      */
     Optional<BlackUser> findByLoginId(String loginId);
 
-
     /**
      * 해당 유저아이디로 블랙유저를 조회합니다
      */
@@ -38,19 +37,19 @@ public interface BlackUserRepository extends JpaRepository<BlackUser, Long> {
     Optional<BlackUser> findByPhoneNumberAndUserStatus(String phoneNumber, UserStatus userStatus);
 
     /**
-     * 해당 핸드폰 번호를 가지고 유저 상태가 영구정지/관리자에 의한 이용제한/신고누적 3회 이용제한인 블랙 유저를 조회합니다
+     * 해당 핸드폰 번호를 가지고 유저 상태가 영구정지/일주일간이용제한인 블랙 유저를 조회합니다
      */
     @Query("SELECT blackUser FROM BlackUser blackUser " +
             "WHERE blackUser.phoneNumber = :phoneNumber AND " +
-            "(blackUser.userStatus = 'SUSPENDED' OR blackUser.userStatus = 'RESTRICTED_ADMIN' OR blackUser.userStatus = 'RESTRICTED_REPORT') ")
+            "(blackUser.userStatus = 'BAN' OR blackUser.userStatus = 'RESTRICTED_SEVEN_DAYS') ")
     Optional<BlackUser> findRestrictedByPhoneNumber(String phoneNumber);
 
     /**
-     * 해당 로그인 아이디를 가지고 유저 상태가 영구정지/관리자에 의한 이용제한/신고누적 3회 이용제한인 블랙 유저를 조회합니다
+     * 해당 로그인 아이디를 가지고 유저 상태가 영구정지/일주일간 이용제한/회원탈퇴인 블랙 유저를 조회합니다
      */
     @Query("SELECT blackUser FROM BlackUser blackUser " +
             "WHERE blackUser.loginId = :loginId AND " +
-            "(blackUser.userStatus = 'SUSPENDED' OR blackUser.userStatus = 'RESTRICTED_ADMIN' OR blackUser.userStatus = 'RESTRICTED_REPORT') ")
+            "(blackUser.userStatus = 'BAN' OR blackUser.userStatus = 'RESTRICTED_SEVEN_DAYS' OR blackUser.userStatus = 'WITHDRAWN') ")
     Optional<BlackUser> findRestrictedByLoginId(String loginId);
 
     /**

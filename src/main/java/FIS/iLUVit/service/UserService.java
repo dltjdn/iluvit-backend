@@ -86,7 +86,7 @@ public class UserService {
     /**
      * 비밀번호를 변경합니다
      */
-    public User changePassword(Long id, PasswordUpdateDto request) {
+    public void changePassword(Long id, PasswordUpdateDto request) {
         // 유저 id로 유저 정보 조회
         User findUser = userRepository.findById(id)
                 .orElseThrow(() -> new UserException(UserErrorResult.NOT_VALID_TOKEN));
@@ -102,18 +102,16 @@ public class UserService {
 
         // 비밀번호 변경
         findUser.changePassword(encoder.encode(request.getNewPwd()));
-
-        return findUser;
     }
 
     /**
      * 유저의 로그인 요청을 처리합니다
      */
     public UserDto login(LoginRequestDto request) {
-        // 영구정지, 관리자에 의한 이용제한, 신고 누적 3회에 대한 이용제한 유저인지 검증
+        // 영구정지, 일주일간 이용제한 유저인지 검증
         blackUserRepository.findRestrictedByLoginId(request.getLoginId())
                 .ifPresent(blackUser -> {
-                    throw new UserException(UserErrorResult.USER_IS_BLACK);
+                    throw new UserException(UserErrorResult.USER_IS_BLACK_OR_WITHDRAWN);
                 });
 
         // 아이디 및 비밀번호 확인을 위해 authenticationManager를 사용하여 인증
@@ -218,7 +216,7 @@ public class UserService {
     /**
      * 회원 탈퇴 요청을 처리합니다 ( 교사, 학부모 공통 )
      */
-    public long withdrawUser(Long userId){
+    public void withdrawUser(Long userId){
         // 유저 정보 삭제 & 게시글, 댓글, 채팅, 시설리뷰 작성자 '알 수 없음'
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new UserException(UserErrorResult.NOT_VALID_TOKEN));
@@ -233,17 +231,15 @@ public class UserService {
 
         // 스크랩 폴더 삭제 -> 스크랩한 포스트 casecade 됨
         scrapDirs.forEach(scrapDir -> {
-            if(scrapDir.getIsDefault() == false){
+            if(!scrapDir.getIsDefault()){
                 scrapService.deleteScrapDir(userId, scrapDir.getId());
-            };
+            }
         });
 
         //유저 알람 전체 삭제
         alarmService.deleteAllAlarm(userId);
         //유저의 expoToken 모두 삭제
         expoTokenRepository.deleteAllByUser(user);
-
-        return userId;
     }
 
 }

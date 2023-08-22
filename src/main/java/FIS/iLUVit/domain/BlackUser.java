@@ -35,7 +35,7 @@ public class BlackUser extends BaseImageEntity {
     @Enumerated(EnumType.STRING)
     private Auth auth;// Teacher, Director or Parent
     @Enumerated(EnumType.STRING)
-    private UserStatus userStatus;      // Suspended, Restricted or Withdrawn
+    private UserStatus userStatus;      // 회원탈퇴, 일주일간 이용제한, 영구정지
 
     public BlackUser(User user, UserStatus userStatus) {
         this.userId = user.getId();

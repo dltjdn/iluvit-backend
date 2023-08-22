@@ -130,7 +130,7 @@ public class BlackUserService {
      * 블랙유저인지 검증합니다
      */
     public void isValidUser(String phoneNum) {
-        //현재 영구정지, 관리자에 의한 이용제한, 신고 누적 3회에 대한 이용제한 유저는 가입 불가
+        //현재 영구정지, 일주일간 이용제한 유저는 가입 불가
         blackUserRepository.findRestrictedByPhoneNumber(phoneNum)
                 .ifPresent(blackUser -> {
                     throw new UserException(UserErrorResult.USER_IS_BLACK);
