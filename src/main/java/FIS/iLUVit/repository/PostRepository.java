@@ -1,5 +1,6 @@
 package FIS.iLUVit.repository;
 
+import FIS.iLUVit.domain.Board;
 import FIS.iLUVit.domain.Post;
 import FIS.iLUVit.domain.User;
 import org.springframework.data.domain.Pageable;
@@ -12,6 +13,11 @@ import java.util.List;
 import java.util.Optional;
 
 public interface PostRepository extends JpaRepository<Post, Long>, PostRepositoryCustom {
+    /**
+     * 해당 게시판의 게시물 리스트를 조회한다
+     */
+    List<Post> findByBoardOrderByPostUpdateDateDesc(Board board);
+    List<Post> findByBoardAndUserIdNotInOrderByPostUpdateDateDesc(Board board, List<Long> blockedUserIds);
 
     /*
         사용자, 게시판, 시설 id로 게시글을 조회합니다.

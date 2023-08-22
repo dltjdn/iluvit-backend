@@ -55,6 +55,6 @@ management:
 logging:
   level:
     org.hibernate.SQL: info
-  slack:
-    webhook-uri: https://hooks.slack.com/services/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
-  config: classpath:logback-spring.xml
+    FIS.iLUVit: info
+    FIS.iLUVit.controller: warn
+    FIS.iLUVit.service: warn
