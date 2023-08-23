@@ -23,8 +23,10 @@ public class CommentReplyResponse {
     private LocalTime time;
     private Boolean anonymous;
     private Boolean canDelete;
+    private Boolean isBlocked;  // 댓글 차단 여부
 
-    public CommentReplyResponse(Comment comment, Long userId) {
+
+    public CommentReplyResponse(Comment comment, Long userId, Boolean isBlocked) {
         this.id = comment.getId();
         User writer = comment.getUser();
         if (writer != null) {
@@ -51,5 +53,6 @@ public class CommentReplyResponse {
         this.content = comment.getContent();
         this.date = comment.getDate();
         this.time = comment.getTime();
+        this.isBlocked = isBlocked;
     }
 }

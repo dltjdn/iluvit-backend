@@ -45,7 +45,7 @@ public class PostDetailResponse {
     private List<CommentDto> comments;
 
 
-    public PostDetailResponse(Post post, List<String> encodedImages, String encodedProfileImage, Long userId) {
+    public PostDetailResponse(Post post, List<String> infoImages, String profileImage, Long userId, List<CommentDto> commentDtos) {
         this.id = post.getId();
         if (post.getUser() != null) {
             if (Objects.equals(post.getUser().getId(), userId)) {
@@ -66,10 +66,10 @@ public class PostDetailResponse {
         this.title = post.getTitle();
         this.content = post.getContent();
 
-        this.profileImage = encodedProfileImage;
-        this.images = encodedImages;
+        this.profileImage = profileImage;
+        this.images = infoImages;
 
-        this.imgCnt = encodedImages.size();
+        this.imgCnt = infoImages.size();
         this.heartCnt = post.getHeartCnt();
 
         if (post.getBoard() != null) {
@@ -81,9 +81,7 @@ public class PostDetailResponse {
             }
         }
 
-        this.comments = post.getComments().stream()
-                .filter(c -> c.getParentComment() == null)
-                .map(c -> new CommentDto(c, userId)).collect(Collectors.toList());
+        this.comments = commentDtos;
         this.commentCnt = post.getCommentCnt();
 
     }

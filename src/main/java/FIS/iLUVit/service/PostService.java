@@ -5,6 +5,8 @@ import FIS.iLUVit.domain.enumtype.Approval;
 import FIS.iLUVit.domain.enumtype.Auth;
 import FIS.iLUVit.domain.enumtype.BoardKind;
 import FIS.iLUVit.dto.board.BoardPreviewDto;
+import FIS.iLUVit.dto.comment.CommentDto;
+import FIS.iLUVit.dto.comment.CommentReplyResponse;
 import FIS.iLUVit.dto.post.PostCreateRequest;
 import FIS.iLUVit.dto.post.PostDetailResponse;
 import FIS.iLUVit.dto.post.PostResponse;
@@ -43,6 +45,7 @@ public class PostService {
     private final ReportDetailRepository reportDetailRepository;
     private final CommentRepository commentRepository;
     private final CenterRepository centerRepository;
+    private final BlockedRepository blockedRepository;
 
 
     /**
@@ -125,7 +128,7 @@ public class PostService {
     }
 
     /**
-     * [모두의 이야기 + 유저가 속한 센터의 이야기] 에서  게시글 제목+내용 검색
+     * [모두의 이야기 + 유저가 속한 센터의 이야기] 에서 게시글 제목+내용 검색
      */
     public Slice<PostResponse> searchPost(Long userId, String keyword, Pageable pageable) {
         if(keyword == null || keyword == "") throw new PostException(PostErrorResult.NO_KEYWORD);
@@ -149,8 +152,11 @@ public class PostService {
             if (center != null) centers.add(center);
         }
 
+        // 유저가 차단한 유저를 조회한다
+        List<User> blockedUsers = getBlockedUsers(user);
+
         // 센터의 게시판 + 모두의 게시판(centerId == null) 키워드 검색
-        Slice<Post> posts = postRepository.findInCenterByKeyword(centers, keyword, pageable);
+        Slice<Post> posts = postRepository.findInCenterByKeyword(centers, keyword, blockedUsers, pageable);
 
         return getPostResponses(posts);
     }
@@ -192,8 +198,11 @@ public class PostService {
             }
         }
 
+        // 유저가 차단한 유저를 조회한다
+        List<User> blockedUsers = getBlockedUsers(user);
+
         // 시설 id not null -> 시설이야기 안에서 검색, 시설 id null -> 모두의 이야기 안에서 검색
-        Slice<Post> posts = postRepository.findByCenterAndKeyword(centerId, keyword, pageable);
+        Slice<Post> posts = postRepository.findByCenterAndKeyword(centerId, keyword, blockedUsers, pageable);
 
         return getPostResponses(posts);
     }
@@ -201,11 +210,17 @@ public class PostService {
     /**
      * 각 게시판 별 게시글 제목+내용 검색
      */
-    public Slice<PostResponse> searchByBoard(Long boardId, String keyword, Pageable pageable) {
+    public Slice<PostResponse> searchByBoard(Long userId, Long boardId, String keyword, Pageable pageable) {
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new UserException(UserErrorResult.USER_NOT_EXIST));
+
         boardRepository.findById(boardId)
                 .orElseThrow(() -> new BoardException(BoardErrorResult.BOARD_NOT_EXIST));
 
-        Slice<Post> posts = postRepository.findByBoardAndKeyword(boardId, keyword, pageable);
+        // 유저가 차단한 유저를 조회한다
+        List<User> blockedUsers = getBlockedUsers(user);
+
+        Slice<Post> posts = postRepository.findByBoardAndKeyword(boardId, keyword, blockedUsers, pageable);
 
         return getPostResponses(posts);
     }
@@ -213,10 +228,14 @@ public class PostService {
     /**
      * HOT 게시판 게시글 전체 조회
      */
-    public Slice<PostResponse> findPostByHeartCnt(Long centerId, Pageable pageable) {
+    public Slice<PostResponse> findPostByHeartCnt(Long userId, Long centerId, Pageable pageable) {
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new UserException(UserErrorResult.USER_NOT_EXIST));
+        // 유저가 차단한 유저를 조회한다
+        List<User> blockedUsers = getBlockedUsers(user);
 
         // heartCnt 가 10개 이상이면 HOT 게시판에 넣어줍니다.
-        Slice<Post> posts = postRepository.findHotPosts(centerId, Criteria.HOT_POST_HEART_CNT, pageable);
+        Slice<Post> posts = postRepository.findHotPosts(centerId, Criteria.HOT_POST_HEART_CNT, blockedUsers, pageable);
 
         return getPostResponses(posts);
     }
@@ -225,14 +244,35 @@ public class PostService {
      *  게시글 상세 조회
      */
     public PostDetailResponse findPostByPostId(Long userId, Long postId) {
-
         Post post = postRepository.findById(postId)
                 .orElseThrow(() -> new PostException(PostErrorResult.POST_NOT_EXIST));
 
-        List<String> infoImages = imageService.getInfoImages(post);
-        String profileImage = imageService.getProfileImage(post.getUser());
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new UserException(UserErrorResult.USER_NOT_EXIST));
 
-        return new PostDetailResponse(post, infoImages, profileImage, userId);
+        // 유저가 차단한 유저를 조회한다
+        List<User> blockedUsers = getBlockedUsers(user);
+
+        List<CommentDto> commentResponses = new ArrayList<>();
+
+        post.getComments().forEach(comment -> {
+            List<CommentReplyResponse> subCommentResponses = comment.getSubComments().
+                    stream()
+                    .map(subComment -> blockedUsers.contains(subComment.getUser()) ?
+                            new CommentReplyResponse(subComment, userId, true) : new CommentReplyResponse(subComment, userId, false))
+                    .collect(Collectors.toList());
+
+            if(blockedUsers.contains(comment.getUser())){
+                commentResponses.add(new CommentDto(comment, userId, subCommentResponses, true));
+            }else{
+                commentResponses.add(new CommentDto(comment, userId, subCommentResponses, false));
+            }
+        });
+
+        String profileImage = imageService.getProfileImage(post.getUser());
+        List<String> infoImages = imageService.getInfoImages(post);
+
+        return new PostDetailResponse(post, infoImages, profileImage, userId, commentResponses);
     }
 
     /**
@@ -244,7 +284,7 @@ public class PostService {
 
         List<Bookmark> bookmarkList = boardBookmarkRepository.findByUserAndBoardCenterIsNull(user);
 
-        List<BoardPreviewDto> BoardPreviewWithHotBoard = addHotBoardToBoardPreviewDto(null);
+        List<BoardPreviewDto> BoardPreviewWithHotBoard = addHotBoardToBoardPreviewDto(user, null);
 
         return addBookmarkBoardToBoardPreviewDto(BoardPreviewWithHotBoard,bookmarkList);
     }
@@ -288,7 +328,7 @@ public class PostService {
         // 유저의 시설 즐겨찾기 리스트 가져옴
         List<Bookmark> bookmarkList = boardBookmarkRepository.findByUserAndBoardCenter(user, center);
 
-        List<BoardPreviewDto> boardPreviewWithHotBoard = addHotBoardToBoardPreviewDto(center);
+        List<BoardPreviewDto> boardPreviewWithHotBoard = addHotBoardToBoardPreviewDto(user, center);
 
         return addBookmarkBoardToBoardPreviewDto(boardPreviewWithHotBoard, bookmarkList);
     }
@@ -326,9 +366,12 @@ public class PostService {
     /**
      * BoardPreviewDto 리스트에 핫게시판 정보를 추가한다
      */
-    private List<BoardPreviewDto> addHotBoardToBoardPreviewDto(Center center){
+    private List<BoardPreviewDto> addHotBoardToBoardPreviewDto(User user, Center center){
+        // 유저가 차단한 유저를 조회한다
+        List<User> blockedUsers = getBlockedUsers(user);
+
         //  센터가 null이면 모든 게시물, 센터가 null이 아니면 해당 센터의 게시물 중 핫 게시물을 조회
-        List<Post> hotPosts = postRepository.findHotPostsByHeartCnt(Criteria.HOT_POST_HEART_CNT, center, PageRequest.of(0, 3));
+        List<Post> hotPosts = postRepository.findHotPostsByHeartCnt(Criteria.HOT_POST_HEART_CNT, center, blockedUsers, PageRequest.of(0, 3));
 
         List<BoardPreviewDto> boardPreviewDtos = new ArrayList<>();
 
@@ -355,7 +398,6 @@ public class PostService {
 
         // 추출한 게시판들의 게시물을 조회
         List<Post> posts = postRepository.findByBoardIn(boards);
-        System.out.println("@@@@@@@@@@@"+posts);
 
         // 게시판별로 게시물들을 그룹화하여 매핑
         Map<Board, List<Post>> boardPostMap = posts.stream()
@@ -382,6 +424,14 @@ public class PostService {
         return boardPreviewDtos;
     }
 
-
+    /**
+     * 해당 유저가 차단한 유저의 리스트를 조회합니다
+     */
+    private List<User> getBlockedUsers(User user) {
+        List<User> blockedUsers = blockedRepository.findByBlockingUser(user).stream()
+                .map(Blocked::getBlockedUser)
+                .collect(Collectors.toList());
+        return blockedUsers;
+    }
 
 }
