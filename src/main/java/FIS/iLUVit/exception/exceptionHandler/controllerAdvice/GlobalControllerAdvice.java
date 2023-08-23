@@ -17,7 +17,6 @@ import org.springframework.security.core.AuthenticationException;
 import org.springframework.validation.BindException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
-import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
@@ -55,36 +54,33 @@ public class GlobalControllerAdvice extends ResponseEntityExceptionHandler {
      * request dto type 불일치 exception
      */
     @Override
-    protected ResponseEntity<Object> handleHttpMessageNotReadable(
-            HttpMessageNotReadableException ex,
-            HttpHeaders headers,
-            HttpStatus status,
-            WebRequest request) {
-        log.warn("[Request type mapping error] {}", ex);
-        return makeErrorResponseEntity("HttpMessageNotReadable error");
+    protected ResponseEntity<Object> handleHttpMessageNotReadable(HttpMessageNotReadableException e, HttpHeaders headers, HttpStatus status, WebRequest request) {
+        log.warn("[HttpMessageNotReadableException] errMessage={}\n", e.getMessage());
+
+        return makeErrorResponseEntity(e.getMessage());
     }
 
     @Override
-    protected ResponseEntity<Object> handleBindException(
-            BindException ex,
-            HttpHeaders headers,
-            HttpStatus status,
-            WebRequest request) {
-        final List<String> errorList = ex.getBindingResult()
+    protected ResponseEntity<Object> handleBindException(BindException e, HttpHeaders headers, HttpStatus status, WebRequest request) {
+        final List<String> errorList = e.getBindingResult()
                 .getAllErrors()
                 .stream()
                 .map(DefaultMessageSourceResolvable::getDefaultMessage)
                 .collect(Collectors.toList());
 
-        log.warn("[Request type mapping errors] {}", errorList);
+        log.warn("[BindException] errMessage={}\n", errorList.get(0));
         return makeErrorResponseEntity(errorList.get(0));
     }
 
 
     @ExceptionHandler(DataIntegrityViolationException.class)
     public ResponseEntity<Object> DataIntegrityViolationExHandler(DataIntegrityViolationException e, HttpServletRequest request) {
-        log.warn("[DataIntegrityViolationException] {}", e);
-        return makeErrorResponseEntity("올바르지 않은 식별자값입니다.");
+        log.warn("[DataIntegrityViolationException] {} {} errMessage={}\n",
+                request.getMethod(),
+                request.getRequestURI(),
+                e.getMessage()
+        );
+        return makeErrorResponseEntity(e.getMessage());
     }
 
     /**
@@ -92,23 +88,34 @@ public class GlobalControllerAdvice extends ResponseEntityExceptionHandler {
      */
     @ExceptionHandler(InvalidDataAccessApiUsageException.class)
     public ResponseEntity<ErrorResponse> illegalExHandler(InvalidDataAccessApiUsageException e, HttpServletRequest request) {
-        log.warn("[ExceptionHandler] {}", e);
-        return ResponseEntity.status(HttpStatus.FORBIDDEN)
-                .body(new ErrorResponse(HttpStatus.FORBIDDEN, "쿼리파라미터가 null 입니다. 토큰이 유효한지 확인해보세요"));
+        log.warn("[InvalidDataAccessApiUsageException] {} {} errMessage={}\n",
+                request.getMethod(),
+                request.getRequestURI(),
+                e.getMessage()
+        );
+        return makeErrorResponseEntity(HttpStatus.FORBIDDEN, e.getMessage());
     }
 
     @ExceptionHandler(JWTVerificationException.class)
     public ResponseEntity<ErrorResponse> jwtVerificationException(JWTVerificationException e, HttpServletRequest request) {
-        log.warn("[JwtVerificationException] {} {}", e.getMessage());
-        return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
-                .body(new ErrorResponse(HttpStatus.UNAUTHORIZED, e.getMessage()));
+        log.warn("[JwtVerificationException] {} {} errMessage={}\n",
+                request.getMethod(),
+                request.getRequestURI(),
+                e.getMessage()
+        );
+        return makeErrorResponseEntity(HttpStatus.UNAUTHORIZED,e.getMessage());
+
     }
 
     @ExceptionHandler(AuthenticationException.class)
     public ResponseEntity<ErrorResponse> authenticationException(AuthenticationException e, HttpServletRequest request) {
-         log.warn("[AuthenticationException] {}", e.getMessage());
-        return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
-                .body(new ErrorResponse(HttpStatus.UNAUTHORIZED, "아이디 또는 비밀번호가 잘못되었습니다."));
+        log.warn("[AuthenticationException] {} {} errMessage={}\n",
+                request.getMethod(),
+                request.getRequestURI(),
+                e.getMessage()
+        );
+
+        return makeErrorResponseEntity(HttpStatus.UNAUTHORIZED,e.getMessage());
     }
 
     /**
@@ -116,7 +123,11 @@ public class GlobalControllerAdvice extends ResponseEntityExceptionHandler {
      */
     @ExceptionHandler(NurigoBadRequestException.class)
     public ResponseEntity<Object> nurigoException(NurigoBadRequestException e, HttpServletRequest request) {
-        log.warn("[NurigoBadRequestExceptionHandler] {}", e);
+        log.warn("[NurigoBadRequestException] {} {} errMessage={}\n",
+                request.getMethod(),
+                request.getRequestURI(),
+                e.getMessage()
+        );
         return makeErrorResponseEntity(e.getMessage());
     }
 
@@ -125,7 +136,11 @@ public class GlobalControllerAdvice extends ResponseEntityExceptionHandler {
      */
     @ExceptionHandler(PresentationException.class)
     public ResponseEntity<ErrorResponse> PresenterExceptionHandler(PresentationException e, HttpServletRequest request) {
-        log.warn("[PresentationExceptionHandler] {}", e.getMessage());
+        log.warn("[PresentationException] {} {} errMessage={}\n",
+                request.getMethod(),
+                request.getRequestURI(),
+                e.getMessage()
+        );
         return makeErrorResponseEntity(e.getErrorResult());
     }
 
@@ -134,7 +149,11 @@ public class GlobalControllerAdvice extends ResponseEntityExceptionHandler {
      */
     @ExceptionHandler(AuthNumberException.class)
     public ResponseEntity<ErrorResponse> authNumberExceptionHandler(AuthNumberException e, HttpServletRequest request) {
-        log.warn("[AuthNumberExceptionHandler] {}", e);
+        log.warn("[AuthNumberException] {} {} errMessage={}\n",
+                request.getMethod(),
+                request.getRequestURI(),
+                e.getMessage()
+        );
         return makeErrorResponseEntity(e.getErrorResult());
     }
 
@@ -143,7 +162,11 @@ public class GlobalControllerAdvice extends ResponseEntityExceptionHandler {
      */
     @ExceptionHandler(SignupException.class)
     public ResponseEntity<ErrorResponse> signupExceptionHandler(SignupException e, HttpServletRequest request) {
-        log.warn("[SignupExceptionHandler] {}", e);
+        log.warn("[SignupException] {} {} errMessage={}\n",
+                request.getMethod(),
+                request.getRequestURI(),
+                e.getMessage()
+        );
         return makeErrorResponseEntity(e.getErrorResult());
     }
 
@@ -152,16 +175,24 @@ public class GlobalControllerAdvice extends ResponseEntityExceptionHandler {
      */
     @ExceptionHandler(ChatException.class)
     public ResponseEntity<ErrorResponse> chatExceptionHandler(ChatException e, HttpServletRequest request) {
-        log.warn("[ChatExceptionHandler] {}", e);
+        log.warn("[ChatException] {} {} errMessage={}\n",
+                request.getMethod(),
+                request.getRequestURI(),
+                e.getMessage()
+        );
         return makeErrorResponseEntity(e.getErrorResult());
     }
 
     /**
-     * Bookmark 관련 에러 등록
+     * BoardBookmark 관련 에러 등록
      */
-    @ExceptionHandler(BookmarkException.class)
-    public ResponseEntity<ErrorResponse> bookmarkException(BookmarkException e, HttpServletRequest request) {
-        log.warn("[BookmarkException] {}", e);
+    @ExceptionHandler(BoardBookmarkException.class)
+    public ResponseEntity<ErrorResponse> boardBookmarkException(BoardBookmarkException e, HttpServletRequest request) {
+        log.warn("[BoardBookmarkException] {} {} errMessage={}\n",
+                request.getMethod(),
+                request.getRequestURI(),
+                e.getMessage()
+        );
         return makeErrorResponseEntity(e.getErrorResult());
     }
     /**
@@ -169,7 +200,11 @@ public class GlobalControllerAdvice extends ResponseEntityExceptionHandler {
      */
     @ExceptionHandler(BoardException.class)
     public ResponseEntity<ErrorResponse> boardException(BoardException e, HttpServletRequest request) {
-        log.warn("[BoardException] {}", e);
+        log.warn("[BoardException] {} {} errMessage={}\n",
+                request.getMethod(),
+                request.getRequestURI(),
+                e.getMessage()
+        );
         return makeErrorResponseEntity(e.getErrorResult());
     }
 
@@ -178,7 +213,11 @@ public class GlobalControllerAdvice extends ResponseEntityExceptionHandler {
      */
     @ExceptionHandler(CommentException.class)
     public ResponseEntity<ErrorResponse> commentException(CommentException e, HttpServletRequest request) {
-        log.warn("[CommentExceptionHandler] {}", e.getMessage());
+        log.warn("[CommentException] {} {} errMessage={}\n",
+                request.getMethod(),
+                request.getRequestURI(),
+                e.getMessage()
+        );
         return makeErrorResponseEntity(e.getErrorResult());
     }
 
@@ -187,7 +226,11 @@ public class GlobalControllerAdvice extends ResponseEntityExceptionHandler {
      */
     @ExceptionHandler(PostException.class)
     public ResponseEntity<ErrorResponse> postException(PostException e, HttpServletRequest request) {
-        log.warn("[PostExceptionHandler] {}", e.getMessage());
+        log.warn("[PostException] {} {} errMessage={}\n",
+                request.getMethod(),
+                request.getRequestURI(),
+                e.getMessage()
+        );
         return makeErrorResponseEntity(e.getErrorResult());
     }
 
@@ -196,7 +239,11 @@ public class GlobalControllerAdvice extends ResponseEntityExceptionHandler {
      */
     @ExceptionHandler(WaitingException.class)
     public ResponseEntity<ErrorResponse> waitingException(WaitingException e, HttpServletRequest request) {
-        log.warn("[WaitingExceptionHandler] {}", e.getMessage());
+        log.warn("[WaitingException] {} {} errMessage={}\n",
+                request.getMethod(),
+                request.getRequestURI(),
+                e.getMessage()
+        );
         return makeErrorResponseEntity(e.getErrorResult());
     }
 
@@ -205,7 +252,11 @@ public class GlobalControllerAdvice extends ResponseEntityExceptionHandler {
      */
     @ExceptionHandler(ParticipationException.class)
     public ResponseEntity<ErrorResponse> participantException(ParticipationException e, HttpServletRequest request) {
-        log.warn("[WaitingExceptionHandler] {}", e.getMessage());
+        log.warn("[ParticipationException] {} {} errMessage={}\n",
+                request.getMethod(),
+                request.getRequestURI(),
+                e.getMessage()
+        );
         return makeErrorResponseEntity(e.getErrorResult());
     }
 
@@ -214,7 +265,11 @@ public class GlobalControllerAdvice extends ResponseEntityExceptionHandler {
      */
     @ExceptionHandler(UserException.class)
     public ResponseEntity<ErrorResponse> userException(UserException e, HttpServletRequest request) {
-        log.warn("[UserExceptionHandler] {}", e.getMessage());
+        log.warn("[UserException] {} {} errMessage={}\n",
+                request.getMethod(),
+                request.getRequestURI(),
+                e.getMessage()
+        );
         return makeErrorResponseEntity(e.getErrorResult());
     }
 
@@ -223,7 +278,11 @@ public class GlobalControllerAdvice extends ResponseEntityExceptionHandler {
      */
     @ExceptionHandler(ReviewException.class)
     public ResponseEntity<ErrorResponse> reviewException(ReviewException e, HttpServletRequest request) {
-        log.warn("[ReviewExceptionHandler] {}", e.getMessage());
+        log.warn("[ReviewException] {} {} errMessage={}\n",
+                request.getMethod(),
+                request.getRequestURI(),
+                e.getMessage()
+        );
         return makeErrorResponseEntity(e.getErrorResult());
     }
 
@@ -232,7 +291,11 @@ public class GlobalControllerAdvice extends ResponseEntityExceptionHandler {
      */
     @ExceptionHandler(CenterException.class)
     public ResponseEntity<ErrorResponse> centerException(CenterException e, HttpServletRequest request) {
-        log.warn("[CenterExceptionHandler] {}", e.getMessage());
+        log.warn("[CenterException] {} {} errMessage={}\n",
+                request.getMethod(),
+                request.getRequestURI(),
+                e.getMessage()
+        );
         return makeErrorResponseEntity(e.getErrorResult());
     }
 
@@ -241,16 +304,24 @@ public class GlobalControllerAdvice extends ResponseEntityExceptionHandler {
      */
     @ExceptionHandler(ScrapException.class)
     public ResponseEntity<ErrorResponse> scrapException(ScrapException e, HttpServletRequest request) {
-        log.warn("[ScrapExceptionHandler] {}", e.getMessage());
+        log.warn("[ScrapException] {} {} errMessage={}\n",
+                request.getMethod(),
+                request.getRequestURI(),
+                e.getMessage()
+        );
         return makeErrorResponseEntity(e.getErrorResult());
     }
 
     /**
-     * Prefer 관련 에러 등록
+     * CenterBookmark 관련 에러 등록
      */
-    @ExceptionHandler(PreferException.class)
-    public ResponseEntity<ErrorResponse> preferException(PreferException e, HttpServletRequest request) {
-        log.warn("[PreferExceptionHandler] {}", e.getMessage());
+    @ExceptionHandler(CenterBookmarkException.class)
+    public ResponseEntity<ErrorResponse> centerBookmarkException(CenterBookmarkException e, HttpServletRequest request) {
+        log.warn("[CenterBookmarkException] {} {} errMessage={}\n",
+                request.getMethod(),
+                request.getRequestURI(),
+                e.getMessage()
+        );
         return makeErrorResponseEntity(e.getErrorResult());
     }
 
@@ -259,7 +330,11 @@ public class GlobalControllerAdvice extends ResponseEntityExceptionHandler {
      */
     @ExceptionHandler(ReportException.class)
     public ResponseEntity<ErrorResponse> reportException(ReportException e, HttpServletRequest request) {
-        log.warn("[ReportExceptionHandler] {}", e.getMessage());
+        log.warn("[ReportException] {} {} errMessage={}\n",
+                request.getMethod(),
+                request.getRequestURI(),
+                e.getMessage()
+        );
         return makeErrorResponseEntity(e.getErrorResult());
     }
 
@@ -268,7 +343,11 @@ public class GlobalControllerAdvice extends ResponseEntityExceptionHandler {
      */
     @ExceptionHandler(BlockedException.class)
     public ResponseEntity<ErrorResponse> blockedErrorResult(BlockedException e, HttpServletRequest request) {
-        log.warn("[BlockedErrorResult] ex", e);
+        log.warn("[BlockedException] {} {} errMessage={}\n",
+                request.getMethod(),
+                request.getRequestURI(),
+                e.getMessage()
+        );
         return makeErrorResponseEntity(e.getErrorResult());
     }
 
@@ -277,7 +356,11 @@ public class GlobalControllerAdvice extends ResponseEntityExceptionHandler {
      */
     @ExceptionHandler(BlackUserException.class)
     public ResponseEntity<ErrorResponse> blockedErrorResult(BlackUserException e, HttpServletRequest request) {
-        log.warn("[BlackUserException] ex", e);
+        log.warn("[BlackUserException] {} {} errMessage={}\n",
+                request.getMethod(),
+                request.getRequestURI(),
+                e.getMessage()
+        );
         return makeErrorResponseEntity(e.getErrorResult());
     }
 
@@ -286,7 +369,11 @@ public class GlobalControllerAdvice extends ResponseEntityExceptionHandler {
      */
     @ExceptionHandler(ImageException.class)
     public ResponseEntity<ErrorResponse> imageErrorResult(ImageException e, HttpServletRequest request) {
-        log.warn("[ImageException] ex", e);
+        log.warn("[ImageException] {} {} errMessage={}\n",
+                request.getMethod(),
+                request.getRequestURI(),
+                e.getMessage()
+        );
         return makeErrorResponseEntity(e.getErrorResult());
     }
 
@@ -295,22 +382,33 @@ public class GlobalControllerAdvice extends ResponseEntityExceptionHandler {
      */
     @ExceptionHandler(PoliceClientException.class)
     public ResponseEntity<ErrorResponse> policeClientErrorResult(PoliceClientException e, HttpServletRequest request) {
-        log.warn("[PoliceClientException] ex", e);
+        log.warn("[PoliceClientException] {} {} errMessage={}\n",
+                request.getMethod(),
+                request.getRequestURI(),
+                e.getMessage()
+        );
+
         return makeErrorResponseEntity(e.getErrorResult());
     }
 
     /**
-     * ErrorResult -> ErrorResponse
+     * create ResponseEntity
      */
     private ResponseEntity<ErrorResponse> makeErrorResponseEntity(ErrorResult errorResult) {
         return ResponseEntity.status(errorResult.getHttpStatus())
                 .body(new ErrorResponse(errorResult.getHttpStatus(), errorResult.getMessage()));
     }
 
+    private ResponseEntity<ErrorResponse> makeErrorResponseEntity(HttpStatus httpStatus, String message) {
+        return ResponseEntity.status(httpStatus)
+                .body(new ErrorResponse(httpStatus,message));
+    }
+
     private ResponseEntity<Object> makeErrorResponseEntity(final String errorMessage) {
         return ResponseEntity.status(HttpStatus.BAD_REQUEST)
                 .body(new ErrorResponse(HttpStatus.BAD_REQUEST, errorMessage));
     }
+
 
 
 
