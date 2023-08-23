@@ -139,7 +139,7 @@ public class GlobalControllerAdvice extends ResponseEntityExceptionHandler {
         log.warn("[PresentationException] {} {} errMessage={}\n",
                 request.getMethod(),
                 request.getRequestURI(),
-                e.getMessage()
+                e.getErrorResult().getMessage()
         );
         return makeErrorResponseEntity(e.getErrorResult());
     }
@@ -152,7 +152,7 @@ public class GlobalControllerAdvice extends ResponseEntityExceptionHandler {
         log.warn("[AuthNumberException] {} {} errMessage={}\n",
                 request.getMethod(),
                 request.getRequestURI(),
-                e.getMessage()
+                e.getErrorResult().getMessage()
         );
         return makeErrorResponseEntity(e.getErrorResult());
     }
@@ -165,7 +165,7 @@ public class GlobalControllerAdvice extends ResponseEntityExceptionHandler {
         log.warn("[SignupException] {} {} errMessage={}\n",
                 request.getMethod(),
                 request.getRequestURI(),
-                e.getMessage()
+                e.getErrorResult().getMessage()
         );
         return makeErrorResponseEntity(e.getErrorResult());
     }
@@ -178,7 +178,7 @@ public class GlobalControllerAdvice extends ResponseEntityExceptionHandler {
         log.warn("[ChatException] {} {} errMessage={}\n",
                 request.getMethod(),
                 request.getRequestURI(),
-                e.getMessage()
+                e.getErrorResult().getMessage()
         );
         return makeErrorResponseEntity(e.getErrorResult());
     }
@@ -191,7 +191,7 @@ public class GlobalControllerAdvice extends ResponseEntityExceptionHandler {
         log.warn("[BoardBookmarkException] {} {} errMessage={}\n",
                 request.getMethod(),
                 request.getRequestURI(),
-                e.getMessage()
+                e.getErrorResult().getMessage()
         );
         return makeErrorResponseEntity(e.getErrorResult());
     }
@@ -203,7 +203,7 @@ public class GlobalControllerAdvice extends ResponseEntityExceptionHandler {
         log.warn("[BoardException] {} {} errMessage={}\n",
                 request.getMethod(),
                 request.getRequestURI(),
-                e.getMessage()
+                e.getErrorResult().getMessage()
         );
         return makeErrorResponseEntity(e.getErrorResult());
     }
@@ -216,7 +216,7 @@ public class GlobalControllerAdvice extends ResponseEntityExceptionHandler {
         log.warn("[CommentException] {} {} errMessage={}\n",
                 request.getMethod(),
                 request.getRequestURI(),
-                e.getMessage()
+                e.getErrorResult().getMessage()
         );
         return makeErrorResponseEntity(e.getErrorResult());
     }
@@ -229,7 +229,7 @@ public class GlobalControllerAdvice extends ResponseEntityExceptionHandler {
         log.warn("[PostException] {} {} errMessage={}\n",
                 request.getMethod(),
                 request.getRequestURI(),
-                e.getMessage()
+                e.getErrorResult().getMessage()
         );
         return makeErrorResponseEntity(e.getErrorResult());
     }
@@ -242,7 +242,7 @@ public class GlobalControllerAdvice extends ResponseEntityExceptionHandler {
         log.warn("[WaitingException] {} {} errMessage={}\n",
                 request.getMethod(),
                 request.getRequestURI(),
-                e.getMessage()
+                e.getErrorResult().getMessage()
         );
         return makeErrorResponseEntity(e.getErrorResult());
     }
@@ -255,7 +255,7 @@ public class GlobalControllerAdvice extends ResponseEntityExceptionHandler {
         log.warn("[ParticipationException] {} {} errMessage={}\n",
                 request.getMethod(),
                 request.getRequestURI(),
-                e.getMessage()
+                e.getErrorResult().getMessage()
         );
         return makeErrorResponseEntity(e.getErrorResult());
     }
@@ -268,7 +268,7 @@ public class GlobalControllerAdvice extends ResponseEntityExceptionHandler {
         log.warn("[UserException] {} {} errMessage={}\n",
                 request.getMethod(),
                 request.getRequestURI(),
-                e.getMessage()
+                e.getErrorResult().getMessage()
         );
         return makeErrorResponseEntity(e.getErrorResult());
     }
@@ -281,7 +281,7 @@ public class GlobalControllerAdvice extends ResponseEntityExceptionHandler {
         log.warn("[ReviewException] {} {} errMessage={}\n",
                 request.getMethod(),
                 request.getRequestURI(),
-                e.getMessage()
+                e.getErrorResult().getMessage()
         );
         return makeErrorResponseEntity(e.getErrorResult());
     }
@@ -294,7 +294,7 @@ public class GlobalControllerAdvice extends ResponseEntityExceptionHandler {
         log.warn("[CenterException] {} {} errMessage={}\n",
                 request.getMethod(),
                 request.getRequestURI(),
-                e.getMessage()
+                e.getErrorResult().getMessage()
         );
         return makeErrorResponseEntity(e.getErrorResult());
     }
@@ -307,7 +307,7 @@ public class GlobalControllerAdvice extends ResponseEntityExceptionHandler {
         log.warn("[ScrapException] {} {} errMessage={}\n",
                 request.getMethod(),
                 request.getRequestURI(),
-                e.getMessage()
+                e.getErrorResult().getMessage()
         );
         return makeErrorResponseEntity(e.getErrorResult());
     }
@@ -320,7 +320,7 @@ public class GlobalControllerAdvice extends ResponseEntityExceptionHandler {
         log.warn("[CenterBookmarkException] {} {} errMessage={}\n",
                 request.getMethod(),
                 request.getRequestURI(),
-                e.getMessage()
+                e.getErrorResult().getMessage()
         );
         return makeErrorResponseEntity(e.getErrorResult());
     }
@@ -333,7 +333,7 @@ public class GlobalControllerAdvice extends ResponseEntityExceptionHandler {
         log.warn("[ReportException] {} {} errMessage={}\n",
                 request.getMethod(),
                 request.getRequestURI(),
-                e.getMessage()
+                e.getErrorResult().getMessage()
         );
         return makeErrorResponseEntity(e.getErrorResult());
     }
@@ -346,7 +346,7 @@ public class GlobalControllerAdvice extends ResponseEntityExceptionHandler {
         log.warn("[BlockedException] {} {} errMessage={}\n",
                 request.getMethod(),
                 request.getRequestURI(),
-                e.getMessage()
+                e.getErrorResult().getMessage()
         );
         return makeErrorResponseEntity(e.getErrorResult());
     }
@@ -359,7 +359,7 @@ public class GlobalControllerAdvice extends ResponseEntityExceptionHandler {
         log.warn("[BlackUserException] {} {} errMessage={}\n",
                 request.getMethod(),
                 request.getRequestURI(),
-                e.getMessage()
+                e.getErrorResult().getMessage()
         );
         return makeErrorResponseEntity(e.getErrorResult());
     }
@@ -372,7 +372,7 @@ public class GlobalControllerAdvice extends ResponseEntityExceptionHandler {
         log.warn("[ImageException] {} {} errMessage={}\n",
                 request.getMethod(),
                 request.getRequestURI(),
-                e.getMessage()
+                e.getErrorResult().getMessage()
         );
         return makeErrorResponseEntity(e.getErrorResult());
     }
@@ -385,7 +385,7 @@ public class GlobalControllerAdvice extends ResponseEntityExceptionHandler {
         log.warn("[PoliceClientException] {} {} errMessage={}\n",
                 request.getMethod(),
                 request.getRequestURI(),
-                e.getMessage()
+                e.getErrorResult().getMessage()
         );
 
         return makeErrorResponseEntity(e.getErrorResult());
