@@ -2,6 +2,7 @@ package FIS.iLUVit.aspect.trace.filter;
 
 import FIS.iLUVit.aspect.trace.TraceSupports;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
 
@@ -12,12 +13,24 @@ import java.io.IOException;
 @Component
 @Order(1)
 @RequiredArgsConstructor
+@Slf4j
 public class TraceFilter implements Filter {
 
     @Override
     public void doFilter(ServletRequest servletRequest, ServletResponse servletResponse, FilterChain filterChain) throws IOException, ServletException {
-        TraceSupports.syncFilter((HttpServletRequest) servletRequest);
-        filterChain.doFilter(servletRequest, servletResponse);
-        TraceSupports.releaseTraceInfos();
+        HttpServletRequest request = (HttpServletRequest) servletRequest;
+        try{
+            TraceSupports.syncFilter(request);
+            filterChain.doFilter(servletRequest, servletResponse);
+            TraceSupports.releaseTraceInfos();
+        }catch(Exception e){
+            log.error("[INTERNAL SERVER ERROR] {} {} errMessage={}\n",
+                    request.getMethod(),
+                    request.getRequestURI(),
+                    e.getMessage()
+            );
+            throw e;
+        }
+
     }
 }
