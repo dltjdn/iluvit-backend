@@ -3,10 +3,12 @@ package FIS.iLUVit.exception.exceptionHandler.controllerAdvice;
 import FIS.iLUVit.exception.*;
 import FIS.iLUVit.exception.exceptionHandler.ErrorResponse;
 import FIS.iLUVit.exception.exceptionHandler.ErrorResult;
+import FIS.iLUVit.exception.exceptionHandler.SlackErrorLogger;
 import com.auth0.jwt.exceptions.JWTVerificationException;
 import com.slack.api.Slack;
 import com.slack.api.model.Attachment;
 import com.slack.api.model.Field;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import net.nurigo.sdk.message.exception.NurigoBadRequestException;
 import org.springframework.beans.factory.annotation.Value;
@@ -24,29 +26,29 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
-
 import javax.servlet.http.HttpServletRequest;
-import java.io.IOException;
-import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import static com.slack.api.webhook.WebhookPayloads.payload;
 
 @Slf4j
 @RestControllerAdvice
+@RequiredArgsConstructor
 public class GlobalControllerAdvice extends ResponseEntityExceptionHandler {
-    private final Slack slackClient = Slack.getInstance();
-
-    @Value("${dev.webhook-uri}")
-    private String webhookUrl;
+    private final SlackErrorLogger slackErrorLogger;
 
     @Override
     protected ResponseEntity<Object> handleExceptionInternal(Exception e, Object body, HttpHeaders headers, HttpStatus status, WebRequest request) {
         HttpServletRequest httpServletRequest = (HttpServletRequest) request;
-        log.warn("[InternalExceptionHandler] {}", e);
-        sendSlackAlertErrorLog(e.getMessage(), httpServletRequest); // 슬랙 알림 보내는 메서드
+
+        log.error("[InternalExceptionHandler {} {} errMessage={}\n",
+                httpServletRequest.getMethod(),
+                httpServletRequest.getRequestURI(),
+                e.getMessage()
+        );
+
+        slackErrorLogger.sendSlackAlertErrorLog(e.getMessage(), httpServletRequest); // 슬랙 알림 보내는 메서드
+
         return makeErrorResponseEntity(e.getMessage());
     }
 
@@ -56,14 +58,21 @@ public class GlobalControllerAdvice extends ResponseEntityExceptionHandler {
     @Override
     protected ResponseEntity<Object> handleMethodArgumentNotValid(MethodArgumentNotValidException e, HttpHeaders headers, HttpStatus status, WebRequest request) {
         HttpServletRequest httpServletRequest = (HttpServletRequest) request;
+
         final List<String> errorList = e.getBindingResult()
                 .getAllErrors()
                 .stream()
                 .map(DefaultMessageSourceResolvable::getDefaultMessage)
                 .collect(Collectors.toList());
 
-        log.warn("[MethodArgumentNotValidException] {}", errorList);
-        sendSlackAlertErrorLog(e.getMessage(), httpServletRequest); // 슬랙 알림 보내는 메서드
+        log.warn("[MethodArgumentNotValidException {} {} errMessage={}\n",
+                httpServletRequest.getMethod(),
+                httpServletRequest.getRequestURI(),
+                e.getMessage()
+        );
+
+        slackErrorLogger.sendSlackAlertErrorLog(e.getMessage(), httpServletRequest); // 슬랙 알림 보내는 메서드
+
         return makeErrorResponseEntity(errorList.toString());
     }
 
@@ -73,8 +82,12 @@ public class GlobalControllerAdvice extends ResponseEntityExceptionHandler {
     @Override
     protected ResponseEntity<Object> handleHttpMessageNotReadable(HttpMessageNotReadableException e, HttpHeaders headers, HttpStatus status, WebRequest request) {
         HttpServletRequest httpServletRequest = (HttpServletRequest) request;
-        log.warn("[HttpMessageNotReadableException] errMessage={}\n", e.getMessage());
-        sendSlackAlertErrorLog(e.getMessage(), httpServletRequest); // 슬랙 알림 보내는 메서드
+        log.warn("[HttpMessageNotReadableException {} {} errMessage={}\n",
+                httpServletRequest.getMethod(),
+                httpServletRequest.getRequestURI(),
+                e.getMessage()
+        );
+        slackErrorLogger.sendSlackAlertErrorLog(e.getMessage(), httpServletRequest); // 슬랙 알림 보내는 메서드
         return makeErrorResponseEntity(e.getMessage());
     }
 
@@ -86,9 +99,12 @@ public class GlobalControllerAdvice extends ResponseEntityExceptionHandler {
                 .stream()
                 .map(DefaultMessageSourceResolvable::getDefaultMessage)
                 .collect(Collectors.toList());
-
-        log.warn("[BindException] errMessage={}\n", errorList.get(0));
-        sendSlackAlertErrorLog(e.getMessage(), httpServletRequest); // 슬랙 알림 보내는 메서드
+        log.warn("[BindException {} {} errMessage={}\n",
+                httpServletRequest.getMethod(),
+                httpServletRequest.getRequestURI(),
+                errorList.get(0)
+        );
+        slackErrorLogger.sendSlackAlertErrorLog(e.getMessage(), httpServletRequest); // 슬랙 알림 보내는 메서드
         return makeErrorResponseEntity(errorList.get(0));
     }
 
@@ -100,7 +116,7 @@ public class GlobalControllerAdvice extends ResponseEntityExceptionHandler {
                 request.getRequestURI(),
                 e.getMessage()
         );
-        sendSlackAlertErrorLog(e.getMessage(), request); // 슬랙 알림 보내는 메서드
+        slackErrorLogger.sendSlackAlertErrorLog(e.getMessage(), request); // 슬랙 알림 보내는 메서드
         return makeErrorResponseEntity(e.getMessage());
     }
 
@@ -112,7 +128,7 @@ public class GlobalControllerAdvice extends ResponseEntityExceptionHandler {
                 request.getRequestURI(),
                 e.getMessage()
         );
-        sendSlackAlertErrorLog(e.getMessage(), request); // 슬랙 알림 보내는 메서드
+        slackErrorLogger.sendSlackAlertErrorLog(e.getMessage(), request); // 슬랙 알림 보내는 메서드
         return makeErrorResponseEntity(HttpStatus.FORBIDDEN, e.getMessage());
     }
 
@@ -123,7 +139,7 @@ public class GlobalControllerAdvice extends ResponseEntityExceptionHandler {
                 request.getRequestURI(),
                 e.getMessage()
         );
-        sendSlackAlertErrorLog(e.getMessage(), request); // 슬랙 알림 보내는 메서드
+        slackErrorLogger.sendSlackAlertErrorLog(e.getMessage(), request); // 슬랙 알림 보내는 메서드
         return makeErrorResponseEntity(HttpStatus.UNAUTHORIZED,e.getMessage());
 
     }
@@ -135,7 +151,7 @@ public class GlobalControllerAdvice extends ResponseEntityExceptionHandler {
                 request.getRequestURI(),
                 e.getMessage()
         );
-        sendSlackAlertErrorLog(e.getMessage(), request); // 슬랙 알림 보내는 메서드
+        slackErrorLogger.sendSlackAlertErrorLog(e.getMessage(), request); // 슬랙 알림 보내는 메서드
         return makeErrorResponseEntity(HttpStatus.UNAUTHORIZED,e.getMessage());
     }
 
@@ -149,7 +165,7 @@ public class GlobalControllerAdvice extends ResponseEntityExceptionHandler {
                 request.getRequestURI(),
                 e.getMessage()
         );
-        sendSlackAlertErrorLog(e.getMessage(), request); // 슬랙 알림 보내는 메서드
+        slackErrorLogger.sendSlackAlertErrorLog(e.getMessage(), request); // 슬랙 알림 보내는 메서드
         return makeErrorResponseEntity(e.getMessage());
     }
 
@@ -163,7 +179,7 @@ public class GlobalControllerAdvice extends ResponseEntityExceptionHandler {
                 request.getRequestURI(),
                 e.getErrorResult().getMessage()
         );
-        sendSlackAlertErrorLog(e.getErrorResult().getMessage(), request); // 슬랙 알림 보내는 메서드
+        slackErrorLogger.sendSlackAlertErrorLog(e.getErrorResult().getMessage(), request); // 슬랙 알림 보내는 메서드
         return makeErrorResponseEntity(e.getErrorResult());
     }
 
@@ -177,7 +193,7 @@ public class GlobalControllerAdvice extends ResponseEntityExceptionHandler {
                 request.getRequestURI(),
                 e.getErrorResult().getMessage()
         );
-        sendSlackAlertErrorLog(e.getErrorResult().getMessage(), request); // 슬랙 알림 보내는 메서드
+        slackErrorLogger.sendSlackAlertErrorLog(e.getErrorResult().getMessage(), request); // 슬랙 알림 보내는 메서드
         return makeErrorResponseEntity(e.getErrorResult());
     }
 
@@ -191,7 +207,7 @@ public class GlobalControllerAdvice extends ResponseEntityExceptionHandler {
                 request.getRequestURI(),
                 e.getErrorResult().getMessage()
         );
-        sendSlackAlertErrorLog(e.getErrorResult().getMessage(), request); // 슬랙 알림 보내는 메서드
+        slackErrorLogger.sendSlackAlertErrorLog(e.getErrorResult().getMessage(), request); // 슬랙 알림 보내는 메서드
         return makeErrorResponseEntity(e.getErrorResult());
     }
 
@@ -205,7 +221,7 @@ public class GlobalControllerAdvice extends ResponseEntityExceptionHandler {
                 request.getRequestURI(),
                 e.getErrorResult().getMessage()
         );
-        sendSlackAlertErrorLog(e.getErrorResult().getMessage(), request); // 슬랙 알림 보내는 메서드
+        slackErrorLogger.sendSlackAlertErrorLog(e.getErrorResult().getMessage(), request); // 슬랙 알림 보내는 메서드
         return makeErrorResponseEntity(e.getErrorResult());
     }
 
@@ -219,7 +235,7 @@ public class GlobalControllerAdvice extends ResponseEntityExceptionHandler {
                 request.getRequestURI(),
                 e.getErrorResult().getMessage()
         );
-        sendSlackAlertErrorLog(e.getErrorResult().getMessage(), request); // 슬랙 알림 보내는 메서드
+        slackErrorLogger.sendSlackAlertErrorLog(e.getErrorResult().getMessage(), request); // 슬랙 알림 보내는 메서드
         return makeErrorResponseEntity(e.getErrorResult());
     }
     /**
@@ -232,7 +248,7 @@ public class GlobalControllerAdvice extends ResponseEntityExceptionHandler {
                 request.getRequestURI(),
                 e.getErrorResult().getMessage()
         );
-        sendSlackAlertErrorLog(e.getErrorResult().getMessage(), request); // 슬랙 알림 보내는 메서드
+        slackErrorLogger.sendSlackAlertErrorLog(e.getErrorResult().getMessage(), request); // 슬랙 알림 보내는 메서드
         return makeErrorResponseEntity(e.getErrorResult());
     }
 
@@ -246,7 +262,7 @@ public class GlobalControllerAdvice extends ResponseEntityExceptionHandler {
                 request.getRequestURI(),
                 e.getErrorResult().getMessage()
         );
-        sendSlackAlertErrorLog(e.getErrorResult().getMessage(), request); // 슬랙 알림 보내는 메서드
+        slackErrorLogger.sendSlackAlertErrorLog(e.getErrorResult().getMessage(), request); // 슬랙 알림 보내는 메서드
         return makeErrorResponseEntity(e.getErrorResult());
     }
 
@@ -260,7 +276,7 @@ public class GlobalControllerAdvice extends ResponseEntityExceptionHandler {
                 request.getRequestURI(),
                 e.getErrorResult().getMessage()
         );
-        sendSlackAlertErrorLog(e.getErrorResult().getMessage(), request); // 슬랙 알림 보내는 메서드
+        slackErrorLogger.sendSlackAlertErrorLog(e.getErrorResult().getMessage(), request); // 슬랙 알림 보내는 메서드
         return makeErrorResponseEntity(e.getErrorResult());
     }
 
@@ -274,7 +290,7 @@ public class GlobalControllerAdvice extends ResponseEntityExceptionHandler {
                 request.getRequestURI(),
                 e.getErrorResult().getMessage()
         );
-        sendSlackAlertErrorLog(e.getErrorResult().getMessage(), request); // 슬랙 알림 보내는 메서드
+        slackErrorLogger.sendSlackAlertErrorLog(e.getErrorResult().getMessage(), request); // 슬랙 알림 보내는 메서드
         return makeErrorResponseEntity(e.getErrorResult());
     }
 
@@ -288,7 +304,7 @@ public class GlobalControllerAdvice extends ResponseEntityExceptionHandler {
                 request.getRequestURI(),
                 e.getErrorResult().getMessage()
         );
-        sendSlackAlertErrorLog(e.getErrorResult().getMessage(), request); // 슬랙 알림 보내는 메서드
+        slackErrorLogger.sendSlackAlertErrorLog(e.getErrorResult().getMessage(), request); // 슬랙 알림 보내는 메서드
         return makeErrorResponseEntity(e.getErrorResult());
     }
 
@@ -302,7 +318,7 @@ public class GlobalControllerAdvice extends ResponseEntityExceptionHandler {
                 request.getRequestURI(),
                 e.getErrorResult().getMessage()
         );
-        sendSlackAlertErrorLog(e.getErrorResult().getMessage(), request); // 슬랙 알림 보내는 메서드
+        slackErrorLogger.sendSlackAlertErrorLog(e.getErrorResult().getMessage(), request); // 슬랙 알림 보내는 메서드
         return makeErrorResponseEntity(e.getErrorResult());
     }
 
@@ -316,7 +332,7 @@ public class GlobalControllerAdvice extends ResponseEntityExceptionHandler {
                 request.getRequestURI(),
                 e.getErrorResult().getMessage()
         );
-        sendSlackAlertErrorLog(e.getErrorResult().getMessage(), request); // 슬랙 알림 보내는 메서드
+        slackErrorLogger.sendSlackAlertErrorLog(e.getErrorResult().getMessage(), request); // 슬랙 알림 보내는 메서드
         return makeErrorResponseEntity(e.getErrorResult());
     }
 
@@ -330,7 +346,7 @@ public class GlobalControllerAdvice extends ResponseEntityExceptionHandler {
                 request.getRequestURI(),
                 e.getErrorResult().getMessage()
         );
-        sendSlackAlertErrorLog(e.getErrorResult().getMessage(), request); // 슬랙 알림 보내는 메서드
+        slackErrorLogger.sendSlackAlertErrorLog(e.getErrorResult().getMessage(), request); // 슬랙 알림 보내는 메서드
         return makeErrorResponseEntity(e.getErrorResult());
     }
 
@@ -344,7 +360,7 @@ public class GlobalControllerAdvice extends ResponseEntityExceptionHandler {
                 request.getRequestURI(),
                 e.getErrorResult().getMessage()
         );
-        sendSlackAlertErrorLog(e.getErrorResult().getMessage(), request); // 슬랙 알림 보내는 메서드
+        slackErrorLogger.sendSlackAlertErrorLog(e.getErrorResult().getMessage(), request); // 슬랙 알림 보내는 메서드
         return makeErrorResponseEntity(e.getErrorResult());
     }
 
@@ -358,7 +374,7 @@ public class GlobalControllerAdvice extends ResponseEntityExceptionHandler {
                 request.getRequestURI(),
                 e.getErrorResult().getMessage()
         );
-        sendSlackAlertErrorLog(e.getErrorResult().getMessage(), request); // 슬랙 알림 보내는 메서드
+        slackErrorLogger.sendSlackAlertErrorLog(e.getErrorResult().getMessage(), request); // 슬랙 알림 보내는 메서드
         return makeErrorResponseEntity(e.getErrorResult());
     }
 
@@ -372,7 +388,7 @@ public class GlobalControllerAdvice extends ResponseEntityExceptionHandler {
                 request.getRequestURI(),
                 e.getErrorResult().getMessage()
         );
-        sendSlackAlertErrorLog(e.getErrorResult().getMessage(), request); // 슬랙 알림 보내는 메서드
+        slackErrorLogger.sendSlackAlertErrorLog(e.getErrorResult().getMessage(), request); // 슬랙 알림 보내는 메서드
         return makeErrorResponseEntity(e.getErrorResult());
     }
 
@@ -386,7 +402,7 @@ public class GlobalControllerAdvice extends ResponseEntityExceptionHandler {
                 request.getRequestURI(),
                 e.getErrorResult().getMessage()
         );
-        sendSlackAlertErrorLog(e.getErrorResult().getMessage(), request); // 슬랙 알림 보내는 메서드
+        slackErrorLogger.sendSlackAlertErrorLog(e.getErrorResult().getMessage(), request); // 슬랙 알림 보내는 메서드
         return makeErrorResponseEntity(e.getErrorResult());
     }
 
@@ -400,7 +416,7 @@ public class GlobalControllerAdvice extends ResponseEntityExceptionHandler {
                 request.getRequestURI(),
                 e.getErrorResult().getMessage()
         );
-        sendSlackAlertErrorLog(e.getErrorResult().getMessage(), request); // 슬랙 알림 보내는 메서드
+        slackErrorLogger.sendSlackAlertErrorLog(e.getErrorResult().getMessage(), request); // 슬랙 알림 보내는 메서드
         return makeErrorResponseEntity(e.getErrorResult());
     }
 
@@ -414,7 +430,7 @@ public class GlobalControllerAdvice extends ResponseEntityExceptionHandler {
                 request.getRequestURI(),
                 e.getErrorResult().getMessage()
         );
-        sendSlackAlertErrorLog(e.getErrorResult().getMessage(), request); // 슬랙 알림 보내는 메서드
+        slackErrorLogger.sendSlackAlertErrorLog(e.getErrorResult().getMessage(), request); // 슬랙 알림 보내는 메서드
         return makeErrorResponseEntity(e.getErrorResult());
     }
 
@@ -428,7 +444,7 @@ public class GlobalControllerAdvice extends ResponseEntityExceptionHandler {
                 request.getRequestURI(),
                 e.getErrorResult().getMessage()
         );
-        sendSlackAlertErrorLog(e.getErrorResult().getMessage(), request); // 슬랙 알림 보내는 메서드
+        slackErrorLogger.sendSlackAlertErrorLog(e.getErrorResult().getMessage(), request); // 슬랙 알림 보내는 메서드
         return makeErrorResponseEntity(e.getErrorResult());
     }
 
@@ -449,51 +465,6 @@ public class GlobalControllerAdvice extends ResponseEntityExceptionHandler {
         return ResponseEntity.status(HttpStatus.BAD_REQUEST)
                 .body(new ErrorResponse(HttpStatus.BAD_REQUEST, errorMessage));
     }
-
-    // 슬랙 알림 보내는 메서드
-    private void sendSlackAlertErrorLog(String errMessage, HttpServletRequest request) {
-        try {
-            slackClient.send(webhookUrl, payload(p -> p
-                    .text("서버 에러 발생! 백엔드 측의 빠른 확인 요망")
-                    // attachment는 list 형태여야 합니다.
-                    .attachments(
-                            List.of(generateSlackAttachment(errMessage, request))
-                    )
-            ));
-        } catch (IOException slackError) {
-            // slack 통신 시 발생한 예외에서 Exception을 던져준다면 재귀적인 예외가 발생합니다.
-            // 따라서 로깅으로 처리하였고, 모카콩 서버 에러는 아니므로 `error` 레벨보다 낮은 레벨로 설정했습니다.
-            log.debug("Slack 통신과의 예외 발생");
-        }
-    }
-
-    // attachment 생성 메서드
-    private Attachment generateSlackAttachment(String errMessage, HttpServletRequest request) {
-        String requestTime = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss.SSS").format(LocalDateTime.now());
-        String xffHeader = request.getHeader("X-FORWARDED-FOR");  // 프록시 서버일 경우 client IP는 여기에 담길 수 있습니다.
-        return Attachment.builder()
-                .color("ff0000")  // 붉은 색으로 보이도록
-                .title(requestTime + " 발생 에러 로그")
-                // Field도 List 형태로 담아주어야 합니다.
-                .fields(List.of(
-                                generateSlackField("Request IP", xffHeader == null ? request.getRemoteAddr() : xffHeader),
-                                generateSlackField("Request URL", request.getRequestURL() + " " + request.getMethod()),
-                                generateSlackField("Error Message", errMessage)
-                        )
-                )
-                .build();
-    }
-
-    // Field 생성 메서드
-    private Field generateSlackField(String title, String value) {
-        return Field.builder()
-                .title(title)
-                .value(value)
-                .valueShortEnough(false)
-                .build();
-    }
-
-
 
 
 }
