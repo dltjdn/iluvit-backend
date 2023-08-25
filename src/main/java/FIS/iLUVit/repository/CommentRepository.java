@@ -29,6 +29,10 @@ public interface CommentRepository extends JpaRepository<Comment, Long> {
      */
     Optional<Comment> findFirstByPostAndUserAndAnonymous(Post post, User user, Boolean anonymous);
 
+    List<Comment> findByPostAndParentCommentIsNull(Post post);
+
+    List<Comment> findByParentComment(Comment comment);
+
     /*
         댓글 id로 댓글 리스트를 조회합니다.
      */
