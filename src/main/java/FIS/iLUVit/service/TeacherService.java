@@ -125,8 +125,10 @@ public class TeacherService {
 
         // 교사 객체 생성
         Teacher teacher;
+
         // 센터를 선택한 경우
         if (request.getCenterId() != null) {
+
             Center center = centerRepository.findByIdWithTeacher(request.getCenterId())
                     .orElseThrow(() -> new SignupException(SignupErrorResult.NOT_EXIST_CENTER));
             teacher = request.createTeacher(center, hashedPwd);
@@ -136,7 +138,9 @@ public class TeacherService {
             Location location = new Location(loAndLat, hangjung);
             teacher.updateLocation(location);
             imageService.saveProfileImage(null, teacher);
+
             teacherRepository.save(teacher);
+
             // 시설에 원장들에게 알람보내기
             List<Teacher> teacherList = teacherRepository.findByCenter(center);
             teacherList.forEach(t -> {
@@ -146,7 +150,8 @@ public class TeacherService {
                     String type = "아이러빗";
                     AlarmUtils.publishAlarmEvent(alarm, type);                }
             });
-        } else {   // 센터를 선택하지 않은 경우
+
+        } else {// 센터를 선택하지 않은 경우
             teacher = request.createTeacher(null, hashedPwd);
             Pair<Double, Double> loAndLat = mapService.convertAddressToLocation(request.getAddress());
             Pair<String, String> hangjung = mapService.getSidoSigunguByLocation(loAndLat.getFirst(), loAndLat.getSecond());
@@ -155,6 +160,7 @@ public class TeacherService {
 
             teacherRepository.save(teacher);
         }
+
         // 모두의 이야기 default boards bookmark 추가하기
         List<Board> defaultBoards = boardRepository.findDefaultByModu();
         for (Board defaultBoard : defaultBoards) {
