@@ -88,7 +88,7 @@
             <appender-ref ref="STDOUT"/>
             <appender-ref ref="DATA"/>
         </logger>
-        <logger name="FIS.iLUVit" level="WARN" additivity="false">
+        <logger name="FIS.iLUVit" level="ERROR" additivity="false">
             <appender-ref ref="ERROR"/>
             <!--               <appender-ref ref="DEV_ASYNC_SLACK_ERROR"/>-->
         </logger>
