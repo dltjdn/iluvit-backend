@@ -209,11 +209,9 @@ public class PostService {
         comments.forEach(comment -> {
             // 대댓글 Response List 만들기
             List<CommentResponse> subCommentResponses = new ArrayList<>();
-            System.out.println("!!!!!!!!"+comment);
             List<Comment> subComments = commentRepository.findByParentComment(comment);
 
             subComments.forEach(subComment -> {
-                System.out.println("$$$$$"+subComment.getId());
                 Boolean SubCommentIsBlocked = false;
                 Long subCommentUserId = null;
                 if(subComment.getUser() != null){
@@ -234,7 +232,7 @@ public class PostService {
             if(commentUserId != null && blockedUserIds.contains(commentUserId)){
                 commentIsBlocked = true;
             }
-            commentResponses.add(new CommentResponse(comment, commentUserId, commentIsBlocked));
+            commentResponses.add(new CommentResponse(comment, commentUserId, subCommentResponses, commentIsBlocked));
 
         });
 
