@@ -200,26 +200,39 @@ public class PostService {
 
         // 유저가 차단한 유저를 조회한다
         List<Long> blockedUserIds = getBlockedUserIds(user);
-
         List<CommentResponse> commentResponses = new ArrayList<>();
 
+        // 대댓글 포함한 댓글 리스트 조회
         post.getComments().forEach(comment -> {
-            List<CommentResponse> subCommentResponses = comment.getSubComments().stream()
-                    .map(subComment -> blockedUserIds.contains(subComment.getUser().getId()) ?
-                            new CommentResponse(subComment, userId, true) : new CommentResponse(subComment, userId, false))
-                    .collect(Collectors.toList());
+            // 대댓글 리스트 조회
+            List<CommentResponse> subCommentResponses = new ArrayList<>();
+            comment.getSubComments().forEach(subComment -> {
+                Boolean SubCommentIsBlocked = false;
+                Long subCommentUserId = null;
+                if(subComment.getUser() != null){
+                    subCommentUserId = subComment.getUser().getId();
+                }
+                if(subCommentUserId != null && blockedUserIds.contains(subCommentUserId)){
+                    SubCommentIsBlocked=true;
+                }
+                subCommentResponses.add(new CommentResponse(subComment, subCommentUserId, SubCommentIsBlocked));
+            });
 
-            if(blockedUserIds.contains(comment.getUser().getId())){
-                commentResponses.add(new CommentResponse(comment, userId, subCommentResponses, true));
-            }else{
-                commentResponses.add(new CommentResponse(comment, userId, subCommentResponses, false));
+            // 댓글 리스트 조회
+            boolean commentIsBlocked = false;
+            Long commentUserId = null;
+            if(comment.getUser() != null){
+                commentUserId = comment.getUser().getId();
             }
+            if(commentUserId != null && blockedUserIds.contains(commentUserId)){
+                commentIsBlocked = true;
+            }
+            commentResponses.add(new CommentResponse(comment, commentUserId, commentIsBlocked));
 
         });
 
         String profileImage = imageService.getProfileImage(post.getUser());
         List<String> infoImages = imageService.getInfoImages(post);
-
         return new PostResponse(post, infoImages, profileImage, userId, commentResponses);
     }
 
