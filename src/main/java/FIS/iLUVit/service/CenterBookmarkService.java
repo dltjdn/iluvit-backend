@@ -3,8 +3,8 @@ package FIS.iLUVit.service;
 import FIS.iLUVit.domain.Center;
 import FIS.iLUVit.domain.Parent;
 import FIS.iLUVit.domain.Prefer;
-import FIS.iLUVit.exception.PreferErrorResult;
-import FIS.iLUVit.exception.PreferException;
+import FIS.iLUVit.exception.CenterBookmarkErrorResult;
+import FIS.iLUVit.exception.CenterBookmarkException;
 import FIS.iLUVit.repository.CenterRepository;
 import FIS.iLUVit.repository.ParentRepository;
 import FIS.iLUVit.repository.CenterBookmarkRepository;
@@ -41,7 +41,7 @@ public class CenterBookmarkService {
 
         centerBookmarkRepository.findByUserIdAndCenterId(userId, centerId)
                 .ifPresent(prefer -> {
-                    throw new PreferException(PreferErrorResult.ALREADY_PREFER);
+                    throw new CenterBookmarkException(CenterBookmarkErrorResult.ALREADY_PREFER);
                 });
 
         try {
@@ -51,7 +51,7 @@ public class CenterBookmarkService {
             centerBookmarkRepository.saveAndFlush(prefer);
             return prefer;
         } catch (DataIntegrityViolationException e) {
-            throw new PreferException(PreferErrorResult.NOT_VALID_CENTER);
+            throw new CenterBookmarkException(CenterBookmarkErrorResult.NOT_VALID_CENTER);
         }
     }
 
@@ -61,7 +61,7 @@ public class CenterBookmarkService {
      */
     public void deleteCenterBookmark(Long userId, Long centerId) {
         Prefer deletedPrefer = centerBookmarkRepository.findByUserIdAndCenterId(userId, centerId)
-                .orElseThrow(() -> new PreferException(PreferErrorResult.NOT_VALID_CENTER));
+                .orElseThrow(() -> new CenterBookmarkException(CenterBookmarkErrorResult.NOT_VALID_CENTER));
 
         centerBookmarkRepository.delete(deletedPrefer);
     }

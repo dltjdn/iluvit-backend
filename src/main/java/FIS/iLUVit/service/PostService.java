@@ -200,29 +200,48 @@ public class PostService {
 
         // 유저가 차단한 유저를 조회한다
         List<Long> blockedUserIds = getBlockedUserIds(user);
-
         List<CommentResponse> commentResponses = new ArrayList<>();
 
-        post.getComments().forEach(comment -> {
-            List<CommentResponse> subCommentResponses = comment.getSubComments().stream()
-                    .map(subComment -> blockedUserIds.contains(subComment.getUser().getId()) ?
-                            new CommentResponse(subComment, userId, true) : new CommentResponse(subComment, userId, false))
-                    .collect(Collectors.toList());
 
-            if(blockedUserIds.contains(comment.getUser().getId())){
-                commentResponses.add(new CommentResponse(comment, userId, subCommentResponses, true));
-            }else{
-                commentResponses.add(new CommentResponse(comment, userId, subCommentResponses, false));
+        // 댓글 리스트 조회
+        List<Comment> comments = commentRepository.findByPostAndParentCommentIsNull(post);
+
+        // 대댓글 포함한 댓글 리스트 조회
+        comments.forEach(comment -> {
+            // 대댓글 Response List 만들기
+            List<CommentResponse> subCommentResponses = new ArrayList<>();
+            List<Comment> subComments = commentRepository.findByParentComment(comment);
+
+            subComments.forEach(subComment -> {
+
+                Boolean SubCommentIsBlocked = false;
+                Long subCommentUserId = null;
+                if(subComment.getUser() != null){
+                    subCommentUserId = subComment.getUser().getId();
+                }
+                if(subCommentUserId != null && blockedUserIds.contains(subCommentUserId)){
+                    SubCommentIsBlocked=true;
+                }
+                subCommentResponses.add(new CommentResponse(subComment, subCommentUserId, SubCommentIsBlocked));
+            });
+
+            // 댓글 Response List 만들기
+            boolean commentIsBlocked = false;
+            Long commentUserId = null;
+            if(comment.getUser() != null){
+                commentUserId = comment.getUser().getId();
             }
+            if(commentUserId != null && blockedUserIds.contains(commentUserId)){
+                commentIsBlocked = true;
+            }
+            commentResponses.add(new CommentResponse(comment, commentUserId, subCommentResponses, commentIsBlocked));
 
         });
 
         String profileImage = imageService.getProfileImage(post.getUser());
         List<String> infoImages = imageService.getInfoImages(post);
-
         return new PostResponse(post, infoImages, profileImage, userId, commentResponses);
     }
-
     public void setPreviewImage(PostPreviewDto preview) {
 //        String postDir = imageService.getPostDir(preview.getPost_id());
 //        List<String> encodedInfoImage = imageService.getEncodedInfoImage(postDir, preview.getImgCnt());

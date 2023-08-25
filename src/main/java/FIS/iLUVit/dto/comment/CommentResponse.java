@@ -7,6 +7,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import java.time.LocalDate;
 import java.time.LocalTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
@@ -87,7 +88,7 @@ public class CommentResponse {
         this.date = comment.getDate();
         this.time = comment.getTime();
         this.isBlocked = isBlocked;
-        this.answers = null;
+        this.answers = new ArrayList<>();
     }
 }
 

@@ -46,6 +46,11 @@ spring:
   profiles:
     active: prod
 ---
+
+spring:
+  profiles:
+    active: local
+---
 management:
   endpoints:
     web:
