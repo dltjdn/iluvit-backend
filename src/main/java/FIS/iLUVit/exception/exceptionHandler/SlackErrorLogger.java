@@ -42,7 +42,7 @@ public class SlackErrorLogger {
             ));
         } catch (IOException slackError) {
             // slack 통신 시 발생한 예외에서 Exception을 던져준다면 재귀적인 예외가 발생합니다.
-            // 따라서 로깅으로 처리하였고, 모카콩 서버 에러는 아니므로 `error` 레벨보다 낮은 레벨로 설정했습니다.
+            // 따라서 로깅으로 처리하였고, 아이러빗 서버 에러는 아니므로 `error` 레벨보다 낮은 레벨로 설정했습니다.
             log.debug("Slack 통신과의 예외 발생");
         }
     }
@@ -62,7 +62,7 @@ public class SlackErrorLogger {
             ));
         } catch (IOException slackError) {
             // slack 통신 시 발생한 예외에서 Exception을 던져준다면 재귀적인 예외가 발생합니다.
-            // 따라서 로깅으로 처리하였고, 모카콩 서버 에러는 아니므로 `error` 레벨보다 낮은 레벨로 설정했습니다.
+            // 따라서 로깅으로 처리하였고, 아이러빗 서버 에러는 아니므로 `error` 레벨보다 낮은 레벨로 설정했습니다.
             log.debug("Slack 통신과의 예외 발생");
         }
     }

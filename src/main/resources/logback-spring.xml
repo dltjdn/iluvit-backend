@@ -2,7 +2,6 @@
 <configuration>
 
     <!-- 로그 설정 -->
-<!--    <property name="LOG_DIR" value="./logs"/>-->
     <springProperty name="LOG_DIR" source="log-dir"/>
     <property name="LOG_PATH_NAME" value="${LOG_DIR}/data/"/>
     <property name="ERROR_LOG_PATH_NAME" value="${LOG_DIR}/error/"/>
@@ -93,27 +92,6 @@
             <!--               <appender-ref ref="DEV_ASYNC_SLACK_ERROR"/>-->
         </logger>
     </springProfile>
-<!--    <springProfile name="dev">-->
-<!--        <logger name="FIS.iLUVit" level="INFO" additivity="false">-->
-<!--            <appender-ref ref="STDOUT"/>-->
-<!--            <appender-ref ref="DATA"/>-->
-<!--        </logger>-->
-<!--        <logger name="FIS.iLUVit" level="WARN" additivity="false">-->
-<!--               <appender-ref ref="ERROR"/>-->
-<!--&lt;!&ndash;               <appender-ref ref="DEV_ASYNC_SLACK_ERROR"/>&ndash;&gt;-->
-<!--        </logger>-->
-<!--    </springProfile>-->
-<!--    <springProfile name="prod">-->
-<!--        <logger name="FIS.iLUVit" level="INFO" additivity="false">-->
-<!--            <appender-ref ref="STDOUT"/>-->
-<!--            <appender-ref ref="DATA"/>-->
-<!--        </logger>-->
-<!--        <logger name="FIS.iLUVit" level="WARN" additivity="false">-->
-<!--            <appender-ref ref="ERROR"/>-->
-<!--&lt;!&ndash;            <appender-ref ref="PROD_ASYNC_SLACK_ERROR"/>&ndash;&gt;-->
-<!--        </logger>-->
-<!--    </springProfile>-->
-
 
 
 </configuration>
