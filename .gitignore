@@ -4,6 +4,7 @@ HELP.md
 !**/src/main/**/build/
 !**/src/test/**/build/
 build
+logs/**
 
 ### STS ###
 .apt_generated
@@ -16,6 +17,7 @@ build
 bin/
 !**/src/main/**/bin/
 !**/src/test/**/bin/
+logs
 
 ### IntelliJ IDEA ###
 .idea
@@ -46,4 +48,5 @@ src/main/resources/application-map.yml
 src/main/resources/application-security.yml
 src/main/resources/application-http.yml
 src/main/resources/application-auth.yml
+src/main/resources/application-local.yml
 src/test/resources
