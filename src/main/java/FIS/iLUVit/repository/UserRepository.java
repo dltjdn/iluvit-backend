@@ -53,8 +53,7 @@ public interface UserRepository extends JpaRepository<User, Long> {
      */
     @Query("select c from Child c " +
             "join c.parent p " +
-            "join fetch c.center ct " +
-            " where p.id = :parentId")
+            "where p.id = :parentId ")
     List<Child> findChildrenWithCenter(@Param("parentId") Long parentId);
 
     /*
