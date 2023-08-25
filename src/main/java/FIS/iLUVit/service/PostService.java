@@ -202,11 +202,18 @@ public class PostService {
         List<Long> blockedUserIds = getBlockedUserIds(user);
         List<CommentResponse> commentResponses = new ArrayList<>();
 
+
+        // 댓글 리스트 조회
+        List<Comment> comments = commentRepository.findByPostAndParentCommentIsNull(post);
+
         // 대댓글 포함한 댓글 리스트 조회
-        post.getComments().forEach(comment -> {
-            // 대댓글 리스트 조회
+        comments.forEach(comment -> {
+            // 대댓글 Response List 만들기
             List<CommentResponse> subCommentResponses = new ArrayList<>();
-            comment.getSubComments().forEach(subComment -> {
+            List<Comment> subComments = commentRepository.findByParentComment(comment);
+
+            subComments.forEach(subComment -> {
+
                 Boolean SubCommentIsBlocked = false;
                 Long subCommentUserId = null;
                 if(subComment.getUser() != null){
@@ -218,7 +225,7 @@ public class PostService {
                 subCommentResponses.add(new CommentResponse(subComment, subCommentUserId, SubCommentIsBlocked));
             });
 
-            // 댓글 리스트 조회
+            // 댓글 Response List 만들기
             boolean commentIsBlocked = false;
             Long commentUserId = null;
             if(comment.getUser() != null){
@@ -227,9 +234,7 @@ public class PostService {
             if(commentUserId != null && blockedUserIds.contains(commentUserId)){
                 commentIsBlocked = true;
             }
-
-            commentResponses.add(new CommentResponse(comment, commentUserId,subCommentResponses, commentIsBlocked));
-
+            commentResponses.add(new CommentResponse(comment, commentUserId, subCommentResponses, commentIsBlocked));
 
         });
 

@@ -2,8 +2,8 @@ package FIS.iLUVit.service;
 
 import FIS.iLUVit.dto.board.StoryDto;
 import FIS.iLUVit.domain.*;
-import FIS.iLUVit.exception.BookmarkErrorResult;
-import FIS.iLUVit.exception.BookmarkException;
+import FIS.iLUVit.exception.BoardBookmarkErrorResult;
+import FIS.iLUVit.exception.BoardBookmarkException;
 import FIS.iLUVit.exception.UserErrorResult;
 import FIS.iLUVit.exception.UserException;
 import FIS.iLUVit.repository.*;
@@ -101,12 +101,12 @@ public class BoardBookmarkService {
      */
     public Long saveBoardBookmark(Long userId, Long boardId) {
         if (userId == null) {
-            throw new BookmarkException(BookmarkErrorResult.UNAUTHORIZED_USER_ACCESS);
+            throw new BoardBookmarkException(BoardBookmarkErrorResult.UNAUTHORIZED_USER_ACCESS);
         }
         User findUser = userRepository.findById(userId)
-                .orElseThrow(() -> new BookmarkException(BookmarkErrorResult.USER_NOT_EXIST));
+                .orElseThrow(() -> new BoardBookmarkException(BoardBookmarkErrorResult.USER_NOT_EXIST));
         Board findBoard = boardRepository.findById(boardId)
-                .orElseThrow(() -> new BookmarkException(BookmarkErrorResult.BOARD_NOT_EXIST));
+                .orElseThrow(() -> new BoardBookmarkException(BoardBookmarkErrorResult.BOARD_NOT_EXIST));
         Bookmark bookmark = new Bookmark(findBoard, findUser);
         return boardBookmarkRepository.save(bookmark).getId();
     }
@@ -117,12 +117,12 @@ public class BoardBookmarkService {
      */
     public Long deleteBoardBookmark(Long userId, Long bookmarkId) {
         if (userId == null) {
-            throw new BookmarkException(BookmarkErrorResult.UNAUTHORIZED_USER_ACCESS);
+            throw new BoardBookmarkException(BoardBookmarkErrorResult.UNAUTHORIZED_USER_ACCESS);
         }
         Bookmark findBookmark = boardBookmarkRepository.findById(bookmarkId)
-                .orElseThrow(() -> new BookmarkException(BookmarkErrorResult.BOOKMARK_NOT_EXIST));
+                .orElseThrow(() -> new BoardBookmarkException(BoardBookmarkErrorResult.BOOKMARK_NOT_EXIST));
         if (!Objects.equals(findBookmark.getUser().getId(), userId)) {
-            throw new BookmarkException(BookmarkErrorResult.UNAUTHORIZED_USER_ACCESS);
+            throw new BoardBookmarkException(BoardBookmarkErrorResult.UNAUTHORIZED_USER_ACCESS);
         }
         boardBookmarkRepository.delete(findBookmark);
         return bookmarkId;
