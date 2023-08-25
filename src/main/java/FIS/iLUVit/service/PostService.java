@@ -227,7 +227,9 @@ public class PostService {
             if(commentUserId != null && blockedUserIds.contains(commentUserId)){
                 commentIsBlocked = true;
             }
+
             commentResponses.add(new CommentResponse(comment, commentUserId,subCommentResponses, commentIsBlocked));
+
 
         });
 
