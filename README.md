@@ -55,11 +55,13 @@
 <br><br>
 
 ## ERD
-![]()
+![아이러빗 ERD](https://github.com/FISOLUTION/iluvit-backend/assets/78267146/d20a9b5d-7f18-4a83-81da-4b97064a9cc4)
 
 <br><br>
 
 ## Architecture
+![아이러빗 아키텍쳐](https://github.com/FISOLUTION/iluvit-backend/assets/78267146/c62c3764-988a-4922-9b01-b59a67d8a5e4)
+
 
 <br><br>
 
