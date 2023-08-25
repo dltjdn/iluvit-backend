@@ -202,6 +202,7 @@ public class PostService {
         List<Long> blockedUserIds = getBlockedUserIds(user);
         List<CommentResponse> commentResponses = new ArrayList<>();
 
+
         // 댓글 리스트 조회
         List<Comment> comments = commentRepository.findByPostAndParentCommentIsNull(post);
 
@@ -212,6 +213,7 @@ public class PostService {
             List<Comment> subComments = commentRepository.findByParentComment(comment);
 
             subComments.forEach(subComment -> {
+
                 Boolean SubCommentIsBlocked = false;
                 Long subCommentUserId = null;
                 if(subComment.getUser() != null){
@@ -240,7 +242,6 @@ public class PostService {
         List<String> infoImages = imageService.getInfoImages(post);
         return new PostResponse(post, infoImages, profileImage, userId, commentResponses);
     }
-
     public void setPreviewImage(PostPreviewDto preview) {
 //        String postDir = imageService.getPostDir(preview.getPost_id());
 //        List<String> encodedInfoImage = imageService.getEncodedInfoImage(postDir, preview.getImgCnt());

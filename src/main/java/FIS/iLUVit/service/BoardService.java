@@ -199,7 +199,9 @@ public class BoardService {
         User findUser = userRepository.findById(userId)
                 .orElseThrow(() -> new UserException(UserErrorResult.USER_NOT_EXIST));
         if (findUser.getAuth() == Auth.PARENT) {
+
             List<Child> children = userRepository.findChildrenWithCenter(userId);
+
             List<StoryPreviewDto> storyPreviewDtoList = children.stream()
                     .filter(child -> child.getCenter() != null && child.getApproval() == Approval.ACCEPT)
                     .map(child -> new StoryPreviewDto(child.getCenter()))
