@@ -112,11 +112,47 @@ public class PostService {
 
     public PostResponse findPostByPostId(Long userId, Long postId) {
         // 게시글과 연관된 유저, 게시판, 시설 한 번에 끌고옴
-        Post findPost = postRepository.findByIdWithUserAndBoardAndCenter(postId)
+        Post post = postRepository.findByIdWithUserAndBoardAndCenter(postId)
                 .orElseThrow(() -> new PostException(PostErrorResult.POST_NOT_EXIST));
 
         // 첨부된 이미지 파일, 게시글에 달린 댓글 지연 로딩으로 가져와 DTO 생성
-        return getPostResponseDto(findPost, userId);
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new UserException(UserErrorResult.USER_NOT_EXIST));
+
+        // 유저가 차단한 유저를 조회한다
+        List<Long> blockedUserIds = getBlockedUserIds(user);
+        List<CommentResponse> commentResponses = new ArrayList<>();
+
+        // 댓글 리스트 조회
+        List<Comment> comments = commentRepository.findByPostAndParentCommentIsNull(post);
+
+        // 대댓글 포함한 댓글 리스트 조회
+        comments.forEach(comment -> {
+            // 대댓글 Response List 만들기
+            List<CommentResponse> subCommentResponses = new ArrayList<>();
+            List<Comment> subComments = commentRepository.findByParentComment(comment);
+
+            subComments.forEach(subComment -> {
+
+                Boolean SubCommentIsBlocked = false;
+                if(subComment.getUser() != null && blockedUserIds.contains(subComment.getUser().getId())){
+                    SubCommentIsBlocked=true;
+                }
+                subCommentResponses.add(new CommentResponse(subComment, userId, SubCommentIsBlocked));
+            });
+
+            // 댓글 Response List 만들기
+            boolean commentIsBlocked = false;
+            if(comment.getUser() != null && blockedUserIds.contains(comment.getUser().getId())){
+                commentIsBlocked = true;
+            }
+            commentResponses.add(new CommentResponse(comment, userId, subCommentResponses, commentIsBlocked));
+
+        });
+
+        String profileImage = imageService.getProfileImage(post.getUser());
+        List<String> infoImages = imageService.getInfoImages(post);
+        return new PostResponse(post, infoImages, profileImage, userId, commentResponses);
     }
 
     // [모두의 이야기 + 유저가 속한 센터의 이야기] 에서 통합 검색
@@ -194,54 +230,6 @@ public class PostService {
         return posts;
     }
 
-    public PostResponse getPostResponseDto(Post post, Long userId) {
-        User user = userRepository.findById(userId)
-                .orElseThrow(() -> new UserException(UserErrorResult.USER_NOT_EXIST));
-
-        // 유저가 차단한 유저를 조회한다
-        List<Long> blockedUserIds = getBlockedUserIds(user);
-        List<CommentResponse> commentResponses = new ArrayList<>();
-
-
-        // 댓글 리스트 조회
-        List<Comment> comments = commentRepository.findByPostAndParentCommentIsNull(post);
-
-        // 대댓글 포함한 댓글 리스트 조회
-        comments.forEach(comment -> {
-            // 대댓글 Response List 만들기
-            List<CommentResponse> subCommentResponses = new ArrayList<>();
-            List<Comment> subComments = commentRepository.findByParentComment(comment);
-
-            subComments.forEach(subComment -> {
-
-                Boolean SubCommentIsBlocked = false;
-                Long subCommentUserId = null;
-                if(subComment.getUser() != null){
-                    subCommentUserId = subComment.getUser().getId();
-                }
-                if(subCommentUserId != null && blockedUserIds.contains(subCommentUserId)){
-                    SubCommentIsBlocked=true;
-                }
-                subCommentResponses.add(new CommentResponse(subComment, subCommentUserId, SubCommentIsBlocked));
-            });
-
-            // 댓글 Response List 만들기
-            boolean commentIsBlocked = false;
-            Long commentUserId = null;
-            if(comment.getUser() != null){
-                commentUserId = comment.getUser().getId();
-            }
-            if(commentUserId != null && blockedUserIds.contains(commentUserId)){
-                commentIsBlocked = true;
-            }
-            commentResponses.add(new CommentResponse(comment, commentUserId, subCommentResponses, commentIsBlocked));
-
-        });
-
-        String profileImage = imageService.getProfileImage(post.getUser());
-        List<String> infoImages = imageService.getInfoImages(post);
-        return new PostResponse(post, infoImages, profileImage, userId, commentResponses);
-    }
     public void setPreviewImage(PostPreviewDto preview) {
 //        String postDir = imageService.getPostDir(preview.getPost_id());
 //        List<String> encodedInfoImage = imageService.getEncodedInfoImage(postDir, preview.getImgCnt());
