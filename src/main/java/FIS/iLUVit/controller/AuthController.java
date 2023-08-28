@@ -59,12 +59,19 @@ public class AuthController {
     }
 
     /**
-     * (회원가입, 비밀번호찾기, 핸드폰번호 변경) 인증번호 인증
+     * (회원가입, 비밀번호 찾기) 인증번호 인증
      */
     @PostMapping("")
-    public ResponseEntity<Void> authenticateAuthNum(@Login Long userId, @RequestBody AuthRequestDto authRequestDto) {
-        authService.authenticateAuthNum(userId, authRequestDto);
-        return ResponseEntity.ok().build();
+    public void authenticateAuthNum(@RequestBody AuthRequestDto request) {
+        authService.authenticateAuthNum(request);
+    }
+
+    /**
+     * (핸드폰번호 변경) 인증번호 인증
+     */
+    @PostMapping("phonenum")
+    public void authenticateAuthNumForChangingPhoneNum(@Login Long userId, @RequestBody AuthRequestDto request) {
+        authService.authenticateAuthNumForChangingPhoneNum(userId, request);
     }
 
     /**

@@ -27,6 +27,7 @@ public interface AuthRepository extends JpaRepository<AuthNumber, Long> {
      */
     Optional<AuthNumber> findByPhoneNumAndAuthNumAndAuthKind(String phoneNum, String authNum, AuthKind authKind);
 
+
     /**
      * 인증이 완료된 것들 중 해당 전화 번호화 인증 종류에 대한 인증 정보를 조회합니다
      */
