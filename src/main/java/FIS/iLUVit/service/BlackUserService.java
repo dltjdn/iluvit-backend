@@ -42,7 +42,7 @@ public class BlackUserService {
     public BlockedReasonResponse getBlockedReason(String loginId) {
 
         BlackUser blackUser = blackUserRepository.findByLoginId(loginId)
-                .orElseThrow(() -> new BlackUserException(BlackUserResult.BLACK_USER_NOT_EXIST));
+                .orElseThrow(() -> new BlackUserException(BlackUserErrorResult.BLACK_USER_NOT_EXIST));
         Long userId = blackUser.getUserId();
 
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
