@@ -48,6 +48,7 @@ public class PostResponse {
     public PostResponse(Post post, List<String> infoImages, String profileImage,Long userId, List<CommentResponse> commentResponses) {
         this.id = post.getId();
         if (post.getUser() != null) {
+            this.writer_id = post.getUser().getId();
             if (Objects.equals(post.getUser().getId(), userId)) {
                 this.canDelete = true;
             } else {
@@ -56,7 +57,6 @@ public class PostResponse {
             if (post.getAnonymous()) {
                 this.nickname = "익명";
             } else {
-                this.writer_id = post.getUser().getId();
                 this.nickname = post.getUser().getNickName();
             }
         }
