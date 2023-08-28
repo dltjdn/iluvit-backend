@@ -32,7 +32,9 @@ public class CommentResponse {
     public CommentResponse(Comment comment, Long userId, List<CommentResponse> subComments, Boolean isBlocked) {
         this.id = comment.getId();
         User writer = comment.getUser();
-        if (writer != null) {
+        if (writer != null) { // 삭제된 댓글은 wirter 가 null
+            this.writer_id = writer.getId();
+
             if (Objects.equals(writer.getId(), userId)) {
                 this.canDelete = true;
             } else {
@@ -45,9 +47,9 @@ public class CommentResponse {
                 } else {
                     this.nickname = "익명" + comment.getAnonymousOrder();
                 }
+
             } else {
                 this.profileImage = writer.getProfileImagePath();
-                this.writer_id = writer.getId();
                 this.nickname = writer.getNickName();
             }
         }
@@ -64,7 +66,9 @@ public class CommentResponse {
         this.id = comment.getId();
         User writer = comment.getUser();
         if (writer != null) {
-            if (Objects.equals(writer.getId(), userId)) {
+            this.writer_id = writer.getId();
+
+            if(Objects.equals(writer.getId(), userId)) {
                 this.canDelete = true;
             } else {
                 this.canDelete = false;
@@ -78,7 +82,6 @@ public class CommentResponse {
                 }
             } else {
                 this.profileImage = writer.getProfileImagePath();
-                this.writer_id = writer.getId();
                 this.nickname = writer.getNickName();
             }
         }
