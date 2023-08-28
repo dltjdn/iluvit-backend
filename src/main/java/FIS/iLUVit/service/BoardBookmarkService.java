@@ -27,6 +27,8 @@ public class BoardBookmarkService {
     private final BoardRepository boardRepository;
     private final PostRepository postRepository;
 
+    private final BlockedRepository blockedRepository;
+
 
     /**
      * 즐겨찾는 게시판 전체 조회
@@ -34,6 +36,12 @@ public class BoardBookmarkService {
     public List<BoardStoryDto> findBoardBookmarkByUser(Long userId) {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new UserException(UserErrorResult.USER_NOT_EXIST));
+
+
+        List<Long> blockedUserIds = blockedRepository.findByBlockingUser(user).stream()
+                .map(Blocked::getBlockedUser)
+                .map(User::getId)
+                .collect(Collectors.toList());
 
         // 북마크한 게시판들
         List<Board> boards = boardBookmarkRepository.findByUser(user).stream()
@@ -64,7 +72,7 @@ public class BoardBookmarkService {
                 String postTitle = null;
                 Long postId = null;
 
-                List<Post> posts = postRepository.findByBoardOrderByPostUpdateDateDesc(board);
+                List<Post> posts = postRepository.findByBoardAndUserIdNotIn(board, blockedUserIds);
 
                 if (!posts.isEmpty()) { // 게시판에 게시물이 하나도 없을수도 있으므로 검사해줘야한다
                     postTitle = posts.get(0).getTitle(); // 게시판의 가장 최근 게시물 하나

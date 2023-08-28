@@ -153,10 +153,10 @@ public class PostService {
         }
 
         // 유저가 차단한 유저를 조회한다
-        List<User> blockedUsers = getBlockedUsers(user);
+        List<Long> blockedUserIds = getBlockedUserIds(user);
 
         // 센터의 게시판 + 모두의 게시판(centerId == null) 키워드 검색
-        Slice<Post> posts = postRepository.findInCenterByKeyword(centers, keyword, blockedUsers, pageable);
+        Slice<Post> posts = postRepository.findInCenterByKeyword(centers, keyword, blockedUserIds, pageable);
 
         return getPostResponses(posts);
     }
@@ -199,10 +199,10 @@ public class PostService {
         }
 
         // 유저가 차단한 유저를 조회한다
-        List<User> blockedUsers = getBlockedUsers(user);
+        List<Long> blockedUserIds = getBlockedUserIds(user);
 
         // 시설 id not null -> 시설이야기 안에서 검색, 시설 id null -> 모두의 이야기 안에서 검색
-        Slice<Post> posts = postRepository.findByCenterAndKeyword(centerId, keyword, blockedUsers, pageable);
+        Slice<Post> posts = postRepository.findByCenterAndKeyword(centerId, keyword, blockedUserIds, pageable);
 
         return getPostResponses(posts);
     }
@@ -218,9 +218,9 @@ public class PostService {
                 .orElseThrow(() -> new BoardException(BoardErrorResult.BOARD_NOT_EXIST));
 
         // 유저가 차단한 유저를 조회한다
-        List<User> blockedUsers = getBlockedUsers(user);
+        List<Long> blockedUserIds = getBlockedUserIds(user);
 
-        Slice<Post> posts = postRepository.findByBoardAndKeyword(boardId, keyword, blockedUsers, pageable);
+        Slice<Post> posts = postRepository.findByBoardAndKeyword(boardId, keyword, blockedUserIds, pageable);
 
         return getPostResponses(posts);
     }
@@ -232,10 +232,10 @@ public class PostService {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new UserException(UserErrorResult.USER_NOT_EXIST));
         // 유저가 차단한 유저를 조회한다
-        List<User> blockedUsers = getBlockedUsers(user);
+        List<Long> blockedUserIds = getBlockedUserIds(user);
 
         // heartCnt 가 10개 이상이면 HOT 게시판에 넣어줍니다.
-        Slice<Post> posts = postRepository.findHotPosts(centerId, Criteria.HOT_POST_HEART_CNT, blockedUsers, pageable);
+        Slice<Post> posts = postRepository.findHotPosts(centerId, Criteria.HOT_POST_HEART_CNT, blockedUserIds, pageable);
 
         return getPostResponses(posts);
     }
@@ -382,10 +382,10 @@ public class PostService {
      */
     private List<BoardPreviewDto> addHotBoardToBoardPreviewDto(User user, Center center){
         // 유저가 차단한 유저를 조회한다
-        List<User> blockedUsers = getBlockedUsers(user);
+        List<Long> blockedUserIds = getBlockedUserIds(user);
 
         //  센터가 null이면 모든 게시물, 센터가 null이 아니면 해당 센터의 게시물 중 핫 게시물을 조회
-        List<Post> hotPosts = postRepository.findHotPostsByHeartCnt(Criteria.HOT_POST_HEART_CNT, center, blockedUsers, PageRequest.of(0, 3));
+        List<Post> hotPosts = postRepository.findHotPostsByHeartCnt(Criteria.HOT_POST_HEART_CNT, center, blockedUserIds);
 
         List<BoardPreviewDto> boardPreviewDtos = new ArrayList<>();
 
@@ -439,15 +439,8 @@ public class PostService {
     }
 
     /**
-     * 해당 유저가 차단한 유저의 리스트를 조회합니다
+     * 해당 유저가 차단한 유저 id의 리스트를 조회합니다
      */
-    private List<User> getBlockedUsers(User user) {
-        List<User> blockedUsers = blockedRepository.findByBlockingUser(user).stream()
-                .map(Blocked::getBlockedUser)
-                .collect(Collectors.toList());
-        return blockedUsers;
-    }
-
     private List<Long> getBlockedUserIds(User user) {
         List<Long> blockedUserIds = blockedRepository.findByBlockingUser(user).stream()
                 .map(Blocked::getBlockedUser)
