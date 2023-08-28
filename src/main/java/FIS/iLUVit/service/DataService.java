@@ -71,40 +71,34 @@ public class DataService {
      */
     @Transactional
     public void updateChildHouseInfo() {
-//        List<Region> regionList = regionRepository.findAll();
+        List<Region> regionList = regionRepository.findAll();
 
-//        for (Region region : regionList) {
-            List<ChildHouseInfoResponse> responses = updateChildHouseInfo("46820");
+        for (Region region : regionList) {
+            List<ChildHouseInfoResponse> responses = updateChildHouseInfo(region.getSigunguCode());
             for(ChildHouseInfoResponse response : responses) {
-                log.info("ChildHouseInfoResponse 시설명 : {}, 시도명 :{}, 시군구명 :{}", response.getCenterName(), response.getArea().getSido(), response.getArea().getSigungu());
                 List<Center> centerList = centerRepository.findByNameAndAreaSidoAndAreaSigungu(
                         response.getCenterName(), response.getArea().getSido(), response.getArea().getSigungu());
-                
-                for(Center center1 : centerList) {
-                    System.out.println("center1 = " + center1.getName());
-                    System.out.println("center1.getTel() = " + center1.getTel());
-                }
 
                 if (centerList.size() == 1) {
                     Center center = centerList.get(0);
-                    log.info("업데이트 할 시설명 : {}", center.getName());
                     center.updateCenter(response);
-                    log.info("시설 정보 업데이트 완료");
                 }
             }
-//        }
+        }
     }
 
     /**
      * 어린이집 기본정보 조회 API를 요청하고 응답값의 내용으로 정보 저장을 위한 시설 객체를 생성하여 반환합니다f
      */
     public List<ChildHouseInfoResponse> updateChildHouseInfo(String sigunguCode) {
-        log.info("어린이집 기본 정보 조회 API 호출 메서드 실행 - getChildHouseInfo");
 
         HttpHeaders httpHeaders = new HttpHeaders();
 
+        // 어린이집 일반 정보 API URL
         String childHouseGeneralApiUrl = "http://api.childcare.go.kr/mediate/rest/cpmsapi030/cpmsapi030/request";
+        // API 요청을 위한 URL 생성
         String url = childHouseGeneralApiUrl + "?key=" + childHouseSecretKey + "&arcode=" + sigunguCode + "&stcode=";
+        // RestTemplate을 사용하여 API 호출 및 응답 수신
         ResponseEntity<String> responseEntity = restTemplate.exchange(
                 url, HttpMethod.GET, new HttpEntity<>(httpHeaders), String.class);
 
@@ -117,15 +111,16 @@ public class DataService {
 
         List<ChildHouseInfoResponse> childHouseInfoResponseList = new ArrayList<>();
 
+        // API 응답 데이터 처리
         for(ChildHouseXmlResponse response : responseList) {
 
-            log.info("ChildHouseXmlResponse 시군구명 : {}", response.getSigungu());
-
+            // Area 관련 정보 객체 생성
             Area area = Area.builder()
                     .sido(response.getSido())
                     .sigungu(response.getSigungu())
                     .build();
 
+            // BasicInfra 관련 정보 전처리 및 객체 생성 ( 버스 운영 여부, 놀이터 여부, CCTV 여부 판단 )
             Boolean hasBus = "운영".equals(response.getHasBus());
             Boolean hasPlayground = response.getPlayGroundCnt() > 0;
             Boolean hasCCTV = response.getCctvCnt() > 0;
@@ -137,6 +132,7 @@ public class DataService {
                     .cctvCnt(response.getCctvCnt())
                     .build();
 
+            // ClassInfo 관련 정보 객체 생성
             ClassInfo classInfo = ClassInfo.builder()
                     .class_0(response.getClass_0())
                     .class_1(response.getClass_1())
@@ -153,6 +149,7 @@ public class DataService {
                     .child_spe(response.getChild_spe())
                     .build();
 
+            // Teacher 관련 정보 객체 생성
             TeacherInfo teacherInfo = TeacherInfo.builder()
                     .dur_1(response.getDur_1())
                     .dur12(response.getDur12())
@@ -161,6 +158,7 @@ public class DataService {
                     .dur6_(response.getDur6_())
                     .build();
 
+            // 어린이집 정보 응답 객체 생성
             ChildHouseInfoResponse childHouseInfoResponse = ChildHouseInfoResponse.builder()
                     .centerName(response.getCenterName())
                     .area(area)
@@ -177,25 +175,29 @@ public class DataService {
                     .teacherInfo(teacherInfo)
                     .build();
 
+            // 어린이집 정보 응답 리스트에 추가
             childHouseInfoResponseList.add(childHouseInfoResponse);
-
-            log.info("childHouseInfoResponse : {}", childHouseInfoResponse);
         }
+
         return childHouseInfoResponseList;
     }
 
     /**
-     * xml 포맷 데이터를 언마샬합니다
+     * xml 포맷 데이터를 언마샬링합니다
      */
     private ChildHouseXmlResponseWrapper unmarshalXmlResponse(String xmlData) {
-        log.info("xml 포맷 데이터 언마샬링 실행 - unmarshalXmlResponse");
         try {
+            // JAXB 컨텍스트 초기화
             JAXBContext jaxbContext = JAXBContext.newInstance(ChildHouseXmlResponseWrapper.class);
+            // 언마샬링을 위한 언마샬러 생성
             Unmarshaller unmarshaller = jaxbContext.createUnmarshaller();
+            // 입력 문자열을 읽기 위한 StringReader 생성
             StringReader reader = new StringReader(xmlData);
+
+            // XML 데이터를 객체로 변환하여 반환
             return (ChildHouseXmlResponseWrapper) unmarshaller.unmarshal(reader);
         } catch (JAXBException e) {
-            // 예외 처리
+            // JAXB 예외 처리
             e.printStackTrace();
         }
         return null;
