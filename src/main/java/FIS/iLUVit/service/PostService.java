@@ -230,6 +230,7 @@ public class PostService {
         return posts;
     }
 
+
     public void setPreviewImage(PostPreviewDto preview) {
 //        String postDir = imageService.getPostDir(preview.getPost_id());
 //        List<String> encodedInfoImage = imageService.getEncodedInfoImage(postDir, preview.getImgCnt());
