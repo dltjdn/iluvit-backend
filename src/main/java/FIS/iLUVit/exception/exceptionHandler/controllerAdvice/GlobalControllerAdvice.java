@@ -220,4 +220,10 @@ public class GlobalControllerAdvice extends ResponseEntityExceptionHandler {
         return makeErrorResponseEntity(e.getErrorResult());
     }
 
+    @ExceptionHandler(DataException.class)
+    public ResponseEntity<ErrorResponse> dataException(DataException e) {
+        log.warn("[DataException] ex", e);
+        return makeErrorResponseEntity(e.getErrorResult());
+    }
+
 }
