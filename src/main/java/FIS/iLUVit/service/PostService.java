@@ -385,7 +385,9 @@ public class PostService {
         List<Long> blockedUserIds = getBlockedUserIds(user);
 
         //  센터가 null이면 모든 게시물, 센터가 null이 아니면 해당 센터의 게시물 중 핫 게시물을 조회
-        List<Post> hotPosts = postRepository.findHotPostsByHeartCnt(Criteria.HOT_POST_HEART_CNT, center, blockedUserIds);
+        Long centerId = null;
+        if (center != null) centerId = center.getId();
+        List<Post> hotPosts = postRepository.findHotPostsByHeartCnt(Criteria.HOT_POST_HEART_CNT, centerId, blockedUserIds);
 
         List<BoardPreviewDto> boardPreviewDtos = new ArrayList<>();
 

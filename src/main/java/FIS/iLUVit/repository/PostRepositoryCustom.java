@@ -20,7 +20,7 @@ public interface PostRepositoryCustom {
     /**
      * 일정 좋아요 개수 이상의 게시물을 조회한다 ( 센터가 null이면 모든 게시물, 센터가 null이 아니면 해당 센터의 게시물 )
      */
-    List<Post> findHotPostsByHeartCnt(int heartCnt, Center center, List<Long> blockedUserIds);
+    List<Post> findHotPostsByHeartCnt(int heartCnt, Long centerId, List<Long> blockedUserIds);
 
     /**
      *  유저가 속한 센터 게시판 + 모두의 게시판(center == null)에서 해당 키워드를 포함하는 게시글들을 조회합니다
