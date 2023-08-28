@@ -43,6 +43,7 @@ public class ParentService {
     private final ParticipationRepository participationRepository;
     private final WaitingRepository waitingRepository;
     private final WaitingService waitingService;
+    private final BlackUserService blackUserService;
 
     /**
      *  학부모 정보 상세 조회
@@ -103,6 +104,8 @@ public class ParentService {
      * 학부모 생성 (학부모 회원가입)
      */
     public void signupParent(ParentSignupDto request) {
+        // 블랙 유저 검증
+        blackUserService.isValidUser(request.getPhoneNum());
 
         String hashedPwd = userService.hashAndValidatePwdForSignup(request.getPassword(), request.getPasswordCheck(), request.getLoginId(), request.getPhoneNum(), request.getNickname());
         Parent parent = request.createParent(hashedPwd);

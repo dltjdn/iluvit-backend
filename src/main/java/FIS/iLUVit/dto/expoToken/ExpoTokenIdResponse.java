@@ -5,8 +5,6 @@ import lombok.Getter;
 
 @Getter
 @AllArgsConstructor
-public class ExpoTokenDto {
-    private Long id;
-    private String token;
-    private Boolean accept;
+public class ExpoTokenIdResponse {
+    private Long expoTokenId;
 }

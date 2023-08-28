@@ -1,5 +1,6 @@
 package FIS.iLUVit.service;
 
+import FIS.iLUVit.domain.BlackUser;
 import FIS.iLUVit.dto.auth.AuthRequestDto;
 import FIS.iLUVit.dto.auth.AuthLoginIdDto;
 import FIS.iLUVit.dto.auth.AuthFindPasswordDto;
@@ -11,6 +12,7 @@ import FIS.iLUVit.exception.AuthNumberException;
 import FIS.iLUVit.exception.UserErrorResult;
 import FIS.iLUVit.exception.UserException;
 import FIS.iLUVit.repository.AuthRepository;
+import FIS.iLUVit.repository.BlackUserRepository;
 import FIS.iLUVit.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -23,6 +25,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.Duration;
 import java.time.LocalDateTime;
+import java.util.Optional;
 import java.util.Random;
 
 @Slf4j
@@ -35,6 +38,7 @@ public class AuthService {
     private final UserRepository userRepository;
     private final AuthRepository authRepository;
     private final BCryptPasswordEncoder encoder;
+    private final BlackUserRepository blackUserRepository;
 
     @Value("${coolsms.fromNumber}")
     private String fromNumber;
@@ -49,10 +53,10 @@ public class AuthService {
      * (회원가입) 인증번호 받기
      */
     public void sendAuthNumForSignup(String toNumber) {
+        Optional<BlackUser> blackUser = blackUserRepository.findByPhoneNumber(toNumber);
+        Optional<User> user = userRepository.findByPhoneNumber(toNumber);
 
-        User findUser = userRepository.findByPhoneNumber(toNumber).orElse(null);
-
-        if (findUser != null) {
+        if (blackUser.isPresent() || user.isPresent()) {
             throw new AuthNumberException(AuthNumberErrorResult.ALREADY_PHONENUMBER_REGISTER);
         }
         sendAuthNumber(toNumber, AuthKind.signup, null);

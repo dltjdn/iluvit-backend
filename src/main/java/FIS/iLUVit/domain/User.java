@@ -55,9 +55,9 @@ public class User extends BaseImageEntity {
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+        if (o == null || !(o instanceof User)) return false;
         User user = (User) o;
-        return id.equals(user.id);
+        return id.equals(user.getId());
     }
 
     @Override
@@ -98,11 +98,26 @@ public class User extends BaseImageEntity {
         this.address = null;
         this.name=null;
         this.detailAddress = null;
-        this.profileImagePath = "";
+        this.profileImagePath = "basic";
         this.infoImagePath = null;
         this.imgCnt = null;
         this.location = null;
         this.auth=null;
-        this.dtype=null;
+    }
+
+    public void restorePersonalInfo(BlackUser blackUser){
+        this.nickName = blackUser.getNickName();
+        this.loginId = blackUser.getLoginId();
+        this.password = blackUser.getPassword();
+        this.phoneNumber = blackUser.getPhoneNumber();
+        this.emailAddress = blackUser.getEmailAddress();
+        this.address = blackUser.getAddress();
+        this.name = blackUser.getName() ;
+        this.detailAddress = blackUser.getDetailAddress();
+        this.profileImagePath = blackUser.getProfileImagePath();
+        this.infoImagePath = blackUser.getInfoImagePath();
+        this.imgCnt = blackUser.getImgCnt();
+        this.location = blackUser.getLocation();
+        this.auth = blackUser.getAuth();
     }
 }

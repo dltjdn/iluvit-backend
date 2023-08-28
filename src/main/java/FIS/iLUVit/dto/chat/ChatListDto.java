@@ -24,6 +24,7 @@ public class ChatListDto {
     private Long opponentId;
     private String opponentNickname;
     private String opponentImage;
+    private Boolean opponentIsBlocked; // 쪽지를 보낸 유저가 차단된 유저인지 판단
 
     @Getter
     @NoArgsConstructor
@@ -45,7 +46,7 @@ public class ChatListDto {
         }
     }
 
-    public ChatListDto(ChatRoom chatRoom, Slice<ChatInfo> chatList) {
+    public ChatListDto(ChatRoom chatRoom, Slice<ChatInfo> chatList, Boolean opponentIsBlocked) {
         Post getPost = chatRoom.getPost();
         if (getPost != null) {
             this.boardId = getPost.getBoard().getId();
@@ -72,7 +73,7 @@ public class ChatListDto {
             this.opponentId = chatRoom.getSender().getId();
             this.opponentNickname = chatRoom.getSender().getNickName();
         }
-
+        this.opponentIsBlocked = opponentIsBlocked;
     }
 
     public void updateImage(String imageUrl) {

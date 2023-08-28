@@ -70,7 +70,7 @@ public class PostController {
      * [시설 이야기] or [모두의 이야기] 에서 게시글 제목+내용 검색
      */
     @GetMapping(value = {"search/center","search/center/{centerId}"})
-    public ResponseEntity<Slice<PostResponse>> getPostByCenter(@Login Long userId,  @PathVariable(required = false, value="centerId") Long centerId,
+    public ResponseEntity<Slice<PostResponse>> getPostByCenter(@Login Long userId, @PathVariable(required = false, value="centerId") Long centerId,
             @RequestParam("keyword") String keyword, Pageable pageable) {
         Slice<PostResponse> postResponses = postService.searchPostByCenter( userId, centerId, keyword, pageable);
         return ResponseEntity.ok(postResponses);
@@ -80,8 +80,8 @@ public class PostController {
      * 각 게시판 별 게시글 제목+내용 검색
      */
     @GetMapping("search/board/{boardId}")
-    public ResponseEntity<Slice<PostResponse>> getPostByBoard(@PathVariable("boardId") Long boardId, @RequestParam("keyword") String keyword, Pageable pageable) {
-        Slice<PostResponse> postResponses = postService.searchByBoard(boardId, keyword, pageable);
+    public ResponseEntity<Slice<PostResponse>> getPostByBoard(@Login Long userId, @PathVariable("boardId") Long boardId, @RequestParam("keyword") String keyword, Pageable pageable) {
+        Slice<PostResponse> postResponses = postService.searchByBoard(userId, boardId, keyword, pageable);
         return ResponseEntity.ok(postResponses);
     }
 
@@ -90,8 +90,8 @@ public class PostController {
      * HOT 게시판 게시글 전체 조회
      */
     @GetMapping(value={"search/hot-board", "search/hot-board/{centerId}"})
-    public ResponseEntity<Slice<PostResponse>> getPostByHotBoard( @PathVariable(required = false, value="centerId") Long centerId, Pageable pageable) {
-        Slice<PostResponse> postResponses = postService.findPostByHeartCnt(centerId, pageable);
+    public ResponseEntity<Slice<PostResponse>> getPostByHotBoard(@Login Long userId, @PathVariable(required = false, value="centerId") Long centerId, Pageable pageable) {
+        Slice<PostResponse> postResponses = postService.findPostByHeartCnt(userId, centerId, pageable);
         return ResponseEntity.ok(postResponses);
     }
 
