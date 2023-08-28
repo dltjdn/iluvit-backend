@@ -13,6 +13,7 @@ public class BoardStoryPreviewDto {
     private Long centerId;
     private String centerName;
     private String storyName;
+    private String profileImagePath;
 
     public BoardStoryPreviewDto(Center center) {
         if (center == null) {
@@ -22,5 +23,6 @@ public class BoardStoryPreviewDto {
             this.centerName = center.getName();
             this.storyName = center.getName() + "의 이야기";
         }
+        this.profileImagePath = center.getProfileImagePath();
     }
 }
