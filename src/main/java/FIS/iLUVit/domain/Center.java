@@ -8,6 +8,7 @@ import FIS.iLUVit.dto.data.KindergartenBasicInfraResponse;
 import FIS.iLUVit.dto.data.KindergartenGeneralResponse;
 import FIS.iLUVit.dto.data.KindergartenTeacherResponse;
 import lombok.*;
+import lombok.extern.slf4j.Slf4j;
 
 import javax.persistence.*;
 import java.time.LocalDate;
@@ -16,6 +17,7 @@ import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+@Slf4j
 @Entity
 @Inheritance(strategy = InheritanceType.JOINED)
 @DiscriminatorValue("null")
@@ -157,6 +159,7 @@ public class Center extends BaseImageEntity {
     }
 
     public void updateCenter(ChildHouseInfoResponse response) {
+        log.info("시설 정보 업데이트 실행 - updateCenter");
         this.owner = response.getOwner();
         this.estType = response.getEstType();
         this.homepage = response.getHomepage();

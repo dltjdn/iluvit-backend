@@ -25,12 +25,10 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.client.RestTemplate;
-import org.w3c.dom.Document;
-import org.w3c.dom.NodeList;
-import org.xml.sax.InputSource;
-import org.w3c.dom.Element;
 
-import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.bind.JAXBContext;
+import javax.xml.bind.JAXBException;
+import javax.xml.bind.Unmarshaller;
 import java.io.StringReader;
 import java.util.List;
 import java.util.ArrayList;
@@ -43,6 +41,7 @@ public class DataService {
 
     private final RegionRepository regionRepository;
     private final CenterRepository centerRepository;
+    private final RestTemplate restTemplate;
 
     @Value("${center.api-key.child-house}")
     private String childHouseSecretKey;
@@ -50,28 +49,6 @@ public class DataService {
 
     @Value("${center.api-key.kindergarten}")
     private String kindergartenSecretKey;
-
-    /**
-     * 어린이집 정보를 업데이트합니다
-     */
-    @Transactional
-    public void updateChildHouseInfo() {
-        List<Region> regionList = regionRepository.findAll();
-
-        for (Region region : regionList) {
-            List<ChildHouseInfoResponse> responses = getChildHouseInfo(region.getSigunguCode());
-
-            for(ChildHouseInfoResponse response : responses) {
-                List<Center> centerList = centerRepository.findByNameAndAreaSidoAndAreaSigungu(
-                        response.getCenterName(), response.getArea().getSido(), response.getArea().getSigungu());
-
-                if (centerList.size() == 1) {
-                    Center center = centerList.get(0);
-                    center.updateCenter(response);
-                }
-            }
-        }
-    }
 
     /**
      * 유치원 정보를 업데이트합니다
@@ -87,6 +64,141 @@ public class DataService {
             updateKindergartenBuildingInfo(region);
             updateKindergartenSchoolBusInfo(region);
         }
+    }
+
+    /**
+     * 어린이집 정보를 업데이트합니다
+     */
+    @Transactional
+    public void updateChildHouseInfo() {
+//        List<Region> regionList = regionRepository.findAll();
+
+//        for (Region region : regionList) {
+            List<ChildHouseInfoResponse> responses = updateChildHouseInfo("46820");
+            for(ChildHouseInfoResponse response : responses) {
+                log.info("ChildHouseInfoResponse 시설명 : {}, 시도명 :{}, 시군구명 :{}", response.getCenterName(), response.getArea().getSido(), response.getArea().getSigungu());
+                List<Center> centerList = centerRepository.findByNameAndAreaSidoAndAreaSigungu(
+                        response.getCenterName(), response.getArea().getSido(), response.getArea().getSigungu());
+                
+                for(Center center1 : centerList) {
+                    System.out.println("center1 = " + center1.getName());
+                    System.out.println("center1.getTel() = " + center1.getTel());
+                }
+
+                if (centerList.size() == 1) {
+                    Center center = centerList.get(0);
+                    log.info("업데이트 할 시설명 : {}", center.getName());
+                    center.updateCenter(response);
+                    log.info("시설 정보 업데이트 완료");
+                }
+            }
+//        }
+    }
+
+    /**
+     * 어린이집 기본정보 조회 API를 요청하고 응답값의 내용으로 정보 저장을 위한 시설 객체를 생성하여 반환합니다f
+     */
+    public List<ChildHouseInfoResponse> updateChildHouseInfo(String sigunguCode) {
+        log.info("어린이집 기본 정보 조회 API 호출 메서드 실행 - getChildHouseInfo");
+
+        HttpHeaders httpHeaders = new HttpHeaders();
+
+        String childHouseGeneralApiUrl = "http://api.childcare.go.kr/mediate/rest/cpmsapi030/cpmsapi030/request";
+        String url = childHouseGeneralApiUrl + "?key=" + childHouseSecretKey + "&arcode=" + sigunguCode + "&stcode=";
+        ResponseEntity<String> responseEntity = restTemplate.exchange(
+                url, HttpMethod.GET, new HttpEntity<>(httpHeaders), String.class);
+
+        log.info("responseEntity : {}", responseEntity);
+
+        // JAXB를 이용한 XML 데이터 언마샬링
+        ChildHouseXmlResponseWrapper responseWrapper = unmarshalXmlResponse(responseEntity.getBody());
+
+        List<ChildHouseXmlResponse> responseList = responseWrapper.getChildHouseInfoResponseList();
+
+        List<ChildHouseInfoResponse> childHouseInfoResponseList = new ArrayList<>();
+
+        for(ChildHouseXmlResponse response : responseList) {
+
+            log.info("ChildHouseXmlResponse 시군구명 : {}", response.getSigungu());
+
+            Area area = Area.builder()
+                    .sido(response.getSido())
+                    .sigungu(response.getSigungu())
+                    .build();
+
+            Boolean hasBus = "운영".equals(response.getHasBus());
+            Boolean hasPlayground = response.getPlayGroundCnt() > 0;
+            Boolean hasCCTV = response.getCctvCnt() > 0;
+
+            BasicInfra basicInfra = BasicInfra.builder()
+                    .hasBus(hasBus)
+                    .hasPlayground(hasPlayground)
+                    .hasCCTV(hasCCTV)
+                    .cctvCnt(response.getCctvCnt())
+                    .build();
+
+            ClassInfo classInfo = ClassInfo.builder()
+                    .class_0(response.getClass_0())
+                    .class_1(response.getClass_1())
+                    .class_2(response.getClass_2())
+                    .class_3(response.getClass_3())
+                    .class_4(response.getClass_4())
+                    .class_5(response.getClass_5())
+                    .child_0(response.getChild_0())
+                    .child_1(response.getChild_1())
+                    .child_2(response.getChild_2())
+                    .child_3(response.getChild_3())
+                    .child_4(response.getChild_4())
+                    .child_5(response.getChild_5())
+                    .child_spe(response.getChild_spe())
+                    .build();
+
+            TeacherInfo teacherInfo = TeacherInfo.builder()
+                    .dur_1(response.getDur_1())
+                    .dur12(response.getDur12())
+                    .dur24(response.getDur24())
+                    .dur46(response.getDur46())
+                    .dur6_(response.getDur6_())
+                    .build();
+
+            ChildHouseInfoResponse childHouseInfoResponse = ChildHouseInfoResponse.builder()
+                    .centerName(response.getCenterName())
+                    .area(area)
+                    .estType(response.getEstType())
+                    .program(response.getProgram())
+                    .homepage(response.getHomepage())
+                    .status(response.getStatus())
+                    .owner(response.getOwner())
+                    .zipcode(response.getZipcode())
+                    .curChildCnt(response.getCurChildCnt())
+                    .maxChildCnt(response.getMaxChildCnt())
+                    .basicInfra(basicInfra)
+                    .classInfo(classInfo)
+                    .teacherInfo(teacherInfo)
+                    .build();
+
+            childHouseInfoResponseList.add(childHouseInfoResponse);
+
+            log.info("childHouseInfoResponse : {}", childHouseInfoResponse);
+        }
+        return childHouseInfoResponseList;
+    }
+
+    /**
+     * xml 포맷 데이터를 언마샬합니다
+     */
+    private ChildHouseXmlResponseWrapper unmarshalXmlResponse(String xmlData) {
+        log.info("xml 포맷 데이터 언마샬링 실행 - unmarshalXmlResponse");
+        try {
+            JAXBContext jaxbContext = JAXBContext.newInstance(ChildHouseXmlResponseWrapper.class);
+            Unmarshaller unmarshaller = jaxbContext.createUnmarshaller();
+            StringReader reader = new StringReader(xmlData);
+            return (ChildHouseXmlResponseWrapper) unmarshaller.unmarshal(reader);
+        } catch (JAXBException e) {
+            // 예외 처리
+            e.printStackTrace();
+        }
+        return null;
     }
 
     /**
@@ -178,186 +290,6 @@ public class DataService {
             }
         }
     }
-
-    /**
-     * 어린이집 기본 정보 조회 API 호출
-     */
-    private List<ChildHouseInfoResponse> getChildHouseInfo(String sigunguCode) {
-
-        RestTemplate restTemplate = new RestTemplate();
-        HttpHeaders httpHeaders = new HttpHeaders();
-
-        String childHouseGeneralApiUrl = "http://api.childcare.go.kr/mediate/rest/cpmsapi030/cpmsapi030/request";
-        String url = childHouseGeneralApiUrl + "?key=" + childHouseSecretKey + "&arcode=" + sigunguCode + "&stcode=";
-        ResponseEntity<String> responseEntity = restTemplate.exchange(
-                url, HttpMethod.GET, new HttpEntity<>(httpHeaders), String.class);
-
-        List<ChildHouseInfoResponse> childHouseInfoResponseList = parseXmlResponse(responseEntity.getBody());
-
-        return childHouseInfoResponseList;
-    }
-
-
-    /**
-     * xml 포맷데이터를 파싱하여 저장합니다
-     */
-    private List<ChildHouseInfoResponse> parseXmlResponse(String xmlData) {
-        List<ChildHouseInfoResponse> childHouseInfoResponseList = new ArrayList<>();
-
-        try {
-            // DocumentBuilderFactory를 생성하여 XML 문서를 파싱할 준비하기
-            DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
-
-            // XML 데이터를 문자열에서 읽어와서 파싱
-            Document doc = factory.newDocumentBuilder().parse(new InputSource(new StringReader(xmlData)));
-
-            // XML 문서 구조 정규화
-            doc.getDocumentElement().normalize();
-
-            // "item" 태그를 가진 노드들의 목록 가져오기
-            NodeList itemNodeList = doc.getElementsByTagName("item");
-
-            // 모든 "item" 노드에 대해서 반복
-            for (int i = 0; i < itemNodeList.getLength(); i++) {
-                // 현재 반복 중인 "item" 노드 가져오기
-                Element itemElement = (Element) itemNodeList.item(i);
-
-                // 기본 정보 관련 노드 가져와서 저장하기
-                String centerName = itemElement.getElementsByTagName("crname").item(0).getTextContent();
-                String estType = itemElement.getElementsByTagName("crtypename").item(0).getTextContent();
-                String status = itemElement.getElementsByTagName("crstatusname").item(0).getTextContent();
-                String owner = itemElement.getElementsByTagName("Crrepname").item(0).getTextContent();
-                String zipcode = itemElement.getElementsByTagName("zipcode").item(0).getTextContent();
-                String homepage = itemElement.getElementsByTagName("crhome").item(0).getTextContent();
-                String maxChildCntStr = itemElement.getElementsByTagName("crcapat").item(0).getTextContent();
-                String curChildCntStr = itemElement.getElementsByTagName("crchcnt").item(0).getTextContent();
-                String program = itemElement.getElementsByTagName("crspec").item(0).getTextContent();
-
-                // Area 관련 노드 가져와서 저장하기
-                String sido = itemElement.getElementsByTagName("sidoname").item(0).getTextContent();
-                String sigungu = itemElement.getElementsByTagName("sigunguname").item(0).getTextContent();
-
-                // BasicInfra 관련 노드 가져와서 저장하기
-                String hasBusStr = itemElement.getElementsByTagName("crcargbname").item(0).getTextContent();
-                String hasPlaygroundStr = itemElement.getElementsByTagName("plgrdco").item(0).getTextContent();
-                String cctvCntStr = itemElement.getElementsByTagName("cctvinstlcnt").item(0).getTextContent();
-
-                // ClassInfo 관련 노드 가져와서 저장하기
-                String class_0_Str = itemElement.getElementsByTagName("class_cnt_00").item(0).getTextContent();
-                String class_1_Str = itemElement.getElementsByTagName("class_cnt_01").item(0).getTextContent();
-                String class_2_Str = itemElement.getElementsByTagName("class_cnt_02").item(0).getTextContent();
-                String class_3_Str = itemElement.getElementsByTagName("class_cnt_03").item(0).getTextContent();
-                String class_4_Str = itemElement.getElementsByTagName("class_cnt_04").item(0).getTextContent();
-                String class_5_Str = itemElement.getElementsByTagName("class_cnt_05").item(0).getTextContent();
-                String child_0_Str = itemElement.getElementsByTagName("child_cnt_00").item(0).getTextContent();
-                String child_1_Str = itemElement.getElementsByTagName("child_cnt_01").item(0).getTextContent();
-                String child_2_Str = itemElement.getElementsByTagName("child_cnt_02").item(0).getTextContent();
-                String child_3_Str = itemElement.getElementsByTagName("child_cnt_03").item(0).getTextContent();
-                String child_4_Str = itemElement.getElementsByTagName("child_cnt_04").item(0).getTextContent();
-                String child_5_Str = itemElement.getElementsByTagName("child_cnt_05").item(0).getTextContent();
-                String child_spe_Str = itemElement.getElementsByTagName("child_cnt_sp").item(0).getTextContent();
-
-                // TeacherInfo 관련 노드 가져와서 저장하기
-                String dur_1_Str = itemElement.getElementsByTagName("em_cnt_0y").item(0).getTextContent();
-                String dur12_Str = itemElement.getElementsByTagName("em_cnt_1y").item(0).getTextContent();
-                String dur24_Str = itemElement.getElementsByTagName("em_cnt_2y").item(0).getTextContent();
-                String dur46_Str = itemElement.getElementsByTagName("em_cnt_4y").item(0).getTextContent();
-                String dur6_Str = itemElement.getElementsByTagName("em_cnt_6y").item(0).getTextContent();
-
-                // Area Embeddable 객체 생성하고 정보 설정
-                Area area = Area.builder()
-                        .sido(sido)
-                        .sigungu(sigungu)
-                        .build();
-
-                // BasicInfra Embeddable 객체 생성하고 정보 전처리 및 설정
-                Boolean hasBus = "운영".equals(hasBusStr);
-                Boolean hasPlayground = !hasPlaygroundStr.isEmpty();
-                Boolean hasCCTV = !cctvCntStr.isEmpty();
-                Integer cctvCnt = Integer.parseInt(cctvCntStr);
-
-                BasicInfra basicInfra = BasicInfra.builder()
-                        .hasBus(hasBus)
-                        .hasPlayground(hasPlayground)
-                        .hasCCTV(hasCCTV)
-                        .cctvCnt(cctvCnt)
-                        .build();
-
-                // ClassInfo Embeddable 객체 생성하고 정보 전처리 및 설정
-                Integer class_0 = Integer.parseInt(class_0_Str);
-                Integer class_1 = Integer.parseInt(class_1_Str);
-                Integer class_2 = Integer.parseInt(class_2_Str);
-                Integer class_3 = Integer.parseInt(class_3_Str);
-                Integer class_4 = Integer.parseInt(class_4_Str);
-                Integer class_5 = Integer.parseInt(class_5_Str);
-                Integer child_0 = Integer.parseInt(child_0_Str);
-                Integer child_1 = Integer.parseInt(child_1_Str);
-                Integer child_2 = Integer.parseInt(child_2_Str);
-                Integer child_3 = Integer.parseInt(child_3_Str);
-                Integer child_4 = Integer.parseInt(child_4_Str);
-                Integer child_5 = Integer.parseInt(child_5_Str);
-                Integer child_spe = Integer.parseInt(child_spe_Str);
-
-                ClassInfo classInfo = ClassInfo.builder()
-                        .class_0(class_0)
-                        .class_1(class_1)
-                        .class_2(class_2)
-                        .class_3(class_3)
-                        .class_4(class_4)
-                        .class_5(class_5)
-                        .child_0(child_0)
-                        .child_1(child_1)
-                        .child_2(child_2)
-                        .child_3(child_3)
-                        .child_4(child_4)
-                        .child_5(child_5)
-                        .child_spe(child_spe)
-                        .build();
-
-                // TeacherInfo Embeddable 객체 생성하고 정보 전처리 및 설정
-                Integer dur_1 = Integer.parseInt(dur_1_Str);
-                Integer dur12 = Integer.parseInt(dur12_Str);
-                Integer dur24 = Integer.parseInt(dur24_Str);
-                Integer dur46 = Integer.parseInt(dur46_Str);
-                Integer dur6_ = Integer.parseInt(dur6_Str);
-
-                TeacherInfo teacherInfo = TeacherInfo.builder()
-                        .dur_1(dur_1)
-                        .dur12(dur12)
-                        .dur24(dur24)
-                        .dur46(dur46)
-                        .dur6_(dur6_)
-                        .build();
-
-                // ChildHouseInfoResponse 객체 생성하고 정보 전처리 및 설정
-                Integer maxChildCnt = Integer.parseInt(maxChildCntStr);
-                Integer curChildCnt = Integer.parseInt(curChildCntStr);
-
-                ChildHouseInfoResponse childHouseInfoResponse = ChildHouseInfoResponse.builder()
-                        .centerName(centerName)
-                        .estType(estType)
-                        .program(program)
-                        .homepage(homepage)
-                        .status(status)
-                        .owner(owner)
-                        .zipcode(zipcode)
-                        .curChildCnt(curChildCnt)
-                        .maxChildCnt(maxChildCnt)
-                        .area(area)
-                        .basicInfra(basicInfra)
-                        .classInfo(classInfo)
-                        .teacherInfo(teacherInfo)
-                        .build();
-
-                childHouseInfoResponseList.add(childHouseInfoResponse);
-            }
-        } catch (Exception e) {
-            // 예외가 발생하면 스택 트레이스를 출력합니다.
-            e.printStackTrace();
-        }
-        return childHouseInfoResponseList;
-    }
-
 
     /**
      * 유치원 일반현황 조회 API 호출
