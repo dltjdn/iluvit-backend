@@ -30,12 +30,12 @@ public class CommentReplyResponse {
         this.id = comment.getId();
         User writer = comment.getUser();
         if (writer != null) {
+            this.writerId = writer.getId();
             if (Objects.equals(writer.getId(), userId)) {
                 this.canDelete = true;
             } else {
                 this.canDelete = false;
             }
-
             if (comment.getAnonymous()) {
                 if (comment.getAnonymousOrder().equals(-1)) {
                     this.nickName = "익명(작성자)";
@@ -44,7 +44,6 @@ public class CommentReplyResponse {
                 }
             } else {
                 this.profileImage = writer.getProfileImagePath();
-                this.writerId = writer.getId();
                 this.nickName = writer.getNickName();
             }
         }
