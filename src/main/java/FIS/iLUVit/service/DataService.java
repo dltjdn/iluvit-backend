@@ -81,7 +81,10 @@ public class DataService {
 
                 if (centerList.size() == 1) {
                     Center center = centerList.get(0);
-                    center.updateCenter(response);
+                    if(!center.getSigned()) {
+                        center.updateCenter(response);
+                    }
+
                 }
             }
         }
@@ -123,14 +126,10 @@ public class DataService {
             // BasicInfra 관련 정보 전처리 및 객체 생성 ( 버스 운영 여부, 놀이터 여부, CCTV 여부 판단 )
             Boolean hasBus = "운영".equals(response.getHasBus());
             Boolean hasPlayground = response.getPlayGroundCnt() > 0;
+            Integer cctvCnt = response.getCctvCnt();
             Boolean hasCCTV = response.getCctvCnt() > 0;
 
-            BasicInfra basicInfra = BasicInfra.builder()
-                    .hasBus(hasBus)
-                    .hasPlayground(hasPlayground)
-                    .hasCCTV(hasCCTV)
-                    .cctvCnt(response.getCctvCnt())
-                    .build();
+            BasicInfra basicInfra = new BasicInfra(hasBus, hasPlayground, hasCCTV, cctvCnt);
 
             // ClassInfo 관련 정보 객체 생성
             ClassInfo classInfo = ClassInfo.builder()

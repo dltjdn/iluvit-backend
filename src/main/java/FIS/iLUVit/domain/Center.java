@@ -161,14 +161,15 @@ public class Center extends BaseImageEntity {
     public void updateCenter(ChildHouseInfoResponse response) {
         log.info("시설 정보 업데이트 실행 - updateCenter");
         this.owner = response.getOwner();
+        this.status = response.getStatus();
         this.estType = response.getEstType();
         this.homepage = response.getHomepage();
         this.zipcode = response.getZipcode();
+        this.program = response.getProgram();
         this.maxChildCnt = response.getMaxChildCnt();
         this.classInfo = response.getClassInfo();
         this.teacherInfo = response.getTeacherInfo();
         this.basicInfra = response.getBasicInfra();
-        this.program = response.getProgram();
     }
 
     public void updateCenter(KindergartenBasicInfraResponse response) {

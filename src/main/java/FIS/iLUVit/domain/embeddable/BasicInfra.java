@@ -43,4 +43,11 @@ public class BasicInfra {
         this.hasCCTV = hasCCTV;
         this.cctvCnt = cctvCnt;
     }
+
+    public BasicInfra(Boolean hasBus, Boolean hasPlayground, Boolean hasCCTV, Integer cctvCnt) {
+        this.hasBus = hasBus;
+        this.hasPlayground = hasPlayground;
+        this.hasCCTV = hasCCTV;
+        this.cctvCnt = cctvCnt;
+    }
 }
