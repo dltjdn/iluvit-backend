@@ -29,6 +29,13 @@ public interface CommentRepository extends JpaRepository<Comment, Long> {
      */
     List<Comment> findByPost(Post post);
 
+    /**
+     * 해당 게시물의 댓글을 조회합니다.  대댓글은 조회하지 않습니다.
+     */
     List<Comment> findByPostAndParentCommentIsNull(Post post);
+
+    /**
+     * 해당 댓글의 대댓글을 조회합니다
+     */
     List<Comment>  findByParentComment(Comment comment);
 }

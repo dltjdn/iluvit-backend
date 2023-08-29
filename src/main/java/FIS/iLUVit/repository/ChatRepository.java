@@ -16,10 +16,6 @@ import java.util.List;
 
 public interface ChatRepository extends JpaRepository<Chat, Long> {
 
-    /**
-     * Receiver의 채팅방 속 채팅을 생성일시를 기준으로 내림차순으로 조회합니다
-     */
-    Slice<Chat> findByChatRoomAndChatRoomReceiverOrderByCreatedDateDesc(ChatRoom chatRoom, User user, Pageable pageable);
 
     /**
      * 쪽지 수신자의 채팅방 내 채팅을 생성일시를 기준으로 내림차순으로 조회합니다
