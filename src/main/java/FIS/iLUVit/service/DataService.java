@@ -74,7 +74,7 @@ public class DataService {
         List<Region> regionList = regionRepository.findAll();
 
         for (Region region : regionList) {
-            List<ChildHouseInfoResponse> responses = updateChildHouseInfo(region.getSigunguCode());
+            List<ChildHouseInfoResponse> responses = getChildHouseInfo(region.getSigunguCode());
             for(ChildHouseInfoResponse response : responses) {
                 List<Center> centerList = centerRepository.findByNameAndAreaSidoAndAreaSigungu(
                         response.getCenterName(), response.getArea().getSido(), response.getArea().getSigungu());
@@ -84,7 +84,6 @@ public class DataService {
                     if(!center.getSigned()) {
                         center.updateCenter(response);
                     }
-
                 }
             }
         }
@@ -93,7 +92,7 @@ public class DataService {
     /**
      * 어린이집 기본정보 조회 API를 요청하고 응답값의 내용으로 정보 저장을 위한 시설 객체를 생성하여 반환합니다
      */
-    public List<ChildHouseInfoResponse> updateChildHouseInfo(String sigunguCode) {
+    public List<ChildHouseInfoResponse> getChildHouseInfo(String sigunguCode) {
 
         HttpHeaders httpHeaders = new HttpHeaders();
 
@@ -114,68 +113,72 @@ public class DataService {
 
         List<ChildHouseInfoResponse> childHouseInfoResponseList = new ArrayList<>();
 
-        // API 응답 데이터 처리
-        for(ChildHouseXmlResponse response : responseList) {
+        if(responseList != null) {
+            // API 응답 데이터 처리
+            for (ChildHouseXmlResponse response : responseList) {
 
-            // Area 관련 정보 객체 생성
-            Area area = Area.builder()
-                    .sido(response.getSido())
-                    .sigungu(response.getSigungu())
-                    .build();
+                // Area 관련 정보 객체 생성
+                Area area = Area.builder()
+                        .sido(response.getSido())
+                        .sigungu(response.getSigungu())
+                        .build();
 
-            // BasicInfra 관련 정보 전처리 및 객체 생성 ( 버스 운영 여부, 놀이터 여부, CCTV 여부 판단 )
-            Boolean hasBus = "운영".equals(response.getHasBus());
-            Boolean hasPlayground = response.getPlayGroundCnt() > 0;
-            Integer cctvCnt = response.getCctvCnt();
-            Boolean hasCCTV = response.getCctvCnt() > 0;
+                // BasicInfra 관련 정보 전처리 및 객체 생성 ( 버스 운영 여부, 놀이터 여부, CCTV 여부 판단 )
+                Boolean hasBus = "운영".equals(response.getHasBus());
+                Boolean hasPlayground = response.getPlayGroundCnt() > 0;
+                Integer cctvCnt = response.getCctvCnt();
+                Boolean hasCCTV = response.getCctvCnt() > 0;
 
-            BasicInfra basicInfra = new BasicInfra(hasBus, hasPlayground, hasCCTV, cctvCnt);
+                BasicInfra basicInfra = new BasicInfra(hasBus, hasPlayground, hasCCTV, cctvCnt);
 
-            // ClassInfo 관련 정보 객체 생성
-            ClassInfo classInfo = ClassInfo.builder()
-                    .class_0(response.getClass_0())
-                    .class_1(response.getClass_1())
-                    .class_2(response.getClass_2())
-                    .class_3(response.getClass_3())
-                    .class_4(response.getClass_4())
-                    .class_5(response.getClass_5())
-                    .child_0(response.getChild_0())
-                    .child_1(response.getChild_1())
-                    .child_2(response.getChild_2())
-                    .child_3(response.getChild_3())
-                    .child_4(response.getChild_4())
-                    .child_5(response.getChild_5())
-                    .child_spe(response.getChild_spe())
-                    .build();
+                // ClassInfo 관련 정보 객체 생성
+                ClassInfo classInfo = ClassInfo.builder()
+                        .class_0(response.getClass_0())
+                        .class_1(response.getClass_1())
+                        .class_2(response.getClass_2())
+                        .class_3(response.getClass_3())
+                        .class_4(response.getClass_4())
+                        .class_5(response.getClass_5())
+                        .child_0(response.getChild_0())
+                        .child_1(response.getChild_1())
+                        .child_2(response.getChild_2())
+                        .child_3(response.getChild_3())
+                        .child_4(response.getChild_4())
+                        .child_5(response.getChild_5())
+                        .child_spe(response.getChild_spe())
+                        .build();
 
-            // Teacher 관련 정보 객체 생성
-            TeacherInfo teacherInfo = TeacherInfo.builder()
-                    .dur_1(response.getDur_1())
-                    .dur12(response.getDur12())
-                    .dur24(response.getDur24())
-                    .dur46(response.getDur46())
-                    .dur6_(response.getDur6_())
-                    .build();
+                // Teacher 관련 정보 객체 생성
+                TeacherInfo teacherInfo = TeacherInfo.builder()
+                        .dur_1(response.getDur_1())
+                        .dur12(response.getDur12())
+                        .dur24(response.getDur24())
+                        .dur46(response.getDur46())
+                        .dur6_(response.getDur6_())
+                        .build();
 
-            // 어린이집 정보 응답 객체 생성
-            ChildHouseInfoResponse childHouseInfoResponse = ChildHouseInfoResponse.builder()
-                    .centerName(response.getCenterName())
-                    .area(area)
-                    .estType(response.getEstType())
-                    .program(response.getProgram())
-                    .homepage(response.getHomepage())
-                    .status(response.getStatus())
-                    .owner(response.getOwner())
-                    .zipcode(response.getZipcode())
-                    .curChildCnt(response.getCurChildCnt())
-                    .maxChildCnt(response.getMaxChildCnt())
-                    .basicInfra(basicInfra)
-                    .classInfo(classInfo)
-                    .teacherInfo(teacherInfo)
-                    .build();
+                // 어린이집 정보 응답 객체 생성
+                ChildHouseInfoResponse childHouseInfoResponse = ChildHouseInfoResponse.builder()
+                        .centerName(response.getCenterName())
+                        .area(area)
+                        .estType(response.getEstType())
+                        .program(response.getProgram())
+                        .homepage(response.getHomepage())
+                        .status(response.getStatus())
+                        .owner(response.getOwner())
+                        .zipcode(response.getZipcode())
+                        .curChildCnt(response.getCurChildCnt())
+                        .maxChildCnt(response.getMaxChildCnt())
+                        .basicInfra(basicInfra)
+                        .classInfo(classInfo)
+                        .teacherInfo(teacherInfo)
+                        .build();
 
-            // 어린이집 정보 응답 리스트에 추가
-            childHouseInfoResponseList.add(childHouseInfoResponse);
+                // 어린이집 정보 응답 리스트에 추가
+                childHouseInfoResponseList.add(childHouseInfoResponse);
+            }
+        } else {
+            log.warn("ResponseList가 null 입니다");
         }
 
         return childHouseInfoResponseList;
