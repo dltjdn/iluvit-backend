@@ -54,8 +54,9 @@ dependencies {
 	implementation 'com.slack.api:slack-api-client:1.29.0'
 
 	//swagger
-	implementation group: 'io.springfox', name: 'springfox-swagger-ui', version: '2.9.2'
-	implementation group: 'io.springfox', name: 'springfox-swagger2', version: '2.9.2'
+	//implementation group: 'io.springfox', name: 'springfox-swagger-ui', version: '2.9.2'
+	//implementation group: 'io.springfox', name: 'springfox-swagger2', version: '2.9.2'
+	implementation group: 'org.springdoc', name: 'springdoc-openapi-ui', version: '1.6.5' // Use the latest version
 
 	implementation group: 'org.hibernate', name: 'hibernate-validator', version: '6.1.0.Final'
 
