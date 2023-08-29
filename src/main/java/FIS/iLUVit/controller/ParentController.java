@@ -1,9 +1,9 @@
 package FIS.iLUVit.controller;
 
 import FIS.iLUVit.config.argumentResolver.Login;
-import FIS.iLUVit.dto.parent.ParentUpdateDto;
-import FIS.iLUVit.dto.parent.ParentDetailDto;
-import FIS.iLUVit.dto.parent.ParentSignupDto;
+import FIS.iLUVit.dto.parent.ParentUpdateRequest;
+import FIS.iLUVit.dto.parent.ParentDetailResponse;
+import FIS.iLUVit.dto.parent.ParentCreateRequest;
 import FIS.iLUVit.service.ParentService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -30,8 +30,8 @@ public class ParentController {
      *  학부모 정보 상세 조회
      */
     @GetMapping("")
-    public ResponseEntity<ParentDetailDto> getParentDetails(@Login Long userId){
-        ParentDetailDto parentDetails = parentService.findParentDetails(userId);
+    public ResponseEntity<ParentDetailResponse> getParentDetails(@Login Long userId){
+        ParentDetailResponse parentDetails = parentService.findParentDetails(userId);
         return ResponseEntity.ok(parentDetails);
     }
 
@@ -39,8 +39,8 @@ public class ParentController {
      *  학부모 정보 수정
      */
     @PatchMapping("")
-    public ResponseEntity<Void> updateParent(@Login Long userId, @Valid @ModelAttribute ParentUpdateDto parentUpdateDto) throws IOException {
-        parentService.modifyParentInfo(userId, parentUpdateDto);
+    public ResponseEntity<Void> updateParent(@Login Long userId, @Valid @ModelAttribute ParentUpdateRequest parentUpdateRequest) throws IOException {
+        parentService.modifyParentInfo(userId, parentUpdateRequest);
         return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
     }
 
@@ -48,8 +48,8 @@ public class ParentController {
      * 학부모 생성 (학부모 회원가입)
      */
     @PostMapping("signup")
-    public ResponseEntity<Void> createParent(@RequestBody @Valid ParentSignupDto parentSignupDto) {
-        parentService.signupParent(parentSignupDto);
+    public ResponseEntity<Void> createParent(@RequestBody @Valid ParentCreateRequest parentCreateRequest) {
+        parentService.signupParent(parentCreateRequest);
         return ResponseEntity.status(HttpStatus.CREATED).build();
     }
 

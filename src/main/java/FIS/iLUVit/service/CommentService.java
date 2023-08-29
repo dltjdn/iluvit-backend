@@ -1,8 +1,8 @@
 package FIS.iLUVit.service;
 
 import FIS.iLUVit.domain.alarms.Alarm;
-import FIS.iLUVit.dto.comment.CommentPostDto;
-import FIS.iLUVit.dto.comment.CommentCreateDto;
+import FIS.iLUVit.dto.comment.CommentPostResponse;
+import FIS.iLUVit.dto.comment.CommentCreateRequest;
 import FIS.iLUVit.domain.Comment;
 import FIS.iLUVit.domain.Post;
 import FIS.iLUVit.domain.User;
@@ -37,7 +37,7 @@ public class CommentService {
     /**
      * 댓글 작성 (comment_id 값이 null일 경우 댓글 작성, comment_id 값까지 보내는 경우 대댓글 작성)
      */
-    public void saveNewComment(Long userId, Long postId, Long parentCommentId, CommentCreateDto request) {
+    public void saveNewComment(Long userId, Long postId, Long parentCommentId, CommentCreateRequest request) {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new UserException(UserErrorResult.USER_NOT_EXIST));
 
@@ -127,9 +127,9 @@ public class CommentService {
     /**
      * 댓글 단 글 전체 조회
      */
-    public Slice<CommentPostDto> findCommentByUser(Long userId, Pageable pageable) {
+    public Slice<CommentPostResponse> findCommentByUser(Long userId, Pageable pageable) {
         User user = userRepository.findById(userId).orElseThrow(() -> new UserException(UserErrorResult.USER_NOT_EXIST));
         // Comment -> CommentDTO 타입으로 변환
-        return commentRepository.findByUser(user, pageable).map(CommentPostDto::new);
+        return commentRepository.findByUser(user, pageable).map(CommentPostResponse::new);
     }
 }

@@ -1,10 +1,10 @@
 package FIS.iLUVit.controller;
 
 import FIS.iLUVit.config.argumentResolver.Login;
-import FIS.iLUVit.dto.board.BoardIdDto;
-import FIS.iLUVit.dto.board.BoardListDto;
-import FIS.iLUVit.dto.board.BoardCreateDto;
-import FIS.iLUVit.dto.board.BoardStoryPreviewDto;
+import FIS.iLUVit.dto.board.BoardIdResponse;
+import FIS.iLUVit.dto.board.BoardListResponse;
+import FIS.iLUVit.dto.board.BoardCreateRequest;
+import FIS.iLUVit.dto.board.BoardStoryPreviewResponse;
 import FIS.iLUVit.service.BoardService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -29,26 +29,26 @@ public class BoardController {
      * 모두의 이야기 게시판 전체 조회
      */
     @GetMapping("public")
-    public ResponseEntity<BoardListDto> getAllBoardByPublic(@Login Long userId) {
-        BoardListDto boardListDto = boardService.findBoardByPublicList(userId);
-        return ResponseEntity.ok(boardListDto);
+    public ResponseEntity<BoardListResponse> getAllBoardByPublic(@Login Long userId) {
+        BoardListResponse boardListResponse = boardService.findBoardByPublicList(userId);
+        return ResponseEntity.ok(boardListResponse);
     }
 
     /**
      *  시설 이야기 게시판 전체 조회
      */
     @GetMapping("in-center/{centerId}")
-    public ResponseEntity<BoardListDto> getAllBoardByCenter(@Login Long userId, @PathVariable("centerId") Long centerId) {
-        BoardListDto boardListDto = boardService.findAllBoardByCenter(userId, centerId);
-        return ResponseEntity.ok(boardListDto);
+    public ResponseEntity<BoardListResponse> getAllBoardByCenter(@Login Long userId, @PathVariable("centerId") Long centerId) {
+        BoardListResponse boardListResponse = boardService.findAllBoardByCenter(userId, centerId);
+        return ResponseEntity.ok(boardListResponse);
     }
 
     /**
      * 이야기 (모두의 이야기 + 유저가 속한 시설의 이야기) 전체 조회
      */
     @GetMapping("home")
-    public ResponseEntity<List<BoardStoryPreviewDto>> getAllStory(@Login Long userId) {
-        List<BoardStoryPreviewDto> storyPreviewList = boardService.findStoryPreviewList(userId);
+    public ResponseEntity<List<BoardStoryPreviewResponse>> getAllStory(@Login Long userId) {
+        List<BoardStoryPreviewResponse> storyPreviewList = boardService.findStoryPreviewList(userId);
         return ResponseEntity.ok(storyPreviewList);
     }
 
@@ -56,10 +56,10 @@ public class BoardController {
      * 게시판 생성
      */
     @PostMapping("{centerId}")
-    public ResponseEntity<BoardIdDto> createBoard(@Login Long userId, @PathVariable("centerId") Long centerId,
-                                                  @RequestBody @Valid BoardCreateDto boardCreateDto) {
-        BoardIdDto boardIdDto = boardService.saveNewBoard(userId, centerId, boardCreateDto);
-        return ResponseEntity.status(HttpStatus.CREATED).body(boardIdDto);
+    public ResponseEntity<BoardIdResponse> createBoard(@Login Long userId, @PathVariable("centerId") Long centerId,
+                                                       @RequestBody @Valid BoardCreateRequest boardCreateRequest) {
+        BoardIdResponse boardIdResponse = boardService.saveNewBoard(userId, centerId, boardCreateRequest);
+        return ResponseEntity.status(HttpStatus.CREATED).body(boardIdResponse);
     }
 
     /**

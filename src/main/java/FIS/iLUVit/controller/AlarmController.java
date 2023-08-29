@@ -28,8 +28,8 @@ public class AlarmController {
      * 활동 알림을 조회합니다
      */
     @GetMapping("active")
-    public ResponseEntity<Slice<AlarmDto>> getActiveAlarm(@Login Long userId, Pageable pageable){
-        Slice<AlarmDto> alarmDetailDtos = alarmService.findActiveAlarmByUser(userId, pageable);
+    public ResponseEntity<Slice<AlarmResponse>> getActiveAlarm(@Login Long userId, Pageable pageable){
+        Slice<AlarmResponse> alarmDetailDtos = alarmService.findActiveAlarmByUser(userId, pageable);
         return ResponseEntity.ok(alarmDetailDtos);
     }
 
@@ -37,8 +37,8 @@ public class AlarmController {
      * 설명회 알림을 조회합니다
      */
     @GetMapping("presentation")
-    public ResponseEntity<Slice<AlarmDto>> getPresentationAlarm(@Login Long userId, Pageable pageable){
-        Slice<AlarmDto> alarmDetailDtos = alarmService.findPresentationActiveAlarmByUser(userId, pageable);
+    public ResponseEntity<Slice<AlarmResponse>> getPresentationAlarm(@Login Long userId, Pageable pageable){
+        Slice<AlarmResponse> alarmDetailDtos = alarmService.findPresentationActiveAlarmByUser(userId, pageable);
         return ResponseEntity.ok(alarmDetailDtos);
     }
 
@@ -55,17 +55,17 @@ public class AlarmController {
      * 전체 알림 읽었는지 안 읽었는지 여부를 조회합니다
      */
     @GetMapping("is-read")
-    public ResponseEntity<AlarmReadDto> hasRead(@Login Long userId){
-        AlarmReadDto alarmReadDto = alarmService.hasRead(userId);
-        return ResponseEntity.ok(alarmReadDto);
+    public ResponseEntity<AlarmReadResponse> hasRead(@Login Long userId){
+        AlarmReadResponse alarmReadResponse = alarmService.hasRead(userId);
+        return ResponseEntity.ok(alarmReadResponse);
     }
 
     /**
      * 선택한 알림들을 삭제합니다
      */
     @DeleteMapping("")
-    public ResponseEntity<Void> deleteAlarm(@Login Long userId, @RequestBody AlarmDeleteDto alarmDeleteDto) {
-        alarmService.deleteSelectedAlarm(userId, alarmDeleteDto);
+    public ResponseEntity<Void> deleteAlarm(@Login Long userId, @RequestBody AlarmDeleteRequest alarmDeleteRequest) {
+        alarmService.deleteSelectedAlarm(userId, alarmDeleteRequest);
         return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
     }
 

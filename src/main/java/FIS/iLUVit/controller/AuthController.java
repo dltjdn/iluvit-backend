@@ -1,9 +1,9 @@
 package FIS.iLUVit.controller;
 
 import FIS.iLUVit.config.argumentResolver.Login;
-import FIS.iLUVit.dto.auth.AuthRequestDto;
-import FIS.iLUVit.dto.auth.AuthLoginIdDto;
-import FIS.iLUVit.dto.auth.AuthFindPasswordDto;
+import FIS.iLUVit.dto.auth.AuthRequest;
+import FIS.iLUVit.dto.auth.AuthLoginIdResponse;
+import FIS.iLUVit.dto.auth.AuthFindPasswordRequest;
 import FIS.iLUVit.service.AuthService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -62,7 +62,7 @@ public class AuthController {
      * (회원가입, 비밀번호 찾기) 인증번호 인증
      */
     @PostMapping("")
-    public void authenticateAuthNum(@RequestBody AuthRequestDto request) {
+    public void authenticateAuthNum(@RequestBody AuthRequest request) {
         authService.authenticateAuthNum(request);
     }
 
@@ -70,7 +70,7 @@ public class AuthController {
      * (핸드폰번호 변경) 인증번호 인증
      */
     @PostMapping("phonenum")
-    public void authenticateAuthNumForChangingPhoneNum(@Login Long userId, @RequestBody AuthRequestDto request) {
+    public void authenticateAuthNumForChangingPhoneNum(@Login Long userId, @RequestBody AuthRequest request) {
         authService.authenticateAuthNumForChangingPhoneNum(userId, request);
     }
 
@@ -78,17 +78,17 @@ public class AuthController {
      * (아이디찾기) 인증번호 인증 후 유저 아이디 반환
      */
     @PostMapping("loginid")
-    public ResponseEntity<AuthLoginIdDto> authenticateAuthNumForFindLoginId(@RequestBody AuthRequestDto authRequestDto) {
-        AuthLoginIdDto authLoginIdDto = authService.authenticateAuthNumForFindLoginId(authRequestDto);
-        return ResponseEntity.ok(authLoginIdDto);
+    public ResponseEntity<AuthLoginIdResponse> authenticateAuthNumForFindLoginId(@RequestBody AuthRequest authRequest) {
+        AuthLoginIdResponse authLoginIdResponse = authService.authenticateAuthNumForFindLoginId(authRequest);
+        return ResponseEntity.ok(authLoginIdResponse);
     }
 
     /**
      * (비밀번호 변경용 비밀번호찾기) 인증이 완료된 핸드폰번호인지 확인 후 비밀번호 변경
      */
     @PostMapping("password")
-    public ResponseEntity<Void> authenticateAuthNumForChangePwd(@RequestBody @Valid AuthFindPasswordDto authFindPasswordDto) {
-        authService.authenticateAuthNumForChangePwd(authFindPasswordDto);
+    public ResponseEntity<Void> authenticateAuthNumForChangePwd(@RequestBody @Valid AuthFindPasswordRequest authFindPasswordRequest) {
+        authService.authenticateAuthNumForChangePwd(authFindPasswordRequest);
         return ResponseEntity.ok().build();
     }
 

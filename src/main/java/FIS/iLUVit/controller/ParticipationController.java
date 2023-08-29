@@ -1,9 +1,8 @@
 package FIS.iLUVit.controller;
 
 import FIS.iLUVit.config.argumentResolver.Login;
-import FIS.iLUVit.dto.participation.ParticipationDto;
-import FIS.iLUVit.domain.enumtype.Status;
-import FIS.iLUVit.dto.participation.ParticipationWithStatusDto;
+import FIS.iLUVit.dto.participation.ParticipationResponse;
+import FIS.iLUVit.dto.participation.ParticipationWithStatusResponse;
 import FIS.iLUVit.service.ParticipationService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -14,7 +13,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.Map;
 
 @RestController
 @RequiredArgsConstructor
@@ -48,17 +46,17 @@ public class ParticipationController {
      * 신청한/신청 취소한 설명회 전체 조회
      */
     @GetMapping("")
-    public ResponseEntity<List<ParticipationWithStatusDto>> getAllParticipation(@Login Long userId){
-        List<ParticipationWithStatusDto> participationWithStatusDtos = participationService.findAllParticipationByUser(userId);
-        return ResponseEntity.ok(participationWithStatusDtos);
+    public ResponseEntity<List<ParticipationWithStatusResponse>> getAllParticipation(@Login Long userId){
+        List<ParticipationWithStatusResponse> participationWithStatusResponses = participationService.findAllParticipationByUser(userId);
+        return ResponseEntity.ok(participationWithStatusResponses);
     }
 
     /**
      * 신청한 설명회 전체 조회
      */
     @GetMapping("join")
-    public ResponseEntity<Slice<ParticipationDto>> getRegisterParticipation(@Login Long userId, Pageable pageable){
-        Slice<ParticipationDto> participationDtos = participationService.findRegisterParticipationByUser(userId, pageable);
+    public ResponseEntity<Slice<ParticipationResponse>> getRegisterParticipation(@Login Long userId, Pageable pageable){
+        Slice<ParticipationResponse> participationDtos = participationService.findRegisterParticipationByUser(userId, pageable);
         return ResponseEntity.ok(participationDtos);
     }
 
@@ -66,8 +64,8 @@ public class ParticipationController {
      * 신청 취소한 설명회 전체 조회
      */
     @GetMapping("cancel")
-    public ResponseEntity<Slice<ParticipationDto>> getCancelParticipation(@Login Long userId, Pageable pageable){
-        Slice<ParticipationDto> participationDtos = participationService.findCancelParticipationByUser(userId, pageable);
+    public ResponseEntity<Slice<ParticipationResponse>> getCancelParticipation(@Login Long userId, Pageable pageable){
+        Slice<ParticipationResponse> participationDtos = participationService.findCancelParticipationByUser(userId, pageable);
         return ResponseEntity.ok(participationDtos);
     }
 
@@ -75,8 +73,8 @@ public class ParticipationController {
      * 대기를 신청한 설명회 전체 조회
      */
     @GetMapping("waiting")
-    public ResponseEntity<Slice<ParticipationDto>> getWaitingParticipation(@Login Long userId, Pageable pageable){
-        Slice<ParticipationDto> participationDtos = participationService.findWaitingParticipationByUser(userId, pageable);
+    public ResponseEntity<Slice<ParticipationResponse>> getWaitingParticipation(@Login Long userId, Pageable pageable){
+        Slice<ParticipationResponse> participationDtos = participationService.findWaitingParticipationByUser(userId, pageable);
         return ResponseEntity.ok(participationDtos);
     }
 }

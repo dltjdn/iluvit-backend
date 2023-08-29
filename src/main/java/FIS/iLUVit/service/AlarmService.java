@@ -2,9 +2,9 @@ package FIS.iLUVit.service;
 
 import FIS.iLUVit.domain.User;
 import FIS.iLUVit.domain.alarms.Alarm;
-import FIS.iLUVit.dto.alarm.AlarmDeleteDto;
-import FIS.iLUVit.dto.alarm.AlarmDto;
-import FIS.iLUVit.dto.alarm.AlarmReadDto;
+import FIS.iLUVit.dto.alarm.AlarmDeleteRequest;
+import FIS.iLUVit.dto.alarm.AlarmResponse;
+import FIS.iLUVit.dto.alarm.AlarmReadResponse;
 import FIS.iLUVit.exception.UserErrorResult;
 import FIS.iLUVit.exception.UserException;
 import FIS.iLUVit.repository.AlarmRepository;
@@ -29,9 +29,9 @@ public class AlarmService {
     /**
      * 활동 알림을 조회합니다
      */
-    public Slice<AlarmDto> findActiveAlarmByUser(Long userId, Pageable pageable) {
+    public Slice<AlarmResponse> findActiveAlarmByUser(Long userId, Pageable pageable) {
         Slice<Alarm> alarms = alarmRepository.findActiveByUser(userId, pageable);
-        SliceImpl<AlarmDto> alarmDetailDtos = new SliceImpl<>(alarms.stream()
+        SliceImpl<AlarmResponse> alarmDetailDtos = new SliceImpl<>(alarms.stream()
                 .map(Alarm::exportAlarm)
                 .collect(Collectors.toList()),
                 pageable, alarms.hasNext());
@@ -42,10 +42,10 @@ public class AlarmService {
     /**
      * 설명회 알림을 조회합니다
      */
-    public Slice<AlarmDto> findPresentationActiveAlarmByUser(Long userId, Pageable pageable) {
+    public Slice<AlarmResponse> findPresentationActiveAlarmByUser(Long userId, Pageable pageable) {
         Slice<Alarm> alarms = alarmRepository.findPresentationByUser(userId, pageable);
 
-        SliceImpl<AlarmDto> alarmDetailDtos = new SliceImpl<>(alarms.stream()
+        SliceImpl<AlarmResponse> alarmDetailDtos = new SliceImpl<>(alarms.stream()
                 .map(Alarm::exportAlarm)
                 .collect(Collectors.toList()),
                 pageable, alarms.hasNext());
@@ -65,21 +65,21 @@ public class AlarmService {
     /**
      * 전체 알림 읽었는지 안 읽었는지 여부를 조회합니다
      */
-    public AlarmReadDto hasRead(Long userId) {
+    public AlarmReadResponse hasRead(Long userId) {
         Boolean readAlarm = userRepository.findById(userId)
                 .orElseThrow(() -> new UserException(UserErrorResult.USER_NOT_EXIST))
                 .getReadAlarm();
 
-        AlarmReadDto alarmReadDto = new AlarmReadDto(readAlarm);
+        AlarmReadResponse alarmReadResponse = new AlarmReadResponse(readAlarm);
 
-        return alarmReadDto;
+        return alarmReadResponse;
     }
 
     /**
      * 선택한 알림들을 삭제합니다
      */
-    public void deleteSelectedAlarm(Long userId, AlarmDeleteDto alarmDeleteDto) {
-        List<Long> alarmIds = alarmDeleteDto.getAlarmIds();
+    public void deleteSelectedAlarm(Long userId, AlarmDeleteRequest alarmDeleteRequest) {
+        List<Long> alarmIds = alarmDeleteRequest.getAlarmIds();
 
         alarmRepository.deleteByUserIdAndIdIn(userId, alarmIds);
     }

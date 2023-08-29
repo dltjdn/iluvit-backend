@@ -15,7 +15,7 @@ import FIS.iLUVit.exception.UserErrorResult;
 import FIS.iLUVit.exception.UserException;
 import FIS.iLUVit.repository.*;
 import FIS.iLUVit.dto.presentation.PresentationWithPtDatesDto;
-import FIS.iLUVit.dto.parent.ParentDto;
+import FIS.iLUVit.dto.parent.ParentResponse;
 import FIS.iLUVit.dto.presentation.PresentationQueryDto;
 import FIS.iLUVit.dto.presentation.PtDateDetailDto;
 import lombok.RequiredArgsConstructor;
@@ -209,7 +209,7 @@ public class PresentationService {
         return presentation;
     }
 
-    public List<ParentDto> findParentListWithRegisterParticipation(Long userId, Long ptDateId) {
+    public List<ParentResponse> findParentListWithRegisterParticipation(Long userId, Long ptDateId) {
         //
         PtDate ptDate = ptDateRepository.findByIdAndJoinParticipationForSearch(ptDateId)
                 .orElseThrow(() -> new PresentationException("존재하지 않는 설명회 회차 입니다."));
@@ -218,11 +218,11 @@ public class PresentationService {
                 .canRead(ptDate.getPresentation().getCenter().getId());
         return ptDate.getParticipations().stream()
                 .filter(participation -> participation.getStatus().equals(Status.JOINED))
-                .map(participation -> new ParentDto(participation.getParent()))
+                .map(participation -> new ParentResponse(participation.getParent()))
                 .collect(Collectors.toList());
     }
 
-    public List<ParentDto> findParentListWithWaitingParticipation(Long userId, Long ptDateId) {
+    public List<ParentResponse> findParentListWithWaitingParticipation(Long userId, Long ptDateId) {
         //
         PtDate ptDate = ptDateRepository.findByIdWithWaitingAndPresentationAndCenterAndParent(ptDateId)
                 .orElseThrow(() -> new PresentationException("존재하지 않는 설명회 회차 입니다."));
@@ -231,7 +231,7 @@ public class PresentationService {
                 .canRead(ptDate.getPresentation().getCenter().getId());
 
         return waitingRepository.findByPtDate(ptDate).stream()
-                .map(participation -> new ParentDto(participation.getParent()))
+                .map(participation -> new ParentResponse(participation.getParent()))
                 .collect(Collectors.toList());
     }
 

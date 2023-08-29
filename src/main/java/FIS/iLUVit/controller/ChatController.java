@@ -2,10 +2,10 @@
 package FIS.iLUVit.controller;
 
 import FIS.iLUVit.config.argumentResolver.Login;
-import FIS.iLUVit.dto.chat.ChatListDto;
-import FIS.iLUVit.dto.chat.ChatRoomDto;
-import FIS.iLUVit.dto.chat.ChatRoomRequestDto;
-import FIS.iLUVit.dto.chat.ChatRequestDto;
+import FIS.iLUVit.dto.chat.ChatDetailResponse;
+import FIS.iLUVit.dto.chat.ChatRoomResponse;
+import FIS.iLUVit.dto.chat.ChatRoomCreateRequest;
+import FIS.iLUVit.dto.chat.ChatCreateRequest;
 import FIS.iLUVit.service.ChatService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
@@ -28,8 +28,8 @@ public class ChatController {
      * 쪽지 작성 ( 대화방 생성 )
      */
     @PostMapping("")
-    public ResponseEntity<Void> createChat(@Login Long userId, @RequestBody ChatRoomRequestDto chatRoomRequestDto) {
-        chatService.saveNewChat(userId, chatRoomRequestDto);
+    public ResponseEntity<Void> createChat(@Login Long userId, @RequestBody ChatRoomCreateRequest chatRoomCreateRequest) {
+        chatService.saveNewChat(userId, chatRoomCreateRequest);
         return ResponseEntity.status(HttpStatus.CREATED).build();
     }
 
@@ -37,8 +37,8 @@ public class ChatController {
      * 쪽지 작성 ( 대화방 생성 후 쪽지 작성 )
      */
     @PostMapping("in-room")
-    public ResponseEntity<Void> createChatInRoom(@Login Long userId, @RequestBody ChatRequestDto chatRequestDto) {
-        chatService.saveChatInRoom(userId, chatRequestDto);
+    public ResponseEntity<Void> createChatInRoom(@Login Long userId, @RequestBody ChatCreateRequest chatCreateRequest) {
+        chatService.saveChatInRoom(userId, chatCreateRequest);
         return ResponseEntity.status(HttpStatus.CREATED).build();
     }
 
@@ -46,8 +46,8 @@ public class ChatController {
      * 대화방 전체 조회
      */
     @GetMapping("")
-    public ResponseEntity<Slice<ChatRoomDto>> getAllChatRoom(@Login Long userId, Pageable pageable) {
-        Slice<ChatRoomDto> chatListDtos = chatService.findChatRoomList(userId, pageable);
+    public ResponseEntity<Slice<ChatRoomResponse>> getAllChatRoom(@Login Long userId, Pageable pageable) {
+        Slice<ChatRoomResponse> chatListDtos = chatService.findChatRoomList(userId, pageable);
         return ResponseEntity.ok(chatListDtos);
     }
 
@@ -55,8 +55,8 @@ public class ChatController {
      * 대화방 상세 조회
      */
     @GetMapping("{roomId}")
-    public ResponseEntity<ChatListDto> getChatRoomDetails(@Login Long userId, @PathVariable("roomId") Long roomId, Pageable pageable) {
-        ChatListDto chatListDtos = chatService.findChatRoomDetails(userId, roomId, pageable);
+    public ResponseEntity<ChatDetailResponse> getChatRoomDetails(@Login Long userId, @PathVariable("roomId") Long roomId, Pageable pageable) {
+        ChatDetailResponse chatListDtos = chatService.findChatRoomDetails(userId, roomId, pageable);
         return ResponseEntity.ok(chatListDtos);
     }
 

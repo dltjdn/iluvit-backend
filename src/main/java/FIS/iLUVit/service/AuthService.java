@@ -1,9 +1,9 @@
 package FIS.iLUVit.service;
 
 import FIS.iLUVit.domain.BlackUser;
-import FIS.iLUVit.dto.auth.AuthRequestDto;
-import FIS.iLUVit.dto.auth.AuthLoginIdDto;
-import FIS.iLUVit.dto.auth.AuthFindPasswordDto;
+import FIS.iLUVit.dto.auth.AuthRequest;
+import FIS.iLUVit.dto.auth.AuthLoginIdResponse;
+import FIS.iLUVit.dto.auth.AuthFindPasswordRequest;
 import FIS.iLUVit.domain.AuthNumber;
 import FIS.iLUVit.domain.User;
 import FIS.iLUVit.domain.enumtype.AuthKind;
@@ -104,7 +104,7 @@ public class AuthService {
     /**
      * 회원가입, 비밀번호 찾기를 위한 인증번호 인증
      */
-    public AuthNumber authenticateAuthNum(AuthRequestDto request) {
+    public AuthNumber authenticateAuthNum(AuthRequest request) {
         AuthKind authKind = request.getAuthKind();
         if (authKind != AuthKind.signup && authKind != AuthKind.findPwd && authKind != AuthKind.findLoginId) {
             throw new AuthNumberException(AuthNumberErrorResult.NOT_MATCH_AUTHKIND);
@@ -125,7 +125,7 @@ public class AuthService {
     /**
      * 핸드폰번호 변경을 위한 인증번호 인증
      */
-    public AuthNumber authenticateAuthNumForChangingPhoneNum(Long userId, AuthRequestDto request) {
+    public AuthNumber authenticateAuthNumForChangingPhoneNum(Long userId, AuthRequest request) {
 
         if (! request.getAuthKind().equals(AuthKind.updatePhoneNum)){
             throw new AuthNumberException(AuthNumberErrorResult.NOT_MATCH_AUTHKIND);
@@ -147,7 +147,7 @@ public class AuthService {
     /**
      * (아이디찾기) 인증번호 인증 후 유저 아이디 반환
      */
-    public AuthLoginIdDto authenticateAuthNumForFindLoginId(AuthRequestDto request) {
+    public AuthLoginIdResponse authenticateAuthNumForFindLoginId(AuthRequest request) {
 
         // 인증번호 인증
         AuthNumber authNumber = authenticateAuthNum(request);
@@ -160,15 +160,15 @@ public class AuthService {
 
         String blindLoginId = blindLoginId(findUser.getLoginId());
 
-        AuthLoginIdDto authLoginIdDto = new AuthLoginIdDto(blindLoginId);
+        AuthLoginIdResponse authLoginIdResponse = new AuthLoginIdResponse(blindLoginId);
 
-        return authLoginIdDto;
+        return authLoginIdResponse;
     }
 
     /**
      * (비밀번호 변경용 비밀번호찾기) 인증이 완료된 핸드폰번호인지 확인 후 비밀번호 변경
      */
-    public void authenticateAuthNumForChangePwd(AuthFindPasswordDto request) {
+    public void authenticateAuthNumForChangePwd(AuthFindPasswordRequest request) {
         // 비밀번호와 비밀번호 확인 불일치
         if (!request.getNewPwd().equals(request.getNewPwdCheck())) {
             throw new AuthNumberException(AuthNumberErrorResult.NOT_MATCH_CHECKPWD);

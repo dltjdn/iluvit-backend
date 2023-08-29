@@ -1,8 +1,8 @@
 package FIS.iLUVit.controller;
 
 import FIS.iLUVit.config.argumentResolver.Login;
-import FIS.iLUVit.dto.board.BoardBookmarkIdDto;
-import FIS.iLUVit.dto.board.BoardStoryDto;
+import FIS.iLUVit.dto.board.BoardBookmarkIdResponse;
+import FIS.iLUVit.dto.board.BoardStoryResponse;
 import FIS.iLUVit.service.BoardBookmarkService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -26,18 +26,18 @@ public class BoardBookmarkController {
      * 즐겨찾는 게시판 전체 조회
     */
     @GetMapping("main")
-    public ResponseEntity<List<BoardStoryDto>> getAllBoardBookmark(@Login Long userId) {
-        List<BoardStoryDto> boardStoryDtoList = boardBookmarkService.findBoardBookmarkByUser(userId);
-        return ResponseEntity.ok(boardStoryDtoList);
+    public ResponseEntity<List<BoardStoryResponse>> getAllBoardBookmark(@Login Long userId) {
+        List<BoardStoryResponse> boardStoryResponseList = boardBookmarkService.findBoardBookmarkByUser(userId);
+        return ResponseEntity.ok(boardStoryResponseList);
     }
 
     /**
      * 즐겨찾는 게시판 등록
     */
     @PostMapping("{boardId}")
-    public ResponseEntity<BoardBookmarkIdDto> createBoardBookmark(@Login Long userId, @PathVariable("boardId") Long boardId) {
-        BoardBookmarkIdDto boardBookmarkIdDto = boardBookmarkService.saveBoardBookmark(userId, boardId);
-        return ResponseEntity.status(HttpStatus.CREATED).body(boardBookmarkIdDto);
+    public ResponseEntity<BoardBookmarkIdResponse> createBoardBookmark(@Login Long userId, @PathVariable("boardId") Long boardId) {
+        BoardBookmarkIdResponse boardBookmarkIdResponse = boardBookmarkService.saveBoardBookmark(userId, boardId);
+        return ResponseEntity.status(HttpStatus.CREATED).body(boardBookmarkIdResponse);
     }
 
     /**

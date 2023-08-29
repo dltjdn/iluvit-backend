@@ -4,8 +4,8 @@ import FIS.iLUVit.domain.*;
 import FIS.iLUVit.domain.enumtype.Approval;
 import FIS.iLUVit.domain.enumtype.Auth;
 import FIS.iLUVit.domain.enumtype.BoardKind;
-import FIS.iLUVit.dto.board.BoardPreviewDto;
-import FIS.iLUVit.dto.comment.CommentDto;
+import FIS.iLUVit.dto.board.BoardPreviewResponse;
+import FIS.iLUVit.dto.comment.CommentInPostResponse;
 import FIS.iLUVit.dto.comment.CommentReplyResponse;
 import FIS.iLUVit.dto.post.PostCreateRequest;
 import FIS.iLUVit.dto.post.PostDetailResponse;
@@ -16,7 +16,6 @@ import FIS.iLUVit.service.constant.Criteria;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.jetbrains.annotations.NotNull;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
 import org.springframework.stereotype.Service;
@@ -252,7 +251,7 @@ public class PostService {
 
         // 유저가 차단한 유저를 조회한다
         List<Long> blockedUserIds = getBlockedUserIds(user);
-        List<CommentDto> commentResponses = new ArrayList<>();
+        List<CommentInPostResponse> commentResponses = new ArrayList<>();
 
 
         // 댓글 리스트 조회
@@ -279,7 +278,7 @@ public class PostService {
             if(comment.getUser() != null && blockedUserIds.contains(comment.getUser().getId())){
                 commentIsBlocked = true;
             }
-            commentResponses.add(new CommentDto(comment, userId, subCommentResponses, commentIsBlocked));
+            commentResponses.add(new CommentInPostResponse(comment, userId, subCommentResponses, commentIsBlocked));
 
         });
 
@@ -292,13 +291,13 @@ public class PostService {
     /**
      * 모두의 이야기 게시판 전체 조회
      */
-    public List<BoardPreviewDto> findBoardDetailsByPublic(Long userId) {
+    public List<BoardPreviewResponse> findBoardDetailsByPublic(Long userId) {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new UserException(UserErrorResult.USER_NOT_EXIST));
 
         List<Bookmark> bookmarkList = boardBookmarkRepository.findByUserAndBoardCenterIsNull(user);
 
-        List<BoardPreviewDto> BoardPreviewWithHotBoard = addHotBoardToBoardPreviewDto(user, null);
+        List<BoardPreviewResponse> BoardPreviewWithHotBoard = addHotBoardToBoardPreviewDto(user, null);
 
         return addBookmarkBoardToBoardPreviewDto(BoardPreviewWithHotBoard,bookmarkList);
     }
@@ -306,7 +305,7 @@ public class PostService {
     /**
      * 시설별 이야기 게시판 전체 조회
      */
-    public List<BoardPreviewDto> findBoardDetailsByCenter(Long userId, Long centerId) {
+    public List<BoardPreviewResponse> findBoardDetailsByCenter(Long userId, Long centerId) {
 
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new UserException(UserErrorResult.USER_NOT_EXIST));
@@ -342,7 +341,7 @@ public class PostService {
         // 유저의 시설 즐겨찾기 리스트 가져옴
         List<Bookmark> bookmarkList = boardBookmarkRepository.findByUserAndBoardCenter(user, center);
 
-        List<BoardPreviewDto> boardPreviewWithHotBoard = addHotBoardToBoardPreviewDto(user, center);
+        List<BoardPreviewResponse> boardPreviewWithHotBoard = addHotBoardToBoardPreviewDto(user, center);
 
         return addBookmarkBoardToBoardPreviewDto(boardPreviewWithHotBoard, bookmarkList);
     }
@@ -378,9 +377,9 @@ public class PostService {
     }
 
     /**
-     * BoardPreviewDto 리스트에 핫게시판 정보를 추가한다
+     * BoardPreviewResponse 리스트에 핫게시판 정보를 추가한다
      */
-    private List<BoardPreviewDto> addHotBoardToBoardPreviewDto(User user, Center center){
+    private List<BoardPreviewResponse> addHotBoardToBoardPreviewDto(User user, Center center){
         // 유저가 차단한 유저를 조회한다
         List<Long> blockedUserIds = getBlockedUserIds(user);
 
@@ -389,24 +388,24 @@ public class PostService {
         if (center != null) centerId = center.getId();
         List<Post> hotPosts = postRepository.findHotPostsByHeartCnt(Criteria.HOT_POST_HEART_CNT, centerId, blockedUserIds);
 
-        List<BoardPreviewDto> boardPreviewDtos = new ArrayList<>();
+        List<BoardPreviewResponse> boardPreviewResponses = new ArrayList<>();
 
-        // 핫 게시물 정보를 활용하여 BoardPreviewDto.PostInfo 생성
-        List<BoardPreviewDto.PostInfo> postInfoList = hotPosts.stream()
-                .map((post) -> new BoardPreviewDto.PostInfo(post, imageService.getInfoImages(post)))
+        // 핫 게시물 정보를 활용하여 BoardPreviewResponse.PostInfo 생성
+        List<BoardPreviewResponse.PostInfo> postInfoList = hotPosts.stream()
+                .map((post) -> new BoardPreviewResponse.PostInfo(post, imageService.getInfoImages(post)))
                 .collect(Collectors.toList());
 
         // 핫 게시판 정보를 boardPreviewDtos에 추가
-        boardPreviewDtos.add(new BoardPreviewDto(null, "HOT 게시판", BoardKind.NORMAL, postInfoList));
+        boardPreviewResponses.add(new BoardPreviewResponse(null, "HOT 게시판", BoardKind.NORMAL, postInfoList));
 
-        return boardPreviewDtos;
+        return boardPreviewResponses;
     }
 
     /**
-     * 기존의 BoardPreviewDto 리스트에 북마크만 게시판 정보들을 추가한다
+     * 기존의 BoardPreviewResponse 리스트에 북마크만 게시판 정보들을 추가한다
      */
     @NotNull
-    private List<BoardPreviewDto> addBookmarkBoardToBoardPreviewDto(List<BoardPreviewDto> boardPreviewDtos, List<Bookmark> bookmarkList) {
+    private List<BoardPreviewResponse> addBookmarkBoardToBoardPreviewDto(List<BoardPreviewResponse> boardPreviewResponses, List<Bookmark> bookmarkList) {
         // 북마크한 게시판을 추출
         List<Board> boards = bookmarkList.stream()
                 .map(Bookmark::getBoard)
@@ -419,25 +418,25 @@ public class PostService {
         Map<Board, List<Post>> boardPostMap = posts.stream()
                 .collect(Collectors.groupingBy(Post::getBoard));
 
-        // 게시판별 게시물 정보를 활용하여 BoardPreviewDto 생성
-        List<BoardPreviewDto> boardPreviews = boardPostMap.entrySet().stream()
+        // 게시판별 게시물 정보를 활용하여 BoardPreviewResponse 생성
+        List<BoardPreviewResponse> boardPreviews = boardPostMap.entrySet().stream()
                 .map(entry -> {
                     Board board = entry.getKey();
                     List<Post> postList = entry.getValue();
 
-                    List<BoardPreviewDto.PostInfo> postInfos = postList.stream()
-                            .map(post -> new BoardPreviewDto.PostInfo(post, imageService.getInfoImages(post)))
+                    List<BoardPreviewResponse.PostInfo> postInfos = postList.stream()
+                            .map(post -> new BoardPreviewResponse.PostInfo(post, imageService.getInfoImages(post)))
                             .collect(Collectors.toList());
 
-                    return new BoardPreviewDto(board.getId(), board.getName(),board.getBoardKind(),  postInfos);
+                    return new BoardPreviewResponse(board.getId(), board.getName(),board.getBoardKind(),  postInfos);
                 })
-                .sorted(Comparator.comparing(BoardPreviewDto::getBoardId))
+                .sorted(Comparator.comparing(BoardPreviewResponse::getBoardId))
                 .collect(Collectors.toList());
 
         // 기존의 boardPreviewDtos에 북마크 게시판 정보 추가
-        boardPreviewDtos.addAll(boardPreviews);
+        boardPreviewResponses.addAll(boardPreviews);
 
-        return boardPreviewDtos;
+        return boardPreviewResponses;
     }
 
     /**

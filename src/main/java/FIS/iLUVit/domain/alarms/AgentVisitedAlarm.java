@@ -3,7 +3,7 @@ package FIS.iLUVit.domain.alarms;
 import FIS.iLUVit.domain.Center;
 import FIS.iLUVit.domain.User;
 import FIS.iLUVit.domain.enumtype.Auth;
-import FIS.iLUVit.dto.alarm.AlarmDto;
+import FIS.iLUVit.dto.alarm.AlarmResponse;
 import FIS.iLUVit.service.AlarmUtils;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -31,17 +31,17 @@ public class AgentVisitedAlarm extends Alarm {
     }
 
     @Override
-    public AlarmDto exportAlarm() {
-        return new AgentVisitedAlarmDto(id, createdDate, message, dtype, auth, centerName, centerId);
+    public AlarmResponse exportAlarm() {
+        return new AgentVisitedAlarmResponse(id, createdDate, message, dtype, auth, centerName, centerId);
     }
 
     @Getter
-    public static class AgentVisitedAlarmDto extends AlarmDto {
+    public static class AgentVisitedAlarmResponse extends AlarmResponse {
         private Auth auth;
         private String centerName;
         private Long centerId;
 
-        public AgentVisitedAlarmDto(Long id, LocalDateTime createdTime, String message, String type, Auth auth, String centerName, Long centerId) {
+        public AgentVisitedAlarmResponse(Long id, LocalDateTime createdTime, String message, String type, Auth auth, String centerName, Long centerId) {
             super(id, createdTime, message, type);
             this.auth = auth;
             this.centerName = centerName;

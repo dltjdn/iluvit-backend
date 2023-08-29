@@ -1,7 +1,7 @@
 package FIS.iLUVit.domain;
 
 import FIS.iLUVit.domain.embeddable.Location;
-import FIS.iLUVit.dto.user.UserBasicInfoDto;
+import FIS.iLUVit.dto.user.UserBasicInfoResponse;
 import FIS.iLUVit.domain.enumtype.Auth;
 import FIS.iLUVit.security.UserDto;
 import lombok.AccessLevel;
@@ -69,8 +69,8 @@ public class User extends BaseImageEntity {
         return new UserDto(this);
     }
 
-    public UserBasicInfoDto getUserInfo() {
-        return new UserBasicInfoDto(id, nickName, auth);
+    public UserBasicInfoResponse getUserInfo() {
+        return new UserBasicInfoResponse(id, nickName, auth);
     }
 
     public User updateReadAlarm(Boolean readAlarm) {

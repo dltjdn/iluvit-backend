@@ -43,7 +43,7 @@ public class UserService {
     /**
      * 유저 기본정보( id, nickname, auth )를 반환합니다
      */
-    public UserBasicInfoDto findUserDetails(Long userId) {
+    public UserBasicInfoResponse findUserDetails(Long userId) {
         // 블랙 유저 검증
         blackUserRepository.findByUserId(userId)
                 .ifPresent(blackUser -> {
@@ -86,7 +86,7 @@ public class UserService {
     /**
      * 비밀번호를 변경합니다
      */
-    public void changePassword(Long id, PasswordUpdateDto request) {
+    public void changePassword(Long id, PasswordUpdateRequest request) {
         // 유저 id로 유저 정보 조회
         User findUser = userRepository.findById(id)
                 .orElseThrow(() -> new UserException(UserErrorResult.NOT_VALID_TOKEN));
@@ -147,7 +147,7 @@ public class UserService {
     /**
      * refreshToken으로 accessToken를 재발급합니다
      */
-    public UserDto refreshAccessToken(TokenRefreshRequestDto request) {
+    public UserDto refreshAccessToken(TokenRefreshRequest request) {
         //요청으로 받은 refreshToken 추출
         String requestRefreshToken = request.getRefreshToken().replace("Bearer ", "");
 

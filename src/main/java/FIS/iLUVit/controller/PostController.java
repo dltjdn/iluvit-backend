@@ -1,8 +1,7 @@
 package FIS.iLUVit.controller;
 
 import FIS.iLUVit.config.argumentResolver.Login;
-import FIS.iLUVit.domain.enumtype.Auth;
-import FIS.iLUVit.dto.board.BoardPreviewDto;
+import FIS.iLUVit.dto.board.BoardPreviewResponse;
 import FIS.iLUVit.dto.post.PostResponse;
 import FIS.iLUVit.dto.post.PostCreateRequest;
 import FIS.iLUVit.dto.post.PostDetailResponse;
@@ -108,18 +107,18 @@ public class PostController {
      * 모두의 이야기 게시판 전체 조회
      */
     @GetMapping("story")
-    public ResponseEntity<List<BoardPreviewDto>> getBoardDetailsByPublic(@Login Long userId) {
-        List<BoardPreviewDto> boardPreviewDtos = postService.findBoardDetailsByPublic(userId);
-        return ResponseEntity.ok(boardPreviewDtos);
+    public ResponseEntity<List<BoardPreviewResponse>> getBoardDetailsByPublic(@Login Long userId) {
+        List<BoardPreviewResponse> boardPreviewResponses = postService.findBoardDetailsByPublic(userId);
+        return ResponseEntity.ok(boardPreviewResponses);
     }
 
     /**
      * 시설별 이야기 게시판 전체 조회
      */
     @GetMapping("story/{centerId}")
-    public ResponseEntity<List<BoardPreviewDto>> getBoardDetailsByCenter(@Login Long userId, @PathVariable("centerId") Long centerId) {
-        List<BoardPreviewDto> boardPreviewDtos = postService.findBoardDetailsByCenter(userId, centerId);
-        return ResponseEntity.ok(boardPreviewDtos);
+    public ResponseEntity<List<BoardPreviewResponse>> getBoardDetailsByCenter(@Login Long userId, @PathVariable("centerId") Long centerId) {
+        List<BoardPreviewResponse> boardPreviewResponses = postService.findBoardDetailsByCenter(userId, centerId);
+        return ResponseEntity.ok(boardPreviewResponses);
     }
 
 

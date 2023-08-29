@@ -1,6 +1,6 @@
 package FIS.iLUVit.domain.alarms;
 
-import FIS.iLUVit.dto.alarm.AlarmDto;
+import FIS.iLUVit.dto.alarm.AlarmResponse;
 import FIS.iLUVit.domain.Center;
 import FIS.iLUVit.domain.User;
 import FIS.iLUVit.service.AlarmUtils;
@@ -27,16 +27,16 @@ public class CenterApprovalAcceptedAlarm extends Alarm{
     }
 
     @Override
-    public AlarmDto exportAlarm() {
-        return new CenterApprovalAcceptedAlarmDto(id, createdDate, message, dtype, centerId, centerName);
+    public AlarmResponse exportAlarm() {
+        return new CenterApprovalAcceptedAlarmResponse(id, createdDate, message, dtype, centerId, centerName);
     }
 
     @Getter
-    public static class CenterApprovalAcceptedAlarmDto extends AlarmDto {
+    public static class CenterApprovalAcceptedAlarmResponse extends AlarmResponse {
         protected Long centerId;
         protected String centerName;
 
-        public CenterApprovalAcceptedAlarmDto(Long id, LocalDateTime createdDate, String message, String type, Long centerId, String centerName) {
+        public CenterApprovalAcceptedAlarmResponse(Long id, LocalDateTime createdDate, String message, String type, Long centerId, String centerName) {
             super(id, createdDate, message, type);
             this.centerId = centerId;
             this.centerName = centerName;

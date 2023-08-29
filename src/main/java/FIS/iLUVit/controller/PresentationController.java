@@ -3,7 +3,7 @@ package FIS.iLUVit.controller;
 import FIS.iLUVit.config.argumentResolver.Login;
 import FIS.iLUVit.dto.presentation.*;
 import FIS.iLUVit.service.PresentationService;
-import FIS.iLUVit.dto.parent.ParentDto;
+import FIS.iLUVit.dto.parent.ParentResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Pageable;
@@ -131,7 +131,7 @@ public class PresentationController {
      * 작성내용: 설명회 예약 학부모 전체 조회(예약명단)
      */
     @GetMapping("pt-date/{ptDateId}/participating")
-    public List<ParentDto> getParentParticipate(@Login Long userId, @PathVariable("ptDateId") Long ptDateId){
+    public List<ParentResponse> getParentParticipate(@Login Long userId, @PathVariable("ptDateId") Long ptDateId){
         return presentationService.findParentListWithRegisterParticipation(userId, ptDateId);
     }
 
@@ -140,7 +140,7 @@ public class PresentationController {
      * 작성내용: 설명회 대기 학부모 전체 조회(대기명단)
      */
     @GetMapping("pt-date/{ptDateId}/waiting")
-    public List<ParentDto> getParentWait(@Login Long userId, @PathVariable("ptDateId") Long ptDateId){
+    public List<ParentResponse> getParentWait(@Login Long userId, @PathVariable("ptDateId") Long ptDateId){
         return presentationService.findParentListWithWaitingParticipation(userId, ptDateId);
     }
 
