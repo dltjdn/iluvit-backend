@@ -23,7 +23,6 @@ spring:
         create_empty_composites:
           enabled: true
     open-in-view: false
-
   profiles:
     include:
       - secret
@@ -59,3 +58,4 @@ logging:
     FIS.iLUVit: info
     FIS.iLUVit.controller: warn
     FIS.iLUVit.service: warn
+
