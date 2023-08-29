@@ -88,7 +88,7 @@ public class DataService {
     }
 
     /**
-     * 어린이집 기본정보 조회 API를 요청하고 응답값의 내용으로 정보 저장을 위한 시설 객체를 생성하여 반환합니다f
+     * 어린이집 기본정보 조회 API를 요청하고 응답값의 내용으로 정보 저장을 위한 시설 객체를 생성하여 반환합니다
      */
     public List<ChildHouseInfoResponse> updateChildHouseInfo(String sigunguCode) {
 
@@ -316,27 +316,34 @@ public class DataService {
             for (Object result : results) {
                 JSONObject temp = (JSONObject) result;
 
+                // JSON 데이터 가져오기
                 String centerName = temp.get("kindername").toString();
-                String estType = temp.get("establish").toString();
-                String owner = temp.get("rppnname").toString();
-                String director = temp.get("ldgrname").toString();
-                String estDate = temp.get("ldgrname").toString();
-                String openTime = temp.get("ldgrname").toString();
-                String homepage = temp.get("ldgrname").toString();
-                Integer maxChildCnt = Integer.parseInt(temp.get("prmstfcnt").toString());
+                String estType = (temp.get("establish") != null) ? temp.get("establish").toString() : null;
+                String owner = (temp.get("rppnname") != null) ? temp.get("rppnname").toString() : null;
+                String director = (temp.get("ldgrname") != null) ? temp.get("ldgrname").toString() : null;
+                String estDate = (temp.get("odate") != null) ? temp.get("odate").toString() : null;
+                String operTime = (temp.get("opertime") != null) ? temp.get("opertime").toString() : null;
+                String homepage = (temp.get("hpaddr") != null) ? temp.get("hpaddr").toString() : null;
+                Integer maxChildCnt = (temp.get("prmstfcnt") != null) ? Integer.parseInt(temp.get("prmstfcnt").toString()) : null;
+                Integer class_3 = (temp.get("clcnt3") != null) ? Integer.parseInt(temp.get("clcnt3").toString()) : null;
+                Integer class_4 = (temp.get("clcnt4") != null) ? Integer.parseInt(temp.get("clcnt4").toString()) : null;
+                Integer class_5 = (temp.get("clcnt5") != null) ? Integer.parseInt(temp.get("clcnt5").toString()) : null;
+                Integer child_3 = (temp.get("ppcnt3") != null) ? Integer.parseInt(temp.get("ppcnt3").toString()) : null;
+                Integer child_4 = (temp.get("ppcnt4") != null) ? Integer.parseInt(temp.get("ppcnt4").toString()) : null;
+                Integer child_5 = (temp.get("ppcnt5") != null) ? Integer.parseInt(temp.get("ppcnt5").toString()) : null;
+                Integer child_spe = (temp.get("shppcnt") != null) ? Integer.parseInt(temp.get("shppcnt").toString()) : null;
 
-                Integer class_3 = Integer.parseInt(temp.get("clcnt3").toString());
-                Integer class_4 = Integer.parseInt(temp.get("clcnt4").toString());
-                Integer class_5 = Integer.parseInt(temp.get("clcnt5").toString());
-                Integer child_3 = Integer.parseInt(temp.get("ppcnt3").toString());
-                Integer child_4 = Integer.parseInt(temp.get("ppcnt4").toString());
-                Integer child_5 = Integer.parseInt(temp.get("ppcnt5").toString());
-                Integer child_spe = Integer.parseInt(temp.get("shppcnt").toString());
+                // 데이터 전처리
+                String startTime = null;
+                String endTime = null;
 
-                String[] timeParts = openTime.split("~");
-                String startTime = timeParts[0].replace("시", ":").replace("분", "");
-                String endTime = timeParts[1].replace("시", ":").replace("분", "");
+                if (operTime != null) {
+                    String[] timeParts = operTime.split("~");
+                    startTime = timeParts[0].replace("시", ":").replace("분", "").trim();
+                    endTime = timeParts[1].replace("시", ":").replace("분", "").trim();
+                }
 
+                // ClassInfo 객체 생성
                 ClassInfo classInfo = ClassInfo.builder()
                         .class_3(class_3)
                         .class_4(class_4)
@@ -347,6 +354,7 @@ public class DataService {
                         .child_spe(child_spe)
                         .build();
 
+                // 유치원 일반정보 객체 생성
                 KindergartenGeneralResponse response = KindergartenGeneralResponse.builder()
                         .centerName(centerName)
                         .estType(estType)
@@ -393,13 +401,23 @@ public class DataService {
             for (Object result : results) {
                 JSONObject temp = (JSONObject) result;
 
+                // 데이터 가져오기
                 String centerName = temp.get("kindername").toString();
-                Integer buildingYear = Integer.parseInt(temp.get("archyy").toString());
+                String buildingYearStr = (temp.get("archyy") != null) ? temp.get("archyy").toString() : null;
 
+                // 데이터 전처리
+                Integer buildingYear = null;
+                if (buildingYearStr != null) {
+                    buildingYearStr = buildingYearStr.replace("년", "").trim();
+                    buildingYear = Integer.parseInt(buildingYearStr);
+                }
+
+                // BasicInfra 객체 생성
                 BasicInfra basicInfra = BasicInfra.builder()
                         .buildingYear(buildingYear)
                         .build();
 
+                // 건축년도 정보 관련 객체 생성
                 KindergartenBasicInfraResponse response = KindergartenBasicInfraResponse.builder()
                         .centerName(centerName)
                         .basicInfra(basicInfra)
@@ -439,15 +457,22 @@ public class DataService {
             for (Object result : results) {
                 JSONObject temp = (JSONObject) result;
 
+                // 데이터 가져오기
                 String centerName = temp.get("kindername").toString();
+                String physicsArea = (temp.get("phgrindrarea") != null) ? temp.get("phgrindrarea").toString() : null;
 
-                String physicsIstYnValue = temp.get("phgrindrarea").toString();
-                Boolean hasPhysics = !physicsIstYnValue.equals("㎡");
+                // 데이터 전처리
+                Boolean hasPhysics = null;
+                if (physicsArea != null) {
+                    hasPhysics = !physicsArea.equals("㎡");
+                }
 
+                // BasicInfra 객체 생성
                 BasicInfra basicInfra = BasicInfra.builder()
                         .hasPhysics(hasPhysics)
                         .build();
 
+                // 체육장 관련 정보 객체 생성
                 KindergartenBasicInfraResponse response = KindergartenBasicInfraResponse.builder()
                         .centerName(centerName)
                         .basicInfra(basicInfra)
@@ -487,18 +512,24 @@ public class DataService {
             for (Object result : results) {
                 JSONObject temp = (JSONObject) result;
 
+                // 데이터 가져오기
                 String centerName = temp.get("kindername").toString();
+                String busIstYnValue = (temp.get("vhcl_oprn_yn") != null) ? temp.get("vhcl_oprn_yn").toString() : null;
+                Integer busCnt = (temp.get("opra_vhcnt") != null) ? Integer.parseInt(temp.get("opra_vhcnt").toString()) : null;
 
-                String busIstYnValue = temp.get("vhcl_oprn_yn").toString();
-                Boolean hasBus = "Y".equals(busIstYnValue);
+                // 데이터 전처리
+                Boolean hasBus = null;
+                if (busIstYnValue != null) {
+                    hasBus = "Y".equals(busIstYnValue);
+                }
 
-                Integer busCnt = Integer.parseInt(temp.get("opra_vhcnt").toString());
-
+                // BasicInfra 객체 생성
                 BasicInfra basicInfra = BasicInfra.builder()
                         .hasBus(hasBus)
                         .busCnt(busCnt)
                         .build();
 
+                // 통학버스 관련 정보 객체 생성
                 KindergartenBasicInfraResponse response = KindergartenBasicInfraResponse.builder()
                         .centerName(centerName)
                         .basicInfra(basicInfra)
@@ -537,14 +568,15 @@ public class DataService {
             for (Object result : results) {
                 JSONObject temp = (JSONObject) result;
 
+                // 데이터 가져오기
                 String centerName = temp.get("kindername").toString();
+                Integer dur_1 = (temp.get("yy1_undr_thcnt") != null) ? Integer.parseInt(temp.get("yy1_undr_thcnt").toString()) : null;
+                Integer dur12 = (temp.get("yy1_abv_yy2_undr_thcnt") != null) ? Integer.parseInt(temp.get("yy1_abv_yy2_undr_thcnt").toString()) : null;
+                Integer dur24 = (temp.get("yy2_abv_yy4_undr_thcnt") != null) ? Integer.parseInt(temp.get("yy2_abv_yy4_undr_thcnt").toString()) : null;
+                Integer dur46 = (temp.get("yy4_abv_yy6_undr_thcnt") != null) ? Integer.parseInt(temp.get("yy4_abv_yy6_undr_thcnt").toString()) : null;
+                Integer dur6_ = (temp.get("yy6_abv_thcnt") != null) ? Integer.parseInt(temp.get("yy6_abv_thcnt").toString()) : null;
 
-                Integer dur_1 = Integer.parseInt(temp.get("yy1_undr_thcnt").toString());
-                Integer dur12 = Integer.parseInt(temp.get("yy1_abv_yy2_undr_thcnt").toString());
-                Integer dur24 = Integer.parseInt(temp.get("yy2_abv_yy4_undr_thcnt").toString());
-                Integer dur46 = Integer.parseInt(temp.get("yy4_abv_yy6_undr_thcnt").toString());
-                Integer dur6_ = Integer.parseInt(temp.get("yy6_abv_thcnt").toString());
-
+                // TeacherInfo 객체 생성
                 TeacherInfo teacherInfo = TeacherInfo.builder()
                         .dur_1(dur_1)
                         .dur12(dur12)
@@ -553,6 +585,7 @@ public class DataService {
                         .dur6_(dur6_)
                         .build();
 
+                // 교사 정보 관련 객체 생성
                 KindergartenTeacherResponse response = KindergartenTeacherResponse.builder()
                         .centerName(centerName)
                         .teacherInfo(teacherInfo)
@@ -593,18 +626,24 @@ public class DataService {
             for (Object result : results) {
                 JSONObject temp = (JSONObject) result;
 
+                // 데이터 가져오기
                 String centerName = temp.get("kindername").toString();
+                String cctvIstYnValue = (temp.get("cctv_ist_yn") != null) ? temp.get("cctv_ist_yn").toString() : null;
+                Integer cctvCnt = (temp.get("cctv_ist_total") != null) ? Integer.parseInt(temp.get("cctv_ist_total").toString()) : null;
 
-                String cctvIstYnValue = temp.get("cctv_ist_yn").toString();
-                Boolean hasCCTV = "Y".equals(cctvIstYnValue);
+                // 데이터 전처리
+                Boolean hasCCTV = null;
+                if (cctvIstYnValue != null) {
+                    hasCCTV = "Y".equals(cctvIstYnValue);
+                }
 
-                Integer cctvCnt = Integer.parseInt(temp.get("cctv_ist_total").toString());
-
+                // BasicInfra 객체 생성
                 BasicInfra basicInfra = BasicInfra.builder()
                         .hasCCTV(hasCCTV)
                         .cctvCnt(cctvCnt)
                         .build();
 
+                // CCTV 관련 정보 객체 생성
                 KindergartenBasicInfraResponse response = KindergartenBasicInfraResponse.builder()
                         .centerName(centerName)
                         .basicInfra(basicInfra)
