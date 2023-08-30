@@ -3,6 +3,9 @@ package FIS.iLUVit.repository;
 import FIS.iLUVit.domain.Center;
 import FIS.iLUVit.domain.enumtype.KindOf;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 
 import java.util.List;
 import java.util.Optional;
@@ -27,5 +30,33 @@ public interface CenterRepository extends JpaRepository<Center, Long>, CenterRep
      * 해당 시도, 시군구, 시설명으로 시설을 조회합니다
      */
     List<Center> findByNameAndAreaSidoAndAreaSigungu(String Name, String sido, String sigungu);
+
+    /**
+     * 해당 시설의 건축년도 정보를 업데이트합니다
+     */
+    @Modifying
+    @Query("UPDATE Center c SET c.basicInfra.buildingYear = :buildingYear WHERE c.name = :name")
+    void updateCenterBuildingYear(@Param("name") String name, @Param("buildingYear") Integer buildingYear);
+
+    /**
+     * 해당 시설의 체육시설 유무 정보를 업데이트합니다
+     */
+    @Modifying
+    @Query("UPDATE Center c SET c.basicInfra.hasPhysics = :hasPhysics WHERE c.name = :name")
+    void updateCenterPhysics(@Param("name") String name, @Param("hasPhysics") Boolean hasPhysics);
+
+    /**
+     * 해당 시설의 통학버스 정보를 업데이트 합니다
+     */
+    @Modifying
+    @Query("UPDATE Center c SET c.basicInfra.hasBus = :hasBus, c.basicInfra.busCnt = :busCnt WHERE c.name = :name")
+    void updateCenterBus(@Param("name") String name, @Param("hasBus") Boolean hasBus, @Param("busCnt") Integer busCnt);
+
+    /**
+     * 해당 시설의 CCTV 정보를 업데이트합니다
+     */
+    @Modifying
+    @Query("UPDATE Center c SET c.basicInfra.hasCCTV = :hasCCTV, c.basicInfra.cctvCnt = :cctvCnt WHERE c.name = :name")
+    void updateCenterCCTV(@Param("name") String name, @Param("hasCCTV") Boolean hasCCTV, @Param("cctvCnt") Integer cctvCnt);
 
 }

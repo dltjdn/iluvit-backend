@@ -61,7 +61,7 @@ public class DataService {
             updateKindergartenTeacherInfo(region);
             updateKindergartenSafetyInfo(region);
             updateKindergartenBuildingInfo(region);
-            updateKindergartenBuildingInfo(region);
+            updateKindergartenPhysicsInfo(region);
             updateKindergartenSchoolBusInfo(region);
         }
     }
@@ -103,8 +103,6 @@ public class DataService {
         // RestTemplate을 사용하여 API 호출 및 응답 수신
         ResponseEntity<String> responseEntity = restTemplate.exchange(
                 url, HttpMethod.GET, new HttpEntity<>(httpHeaders), String.class);
-
-        log.info("responseEntity : {}", responseEntity);
 
         // JAXB를 이용한 XML 데이터 언마샬링
         ChildHouseXmlResponseWrapper responseWrapper = unmarshalXmlResponse(responseEntity.getBody());
@@ -218,7 +216,7 @@ public class DataService {
 
             if (centerList.size() == 1) {
                 Center center = centerList.get(0);
-                center.updateCenter(generalResponse);
+                center.updateCenterGeneral(generalResponse);
             }
         }
     }
@@ -236,7 +234,7 @@ public class DataService {
 
             if (centerList.size() == 1) {
                 Center center = centerList.get(0);
-                center.updateCenter(teacherResponse);
+                center.updateCenterTeacher(teacherResponse);
             }
         }
     }
@@ -254,7 +252,25 @@ public class DataService {
 
             if (centerList.size() == 1) {
                 Center center = centerList.get(0);
-                center.updateCenter(schoolResponse);
+                centerRepository.updateCenterBus(center.getName(), schoolResponse.getBasicInfra().getHasBus(), schoolResponse.getBasicInfra().getBusCnt());
+            }
+        }
+    }
+
+    /**
+     * 유치원 교실현황 정보를 업데이트합니다
+     */
+    private void updateKindergartenPhysicsInfo(Region region) {
+
+        List<KindergartenBasicInfraResponse> physicsResponseList = getKindergartenPhysicsInfo(region.getSidoCode(), region.getSigunguCode());
+
+        for (KindergartenBasicInfraResponse physicsResponse : physicsResponseList) {
+            List<Center> centerList = centerRepository.findByNameAndAreaSidoAndAreaSigungu(
+                    physicsResponse.getCenterName(), region.getSidoName(), region.getSigunguName());
+
+            if (centerList.size() == 1) {
+                Center center = centerList.get(0);
+                centerRepository.updateCenterPhysics(center.getName(), physicsResponse.getBasicInfra().getHasPhysics());
             }
         }
     }
@@ -272,7 +288,7 @@ public class DataService {
 
             if (centerList.size() == 1) {
                 Center center = centerList.get(0);
-                center.updateCenter(buildingResponse);
+                centerRepository.updateCenterBuildingYear(center.getName(), buildingResponse.getBasicInfra().getBuildingYear());
             }
         }
     }
@@ -290,7 +306,7 @@ public class DataService {
 
             if (centerList.size() == 1) {
                 Center center = centerList.get(0);
-                center.updateCenter(safetyResponse);
+                centerRepository.updateCenterCCTV(center.getName(), safetyResponse.getBasicInfra().getHasCCTV(), safetyResponse.getBasicInfra().getCctvCnt());
             }
         }
     }
