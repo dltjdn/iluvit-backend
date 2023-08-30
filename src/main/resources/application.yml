@@ -56,6 +56,6 @@ management:
 logging:
   level:
     org.hibernate.SQL: info
-    FIS.iLUVit: info
-    FIS.iLUVit.controller: warn
-    FIS.iLUVit.service: warn
+    FIS.iLUVit: trace
+    FIS.iLUVit.controller: trace
+    FIS.iLUVit.service: trace
