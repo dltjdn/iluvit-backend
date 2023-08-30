@@ -116,9 +116,10 @@ public class AuthService {
 
         if (Duration.between(authNumber.getCreatedDate(), LocalDateTime.now()).getSeconds() > authValidTime) {
             throw new AuthNumberException(AuthNumberErrorResult.EXPIRED);
-        } else {
-            authNumber.AuthComplete();
         }
+
+        authNumber.AuthComplete();
+
         return authNumber;
     }
 
