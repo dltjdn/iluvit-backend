@@ -29,7 +29,10 @@ public interface CenterRepository extends JpaRepository<Center, Long>, CenterRep
     /**
      * 해당 시도, 시군구, 시설명으로 시설을 조회합니다
      */
-    List<Center> findByNameAndAreaSidoAndAreaSigungu(String Name, String sido, String sigungu);
+    Center findByNameAndAreaSidoAndAreaSigungu(String Name, String sido, String sigungu);
+
+    List<Center> findCentersByNameAndAreaSidoAndAreaSigungu(String Name, String sido, String sigungu);
+
 
     /**
      * 해당 시설의 건축년도 정보를 업데이트합니다
