@@ -26,11 +26,15 @@ public interface CenterRepository extends JpaRepository<Center, Long>, CenterRep
      * 시설 아이디 리스트로 시설을 조회합니다 ( 점수 기준으로 내림차순 후 아이디 기준으로 오름차순 )
      */
     List<Center> findByIdInOrderByScoreDescIdAsc(List<Long> centerIds);
+
     /**
      * 해당 시도, 시군구, 시설명으로 시설을 조회합니다
      */
-    Center findByNameAndAreaSidoAndAreaSigungu(String Name, String sido, String sigungu);
+    Optional<Center> findByNameAndAreaSidoAndAreaSigungu(String Name, String sido, String sigungu);
 
+    /**
+     * 해당 시도, 시군구, 시설명으로 시설 리스트를 조회합니다
+     */
     List<Center> findCentersByNameAndAreaSidoAndAreaSigungu(String Name, String sido, String sigungu);
 
 

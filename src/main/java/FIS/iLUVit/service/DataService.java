@@ -32,6 +32,7 @@ import javax.xml.bind.Unmarshaller;
 import java.io.StringReader;
 import java.util.List;
 import java.util.ArrayList;
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -80,16 +81,18 @@ public class DataService {
             List<ChildHouseInfoResponse> responses = getChildHouseInfo(region.getSigunguCode());
             // 가져온 어린이집 정보를 순회하며 처리
             for (ChildHouseInfoResponse response : responses) {
+                String centerName = response.getCenterName();
+                String sidoName = region.getSidoName();
+                String sigunguName = region.getSigunguName();
+
                 // 중복된 센터가 있는 경우 처리
-                if (hasDuplicateCenter(response.getCenterName(), region.getSidoName(), region.getSigunguName())) {
-                    // 로그를 출력하고 다음 반복으로 이동
-                    log.warn("시도명 {}와 시군구명 {}에 동일한 이름 {}을 가진 센터가 있습니다", response.getCenterName(), region.getSidoName(), region.getSigunguName());
+                if (hasDuplicateCenter(centerName, sidoName, sigunguName)) {
+                    log.warn("시도명 {}와 시군구명 {}에 동일한 이름 {}을 가진 센터가 있습니다", centerName, sidoName, sigunguName);
                     continue;  // Skip to the next iteration
                 }
                 // 중복된 센터가 없는 경우 해당 센터 업데이트
-                Center center = centerRepository.findByNameAndAreaSidoAndAreaSigungu(
-                        response.getCenterName(), region.getSidoName(), region.getSigunguName());
-                center.updateCenter(response);
+                Optional<Center> optionalCenter = centerRepository.findByNameAndAreaSidoAndAreaSigungu(centerName, sidoName, sigunguName);
+                optionalCenter.ifPresent(center -> center.updateCenter(response));
             }
         }
     }
@@ -216,13 +219,17 @@ public class DataService {
         List<KindergartenGeneralResponse> generalResponseList = getKindergartenGeneralInfo(region.getSidoCode(), region.getSigunguCode());
 
         for (KindergartenGeneralResponse generalResponse : generalResponseList) {
-            if (hasDuplicateCenter(generalResponse.getCenterName(), region.getSidoName(), region.getSigunguName())) {
-                log.warn("시도명 {}와 시군구명 {}에 동일한 이름 {}을 가진 센터가 있습니다", generalResponse.getCenterName(), region.getSidoName(), region.getSigunguName());
+            String centerName = generalResponse.getCenterName();
+            String sidoName = region.getSidoName();
+            String sigunguName = region.getSigunguName();
+
+            if (hasDuplicateCenter(centerName, sidoName, sigunguName)) {
+                log.warn("시도명 {}와 시군구명 {}에 동일한 이름 {}을 가진 센터가 있습니다", centerName, sidoName, sigunguName);
                 continue;  // Skip to the next iteration
             }
-            Center center = centerRepository.findByNameAndAreaSidoAndAreaSigungu(
-                    generalResponse.getCenterName(), region.getSidoName(), region.getSigunguName());
-            center.updateCenterGeneral(generalResponse);
+
+            Optional<Center> optionalCenter = centerRepository.findByNameAndAreaSidoAndAreaSigungu(centerName, sidoName, sigunguName);
+            optionalCenter.ifPresent(center -> center.updateCenterGeneral(generalResponse));
         }
     }
 
@@ -234,13 +241,17 @@ public class DataService {
         List<KindergartenTeacherResponse> teacherResponseList = getKindergartenTeacherInfo(region.getSidoCode(), region.getSigunguCode());
 
         for (KindergartenTeacherResponse teacherResponse : teacherResponseList) {
-            if (hasDuplicateCenter(teacherResponse.getCenterName(), region.getSidoName(), region.getSigunguName())) {
-                log.warn("시도명 {}와 시군구명 {}에 동일한 이름 {}을 가진 센터가 있습니다", teacherResponse.getCenterName(), region.getSidoName(), region.getSigunguName());
+            String centerName = teacherResponse.getCenterName();
+            String sidoName = region.getSidoName();
+            String sigunguName = region.getSigunguName();
+
+            if (hasDuplicateCenter(centerName, sidoName, sigunguName)) {
+                log.warn("시도명 {}와 시군구명 {}에 동일한 이름 {}을 가진 센터가 있습니다", centerName, sidoName, sigunguName);
                 continue;  // Skip to the next iteration
             }
-            Center center = centerRepository.findByNameAndAreaSidoAndAreaSigungu(
-                    teacherResponse.getCenterName(), region.getSidoName(), region.getSigunguName());
-            center.updateCenterTeacher(teacherResponse);
+
+            Optional<Center> optionalCenter = centerRepository.findByNameAndAreaSidoAndAreaSigungu(centerName, sidoName, sigunguName);
+            optionalCenter.ifPresent(center -> center.updateCenterTeacher(teacherResponse));
         }
     }
 
@@ -252,13 +263,17 @@ public class DataService {
         List<KindergartenBasicInfraResponse> schoolBusResponseList = getKindergartenSchoolBusInfo(region.getSidoCode(), region.getSigunguCode());
 
         for (KindergartenBasicInfraResponse schoolResponse : schoolBusResponseList) {
-            if (hasDuplicateCenter(schoolResponse.getCenterName(), region.getSidoName(), region.getSigunguName())) {
-                log.warn("시도명 {}와 시군구명 {}에 동일한 이름 {}을 가진 센터가 있습니다", schoolResponse.getCenterName(), region.getSidoName(), region.getSigunguName());
+            String centerName = schoolResponse.getCenterName();
+            String sidoName = region.getSidoName();
+            String sigunguName = region.getSigunguName();
+
+            if (hasDuplicateCenter(centerName, sidoName, sigunguName)) {
+                log.warn("시도명 {}와 시군구명 {}에 동일한 이름 {}을 가진 센터가 있습니다", centerName, sidoName, sigunguName);
                 continue;  // Skip to the next iteration
             }
-            Center center = centerRepository.findByNameAndAreaSidoAndAreaSigungu(
-                    schoolResponse.getCenterName(), region.getSidoName(), region.getSigunguName());
-            centerRepository.updateCenterBus(center.getName(), schoolResponse.getBasicInfra().getHasBus(), schoolResponse.getBasicInfra().getBusCnt());
+
+            Optional<Center> optionalCenter = centerRepository.findByNameAndAreaSidoAndAreaSigungu(centerName, sidoName, sigunguName);
+            optionalCenter.ifPresent(center -> centerRepository.updateCenterBus(center.getName(), schoolResponse.getBasicInfra().getHasBus(), schoolResponse.getBasicInfra().getBusCnt()));
         }
     }
 
@@ -270,13 +285,17 @@ public class DataService {
         List<KindergartenBasicInfraResponse> physicsResponseList = getKindergartenPhysicsInfo(region.getSidoCode(), region.getSigunguCode());
 
         for (KindergartenBasicInfraResponse physicsResponse : physicsResponseList) {
-            if (hasDuplicateCenter(physicsResponse.getCenterName(), region.getSidoName(), region.getSigunguName())) {
-                log.warn("시도명 {}와 시군구명 {}에 동일한 이름 {}을 가진 센터가 있습니다", physicsResponse.getCenterName(), region.getSidoName(), region.getSigunguName());
+            String centerName = physicsResponse.getCenterName();
+            String sidoName = region.getSidoName();
+            String sigunguName = region.getSigunguName();
+
+            if (hasDuplicateCenter(centerName, sidoName, sigunguName)) {
+                log.warn("시도명 {}와 시군구명 {}에 동일한 이름 {}을 가진 센터가 있습니다", centerName, sidoName, sigunguName);
                 continue;  // Skip to the next iteration
             }
-            Center center = centerRepository.findByNameAndAreaSidoAndAreaSigungu(
-                    physicsResponse.getCenterName(), region.getSidoName(), region.getSigunguName());
-            centerRepository.updateCenterPhysics(center.getName(), physicsResponse.getBasicInfra().getHasPhysics());
+
+            Optional<Center> optionalCenter = centerRepository.findByNameAndAreaSidoAndAreaSigungu(centerName, sidoName, sigunguName);
+            optionalCenter.ifPresent(center -> centerRepository.updateCenterPhysics(center.getName(), physicsResponse.getBasicInfra().getHasPhysics()));
         }
     }
 
@@ -288,13 +307,17 @@ public class DataService {
         List<KindergartenBasicInfraResponse> buildingResponseList = getKindergartenBuildingInfo(region.getSidoCode(), region.getSigunguCode());
 
         for (KindergartenBasicInfraResponse buildingResponse : buildingResponseList) {
+            String centerName = buildingResponse.getCenterName();
+            String sidoName = region.getSidoName();
+            String sigunguName = region.getSigunguName();
+
             if (hasDuplicateCenter(buildingResponse.getCenterName(), region.getSidoName(), region.getSigunguName())) {
-                log.warn("시도명 {}와 시군구명 {}에 동일한 이름 {}을 가진 센터가 있습니다", buildingResponse.getCenterName(), region.getSidoName(), region.getSigunguName());
+                log.warn("시도명 {}와 시군구명 {}에 동일한 이름 {}을 가진 센터가 있습니다", centerName, sidoName, sigunguName);
                 continue;  // Skip to the next iteration
             }
-            Center center = centerRepository.findByNameAndAreaSidoAndAreaSigungu(
-                    buildingResponse.getCenterName(), region.getSidoName(), region.getSigunguName());
-            centerRepository.updateCenterBuildingYear(center.getName(), buildingResponse.getBasicInfra().getBuildingYear());
+
+            Optional<Center> optionalCenter = centerRepository.findByNameAndAreaSidoAndAreaSigungu(centerName, sidoName, sigunguName);
+            optionalCenter.ifPresent(center -> centerRepository.updateCenterBuildingYear(center.getName(), buildingResponse.getBasicInfra().getBuildingYear()));
         }
     }
 
@@ -306,13 +329,17 @@ public class DataService {
         List<KindergartenBasicInfraResponse> safetyResponseList = getKindergartenSafetyInfo(region.getSidoCode(), region.getSigunguCode());
 
         for (KindergartenBasicInfraResponse safetyResponse : safetyResponseList) {
-            if (hasDuplicateCenter(safetyResponse.getCenterName(), region.getSidoName(), region.getSigunguName())) {
-                log.warn("시도명 {}와 시군구명 {}에 동일한 이름 {}을 가진 센터가 있습니다", safetyResponse.getCenterName(), region.getSidoName(), region.getSigunguName());
+            String centerName = safetyResponse.getCenterName();
+            String sidoName = region.getSidoName();
+            String sigunguName = region.getSigunguName();
+
+            if (hasDuplicateCenter(centerName, sidoName, sigunguName)) {
+                log.warn("시도명 {}와 시군구명 {}에 동일한 이름 {}을 가진 센터가 있습니다", centerName, sidoName, sigunguName);
                 continue;  // Skip to the next iteration
             }
-            Center center = centerRepository.findByNameAndAreaSidoAndAreaSigungu(
-                    safetyResponse.getCenterName(), region.getSidoName(), region.getSigunguName());
-            centerRepository.updateCenterCCTV(center.getName(), safetyResponse.getBasicInfra().getHasCCTV(), safetyResponse.getBasicInfra().getCctvCnt());
+
+            Optional<Center> optionalCenter = centerRepository.findByNameAndAreaSidoAndAreaSigungu(centerName, sidoName, sigunguName);
+            optionalCenter.ifPresent(center -> centerRepository.updateCenterCCTV(center.getName(), safetyResponse.getBasicInfra().getHasCCTV(), safetyResponse.getBasicInfra().getCctvCnt()));
         }
     }
 
@@ -680,6 +707,9 @@ public class DataService {
         }
     }
 
+    /**
+     * 해당 시도, 시군구에 동일한 이름을 가진 시설이 있는지 중복을 조회합니다
+     */
     private Boolean hasDuplicateCenter(String centerName, String sido, String sigungu) {
         List<Center> centerList = centerRepository.findCentersByNameAndAreaSidoAndAreaSigungu(centerName, sido, sigungu);
         return centerList.size() > 1;
