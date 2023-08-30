@@ -1,16 +1,15 @@
 package FIS.iLUVit.service;
 
-import FIS.iLUVit.dto.board.BoardBookmarkIdDto;
-import FIS.iLUVit.dto.board.BoardStoryDto;
+import FIS.iLUVit.dto.board.BoardBookmarkIdResponse;
+import FIS.iLUVit.dto.board.BoardStoryResponse;
 import FIS.iLUVit.domain.*;
-import FIS.iLUVit.exception.BookmarkErrorResult;
-import FIS.iLUVit.exception.BookmarkException;
+import FIS.iLUVit.exception.BoardBookmarkErrorResult;
+import FIS.iLUVit.exception.BoardBookmarkException;
 import FIS.iLUVit.exception.UserErrorResult;
 import FIS.iLUVit.exception.UserException;
 import FIS.iLUVit.repository.*;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -28,13 +27,21 @@ public class BoardBookmarkService {
     private final BoardRepository boardRepository;
     private final PostRepository postRepository;
 
+    private final BlockedRepository blockedRepository;
+
 
     /**
      * 즐겨찾는 게시판 전체 조회
      */
-    public List<BoardStoryDto> findBoardBookmarkByUser(Long userId) {
+    public List<BoardStoryResponse> findBoardBookmarkByUser(Long userId) {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new UserException(UserErrorResult.USER_NOT_EXIST));
+
+
+        List<Long> blockedUserIds = blockedRepository.findByBlockingUser(user).stream()
+                .map(Blocked::getBlockedUser)
+                .map(User::getId)
+                .collect(Collectors.toList());
 
         // 북마크한 게시판들
         List<Board> boards = boardBookmarkRepository.findByUser(user).stream()
@@ -47,14 +54,14 @@ public class BoardBookmarkService {
                     return board.getCenter()==null? new Center(): board.getCenter();
                 })));
 
-        List<BoardStoryDto> boardStoryDtos = new ArrayList<>();
+        List<BoardStoryResponse> boardStoryResponses = new ArrayList<>();
 
         /*
          * 시설별로 (시설-게시판리스트) 반복문 돈다
          */
         centerBoardMap.forEach((center, boardList) -> {
 
-            List<BoardStoryDto.BoardDto> boardDtoList = new ArrayList<>();
+            List<BoardStoryResponse.BoardDto> boardDtoList = new ArrayList<>();
 
             /*
              * 게시판 별로 반복문 돈다
@@ -65,41 +72,41 @@ public class BoardBookmarkService {
                 String postTitle = null;
                 Long postId = null;
 
-                List<Post> posts = postRepository.findByBoardOrderByPostUpdateDateDesc(board);
+                List<Post> posts = postRepository.findByBoardAndUserIdNotIn(board, blockedUserIds);
 
                 if (!posts.isEmpty()) { // 게시판에 게시물이 하나도 없을수도 있으므로 검사해줘야한다
                     postTitle = posts.get(0).getTitle(); // 게시판의 가장 최근 게시물 하나
                     postId = posts.get(0).getId();
                 }
 
-                BoardStoryDto.BoardDto boardDto = new BoardStoryDto.BoardDto(boardId, boardName, postTitle, postId);
+                BoardStoryResponse.BoardDto boardDto = new BoardStoryResponse.BoardDto(boardId, boardName, postTitle, postId);
                 boardDtoList.add(boardDto);
             });
 
             String storyName = center.getId() == null ? "모두의 이야기" : center.getName(); // 센터 아이디 널이면 모두, 아니면 시설 이야기
 
-            BoardStoryDto boardStoryDto = new BoardStoryDto(center.getId(), storyName, boardDtoList);
+            BoardStoryResponse boardStoryResponse = new BoardStoryResponse(center.getId(), storyName, boardDtoList);
 
-            boardStoryDtos.add(boardStoryDto);
+            boardStoryResponses.add(boardStoryResponse);
         });
 
-        return boardStoryDtos;
+        return boardStoryResponses;
 
     }
 
     /**
      * 즐겨찾는 게시판 등록
      */
-    public BoardBookmarkIdDto saveBoardBookmark(Long userId, Long boardId) {
+    public BoardBookmarkIdResponse saveBoardBookmark(Long userId, Long boardId) {
         User findUser = userRepository.findById(userId)
-                .orElseThrow(() -> new BookmarkException(BookmarkErrorResult.USER_NOT_EXIST));
+                .orElseThrow(() -> new BoardBookmarkException(BoardBookmarkErrorResult.USER_NOT_EXIST));
 
         Board findBoard = boardRepository.findById(boardId)
-                .orElseThrow(() -> new BookmarkException(BookmarkErrorResult.BOARD_NOT_EXIST));
+                .orElseThrow(() -> new BoardBookmarkException(BoardBookmarkErrorResult.BOARD_NOT_EXIST));
 
         Bookmark bookmark = boardBookmarkRepository.save(new Bookmark(findBoard, findUser));
 
-        return new BoardBookmarkIdDto(bookmark.getId());
+        return new BoardBookmarkIdResponse(bookmark.getId());
     }
 
     /**
@@ -107,10 +114,10 @@ public class BoardBookmarkService {
      */
     public void deleteBoardBookmark(Long userId, Long bookmarkId) {
         Bookmark findBookmark = boardBookmarkRepository.findById(bookmarkId)
-                .orElseThrow(() -> new BookmarkException(BookmarkErrorResult.BOOKMARK_NOT_EXIST));
+                .orElseThrow(() -> new BoardBookmarkException(BoardBookmarkErrorResult.BOOKMARK_NOT_EXIST));
 
         if (!findBookmark.getUser().getId().equals(userId)) {
-            throw new BookmarkException(BookmarkErrorResult.UNAUTHORIZED_USER_ACCESS);
+            throw new BoardBookmarkException(BoardBookmarkErrorResult.UNAUTHORIZED_USER_ACCESS);
         }
 
         boardBookmarkRepository.delete(findBookmark);

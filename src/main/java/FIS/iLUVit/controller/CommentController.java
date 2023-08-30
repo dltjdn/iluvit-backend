@@ -1,8 +1,8 @@
 package FIS.iLUVit.controller;
 
 import FIS.iLUVit.config.argumentResolver.Login;
-import FIS.iLUVit.dto.comment.CommentPostDto;
-import FIS.iLUVit.dto.comment.CommentCreateDto;
+import FIS.iLUVit.dto.comment.CommentPostResponse;
+import FIS.iLUVit.dto.comment.CommentCreateRequest;
 import FIS.iLUVit.service.CommentService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
@@ -27,8 +27,8 @@ public class CommentController {
     */
     @PostMapping(value={"{postId}","{postId}/{commentId}"})
     public ResponseEntity<Void> createComment(@Login Long userId, @PathVariable("postId") Long postId,
-                                @PathVariable(required = false, value="commentId") Long commentId, @RequestBody CommentCreateDto commentRequest) {
-        commentService.saveNewComment(userId, postId, commentId, commentRequest);
+                                @PathVariable(required = false, value="commentId") Long commentId, @RequestBody CommentCreateRequest commentCreateRequest) {
+        commentService.saveNewComment(userId, postId, commentId, commentCreateRequest);
         return ResponseEntity.status(HttpStatus.CREATED).build();
     }
 
@@ -45,8 +45,8 @@ public class CommentController {
      * 댓글 단 글 전체 조회
      */
     @GetMapping("mypage")
-    public ResponseEntity<Slice<CommentPostDto>> getCommentByUser(@Login Long userId, Pageable pageable) {
-        Slice<CommentPostDto> commentResponseDtos = commentService.findCommentByUser(userId, pageable);
+    public ResponseEntity<Slice<CommentPostResponse>> getCommentByUser(@Login Long userId, Pageable pageable) {
+        Slice<CommentPostResponse> commentResponseDtos = commentService.findCommentByUser(userId, pageable);
         return ResponseEntity.ok(commentResponseDtos);
     }
 

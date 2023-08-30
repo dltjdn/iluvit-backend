@@ -30,9 +30,9 @@ public class UserController {
      * 유저 상세 조회
      */
     @GetMapping("user")
-    public ResponseEntity<UserBasicInfoDto> getUserDetails(@Login Long id) {
-        UserBasicInfoDto userBasicInfoDto = userService.findUserDetails(id);
-        return ResponseEntity.ok(userBasicInfoDto);
+    public ResponseEntity<UserBasicInfoResponse> getUserDetails(@Login Long id) {
+        UserBasicInfoResponse userBasicInfoResponse = userService.findUserDetails(id);
+        return ResponseEntity.ok(userBasicInfoResponse);
     }
 
     /**
@@ -57,7 +57,7 @@ public class UserController {
      * 비밀번호 변경
      */
     @PutMapping("password")
-    public ResponseEntity<Void> updatePassword(@Login Long id, @Valid @RequestBody PasswordUpdateDto request) {
+    public ResponseEntity<Void> updatePassword(@Login Long id, @Valid @RequestBody PasswordUpdateRequest request) {
         userService.changePassword(id, request);
         return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
     }
@@ -75,7 +75,7 @@ public class UserController {
      * 토큰 재발급
      */
     @PostMapping("refresh")
-    public ResponseEntity<UserDto> refreshToken(@Valid @RequestBody TokenRefreshRequestDto request) {
+    public ResponseEntity<UserDto> refreshToken(@Valid @RequestBody TokenRefreshRequest request) {
         UserDto userDto = userService.refreshAccessToken(request);
         return ResponseEntity.ok(userDto);
     }
@@ -84,11 +84,11 @@ public class UserController {
      * 앱 버전 확인
      */
     @GetMapping("version")
-    public ResponseEntity<VersionInfoDto> getVersion() {
+    public ResponseEntity<VersionInfoResponse> getVersion() {
         String iosVersion = env.getProperty("version.ios");
         String aosVersion = env.getProperty("version.aos");
-        VersionInfoDto versionInfoDto = new VersionInfoDto(iosVersion, aosVersion);
-        return ResponseEntity.ok(versionInfoDto);
+        VersionInfoResponse versionInfoResponse = new VersionInfoResponse(iosVersion, aosVersion);
+        return ResponseEntity.ok(versionInfoResponse);
     }
 
 }

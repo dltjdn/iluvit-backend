@@ -1,7 +1,7 @@
 package FIS.iLUVit.domain;
 
-import FIS.iLUVit.dto.parent.ParentUpdateDto;
-import FIS.iLUVit.dto.user.UserBasicInfoDto;
+import FIS.iLUVit.dto.parent.ParentUpdateRequest;
+import FIS.iLUVit.dto.user.UserBasicInfoResponse;
 import FIS.iLUVit.domain.embeddable.Theme;
 import FIS.iLUVit.domain.enumtype.Auth;
 import FIS.iLUVit.security.UserDto;
@@ -49,7 +49,7 @@ public class Parent extends User {
         this.readAlarm = readAlarm;
     }
 
-    public void updateDetail(ParentUpdateDto request, Theme theme) {
+    public void updateDetail(ParentUpdateRequest request, Theme theme) {
         this.name = request.getName();
         this.nickName = request.getNickname();
         this.emailAddress = request.getEmailAddress();
@@ -59,7 +59,7 @@ public class Parent extends User {
         this.theme = theme;
     }
 
-    public void updateDetailWithPhoneNum(ParentUpdateDto request, Theme theme) {
+    public void updateDetailWithPhoneNum(ParentUpdateRequest request, Theme theme) {
         this.name = request.getName();
         this.nickName = request.getNickname();
         this.phoneNumber = request.getPhoneNum();
@@ -76,8 +76,8 @@ public class Parent extends User {
     }
 
     @Override
-    public UserBasicInfoDto getUserInfo() {
-        return new UserBasicInfoDto(id, nickName, auth);
+    public UserBasicInfoResponse getUserInfo() {
+        return new UserBasicInfoResponse(id, nickName, auth);
     }
 
 }

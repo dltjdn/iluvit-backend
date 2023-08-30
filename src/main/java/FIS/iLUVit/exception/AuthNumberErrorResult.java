@@ -17,6 +17,7 @@ public enum AuthNumberErrorResult implements ErrorResult {
     NOT_MATCH_INFO(HttpStatus.BAD_REQUEST, "아이디 또는 휴대폰번호를 확인해주세요."),
     NOT_MATCH_CHECKPWD(HttpStatus.BAD_REQUEST, "비밀번호와 비밀번호확인이 서로 다릅니다."),
     NOT_AUTHENTICATION(HttpStatus.BAD_REQUEST, "핸드폰 인증이 완료되지 않았습니다."),
+    NOT_MATCH_AUTHKIND(HttpStatus.BAD_REQUEST, "인증 종류가 일치하지 않습니다."),
     ;
 
     private final HttpStatus httpStatus;

@@ -23,17 +23,19 @@ public class CommentReplyResponse {
     private LocalTime time;
     private Boolean anonymous;
     private Boolean canDelete;
+    private Boolean isBlocked;  // 댓글 차단 여부
 
-    public CommentReplyResponse(Comment comment, Long userId) {
+
+    public CommentReplyResponse(Comment comment, Long userId, Boolean isBlocked) {
         this.id = comment.getId();
         User writer = comment.getUser();
         if (writer != null) {
+            this.writerId = writer.getId();
             if (Objects.equals(writer.getId(), userId)) {
                 this.canDelete = true;
             } else {
                 this.canDelete = false;
             }
-
             if (comment.getAnonymous()) {
                 if (comment.getAnonymousOrder().equals(-1)) {
                     this.nickName = "익명(작성자)";
@@ -42,7 +44,6 @@ public class CommentReplyResponse {
                 }
             } else {
                 this.profileImage = writer.getProfileImagePath();
-                this.writerId = writer.getId();
                 this.nickName = writer.getNickName();
             }
         }
@@ -51,5 +52,6 @@ public class CommentReplyResponse {
         this.content = comment.getContent();
         this.date = comment.getDate();
         this.time = comment.getTime();
+        this.isBlocked = isBlocked;
     }
 }

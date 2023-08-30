@@ -5,10 +5,16 @@ import lombok.Getter;
 @Getter
 public class ImageException extends RuntimeException {
 
-    private final ImageErrorResult imageExceptionErrorResult;
-
-    public ImageException(ImageErrorResult imageExceptionErrorResult) {
+    private ImageErrorResult errorResult;
+    public ImageException() {
         super();
-        this.imageExceptionErrorResult = imageExceptionErrorResult;
+    }
+
+    public ImageException(String message) {
+        super(message);
+    }
+    public ImageException(ImageErrorResult errorResult) {
+        super();
+        this.errorResult = errorResult;
     }
 }

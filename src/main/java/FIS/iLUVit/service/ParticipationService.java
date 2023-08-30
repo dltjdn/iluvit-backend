@@ -2,10 +2,10 @@ package FIS.iLUVit.service;
 
 import FIS.iLUVit.domain.*;
 import FIS.iLUVit.domain.alarms.Alarm;
-import FIS.iLUVit.dto.participation.ParticipationDto;
+import FIS.iLUVit.dto.participation.ParticipationResponse;
 import FIS.iLUVit.domain.alarms.PresentationFullAlarm;
 import FIS.iLUVit.domain.enumtype.Status;
-import FIS.iLUVit.dto.participation.ParticipationWithStatusDto;
+import FIS.iLUVit.dto.participation.ParticipationWithStatusResponse;
 import FIS.iLUVit.event.ParticipationCancelEvent;
 import FIS.iLUVit.exception.*;
 import FIS.iLUVit.repository.*;
@@ -74,7 +74,8 @@ public class ParticipationService {
             teacherRepository.findByCenter(presentation.getCenter()).forEach((teacher) -> {
                 Alarm alarm = new PresentationFullAlarm(teacher, presentation, presentation.getCenter());
                 alarmRepository.save(alarm);
-                AlarmUtils.publishAlarmEvent(alarm);
+                String type = "아이러빗";
+                AlarmUtils.publishAlarmEvent(alarm, type);
             });
         }
     }
@@ -104,42 +105,42 @@ public class ParticipationService {
     /**
      * 신청한/취소한 설명회 전체 조회
      */
-    public List<ParticipationWithStatusDto> findAllParticipationByUser(Long userId) {
+    public List<ParticipationWithStatusResponse> findAllParticipationByUser(Long userId) {
         // 학부모 조회
         Parent parent = parentRepository.findById(userId)
                 .orElseThrow(()-> new UserException(UserErrorResult.USER_NOT_EXIST));
 
-        List<ParticipationDto> participationDtos = participationRepository.findByParent(parent).stream()
-                .map(ParticipationDto::createDtoByParticipation)
+        List<ParticipationResponse> participationResponses = participationRepository.findByParent(parent).stream()
+                .map(ParticipationResponse::createDtoByParticipation)
                 .collect(Collectors.toList());
 
-        participationDtos.addAll(
+        participationResponses.addAll(
                 parent.getWaitings().stream()
-                .map(ParticipationDto::createDtoByWaiting)
+                .map(ParticipationResponse::createDtoByWaiting)
                 .collect(Collectors.toList())
         );
 
-        Map<Status, List<ParticipationDto>> statusParticipationMap = participationDtos.stream()
-                .collect(Collectors.groupingBy(ParticipationDto::getStatus));
+        Map<Status, List<ParticipationResponse>> statusParticipationMap = participationResponses.stream()
+                .collect(Collectors.groupingBy(ParticipationResponse::getStatus));
 
-        List<ParticipationWithStatusDto> participationWithStatusDtos = new ArrayList<>();
+        List<ParticipationWithStatusResponse> participationWithStatusResponses = new ArrayList<>();
 
         statusParticipationMap.forEach((status, participationDtoList)-> {
-            participationWithStatusDtos.add(new ParticipationWithStatusDto(status, participationDtoList));
+            participationWithStatusResponses.add(new ParticipationWithStatusResponse(status, participationDtoList));
         });
 
-        return participationWithStatusDtos;
+        return participationWithStatusResponses;
     }
 
     /**
      * 신청한 설명회 전체 조회
      */
-    public Slice<ParticipationDto> findRegisterParticipationByUser(Long userId, Pageable pageable){
+    public Slice<ParticipationResponse> findRegisterParticipationByUser(Long userId, Pageable pageable){
         Parent parent = parentRepository.findById(userId)
                 .orElseThrow(() -> new UserException(UserErrorResult.USER_NOT_EXIST));
 
-        Slice<ParticipationDto> participationDtos = participationRepository.findByParentAndStatus(parent, JOINED, pageable)
-                .map(ParticipationDto::createDtoByParticipation);
+        Slice<ParticipationResponse> participationDtos = participationRepository.findByParentAndStatus(parent, JOINED, pageable)
+                .map(ParticipationResponse::createDtoByParticipation);
 
         return participationDtos;
     }
@@ -147,12 +148,12 @@ public class ParticipationService {
     /**
      * 신청을 취소한 설명회 전체 조회
      */
-    public Slice<ParticipationDto> findCancelParticipationByUser(Long userId, Pageable pageable){
+    public Slice<ParticipationResponse> findCancelParticipationByUser(Long userId, Pageable pageable){
         Parent parent = parentRepository.findById(userId)
                 .orElseThrow(() -> new UserException(UserErrorResult.USER_NOT_EXIST));
 
-        Slice<ParticipationDto> participationDtos = participationRepository.findByParentAndStatus(parent, CANCELED, pageable)
-                .map(ParticipationDto::createDtoByParticipation);
+        Slice<ParticipationResponse> participationDtos = participationRepository.findByParentAndStatus(parent, CANCELED, pageable)
+                .map(ParticipationResponse::createDtoByParticipation);
 
         return participationDtos;
     }
@@ -160,12 +161,12 @@ public class ParticipationService {
     /**
      * 대기를 신청한 설명회 전체 조회
      */
-    public Slice<ParticipationDto> findWaitingParticipationByUser(Long userId, Pageable pageable){
+    public Slice<ParticipationResponse> findWaitingParticipationByUser(Long userId, Pageable pageable){
         Parent parent = parentRepository.findById(userId)
                 .orElseThrow(() -> new UserException(UserErrorResult.USER_NOT_EXIST));
 
-        Slice<ParticipationDto> participationDtos = waitingRepository.findByParent(parent, pageable)
-                .map(ParticipationDto::createDtoByWaiting);
+        Slice<ParticipationResponse> participationDtos = waitingRepository.findByParent(parent, pageable)
+                .map(ParticipationResponse::createDtoByWaiting);
 
         return participationDtos;
     }

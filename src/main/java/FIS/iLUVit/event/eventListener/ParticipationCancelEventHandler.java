@@ -35,7 +35,8 @@ public class ParticipationCancelEventHandler {
         Participation waitingToParticipate = Waiting.whenParticipationCanceled(waiting, presentation);
         Alarm alarm = new ConvertedToParticipateAlarm(waiting.getParent(), presentation, presentation.getCenter());
         alarmRepository.save(alarm);
-        AlarmUtils.publishAlarmEvent(alarm);
+        String type = "아이러빗";
+        AlarmUtils.publishAlarmEvent(alarm, type);
 
         participationRepository.save(waitingToParticipate);
         waitingRepository.updateWaitingOrderForPtDateChange(waiting.getWaitingOrder(), ptDate);

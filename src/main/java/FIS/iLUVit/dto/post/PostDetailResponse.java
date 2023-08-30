@@ -1,6 +1,6 @@
 package FIS.iLUVit.dto.post;
 
-import FIS.iLUVit.dto.comment.CommentDto;
+import FIS.iLUVit.dto.comment.CommentInPostResponse;
 import FIS.iLUVit.domain.Post;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -11,7 +11,6 @@ import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.List;
 import java.util.Objects;
-import java.util.stream.Collectors;
 
 @Getter
 @NoArgsConstructor
@@ -42,10 +41,10 @@ public class PostDetailResponse {
 
     private Boolean canDelete;
     private Integer commentCnt;
-    private List<CommentDto> comments;
+    private List<CommentInPostResponse> comments;
 
 
-    public PostDetailResponse(Post post, List<String> encodedImages, String encodedProfileImage, Long userId) {
+    public PostDetailResponse(Post post, List<String> infoImages, String profileImage, Long userId, List<CommentInPostResponse> commentInPostResponses) {
         this.id = post.getId();
         if (post.getUser() != null) {
             if (Objects.equals(post.getUser().getId(), userId)) {
@@ -66,10 +65,10 @@ public class PostDetailResponse {
         this.title = post.getTitle();
         this.content = post.getContent();
 
-        this.profileImage = encodedProfileImage;
-        this.images = encodedImages;
+        this.profileImage = profileImage;
+        this.images = infoImages;
 
-        this.imgCnt = encodedImages.size();
+        this.imgCnt = infoImages.size();
         this.heartCnt = post.getHeartCnt();
 
         if (post.getBoard() != null) {
@@ -81,9 +80,7 @@ public class PostDetailResponse {
             }
         }
 
-        this.comments = post.getComments().stream()
-                .filter(c -> c.getParentComment() == null)
-                .map(c -> new CommentDto(c, userId)).collect(Collectors.toList());
+        this.comments = commentInPostResponses;
         this.commentCnt = post.getCommentCnt();
 
     }

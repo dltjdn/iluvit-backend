@@ -13,5 +13,6 @@ public class CenterMapResponse {
     private String name;                    // 시설명
     private Double longitude;               // 경도
     private Double latitude;                // 위도
+    private Boolean signed;                 // 원장 가입 유무
 
 }

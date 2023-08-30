@@ -1,6 +1,6 @@
 package FIS.iLUVit.domain.alarms;
 
-import FIS.iLUVit.dto.alarm.AlarmDto;
+import FIS.iLUVit.dto.alarm.AlarmResponse;
 import FIS.iLUVit.domain.Comment;
 import FIS.iLUVit.domain.Post;
 import FIS.iLUVit.domain.User;
@@ -57,14 +57,14 @@ public class PostAlarm extends Alarm {
     }
 
     @Override
-    public AlarmDto exportAlarm() {
+    public AlarmResponse exportAlarm() {
         return centerId == null ?
-                new PostAlarmDto(id, boardName, createdDate, message, dtype, postId, anonymous, commentUserProfileImage, commentUserNickname, centerName, boardId, null) :
-                new PostAlarmDto(id, boardName, createdDate, message, dtype, postId, anonymous, commentUserProfileImage, commentUserNickname, centerName, boardId, centerId);
+                new PostAlarmResponse(id, boardName, createdDate, message, dtype, postId, anonymous, commentUserProfileImage, commentUserNickname, centerName, boardId, null) :
+                new PostAlarmResponse(id, boardName, createdDate, message, dtype, postId, anonymous, commentUserProfileImage, commentUserNickname, centerName, boardId, centerId);
     }
 
     @Getter
-    public static class PostAlarmDto extends AlarmDto {
+    public static class PostAlarmResponse extends AlarmResponse {
         protected Long postId;
         private Long centerId;
         private Long boardId;
@@ -74,7 +74,7 @@ public class PostAlarm extends Alarm {
         private String commentUserProfileImage;
         private String commentUserNickname;
 
-        public PostAlarmDto(Long id, String boardName, LocalDateTime createdDate, String message, String type, Long postId, Boolean anonymous, String commentUserProfileImage, String commentUserNickname, String centerName, Long boardId, Long centerId) {
+        public PostAlarmResponse(Long id, String boardName, LocalDateTime createdDate, String message, String type, Long postId, Boolean anonymous, String commentUserProfileImage, String commentUserNickname, String centerName, Long boardId, Long centerId) {
             super(id, createdDate, message, type);
             this.postId = postId;
             this.boardName = boardName;

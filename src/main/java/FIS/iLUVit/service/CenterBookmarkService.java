@@ -74,14 +74,14 @@ public class CenterBookmarkService {
 
         centerBookmarkRepository.findByCenterAndParent(center, parent)
                 .ifPresent(prefer -> {
-                    throw new PreferException(PreferErrorResult.ALREADY_PREFER);
+                    throw new CenterBookmarkException(CenterBookmarkErrorResult.ALREADY_PREFER);
                 });
 
         try {
             Prefer prefer = Prefer.createPrefer(parent, center);
             centerBookmarkRepository.saveAndFlush(prefer);
         } catch (DataIntegrityViolationException e) {
-            throw new PreferException(PreferErrorResult.NOT_VALID_CENTER);
+            throw new CenterBookmarkException(CenterBookmarkErrorResult.NOT_VALID_CENTER);
         }
     }
 
@@ -95,7 +95,7 @@ public class CenterBookmarkService {
                 .orElseThrow(()-> new CenterException(CenterErrorResult.CENTER_NOT_EXIST));
 
         Prefer deletedPrefer = centerBookmarkRepository.findByCenterAndParent(center,parent)
-                .orElseThrow(() -> new PreferException(PreferErrorResult.NOT_VALID_CENTER));
+                .orElseThrow(() -> new CenterBookmarkException(CenterBookmarkErrorResult.NOT_VALID_CENTER));
 
         centerBookmarkRepository.delete(deletedPrefer);
     }

@@ -1,6 +1,6 @@
 package FIS.iLUVit.domain.alarms;
 
-import FIS.iLUVit.dto.alarm.AlarmDto;
+import FIS.iLUVit.dto.alarm.AlarmResponse;
 import FIS.iLUVit.domain.Center;
 import FIS.iLUVit.domain.Presentation;
 import FIS.iLUVit.domain.User;
@@ -36,18 +36,18 @@ public class PresentationPeriodClosedAlarm extends Alarm{
     }
 
     @Override
-    public AlarmDto exportAlarm() {
-        return new PresentationPeriodClosedAlarmDto(id, createdDate, message, dtype, presentationId, centerId, centerName);
+    public AlarmResponse exportAlarm() {
+        return new PresentationPeriodClosedAlarmResponse(id, createdDate, message, dtype, presentationId, centerId, centerName);
     }
 
     @Getter
-    public static class PresentationPeriodClosedAlarmDto extends AlarmDto {
+    public static class PresentationPeriodClosedAlarmResponse extends AlarmResponse {
 
         protected Long presentationId;
         protected Long centerId;
         protected String centerName;
 
-        public PresentationPeriodClosedAlarmDto(Long id, LocalDateTime createdDate, String message, String type, Long presentationId, Long centerId, String centerName) {
+        public PresentationPeriodClosedAlarmResponse(Long id, LocalDateTime createdDate, String message, String type, Long presentationId, Long centerId, String centerName) {
             super(id, createdDate, message, type);
             this.presentationId = presentationId;
             this.centerId = centerId;

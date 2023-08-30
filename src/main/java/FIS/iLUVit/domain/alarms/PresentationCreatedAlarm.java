@@ -1,6 +1,6 @@
 package FIS.iLUVit.domain.alarms;
 
-import FIS.iLUVit.dto.alarm.AlarmDto;
+import FIS.iLUVit.dto.alarm.AlarmResponse;
 import FIS.iLUVit.domain.Center;
 import FIS.iLUVit.domain.Presentation;
 import FIS.iLUVit.domain.User;
@@ -47,17 +47,17 @@ public class PresentationCreatedAlarm extends Alarm {
     }
 
     @Override
-    public AlarmDto exportAlarm() {
-        return new PresentationCreatedAlarmDto(id, createdDate, message, dtype, centerId, centerName, presentationId);
+    public AlarmResponse exportAlarm() {
+        return new PresentationCreatedAlarmResponse(id, createdDate, message, dtype, centerId, centerName, presentationId);
     }
 
     @Getter
-    public static class PresentationCreatedAlarmDto extends AlarmDto {
+    public static class PresentationCreatedAlarmResponse extends AlarmResponse {
         protected Long presentationId;
         protected Long centerId;
         protected String centerName;
 
-        public PresentationCreatedAlarmDto(Long id, LocalDateTime createdDate, String message, String type, Long centerId, String centerName, Long presentationId) {
+        public PresentationCreatedAlarmResponse(Long id, LocalDateTime createdDate, String message, String type, Long centerId, String centerName, Long presentationId) {
             super(id, createdDate, message, type);
             this.centerId = centerId;
             this.centerName = centerName;
