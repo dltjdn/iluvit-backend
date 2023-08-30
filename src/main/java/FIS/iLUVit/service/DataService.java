@@ -68,32 +68,37 @@ public class DataService {
     }
 
     /**
+     * 어린이집 정보를 업데이트합니다
+     */
+    public void updateChildHouseInfo() {
+        List<Region> regionList = regionRepository.findAll();
+
+        for (Region region : regionList) {
+            updateChildHouseInfoForRegion(region);
+        }
+    }
+
+    /**
      * 각 지역에 대해 어린이집 정보를 가져와 중복 여부를 확인하고 지역별 어린이집 정보를 업데이트합니다
      */
     @Transactional
-    public void updateChildHouseInfo() {
-        // 모든 지역 정보를 가져오기
-        List<Region> regionList = regionRepository.findAll();
+    public void updateChildHouseInfoForRegion(Region region) {
+        // 해당 지역의 어린이집 정보를 가져오기
+        List<ChildHouseInfoResponse> responses = getChildHouseInfo(region.getSigunguCode());
+        // 가져온 어린이집 정보를 순회하며 처리
+        for (ChildHouseInfoResponse response : responses) {
+            String centerName = response.getCenterName();
+            String sidoName = region.getSidoName();
+            String sigunguName = region.getSigunguName();
 
-        // 각 지역별로 어린이집 정보 업데이트
-        for (Region region : regionList) {
-            // 해당 지역의 어린이집 정보를 가져오기
-            List<ChildHouseInfoResponse> responses = getChildHouseInfo(region.getSigunguCode());
-            // 가져온 어린이집 정보를 순회하며 처리
-            for (ChildHouseInfoResponse response : responses) {
-                String centerName = response.getCenterName();
-                String sidoName = region.getSidoName();
-                String sigunguName = region.getSigunguName();
-
-                // 중복된 센터가 있는 경우 처리
-                if (hasDuplicateCenter(centerName, sidoName, sigunguName)) {
-                    log.warn("시도명 {}와 시군구명 {}에 동일한 이름 {}을 가진 센터가 있습니다", centerName, sidoName, sigunguName);
-                    continue;  // Skip to the next iteration
-                }
-                // 중복된 센터가 없는 경우 해당 센터 업데이트
-                Optional<Center> optionalCenter = centerRepository.findByNameAndAreaSidoAndAreaSigungu(centerName, sidoName, sigunguName);
-                optionalCenter.ifPresent(center -> center.updateCenter(response));
+            // 중복된 센터가 있는 경우 처리
+            if (hasDuplicateCenter(centerName, sidoName, sigunguName)) {
+                log.warn("시도명 {}와 시군구명 {}에 동일한 이름 {}을 가진 센터가 있습니다", centerName, sidoName, sigunguName);
+                continue;  // Skip to the next iteration
             }
+            // 중복된 센터가 없는 경우 해당 센터 업데이트
+            Optional<Center> optionalCenter = centerRepository.findByNameAndAreaSidoAndAreaSigungu(centerName, sidoName, sigunguName);
+            optionalCenter.ifPresent(center -> center.updateCenter(response));
         }
     }
 
