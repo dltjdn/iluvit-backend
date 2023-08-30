@@ -5,6 +5,8 @@ import FIS.iLUVit.dto.expoToken.ExpoTokenDeviceIdDto;
 import FIS.iLUVit.dto.expoToken.ExpoTokenDto;
 import FIS.iLUVit.dto.expoToken.ExpoTokenCreateDto;
 import FIS.iLUVit.service.ExpoTokenService;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
@@ -14,6 +16,7 @@ import javax.validation.Valid;
 
 @RestController
 @RequiredArgsConstructor
+@Tag(name = "엑스포 토큰 API")
 @RequestMapping("expo-tokens")
 public class ExpoTokenController {
 
@@ -28,6 +31,7 @@ public class ExpoTokenController {
      * 작성내용: expoToken 등록
      * 비고: 앱 최초 접속 시 푸쉬 알림을 위한 [Token]을 받아야 합니다.
      */
+    @Operation(summary = "expoToken 등록", description = "앱 최초 접속 시 푸쉬 알림을 위한 ExpoToken을 받아 저장한다.")
     @PostMapping("")
     @ResponseStatus(HttpStatus.CREATED)
     public Long createExpoToken(@Login Long userId, @RequestBody @Valid ExpoTokenCreateDto request) {
@@ -39,6 +43,7 @@ public class ExpoTokenController {
      * 작성내용: expoToken 조회
      * 비고: 현재 알림 수신 OX 상태 들어있음, O --> True, X --> False 로 응답
      */
+    @Operation(summary = "expoToken 조회", description = "엑스포 토큰 정보를 조회합니다.")
     @GetMapping("")
     public ExpoTokenDto getExpoToken(@Login Long userId,HttpServletRequest request) {
         String expoToken = request.getHeader("ExpoToken");
@@ -49,6 +54,7 @@ public class ExpoTokenController {
      * 작성자: 이창윤
      * 작성내용: expoToken 삭제
      */
+    @Operation(summary = "expoToken 삭제", description = "엑스포 토큰을 삭제합니다. (유저 로그아웃 시 토큰 삭제하기).")
     @DeleteMapping("")
     @ResponseStatus(HttpStatus.OK)
     public void deleteExpoToken(@Login Long userId, HttpServletRequest request) {
@@ -59,6 +65,7 @@ public class ExpoTokenController {
     /**
      * expoToken 비활성화 ( 회원가입 한 유저가 앱 삭제 후 재설치 할 때 사용 )
      */
+    @Operation(summary = "expoToken 비활성화", description = "기기고유 id에 일치하는 데이터가 있다면 비활성화 상테로 만든다.")
     @PatchMapping("deactivate")
     public void deactivateToken( @RequestBody @Valid ExpoTokenDeviceIdDto expoTokenDeviceIdDto){
         expoTokenService.deactivateExpoToken(expoTokenDeviceIdDto);
@@ -68,6 +75,7 @@ public class ExpoTokenController {
     /**
      * 비활성화 된 expoToken을 삭제한다
      */
+    @Operation(summary = "비활성화 된 expoToken 삭제", description = "해당 유저의 비활성화 된 엑스포 토큰을 삭제합니다.")
     @DeleteMapping("deactivate")
     public void deleteDeactivatedToken(HttpServletRequest request){
         String deviceId = request.getHeader("DeviceId");
