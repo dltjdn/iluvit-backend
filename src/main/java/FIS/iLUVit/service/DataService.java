@@ -53,6 +53,7 @@ public class DataService {
     /**
      * 유치원 정보를 업데이트합니다
      */
+    @Transactional
     public void updateKindergartenInfo() {
         List<Region> regionList = regionRepository.findAll();
 
@@ -104,7 +105,7 @@ public class DataService {
     /**
      * 어린이집 기본정보 조회 API를 요청하고 응답값의 내용으로 정보 저장을 위한 시설 객체를 생성하여 반환합니다
      */
-    public List<ChildHouseInfoResponse> getChildHouseInfo(String sigunguCode) {
+    private List<ChildHouseInfoResponse> getChildHouseInfo(String sigunguCode) {
 
         HttpHeaders httpHeaders = new HttpHeaders();
 
