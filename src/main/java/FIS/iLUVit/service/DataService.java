@@ -37,6 +37,7 @@ import java.util.Optional;
 @Service
 @RequiredArgsConstructor
 @Slf4j
+@Transactional
 public class DataService {
 
     private final RegionRepository regionRepository;
@@ -87,18 +88,16 @@ public class DataService {
         List<ChildHouseInfoResponse> responses = getChildHouseInfo(region.getSigunguCode());
         // 가져온 어린이집 정보를 순회하며 처리
         for (ChildHouseInfoResponse response : responses) {
-            String centerName = response.getCenterName();
-            String sidoName = region.getSidoName();
-            String sigunguName = region.getSigunguName();
 
-            // 중복된 센터가 있는 경우 처리
-            if (hasDuplicateCenter(centerName, sidoName, sigunguName)) {
-                log.warn("시도명 {}와 시군구명 {}에 동일한 이름 {}을 가진 센터가 있습니다", centerName, sidoName, sigunguName);
-                continue;  // Skip to the next iteration
+            List<Center> centerList = centerRepository.findCentersByNameAndAreaSidoAndAreaSigungu(response.getCenterName(), region.getSidoName(), region.getSigunguName());
+
+            if(centerList.size() == 1) {
+                Center center = centerList.get(0);
+
+                if(!center.getSigned()) {
+                    center.updateCenter(response);
+                }
             }
-            // 중복된 센터가 없는 경우 해당 센터 업데이트
-            Optional<Center> optionalCenter = centerRepository.findByNameAndAreaSidoAndAreaSigungu(centerName, sidoName, sigunguName);
-            optionalCenter.ifPresent(center -> center.updateCenter(response));
         }
     }
 
