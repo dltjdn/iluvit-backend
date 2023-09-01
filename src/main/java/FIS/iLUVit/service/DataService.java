@@ -111,6 +111,7 @@ public class DataService {
                 Boolean hasCCTV = response.getCctvCnt() > 0;
 
                 // TeacherInfo 데이터 전처리 ( 근속연수 정보의 소수점을 반올림하여 정수로 형변환 )
+                Integer totalCnt = (response.getTotalCnt() != null) ? (int) Math.round(response.getTotalCnt()) : 0;
                 Integer dur_1 = (response.getDur_1() != null) ? (int) Math.round(response.getDur_1()) : 0;
                 Integer dur12 = (response.getDur12() != null) ? (int) Math.round(response.getDur12()) : 0;
                 Integer dur24 = (response.getDur24() != null) ? (int) Math.round(response.getDur24()) : 0;
@@ -118,7 +119,7 @@ public class DataService {
                 Integer dur6_ = (response.getDur6_() != null) ? (int) Math.round(response.getDur6_()) : 0;
 
                 // 어린이집 정보를 업데이트하는 메서드 호출
-                centerRepository.updateChildHouse(response, hasBus, hasPlayground, hasCCTV, dur_1, dur12, dur24, dur46, dur6_);
+                centerRepository.updateChildHouse(response, hasBus, hasPlayground, hasCCTV, totalCnt, dur_1, dur12, dur24, dur46, dur6_);
             }
         }
     }

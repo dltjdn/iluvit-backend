@@ -80,17 +80,19 @@ public interface CenterRepository extends JpaRepository<Center, Long>, CenterRep
             "c.classInfo.class_3= :#{#response.class_3}, c.classInfo.class_4= :#{#response.class_4}, c.classInfo.class_5 = :#{#response.class_5}, " +
             "c.classInfo.child_0= :#{#response.child_0}, c.classInfo.child_1= :#{#response.child_1}, c.classInfo.child_2= :#{#response.child_2}, " +
             "c.classInfo.child_3= :#{#response.child_3}, c.classInfo.child_4= :#{#response.child_4}, c.classInfo.child_5= :#{#response.child_5}, " +
-            "c.classInfo.child_spe = :#{#response.child_spe}, c.teacherInfo.dur_1= :dur_1, c.teacherInfo.dur12= :dur12, " +
-            "c.teacherInfo.dur24 = :dur24, c.teacherInfo.dur46= :dur46, c.teacherInfo.dur6_= :dur6_ " +
+            "c.classInfo.child_spe = :#{#response.child_spe}, c.teacherInfo.totalCnt = :totalCnt, c.teacherInfo.dur_1= :dur_1, " +
+            "c.teacherInfo.dur12= :dur12, c.teacherInfo.dur24 = :dur24, c.teacherInfo.dur46= :dur46, c.teacherInfo.dur6_= :dur6_ " +
             "WHERE c.name = :#{#response.centerName} AND c.area.sido = :#{#response.sido} AND c.area.sigungu = :#{#response.sigungu}")
     void updateChildHouse(@Param("response") ChildHouseInfoResponse response
             , @Param("hasBus") Boolean hasBus
             , @Param("hasPlayground") Boolean hasPlayground
             , @Param("hasCCTV") Boolean hasCCTV
+            , @Param("totalCnt") Integer totalCnt
             , @Param("dur_1") Integer dur_1
             , @Param("dur12") Integer dur12
             , @Param("dur24") Integer dur24
             , @Param("dur46") Integer dur46
-            , @Param("dur6_") Integer dur6_);
+            , @Param("dur6_") Integer dur6_
+    );
 
 }

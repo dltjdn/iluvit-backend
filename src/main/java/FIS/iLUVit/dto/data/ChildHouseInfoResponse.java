@@ -71,6 +71,8 @@ public class ChildHouseInfoResponse {
     private Integer child_5;                // 만5세 아동수
     @XmlElement(name = "CHILD_CNT_SP")
     private Integer child_spe;              // 특수장애 아동수
+    @XmlElement(name = "EM_CNT_TOT")
+    private Double totalCnt;                  // 총 교사 수 ( 교직원 총계 : 원장, 보육교사, 특수교사, 치료교사, 영양사, 간호사, 간호조무사, 조리원, 사무직원 )
     @XmlElement(name = "EM_CNT_0Y")
     private Double dur_1;                  // 근속년수 1년 미만 교사수
     @XmlElement(name = "EM_CNT_1Y")
