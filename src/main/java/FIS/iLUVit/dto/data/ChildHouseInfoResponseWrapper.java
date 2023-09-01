@@ -17,7 +17,7 @@ import java.util.List;
 @NoArgsConstructor
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlRootElement(name = "response")
-public class ChildHouseXmlResponseWrapper {
+public class ChildHouseInfoResponseWrapper {
     @XmlElement(name = "item")
-    private List<ChildHouseXmlResponse> childHouseInfoResponseList;
+    private List<ChildHouseInfoResponse> childHouseInfoResponseList;
 }

@@ -2,7 +2,6 @@ package FIS.iLUVit.service;
 
 import FIS.iLUVit.domain.Center;
 import FIS.iLUVit.domain.Region;
-import FIS.iLUVit.domain.embeddable.Area;
 import FIS.iLUVit.domain.embeddable.BasicInfra;
 import FIS.iLUVit.domain.embeddable.ClassInfo;
 import FIS.iLUVit.domain.embeddable.TeacherInfo;
@@ -75,36 +74,17 @@ public class DataService {
         List<Region> regionList = regionRepository.findAll();
 
         for (Region region : regionList) {
-            updateChildHouseInfoForRegion(region);
-        }
-    }
-
-    /**
-     * 각 지역에 대해 어린이집 정보를 가져와 중복 여부를 확인하고 지역별 어린이집 정보를 업데이트합니다
-     */
-    @Transactional
-    public void updateChildHouseInfoForRegion(Region region) {
-        // 해당 지역의 어린이집 정보를 가져오기
-        List<ChildHouseInfoResponse> responses = getChildHouseInfo(region.getSigunguCode());
-        // 가져온 어린이집 정보를 순회하며 처리
-        for (ChildHouseInfoResponse response : responses) {
-
-            List<Center> centerList = centerRepository.findCentersByNameAndAreaSidoAndAreaSigungu(response.getCenterName(), region.getSidoName(), region.getSigunguName());
-
-            if(centerList.size() == 1) {
-                Center center = centerList.get(0);
-
-                if(!center.getSigned()) {
-                    center.updateCenter(response);
-                }
-            }
+            getChildHouseInfo(region);
         }
     }
 
     /**
      * 어린이집 기본정보 조회 API를 요청하고 응답값의 내용으로 정보 저장을 위한 시설 객체를 생성하여 반환합니다
      */
-    private List<ChildHouseInfoResponse> getChildHouseInfo(String sigunguCode) {
+    @Transactional
+    public void getChildHouseInfo(Region region) {
+
+        String sigunguCode = region.getSigunguCode();
 
         HttpHeaders httpHeaders = new HttpHeaders();
 
@@ -117,97 +97,41 @@ public class DataService {
                 url, HttpMethod.GET, new HttpEntity<>(httpHeaders), String.class);
 
         // JAXB를 이용한 XML 데이터 언마샬링
-        ChildHouseXmlResponseWrapper responseWrapper = unmarshalXmlResponse(responseEntity.getBody());
+        ChildHouseInfoResponseWrapper responseWrapper = unmarshalXmlResponse(responseEntity.getBody());
 
-        List<ChildHouseXmlResponse> responseList = responseWrapper.getChildHouseInfoResponseList();
+        if (responseWrapper != null) {
 
-        List<ChildHouseInfoResponse> childHouseInfoResponseList = new ArrayList<>();
+            List<ChildHouseInfoResponse> responseList = responseWrapper.getChildHouseInfoResponseList();
 
-        if (responseList != null) {
-            // API 응답 데이터 처리
-            for (ChildHouseXmlResponse response : responseList) {
-
-                // Area 관련 정보 객체 생성
-                Area area = Area.builder()
-                        .sido(response.getSido())
-                        .sigungu(response.getSigungu())
-                        .build();
-
-                // BasicInfra 관련 정보 전처리 및 객체 생성 ( 버스 운영 여부, 놀이터 여부, CCTV 여부 판단 )
+            for (ChildHouseInfoResponse response : responseList) {
                 Boolean hasBus = "운영".equals(response.getHasBus());
                 Boolean hasPlayground = response.getPlayGroundCnt() > 0;
-                Integer cctvCnt = response.getCctvCnt();
                 Boolean hasCCTV = response.getCctvCnt() > 0;
 
-                BasicInfra basicInfra = new BasicInfra(hasBus, hasPlayground, hasCCTV, cctvCnt);
-
-                // ClassInfo 관련 정보 객체 생성
-                ClassInfo classInfo = ClassInfo.builder()
-                        .class_0(response.getClass_0())
-                        .class_1(response.getClass_1())
-                        .class_2(response.getClass_2())
-                        .class_3(response.getClass_3())
-                        .class_4(response.getClass_4())
-                        .class_5(response.getClass_5())
-                        .child_0(response.getChild_0())
-                        .child_1(response.getChild_1())
-                        .child_2(response.getChild_2())
-                        .child_3(response.getChild_3())
-                        .child_4(response.getChild_4())
-                        .child_5(response.getChild_5())
-                        .child_spe(response.getChild_spe())
-                        .build();
-
-                // Teacher 관련 정보 객체 생성
-                TeacherInfo teacherInfo = TeacherInfo.builder()
-                        .dur_1(response.getDur_1())
-                        .dur12(response.getDur12())
-                        .dur24(response.getDur24())
-                        .dur46(response.getDur46())
-                        .dur6_(response.getDur6_())
-                        .build();
-
-                // 어린이집 정보 응답 객체 생성
-                ChildHouseInfoResponse childHouseInfoResponse = ChildHouseInfoResponse.builder()
-                        .centerName(response.getCenterName())
-                        .area(area)
-                        .estType(response.getEstType())
-                        .program(response.getProgram())
-                        .homepage(response.getHomepage())
-                        .status(response.getStatus())
-                        .owner(response.getOwner())
-                        .zipcode(response.getZipcode())
-                        .curChildCnt(response.getCurChildCnt())
-                        .maxChildCnt(response.getMaxChildCnt())
-                        .basicInfra(basicInfra)
-                        .classInfo(classInfo)
-                        .teacherInfo(teacherInfo)
-                        .build();
-
-                // 어린이집 정보 응답 리스트에 추가
-                childHouseInfoResponseList.add(childHouseInfoResponse);
+                Integer dur_1 = (response.getDur_1() != null) ? (int) Math.round(response.getDur_1()) : 0;
+                Integer dur12 = (response.getDur12() != null) ? (int) Math.round(response.getDur12()) : 0;
+                Integer dur24 = (response.getDur24() != null) ? (int) Math.round(response.getDur24()) : 0;
+                Integer dur46 = (response.getDur46() != null) ? (int) Math.round(response.getDur46()) : 0;
+                Integer dur6_ = (response.getDur6_() != null) ? (int) Math.round(response.getDur6_()) : 0;
+                centerRepository.updateChildHouse(response, hasBus, hasPlayground, hasCCTV, dur_1, dur12, dur24, dur46, dur6_);
             }
-        } else {
-            log.warn("ResponseList가 null 입니다");
         }
-
-        return childHouseInfoResponseList;
     }
 
     /**
      * xml 포맷 데이터를 언마샬링합니다
      */
-    private ChildHouseXmlResponseWrapper unmarshalXmlResponse(String xmlData) {
+    private ChildHouseInfoResponseWrapper unmarshalXmlResponse(String xmlData) {
         try {
             // JAXB 컨텍스트 초기화
-            JAXBContext jaxbContext = JAXBContext.newInstance(ChildHouseXmlResponseWrapper.class);
+            JAXBContext jaxbContext = JAXBContext.newInstance(ChildHouseInfoResponseWrapper.class);
             // 언마샬링을 위한 언마샬러 생성
             Unmarshaller unmarshaller = jaxbContext.createUnmarshaller();
             // 입력 문자열을 읽기 위한 StringReader 생성
             StringReader reader = new StringReader(xmlData);
 
             // XML 데이터를 객체로 변환하여 반환
-            return (ChildHouseXmlResponseWrapper) unmarshaller.unmarshal(reader);
+            return (ChildHouseInfoResponseWrapper) unmarshaller.unmarshal(reader);
         } catch (JAXBException e) {
             // JAXB 예외 처리
             e.printStackTrace();
