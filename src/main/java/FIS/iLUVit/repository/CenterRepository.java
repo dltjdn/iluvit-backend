@@ -68,7 +68,7 @@ public interface CenterRepository extends JpaRepository<Center, Long>, CenterRep
     void updateCenterCCTV(@Param("name") String name, @Param("hasCCTV") Boolean hasCCTV, @Param("cctvCnt") Integer cctvCnt);
 
     /**
-     * 어린이집정보공개포털에서 받아온 데이터로 어린이집 정보를 업데이트합니다
+     * 주어진 데이터로 어린이집 정보를 업데이트합니다
      */
     @Modifying(clearAutomatically = true)
     @Query("UPDATE Center c SET c.estType = :#{#response.estType}, " +
