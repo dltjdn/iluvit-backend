@@ -25,6 +25,8 @@ import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Unmarshaller;
 import java.io.StringReader;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 
 @Service
@@ -188,12 +190,21 @@ public class DataService {
                     endTime = timeParts[1].replace("시", ":").replace("분", "").trim();
                 }
 
+                String formattedDate = null;
+                if(estDate != null) {
+                    DateTimeFormatter inputFormatter = DateTimeFormatter.ofPattern("yyyyMMdd");
+                    DateTimeFormatter outputFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+
+                    LocalDate date = LocalDate.parse(estDate, inputFormatter);
+                    formattedDate = date.format(outputFormatter);
+                }
+
                 KindergartenGeneralResponse response = KindergartenGeneralResponse.builder()
                         .centerName(centerName)
                         .estType(estType)
                         .owner(owner)
                         .director(director)
-                        .estDate(estDate)
+                        .estDate(formattedDate)
                         .startTime(startTime)
                         .endTime(endTime)
                         .homepage(homepage)
