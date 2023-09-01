@@ -1,10 +1,9 @@
 package FIS.iLUVit.dto.data;
 
-import FIS.iLUVit.domain.embeddable.ClassInfo;
-import io.swagger.models.auth.In;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
+
 @Getter
 @Builder
 @AllArgsConstructor
@@ -19,6 +18,11 @@ public class KindergartenGeneralResponse {
     private String endTime;         // 운영종료시간
     private String homepage;        // 홈페이지 주소
     private Integer maxChildCnt;    // 정원
-    private ClassInfo classInfo;    // 학급정보
-
+    private Integer class_3;                // 만3세 반수
+    private Integer class_4;                // 만4세 반수
+    private Integer class_5;                // 만5세 반수
+    private Integer child_3;                // 만3세 아동수
+    private Integer child_4;                // 만4세 아동수
+    private Integer child_5;                // 만5세 아동수
+    private Integer child_spe;              // 특수장애 아동수
 }

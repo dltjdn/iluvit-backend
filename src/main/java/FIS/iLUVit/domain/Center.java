@@ -3,8 +3,6 @@ package FIS.iLUVit.domain;
 import FIS.iLUVit.dto.center.CenterDetailRequest;
 import FIS.iLUVit.domain.embeddable.*;
 import FIS.iLUVit.domain.enumtype.KindOf;
-import FIS.iLUVit.dto.data.KindergartenGeneralResponse;
-import FIS.iLUVit.dto.data.KindergartenTeacherResponse;
 import lombok.*;
 import lombok.extern.slf4j.Slf4j;
 
@@ -154,23 +152,6 @@ public class Center extends BaseImageEntity {
         this.program = Center.encodeStringList(requestDto.getPrograms());
         this.longitude = longitude;
         this.latitude = latitude;
-    }
-
-    public void updateCenterTeacher(KindergartenTeacherResponse response) {
-        this.teacherInfo = response.getTeacherInfo();
-    }
-
-    public void updateCenterGeneral(KindergartenGeneralResponse response) {
-        this.owner = response.getOwner();
-        this.director = response.getDirector();
-        this.estType = response.getEstType();
-        this.estDate = response.getEstDate();
-        this.homepage = response.getHomepage();
-        this.startTime = response.getStartTime();
-        this.endTime = response.getEndTime();
-        this.maxChildCnt = response.getMaxChildCnt();
-        this.classInfo = response.getClassInfo();
-
     }
 
     public void addScore(Score mode){
