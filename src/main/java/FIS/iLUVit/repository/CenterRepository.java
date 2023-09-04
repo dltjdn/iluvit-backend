@@ -35,8 +35,8 @@ public interface CenterRepository extends JpaRepository<Center, Long>, CenterRep
      */
     @Modifying(clearAutomatically = true)
     @Query("UPDATE Center c SET c.estType = :#{#response.estType}, " +
-            "c.status= :#{#response.status}, c.owner= :#{#response.owner}, c.zipcode= :#{#response.zipcode}, c.homepage= :#{#response.homepage}, " +
-            "c.program= :#{#response.program}, c.maxChildCnt= :#{#response.maxChildCnt}, c.curChildCnt= :#{#response.curChildCnt}, " +
+            "c.status= :#{#response.status}, c.owner= :#{#response.owner}, c.zipcode= :#{#response.zipcode}, " +
+            "c.homepage= :#{#response.homepage}, c.maxChildCnt= :#{#response.maxChildCnt}, c.curChildCnt= :#{#response.curChildCnt}, " +
             "c.basicInfra.hasBus= :hasBus, c.basicInfra.hasPlayground= :hasPlayground, " +
             "c.basicInfra.hasCCTV= :hasCCTV, c.basicInfra.cctvCnt= :#{#response.cctvCnt}, " +
             "c.classInfo.class_0= :#{#response.class_0}, c.classInfo.class_1= :#{#response.class_1}, c.classInfo.class_2= :#{#response.class_2}, " +

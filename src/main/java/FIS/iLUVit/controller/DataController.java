@@ -26,7 +26,6 @@ public class DataController {
 
     @PatchMapping("kindergarten")
     public ResponseEntity<Void> updateKinder() {
-        log.info("유치원 정보 업데이트 controller method 실행 - updateKinder");
         dataService.updateKindergartenInfo();
         return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
     }

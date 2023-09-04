@@ -37,8 +37,6 @@ public class ChildHouseInfoResponse {
     private Integer maxChildCnt;            // 정원
     @XmlElement(name = "crchcnt")
     private Integer curChildCnt;            // 현원
-    @XmlElement(name = "crspec")
-    private String program;                 // 제공서비스
     @XmlElement(name = "crcargbname")
     private String hasBus;                  // 통합차량 운영 여부
     @XmlElement(name = "plgrdco")
