@@ -2,6 +2,7 @@ package FIS.iLUVit.service;
 
 import FIS.iLUVit.domain.alarms.Alarm;
 import FIS.iLUVit.domain.alarms.ConvertedToParticipateAlarm;
+import FIS.iLUVit.domain.enumtype.NotificationTitle;
 import FIS.iLUVit.dto.presentation.*;
 import FIS.iLUVit.domain.*;
 import FIS.iLUVit.domain.alarms.PresentationCreatedAlarm;
@@ -92,8 +93,7 @@ public class PresentationService {
         centerBookmarkRepository.findByCenter(center).forEach(prefer -> {
             Alarm alarm = new PresentationCreatedAlarm(prefer.getParent(), presentation, center);
             alarmRepository.save(alarm);
-            String type = "아이러빗";
-            AlarmUtils.publishAlarmEvent(alarm, type);
+            AlarmUtils.publishAlarmEvent(alarm, NotificationTitle.ILUVIT.getDescription());
         });
 
         return presentation;
@@ -173,8 +173,7 @@ public class PresentationService {
 
                         Alarm alarm = new ConvertedToParticipateAlarm(waiting.getParent(), presentation, presentation.getCenter());
                         alarmRepository.save(alarm);
-                        String type = "아이러빗";
-                        AlarmUtils.publishAlarmEvent(alarm, type);
+                        AlarmUtils.publishAlarmEvent(alarm, NotificationTitle.ILUVIT.getDescription());
 
                         participationRepository.save(andRegisterForWaitings);
                     });
