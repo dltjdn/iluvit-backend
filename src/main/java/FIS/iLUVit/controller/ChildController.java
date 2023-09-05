@@ -66,8 +66,7 @@ public class ChildController {
      */
     @Operation(summary = "아이 정보 수정", description = "아이 정보를 수정합니다.")
     @PutMapping("{childId}")
-    public ChildDetailResponse updateChild(@Login Long userId, @PathVariable("childId") Long childId,
-                                           @ModelAttribute ChildRequest request){
+    public ChildDetailResponse updateChild(@Login Long userId, @PathVariable("childId") Long childId, @ModelAttribute ChildRequest request, Pageable pageable){
         return childService.modifyChildInfo(userId, childId, request);
     }
 
