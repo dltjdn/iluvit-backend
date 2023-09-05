@@ -12,7 +12,6 @@ import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
 
 @Component
-@Order(1)
 @RequiredArgsConstructor
 @Slf4j
 public class TraceFilter implements Filter {
@@ -22,19 +21,11 @@ public class TraceFilter implements Filter {
     @Override
     public void doFilter(ServletRequest servletRequest, ServletResponse servletResponse, FilterChain filterChain) throws IOException, ServletException {
         HttpServletRequest request = (HttpServletRequest) servletRequest;
-        try{
-            TraceSupports.syncFilter(request);
-            filterChain.doFilter(servletRequest, servletResponse);
-            TraceSupports.releaseTraceInfos();
-        }catch(Exception e){
-            log.error("[InternalServerError] {} {} errMessage={}\n",
-                    request.getMethod(),
-                    request.getRequestURI(),
-                    e.getMessage()
-            );
-            slackErrorLogger.sendSlackAlertErrorLog(e.getMessage(), request); // 슬랙 알림 보내는 메서드
-            throw e;
-        }
+
+        TraceSupports.syncFilter(request);
+        filterChain.doFilter(servletRequest, servletResponse);
+        TraceSupports.releaseTraceInfos();
+
 
     }
 }
