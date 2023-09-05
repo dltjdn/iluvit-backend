@@ -15,6 +15,7 @@ public enum BasicErrorResult implements ErrorResult {
     AUTHENTICATION_EXCEPTION(HttpStatus.UNAUTHORIZED, "인증 예외가 발생했습니다."),
     BAD_CREDENTIALS(HttpStatus.UNAUTHORIZED, "아이디 혹은 비밀번호가 잘못되었습니다."),
     INVALID_TOKEN(HttpStatus.UNAUTHORIZED, "유효하지 않은 토큰입니다."),
+
     /**
      * 4XX 클라이언트 에러
      */

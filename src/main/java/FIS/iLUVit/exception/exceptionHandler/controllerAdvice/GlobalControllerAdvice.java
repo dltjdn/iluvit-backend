@@ -18,6 +18,8 @@ import org.springframework.validation.BindException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
+
 import javax.servlet.http.HttpServletRequest;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -60,10 +62,10 @@ public class GlobalControllerAdvice {
         log.warn("[MethodArgumentNotValidException {} {} errMessage={}\n",
                 request.getMethod(),
                 request.getRequestURI(),
-                e.getMessage()
+                errorList.get(0)
         );
 
-        slackErrorLogger.sendSlackAlertWarnLog(e.getMessage(), request); // 슬랙 알림 보내는 메서드
+        slackErrorLogger.sendSlackAlertWarnLog(errorList.get(0), request); // 슬랙 알림 보내는 메서드
 
         return ErrorResponse.toResponseEntity(BasicErrorResult.METHOD_ARGUMENT_NOT_VALID);
     }
@@ -79,7 +81,9 @@ public class GlobalControllerAdvice {
                 request.getRequestURI(),
                 e.getMessage()
         );
+
         slackErrorLogger.sendSlackAlertWarnLog(e.getMessage(), request); // 슬랙 알림 보내는 메서드
+
         return ErrorResponse.toResponseEntity(BasicErrorResult.HTTP_MESSAGE_NOT_READABLE);
     }
 
@@ -93,12 +97,15 @@ public class GlobalControllerAdvice {
                 .stream()
                 .map(DefaultMessageSourceResolvable::getDefaultMessage)
                 .collect(Collectors.toList());
+
         log.warn("[BindException {} {} errMessage={}\n",
                 request.getMethod(),
                 request.getRequestURI(),
                 errorList.get(0)
         );
-        slackErrorLogger.sendSlackAlertWarnLog(e.getMessage(), request); // 슬랙 알림 보내는 메서드
+
+        slackErrorLogger.sendSlackAlertWarnLog(errorList.get(0), request); // 슬랙 알림 보내는 메서드
+
         return ErrorResponse.toResponseEntity(BasicErrorResult.BIND_EXCEPTION);
     }
 
