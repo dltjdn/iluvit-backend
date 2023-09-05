@@ -99,23 +99,27 @@ public class DataService {
         if (responseWrapper != null) {
             // 어린이집 정보 리스트 추출
             List<ChildHouseInfoResponse> responseList = responseWrapper.getChildHouseInfoResponseList();
-            // 어린이집 정보를 순회하며 필요한 정보를 추출하여 업데이트
-            for (ChildHouseInfoResponse response : responseList) {
-                // BasicInfra 데이터 전처리 ( 통학차량 운영 여부, 놀이터 여부, CCTV 여부 불리언으로 형변환 )
-                Boolean hasBus = "운영".equals(response.getHasBus());
-                Boolean hasPlayground = response.getPlayGroundCnt() > 0;
-                Boolean hasCCTV = response.getCctvCnt() > 0;
+            if(responseList != null) {
+                // 어린이집 정보를 순회하며 필요한 정보를 추출하여 업데이트
+                for (ChildHouseInfoResponse response : responseList) {
+                    // BasicInfra 데이터 전처리 ( 통학차량 운영 여부, 놀이터 여부, CCTV 여부 불리언으로 형변환 )
+                    Boolean hasBus = "운영".equals(response.getHasBus());
+                    Boolean hasPlayground = response.getPlayGroundCnt() > 0;
+                    Boolean hasCCTV = response.getCctvCnt() > 0;
 
-                // TeacherInfo 데이터 전처리 ( 근속연수 정보의 소수점을 반올림하여 정수로 형변환 )
-                Integer totalCnt = (response.getTotalCnt() != null) ? (int) Math.round(response.getTotalCnt()) : 0;
-                Integer dur_1 = (response.getDur_1() != null) ? (int) Math.round(response.getDur_1()) : 0;
-                Integer dur12 = (response.getDur12() != null) ? (int) Math.round(response.getDur12()) : 0;
-                Integer dur24 = (response.getDur24() != null) ? (int) Math.round(response.getDur24()) : 0;
-                Integer dur46 = (response.getDur46() != null) ? (int) Math.round(response.getDur46()) : 0;
-                Integer dur6_ = (response.getDur6_() != null) ? (int) Math.round(response.getDur6_()) : 0;
+                    // TeacherInfo 데이터 전처리 ( 근속연수 정보의 소수점을 반올림하여 정수로 형변환 )
+                    Integer totalCnt = (response.getTotalCnt() != null) ? (int) Math.round(response.getTotalCnt()) : 0;
+                    Integer dur_1 = (response.getDur_1() != null) ? (int) Math.round(response.getDur_1()) : 0;
+                    Integer dur12 = (response.getDur12() != null) ? (int) Math.round(response.getDur12()) : 0;
+                    Integer dur24 = (response.getDur24() != null) ? (int) Math.round(response.getDur24()) : 0;
+                    Integer dur46 = (response.getDur46() != null) ? (int) Math.round(response.getDur46()) : 0;
+                    Integer dur6_ = (response.getDur6_() != null) ? (int) Math.round(response.getDur6_()) : 0;
 
-                // 어린이집 정보를 업데이트하는 메서드 호출
-                centerRepository.updateChildHouse(response, hasBus, hasPlayground, hasCCTV, totalCnt, dur_1, dur12, dur24, dur46, dur6_);
+                    // 어린이집 정보를 업데이트하는 메서드 호출
+                    centerRepository.updateChildHouse(response, hasBus, hasPlayground, hasCCTV, totalCnt, dur_1, dur12, dur24, dur46, dur6_);
+                }
+            } else {
+                log.info("받아온 데이터가 없습니다.");
             }
         }
     }
