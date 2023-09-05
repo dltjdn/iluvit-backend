@@ -35,19 +35,17 @@ public class CustomErrorController extends AbstractErrorController {
                 request.getRequestURI(),
                 error);
 
-        if (httpStatus.is4xxClientError()) {
+        if (httpStatus.is4xxClientError()) { // 4XX 에러 발생
             errorResult = map4xxClientError(httpStatus);
             slackErrorLogger.sendSlackAlertWarnLog(error,request);
-        } else if (httpStatus.is5xxServerError()) {
+        } else if (httpStatus.is5xxServerError()) { // 5XX 에러 발생
             errorResult = map5xxServerError(httpStatus);
-            slackErrorLogger.sendSlackAlertWarnLog(error,request);
+            slackErrorLogger.sendSlackAlertErrorLog(error,request);
         } else {
             errorResult = BasicErrorResult.UNKNOWN_ERROR;
         }
 
-        ErrorResponse customResponseEntity = new ErrorResponse(errorResult);
-
-        return new ResponseEntity<>(customResponseEntity, httpStatus);
+        return ErrorResponse.toResponseEntity(errorResult);
     }
 
     private ErrorResult map4xxClientError(HttpStatus httpStatus) {
