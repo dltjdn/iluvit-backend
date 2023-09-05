@@ -50,27 +50,27 @@ public class DataService {
      * 유치원 정보를 업데이트합니다
      */
     @Transactional
-    public void updateKindergartenInfo() {
+    public void updateKindergartenInformation() {
         List<Region> regionList = regionRepository.findAll();
 
         for (Region region : regionList) {
-            updateKindergartenGeneralInfo(region);
-            updateKindergartenTeacherInfo(region);
-            updateKindergartenSafetyInfo(region);
-            updateKindergartenBuildingInfo(region);
-            updateKindergartenSchoolBusInfo(region);
-            updateKindergartenPhysicsInfo(region);
+            updateKindergartenGeneralInformationForRegion(region);
+            updateKindergartenTeacherInformationForRegion(region);
+            updateKindergartenSafetyInformationForRegion(region);
+            updateKindergartenBuildingInformationForRegion(region);
+            updateKindergartenSchoolBusInformationForRegion(region);
+            updateKindergartenPhysicsInformationForRegion(region);
         }
     }
 
     /**
      * 어린이집 정보를 업데이트합니다
      */
-    public void updateChildHouseInfo() {
+    public void updateChildHouseInformation() {
         List<Region> regionList = regionRepository.findAll();
 
         for (Region region : regionList) {
-            getChildHouseInfo(region);
+            updateChildHouseInformationForRegion(region);
         }
     }
 
@@ -78,7 +78,7 @@ public class DataService {
      * 주어진 지역 코드를 활용하여 어린이집 정보를 가져와 업데이트합니다
      */
     @Transactional
-    public void getChildHouseInfo(Region region) {
+    public void updateChildHouseInformationForRegion(Region region) {
         // 지역 정보에서 시군구 코드 추출
         String sigunguCode = region.getSigunguCode();
         // HTTP 요청 헤더 설정
@@ -93,7 +93,7 @@ public class DataService {
                 url, HttpMethod.GET, new HttpEntity<>(httpHeaders), String.class);
 
         // JAXB를 이용한 XML 데이터 언마샬링 ( xml 데이터를 객체로 변환 )
-        ChildHouseInfoResponseWrapper responseWrapper = unmarshalXmlResponse(responseEntity.getBody());
+        ChildHouseInfoResponseWrapper responseWrapper = parseXmlResponseToChildHouseInfo(responseEntity.getBody());
 
         // 변환된 응답 객체가 유효한 경우
         if (responseWrapper != null) {
@@ -127,7 +127,7 @@ public class DataService {
     /**
      * xml 포맷 데이터를 언마샬링합니다
      */
-    private ChildHouseInfoResponseWrapper unmarshalXmlResponse(String xmlData) {
+    private ChildHouseInfoResponseWrapper parseXmlResponseToChildHouseInfo(String xmlData) {
         try {
             // JAXB 컨텍스트 초기화
             JAXBContext jaxbContext = JAXBContext.newInstance(ChildHouseInfoResponseWrapper.class);
@@ -148,7 +148,7 @@ public class DataService {
     /**
      * 유치원 일반현황 조회 OpenAPI 호출, JSON 객체를 파싱하고 전처리하여 생성한 객체 리스트를 반환합니다
      */
-    private void updateKindergartenGeneralInfo(Region region) {
+    private void updateKindergartenGeneralInformationForRegion(Region region) {
 
         RestTemplate restTemplate = new RestTemplate();
         HttpHeaders httpHeaders = new HttpHeaders();
@@ -232,7 +232,7 @@ public class DataService {
     /**
      * 유치원 건물현황 조회 OpenAPI 호출, JSON 객체를 파싱하고 전처리하여 생성한 객체 리스트를 반환합니다
      */
-    private void updateKindergartenBuildingInfo(Region region) {
+    private void updateKindergartenBuildingInformationForRegion(Region region) {
 
         RestTemplate restTemplate = new RestTemplate();
         HttpHeaders httpHeaders = new HttpHeaders();
@@ -272,7 +272,7 @@ public class DataService {
     /**
      * 유치원 교실면적현황 조회 OpenAPI 호출, JSON 객체를 파싱하고 전처리하여 생성한 객체 리스트를 반환합니다
      */
-    private void updateKindergartenPhysicsInfo(Region region) {
+    private void updateKindergartenPhysicsInformationForRegion(Region region) {
 
         RestTemplate restTemplate = new RestTemplate();
         HttpHeaders httpHeaders = new HttpHeaders();
@@ -311,7 +311,7 @@ public class DataService {
     /**
      * 유치원 통학차량현황 조회 OpenAPI 호출, JSON 객체를 파싱하고 전처리하여 생성한 객체 리스트를 반환합니다
      */
-    private void updateKindergartenSchoolBusInfo(Region region) {
+    private void updateKindergartenSchoolBusInformationForRegion(Region region) {
 
         RestTemplate restTemplate = new RestTemplate();
         HttpHeaders httpHeaders = new HttpHeaders();
@@ -350,7 +350,7 @@ public class DataService {
     /**
      * 유치원 근속연수현황 조회 OpenAPI 호출, JSON 객체를 파싱하고 전처리하여 생성한 객체 리스트를 반환합니다
      */
-    private void updateKindergartenTeacherInfo(Region region) {
+    private void updateKindergartenTeacherInformationForRegion(Region region) {
 
         RestTemplate restTemplate = new RestTemplate();
         HttpHeaders httpHeaders = new HttpHeaders();
@@ -400,7 +400,7 @@ public class DataService {
      * 유치원 안전점검ㆍ교육 조회 OpenAPI 호출, JSON 객체를 파싱하고 전처리하여 생성한 객체 리스트를 반환합니다
      */
 
-    private void updateKindergartenSafetyInfo(Region region) {
+    private void updateKindergartenSafetyInformationForRegion(Region region) {
 
         RestTemplate restTemplate = new RestTemplate();
         HttpHeaders httpHeaders = new HttpHeaders();
