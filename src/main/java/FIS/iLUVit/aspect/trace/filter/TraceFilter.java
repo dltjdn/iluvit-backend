@@ -16,8 +16,6 @@ import java.io.IOException;
 @Slf4j
 public class TraceFilter implements Filter {
 
-    private final SlackErrorLogger slackErrorLogger;
-
     @Override
     public void doFilter(ServletRequest servletRequest, ServletResponse servletResponse, FilterChain filterChain) throws IOException, ServletException {
         HttpServletRequest request = (HttpServletRequest) servletRequest;
