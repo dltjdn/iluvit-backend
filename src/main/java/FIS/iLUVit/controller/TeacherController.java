@@ -6,7 +6,7 @@ import FIS.iLUVit.dto.center.CenterBasicRequest;
 import FIS.iLUVit.dto.teacher.SignupTeacherRequest;
 import FIS.iLUVit.dto.teacher.TeacherDetailRequest;
 import FIS.iLUVit.dto.teacher.TeacherDetailResponse;
-import FIS.iLUVit.dto.teacher.TeacherInfoForAdminDto;
+import FIS.iLUVit.dto.teacher.TeacherInfoForAdminResponse;
 import FIS.iLUVit.service.TeacherService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -95,9 +95,9 @@ public class TeacherController {
      * 교사 시설 승인 페이지용 교사 정보 조회
      */
     @GetMapping("approval")
-    public ResponseEntity<List<TeacherInfoForAdminDto>> getAllTeacher(@Login Long userId) {
-        List<TeacherInfoForAdminDto> teacherInfoForAdminDtos = teacherService.findTeacherApprovalList(userId);
-        return ResponseEntity.ok(teacherInfoForAdminDtos);
+    public ResponseEntity<List<TeacherInfoForAdminResponse>> getAllTeacher(@Login Long userId) {
+        List<TeacherInfoForAdminResponse> teacherInfoForAdminResponses = teacherService.findTeacherApprovalList(userId);
+        return ResponseEntity.ok(teacherInfoForAdminResponses);
     }
 
     /**

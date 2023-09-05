@@ -1,9 +1,9 @@
 package FIS.iLUVit.service;
 
 import FIS.iLUVit.domain.embeddable.Location;
-import FIS.iLUVit.dto.parent.ParentUpdateDto;
-import FIS.iLUVit.dto.parent.ParentDetailDto;
-import FIS.iLUVit.dto.parent.ParentSignupDto;
+import FIS.iLUVit.dto.parent.ParentUpdateRequest;
+import FIS.iLUVit.dto.parent.ParentDetailResponse;
+import FIS.iLUVit.dto.parent.ParentCreateRequest;
 import FIS.iLUVit.domain.*;
 import FIS.iLUVit.domain.embeddable.Theme;
 import FIS.iLUVit.domain.enumtype.AuthKind;
@@ -43,24 +43,25 @@ public class ParentService {
     private final ParticipationRepository participationRepository;
     private final WaitingRepository waitingRepository;
     private final WaitingService waitingService;
+    private final BlackUserService blackUserService;
 
     /**
      *  학부모 정보 상세 조회
      */
-    public ParentDetailDto findParentDetails(Long userId) {
+    public ParentDetailResponse findParentDetails(Long userId) {
 
         Parent findParent = parentRepository.findById(userId)
                 .orElseThrow(() -> new UserException(UserErrorResult.NOT_VALID_TOKEN));
 
-        ParentDetailDto parentDetailDto = new ParentDetailDto(findParent,findParent.getProfileImagePath());
+        ParentDetailResponse parentDetailResponse = new ParentDetailResponse(findParent,findParent.getProfileImagePath());
 
-        return parentDetailDto;
+        return parentDetailResponse;
     }
 
     /**
      *  학부모 정보 수정
      */
-    public void modifyParentInfo(Long userId, ParentUpdateDto request) throws IOException {
+    public void modifyParentInfo(Long userId, ParentUpdateRequest request) throws IOException {
 
         Parent findParent = parentRepository.findById(userId)
                 .orElseThrow(() -> new UserException(UserErrorResult.NOT_VALID_TOKEN));
@@ -94,7 +95,7 @@ public class ParentService {
         Location location = new Location(loAndLat, hangjung);
         findParent.updateLocation(location);
 
-        new ParentDetailDto(findParent,findParent.getProfileImagePath());
+        new ParentDetailResponse(findParent,findParent.getProfileImagePath());
         imageService.saveProfileImage(request.getProfileImg(), findParent);
 
     }
@@ -102,7 +103,9 @@ public class ParentService {
     /**
      * 학부모 생성 (학부모 회원가입)
      */
-    public void signupParent(ParentSignupDto request) {
+    public void signupParent(ParentCreateRequest request) {
+        // 블랙 유저 검증
+        blackUserService.isValidUser(request.getPhoneNum());
 
         String hashedPwd = userService.hashAndValidatePwdForSignup(request.getPassword(), request.getPasswordCheck(), request.getLoginId(), request.getPhoneNum(), request.getNickname());
         Parent parent = request.createParent(hashedPwd);

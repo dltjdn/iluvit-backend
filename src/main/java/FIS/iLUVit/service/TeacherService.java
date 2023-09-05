@@ -7,7 +7,7 @@ import FIS.iLUVit.dto.center.CenterBasicRequest;
 import FIS.iLUVit.dto.teacher.SignupTeacherRequest;
 import FIS.iLUVit.dto.teacher.TeacherDetailRequest;
 import FIS.iLUVit.dto.teacher.TeacherDetailResponse;
-import FIS.iLUVit.dto.teacher.TeacherInfoForAdminDto;
+import FIS.iLUVit.dto.teacher.TeacherInfoForAdminResponse;
 import FIS.iLUVit.domain.*;
 import FIS.iLUVit.domain.alarms.CenterApprovalReceivedAlarm;
 import FIS.iLUVit.domain.enumtype.Approval;
@@ -53,6 +53,7 @@ public class TeacherService {
     private final ScrapRepository scrapRepository;
     private final MapService mapService;
     private final AlarmRepository alarmRepository;
+    private final BlackUserService blackUserService;
 
     @Autowired
     public void setUserService(UserService userService){
@@ -77,6 +78,9 @@ public class TeacherService {
      * 교사 회원가입을 수행합니다
      */
     public void signupTeacher(SignupTeacherRequest request) {
+        // 블랙 유저 검증
+        blackUserService.isValidUser(request.getPhoneNum());
+
         // 회원가입 유효성 검사 및 비밀번호 해싱
         String hashedPwd = userService.hashAndValidatePwdForSignup(request.getPassword(), request.getPasswordCheck(), request.getLoginId(), request.getPhoneNum(), request.getNickname());
 
@@ -123,7 +127,8 @@ public class TeacherService {
                 if (t.getAuth() == DIRECTOR) {
                     Alarm alarm = new CenterApprovalReceivedAlarm(t, Auth.TEACHER, t.getCenter());
                     alarmRepository.save(alarm);
-                    AlarmUtils.publishAlarmEvent(alarm);
+                    String type = "아이러빗";
+                    AlarmUtils.publishAlarmEvent(alarm, type);
                 }
             });
         }
@@ -206,7 +211,8 @@ public class TeacherService {
         directors.forEach(director -> {
             Alarm alarm = new CenterApprovalReceivedAlarm(director, Auth.TEACHER, director.getCenter());
             alarmRepository.save(alarm);
-            AlarmUtils.publishAlarmEvent(alarm);
+            String type = "아이러빗";
+            AlarmUtils.publishAlarmEvent(alarm, type);
         });
 
         return teacher;
@@ -250,7 +256,7 @@ public class TeacherService {
     /**
      * 관리교사가 시설에 등록된 교사 리스트를 조회합니다
      */
-    public List<TeacherInfoForAdminDto> findTeacherApprovalList(Long userId) {
+    public List<TeacherInfoForAdminResponse> findTeacherApprovalList(Long userId) {
         // user id로 관리교사인지 확인
         Teacher director = teacherRepository.findByIdAndAuth(userId, DIRECTOR)
                 .orElseThrow(() -> new UserException(UserErrorResult.HAVE_NOT_AUTHORIZATION));
@@ -259,14 +265,14 @@ public class TeacherService {
         List<Teacher> teacherList = teacherRepository.findByCenter(director.getCenter());
 
         // 조회된 교사 정보를 저장할 리스트 초기화
-        List<TeacherInfoForAdminDto> response = new ArrayList<>();
+        List<TeacherInfoForAdminResponse> response = new ArrayList<>();
 
         teacherList.forEach(teacher -> {
             // 요청한 관리교사는 제외하고 시설에 연관된 교사들 보여주기
             if (!Objects.equals(teacher.getId(), userId)) {
                 // 각 교사에 대한 정보를 포함한 Dto 객체 생성
-                TeacherInfoForAdminDto teacherInfoForAdmin =
-                        new TeacherInfoForAdminDto(teacher,teacher.getProfileImagePath());
+                TeacherInfoForAdminResponse teacherInfoForAdmin =
+                        new TeacherInfoForAdminResponse(teacher,teacher.getProfileImagePath());
                 response.add(teacherInfoForAdmin);
             }
         });

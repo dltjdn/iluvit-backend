@@ -30,6 +30,7 @@ public class AlarmUtils {
     public static final String CENTER_APPROVAL_RECEIVED = "alarm.center.approvalReceived";
     //
     public static final String CENTER_APPROVAL_ACCEPTED = "alarm.center.approvalAccepted";
+    public static final String AGENT_VISITED = "alarm.agent.visited";
 
     @Autowired
     public AlarmUtils(MessageSource messageSource, ApplicationEventPublisher eventPublisher){
@@ -41,8 +42,8 @@ public class AlarmUtils {
         return messageSource.getMessage(code, args, null);
     }
 
-    public static AlarmEvent publishAlarmEvent(Alarm alarm){
-        AlarmEvent alarmEvent = new AlarmEvent(alarm);
+    public static AlarmEvent publishAlarmEvent(Alarm alarm, String title){
+        AlarmEvent alarmEvent = new AlarmEvent(alarm, title);
         eventPublisher.publishEvent(alarmEvent);
         return alarmEvent;
     }

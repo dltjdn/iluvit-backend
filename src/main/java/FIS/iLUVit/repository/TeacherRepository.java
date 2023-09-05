@@ -4,6 +4,7 @@ import FIS.iLUVit.domain.Center;
 import FIS.iLUVit.domain.Teacher;
 import FIS.iLUVit.domain.enumtype.Approval;
 import FIS.iLUVit.domain.enumtype.Auth;
+import org.springframework.data.jpa.repository.EntityGraph;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.List;
@@ -44,6 +45,7 @@ public interface TeacherRepository extends JpaRepository<Teacher, Long> {
     /**
      * 해당 시설과 권한으로 교사를 조회합니다
      */
+    @EntityGraph(attributePaths = "center")
     List<Teacher> findByCenterAndAuth(Center center, Auth auth);
 
 }

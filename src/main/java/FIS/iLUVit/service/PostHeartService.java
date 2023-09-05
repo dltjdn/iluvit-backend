@@ -28,12 +28,14 @@ public class PostHeartService {
         Post post = postRepository.findById(postId)
                 .orElseThrow(() -> new PostException(PostErrorResult.POST_NOT_EXIST));
 
+        // 이미 좋아요 누른 게시물이면 에러
         postHeartRepository.findByUserAndPost(user, post)
                 .ifPresent((postHeart) -> {
                     throw new PostException(PostErrorResult.ALREADY_EXIST_HEART);
                 });
 
         postHeartRepository.save(new PostHeart(user, post));
+        post.plusHeartCount(); // 좋아요 수 +1
     }
 
     /**

@@ -1,11 +1,12 @@
 package FIS.iLUVit.service;
 
 import FIS.iLUVit.domain.alarms.Alarm;
-import FIS.iLUVit.dto.comment.CommentPostDto;
-import FIS.iLUVit.dto.comment.CommentCreateDto;
+import FIS.iLUVit.dto.comment.CommentPostResponse;
+import FIS.iLUVit.dto.comment.CommentCreateRequest;
 import FIS.iLUVit.domain.Comment;
 import FIS.iLUVit.domain.Post;
 import FIS.iLUVit.domain.User;
+import FIS.iLUVit.domain.Blocked;
 import FIS.iLUVit.domain.alarms.PostAlarm;
 import FIS.iLUVit.exception.*;
 import FIS.iLUVit.repository.*;
@@ -18,6 +19,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Objects;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -30,20 +32,16 @@ public class CommentService {
     private final ReportRepository reportRepository;
     private final ReportDetailRepository reportDetailRepository;
     private final AlarmRepository alarmRepository;
+    private final BlockedRepository blockedRepository;
 
     /**
      * 댓글 작성 (comment_id 값이 null일 경우 댓글 작성, comment_id 값까지 보내는 경우 대댓글 작성)
      */
-    public void saveNewComment(Long userId, Long postId, Long p_commentId, CommentCreateDto request) {
-
-        if (userId == null) {
-            throw new CommentException(CommentErrorResult.UNAUTHORIZED_USER_ACCESS);
-        }
-
-        User findUser = userRepository.findById(userId)
+    public void saveNewComment(Long userId, Long postId, Long parentCommentId, CommentCreateRequest request) {
+        User user = userRepository.findById(userId)
                 .orElseThrow(() -> new UserException(UserErrorResult.USER_NOT_EXIST));
 
-        Post findPost = postRepository.findById(postId)
+        Post post = postRepository.findById(postId)
                 .orElseThrow(() -> new PostException(PostErrorResult.POST_NOT_EXIST));
 
         // anonymous false 일 때 order = null
@@ -59,32 +57,38 @@ public class CommentService {
         // 익명 작성일 때
         if (request.getAnonymous()) {
             // 게시글 작성자 == 댓글 작성자이면 -1
-            if (Objects.equals(findPost.getUser().getId(), userId)) {
+            if (Objects.equals(post.getUser().getId(), userId)) {
                 anonymousOrder = -1;
             } else {
-                Comment findComment = commentRepository.findFirstByPostAndUserAndAnonymous(findPost, findUser, request.getAnonymous())
+                Comment findComment = commentRepository.findFirstByPostAndUserAndAnonymous(post, user, request.getAnonymous())
                     .orElse(null);
                 // 게시글 내 이미 익명으로 작성한 댓글이 있으면 댓글에서 익명 순서 가져옴
                 if (findComment != null) {
                     anonymousOrder = findComment.getAnonymousOrder();
                 } else { // 없으면 게시글 order +1 후 익명 순서 새로 가져옴
-                    findPost.plusAnonymousOrder();
-                    anonymousOrder = findPost.getAnonymousOrder();
+                    post.plusAnonymousOrder();
+                    anonymousOrder = post.getAnonymousOrder();
                 }
             }
         }
 
-        Comment comment = new Comment(request.getAnonymous(), request.getContent(), findPost, findUser, anonymousOrder);
+        Comment comment = new Comment(request.getAnonymous(), request.getContent(), post, user, anonymousOrder);
 
-        if (p_commentId != null) {
-            Comment parentComment = commentRepository.getById(p_commentId);
+        if (parentCommentId != null) {
+            Comment parentComment = commentRepository.getById(parentCommentId);
             comment.updateParentComment(parentComment);
         }
 
-        if (!userId.equals(findPost.getUser().getId())) { // 본인 게시글에 댓글단 건 알림 X
-            Alarm alarm = new PostAlarm(findPost.getUser(), findPost, comment);
+        // 게시글을 쓴 유저가 차단한 유저를 조회한다
+        List<User> blockedUsers = blockedRepository.findByBlockingUser(post.getUser()).stream()
+                .map(Blocked::getBlockedUser)
+                .collect(Collectors.toList());
+
+        if (!user.equals(post.getUser()) && !blockedUsers.contains(user)) { // 본인 게시글에 댓글단 건 알림 X
+            Alarm alarm = new PostAlarm(post.getUser(), post, comment);
             alarmRepository.save(alarm);
-            AlarmUtils.publishAlarmEvent(alarm);
+            String type = "아이러빗";
+            AlarmUtils.publishAlarmEvent(alarm, type);
         }
         commentRepository.save(comment);
     }
@@ -123,9 +127,9 @@ public class CommentService {
     /**
      * 댓글 단 글 전체 조회
      */
-    public Slice<CommentPostDto> findCommentByUser(Long userId, Pageable pageable) {
+    public Slice<CommentPostResponse> findCommentByUser(Long userId, Pageable pageable) {
         User user = userRepository.findById(userId).orElseThrow(() -> new UserException(UserErrorResult.USER_NOT_EXIST));
         // Comment -> CommentDTO 타입으로 변환
-        return commentRepository.findByUser(user, pageable).map(CommentPostDto::new);
+        return commentRepository.findByUser(user, pageable).map(CommentPostResponse::new);
     }
 }

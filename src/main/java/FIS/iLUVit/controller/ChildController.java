@@ -32,17 +32,17 @@ public class ChildController {
      * 아이 정보 전체 조회
      */
     @GetMapping("info")
-    public ResponseEntity<List<ChildDto>> getAllChild(@Login Long userId) {
-        List<ChildDto> childDtos = childService.findChildList(userId);
-        return ResponseEntity.ok(childDtos);
+    public ResponseEntity<List<ChildCenterResponse>> getAllChild(@Login Long userId) {
+        List<ChildCenterResponse> childInfoRespons = childService.findChildList(userId);
+        return ResponseEntity.ok(childInfoRespons);
     }
 
     /**
      * 아이 정보 저장 ( 아이 생성 )
      */
     @PostMapping("")
-    public ResponseEntity<Void> createChild(@Login Long userId, @Valid @ModelAttribute ChildDetailRequest childDetailRequest){
-        childService.saveNewChild(userId, childDetailRequest);
+    public ResponseEntity<Void> createChild(@Login Long userId, @Valid @ModelAttribute ChildCreateRequest childCreateRequest){
+        childService.saveNewChild(userId, childCreateRequest);
         return ResponseEntity.status(HttpStatus.CREATED).build();
     }
 
@@ -59,8 +59,8 @@ public class ChildController {
      * 아이 정보 수정
      */
     @PutMapping("{childId}")
-    public ResponseEntity<Void> updateChild(@Login Long userId, @PathVariable("childId") Long childId, @ModelAttribute ChildRequest childRequest)  {
-       childService.modifyChildInfo(userId, childId, childRequest);
+    public ResponseEntity<Void> updateChild(@Login Long userId, @PathVariable("childId") Long childId, @ModelAttribute ChildUpdateRequest childUpdateRequest)  {
+       childService.modifyChildInfo(userId, childId, childUpdateRequest);
         return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
     }
 
@@ -108,8 +108,8 @@ public class ChildController {
      *  아이 승인용 아이 정보 전체 조회
      */
     @GetMapping("approval")
-    public ResponseEntity<List<ChildInfoForAdminDto>> getChildForApproval(@Login Long userId) {
-        List<ChildInfoForAdminDto> childApprovalList = childService.findChildApprovalList(userId);
+    public ResponseEntity<List<ChildInfoForAdminResponse>> getChildForApproval(@Login Long userId) {
+        List<ChildInfoForAdminResponse> childApprovalList = childService.findChildApprovalList(userId);
         return ResponseEntity.ok(childApprovalList);
     }
 

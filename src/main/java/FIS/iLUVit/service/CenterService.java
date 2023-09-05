@@ -46,7 +46,7 @@ public class CenterService {
         List<Center> centerByFilter = centerRepository.findByFilterForMap(longitude, latitude, distance, searchContent);
 
         List<CenterMapResponse> centerMapResponses = centerByFilter.stream().map(center -> {
-            return new CenterMapResponse(center.getId(), center.getName(), center.getLongitude(), center.getLatitude());
+            return new CenterMapResponse(center.getId(), center.getName(), center.getLongitude(), center.getLatitude(), center.getSigned());
         }).collect(Collectors.toList());
 
         return centerMapResponses;

@@ -48,25 +48,25 @@ public class ChildService {
     /**
      * 아이 정보 전체 조회
      */
-    public List<ChildDto> findChildList(Long userId) {
+    public List<ChildCenterResponse> findChildList(Long userId) {
         Parent findParent = parentRepository.findById(userId)
                 .orElseThrow(() -> new UserException(UserErrorResult.NOT_VALID_TOKEN));
 
-        List<ChildDto> childDtos = new ArrayList<>();
+        List<ChildCenterResponse> childInfoRespons = new ArrayList<>();
 
         findParent.getChildren().forEach(child -> {
-            childDtos.add(
-                    new ChildDto(child, child.getProfileImagePath())
+            childInfoRespons.add(
+                    new ChildCenterResponse(child, child.getProfileImagePath())
             );
         });
 
-        return childDtos;
+        return childInfoRespons;
     }
 
     /**
      * 아이 정보 저장 ( 아이 생성 )
      */
-    public  void saveNewChild(Long userId, ChildDetailRequest request) {
+    public  void saveNewChild(Long userId, ChildCreateRequest request) {
 
         Parent parent = parentRepository.getById(userId);
 
@@ -83,7 +83,8 @@ public class ChildService {
         teacherList.forEach(teacher -> {
             Alarm alarm = new CenterApprovalReceivedAlarm(teacher, Auth.PARENT, teacher.getCenter());
             alarmRepository.save(alarm);
-            AlarmUtils.publishAlarmEvent(alarm);
+            String type = "아이러빗";
+            AlarmUtils.publishAlarmEvent(alarm, type);
 
         });
 
@@ -111,7 +112,7 @@ public class ChildService {
     /**
      * 아이 정보 수정
      */
-    public void modifyChildInfo(Long userId, Long childId, ChildRequest request) {
+    public void modifyChildInfo(Long userId, Long childId, ChildUpdateRequest request) {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new UserException(UserErrorResult.USER_NOT_EXIST));
 
@@ -200,7 +201,8 @@ public class ChildService {
         teacherList.forEach(teacher -> {
             Alarm alarm = new CenterApprovalReceivedAlarm(teacher, Auth.PARENT, teacher.getCenter());
             alarmRepository.save(alarm);
-            AlarmUtils.publishAlarmEvent(alarm);
+            String type = "아이러빗";
+            AlarmUtils.publishAlarmEvent(alarm, type);
         });
     }
 
@@ -229,25 +231,25 @@ public class ChildService {
     /**
      *  아이 승인용 아이 정보 전체 조회
      */
-    public List<ChildInfoForAdminDto> findChildApprovalList(Long userId) {
+    public List<ChildInfoForAdminResponse> findChildApprovalList(Long userId) {
         // 사용자가 속한 시설의 아이들 끌어오기
         Approval approval = Approval.ACCEPT;
         Teacher teacher = teacherRepository.findByIdAndApproval(userId, approval)
                 .orElseThrow(() -> new UserException(UserErrorResult.HAVE_NOT_AUTHORIZATION));
 
-        List<ChildInfoForAdminDto> childInfoForAdminDtos = new ArrayList<>();
+        List<ChildInfoForAdminResponse> childInfoForAdminResponses = new ArrayList<>();
 
         List<Child> childList = childRepository.findByCenter(teacher.getCenter());
         childList.forEach(child -> {
             // 해당시설에 대해 거절/삭제 당하지 않은 아이들만 보여주기
             if (child.getApproval() != Approval.REJECT) {
-                ChildInfoForAdminDto childInfo =
-                        new ChildInfoForAdminDto(child, child.getProfileImagePath());
+                ChildInfoForAdminResponse childInfo =
+                        new ChildInfoForAdminResponse(child, child.getProfileImagePath());
 
-                childInfoForAdminDtos.add(childInfo);
+                childInfoForAdminResponses.add(childInfo);
             }
         });
-        return childInfoForAdminDtos;
+        return childInfoForAdminResponses;
     }
 
     /**
@@ -275,7 +277,8 @@ public class ChildService {
         // 승인 완료 알람이 학부모에게로 감
         Alarm alarm = new CenterApprovalAcceptedAlarm(acceptedParent, teacher.getCenter());
         alarmRepository.save(alarm);
-        AlarmUtils.publishAlarmEvent(alarm);
+        String type = "아이러빗";
+        AlarmUtils.publishAlarmEvent(alarm, type);
         // bookmark 처리
         // 기존에 있던 아이들중에 현재 승인되는 아이와 같은 시설에 다니는 또 다른 아이가 있는지 검사
         Optional<Child> alreadySignedChild = acceptedParent.getChildren().stream()
