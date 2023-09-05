@@ -7,11 +7,17 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
 @Getter
-@AllArgsConstructor
 @Builder
 public class ErrorResponse {
     private HttpStatus status;
     private String error;
+
+    public static ErrorResponse from(ErrorResult errorResult){
+        return ErrorResponse.builder()
+                .status(errorResult.getHttpStatus())
+                .error(errorResult.getMessage())
+                .build();
+    }
 
 
     public static ResponseEntity<ErrorResponse> toResponseEntity(ErrorResult errorResult) {

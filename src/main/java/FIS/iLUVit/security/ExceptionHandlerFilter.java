@@ -1,5 +1,6 @@
 package FIS.iLUVit.security;
 
+import FIS.iLUVit.exception.BasicErrorResult;
 import FIS.iLUVit.exception.exceptionHandler.ErrorResponse;
 import com.auth0.jwt.exceptions.JWTVerificationException;
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -20,7 +21,7 @@ public class ExceptionHandlerFilter extends OncePerRequestFilter {
         try {
             filterChain.doFilter(request, response);
         } catch (JWTVerificationException e) {
-            ErrorResponse errorResponse = new ErrorResponse(HttpStatus.UNAUTHORIZED, e.getMessage());
+            ErrorResponse errorResponse = ErrorResponse.from(BasicErrorResult.JWT_VERIFICATION_EXCEPTION);
             response.setContentType("application/json");
             response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
             response.getWriter().write(convertObjectToJson(errorResponse));
