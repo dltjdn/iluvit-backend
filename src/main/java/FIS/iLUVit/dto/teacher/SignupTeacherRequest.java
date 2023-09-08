@@ -31,7 +31,7 @@ public class SignupTeacherRequest {
     private String emailAddress;
     @NotNull(message = "입력하지 않은 목록이 있습니다.")
     private String address;
-    @NotNull(message = "입력하지 않은 목록이 있습니다.")
+    @NotNull
     private String detailAddress;
     private Long centerId;
 
