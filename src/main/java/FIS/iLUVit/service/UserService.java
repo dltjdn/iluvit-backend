@@ -110,11 +110,18 @@ public class UserService {
      *   작성내용: login service layer로 옮김
      */
     public LoginResponse login(LoginRequest request) {
+        String loginId = request.getLoginId();
+        String password = request.getPassword();
+
         // 영구정지, 일주일간 이용제한인 유저인지 검증
-        blackUserRepository.findRestrictedByLoginId(request.getLoginId())
+        blackUserRepository.findRestrictedByLoginId(loginId)
                 .ifPresent(blackUser -> {
                     throw new UserException(UserErrorResult.USER_IS_BLACK_OR_WITHDRAWN);
                 });
+
+        // 로그인 아이디, 비밀번호 검증 에러 처리
+        userRepository.findByLoginIdAndPassword(loginId, password)
+                .orElseThrow(()-> new UserException(UserErrorResult.BAD_LOGIN_OR_PASSWORD));
 
         // authenticationManager 이용한 아이디 및 비밀번호 확인
         Authentication authentication = authenticationManager.authenticate(
