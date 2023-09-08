@@ -1,5 +1,6 @@
 package FIS.iLUVit.security;
 
+import FIS.iLUVit.exception.BasicErrorResult;
 import FIS.iLUVit.exception.exceptionHandler.ErrorResponse;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
@@ -19,7 +20,7 @@ public class AccessDeniedHandlerCustom implements AccessDeniedHandler {
     @Override
     public void handle(HttpServletRequest request, HttpServletResponse response, AccessDeniedException accessDeniedException) throws IOException, ServletException {
         log.warn("[AccessDeniedHandlerCustom] Forbidden error : {}", accessDeniedException.getMessage());
-        ErrorResponse errorResponse = new ErrorResponse(HttpStatus.FORBIDDEN, "해당 요청에 대한 권한이 없습니다.");
+        ErrorResponse errorResponse = ErrorResponse.from(BasicErrorResult.INVALID_DATA_ACCESS);
         ObjectMapper objectMapper = new ObjectMapper();
         response.setContentType("application/json");
         response.setStatus(HttpServletResponse.SC_FORBIDDEN);
