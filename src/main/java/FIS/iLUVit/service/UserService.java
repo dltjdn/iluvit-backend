@@ -120,33 +120,30 @@ public class UserService {
                 });
 
         // 로그인 아이디, 비밀번호 검증 에러 처리
-        userRepository.findByLoginIdAndPassword(loginId, password)
-                .orElseThrow(()-> new UserException(UserErrorResult.BAD_LOGIN_OR_PASSWORD));
+        User user = userRepository.findByLoginIdAndPassword(loginId, password)
+                .orElseThrow(() -> new UserException(UserErrorResult.BAD_LOGIN_OR_PASSWORD));
 
         // authenticationManager 이용한 아이디 및 비밀번호 확인
         Authentication authentication = authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(request.getLoginId(), request.getPassword()));
 
-        // 인증된 객체 생성
-        PrincipalDetails principal = (PrincipalDetails) authentication.getPrincipal();
-
         String jwt = jwtUtils.createAccessToken(authentication);
         String refresh = jwtUtils.createRefreshToken(authentication);
-        TokenPair tokenPair = TokenPair.createTokenPair(jwt, refresh, principal.getUser());
+        TokenPair tokenPair = TokenPair.createTokenPair(jwt, refresh, user);
 
         // 기존 토큰이 있으면 수정, 없으면 생성
-        tokenPairRepository.findByUserId(principal.getUser().getId())
+        tokenPairRepository.findByUserId(user.getId())
                 .ifPresentOrElse(
                         (findTokenPair) -> findTokenPair.updateToken(jwt, refresh),
                         () -> tokenPairRepository.save(tokenPair)
                 );
 
-        LoginResponse response = principal.getUser().getLoginInfo();
+        LoginResponse response = user.getLoginInfo();
         response.setAccessToken(jwtUtils.addPrefix(jwt));
         response.setRefreshToken(jwtUtils.addPrefix(refresh));
 
         // 더 이상 튜토리얼이 진행되지 않도록 하기
-        principal.getUser().disableTutorial();
+        user.disableTutorial();
         return response;
     }
 
