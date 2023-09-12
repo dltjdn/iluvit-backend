@@ -51,7 +51,7 @@ public class PresentationService {
     private final ParticipationRepository participationRepository;
     private final AlarmRepository alarmRepository;
 
-    public List<PresentationDetailResponse> findPresentationByCenterIdAndDate(Long centerId, Long userId) {
+    public List<PresentationDetailResponse> findPresentationByCenterIdAndDate( Long userId, Long centerId) {
         List<PresentationWithPtDatesDto> queryDtos =
                 userId == null ? presentationRepository.findByCenterAndDateWithPtDates(centerId, LocalDate.now())
                         : presentationRepository.findByCenterAndDateWithPtDates(centerId, LocalDate.now(), userId);
@@ -67,9 +67,7 @@ public class PresentationService {
                 .collect(toList());
     }
 
-    public Presentation savePresentationInfoWithPtDate(PresentationDetailRequest request, Long userId) {
-        if(userId == null)
-            throw new UserException(UserErrorResult.NOT_LOGIN);
+    public Presentation savePresentationInfoWithPtDate(Long userId, PresentationDetailRequest request) {
 
         // 리펙터링 필요 findById 를 통해서 그냥 canWrite 와 canRead 를 override 하기
         teacherRepository.findById(userId)
@@ -99,15 +97,11 @@ public class PresentationService {
         return presentation;
     }
 
-    public Presentation savePresentationImageWithPtDate(Long presentationId, List<MultipartFile> images, Long userId) {
-        if (userId == null)
-            throw new UserException(UserErrorResult.NOT_LOGIN);
+    public void savePresentationImageWithPtDate(Long userId, Long presentationId, List<MultipartFile> images) {
         Presentation presentation = presentationRepository.findById(presentationId)
                 .orElseThrow(() -> new PresentationException(PresentationErrorResult.NO_RESULT));
 
         imageService.saveInfoImages(images, presentation);
-
-        return presentation;
     }
 
     public List<PresentationForTeacherResponse> findPresentationListByCenter(Long userId, Long centerId, Pageable pageable) {
@@ -129,7 +123,7 @@ public class PresentationService {
         return new PresentationDetailResponse(presentation, imageService.getInfoImages(presentation.getInfoImagePath()));
     }
 
-    public Presentation modifyPresentationInfoWithPtDate(PresentationRequest request, Long userId) {
+    public void modifyPresentationInfoWithPtDate(Long userId, PresentationRequest request) {
         //
         Presentation presentation = presentationRepository.findByIdAndJoinPtDate(request.getPresentationId())
                 .orElseThrow(() -> new PresentationException(PresentationErrorResult.NO_RESULT));
@@ -192,10 +186,9 @@ public class PresentationService {
         ptDateRepository.deletePtDateByIds(ptDateKeysDeleteTarget);
         presentation.update(request);
 
-        return presentation;
     }
 
-    public Presentation modifyPresentationImageWithPtDate(Long presentationId, List<MultipartFile> images, Long userId) {
+    public void modifyPresentationImageWithPtDate(Long userId, Long presentationId, List<MultipartFile> images) {
         //
         Presentation presentation = presentationRepository.findById(presentationId)
                 .orElseThrow(() -> new PresentationException(PresentationErrorResult.NO_RESULT));
@@ -205,8 +198,6 @@ public class PresentationService {
                 .canWrite(presentation.getCenter().getId());
 
         imageService.saveInfoImages(images, presentation);
-
-        return presentation;
     }
 
     public List<ParentResponse> findParentListWithRegisterParticipation(Long userId, Long ptDateId) {
@@ -235,7 +226,12 @@ public class PresentationService {
                 .collect(Collectors.toList());
     }
 
-    public SliceImpl<PresentationForUserResponse> findPresentationByFilter(List<Area> areas, Theme theme, Integer interestedAge, KindOf kindOf, String searchContent, Pageable pageable) {
+    public SliceImpl<PresentationForUserResponse> findPresentationByFilter(PresentationSearchFilterRequest request, Pageable pageable) {
+        List<Area> areas = request.getAreas();
+        Theme theme = request.getTheme();
+        Integer interestedAge = request.getInterestedAge();
+        KindOf kindOf = request.getKindOf();
+        String searchContent = request.getSearchContent();
         return presentationRepository.findByFilter(areas, theme, interestedAge, kindOf, searchContent, pageable);
     }
 
