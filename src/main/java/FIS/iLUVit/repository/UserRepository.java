@@ -88,8 +88,4 @@ public interface UserRepository extends JpaRepository<User, Long> {
      */
     Optional<User> findByIdAndPhoneNumber(Long id, String phoneNumber);
 
-    /**
-     * 로그인 아이디와 비밀번호로 유저를 조회합니다
-     */
-    Optional<User> findByLoginIdAndPassword(String loginId, String password);
 }
