@@ -119,7 +119,7 @@ public class DataService {
                     centerRepository.updateChildHouse(response, hasBus, hasPlayground, hasCCTV, totalCnt, dur_1, dur12, dur24, dur46, dur6_);
                 }
             } else {
-                log.info("받아온 데이터가 없습니다.");
+                throw new DataException(DataErrorResult.DATA_NOT_FOUND);
             }
         }
     }
