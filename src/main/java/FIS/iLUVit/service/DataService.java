@@ -203,24 +203,10 @@ public class DataService {
                     formattedDate = date.format(outputFormatter);
                 }
 
-                KindergartenGeneralResponse response = KindergartenGeneralResponse.builder()
-                        .centerName(centerName)
-                        .estType(estType)
-                        .owner(owner)
-                        .director(director)
-                        .estDate(formattedDate)
-                        .startTime(startTime)
-                        .endTime(endTime)
-                        .homepage(homepage)
-                        .maxChildCnt(maxChildCnt)
-                        .class_3(class_3)
-                        .class_4(class_4)
-                        .class_5(class_5)
-                        .child_3(child_3)
-                        .child_4(child_4)
-                        .child_5(child_5)
-                        .child_spe(child_spe)
-                        .build();
+                KindergartenGeneralResponseParam response = KindergartenGeneralResponseParam.create(
+                        centerName, estType, owner, director, formattedDate, startTime, endTime,
+                        homepage, maxChildCnt, class_3, class_4, class_5,
+                        child_3, child_4, child_5, child_spe);
 
                 centerRepository.updateKindergartenForGeneral(response, region.getSidoName(), region.getSigunguName());
             }
@@ -379,15 +365,8 @@ public class DataService {
 
                 Integer totalCnt = dur_1 + dur12 + dur24 + dur46 + dur6_;
 
-                KindergartenTeacherResponse response = KindergartenTeacherResponse.builder()
-                        .centerName(centerName)
-                        .totalCnt(totalCnt)
-                        .dur_1(dur_1)
-                        .dur12(dur12)
-                        .dur24(dur24)
-                        .dur46(dur46)
-                        .dur6_(dur6_)
-                        .build();
+                KindergartenTeacherResponseParam response = KindergartenTeacherResponseParam.create(
+                        centerName, totalCnt, dur_1, dur12, dur24, dur46, dur6_);
 
                 centerRepository.updateKindergartenForTeacher(response, region.getSidoName(), region.getSigunguName());
             }

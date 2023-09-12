@@ -3,8 +3,8 @@ package FIS.iLUVit.repository;
 import FIS.iLUVit.domain.Center;
 import FIS.iLUVit.domain.enumtype.KindOf;
 import FIS.iLUVit.dto.data.ChildHouseInfoResponse;
-import FIS.iLUVit.dto.data.KindergartenGeneralResponse;
-import FIS.iLUVit.dto.data.KindergartenTeacherResponse;
+import FIS.iLUVit.dto.data.KindergartenGeneralResponseParam;
+import FIS.iLUVit.dto.data.KindergartenTeacherResponseParam;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
@@ -69,7 +69,7 @@ public interface CenterRepository extends JpaRepository<Center, Long>, CenterRep
             "c.classInfo.child_3= :#{#response.child_3}, c.classInfo.child_4= :#{#response.child_4}, c.classInfo.child_5= :#{#response.child_5}, " +
             "c.classInfo.child_spe = :#{#response.child_spe} " +
             "WHERE c.name = :#{#response.centerName} AND c.area.sido = :sido AND c.area.sigungu = :sigungu")
-    void updateKindergartenForGeneral(@Param("response")KindergartenGeneralResponse response, @Param("sido") String sido, @Param("sigungu") String sigungu);
+    void updateKindergartenForGeneral(@Param("response") KindergartenGeneralResponseParam response, @Param("sido") String sido, @Param("sigungu") String sigungu);
 
     /**
      * 해당 시설의 선생님 정보를 업데이트합니다
@@ -79,7 +79,7 @@ public interface CenterRepository extends JpaRepository<Center, Long>, CenterRep
             "c.teacherInfo.dur12= :#{#response.dur12}, c.teacherInfo.dur24 = :#{#response.dur24}, " +
             "c.teacherInfo.dur46= :#{#response.dur46}, c.teacherInfo.dur6_= :#{#response.dur6_} " +
             "WHERE c.name = :#{#response.centerName} AND c.area.sido = :sido AND c.area.sigungu = :sigungu")
-    void updateKindergartenForTeacher(@Param("response") KindergartenTeacherResponse response, @Param("sido") String sido, @Param("sigungu") String sigungu);
+    void updateKindergartenForTeacher(@Param("response") KindergartenTeacherResponseParam response, @Param("sido") String sido, @Param("sigungu") String sigungu);
 
     /**
      * 해당 시설의 건축년도 정보를 업데이트합니다
