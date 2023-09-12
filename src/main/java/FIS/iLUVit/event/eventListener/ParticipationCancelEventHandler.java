@@ -6,6 +6,7 @@ import FIS.iLUVit.domain.PtDate;
 import FIS.iLUVit.domain.Waiting;
 import FIS.iLUVit.domain.alarms.Alarm;
 import FIS.iLUVit.domain.alarms.ConvertedToParticipateAlarm;
+import FIS.iLUVit.domain.enumtype.NotificationTitle;
 import FIS.iLUVit.event.ParticipationCancelEvent;
 import FIS.iLUVit.repository.AlarmRepository;
 import FIS.iLUVit.repository.ParticipationRepository;
@@ -35,8 +36,7 @@ public class ParticipationCancelEventHandler {
         Participation waitingToParticipate = Waiting.whenParticipationCanceled(waiting, presentation);
         Alarm alarm = new ConvertedToParticipateAlarm(waiting.getParent(), presentation, presentation.getCenter());
         alarmRepository.save(alarm);
-        String type = "아이러빗";
-        AlarmUtils.publishAlarmEvent(alarm, type);
+        AlarmUtils.publishAlarmEvent(alarm, NotificationTitle.ILUVIT.getDescription());
 
         participationRepository.save(waitingToParticipate);
         waitingRepository.updateWaitingOrderForPtDateChange(waiting.getWaitingOrder(), ptDate);

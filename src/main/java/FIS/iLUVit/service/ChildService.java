@@ -1,6 +1,7 @@
 package FIS.iLUVit.service;
 
 import FIS.iLUVit.domain.alarms.Alarm;
+import FIS.iLUVit.domain.enumtype.NotificationTitle;
 import FIS.iLUVit.dto.center.CenterBasicResponse;
 import FIS.iLUVit.dto.center.CenterBasicRequest;
 import FIS.iLUVit.dto.child.*;
@@ -83,8 +84,7 @@ public class ChildService {
         teacherList.forEach(teacher -> {
             Alarm alarm = new CenterApprovalReceivedAlarm(teacher, Auth.PARENT, teacher.getCenter());
             alarmRepository.save(alarm);
-            String type = "아이러빗";
-            AlarmUtils.publishAlarmEvent(alarm, type);
+            AlarmUtils.publishAlarmEvent(alarm, NotificationTitle.ILUVIT.getDescription());
 
         });
 
@@ -201,8 +201,7 @@ public class ChildService {
         teacherList.forEach(teacher -> {
             Alarm alarm = new CenterApprovalReceivedAlarm(teacher, Auth.PARENT, teacher.getCenter());
             alarmRepository.save(alarm);
-            String type = "아이러빗";
-            AlarmUtils.publishAlarmEvent(alarm, type);
+            AlarmUtils.publishAlarmEvent(alarm, NotificationTitle.ILUVIT.getDescription());
         });
     }
 
@@ -277,8 +276,8 @@ public class ChildService {
         // 승인 완료 알람이 학부모에게로 감
         Alarm alarm = new CenterApprovalAcceptedAlarm(acceptedParent, teacher.getCenter());
         alarmRepository.save(alarm);
-        String type = "아이러빗";
-        AlarmUtils.publishAlarmEvent(alarm, type);
+        AlarmUtils.publishAlarmEvent(alarm, NotificationTitle.ILUVIT.getDescription());
+
         // bookmark 처리
         // 기존에 있던 아이들중에 현재 승인되는 아이와 같은 시설에 다니는 또 다른 아이가 있는지 검사
         Optional<Child> alreadySignedChild = acceptedParent.getChildren().stream()
