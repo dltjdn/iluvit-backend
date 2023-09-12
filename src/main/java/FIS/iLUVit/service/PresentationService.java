@@ -51,6 +51,21 @@ public class PresentationService {
     private final ParticipationRepository participationRepository;
     private final AlarmRepository alarmRepository;
 
+    /**
+     * 필터 기반 설명회 검색
+     */
+    public SliceImpl<PresentationForUserResponse> findPresentationByFilter(PresentationSearchFilterRequest request, Pageable pageable) {
+        List<Area> areas = request.getAreas();
+        Theme theme = request.getTheme();
+        Integer interestedAge = request.getInterestedAge();
+        KindOf kindOf = request.getKindOf();
+        String searchContent = request.getSearchContent();
+        return presentationRepository.findByFilter(areas, theme, interestedAge, kindOf, searchContent, pageable);
+    }
+
+    /**
+     * 설명회 전체 조회 (현재날짜에 맞춰서 설명회 기간에 있으면 반환 그렇지 않으면 반환 하지않음 )
+     */
     public List<PresentationDetailResponse> findPresentationByCenterIdAndDate( Long userId, Long centerId) {
         List<PresentationWithPtDatesDto> queryDtos =
                 userId == null ? presentationRepository.findByCenterAndDateWithPtDates(centerId, LocalDate.now())
@@ -67,7 +82,10 @@ public class PresentationService {
                 .collect(toList());
     }
 
-    public Presentation savePresentationInfoWithPtDate(Long userId, PresentationDetailRequest request) {
+    /**
+     * 설명회 정보 저장 (설명회 회차 정보 저장 포함)
+     */
+    public PresentationResponse savePresentationInfoWithPtDate(Long userId, PresentationDetailRequest request) {
 
         // 리펙터링 필요 findById 를 통해서 그냥 canWrite 와 canRead 를 override 하기
         teacherRepository.findById(userId)
@@ -94,35 +112,12 @@ public class PresentationService {
             AlarmUtils.publishAlarmEvent(alarm, type);
         });
 
-        return presentation;
+        return new PresentationResponse(presentation);
     }
 
-    public void savePresentationImageWithPtDate(Long userId, Long presentationId, List<MultipartFile> images) {
-        Presentation presentation = presentationRepository.findById(presentationId)
-                .orElseThrow(() -> new PresentationException(PresentationErrorResult.NO_RESULT));
-
-        imageService.saveInfoImages(images, presentation);
-    }
-
-    public List<PresentationForTeacherResponse> findPresentationListByCenter(Long userId, Long centerId, Pageable pageable) {
-        //
-        teacherRepository.findById(userId)
-                .orElseThrow(() -> new UserException("존재하지 않는 유저입니다"))
-                .canRead(centerId);
-        return presentationRepository.findByCenterId(centerId, pageable)
-                .stream().map(data -> {
-                    PresentationForTeacherResponse result = new PresentationForTeacherResponse(data,imageService.getInfoImages(data.getPresentationInfoImage()));
-                    return result;
-                }).collect(toList());
-    }
-
-    public PresentationDetailResponse findPresentationDetails(Long presentationId) {
-        //
-        Presentation presentation = presentationRepository.findByIdAndJoinPtDate(presentationId)
-                .orElseThrow(() -> new PresentationException("존재하지않는 설명회 입니다"));
-        return new PresentationDetailResponse(presentation, imageService.getInfoImages(presentation.getInfoImagePath()));
-    }
-
+    /**
+     * 설명회 정보 수정 ( 설명회 회차 정보 수정 포함)
+     */
     public void modifyPresentationInfoWithPtDate(Long userId, PresentationRequest request) {
         //
         Presentation presentation = presentationRepository.findByIdAndJoinPtDate(request.getPresentationId())
@@ -188,6 +183,19 @@ public class PresentationService {
 
     }
 
+    /**
+     * 설명회 이미지 저장
+     */
+    public void savePresentationImageWithPtDate(Long userId, Long presentationId, List<MultipartFile> images) {
+        Presentation presentation = presentationRepository.findById(presentationId)
+                .orElseThrow(() -> new PresentationException(PresentationErrorResult.NO_RESULT));
+
+        imageService.saveInfoImages(images, presentation);
+    }
+
+    /**
+     * 설명회 이미지 수정
+     */
     public void modifyPresentationImageWithPtDate(Long userId, Long presentationId, List<MultipartFile> images) {
         //
         Presentation presentation = presentationRepository.findById(presentationId)
@@ -200,6 +208,34 @@ public class PresentationService {
         imageService.saveInfoImages(images, presentation);
     }
 
+    /**
+     * 교사용 설명회 전체 조회
+     */
+    public List<PresentationForTeacherResponse> findPresentationListByCenter(Long userId, Long centerId, Pageable pageable) {
+        //
+        teacherRepository.findById(userId)
+                .orElseThrow(() -> new UserException("존재하지 않는 유저입니다"))
+                .canRead(centerId);
+        return presentationRepository.findByCenterId(centerId, pageable)
+                .stream().map(data -> {
+                    PresentationForTeacherResponse result = new PresentationForTeacherResponse(data,imageService.getInfoImages(data.getPresentationInfoImage()));
+                    return result;
+                }).collect(toList());
+    }
+
+    /**
+     * 설명회 상세 조회
+     */
+    public PresentationDetailResponse findPresentationDetails(Long presentationId) {
+        //
+        Presentation presentation = presentationRepository.findByIdAndJoinPtDate(presentationId)
+                .orElseThrow(() -> new PresentationException("존재하지않는 설명회 입니다"));
+        return new PresentationDetailResponse(presentation, imageService.getInfoImages(presentation.getInfoImagePath()));
+    }
+
+    /**
+     * 설명회 예약 학부모 전체 조회 (예약명단)
+     */
     public List<ParentResponse> findParentListWithRegisterParticipation(Long userId, Long ptDateId) {
         //
         PtDate ptDate = ptDateRepository.findByIdAndJoinParticipationForSearch(ptDateId)
@@ -213,6 +249,9 @@ public class PresentationService {
                 .collect(Collectors.toList());
     }
 
+    /**
+     * 설명회 대기 학부모 전체 조회 (대기명단)
+     */
     public List<ParentResponse> findParentListWithWaitingParticipation(Long userId, Long ptDateId) {
         //
         PtDate ptDate = ptDateRepository.findByIdWithWaitingAndPresentationAndCenterAndParent(ptDateId)
@@ -224,15 +263,6 @@ public class PresentationService {
         return waitingRepository.findByPtDate(ptDate).stream()
                 .map(participation -> new ParentResponse(participation.getParent()))
                 .collect(Collectors.toList());
-    }
-
-    public SliceImpl<PresentationForUserResponse> findPresentationByFilter(PresentationSearchFilterRequest request, Pageable pageable) {
-        List<Area> areas = request.getAreas();
-        Theme theme = request.getTheme();
-        Integer interestedAge = request.getInterestedAge();
-        KindOf kindOf = request.getKindOf();
-        String searchContent = request.getSearchContent();
-        return presentationRepository.findByFilter(areas, theme, interestedAge, kindOf, searchContent, pageable);
     }
 
 }

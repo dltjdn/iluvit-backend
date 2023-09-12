@@ -41,7 +41,6 @@ public class PresentationController {
 
     /**
      * 설명회 전체 조회
-     * 비고: 현재날짜에 맞춰서 설명회 기간에 있으면 반환 그렇지 않으면 반환 하지않음
      */
     @GetMapping("info/center/{centerId}")
     public ResponseEntity<List<PresentationDetailResponse>> getAllPresentation(@Login Long userId, @PathVariable("centerId") Long centerId){
@@ -59,7 +58,7 @@ public class PresentationController {
      */
     @PostMapping("")
     public ResponseEntity<PresentationResponse> createPresentationInfo( @Login Long userId, @RequestBody @Validated PresentationDetailRequest request){
-        PresentationResponse response = new PresentationResponse(presentationService.savePresentationInfoWithPtDate(userId, request));
+        PresentationResponse response = presentationService.savePresentationInfoWithPtDate(userId, request);
         return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
 
@@ -85,20 +84,19 @@ public class PresentationController {
     }
 
     /**
-     * 작성자: 이창윤
-     * 작성내용: 설명회 이미지 수정
+     * 설명회 이미지 수정
      */
     @Transactional
     @PatchMapping("{presentationId}/image")
     public ResponseEntity<Void> updatePresentationImage(@Login Long userId, @PathVariable("presentationId") Long presentationId,
                                                           @RequestPart(required = false) List<MultipartFile> images){
         presentationService.modifyPresentationImageWithPtDate(userId, presentationId, images);
+
         return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
     }
 
     /**
-     * 작성자: 현승구
-     * 작성내용: 교사용 설명회 전체 조회
+     * 교사용 설명회 전체 조회
      */
     @GetMapping("center/{centerId}")
     public List<PresentationForTeacherResponse> getAllPresentationForTeacher(@Login Long userId, @PathVariable("centerId") Long centerId, Pageable pageable){
