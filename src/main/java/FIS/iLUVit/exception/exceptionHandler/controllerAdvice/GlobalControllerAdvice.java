@@ -106,7 +106,7 @@ public class GlobalControllerAdvice {
 
         slackErrorLogger.sendSlackAlertWarnLog(errorList.get(0), request); // 슬랙 알림 보내는 메서드
 
-        return ErrorResponse.toResponseEntity(BasicErrorResult.BIND_EXCEPTION);
+        return ErrorResponse.toResponseEntity(HttpStatus.BAD_REQUEST, errorList.get(0));
     }
 
 
