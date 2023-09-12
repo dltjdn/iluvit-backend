@@ -7,6 +7,7 @@ import FIS.iLUVit.dto.parent.ParentResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Slice;
 import org.springframework.data.domain.SliceImpl;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -34,8 +35,8 @@ public class PresentationController {
      * 필터 기반 설명회 검색
      */
     @PostMapping("search")
-    public ResponseEntity<SliceImpl<PresentationForUserResponse>> getPresentationByFilter(@RequestBody PresentationSearchFilterRequest request, Pageable pageable){
-        SliceImpl<PresentationForUserResponse> responses = presentationService.findPresentationByFilter(request, pageable);
+    public ResponseEntity<Slice<PresentationForUserResponse>> getPresentationByFilter(@RequestBody PresentationSearchFilterRequest request, Pageable pageable){
+        Slice<PresentationForUserResponse> responses = presentationService.findPresentationByFilter(request, pageable);
         return ResponseEntity.ok().body(responses);
     }
 

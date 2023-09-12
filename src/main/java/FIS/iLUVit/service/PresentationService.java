@@ -21,16 +21,14 @@ import FIS.iLUVit.dto.presentation.PtDateDetailDto;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Slice;
 import org.springframework.data.domain.SliceImpl;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.time.LocalDate;
-import java.util.Collection;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 
 import static java.util.stream.Collectors.*;
@@ -54,13 +52,16 @@ public class PresentationService {
     /**
      * 필터 기반 설명회 검색
      */
-    public SliceImpl<PresentationForUserResponse> findPresentationByFilter(PresentationSearchFilterRequest request, Pageable pageable) {
-        List<Area> areas = request.getAreas();
-        Theme theme = request.getTheme();
-        Integer interestedAge = request.getInterestedAge();
-        KindOf kindOf = request.getKindOf();
-        String searchContent = request.getSearchContent();
-        return presentationRepository.findByFilter(areas, theme, interestedAge, kindOf, searchContent, pageable);
+    public Slice<PresentationForUserResponse> findPresentationByFilter(PresentationSearchFilterRequest request, Pageable pageable) {
+
+        Slice<Presentation> presentations = presentationRepository.findByFilter(request.getAreas(), request.getTheme(),request.getInterestedAge(), request.getKindOf(), request.getSearchContent(), pageable);
+
+        Slice<PresentationForUserResponse> responses = presentations.map(presentation -> {
+            List<String> infoImages = imageService.getInfoImages(presentation.getInfoImagePath());
+            return PresentationForUserResponse.of(presentation, infoImages);
+        });
+
+        return responses;
     }
 
     /**

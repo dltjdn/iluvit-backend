@@ -1,7 +1,9 @@
 package FIS.iLUVit.dto.presentation;
 
+import FIS.iLUVit.domain.Presentation;
 import FIS.iLUVit.domain.embeddable.Theme;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import java.time.LocalDate;
@@ -11,6 +13,7 @@ import java.util.List;
 @Getter
 @NoArgsConstructor
 @AllArgsConstructor
+@Builder
 public class PresentationForUserResponse {
     private Long centerId;
     private String centerName;
@@ -25,18 +28,20 @@ public class PresentationForUserResponse {
     private Theme theme;                // 센터 테마
 
 
+    public static PresentationForUserResponse of(Presentation presentation, List<String> infoImages){
+        return PresentationForUserResponse.builder()
+                .centerId(presentation.getCenter().getId())
+                .centerName(presentation.getCenter().getName())
+                .presentationId(presentation.getId())
+                .startDate(presentation.getStartDate())
+                .endDate(presentation.getEndDate())
+                .place(presentation.getPlace())
+                .content(presentation.getContent())
+                .infoImages(infoImages)
+                .periodValid(LocalDate.now().isBefore(presentation.getEndDate()))
+                .centerAddress(presentation.getCenter().getAddress())
+                .theme(presentation.getCenter().getTheme())
+                .build();
 
-    public PresentationForUserResponse(PresentationForUserDto dto,List<String> infoImages){
-        this.centerId = dto.getCenterId();
-        this.centerName = dto.getCenterName();
-        this.presentationId = dto.getPresentationId();
-        this.startDate = dto.getStartDate();
-        this.endDate = dto.getEndDate();
-        this.place = dto.getPlace();
-        this.content = dto.getContent();
-        this.theme = dto.getTheme();
-        this.centerAddress = dto.getCenterAddress();
-        this.infoImages = infoImages;
-        this.periodValid = !LocalDate.now().isAfter(endDate);
     }
 }
