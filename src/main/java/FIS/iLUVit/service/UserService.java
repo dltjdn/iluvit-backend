@@ -12,7 +12,6 @@ import FIS.iLUVit.security.LoginResponse;
 import FIS.iLUVit.security.uesrdetails.PrincipalDetails;
 import com.auth0.jwt.exceptions.JWTVerificationException;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -31,7 +30,7 @@ import java.util.Optional;
 @RequiredArgsConstructor
 public class UserService {
     private final UserRepository userRepository;
-    private final BCryptPasswordEncoder encoder;
+    private final BCryptPasswordEncoder bCryptPasswordEncoder;
     private final AuthRepository authRepository;
     private final AuthenticationManager authenticationManager;
     private final JwtUtils jwtUtils;
@@ -68,13 +67,13 @@ public class UserService {
         User findUser = userRepository.findById(id)
                 .orElseThrow(() -> new UserException(UserErrorResult.NOT_VALID_TOKEN));
 
-        if (!encoder.matches(request.getOriginPwd(), findUser.getPassword())) {
+        if (!bCryptPasswordEncoder.matches(request.getOriginPwd(), findUser.getPassword())) {
             throw new SignupException(SignupErrorResult.NOT_MATCH_PWD);
         } else if (!request.getNewPwd().equals(request.getNewPwdCheck())) {
             throw new SignupException(SignupErrorResult.NOT_MATCH_PWDCHECK);
         }
 
-        findUser.changePassword(encoder.encode(request.getNewPwd()));
+        findUser.changePassword(bCryptPasswordEncoder.encode(request.getNewPwd()));
 
         return findUser;
     }
@@ -102,7 +101,7 @@ public class UserService {
             throw new AuthNumberException(AuthNumberErrorResult.EXPIRED);
         }
 
-        return encoder.encode(password);
+        return bCryptPasswordEncoder.encode(password);
     }
 
     /**
@@ -120,9 +119,12 @@ public class UserService {
                 });
 
         // 로그인 아이디, 비밀번호 검증 에러 처리
-        User user = userRepository.findByLoginIdAndPassword(loginId, password)
+        User user = userRepository.findByLoginId(loginId)
                 .orElseThrow(() -> new UserException(UserErrorResult.BAD_LOGIN_OR_PASSWORD));
 
+        if(!bCryptPasswordEncoder.matches(request.getPassword(), user.getPassword())) {
+            throw new UserException(UserErrorResult.BAD_LOGIN_OR_PASSWORD);
+        }
         // authenticationManager 이용한 아이디 및 비밀번호 확인
         Authentication authentication = authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(request.getLoginId(), request.getPassword()));
