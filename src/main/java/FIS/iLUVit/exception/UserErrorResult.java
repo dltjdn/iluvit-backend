@@ -19,6 +19,7 @@ public enum UserErrorResult implements ErrorResult {
     USER_IS_BLACK(HttpStatus.EXPECTATION_FAILED, "차단된 유저입니다."),
     USER_IS_WITHDRAWN(HttpStatus.PRECONDITION_FAILED, "탈퇴 후 15일이 지나지 않은 유저입니다."),
     USER_IS_BLACK_OR_WITHDRAWN(HttpStatus.EXPECTATION_FAILED, "차단 됐거나 탈퇴 후 15일이 지나지 않은 유저입니다."),
+    WRONG_ADDRESS(HttpStatus.BAD_REQUEST, "잘못된 주소입니다."),
     BAD_LOGIN_OR_PASSWORD(HttpStatus.UNAUTHORIZED, "아이디 혹은 비밀번호가 잘못되었습니다."),
     ;
 
