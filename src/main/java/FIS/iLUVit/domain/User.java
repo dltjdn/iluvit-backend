@@ -105,7 +105,6 @@ public class User extends BaseImageEntity {
         this.profileImagePath = "basic";
         this.infoImagePath = null;
         this.imgCnt = null;
-        this.location = null;
         this.auth=null;
     }
 
