@@ -5,24 +5,18 @@ import FIS.iLUVit.domain.alarms.ConvertedToParticipateAlarm;
 import FIS.iLUVit.dto.presentation.*;
 import FIS.iLUVit.domain.*;
 import FIS.iLUVit.domain.alarms.PresentationCreatedAlarm;
-import FIS.iLUVit.domain.embeddable.Area;
-import FIS.iLUVit.domain.embeddable.Theme;
-import FIS.iLUVit.domain.enumtype.KindOf;
 import FIS.iLUVit.domain.enumtype.Status;
 import FIS.iLUVit.exception.PresentationErrorResult;
 import FIS.iLUVit.exception.PresentationException;
 import FIS.iLUVit.exception.UserErrorResult;
 import FIS.iLUVit.exception.UserException;
 import FIS.iLUVit.repository.*;
-import FIS.iLUVit.dto.presentation.PresentationWithPtDatesDto;
 import FIS.iLUVit.dto.parent.ParentResponse;
-import FIS.iLUVit.dto.presentation.PresentationQueryDto;
 import FIS.iLUVit.dto.presentation.PtDateDetailDto;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
-import org.springframework.data.domain.SliceImpl;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
@@ -48,6 +42,7 @@ public class PresentationService {
     private final WaitingRepository waitingRepository;
     private final ParticipationRepository participationRepository;
     private final AlarmRepository alarmRepository;
+    private final ParentRepository parentRepository;
 
     /**
      * 필터 기반 설명회 검색
@@ -56,31 +51,40 @@ public class PresentationService {
 
         Slice<Presentation> presentations = presentationRepository.findByFilter(request.getAreas(), request.getTheme(),request.getInterestedAge(), request.getKindOf(), request.getSearchContent(), pageable);
 
-        Slice<PresentationForUserResponse> responses = presentations.map(presentation -> {
-            List<String> infoImages = imageService.getInfoImages(presentation.getInfoImagePath());
-            return PresentationForUserResponse.of(presentation, infoImages);
+        Slice<PresentationForUserResponse> responses = presentations
+                .map(presentation -> {
+                    List<String> infoImages = imageService.getInfoImages(presentation.getInfoImagePath());
+                    return PresentationForUserResponse.of(presentation, infoImages);
         });
 
         return responses;
     }
 
     /**
-     * 설명회 전체 조회 (현재날짜에 맞춰서 설명회 기간에 있으면 반환 그렇지 않으면 반환 하지않음 )
+     * 설명회 전체 조회
      */
-    public List<PresentationDetailResponse> findPresentationByCenterIdAndDate( Long userId, Long centerId) {
-        List<PresentationWithPtDatesDto> queryDtos =
-                userId == null ? presentationRepository.findByCenterAndDateWithPtDates(centerId, LocalDate.now())
-                        : presentationRepository.findByCenterAndDateWithPtDates(centerId, LocalDate.now(), userId);
-        return queryDtos.stream().collect(
-                        groupingBy(PresentationQueryDto::new,
-                                mapping(PtDateDetailDto::new, toList())
-                        ))
-                .entrySet().stream()
-                .map(e -> {
-                    PresentationDetailResponse presentationDetailResponse = new PresentationDetailResponse(e.getKey(), imageService.getInfoImages(e.getKey().getInfoImages()),e.getValue());
-                    return presentationDetailResponse;
-                })
-                .collect(toList());
+    public List<PresentationDetailResponse> findPresentationByCenterIdAndDate(Long userId, Long centerId) {
+        Parent parent = parentRepository.findById(userId)
+                .orElseThrow(() -> new UserException(UserErrorResult.USER_NOT_EXIST));
+
+        // 현재 진행 중인 설명회 리스트  조회
+        List<Presentation> presentations = presentationRepository.findByCenterAndDate(centerId, LocalDate.now());
+
+        List<PresentationDetailResponse> responses = presentations.stream().map((presentation -> {
+            List<String> infoImages = imageService.getInfoImages(presentation.getInfoImagePath());
+
+            // 설명회 별 회차 리스트 조회 및 회차별 대기,참여 명단 조회
+            List<PtDateDetailDto> ptDateDetailDtos = ptDateRepository.findByPresentation(presentation).stream()
+                    .map((ptDate -> {
+                        Waiting waitings = waitingRepository.findByPtDateAndParent(ptDate, parent).orElse(null);
+                        Participation participations = participationRepository.findByPtDateAndParentAndStatus(ptDate, parent, Status.JOINED).orElse(null);
+                        return PtDateDetailDto.of(ptDate, participations, waitings);
+                    })).collect(toList());
+
+            return PresentationDetailResponse.of(presentation, infoImages, ptDateDetailDtos);
+        })).collect(toList());
+
+        return responses;
     }
 
     /**

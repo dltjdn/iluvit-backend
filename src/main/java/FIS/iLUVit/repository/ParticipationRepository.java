@@ -32,4 +32,6 @@ public interface ParticipationRepository extends JpaRepository<Participation, Lo
       */
     List<Participation> findByParent(Parent parent);
 
+    Optional<Participation> findByPtDateAndParentAndStatus(PtDate ptDate, Parent parent, Status status);
+
 }

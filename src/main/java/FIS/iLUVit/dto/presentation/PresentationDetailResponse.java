@@ -1,13 +1,20 @@
 package FIS.iLUVit.dto.presentation;
 
 import FIS.iLUVit.domain.Presentation;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import org.springframework.format.annotation.DateTimeFormat;
 import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 @Getter
+@Builder
+@AllArgsConstructor
+@NoArgsConstructor
 public class PresentationDetailResponse {
     private Long presentationId;
     @DateTimeFormat(pattern = "yyyy-MM-dd", iso = DateTimeFormat.ISO.DATE)
@@ -21,17 +28,6 @@ public class PresentationDetailResponse {
     private List<String> images = new ArrayList<>();
     List<PtDateDetailDto> ptDateDtos = new ArrayList<>();
 
-    public PresentationDetailResponse(PresentationQueryDto key, List<String> images ,List<PtDateDetailDto> value){
-        this.presentationId = key.getPresentationId();
-        this.startDate = key.getStartDate();
-        this.endDate = key.getEndDate();
-        this.place = key.getPlace();
-        this.content = key.getContent();
-        this.imgCnt = key.getImgCnt();
-        this.videoCnt = key.getVideoCnt();
-        this.images = images;
-        ptDateDtos.addAll(value);
-    }
 
     public PresentationDetailResponse(Presentation presentation, List<String> encodedInfoImage){
         presentationId = presentation.getId();
@@ -44,4 +40,22 @@ public class PresentationDetailResponse {
         images = encodedInfoImage;
         presentation.getPtDates().forEach(ptDate -> ptDateDtos.add(new PtDateDetailDto(ptDate)));
     }
+
+    public static PresentationDetailResponse of(Presentation presentation, List<String> images, List<PtDateDetailDto> ptDateDtos){
+
+        return PresentationDetailResponse.builder()
+                .presentationId(presentation.getId())
+                .startDate(presentation.getStartDate())
+                .endDate(presentation.getEndDate())
+                .place(presentation.getPlace())
+                .content(presentation.getContent())
+                .imgCnt(presentation.getImgCnt())
+                .videoCnt(presentation.getVideoCnt())
+                .images(images)
+                .ptDateDtos(ptDateDtos)
+                .build();
+
+    }
+
+
 }

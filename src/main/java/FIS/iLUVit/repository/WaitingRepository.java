@@ -30,7 +30,7 @@ public interface WaitingRepository extends JpaRepository<Waiting, Long> {
     List<Waiting> findByPtDate(PtDate ptDate);
 
     /**
-     * 주어진 waitingId를 가지며 해당 학부모가 대기 신청한 Waiting 엔티티를 조화합니다
+     * 주어진 waitingId를 가지며 해당 학부모가 대기 신청한 Waiting 엔티티를 조회합니다
      */
     @Lock(LockModeType.PESSIMISTIC_WRITE)
     Optional<Waiting> findByIdAndParent(Long waitingId, Parent parent);
@@ -46,21 +46,26 @@ public interface WaitingRepository extends JpaRepository<Waiting, Long> {
     List<Waiting> findByPtDateAndWaitingOrderLessThanEqual(PtDate ptDate, Integer changeNum);
 
     /**
+     * 해당 설명회 회차와 신청한 학부모로 대기 리스트를 조회합니다
+     */
+    Optional<Waiting> findByPtDateAndParent(PtDate ptDate, Parent parent);
+
+    /**
      * 주어진 ptDate에 해당하는 Waiting의 waitingOrder 값을 -changeNum 만큼 감소시킵니다
      */
     @Modifying
-    @Query("update Waiting waiting " +
-            "set waiting.waitingOrder = waiting.waitingOrder - :changeNum " +
-            "where waiting.ptDate = :ptDate")
+    @Query("UPDATE Waiting waiting " +
+            "SET waiting.waitingOrder = waiting.waitingOrder - :changeNum " +
+            "WHERE waiting.ptDate = :ptDate")
     void updateWaitingOrderForPtDateChange(@Param("changeNum") Integer changeNum, @Param("ptDate") PtDate ptDate);
 
     /**
      * 주어진 ptDate에 해당하는 Waiting 중에서 waitingOrder 값이 주어진 waitingOrder보다 큰 엔티티들의 waitingOrder 값을 1씩 감소시킵니다
      */
     @Modifying
-    @Query("update Waiting waiting " +
-            "set waiting.waitingOrder = waiting.waitingOrder - 1 " +
-            "where waiting.waitingOrder > :waitingOrder and waiting.ptDate = :ptDate ")
+    @Query("UPDATE Waiting waiting " +
+            "SET waiting.waitingOrder = waiting.waitingOrder - 1 " +
+            "WHERE waiting.waitingOrder > :waitingOrder AND waiting.ptDate = :ptDate ")
     void updateWaitingOrder(@Param("ptDate")PtDate ptDate, @Param("waitingOrder") Integer waitingOrder);
 
 }
