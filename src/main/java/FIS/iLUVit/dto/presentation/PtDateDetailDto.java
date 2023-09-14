@@ -35,18 +35,23 @@ public class PtDateDetailDto {
         waitingCnt = ptDate.getWaitingCnt();
     }
 
-    public static PtDateDetailDto of(PtDate ptDate, Participation participation, Waiting waiting ){
-        return PtDateDetailDto.builder()
+    public static PtDateDetailDto of(PtDate ptDate, Participation participation, Waiting waiting) {
+        PtDateDetailDto.PtDateDetailDtoBuilder builder = PtDateDetailDto.builder()
                 .ptDateId(ptDate.getId())
                 .date(ptDate.getDate())
                 .time(ptDate.getTime())
                 .ablePersonNum(ptDate.getAblePersonNum())
                 .participantCnt(ptDate.getParticipantCnt())
-                .waitingCnt(ptDate.getWaitingCnt())
-                .participantId(participation.getId())
-                .isParticipant(participation.getId() != null)
-                .waitingId(waiting.getId())
-                .isWaiting(waiting.getId() != null)
-                .build();
+                .waitingCnt(ptDate.getWaitingCnt());
+
+        if (participation != null) {
+            builder.participantId(participation.getId()).isParticipant(true);
+        }
+
+        if (waiting != null) {
+            builder.waitingId(waiting.getId()).isWaiting(true);
+        }
+
+        return builder.build();
     }
 }
