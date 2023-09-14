@@ -1,13 +1,17 @@
 package FIS.iLUVit.service;
 
+import FIS.iLUVit.domain.Center;
+import FIS.iLUVit.domain.Presentation;
 import FIS.iLUVit.domain.User;
 import FIS.iLUVit.domain.alarms.Alarm;
+import FIS.iLUVit.domain.alarms.PresentationCreatedAlarm;
 import FIS.iLUVit.dto.alarm.AlarmDeleteRequest;
 import FIS.iLUVit.dto.alarm.AlarmResponse;
 import FIS.iLUVit.dto.alarm.AlarmReadResponse;
 import FIS.iLUVit.exception.UserErrorResult;
 import FIS.iLUVit.exception.UserException;
 import FIS.iLUVit.repository.AlarmRepository;
+import FIS.iLUVit.repository.CenterBookmarkRepository;
 import FIS.iLUVit.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
@@ -25,6 +29,7 @@ import java.util.stream.Collectors;
 public class AlarmService {
     private final AlarmRepository alarmRepository;
     private final UserRepository userRepository;
+    private final CenterBookmarkRepository centerBookmarkRepository;
 
     /**
      * 활동 알림을 조회합니다
@@ -92,6 +97,15 @@ public class AlarmService {
                 .orElseThrow(() -> new UserException(UserErrorResult.NOT_VALID_TOKEN));
 
         alarmRepository.deleteAllByUser(user);
+    }
+
+    public void sendPresentationCreatedAlarm(Center center, Presentation presentation) {
+        centerBookmarkRepository.findByCenter(center).forEach(prefer -> {
+            Alarm alarm = new PresentationCreatedAlarm(prefer.getParent(), presentation, center);
+            alarmRepository.save(alarm);
+            String type = "아이러빗";
+            AlarmUtils.publishAlarmEvent(alarm, type);
+        });
     }
 
 }

@@ -14,7 +14,7 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class PresentationForUserResponse {
+public class PresentationSearchFilterResponse {
     private Long centerId;
     private String centerName;
     private Long presentationId;
@@ -28,8 +28,8 @@ public class PresentationForUserResponse {
     private Theme theme;                // 센터 테마
 
 
-    public static PresentationForUserResponse of(Presentation presentation, List<String> infoImages){
-        return PresentationForUserResponse.builder()
+    public static PresentationSearchFilterResponse of(Presentation presentation, List<String> infoImages){
+        return PresentationSearchFilterResponse.builder()
                 .centerId(presentation.getCenter().getId())
                 .centerName(presentation.getCenter().getName())
                 .presentationId(presentation.getId())

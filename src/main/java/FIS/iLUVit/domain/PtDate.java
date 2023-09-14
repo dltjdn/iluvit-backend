@@ -43,8 +43,7 @@ public class PtDate extends BaseEntity {
     private List<Waiting> waitings = new ArrayList<>();       // 인원 마감이 된 회차에 대기
 
     @Builder(toBuilder = true)
-    public PtDate(Long id, LocalDate date, String time, Integer ablePersonNum, Integer participantCnt, Integer waitingCnt, Presentation presentation) {
-        this.id = id;
+    public PtDate(LocalDate date, String time, Integer ablePersonNum, Integer participantCnt, Integer waitingCnt, Presentation presentation) {
         this.date = date;
         this.time = time;
         this.ablePersonNum = ablePersonNum;
@@ -53,17 +52,16 @@ public class PtDate extends BaseEntity {
         this.presentation = presentation;
     }
 
-    public static PtDate register(Presentation presentation, LocalDate date, String time, Integer ablePersonNum) {
-        PtDate ptDate = PtDate.builder()
-                .date(date)
-                .time(time)
-                .ablePersonNum(ablePersonNum)
+    public static PtDate createPtDate(Presentation presentation, PtDateDto ptDateCreateDto) {
+        return PtDate.builder()
+                .date(ptDateCreateDto.getDate())
+                .time(ptDateCreateDto.getTime())
+                .ablePersonNum(ptDateCreateDto.getAblePersonNum())
                 .waitingCnt(0)
                 .participantCnt(0)
                 .presentation(presentation)
                 .build();
-        presentation.getPtDates().add(ptDate);
-        return ptDate;
+        //presentation.getPtDates().add(ptDate);
     }
 
     // 일정을 취소할 경우 participantCnt 값을 줄인다

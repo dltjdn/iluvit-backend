@@ -1,7 +1,6 @@
 package FIS.iLUVit.repository;
 
 import FIS.iLUVit.domain.Presentation;
-import FIS.iLUVit.dto.presentation.PresentationForUserResponse;
 import FIS.iLUVit.domain.embeddable.Area;
 import FIS.iLUVit.domain.embeddable.Theme;
 import FIS.iLUVit.domain.enumtype.KindOf;

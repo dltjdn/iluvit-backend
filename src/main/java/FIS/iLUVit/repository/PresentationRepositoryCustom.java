@@ -1,13 +1,11 @@
 package FIS.iLUVit.repository;
 
 import FIS.iLUVit.domain.Presentation;
-import FIS.iLUVit.dto.presentation.PresentationForUserResponse;
 import FIS.iLUVit.domain.embeddable.Area;
 import FIS.iLUVit.domain.embeddable.Theme;
 import FIS.iLUVit.domain.enumtype.KindOf;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
-import org.springframework.data.domain.SliceImpl;
 
 import java.util.List;
 

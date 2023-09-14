@@ -8,7 +8,6 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
-import org.springframework.data.domain.SliceImpl;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.transaction.annotation.Transactional;
@@ -35,17 +34,17 @@ public class PresentationController {
      * 필터 기반 설명회 검색
      */
     @PostMapping("search")
-    public ResponseEntity<Slice<PresentationForUserResponse>> getPresentationByFilter(@RequestBody PresentationSearchFilterRequest request, Pageable pageable){
-        Slice<PresentationForUserResponse> responses = presentationService.findPresentationByFilter(request, pageable);
+    public ResponseEntity<Slice<PresentationSearchFilterResponse>> getPresentationByFilter(@RequestBody PresentationSearchFilterRequest request, Pageable pageable){
+        Slice<PresentationSearchFilterResponse> responses = presentationService.findPresentationByFilter(request, pageable);
         return ResponseEntity.ok().body(responses);
     }
 
     /**
-     * 설명회 전체 조회
+     * (현재 진행 중인) 설명회 전체 조회
      */
     @GetMapping("info/center/{centerId}")
-    public ResponseEntity<List<PresentationDetailResponse>> getAllPresentation(@Login Long userId, @PathVariable("centerId") Long centerId){
-        List<PresentationDetailResponse> responses = presentationService.findPresentationByCenterIdAndDate( userId, centerId);
+    public ResponseEntity<List<PresentationFindOneResponse>> getAllPresentation(@Login Long userId, @PathVariable("centerId") Long centerId){
+        List<PresentationFindOneResponse> responses = presentationService.findAllPresentation( userId, centerId);
         return ResponseEntity.ok().body(responses);
     }
 
@@ -58,8 +57,8 @@ public class PresentationController {
      * 설명회 정보 저장 (설명회 회차 정보 저장 포함)
      */
     @PostMapping("")
-    public ResponseEntity<PresentationResponse> createPresentationInfo( @Login Long userId, @RequestBody @Validated PresentationDetailRequest request){
-        PresentationResponse response = presentationService.savePresentationInfoWithPtDate(userId, request);
+    public ResponseEntity<PresentationCreateResponse> createPresentationInfo(@Login Long userId, @RequestBody @Validated PresentationCreateRequest request){
+        PresentationCreateResponse response = presentationService.savePresentationInfoWithPtDate(userId, request);
         return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
 
@@ -108,8 +107,8 @@ public class PresentationController {
      * 설명회 상세 조회
      */
     @GetMapping("{presentationId}")
-    public ResponseEntity<PresentationDetailResponse> getPresentationDetails(@PathVariable("presentationId") Long presentationId){
-        PresentationDetailResponse response = presentationService.findPresentationDetails(presentationId);
+    public ResponseEntity<PresentationFindOneResponse> getPresentationDetails(@PathVariable("presentationId") Long presentationId){
+        PresentationFindOneResponse response = presentationService.findPresentationDetails(presentationId);
         return ResponseEntity.ok().body(response);
     }
 

@@ -1,7 +1,5 @@
 package FIS.iLUVit.dto.presentation;
 
-import FIS.iLUVit.domain.Presentation;
-import FIS.iLUVit.exception.PresentationException;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.fasterxml.jackson.datatype.jsr310.ser.LocalDateSerializer;
 import lombok.AllArgsConstructor;
@@ -9,14 +7,13 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.springframework.format.annotation.DateTimeFormat;
 import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Size;
 import java.time.LocalDate;
 import java.util.List;
 
 @Getter
 @NoArgsConstructor
 @AllArgsConstructor
-public class PresentationDetailRequest {
+public class PresentationCreateRequest {
     @NotNull
     private Long centerId;
 
@@ -24,7 +21,6 @@ public class PresentationDetailRequest {
     @NotNull(message = "설명회 신청 시작일자를 작성해주세요.")
     @JsonSerialize(using = LocalDateSerializer.class)
     private LocalDate startDate;          // 설명회 신청 기간
-
 
     @DateTimeFormat(pattern = "yyyy-MM-dd", iso = DateTimeFormat.ISO.DATE)
     @NotNull(message = "설명회 신청 종료일자를 작성해주세요.")
@@ -37,16 +33,7 @@ public class PresentationDetailRequest {
     private String content;             // 설명회 내용
 
     @NotNull(message = "설명회 작성 미완료")
-    private List<PtDateDetailRequest> ptDateDtos;
+    private List<PtDateDto> ptDateDtos;
 
-    public static Presentation toPresentation(PresentationDetailRequest request){
-        if(request.endDate.isBefore(request.startDate))
-            throw new PresentationException("시작일자와 종료일자를 다시 확인해 주세요.");
-        return Presentation.builder()
-                .startDate(request.getStartDate())
-                .endDate(request.getEndDate())
-                .content(request.getContent())
-                .place(request.getPlace())
-                .build();
-    }
+
 }

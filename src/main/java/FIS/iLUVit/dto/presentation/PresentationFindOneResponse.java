@@ -8,14 +8,13 @@ import lombok.NoArgsConstructor;
 import org.springframework.format.annotation.DateTimeFormat;
 import java.time.LocalDate;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 @Getter
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class PresentationDetailResponse {
+public class PresentationFindOneResponse {
     private Long presentationId;
     @DateTimeFormat(pattern = "yyyy-MM-dd", iso = DateTimeFormat.ISO.DATE)
     private LocalDate startDate;          // 설명회 신청 기간
@@ -29,7 +28,7 @@ public class PresentationDetailResponse {
     List<PtDateDetailDto> ptDateDtos = new ArrayList<>();
 
 
-    public PresentationDetailResponse(Presentation presentation, List<String> encodedInfoImage){
+    public PresentationFindOneResponse(Presentation presentation, List<String> encodedInfoImage){
         presentationId = presentation.getId();
         startDate = presentation.getStartDate();
         endDate = presentation.getEndDate();
@@ -41,9 +40,9 @@ public class PresentationDetailResponse {
         presentation.getPtDates().forEach(ptDate -> ptDateDtos.add(new PtDateDetailDto(ptDate)));
     }
 
-    public static PresentationDetailResponse of(Presentation presentation, List<String> images, List<PtDateDetailDto> ptDateDtos){
+    public static PresentationFindOneResponse of(Presentation presentation, List<String> images, List<PtDateDetailDto> ptDateDtos){
 
-        return PresentationDetailResponse.builder()
+        return PresentationFindOneResponse.builder()
                 .presentationId(presentation.getId())
                 .startDate(presentation.getStartDate())
                 .endDate(presentation.getEndDate())

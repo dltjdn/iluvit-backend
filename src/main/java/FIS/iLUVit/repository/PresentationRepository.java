@@ -1,5 +1,6 @@
 package FIS.iLUVit.repository;
 
+import FIS.iLUVit.domain.Center;
 import FIS.iLUVit.domain.Presentation;
 import FIS.iLUVit.dto.presentation.PresentationForTeacherDto;
 import org.springframework.data.domain.Pageable;
@@ -15,8 +16,8 @@ import java.util.Optional;
 @Repository
 public interface PresentationRepository extends JpaRepository<Presentation, Long>, PresentationRepositoryCustom {
 
-    /*
-        설명회 시설 id가 시설 id와 같고, 설명회 시작날짜가 설명회 날짜보다 작거나 같고, 설명회 날짜가 설명회 끝날짜보다 작거나 같은 설명회 객체를 필터링하여 설명회 DTO 리스트를 불러옵니다.
+    /**
+     * 해당 시설의 현재 진행중인 설명회를 조회합니다
      */
     @Query("SELECT presentation FROM Presentation presentation " +
             "WHERE presentation.center.id = :centerId " +
@@ -42,11 +43,9 @@ public interface PresentationRepository extends JpaRepository<Presentation, Long
             "where presentation.id = :presentationId")
     Optional<Presentation> findByIdAndJoinPtDate(@Param("presentationId") Long presentationId);
 
-    /*
-        설명회 종료일이 설명회 날짜보다 크거나 같고, 설명회 시설 id가 시설 id와 같은 설명회를 불러옵니다.
+    /**
+        해당 시설에 대한 설명회 중 설명회 종료일이 현재 날짜 이후인 것을 조회합니다
      */
-    @Query("select presentation from Presentation presentation " +
-            "where presentation.endDate >= :date " +
-            "and presentation.center.id = :centerId")
-    Presentation findByCenterIdAndDate(@Param("centerId") Long centerId, @Param("date") LocalDate date);
+    Optional<Presentation> findByCenterAndEndDateAfter(Center center, LocalDate date);
+
 }
