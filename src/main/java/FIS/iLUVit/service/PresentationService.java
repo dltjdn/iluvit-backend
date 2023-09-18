@@ -4,7 +4,6 @@ import FIS.iLUVit.domain.alarms.Alarm;
 import FIS.iLUVit.domain.alarms.ConvertedToParticipateAlarm;
 import FIS.iLUVit.dto.presentation.*;
 import FIS.iLUVit.domain.*;
-import FIS.iLUVit.domain.alarms.PresentationCreatedAlarm;
 import FIS.iLUVit.domain.enumtype.Status;
 import FIS.iLUVit.exception.*;
 import FIS.iLUVit.repository.*;
@@ -118,65 +117,65 @@ public class PresentationService {
     /**
      * 설명회 정보 수정 ( 설명회 회차 정보 수정 포함)
      */
-    public void modifyPresentationInfoWithPtDate(Long userId, PresentationRequest request) {
-//        //
-//        Presentation presentation = presentationRepository.findByIdAndJoinPtDate(request.getPresentationId())
-//                .orElseThrow(() -> new PresentationException(PresentationErrorResult.NO_RESULT));
-//        teacherRepository.findById(userId)
-//                .orElseThrow(() -> new UserException(UserErrorResult.USER_NOT_EXIST))
-//                .canWrite(presentation.getCenter().getId());
-//
-//        // 데이터 베이스에 저장되어있는 ptDate 목록
-//        Map<Long, PtDate> ptDateMap = presentation.getPtDates()
-//                .stream()
-//                .collect(toMap(PtDate::getId,
-//                        ptDate -> ptDate));
-//
-//        // modify 요청에서 넘어온 ptdate 정보
-//        request.getPtDateDtos().forEach(ptDateModifyDto -> {
-//            if(ptDateModifyDto.getPtDateId() == null) {
-//                PtDate register = PtDate.createPtDate(presentation, ptDateModifyDto);
-//                ptDateRepository.save(register);
-//            }
-//            else {
-//                PtDate ptDate = ptDateMap.get(ptDateModifyDto.getPtDateId());
-//                if(ptDate == null)
-//                    throw new PresentationException(PresentationErrorResult.WRONG_PTDATE_ID_REQUEST);
-//                if(ptDateModifyDto.getAblePersonNum() > ptDate.getAblePersonNum() && ptDate.hasWaiting()){
-//                    // 추가 수용 가능 인원 숫자 체크
-//                    Integer changeNum = ptDateModifyDto.getAblePersonNum() - ptDate.getAblePersonNum();
-//                    // 추가 수용될 인원 추출
-//                    List<Waiting> waitings = waitingRepository.findByPtDateAndWaitingOrderLessThanEqual(ptDate, changeNum);
-//                    // 추가 수용될 인원 id 만 추출
-//                    List<Long> waitingIds = waitings.stream().map(Waiting::getId).collect(toList());
-//                    // 수용 인원들 waiting 에서 삭제
-//                    waitingRepository.deleteAllByIdInBatch(waitingIds);
-//                    // 수용 외의 인원들 order 감소
-//                    waitingRepository.updateWaitingOrderForPtDateChange(changeNum, ptDate);
-//                    ptDate.updateWaitingCntForPtDateChange(waitingIds.size());
-//                    waitings.forEach(waiting -> {
-//                        Participation andRegisterForWaitings = Participation.createAndRegisterForWaitings(waiting.getParent(), presentation, ptDate, ptDate.getParticipations());
-//
-//                        Alarm alarm = new ConvertedToParticipateAlarm(waiting.getParent(), presentation, presentation.getCenter());
-//                        alarmRepository.save(alarm);
-//                        String type = "아이러빗";
-//                        AlarmUtils.publishAlarmEvent(alarm, type);
-//
-//                        participationRepository.save(andRegisterForWaitings);
-//                    });
-//                }
-//                ptDate.update(ptDateModifyDto);
-//                ptDateMap.remove(ptDate.getId());
-//            }
-//        });
-//
-//        Set<Long> ptDateKeysDeleteTarget = ptDateMap.keySet();
-//        Collection<PtDate> ptDateSet = ptDateMap.values();
-//
-//        ptDateSet.forEach(PtDate::canDelete);
-//        presentation.getPtDates().removeAll(ptDateSet);
-//        ptDateRepository.deletePtDateByIds(ptDateKeysDeleteTarget);
-//        presentation.update(request);
+    public void updatePresentationInfoWithPtDate(Long userId, PresentationUpdateRequest request) {
+
+        Presentation presentation = presentationRepository.findByIdAndJoinPtDate(request.getPresentationId())
+                .orElseThrow(() -> new PresentationException(PresentationErrorResult.NO_RESULT));
+
+        teacherRepository.findById(userId)
+                .orElseThrow(() -> new UserException(UserErrorResult.USER_NOT_EXIST))
+                .canWrite(presentation.getCenter().getId());
+
+        // 데이터 베이스에 저장되어있는 ptDate 목록
+        Map<Long, PtDate> ptDateMap = presentation.getPtDates()
+                .stream()
+                .collect(toMap(PtDate::getId,
+                        ptDate -> ptDate));
+
+        // modify 요청에서 넘어온 ptdate 정보
+        request.getPtDateDtos().forEach(ptDateModifyDto -> {
+            if(ptDateModifyDto.getPtDateId() == null) {
+                PtDate register = PtDate.createPtDate(presentation, ptDateModifyDto);
+                ptDateRepository.save(register);
+            }
+            else {
+                PtDate ptDate = ptDateMap.get(ptDateModifyDto.getPtDateId());
+                if(ptDate == null)
+                    throw new PresentationException(PresentationErrorResult.WRONG_PTDATE_ID_REQUEST);
+                if(ptDateModifyDto.getAblePersonNum() > ptDate.getAblePersonNum() && ptDate.hasWaiting()){
+                    // 추가 수용 가능 인원 숫자 체크
+                    Integer changeNum = ptDateModifyDto.getAblePersonNum() - ptDate.getAblePersonNum();
+                    // 추가 수용될 인원 추출
+                    List<Waiting> waitings = waitingRepository.findByPtDateAndWaitingOrderLessThanEqual(ptDate, changeNum);
+                    // 추가 수용될 인원 id 만 추출
+                    List<Long> waitingIds = waitings.stream().map(Waiting::getId).collect(toList());
+                    // 수용 인원들 waiting 에서 삭제
+                    waitingRepository.deleteAllByIdInBatch(waitingIds);
+                    // 수용 외의 인원들 order 감소
+                    waitingRepository.updateWaitingOrderForPtDateChange(changeNum, ptDate);
+                    ptDate.updateWaitingCntForPtDateChange(waitingIds.size());
+                    waitings.forEach(waiting -> {
+                        Participation andRegisterForWaitings = Participation.createAndRegisterForWaitings(waiting.getParent(), presentation, ptDate, ptDate.getParticipations());
+                        Alarm alarm = new ConvertedToParticipateAlarm(waiting.getParent(), presentation, presentation.getCenter());
+                        alarmRepository.save(alarm);
+                        String type = "아이러빗";
+                        AlarmUtils.publishAlarmEvent(alarm, type);
+
+                        participationRepository.save(andRegisterForWaitings);
+                    });
+                }
+                ptDate.update(ptDateModifyDto);
+                ptDateMap.remove(ptDate.getId());
+            }
+        });
+
+        Set<Long> ptDateKeysDeleteTarget = ptDateMap.keySet();
+        Collection<PtDate> ptDateSet = ptDateMap.values();
+
+        ptDateSet.forEach(PtDate::canDelete);
+        presentation.getPtDates().removeAll(ptDateSet);
+        ptDateRepository.deletePtDateByIds(ptDateKeysDeleteTarget);
+        presentation.update(request);
 
     }
 

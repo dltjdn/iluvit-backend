@@ -67,8 +67,8 @@ public class PresentationController {
      * 설명회 정보 수정 ( 설명회 회차 정보 수정 포함)
      */
     @PatchMapping("")
-    public ResponseEntity<Void> updatePresentationInfo( @Login Long userId, @RequestBody @Validated PresentationRequest request){
-        presentationService.modifyPresentationInfoWithPtDate(userId, request);
+    public ResponseEntity<Void> updatePresentationInfo( @Login Long userId, @RequestBody @Validated PresentationUpdateRequest request){
+        presentationService.updatePresentationInfoWithPtDate(userId, request);
         return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
     }
 

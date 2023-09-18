@@ -36,7 +36,7 @@ public class CenterService {
 
 
     /**
-     * 시설 전체 조회
+     * 주변 시설 전체 조회
      */
     public List<CenterMapResponse> findCenterByFilterForMap(String searchContent, CenterMapRequest centerMapRequest){
         double longitude = centerMapRequest.getLongitude();
