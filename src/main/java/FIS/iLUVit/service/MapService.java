@@ -2,6 +2,8 @@ package FIS.iLUVit.service;
 
 import FIS.iLUVit.exception.CenterErrorResult;
 import FIS.iLUVit.exception.CenterException;
+import FIS.iLUVit.exception.UserErrorResult;
+import FIS.iLUVit.exception.UserException;
 import lombok.RequiredArgsConstructor;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
@@ -47,7 +49,7 @@ public class MapService {
                     Double.parseDouble(addressResponse.get("y").toString())
             );
         } catch (Exception ex){
-            throw new CenterException(CenterErrorResult.CENTER_WRONG_ADDRESS);
+            throw new UserException(UserErrorResult.WRONG_ADDRESS);
         }
     }
 
@@ -73,7 +75,7 @@ public class MapService {
             // x 가 longitude y가 latitude
             return Pair.of(sido, sigungu);
         } catch (Exception ex){
-            throw new CenterException(CenterErrorResult.CENTER_WRONG_ADDRESS);
+            throw new UserException(UserErrorResult.WRONG_ADDRESS);
         }
     }
 

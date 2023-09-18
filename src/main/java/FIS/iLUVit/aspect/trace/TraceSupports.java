@@ -41,6 +41,7 @@ public class TraceSupports {
     }
 
     public static Long time(){
+        if(startTime.get() == null) return null;
         return System.currentTimeMillis() - startTime.get();
     }
 

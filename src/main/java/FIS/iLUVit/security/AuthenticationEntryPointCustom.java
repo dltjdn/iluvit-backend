@@ -1,5 +1,6 @@
 package FIS.iLUVit.security;
 
+import FIS.iLUVit.exception.BasicErrorResult;
 import FIS.iLUVit.exception.exceptionHandler.ErrorResponse;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
@@ -22,9 +23,10 @@ public class AuthenticationEntryPointCustom implements AuthenticationEntryPoint 
         log.warn("[AuthenticationEntryPointCustom] Unauthorized error : {}", authException.getMessage());
         ErrorResponse errorResponse;
         if (authException instanceof BadCredentialsException) {
-            errorResponse = new ErrorResponse(HttpStatus.UNAUTHORIZED, "아이디 혹은 비밀번호가 잘못되었습니다.");
+            errorResponse = ErrorResponse.from(BasicErrorResult.BAD_CREDENTIALS);
         } else {
-            errorResponse = new ErrorResponse(HttpStatus.UNAUTHORIZED, "유효하지 않은 토큰입니다.");
+            errorResponse = ErrorResponse.from(BasicErrorResult.INVALID_TOKEN);
+
         }
         ObjectMapper objectMapper = new ObjectMapper();
         response.setContentType("application/json");
