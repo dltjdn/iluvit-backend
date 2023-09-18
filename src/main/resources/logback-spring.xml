@@ -85,6 +85,7 @@
 
     <springProfile name="dev,prod">
         <logger name="FIS.iLUVit" level="INFO" additivity="false">
+
             <appender-ref ref="STDOUT"/>
             <appender-ref ref="DATA"/>
         </logger>
