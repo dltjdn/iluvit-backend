@@ -44,8 +44,8 @@ public class ParticipationService {
      */
     public void registerParticipation(Long userId, Long ptDateId) {
         // 잘못된 설명회 회차 id일 경우
-        PtDate ptDate = ptDateRepository.findByIdAndJoinParticipation(ptDateId)
-                .orElseThrow(() -> new PresentationException(PresentationErrorResult.WRONG_PTDATE_ID_REQUEST));
+        PtDate ptDate = ptDateRepository.findById(ptDateId)
+                .orElseThrow(() -> new PresentationException(PresentationErrorResult.PTDATE_NOT_EXIST));
 
         // 설명회 신청기간이 지났을경우
         if(LocalDate.now().isAfter(ptDate.getPresentation().getEndDate()))

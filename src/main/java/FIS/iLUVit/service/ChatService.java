@@ -43,7 +43,7 @@ public class ChatService {
         }
 
         User sendUser = userRepository.findById(userId)
-                .orElseThrow(() -> new ChatException(ChatErrorResult.USER_NOT_EXIST));
+                .orElseThrow(() -> new UserException(UserErrorResult.USER_NOT_EXIST));
 
         User receiveUser;
 
@@ -161,7 +161,7 @@ public class ChatService {
      */
     public Slice<ChatRoomResponse> findChatRoomList(Long userId, Pageable pageable) {
         User user = userRepository.findById(userId)
-                .orElseThrow(() -> new ChatException(ChatErrorResult.USER_NOT_EXIST));
+                .orElseThrow(() -> new UserException(UserErrorResult.USER_NOT_EXIST));
 
         Slice<ChatRoom> chatList = chatRoomRepository.findByReceiverOrderByUpdatedDateDesc(user, pageable);
         return chatList.map(chat -> {
@@ -178,7 +178,7 @@ public class ChatService {
     public ChatDetailResponse findChatRoomDetails(Long userId, Long roomId, Pageable pageable) {
 
         User receiverUser = userRepository.findById(userId)
-                .orElseThrow(() -> new ChatException(ChatErrorResult.USER_NOT_EXIST));
+                .orElseThrow(() -> new UserException(UserErrorResult.USER_NOT_EXIST));
 
         ChatRoom findRoom = chatRoomRepository.findById(roomId)
                 .orElseThrow(() -> new ChatException(ChatErrorResult.ROOM_NOT_EXIST));

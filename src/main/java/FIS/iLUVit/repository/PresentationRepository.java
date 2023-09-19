@@ -34,14 +34,7 @@ public interface PresentationRepository extends JpaRepository<Presentation, Long
             "where p.center.id = :centerId")
     List<PresentationForTeacherDto> findByCenterId(@Param("centerId") Long centerId, Pageable pageable);
 
-    /*
-        설명회 id와 설명회 가입날짜로 설명회를 불러옵니다.
-     */
-    @Query("select distinct presentation from Presentation presentation " +
-            "join fetch presentation.ptDates " +
-            "join fetch presentation.center " +
-            "where presentation.id = :presentationId")
-    Optional<Presentation> findByIdAndJoinPtDate(@Param("presentationId") Long presentationId);
+
 
     /**
         해당 시설에 대한 설명회 중 설명회 종료일이 현재 날짜 이후인 것을 조회합니다

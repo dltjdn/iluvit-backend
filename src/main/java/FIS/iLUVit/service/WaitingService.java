@@ -38,10 +38,10 @@ public class WaitingService {
 
         // 잘못된 ptDateId로 요청 시 오류 반환
         if(ptDateId < 0)
-            throw new PresentationException(PresentationErrorResult.WRONG_PTDATE_ID_REQUEST);
+            throw new PresentationException(PresentationErrorResult.WRONG_PTDATE_REQUEST);
 
         PtDate ptDate = ptDateRepository.findById(ptDateId)
-                .orElseThrow(() -> new PresentationException(PresentationErrorResult.WRONG_PTDATE_ID_REQUEST));
+                .orElseThrow(() -> new PresentationException(PresentationErrorResult.WRONG_PTDATE_REQUEST));
 
         // 설명회 신청기간이 지났을경우 error throw
         if(LocalDate.now().isAfter(ptDate.getPresentation().getEndDate()))

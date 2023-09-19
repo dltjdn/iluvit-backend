@@ -58,7 +58,7 @@ public class PresentationController {
      */
     @PostMapping("")
     public ResponseEntity<PresentationCreateResponse> createPresentationInfo(@Login Long userId, @RequestBody @Validated PresentationCreateRequest request){
-        PresentationCreateResponse response = presentationService.savePresentationInfoWithPtDate(userId, request);
+        PresentationCreateResponse response = presentationService.createPresentationInfoWithPtDate(userId, request);
         return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
 
@@ -77,9 +77,9 @@ public class PresentationController {
      */
     @Transactional
     @PostMapping("{presentationId}/image")
-    public ResponseEntity<Void> createPresentationImage( @Login Long userId, @PathVariable("presentationId") Long presentationId,
+    public ResponseEntity<Void> createPresentationImage( @PathVariable("presentationId") Long presentationId,
                                                           @RequestPart(required = false) List<MultipartFile> images) {
-        presentationService.savePresentationImageWithPtDate( userId, presentationId, images);
+        presentationService.savePresentationImageWithPtDate(presentationId, images);
         return ResponseEntity.status(HttpStatus.CREATED).build();
     }
 

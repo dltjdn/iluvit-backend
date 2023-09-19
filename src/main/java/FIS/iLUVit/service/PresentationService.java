@@ -33,7 +33,6 @@ public class PresentationService {
     private final PtDateRepository ptDateRepository;
     private final CenterRepository centerRepository;
     private final ImageService imageService;
-    private final CenterBookmarkRepository centerBookmarkRepository;
     private final TeacherRepository teacherRepository;
     private final WaitingRepository waitingRepository;
     private final ParticipationRepository participationRepository;
@@ -87,17 +86,15 @@ public class PresentationService {
     /**
      * 설명회 정보 저장 (설명회 회차 정보 저장 포함)
      */
-    public PresentationCreateResponse savePresentationInfoWithPtDate(Long userId, PresentationCreateRequest request) {
+    public PresentationCreateResponse createPresentationInfoWithPtDate(Long userId, PresentationCreateRequest request) {
         Center center = centerRepository.findById(request.getCenterId())
                 .orElseThrow(() -> new CenterException(CenterErrorResult.CENTER_NOT_EXIST));
 
-        Teacher teacher = teacherRepository.findById(userId)
-                .orElseThrow(() -> new UserException(UserErrorResult.USER_NOT_EXIST))
-                .canWrite(center.getId());  // 글 쓸 권한 있는지 체크
+        getTeacher(userId).canWrite(center.getId());  // 글 쓸 권한 있는지 체크
 
         // 끝나지 않은 설명회 하나라도 있으면 오류
         presentationRepository.findByCenterAndEndDateAfter(center, LocalDate.now())
-                .ifPresent((presentation) -> new PresentationException(PresentationErrorResult.ALREADY_PRESENTATION_EXIST));
+                .ifPresent((presentation) -> new PresentationException(PresentationErrorResult.PRESENTATION_ALREADY_EXIST));
 
         // 설명회, 설명회 회차 생성 및 저장
         Presentation presentation = Presentation.createPresentation(request, center);
@@ -114,17 +111,15 @@ public class PresentationService {
         return PresentationCreateResponse.of(presentation,ptDateIds);
     }
 
+
     /**
      * 설명회 정보 수정 ( 설명회 회차 정보 수정 포함)
      */
     public void updatePresentationInfoWithPtDate(Long userId, PresentationUpdateRequest request) {
 
-        Presentation presentation = presentationRepository.findByIdAndJoinPtDate(request.getPresentationId())
-                .orElseThrow(() -> new PresentationException(PresentationErrorResult.NO_RESULT));
+        Presentation presentation = getPresentation(request.getPresentationId());
 
-        teacherRepository.findById(userId)
-                .orElseThrow(() -> new UserException(UserErrorResult.USER_NOT_EXIST))
-                .canWrite(presentation.getCenter().getId());
+        getTeacher(userId).canWrite(presentation.getCenter().getId());
 
         // 데이터 베이스에 저장되어있는 ptDate 목록
         Map<Long, PtDate> ptDateMap = presentation.getPtDates()
@@ -132,7 +127,7 @@ public class PresentationService {
                 .collect(toMap(PtDate::getId,
                         ptDate -> ptDate));
 
-        // modify 요청에서 넘어온 ptdate 정보
+        // requst의 ptdate 정보
         request.getPtDateDtos().forEach(ptDateModifyDto -> {
             if(ptDateModifyDto.getPtDateId() == null) {
                 PtDate register = PtDate.createPtDate(presentation, ptDateModifyDto);
@@ -141,7 +136,7 @@ public class PresentationService {
             else {
                 PtDate ptDate = ptDateMap.get(ptDateModifyDto.getPtDateId());
                 if(ptDate == null)
-                    throw new PresentationException(PresentationErrorResult.WRONG_PTDATE_ID_REQUEST);
+                    throw new PresentationException(PresentationErrorResult.WRONG_PTDATE_REQUEST);
                 if(ptDateModifyDto.getAblePersonNum() > ptDate.getAblePersonNum() && ptDate.hasWaiting()){
                     // 추가 수용 가능 인원 숫자 체크
                     Integer changeNum = ptDateModifyDto.getAblePersonNum() - ptDate.getAblePersonNum();
@@ -182,24 +177,22 @@ public class PresentationService {
     /**
      * 설명회 이미지 저장
      */
-    public void savePresentationImageWithPtDate(Long userId, Long presentationId, List<MultipartFile> images) {
-        Presentation presentation = presentationRepository.findById(presentationId)
-                .orElseThrow(() -> new PresentationException(PresentationErrorResult.NO_RESULT));
+    public void savePresentationImageWithPtDate(Long presentationId, List<MultipartFile> images) {
+        Presentation presentation = getPresentation(presentationId);
 
         imageService.saveInfoImages(images, presentation);
     }
+
+
 
     /**
      * 설명회 이미지 수정
      */
     public void modifyPresentationImageWithPtDate(Long userId, Long presentationId, List<MultipartFile> images) {
-        //
-        Presentation presentation = presentationRepository.findById(presentationId)
-                .orElseThrow(() -> new PresentationException(PresentationErrorResult.NO_RESULT));
 
-        teacherRepository.findById(userId)
-                .orElseThrow(() -> new UserException(UserErrorResult.USER_NOT_EXIST))
-                .canWrite(presentation.getCenter().getId());
+        Presentation presentation = getPresentation(presentationId);
+
+       getTeacher(userId).canWrite(presentation.getCenter().getId());
 
         imageService.saveInfoImages(images, presentation);
     }
@@ -209,9 +202,7 @@ public class PresentationService {
      */
     public List<PresentationForTeacherResponse> findPresentationListByCenter(Long userId, Long centerId, Pageable pageable) {
         //
-        teacherRepository.findById(userId)
-                .orElseThrow(() -> new UserException("존재하지 않는 유저입니다"))
-                .canRead(centerId);
+        getTeacher(userId).canRead(centerId);
         return presentationRepository.findByCenterId(centerId, pageable)
                 .stream().map(data -> {
                     PresentationForTeacherResponse result = new PresentationForTeacherResponse(data,imageService.getInfoImages(data.getPresentationInfoImage()));
@@ -223,9 +214,7 @@ public class PresentationService {
      * 설명회 상세 조회
      */
     public PresentationFindOneResponse findPresentationDetails(Long presentationId) {
-        //
-        Presentation presentation = presentationRepository.findByIdAndJoinPtDate(presentationId)
-                .orElseThrow(() -> new PresentationException("존재하지않는 설명회 입니다"));
+        Presentation presentation = getPresentation(presentationId);
         return new PresentationFindOneResponse(presentation, imageService.getInfoImages(presentation.getInfoImagePath()));
     }
 
@@ -233,12 +222,11 @@ public class PresentationService {
      * 설명회 예약 학부모 전체 조회 (예약명단)
      */
     public List<ParentResponse> findParentListWithRegisterParticipation(Long userId, Long ptDateId) {
-        //
-        PtDate ptDate = ptDateRepository.findByIdAndJoinParticipationForSearch(ptDateId)
-                .orElseThrow(() -> new PresentationException("존재하지 않는 설명회 회차 입니다."));
-        teacherRepository.findById(userId)
-                .orElseThrow(() -> new UserException("존재하지 않는 유저입니다"))
-                .canRead(ptDate.getPresentation().getCenter().getId());
+
+        PtDate ptDate = getPtDate(ptDateId);
+
+        getTeacher(userId).canRead(ptDate.getPresentation().getCenter().getId());
+
         return ptDate.getParticipations().stream()
                 .filter(participation -> participation.getStatus().equals(Status.JOINED))
                 .map(participation -> new ParentResponse(participation.getParent()))
@@ -249,16 +237,41 @@ public class PresentationService {
      * 설명회 대기 학부모 전체 조회 (대기명단)
      */
     public List<ParentResponse> findParentListWithWaitingParticipation(Long userId, Long ptDateId) {
-        //
-        PtDate ptDate = ptDateRepository.findByIdWithWaitingAndPresentationAndCenterAndParent(ptDateId)
-                .orElseThrow(() -> new PresentationException("존재하지 않는 설명회 회차 입니다."));
-        teacherRepository.findById(userId)
-                .orElseThrow(() -> new UserException("존재하지 않는 유저입니다"))
-                .canRead(ptDate.getPresentation().getCenter().getId());
+
+        PtDate ptDate = getPtDate(ptDateId);
+
+        getTeacher(userId).canRead(ptDate.getPresentation().getCenter().getId());
 
         return waitingRepository.findByPtDate(ptDate).stream()
                 .map(participation -> new ParentResponse(participation.getParent()))
                 .collect(Collectors.toList());
     }
+
+    /**
+     * 예외처리 - 존재하는 선생님인가
+     */
+    private Teacher getTeacher(Long userId) {
+        return teacherRepository.findById(userId)
+                .orElseThrow(() -> new UserException(UserErrorResult.USER_NOT_EXIST));
+    }
+
+    /**
+     * 예외처리 - 존재하는 설명회인가
+     */
+    private Presentation getPresentation(Long presentationId) {
+        return presentationRepository.findById(presentationId)
+                .orElseThrow(() -> new PresentationException(PresentationErrorResult.PRESENTATION_NOT_EXIST));
+    }
+
+    /**
+     * 예외처리 - 존재하는 설명회회차인가
+     */
+    private PtDate getPtDate(Long ptDateId) {
+        return ptDateRepository.findById(ptDateId)
+                .orElseThrow(() -> new PresentationException(PresentationErrorResult.PTDATE_NOT_EXIST));
+
+    }
+
+
 
 }
