@@ -58,7 +58,7 @@ public class PresentationController {
      */
     @PostMapping("")
     public ResponseEntity<PresentationCreateResponse> createPresentationInfo(@Login Long userId, @RequestBody @Validated PresentationCreateRequest request){
-        PresentationCreateResponse response = presentationService.createPresentationInfoWithPtDate(userId, request);
+        PresentationCreateResponse response = presentationService.createPresentationInfo(userId, request);
         return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
 
@@ -68,30 +68,18 @@ public class PresentationController {
      */
     @PatchMapping("")
     public ResponseEntity<Void> updatePresentationInfo( @Login Long userId, @RequestBody @Validated PresentationUpdateRequest request){
-        presentationService.updatePresentationInfoWithPtDate(userId, request);
+        presentationService.updatePresentationInfo(userId, request);
         return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
     }
 
     /**
-     * 설명회 이미지 저장
+     * 설명회 이미지 저장 및 수정
      */
     @Transactional
-    @PostMapping("{presentationId}/image")
-    public ResponseEntity<Void> createPresentationImage( @PathVariable("presentationId") Long presentationId,
-                                                          @RequestPart(required = false) List<MultipartFile> images) {
-        presentationService.savePresentationImageWithPtDate(presentationId, images);
-        return ResponseEntity.status(HttpStatus.CREATED).build();
-    }
-
-    /**
-     * 설명회 이미지 수정
-     */
-    @Transactional
-    @PatchMapping("{presentationId}/image")
+    @RequestMapping(value = "{presentationId}/image", method = {RequestMethod.POST, RequestMethod.PATCH})
     public ResponseEntity<Void> updatePresentationImage(@Login Long userId, @PathVariable("presentationId") Long presentationId,
                                                           @RequestPart(required = false) List<MultipartFile> images){
-        presentationService.modifyPresentationImageWithPtDate(userId, presentationId, images);
-
+        presentationService.updatePresentationImage(userId, presentationId, images);
         return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
     }
 

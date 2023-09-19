@@ -86,7 +86,7 @@ public class PresentationService {
     /**
      * 설명회 정보 저장 (설명회 회차 정보 저장 포함)
      */
-    public PresentationCreateResponse createPresentationInfoWithPtDate(Long userId, PresentationCreateRequest request) {
+    public PresentationCreateResponse createPresentationInfo(Long userId, PresentationCreateRequest request) {
         Center center = centerRepository.findById(request.getCenterId())
                 .orElseThrow(() -> new CenterException(CenterErrorResult.CENTER_NOT_EXIST));
 
@@ -115,7 +115,7 @@ public class PresentationService {
     /**
      * 설명회 정보 수정 ( 설명회 회차 정보 수정 포함)
      */
-    public void updatePresentationInfoWithPtDate(Long userId, PresentationUpdateRequest request) {
+    public void updatePresentationInfo(Long userId, PresentationUpdateRequest request) {
 
         Presentation presentation = getPresentation(request.getPresentationId());
 
@@ -175,24 +175,12 @@ public class PresentationService {
     }
 
     /**
-     * 설명회 이미지 저장
+     * 설명회 이미지 저장 및 수정
      */
-    public void savePresentationImageWithPtDate(Long presentationId, List<MultipartFile> images) {
+    public void updatePresentationImage(Long userId, Long presentationId, List<MultipartFile> images) {
         Presentation presentation = getPresentation(presentationId);
 
-        imageService.saveInfoImages(images, presentation);
-    }
-
-
-
-    /**
-     * 설명회 이미지 수정
-     */
-    public void modifyPresentationImageWithPtDate(Long userId, Long presentationId, List<MultipartFile> images) {
-
-        Presentation presentation = getPresentation(presentationId);
-
-       getTeacher(userId).canWrite(presentation.getCenter().getId());
+        getTeacher(userId).canWrite(presentation.getCenter().getId());
 
         imageService.saveInfoImages(images, presentation);
     }
@@ -271,7 +259,6 @@ public class PresentationService {
                 .orElseThrow(() -> new PresentationException(PresentationErrorResult.PTDATE_NOT_EXIST));
 
     }
-
 
 
 }
