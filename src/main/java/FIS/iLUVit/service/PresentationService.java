@@ -7,7 +7,7 @@ import FIS.iLUVit.domain.*;
 import FIS.iLUVit.domain.enumtype.Status;
 import FIS.iLUVit.exception.*;
 import FIS.iLUVit.repository.*;
-import FIS.iLUVit.dto.parent.ParentResponse;
+import FIS.iLUVit.dto.parent.PresentationByParentResponse;
 import FIS.iLUVit.dto.presentation.PtDateDetailDto;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -223,30 +223,31 @@ public class PresentationService {
     /**
      * 설명회 예약 학부모 전체 조회 (예약명단)
      */
-    public List<ParentResponse> findParentListWithRegisterParticipation(Long userId, Long ptDateId) {
-
+    public List<PresentationByParentResponse> findParentListWithRegisterParticipation(Long userId, Long ptDateId) {
         PtDate ptDate = getPtDate(ptDateId);
-
         getTeacher(userId).canRead(ptDate.getPresentation().getCenter().getId());
 
-        return ptDate.getParticipations().stream()
-                .filter(participation -> participation.getStatus().equals(Status.JOINED))
-                .map(participation -> new ParentResponse(participation.getParent()))
-                .collect(Collectors.toList());
+        List<PresentationByParentResponse> responses = participationRepository.findByPtDateAndStatus(ptDate, Status.JOINED).stream()
+                .map(Participation::getParent)
+                .map(PresentationByParentResponse::of)
+                .collect(toList());
+
+        return responses;
     }
 
     /**
      * 설명회 대기 학부모 전체 조회 (대기명단)
      */
-    public List<ParentResponse> findParentListWithWaitingParticipation(Long userId, Long ptDateId) {
-
+    public List<PresentationByParentResponse> findParentListWithWaitingParticipation(Long userId, Long ptDateId) {
         PtDate ptDate = getPtDate(ptDateId);
-
         getTeacher(userId).canRead(ptDate.getPresentation().getCenter().getId());
 
-        return waitingRepository.findByPtDate(ptDate).stream()
-                .map(participation -> new ParentResponse(participation.getParent()))
-                .collect(Collectors.toList());
+        List<PresentationByParentResponse> responses = waitingRepository.findByPtDate(ptDate).stream()
+                .map(Waiting::getParent)
+                .map(PresentationByParentResponse::of)
+                .collect(toList());
+
+        return responses;
     }
 
     /**

@@ -3,7 +3,7 @@ package FIS.iLUVit.controller;
 import FIS.iLUVit.config.argumentResolver.Login;
 import FIS.iLUVit.dto.presentation.*;
 import FIS.iLUVit.service.PresentationService;
-import FIS.iLUVit.dto.parent.ParentResponse;
+import FIS.iLUVit.dto.parent.PresentationByParentResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Pageable;
@@ -104,8 +104,8 @@ public class PresentationController {
      * 설명회 예약 학부모 전체 조회 (예약명단)
      */
     @GetMapping("pt-date/{ptDateId}/participating")
-    public ResponseEntity<List<ParentResponse>> getParentParticipate(@Login Long userId, @PathVariable("ptDateId") Long ptDateId){
-        List<ParentResponse> responses = presentationService.findParentListWithRegisterParticipation(userId, ptDateId);
+    public ResponseEntity<List<PresentationByParentResponse>> getParentParticipate(@Login Long userId, @PathVariable("ptDateId") Long ptDateId){
+        List<PresentationByParentResponse> responses = presentationService.findParentListWithRegisterParticipation(userId, ptDateId);
         return ResponseEntity.ok().body(responses);
     }
 
@@ -113,8 +113,8 @@ public class PresentationController {
      * 설명회 대기 학부모 전체 조회 (대기명단)
      */
     @GetMapping("pt-date/{ptDateId}/waiting")
-    public ResponseEntity<List<ParentResponse>> getParentWait(@Login Long userId, @PathVariable("ptDateId") Long ptDateId){
-        List<ParentResponse> responses = presentationService.findParentListWithWaitingParticipation(userId, ptDateId);
+    public ResponseEntity<List<PresentationByParentResponse>> getParentWait(@Login Long userId, @PathVariable("ptDateId") Long ptDateId){
+        List<PresentationByParentResponse> responses = presentationService.findParentListWithWaitingParticipation(userId, ptDateId);
         return ResponseEntity.ok().body(responses);
     }
 
