@@ -26,32 +26,30 @@ public class PtDateDetailDto {
     private Long waitingId;
     private Boolean isWaiting;
 
-    public PtDateDetailDto(PtDate ptDate) {
-        ptDateId = ptDate.getId();
-        date = ptDate.getDate();
-        time = ptDate.getTime();
-        ablePersonNum = ptDate.getAblePersonNum();
-        participantCnt = ptDate.getParticipantCnt();
-        waitingCnt = ptDate.getWaitingCnt();
-    }
-
-    public static PtDateDetailDto of(PtDate ptDate, Participation participation, Waiting waiting) {
-        PtDateDetailDto.PtDateDetailDtoBuilder builder = PtDateDetailDto.builder()
+    public static PtDateDetailDto from(PtDate ptDate){
+        return PtDateDetailDto.builder()
                 .ptDateId(ptDate.getId())
                 .date(ptDate.getDate())
                 .time(ptDate.getTime())
                 .ablePersonNum(ptDate.getAblePersonNum())
                 .participantCnt(ptDate.getParticipantCnt())
-                .waitingCnt(ptDate.getWaitingCnt());
+                .waitingCnt(ptDate.getWaitingCnt())
+                .build();
 
-        if (participation != null) {
-            builder.participantId(participation.getId()).isParticipant(true);
-        }
+    }
 
-        if (waiting != null) {
-            builder.waitingId(waiting.getId()).isWaiting(true);
-        }
-
-        return builder.build();
+    public static PtDateDetailDto of(PtDate ptDate, Participation participation, Waiting waiting) {
+        return PtDateDetailDto.builder()
+                .ptDateId(ptDate.getId())
+                .date(ptDate.getDate())
+                .time(ptDate.getTime())
+                .ablePersonNum(ptDate.getAblePersonNum())
+                .participantCnt(ptDate.getParticipantCnt())
+                .waitingCnt(ptDate.getWaitingCnt())
+                .participantId(participation.getId())
+                .isParticipant(true)
+                .waitingId(waiting.getId())
+                .isWaiting(true)
+                .build();
     }
 }

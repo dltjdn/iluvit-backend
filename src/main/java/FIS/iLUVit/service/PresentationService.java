@@ -210,7 +210,14 @@ public class PresentationService {
      */
     public PresentationFindOneResponse findPresentationDetails(Long presentationId) {
         Presentation presentation = getPresentation(presentationId);
-        return new PresentationFindOneResponse(presentation, imageService.getInfoImages(presentation.getInfoImagePath()));
+
+        List<String> infoImages = imageService.getInfoImages(presentation.getInfoImagePath());
+
+        List<PtDateDetailDto> ptDateDetailDtos = ptDateRepository.findByPresentation(presentation).stream()
+                .map(PtDateDetailDto::from)
+                .collect(toList());
+
+        return PresentationFindOneResponse.of(presentation, infoImages, ptDateDetailDtos);
     }
 
     /**

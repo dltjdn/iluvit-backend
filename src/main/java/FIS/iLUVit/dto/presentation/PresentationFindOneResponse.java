@@ -27,19 +27,6 @@ public class PresentationFindOneResponse {
     private List<String> images = new ArrayList<>();
     List<PtDateDetailDto> ptDateDtos = new ArrayList<>();
 
-
-    public PresentationFindOneResponse(Presentation presentation, List<String> encodedInfoImage){
-        presentationId = presentation.getId();
-        startDate = presentation.getStartDate();
-        endDate = presentation.getEndDate();
-        place = presentation.getPlace();
-        content = presentation.getContent();
-        imgCnt = presentation.getImgCnt();
-        videoCnt = presentation.getVideoCnt();
-        images = encodedInfoImage;
-        presentation.getPtDates().forEach(ptDate -> ptDateDtos.add(new PtDateDetailDto(ptDate)));
-    }
-
     public static PresentationFindOneResponse of(Presentation presentation, List<String> images, List<PtDateDetailDto> ptDateDtos){
 
         return PresentationFindOneResponse.builder()
