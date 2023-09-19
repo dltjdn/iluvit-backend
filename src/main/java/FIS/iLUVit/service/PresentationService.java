@@ -189,13 +189,20 @@ public class PresentationService {
      * 교사용 설명회 전체 조회
      */
     public List<PresentationForTeacherResponse> findPresentationListByCenter(Long userId, Long centerId, Pageable pageable) {
-        //
+
         getTeacher(userId).canRead(centerId);
-        return presentationRepository.findByCenterId(centerId, pageable)
-                .stream().map(data -> {
-                    PresentationForTeacherResponse result = new PresentationForTeacherResponse(data,imageService.getInfoImages(data.getPresentationInfoImage()));
-                    return result;
-                }).collect(toList());
+
+        Center center = centerRepository.findById(centerId)
+                .orElseThrow(() -> new CenterException(CenterErrorResult.CENTER_NOT_EXIST));
+
+        List<PresentationForTeacherResponse> response = presentationRepository.findByCenter(center).stream()
+                .map(presentation -> {
+                    List<String> infoImages = imageService.getInfoImages(presentation.getInfoImagePath());
+                    return PresentationForTeacherResponse.of(presentation, infoImages);
+                })
+                .collect(toList());
+
+        return response;
     }
 
     /**

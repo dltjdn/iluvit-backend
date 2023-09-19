@@ -4,6 +4,7 @@ import FIS.iLUVit.domain.Center;
 import FIS.iLUVit.domain.Presentation;
 import FIS.iLUVit.dto.presentation.PresentationForTeacherDto;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Slice;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -17,7 +18,7 @@ import java.util.Optional;
 public interface PresentationRepository extends JpaRepository<Presentation, Long>, PresentationRepositoryCustom {
 
     /**
-     * 해당 시설의 현재 진행중인 설명회를 조회합니다
+     * 해당 시설의 현재 진행중인 설명회를 조회합니다.
      */
     @Query("SELECT presentation FROM Presentation presentation " +
             "WHERE presentation.center.id = :centerId " +
@@ -25,19 +26,13 @@ public interface PresentationRepository extends JpaRepository<Presentation, Long
             "AND presentation.endDate >= :date")
     List<Presentation> findByCenterAndDate(@Param("centerId") Long centerId, @Param("date") LocalDate date);
 
-
-    /*
-        설명회 시설 id로 선생님을 위한 설명회 DTO 리스트를 불러옵니다.
+    /**
+     * 해당 시설에 대한 설명회를 조회합니다.
      */
-    @Query("select new FIS.iLUVit.dto.presentation.PresentationForTeacherDto(p.id, p.startDate, p.endDate, p.place, p.content, p.infoImagePath) " +
-            "from Presentation p " +
-            "where p.center.id = :centerId")
-    List<PresentationForTeacherDto> findByCenterId(@Param("centerId") Long centerId, Pageable pageable);
-
-
+    List<Presentation> findByCenter(Center center);
 
     /**
-        해당 시설에 대한 설명회 중 설명회 종료일이 현재 날짜 이후인 것을 조회합니다
+        해당 시설에 대한 설명회 중 설명회 종료일이 현재 날짜 이후인 것을 조회합니다.
      */
     Optional<Presentation> findByCenterAndEndDateAfter(Center center, LocalDate date);
 

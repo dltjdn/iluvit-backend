@@ -1,6 +1,8 @@
 package FIS.iLUVit.dto.presentation;
 
+import FIS.iLUVit.domain.Presentation;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -10,6 +12,7 @@ import java.util.List;
 @Getter
 @AllArgsConstructor
 @NoArgsConstructor
+@Builder
 public class PresentationForTeacherResponse {
     private Long presentationId;
     private LocalDate startDate;          // 설명회 신청 기간
@@ -19,13 +22,16 @@ public class PresentationForTeacherResponse {
     private List<String> presentationInfoImage;
     private boolean periodValid;
 
-    public PresentationForTeacherResponse(PresentationForTeacherDto dto,List<String> presentationInfoImage) {
-        this.presentationId = dto.getPresentationId();
-        this.startDate = dto.getStartDate();
-        this.endDate = dto.getEndDate();
-        this.place = dto.getPlace();
-        this.content = dto.getContent();
-        this.periodValid = !LocalDate.now().isAfter(endDate);
-        this.presentationInfoImage=presentationInfoImage;
+    public static PresentationForTeacherResponse of(Presentation presentation, List<String> presentationInfoImages){
+        return PresentationForTeacherResponse.builder()
+                .presentationId(presentation.getId())
+                .startDate(presentation.getStartDate())
+                .endDate(presentation.getEndDate())
+                .place(presentation.getPlace())
+                .content(presentation.getContent())
+                .presentationInfoImage(presentationInfoImages)
+                .periodValid(LocalDate.now().isBefore(presentation.getEndDate()))
+                .build();
+
     }
 }
