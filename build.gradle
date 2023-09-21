@@ -13,7 +13,7 @@ plugins {
 }
 
 group = 'FIS'
-version = project.findProperty("version") ?: '1.0.0'
+version = project.findProperty("version")
 sourceCompatibility = '11'
 
 configurations {
