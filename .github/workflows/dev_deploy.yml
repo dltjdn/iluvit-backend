@@ -4,6 +4,9 @@ on:
   push:
     branches:
       - release
+  pull_request:
+    branches:
+      - release
 
 env:
   AWS_REGION: ap-northeast-2
@@ -56,11 +59,25 @@ jobs:
           echo "${{ secrets.SECURITY_YML }}" > ./application-security.yml
           touch ./application-auth.yml
           echo "${{ secrets.AUTH_YML }}" > ./application-auth.yml  
-    
 
-      # (4) Gradle build (Test 제외)
+      # (8) PR 제목 검증 및 시맨틱 버전 정보 추출
+      - name: Extract Semantic Version
+        id: extract_semantic_version
+        run: |
+          PR_TITLE=$(curl -s -H "Authorization: token ${{ secrets.REPO_ACCESS_TOKEN }}" \
+            "https://api.github.com/repos/${{ github.repository }}/pulls/${{ github.event.pull_request.number }}" | jq -r .title)
+          if [[ ! "$PR_TITLE" =~ ^v[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
+            echo "Invalid PR title format: $PR_TITLE. PR title must be in the format 'vX.Y.Z'."
+            exit 1
+          fi
+          echo "::set-output name=SEMANTIC_VERSION::$(echo $PR_TITLE | grep -oE 'v[0-9]+\.[0-9]+\.[0-9]+' | sed 's/v//')"
+
+      # (4) Gradle build (시맨틱 버전 정보 설정, Test 제외)
       - name: Build with Gradle
-        run : ./gradlew clean build --exclude-task test
+        run : |
+          SEMANTIC_VERSION="${{ steps.extract_semantic_version.outputs.SEMANTIC_VERSION }}"
+          echo "version=$SEMANTIC_VERSION" > ./gradle.properties
+          ./gradlew clean build --exclude-task test
 
       # (5) AWS 인증 (IAM 사용자 Access Key, Secret Key 활용)
       - name: Configure AWS credentials
@@ -78,6 +95,7 @@ jobs:
             --ignore-hidden-files \
             --s3-location s3://$S3_BUCKET_NAME/$GITHUB_SHA.zip \
             --source .
+
       # (7) S3 버킷에 있는 파일을 대상으로 CodeDeploy 실행
       - name: Deploy to AWS EC2 from S3
         run: |
