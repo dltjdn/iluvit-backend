@@ -76,6 +76,7 @@ jobs:
       - name: Build with Gradle
         run : |
           SEMANTIC_VERSION="${{ steps.extract_semantic_version.outputs.SEMANTIC_VERSION }}"
+          chmod +w ./gradle.properties
           echo "version=$SEMANTIC_VERSION" > ./gradle.properties
           ./gradlew clean build --exclude-task test
 
