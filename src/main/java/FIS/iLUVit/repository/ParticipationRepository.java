@@ -15,6 +15,10 @@ import java.util.List;
 import java.util.Optional;
 
 public interface ParticipationRepository extends JpaRepository<Participation, Long> {
+    /**
+     * 해당하는 설명회 회차의 설명회 참여 리스트를 조회합니다.
+     */
+    List<Participation> findByPtDate(PtDate ptDate);
 
     /**
      * 해당하는 설명회 회차와 상태의 설명회 참여 리스트를 조회합니다.

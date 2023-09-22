@@ -87,13 +87,7 @@ public class Teacher extends User {
         this.phoneNumber = request.getPhoneNum();
     }
 
-    public Teacher canWrite(Long centerId) {
-        if(approval != Approval.ACCEPT || !Objects.equals(centerId, center.getId()))
-            throw new CenterException(CenterErrorResult.AUTHENTICATION_FAILED);
-        return this;
-    }
-
-    public Teacher canRead(Long centerId){
+    public Teacher checkPermission(Long centerId) {
         if(approval != Approval.ACCEPT || !Objects.equals(centerId, center.getId()))
             throw new CenterException(CenterErrorResult.AUTHENTICATION_FAILED);
         return this;

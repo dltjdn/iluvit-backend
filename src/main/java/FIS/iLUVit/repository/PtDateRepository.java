@@ -13,13 +13,7 @@ import java.util.Set;
 
 public interface PtDateRepository extends JpaRepository<PtDate, Long> {
 
-    /*
-        ptDateKeysDeleteTarget에 해당하는 id를 가진 PtDate들을 삭제합니다.
-     */
-    @Modifying
-    @Query("delete from PtDate ptdate where ptdate.id in :ptDateKeys")
-    void deletePtDateByIds(@Param("ptDateKeys") Set<Long> ptDateKeysDeleteTarget);
-
     List<PtDate> findByPresentation(Presentation presentation);
+    void deleteByIdIn(List<Long> ptDateIds);
 
 }

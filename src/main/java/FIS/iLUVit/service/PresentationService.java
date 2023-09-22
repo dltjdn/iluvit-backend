@@ -1,7 +1,5 @@
 package FIS.iLUVit.service;
 
-import FIS.iLUVit.domain.alarms.Alarm;
-import FIS.iLUVit.domain.alarms.ConvertedToParticipateAlarm;
 import FIS.iLUVit.dto.presentation.*;
 import FIS.iLUVit.domain.*;
 import FIS.iLUVit.domain.enumtype.Status;
@@ -16,11 +14,8 @@ import org.springframework.data.domain.Slice;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
-
 import java.time.LocalDate;
 import java.util.*;
-import java.util.stream.Collectors;
-
 import static java.util.stream.Collectors.*;
 
 @Service
@@ -36,9 +31,10 @@ public class PresentationService {
     private final TeacherRepository teacherRepository;
     private final WaitingRepository waitingRepository;
     private final ParticipationRepository participationRepository;
-    private final AlarmRepository alarmRepository;
     private final ParentRepository parentRepository;
     private final AlarmService alarmService;
+    private final ParticipationService participationService;
+    private final WaitingService waitingService;
 
     /**
      * 필터 기반 설명회 검색
@@ -87,10 +83,9 @@ public class PresentationService {
      * 설명회 정보 저장 (설명회 회차 정보 저장 포함)
      */
     public PresentationCreateResponse createPresentationInfo(Long userId, PresentationCreateRequest request) {
-        Center center = centerRepository.findById(request.getCenterId())
-                .orElseThrow(() -> new CenterException(CenterErrorResult.CENTER_NOT_EXIST));
+        Center center = getCenter(request.getCenterId());
 
-        getTeacher(userId).canWrite(center.getId());  // 글 쓸 권한 있는지 체크
+        getTeacher(userId, center.getId());  // 글 쓸 권한 있는지 체크
 
         // 끝나지 않은 설명회 하나라도 있으면 오류
         presentationRepository.findByCenterAndEndDateAfter(center, LocalDate.now())
@@ -104,7 +99,7 @@ public class PresentationService {
         presentationRepository.save(presentation);
 
         // 시설을 북마크한 사용자에게 '설명회 생성' 알림 전송
-        alarmService.sendPresentationCreatedAlarm(center,presentation);
+        alarmService.sendPresentationCreatedAlarms(center,presentation);
 
         List<Long> ptDateIds = ptDates.stream().map(PtDate::getId).collect(toList());
 
@@ -119,60 +114,34 @@ public class PresentationService {
 
         Presentation presentation = getPresentation(request.getPresentationId());
 
-        getTeacher(userId).canWrite(presentation.getCenter().getId());
+        getTeacher(userId, presentation.getCenter().getId());
 
-        // 데이터 베이스에 저장되어있는 ptDate 목록
-        Map<Long, PtDate> ptDateMap = presentation.getPtDates()
-                .stream()
-                .collect(toMap(PtDate::getId,
-                        ptDate -> ptDate));
+        request.getPtDateDtos().forEach(ptDateDto -> {
+                    Long ptDateId = ptDateDto.getPtDateId();
 
-        // requst의 ptdate 정보
-        request.getPtDateDtos().forEach(ptDateModifyDto -> {
-            if(ptDateModifyDto.getPtDateId() == null) {
-                PtDate register = PtDate.createPtDate(presentation, ptDateModifyDto);
-                ptDateRepository.save(register);
-            }
-            else {
-                PtDate ptDate = ptDateMap.get(ptDateModifyDto.getPtDateId());
-                if(ptDate == null)
-                    throw new PresentationException(PresentationErrorResult.WRONG_PTDATE_REQUEST);
-                if(ptDateModifyDto.getAblePersonNum() > ptDate.getAblePersonNum() && ptDate.hasWaiting()){
-                    // 추가 수용 가능 인원 숫자 체크
-                    Integer changeNum = ptDateModifyDto.getAblePersonNum() - ptDate.getAblePersonNum();
-                    // 추가 수용될 인원 추출
-                    List<Waiting> waitings = waitingRepository.findByPtDateAndWaitingOrderLessThanEqual(ptDate, changeNum);
-                    // 추가 수용될 인원 id 만 추출
-                    List<Long> waitingIds = waitings.stream().map(Waiting::getId).collect(toList());
-                    // 수용 인원들 waiting 에서 삭제
-                    waitingRepository.deleteAllByIdInBatch(waitingIds);
-                    // 수용 외의 인원들 order 감소
-                    waitingRepository.updateWaitingOrderForPtDateChange(changeNum, ptDate);
-                    ptDate.updateWaitingCntForPtDateChange(waitingIds.size());
-                    waitings.forEach(waiting -> {
-                        Participation andRegisterForWaitings = Participation.createAndRegisterForWaitings(waiting.getParent(), presentation, ptDate, ptDate.getParticipations());
-                        Alarm alarm = new ConvertedToParticipateAlarm(waiting.getParent(), presentation, presentation.getCenter());
-                        alarmRepository.save(alarm);
-                        String type = "아이러빗";
-                        AlarmUtils.publishAlarmEvent(alarm, type);
+                    if (ptDateId == null) { // 새로운 설명회 회차일 때
+                        PtDate ptDate = PtDate.createPtDate(presentation, ptDateDto);
+                        ptDateRepository.save(ptDate);
 
-                        participationRepository.save(andRegisterForWaitings);
-                    });
+                    } else { // 기존 설명회 회차 정보를 수정할 때
+                        PtDate ptDate = ptDateRepository.findById(ptDateId)
+                                .orElseThrow(() -> new PresentationException(PresentationErrorResult.PTDATE_NOT_EXIST));
+
+                        // 수정 정보의 수용가능 인원이 현재 수용가능 인원보다 많고, 대기자가 있을 때
+                        if (ptDateDto.getAblePersonNum() > ptDate.getAblePersonNum() && ptDate.checkHasWaiting()) {
+                            extracted(presentation, ptDateDto, ptDate);
+                        }
+
+                        ptDate.updatePtDate(ptDateDto); // 설명회 회차 정보를 업데이트
+                    }
                 }
-                ptDate.update(ptDateModifyDto);
-                ptDateMap.remove(ptDate.getId());
-            }
-        });
+        );
 
-        Set<Long> ptDateKeysDeleteTarget = ptDateMap.keySet();
-        Collection<PtDate> ptDateSet = ptDateMap.values();
-
-        ptDateSet.forEach(PtDate::canDelete);
-        presentation.getPtDates().removeAll(ptDateSet);
-        ptDateRepository.deletePtDateByIds(ptDateKeysDeleteTarget);
-        presentation.update(request);
+        // 설명회 정보 업데이트
+        presentation.updatePresentation(request);
 
     }
+
 
     /**
      * 설명회 이미지 저장 및 수정
@@ -180,7 +149,7 @@ public class PresentationService {
     public void updatePresentationImage(Long userId, Long presentationId, List<MultipartFile> images) {
         Presentation presentation = getPresentation(presentationId);
 
-        getTeacher(userId).canWrite(presentation.getCenter().getId());
+        getTeacher(userId,presentation.getCenter().getId());
 
         imageService.saveInfoImages(images, presentation);
     }
@@ -190,10 +159,9 @@ public class PresentationService {
      */
     public List<PresentationForTeacherResponse> findPresentationListByCenter(Long userId, Long centerId, Pageable pageable) {
 
-        getTeacher(userId).canRead(centerId);
+        getTeacher(userId,centerId);
 
-        Center center = centerRepository.findById(centerId)
-                .orElseThrow(() -> new CenterException(CenterErrorResult.CENTER_NOT_EXIST));
+        Center center = getCenter(centerId);
 
         List<PresentationForTeacherResponse> response = presentationRepository.findByCenter(center).stream()
                 .map(presentation -> {
@@ -225,7 +193,7 @@ public class PresentationService {
      */
     public List<PresentationByParentResponse> findParentListWithRegisterParticipation(Long userId, Long ptDateId) {
         PtDate ptDate = getPtDate(ptDateId);
-        getTeacher(userId).canRead(ptDate.getPresentation().getCenter().getId());
+        getTeacher(userId, ptDate.getPresentation().getCenter().getId());
 
         List<PresentationByParentResponse> responses = participationRepository.findByPtDateAndStatus(ptDate, Status.JOINED).stream()
                 .map(Participation::getParent)
@@ -240,7 +208,7 @@ public class PresentationService {
      */
     public List<PresentationByParentResponse> findParentListWithWaitingParticipation(Long userId, Long ptDateId) {
         PtDate ptDate = getPtDate(ptDateId);
-        getTeacher(userId).canRead(ptDate.getPresentation().getCenter().getId());
+        getTeacher(userId, ptDate.getPresentation().getCenter().getId());
 
         List<PresentationByParentResponse> responses = waitingRepository.findByPtDate(ptDate).stream()
                 .map(Waiting::getParent)
@@ -250,12 +218,29 @@ public class PresentationService {
         return responses;
     }
 
+    private void extracted(Presentation presentation, PtDateDto ptDateDto, PtDate ptDate) {
+        int capacityNum = ptDateDto.getAblePersonNum() - ptDate.getAblePersonNum();  // 추가 수용 가능 인원
+
+        // 추가 수용될 wiating 리스트 조회
+        List<Waiting> waitings = waitingRepository.findByPtDateAndWaitingOrderLessThanEqual(ptDate, capacityNum);
+
+        waitingService.updateWaitingOrdersAndDeleteWaitings(waitings,capacityNum, ptDate);
+
+        ptDate.updateWaitingCntForPtDateChange(waitings.size());
+
+        waitings.forEach(waiting ->
+                participationService.saveParticipation(waiting.getParent(),presentation,ptDate));
+
+        alarmService.sendParticipateAlarms(waitings, presentation);
+    }
+
     /**
-     * 예외처리 - 존재하는 선생님인가
+     * 예외처리 - 존재하는 권한있는 선생님인가
      */
-    private Teacher getTeacher(Long userId) {
+    private Teacher getTeacher(Long userId, Long centerId) {
         return teacherRepository.findById(userId)
-                .orElseThrow(() -> new UserException(UserErrorResult.USER_NOT_EXIST));
+                .orElseThrow(() -> new UserException(UserErrorResult.USER_NOT_EXIST))
+                .checkPermission(centerId);
     }
 
     /**
@@ -272,8 +257,16 @@ public class PresentationService {
     private PtDate getPtDate(Long ptDateId) {
         return ptDateRepository.findById(ptDateId)
                 .orElseThrow(() -> new PresentationException(PresentationErrorResult.PTDATE_NOT_EXIST));
-
     }
+
+    /**
+     * 예외처리 - 존재하는 시설인가
+     */
+    private Center getCenter(Long centerId) {
+        return centerRepository.findById(centerId)
+                .orElseThrow(() -> new CenterException(CenterErrorResult.CENTER_NOT_EXIST));
+    }
+
 
 
 }

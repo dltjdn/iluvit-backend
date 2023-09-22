@@ -68,7 +68,7 @@ public class ParticipationService {
         });
 
         // 설명회 등록
-        participationRepository.save(Participation.createAndRegister(parent, presentation, ptDate, participations));
+        participationRepository.save(Participation.createParticipation(parent, presentation, ptDate, participations));
 
         if(ptDate.getAblePersonNum() <= ptDate.getParticipantCnt()){
             teacherRepository.findByCenter(presentation.getCenter()).forEach((teacher) -> {
@@ -93,11 +93,11 @@ public class ParticipationService {
         Participation participation = participationRepository.findByIdAndStatusAndParent(participationId, JOINED, parent)
                 .orElseThrow(() -> new ParticipationException(ParticipationErrorResult.NO_RESULT));
 
-        participation.cancel(); // ptDate cnt 값을 1줄여야 한다.
+        participation.cancelParticipation(); // ptDate cnt 값을 1줄여야 한다.
 
         PtDate ptDate = participation.getPtDate();
 
-        if(ptDate.hasWaiting()){
+        if(ptDate.checkHasWaiting()){
             eventPublisher.publishEvent(new ParticipationCancelEvent(ptDate.getPresentation(), ptDate)); // 이벤트 리스너 호출
         }
     }
@@ -170,5 +170,18 @@ public class ParticipationService {
 
         return participationDtos;
     }
+
+
+    /**
+     * 설명회 참여정보를 저장한다
+     */
+    public void saveParticipation(Parent parent, Presentation presentation,PtDate ptDate){
+        List<Participation> participations = participationRepository.findByPtDate(ptDate);
+
+        Participation paticipation = Participation.createParticipation(parent, presentation, ptDate, participations);
+
+        participationRepository.save(paticipation);
+    }
+
 
 }

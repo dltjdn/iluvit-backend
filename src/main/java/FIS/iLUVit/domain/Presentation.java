@@ -2,18 +2,14 @@ package FIS.iLUVit.domain;
 
 import FIS.iLUVit.dto.presentation.PresentationCreateRequest;
 import FIS.iLUVit.dto.presentation.PresentationUpdateRequest;
+import FIS.iLUVit.exception.PresentationErrorResult;
 import FIS.iLUVit.exception.PresentationException;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import org.hibernate.annotations.Cascade;
 
 import javax.persistence.*;
 import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.List;
-
-import static org.hibernate.annotations.CascadeType.*;
 
 @Entity
 @NoArgsConstructor
@@ -32,10 +28,6 @@ public class Presentation extends BaseImageEntity {
     @JoinColumn
     private Center center;
 
-    @OneToMany(mappedBy = "presentation")
-    @Cascade({PERSIST, REMOVE})
-    private List<PtDate> ptDates = new ArrayList<>();
-
 
     @Builder
     public Presentation(LocalDate startDate, LocalDate endDate, String place, String content, Integer imgCnt, Integer videoCnt, Center center) {
@@ -50,7 +42,7 @@ public class Presentation extends BaseImageEntity {
 
     public static Presentation createPresentation(PresentationCreateRequest request, Center center){
         if(request.getEndDate().isBefore(request.getStartDate()))
-            throw new PresentationException("시작일자와 종료일자를 다시 확인해 주세요.");
+            throw new PresentationException(PresentationErrorResult.CHECK_START_AND_END_DATE);
 
         return Presentation.builder()
                 .center(center)
@@ -62,20 +54,20 @@ public class Presentation extends BaseImageEntity {
     }
 
 
-    public Presentation update(PresentationUpdateRequest request) {
+    public void updatePresentation(PresentationUpdateRequest request) {
+        if(request.getEndDate().isBefore(request.getStartDate()))
+            throw new PresentationException(PresentationErrorResult.CHECK_START_AND_END_DATE);
+
         startDate = request.getStartDate();
         endDate = request.getEndDate();
-        if(endDate.isBefore(startDate))
-            throw new PresentationException("시작일자와 종료일자를 다시 확인해 주세요.");
         content = request.getContent();
         place = request.getPlace();
-        return this;
     }
 
-    public void canRegister() {
+    public void checkCanRegister() {
         LocalDate now = LocalDate.now();
         if(now.isBefore(startDate) || now.isAfter(endDate)){
-            throw new PresentationException("신청기간이 지났습니다");
+            throw new PresentationException(PresentationErrorResult.PARTICIPATION_PERIOD_PASSED);
         }
     }
 }

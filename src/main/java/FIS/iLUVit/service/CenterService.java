@@ -165,7 +165,7 @@ public class CenterService {
     public void modifyCenterInfo(Long userId, Long centerId, CenterDetailRequest centerDetailRequest) {
         Teacher teacher = teacherRepository.findById(userId)
                 .orElseThrow(() -> new UserException(UserErrorResult.USER_NOT_EXIST))
-                .canWrite(centerId);
+                .checkPermission(centerId);
         // 해당하는 center 없으면 RuntimeException 반환
 
         Center center = teacher.getCenter();
@@ -189,7 +189,7 @@ public class CenterService {
     public void modifyCenterImage(Long userId, Long centerId, CenterImageRequest centerImageRequest) {
         Teacher teacher = teacherRepository.findById(userId)
                 .orElseThrow(() -> new UserException(UserErrorResult.USER_NOT_EXIST))
-                .canWrite(centerId);
+                .checkPermission(centerId);
 
 
         List<MultipartFile> infoImages = centerImageRequest.getInfoImages();
