@@ -38,4 +38,16 @@ public class BasicInfra {
     private Integer buildingYear = 0;           // 건축년도 ( 이걸로 신축 여부 판단하기 )
     @Builder.Default
     private Integer cctvCnt = 0;                // CCTV 갯수
+
+    public void updateSafetyInfo(Boolean hasCCTV, Integer cctvCnt) {
+        this.hasCCTV = hasCCTV;
+        this.cctvCnt = cctvCnt;
+    }
+
+    public BasicInfra(Boolean hasBus, Boolean hasPlayground, Boolean hasCCTV, Integer cctvCnt) {
+        this.hasBus = hasBus;
+        this.hasPlayground = hasPlayground;
+        this.hasCCTV = hasCCTV;
+        this.cctvCnt = cctvCnt;
+    }
 }
