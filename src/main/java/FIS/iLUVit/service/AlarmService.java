@@ -29,12 +29,13 @@ public class AlarmService {
         return alarmRepository.deleteByIds(userId, alarmIds);
     }
 
+    /**
+     * 유저 알람 전체 삭제
+     */
     public void deleteAllAlarm(Long userId){
 
-        if(userId == null)
-            throw new UserException(UserErrorResult.NOT_LOGIN);
         User user = userRepository.findById(userId)
-                .orElseThrow(() -> new UserException(UserErrorResult.NOT_VALID_TOKEN));
+                .orElseThrow(() -> new UserException(UserErrorResult.USER_NOT_EXIST));
 
         alarmRepository.deleteAllByUser(user);
     }
