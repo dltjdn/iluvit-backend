@@ -1,6 +1,7 @@
 package FIS.iLUVit.domain.embeddable;
 
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -10,6 +11,7 @@ import javax.persistence.Embeddable;
 @Getter
 @AllArgsConstructor
 @NoArgsConstructor
+@Builder
 public class TeacherInfo {
     private Integer totalCnt;           // 근속년수로 계산된 교사 총수
     private Integer dur_1;              // 근속년수 1년 미만 교사수

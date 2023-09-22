@@ -4,6 +4,7 @@ import FIS.iLUVit.dto.center.CenterDetailRequest;
 import FIS.iLUVit.domain.embeddable.*;
 import FIS.iLUVit.domain.enumtype.KindOf;
 import lombok.*;
+import lombok.extern.slf4j.Slf4j;
 
 import javax.persistence.*;
 import java.time.LocalDate;
@@ -12,6 +13,7 @@ import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+@Slf4j
 @Entity
 @Inheritance(strategy = InheritanceType.JOINED)
 @DiscriminatorValue("null")
@@ -28,7 +30,7 @@ public class Center extends BaseImageEntity {
     protected String owner;                   // 대표자명
     protected String director;                // 원장명
     protected String estType;                 // 설립유형
-    protected String status;                  //
+    protected String status;                  // 운영현황 (정상, 휴지, 폐지, 재개)
     protected String estDate;                 // 개원일
     protected String tel;                     // 전화번호
     protected String homepage;                // 홈페이지 주소
@@ -37,7 +39,7 @@ public class Center extends BaseImageEntity {
     protected Integer minAge;                 // 시설이 관리하는 연령대
     protected Integer maxAge;                 //
     protected String address;                 // 주소
-    protected String addressDetail;
+    protected String addressDetail;           // 상세 주소
     protected String zipcode;                 // 우편번호
     @Embedded
     protected Area area;
@@ -53,7 +55,7 @@ public class Center extends BaseImageEntity {
     @Lob
     protected String introText;               // 시설 소개글
     protected Integer videoCnt;               // 시설 동영상 갯수 최대 5개
-    protected Integer score;                    // 시설 order By 기준 중 하나
+    protected Integer score;                  // 시설 order By 기준 중 하나
     protected String addInfo;
     protected String program;
 

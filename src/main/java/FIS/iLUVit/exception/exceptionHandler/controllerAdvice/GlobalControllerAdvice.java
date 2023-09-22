@@ -4,14 +4,11 @@ import FIS.iLUVit.exception.*;
 import FIS.iLUVit.exception.exceptionHandler.ErrorResponse;
 import FIS.iLUVit.exception.exceptionHandler.ErrorResult;
 import FIS.iLUVit.exception.exceptionHandler.SlackErrorLogger;
+
 import com.auth0.jwt.exceptions.JWTVerificationException;
-import com.slack.api.Slack;
-import com.slack.api.model.Attachment;
-import com.slack.api.model.Field;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import net.nurigo.sdk.message.exception.NurigoBadRequestException;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.support.DefaultMessageSourceResolvable;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.dao.InvalidDataAccessApiUsageException;
@@ -26,6 +23,7 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
+
 import javax.servlet.http.HttpServletRequest;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -445,6 +443,15 @@ public class GlobalControllerAdvice extends ResponseEntityExceptionHandler {
                 e.getErrorResult().getMessage()
         );
         slackErrorLogger.sendSlackAlertWarnLog(e.getErrorResult().getMessage(), request); // 슬랙 알림 보내는 메서드
+        return makeErrorResponseEntity(e.getErrorResult());
+    }
+
+    /**
+     * Data 관련 에러 등록
+     */
+    @ExceptionHandler(DataException.class)
+    public ResponseEntity<ErrorResponse> dataException(DataException e) {
+        log.warn("[DataException] ex", e);
         return makeErrorResponseEntity(e.getErrorResult());
     }
 
