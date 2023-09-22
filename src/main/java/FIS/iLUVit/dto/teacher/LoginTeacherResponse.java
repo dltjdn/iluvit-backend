@@ -8,13 +8,13 @@ import lombok.Getter;
 @Getter
 public class LoginTeacherResponse extends UserDto {
 
-    private Long center_id;
+    private Long centerId;
     private Approval approval;
 
     public LoginTeacherResponse(Teacher teacher) {
         super(teacher);
         if (teacher.getCenter() != null) {
-            this.center_id = teacher.getCenter().getId();
+            this.centerId = teacher.getCenter().getId();
             this.approval = teacher.getApproval();
         }
     }

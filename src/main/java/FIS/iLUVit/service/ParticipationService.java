@@ -2,6 +2,7 @@ package FIS.iLUVit.service;
 
 import FIS.iLUVit.domain.*;
 import FIS.iLUVit.domain.alarms.Alarm;
+import FIS.iLUVit.domain.enumtype.NotificationTitle;
 import FIS.iLUVit.dto.participation.ParticipationResponse;
 import FIS.iLUVit.domain.alarms.PresentationFullAlarm;
 import FIS.iLUVit.domain.enumtype.Status;
@@ -74,8 +75,7 @@ public class ParticipationService {
             teacherRepository.findByCenter(presentation.getCenter()).forEach((teacher) -> {
                 Alarm alarm = new PresentationFullAlarm(teacher, presentation, presentation.getCenter());
                 alarmRepository.save(alarm);
-                String type = "아이러빗";
-                AlarmUtils.publishAlarmEvent(alarm, type);
+                AlarmUtils.publishAlarmEvent(alarm, NotificationTitle.ILUVIT.getDescription());
             });
         }
     }

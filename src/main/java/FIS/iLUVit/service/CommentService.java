@@ -1,6 +1,7 @@
 package FIS.iLUVit.service;
 
 import FIS.iLUVit.domain.alarms.Alarm;
+import FIS.iLUVit.domain.enumtype.NotificationTitle;
 import FIS.iLUVit.dto.comment.CommentPostResponse;
 import FIS.iLUVit.dto.comment.CommentCreateRequest;
 import FIS.iLUVit.domain.Comment;
@@ -87,8 +88,7 @@ public class CommentService {
         if (!user.equals(post.getUser()) && !blockedUsers.contains(user)) { // 본인 게시글에 댓글단 건 알림 X
             Alarm alarm = new PostAlarm(post.getUser(), post, comment);
             alarmRepository.save(alarm);
-            String type = "아이러빗";
-            AlarmUtils.publishAlarmEvent(alarm, type);
+            AlarmUtils.publishAlarmEvent(alarm, NotificationTitle.ILUVIT.getDescription());
         }
         commentRepository.save(comment);
     }
