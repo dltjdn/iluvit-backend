@@ -88,8 +88,11 @@ public class PresentationService {
         getTeacher(userId, center.getId());  // 글 쓸 권한 있는지 체크
 
         // 끝나지 않은 설명회 하나라도 있으면 오류
-        presentationRepository.findByCenterAndEndDateAfter(center, LocalDate.now())
-                .ifPresent((presentation) -> new PresentationException(PresentationErrorResult.PRESENTATION_ALREADY_EXIST));
+        if(!presentationRepository.findByCenterAndEndDateAfter(center, LocalDate.now()).isEmpty()){
+            throw new PresentationException(PresentationErrorResult.PRESENTATION_ALREADY_EXIST);
+        }
+
+
 
         // 설명회, 설명회 회차 생성 및 저장
         Presentation presentation = Presentation.createPresentation(request, center);

@@ -34,6 +34,6 @@ public interface PresentationRepository extends JpaRepository<Presentation, Long
     /**
         해당 시설에 대한 설명회 중 설명회 종료일이 현재 날짜 이후인 것을 조회합니다.
      */
-    Optional<Presentation> findByCenterAndEndDateAfter(Center center, LocalDate date);
+    List<Presentation> findByCenterAndEndDateAfter(Center center, LocalDate date);
 
 }
