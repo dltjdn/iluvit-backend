@@ -1,9 +1,8 @@
 package FIS.iLUVit.service;
 
-import FIS.iLUVit.domain.Center;
-import FIS.iLUVit.domain.Presentation;
-import FIS.iLUVit.domain.User;
+import FIS.iLUVit.domain.*;
 import FIS.iLUVit.domain.alarms.Alarm;
+import FIS.iLUVit.domain.alarms.ConvertedToParticipateAlarm;
 import FIS.iLUVit.domain.alarms.PresentationCreatedAlarm;
 import FIS.iLUVit.dto.alarm.AlarmDeleteRequest;
 import FIS.iLUVit.dto.alarm.AlarmResponse;
@@ -99,7 +98,10 @@ public class AlarmService {
         alarmRepository.deleteAllByUser(user);
     }
 
-    public void sendPresentationCreatedAlarm(Center center, Presentation presentation) {
+    /**
+     * 설명회 생성 알람을 전송합니다
+     */
+    public void sendPresentationCreatedAlarms(Center center, Presentation presentation) {
         centerBookmarkRepository.findByCenter(center).forEach(prefer -> {
             Alarm alarm = new PresentationCreatedAlarm(prefer.getParent(), presentation, center);
             alarmRepository.save(alarm);
@@ -107,5 +109,26 @@ public class AlarmService {
             AlarmUtils.publishAlarmEvent(alarm, type);
         });
     }
+
+    /**
+     * 설명회 참여 알림을 전송합니다
+     */
+    public void sendParticipateAlarms(List<Waiting> waitings, Presentation presentation){
+        waitings.forEach(waiting -> {
+            Alarm alarm = new ConvertedToParticipateAlarm(waiting.getParent(), presentation, presentation.getCenter());
+            alarmRepository.save(alarm);
+            String type = "아이러빗";
+            AlarmUtils.publishAlarmEvent(alarm, type);
+
+        });
+    }
+    public void sendParticipateAlarm(Waiting waiting, Presentation presentation){
+        Alarm alarm = new ConvertedToParticipateAlarm(waiting.getParent(), presentation, presentation.getCenter());
+        alarmRepository.save(alarm);
+        String type = "아이러빗";
+        AlarmUtils.publishAlarmEvent(alarm, type);
+    }
+
+
 
 }
