@@ -132,7 +132,7 @@ public class PresentationService {
 
                         // 수정 정보의 수용가능 인원이 현재 수용가능 인원보다 많고, 대기자가 있을 때
                         if (ptDateDto.getAblePersonNum() > ptDate.getAblePersonNum() && ptDate.checkHasWaiting()) {
-                            extracted(presentation, ptDateDto, ptDate);
+                            moveWaitingListToParticipants(presentation, ptDateDto, ptDate);
                         }
 
                         ptDate.updatePtDate(ptDateDto); // 설명회 회차 정보를 업데이트
@@ -221,7 +221,7 @@ public class PresentationService {
         return responses;
     }
 
-    private void extracted(Presentation presentation, PtDateDto ptDateDto, PtDate ptDate) {
+    private void moveWaitingListToParticipants(Presentation presentation, PtDateDto ptDateDto, PtDate ptDate) {
         int capacityNum = ptDateDto.getAblePersonNum() - ptDate.getAblePersonNum();  // 추가 수용 가능 인원
 
         // 추가 수용될 wiating 리스트 조회
