@@ -40,6 +40,7 @@ public class UserService {
     private final ExpoTokenRepository expoTokenRepository;
     private final AlarmService alarmService;
     private final BlackUserRepository blackUserRepository;
+    private final BoardBookmarkService boardBookmarkService;
 
     /**
      * 작성자: 이승범
@@ -246,6 +247,9 @@ public class UserService {
                 scrapService.deleteScrapDir(userId, scrapDir.getId());
             };
         });
+
+        // 유저 북마크 전체 삭제
+        boardBookmarkService.deleteAllBookmark(userId);
 
         //유저 알람 전체 삭제
         alarmService.deleteAllAlarm(userId);

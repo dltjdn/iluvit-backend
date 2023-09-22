@@ -46,5 +46,6 @@ public interface BoardBookmarkRepository extends JpaRepository<Bookmark, Long> {
         사용자별로 즐겨찾기 리스트를 조회합니다.
     */
     List<Bookmark> findByUser(User user);
+    void deleteAllByUser(User user);
 
 }

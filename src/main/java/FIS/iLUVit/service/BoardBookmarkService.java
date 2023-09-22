@@ -127,4 +127,10 @@ public class BoardBookmarkService {
         boardBookmarkRepository.delete(findBookmark);
         return bookmarkId;
    }
+
+    public void deleteAllBookmark(Long userId) {
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new UserException(UserErrorResult.USER_NOT_EXIST));
+        boardBookmarkRepository.deleteAllByUser(user);
+    }
 }

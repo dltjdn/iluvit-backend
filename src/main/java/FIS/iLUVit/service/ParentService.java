@@ -152,7 +152,7 @@ public class ParentService {
         Parent parent = parentRepository.findById(userId)
                 .orElseThrow(() -> new UserException(UserErrorResult.NOT_VALID_TOKEN));
 
-        // 찜한 시설 리스트 삭제
+        // 시설 즐겨찾기 리스트 삭제
         centerBookmarkRepository.findByParent(parent).forEach(centerBookmark -> {
             centerBookmarkService.deleteCenterBookmark(userId, centerBookmark.getCenter().getId());
         });
