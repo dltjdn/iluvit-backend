@@ -29,6 +29,9 @@ public class AlarmService {
         return alarmRepository.deleteByIds(userId, alarmIds);
     }
 
+    /**
+     * 유저 알람 전체 삭제
+     */
     public void deleteAllAlarm(Long userId){
 
         User user = userRepository.findById(userId)

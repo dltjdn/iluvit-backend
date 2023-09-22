@@ -128,6 +128,9 @@ public class BoardBookmarkService {
         return bookmarkId;
    }
 
+   /**
+    * 유저 북마크 전체 삭제
+    */
     public void deleteAllBookmark(Long userId) {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new UserException(UserErrorResult.USER_NOT_EXIST));
