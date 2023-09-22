@@ -38,7 +38,7 @@ public interface WaitingRepository extends JpaRepository<Waiting, Long> {
     /**
      * 해당 설명회 회차에서 대기순번이 가장 낮은 Waiting 엔티티를 조회합니다
      */
-    Waiting findFirstByPtDateOrderByWaitingOrderAsc(PtDate ptDate);
+    Optional<Waiting> findFirstByPtDateOrderByWaitingOrderAsc(PtDate ptDate);
 
     /**
      * 해당 설명회 회차의 대기순번이 changeNum보다 같거나 작은 Waiting 리스트를 조회합니다
@@ -49,6 +49,11 @@ public interface WaitingRepository extends JpaRepository<Waiting, Long> {
      * 해당 설명회 회차와 신청한 학부모로 대기 리스트를 조회합니다
      */
     Optional<Waiting> findByPtDateAndParent(PtDate ptDate, Parent parent);
+
+    /**
+     * Waiting Id 리스트를 받아 해당 Waiting들을 삭제합니다.
+     */
+    void deleteByIdIn(List<Long> waitingIds);
 
     /**
      * 주어진 ptDate에 해당하는 Waiting의 waitingOrder 값을 -changeNum 만큼 감소시킵니다
