@@ -1,6 +1,7 @@
 package FIS.iLUVit.service;
 
 import FIS.iLUVit.domain.alarms.Alarm;
+import FIS.iLUVit.domain.enumtype.NotificationTitle;
 import FIS.iLUVit.dto.chat.ChatDetailResponse;
 import FIS.iLUVit.dto.chat.ChatRoomResponse;
 import FIS.iLUVit.dto.chat.ChatRoomCreateRequest;
@@ -93,8 +94,7 @@ public class ChatService {
         if(!blockedUsers.contains(sendUser)) {
             Alarm alarm = new ChatAlarm(receiveUser, sendUser, anonymousInfo);
             alarmRepository.save(alarm);
-            String type = "아이러빗";
-            AlarmUtils.publishAlarmEvent(alarm, type);
+            AlarmUtils.publishAlarmEvent(alarm, NotificationTitle.ILUVIT.getDescription());
         }
 
         chatRepository.save(myChat);

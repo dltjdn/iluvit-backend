@@ -5,6 +5,7 @@ import FIS.iLUVit.domain.Teacher;
 import FIS.iLUVit.domain.alarms.AgentVisitedAlarm;
 import FIS.iLUVit.domain.alarms.Alarm;
 import FIS.iLUVit.domain.enumtype.Auth;
+import FIS.iLUVit.domain.enumtype.NotificationTitle;
 import FIS.iLUVit.dto.alarm.ScheduleByDateResponse;
 import FIS.iLUVit.exception.CenterErrorResult;
 import FIS.iLUVit.exception.CenterException;
@@ -50,8 +51,7 @@ public class ScheduledNotificationService {
             directors.forEach(director -> {
                 Alarm alarm = new AgentVisitedAlarm(director, Auth.DIRECTOR, director.getCenter());
                 alarmRepository.save(alarm);
-                String type = "지문등록";
-                AlarmUtils.publishAlarmEvent(alarm, type);
+                AlarmUtils.publishAlarmEvent(alarm, NotificationTitle.FINGERPRINT.getDescription());
             });
         }
     }

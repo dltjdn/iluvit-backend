@@ -2,6 +2,7 @@ package FIS.iLUVit.service;
 
 import FIS.iLUVit.domain.alarms.Alarm;
 import FIS.iLUVit.domain.embeddable.Location;
+import FIS.iLUVit.domain.enumtype.NotificationTitle;
 import FIS.iLUVit.dto.center.CenterBasicResponse;
 import FIS.iLUVit.dto.center.CenterBasicRequest;
 import FIS.iLUVit.dto.teacher.SignupTeacherRequest;
@@ -127,8 +128,7 @@ public class TeacherService {
                 if (t.getAuth() == DIRECTOR) {
                     Alarm alarm = new CenterApprovalReceivedAlarm(t, Auth.TEACHER, t.getCenter());
                     alarmRepository.save(alarm);
-                    String type = "아이러빗";
-                    AlarmUtils.publishAlarmEvent(alarm, type);
+                    AlarmUtils.publishAlarmEvent(alarm, NotificationTitle.ILUVIT.getDescription());
                 }
             });
         }
@@ -211,8 +211,7 @@ public class TeacherService {
         directors.forEach(director -> {
             Alarm alarm = new CenterApprovalReceivedAlarm(director, Auth.TEACHER, director.getCenter());
             alarmRepository.save(alarm);
-            String type = "아이러빗";
-            AlarmUtils.publishAlarmEvent(alarm, type);
+            AlarmUtils.publishAlarmEvent(alarm, NotificationTitle.ILUVIT.getDescription());
         });
 
         return teacher;

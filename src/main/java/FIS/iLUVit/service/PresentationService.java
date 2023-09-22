@@ -1,5 +1,8 @@
 package FIS.iLUVit.service;
 
+import FIS.iLUVit.domain.alarms.Alarm;
+import FIS.iLUVit.domain.alarms.ConvertedToParticipateAlarm;
+import FIS.iLUVit.domain.enumtype.NotificationTitle;
 import FIS.iLUVit.dto.presentation.*;
 import FIS.iLUVit.domain.*;
 import FIS.iLUVit.domain.enumtype.Status;
@@ -106,6 +109,7 @@ public class PresentationService {
 
         List<Long> ptDateIds = ptDates.stream().map(PtDate::getId).collect(toList());
 
+
         return PresentationCreateResponse.of(presentation,ptDateIds);
     }
 
@@ -191,6 +195,7 @@ public class PresentationService {
         return PresentationFindOneResponse.of(presentation, infoImages, ptDateDetailDtos);
     }
 
+
     /**
      * 설명회 예약 학부모 전체 조회 (예약명단)
      */
@@ -205,6 +210,7 @@ public class PresentationService {
 
         return responses;
     }
+
 
     /**
      * 설명회 대기 학부모 전체 조회 (대기명단)
