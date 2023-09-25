@@ -31,7 +31,7 @@ public class BlockedService {
      */
     public void createBlocked(Long blockingUserId, Long blockedUserId) {
         if(blockingUserId.equals(blockedUserId)) {
-            throw new BlockedException(BlockedErrorResult.IS_SAME_USER);
+            throw new BlockedException(BlockedErrorResult.CANNOT_BLOCK_SELF);
         }
         // 차단 관계를 생성할 유저들의 정보 조회
         User blockingUser = userRepository.findById(blockingUserId)
@@ -42,7 +42,7 @@ public class BlockedService {
         // 이미 차단된 경우 예외 발생
         blockedRepository.findByBlockingUserAndBlockedUser(blockingUser, blockedUser)
                 .ifPresent(existingBlocked -> {
-                    throw new BlockedException(BlockedErrorResult.ALREADY_BLOCKED_EXIST);
+                    throw new BlockedException(BlockedErrorResult.ALREADY_BLOCKED);
                 });
 
         // 차단 정보 생성
