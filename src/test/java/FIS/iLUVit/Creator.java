@@ -137,7 +137,7 @@ public class Creator {
                 .board(board)
                 .user(user)
                 .comments(new ArrayList<>())
-                .postHearts(new ArrayList<>())
+//                .postHearts(new ArrayList<>())
                 .anonymousOrder(3)
                 .build();
     }
@@ -166,16 +166,7 @@ public class Creator {
                 .videoCnt(0)
                 .board(board)
                 .user(user)
-                .postHearts(new ArrayList<>())
-                .build();
-    }
-
-    public static ChatRoom createChatRoom(Long id, User receiver, User sender, Post post) {
-        return ChatRoom.builder()
-                .id(id)
-                .receiver(receiver)
-                .sender(sender)
-                .post(post)
+//                .postHearts(new ArrayList<>())
                 .build();
     }
 
@@ -183,27 +174,8 @@ public class Creator {
         return new ChatRoom(receiver, sender, post, true);
     }
 
-    public static Chat createChat(Long id, String message, ChatRoom chatRoom, User receiver, User sender) {
-        return Chat.builder()
-                .id(id)
-                .date(LocalDate.now())
-                .time(LocalTime.now())
-                .message(message)
-                .chatRoom(chatRoom)
-                .receiver(receiver)
-                .sender(sender)
-                .build();
-    }
-
     public static Chat createChat(String message, ChatRoom chatRoom, User receiver, User sender) {
-        return Chat.builder()
-                .date(LocalDate.now())
-                .time(LocalTime.now())
-                .message(message)
-                .chatRoom(chatRoom)
-                .receiver(receiver)
-                .sender(sender)
-                .build();
+        return new Chat(message, receiver, sender);
     }
 
     public static Teacher createTeacher(Long id, String name, Center center, Auth auth, Approval approval) {
@@ -553,7 +525,7 @@ public class Creator {
                 .user(user)
                 .parentComment(null)
                 .subComments(new ArrayList<>())
-                .commentHearts(new ArrayList<>())
+//                .commentHearts(new ArrayList<>())
                 .heartCnt(0)
                 .anonymousOrder(1)
                 .build();
@@ -656,13 +628,8 @@ public class Creator {
                 .build();
     }
 
-    public static Board createBoard(Long id, String name, Center center, Boolean isDefault) {
-        return Board.builder()
-                .id(id)
-                .name(name)
-                .center(center)
-                .isDefault(isDefault)
-                .build();
+    public static Board createBoard(Long id, String name, BoardKind boardKind, Center center, Boolean isDefault) {
+        return Board.createBoard(name, boardKind, center, isDefault);
     }
 
     public static Child createChild(Long id, String name, Parent parent, Center center, Approval approval) {
@@ -684,11 +651,7 @@ public class Creator {
     }
 
     public static Bookmark createBookmark(Long id, Board board, User user) {
-        return Bookmark.builder()
-                .id(id)
-                .board(board)
-                .user(user)
-                .build();
+        return Bookmark.createBookmark(board, user);
     }
 
     public static Center createCenter(String name, boolean signed, Area area) {

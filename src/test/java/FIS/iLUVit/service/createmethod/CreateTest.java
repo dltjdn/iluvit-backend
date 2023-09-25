@@ -9,22 +9,11 @@ import FIS.iLUVit.domain.enumtype.BoardKind;
 public class CreateTest {
 
     public static Board createBoard(Long id, String name, BoardKind boardKind, Center center, Boolean isDefault) {
-        return Board.builder()
-                .id(id)
-                .name(name)
-                .boardKind(boardKind)
-                .center(center)
-                .isDefault(isDefault)
-                .build();
+        return Board.createBoard(name, boardKind, center, isDefault);
     }
 
     public static Board createBoard(String name, BoardKind boardKind, Center center, Boolean isDefault) {
-        return Board.builder()
-                .name(name)
-                .boardKind(boardKind)
-                .center(center)
-                .isDefault(isDefault)
-                .build();
+        return Board.createBoard(name, boardKind, center, isDefault);
     }
 
     public static Center createCenter(Long id, String name) {
@@ -41,17 +30,10 @@ public class CreateTest {
     }
 
     public static Bookmark createBookmark(Long id, Board board, User user) {
-        return Bookmark.builder()
-                .id(id)
-                .board(board)
-                .user(user)
-                .build();
+        return Bookmark.createBookmark(board, user);
     }
 
     public static Bookmark createBookmark(Board board, User user) {
-        return Bookmark.builder()
-                .board(board)
-                .user(user)
-                .build();
+        return Bookmark.createBookmark(board, user);
     }
 }
