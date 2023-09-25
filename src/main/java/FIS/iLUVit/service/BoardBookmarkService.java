@@ -3,10 +3,7 @@ package FIS.iLUVit.service;
 import FIS.iLUVit.dto.board.BoardBookmarkIdResponse;
 import FIS.iLUVit.dto.board.BoardStoryResponse;
 import FIS.iLUVit.domain.*;
-import FIS.iLUVit.exception.BoardBookmarkErrorResult;
-import FIS.iLUVit.exception.BoardBookmarkException;
-import FIS.iLUVit.exception.UserErrorResult;
-import FIS.iLUVit.exception.UserException;
+import FIS.iLUVit.exception.*;
 import FIS.iLUVit.repository.*;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -99,10 +96,10 @@ public class BoardBookmarkService {
      */
     public BoardBookmarkIdResponse saveBoardBookmark(Long userId, Long boardId) {
         User findUser = userRepository.findById(userId)
-                .orElseThrow(() -> new BoardBookmarkException(BoardBookmarkErrorResult.USER_NOT_EXIST));
+                .orElseThrow(() -> new UserException(UserErrorResult.USER_NOT_EXIST));
 
         Board findBoard = boardRepository.findById(boardId)
-                .orElseThrow(() -> new BoardBookmarkException(BoardBookmarkErrorResult.BOARD_NOT_EXIST));
+                .orElseThrow(() -> new BoardException(BoardErrorResult.BOARD_NOT_FOUND));
 
         Bookmark bookmark = boardBookmarkRepository.save(new Bookmark(findBoard, findUser));
 
@@ -114,10 +111,10 @@ public class BoardBookmarkService {
      */
     public void deleteBoardBookmark(Long userId, Long bookmarkId) {
         Bookmark findBookmark = boardBookmarkRepository.findById(bookmarkId)
-                .orElseThrow(() -> new BoardBookmarkException(BoardBookmarkErrorResult.BOOKMARK_NOT_EXIST));
+                .orElseThrow(() -> new BoardBookmarkException(BoardBookmarkErrorResult.BOARD_BOOKMARK_NOT_FOUND));
 
         if (!findBookmark.getUser().getId().equals(userId)) {
-            throw new BoardBookmarkException(BoardBookmarkErrorResult.UNAUTHORIZED_USER_ACCESS);
+            throw new BoardBookmarkException(BoardBookmarkErrorResult.FORBIDDEN_ACCESS);
         }
 
         boardBookmarkRepository.delete(findBookmark);

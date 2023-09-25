@@ -56,7 +56,7 @@ public class PostService {
                 .orElseThrow(() -> new UserException(UserErrorResult.USER_NOT_EXIST));
 
         Board board = boardRepository.findById(postCreateRequest.getBoardId())
-                .orElseThrow(() -> new BoardException(BoardErrorResult.BOARD_NOT_EXIST));
+                .orElseThrow(() -> new BoardException(BoardErrorResult.BOARD_NOT_FOUND));
 
         // 학부모는 공지 게시판에 게시글 쓸 수 없다
         if (board.getBoardKind() == BoardKind.NOTICE && user.getAuth() == Auth.PARENT ) {
@@ -214,7 +214,7 @@ public class PostService {
                 .orElseThrow(() -> new UserException(UserErrorResult.USER_NOT_EXIST));
 
         boardRepository.findById(boardId)
-                .orElseThrow(() -> new BoardException(BoardErrorResult.BOARD_NOT_EXIST));
+                .orElseThrow(() -> new BoardException(BoardErrorResult.BOARD_NOT_FOUND));
 
         // 유저가 차단한 유저를 조회한다
         List<Long> blockedUserIds = getBlockedUserIds(user);

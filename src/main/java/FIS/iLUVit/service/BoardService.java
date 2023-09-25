@@ -114,17 +114,13 @@ public class BoardService {
     /**
      * 게시판 생성
      */
-    public BoardIdResponse saveNewBoard(Long userId, Long center_id, BoardCreateRequest request) {
-        // userId 가 null 인 경우 게시판 생성 제한
-        if (userId == null) {
-            throw new BoardException(BoardErrorResult.UNAUTHORIZED_USER_ACCESS);
-        }
+    public BoardIdResponse saveNewBoard(Long userId, Long centerId, BoardCreateRequest request) {
 
         // 모두의 이야기에서 게시판 이름 중복성 검사 및 저장
-        if (center_id == null) {
+        if (centerId == null) {
             boardRepository.findByCenterIsNullAndName(request.getBoardName())
                     .ifPresent((b) -> {
-                        throw new BoardException(BoardErrorResult.BOARD_NAME_DUPLICATION);
+                        throw new BoardException(BoardErrorResult.DUPLICATE_BOARD_NAME);
                     });
             Long boardId = boardRepository.save(Board.createBoard(
                     request.getBoardName(), request.getBoardKind(), null, false)).getId();
@@ -132,7 +128,7 @@ public class BoardService {
         }
 
         // 센터가 존재하는 지 검사
-        Center findCenter = centerRepository.findById(center_id)
+        Center findCenter = centerRepository.findById(centerId)
                 .orElseThrow(() -> new CenterException(CenterErrorResult.CENTER_NOT_EXIST));
 
         // 시설의 이야기에서 센터에 속하지 않은 회원은 게시판 생성 불가
@@ -144,19 +140,19 @@ public class BoardService {
             boolean childless = childRepository.findByParentAndCenter(parent, findCenter)
                     .isEmpty();
             if (childless) {
-                throw new BoardException(BoardErrorResult.UNAUTHORIZED_USER_ACCESS);
+                throw new BoardException(BoardErrorResult.UNAUTHORIZED_ACCESS);
             }
         } else if (findUser instanceof Teacher) {
             Teacher teacher = (Teacher) findUser;
-            if (teacher.getCenter() == null || !Objects.equals(teacher.getCenter().getId(), center_id)) {
-                throw new BoardException(BoardErrorResult.UNAUTHORIZED_USER_ACCESS);
+            if (teacher.getCenter() == null || !Objects.equals(teacher.getCenter().getId(), centerId)) {
+                throw new BoardException(BoardErrorResult.UNAUTHORIZED_ACCESS);
             }
         }
 
         // 시설의 이야기에서 게시판 이름 중복성 검사 및 저장
         boardRepository.findByCenterAndName(findCenter,request.getBoardName())
                 .ifPresent((b) -> {
-                    throw new BoardException(BoardErrorResult.BOARD_NAME_DUPLICATION);
+                    throw new BoardException(BoardErrorResult.DUPLICATE_BOARD_NAME);
                 });
 
 
@@ -169,14 +165,10 @@ public class BoardService {
      * 게시판 삭제
      */
     public void deleteBoardWithValidation(Long userId, Long boardId) {
-        // userId 가 null 인 경우 게시판 삭제 제한
-        if (userId == null) {
-            throw new BoardException(BoardErrorResult.UNAUTHORIZED_USER_ACCESS);
-        }
 
         // board id 오류
         Board findBoard = boardRepository.findById(boardId)
-                .orElseThrow(() -> new BoardException(BoardErrorResult.BOARD_NOT_EXIST));
+                .orElseThrow(() -> new BoardException(BoardErrorResult.BOARD_NOT_FOUND));
 
         /*
          * 1. 학부모 -> 삭제 불가
@@ -187,7 +179,7 @@ public class BoardService {
          */
 
         if (findBoard.getIsDefault()) {
-            throw new BoardException(BoardErrorResult.DEFAULT_BOARD_DELETE_BAN);
+            throw new BoardException(BoardErrorResult.CANNOT_DELETE_DEFAULT_BOARD);
         }
         userRepository.findById(userId)
                 .ifPresent(u -> validateAuth(findBoard, u));
@@ -200,17 +192,17 @@ public class BoardService {
      */
     private void validateAuth(Board findBoard, User u) {
         if (u.getAuth() == Auth.PARENT) {
-            throw new BoardException(BoardErrorResult.UNAUTHORIZED_USER_ACCESS);
+            throw new BoardException(BoardErrorResult.UNAUTHORIZED_ACCESS);
         } else {
             Teacher t = (Teacher) u;
             if (t.getAuth() != Auth.DIRECTOR) {
-                throw new BoardException(BoardErrorResult.UNAUTHORIZED_USER_ACCESS);
+                throw new BoardException(BoardErrorResult.UNAUTHORIZED_ACCESS);
             }
             if (t.getCenter() == null) {
-                throw new BoardException(BoardErrorResult.UNAUTHORIZED_USER_ACCESS);
+                throw new BoardException(BoardErrorResult.UNAUTHORIZED_ACCESS);
             }
             if (t.getCenter().getId() != findBoard.getCenter().getId()) {
-                throw new BoardException(BoardErrorResult.UNAUTHORIZED_USER_ACCESS);
+                throw new BoardException(BoardErrorResult.UNAUTHORIZED_ACCESS);
             }
         }
     }
