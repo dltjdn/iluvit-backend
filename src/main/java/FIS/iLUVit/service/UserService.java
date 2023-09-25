@@ -203,11 +203,11 @@ public class UserService {
 
         // 핸드폰 인증확인
         AuthNumber authComplete = authRepository.findByPhoneNumAndAuthKindAndAuthTimeNotNull(phoneNum, AuthKind.signup)
-                .orElseThrow(() -> new AuthNumberException(AuthNumberErrorResult.NOT_AUTHENTICATION));
+                .orElseThrow(() -> new AuthNumberException(AuthNumberErrorResult.PHONE_NUMBER_UNVERIFIED));
 
         // 핸드폰 인증 후 지정된 시간이 지나면 인증 무효
         if (Duration.between(authComplete.getAuthTime(), LocalDateTime.now()).getSeconds() > (60 * 60)) {
-            throw new AuthNumberException(AuthNumberErrorResult.EXPIRED);
+            throw new AuthNumberException(AuthNumberErrorResult.AUTH_NUMBER_EXPIRED);
         }
 
         return encoder.encode(password);

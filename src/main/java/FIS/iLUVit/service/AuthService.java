@@ -57,7 +57,7 @@ public class AuthService {
         Optional<User> user = userRepository.findByPhoneNumber(toNumber);
 
         if (blackUser.isPresent() || user.isPresent()) {
-            throw new AuthNumberException(AuthNumberErrorResult.ALREADY_PHONENUMBER_REGISTER);
+            throw new AuthNumberException(AuthNumberErrorResult.PHONE_NUMBER_ALREADY_REGISTERED);
         }
         sendAuthNumber(toNumber, AuthKind.signup, null);
     }
@@ -68,7 +68,7 @@ public class AuthService {
     public void sendAuthNumForFindLoginId(String toNumber) {
 
         userRepository.findByPhoneNumber(toNumber)
-                .orElseThrow(() -> new AuthNumberException(AuthNumberErrorResult.NOT_SIGNUP_PHONE));
+                .orElseThrow(() -> new AuthNumberException(AuthNumberErrorResult.PHONE_NUMBER_NOT_REGISTERED));
 
         sendAuthNumber(toNumber, AuthKind.findLoginId, null);
     }
@@ -78,11 +78,9 @@ public class AuthService {
      */
     public void sendAuthNumberForFindPassword(String loginId, String toNumber) {
 
-        User findUser = userRepository.findByLoginIdAndPhoneNumber(loginId, toNumber).orElse(null);
+        userRepository.findByLoginIdAndPhoneNumber(loginId, toNumber)
+                .orElseThrow(()-> new AuthNumberException(AuthNumberErrorResult.ID_OR_PASSWORD_MISMATCH));
 
-        if (findUser == null) {
-            throw new AuthNumberException(AuthNumberErrorResult.NOT_MATCH_INFO);
-        }
         sendAuthNumber(toNumber, AuthKind.findPwd, null);
     }
 
@@ -96,7 +94,7 @@ public class AuthService {
         User findUser = userRepository.findByPhoneNumber(toNumber).orElse(null);
 
         if (findUser != null) {
-            throw new AuthNumberException(AuthNumberErrorResult.ALREADY_PHONENUMBER_REGISTER);
+            throw new AuthNumberException(AuthNumberErrorResult.PHONE_NUMBER_ALREADY_REGISTERED);
         }
         sendAuthNumber(toNumber, AuthKind.updatePhoneNum, userId);
     }
@@ -107,15 +105,15 @@ public class AuthService {
     public AuthNumber authenticateAuthNum(AuthRequest request) {
         AuthKind authKind = request.getAuthKind();
         if (authKind != AuthKind.signup && authKind != AuthKind.findPwd && authKind != AuthKind.findLoginId) {
-            throw new AuthNumberException(AuthNumberErrorResult.NOT_MATCH_AUTHKIND);
+            throw new AuthNumberException(AuthNumberErrorResult.AUTH_KIND_MISMATCH);
         }
 
         AuthNumber authNumber = authRepository
                 .findByPhoneNumAndAuthNumAndAuthKind(request.getPhoneNum(), request.getAuthNum(), request.getAuthKind())
-                .orElseThrow(() -> new AuthNumberException(AuthNumberErrorResult.AUTHENTICATION_FAIL));
+                .orElseThrow(() -> new AuthNumberException(AuthNumberErrorResult.AUTHENTICATION_FAILED));
 
         if (Duration.between(authNumber.getCreatedDate(), LocalDateTime.now()).getSeconds() > authValidTime) {
-            throw new AuthNumberException(AuthNumberErrorResult.EXPIRED);
+            throw new AuthNumberException(AuthNumberErrorResult.AUTH_NUMBER_EXPIRED);
         }
 
         authNumber.AuthComplete();
@@ -129,15 +127,15 @@ public class AuthService {
     public AuthNumber authenticateAuthNumForChangingPhoneNum(Long userId, AuthRequest request) {
 
         if (! request.getAuthKind().equals(AuthKind.updatePhoneNum)){
-            throw new AuthNumberException(AuthNumberErrorResult.NOT_MATCH_AUTHKIND);
+            throw new AuthNumberException(AuthNumberErrorResult.AUTH_KIND_MISMATCH);
         }
 
         AuthNumber authNumber = authRepository
                 .findByPhoneNumAndAuthKindAndAuthNumAndUserId(request.getPhoneNum(), request.getAuthKind(),request.getAuthNum(), userId)
-                .orElseThrow(() -> new AuthNumberException(AuthNumberErrorResult.AUTHENTICATION_FAIL));
+                .orElseThrow(() -> new AuthNumberException(AuthNumberErrorResult.AUTHENTICATION_FAILED));
 
         if (Duration.between(authNumber.getCreatedDate(), LocalDateTime.now()).getSeconds() > authValidTime) {
-            throw new AuthNumberException(AuthNumberErrorResult.EXPIRED);
+            throw new AuthNumberException(AuthNumberErrorResult.AUTH_NUMBER_EXPIRED);
         } else {
             authNumber.AuthComplete();
         }
@@ -154,7 +152,7 @@ public class AuthService {
         AuthNumber authNumber = authenticateAuthNum(request);
 
         User findUser = userRepository.findByPhoneNumber(authNumber.getPhoneNum())
-                .orElseThrow(() -> new AuthNumberException(AuthNumberErrorResult.NOT_SIGNUP_PHONE));
+                .orElseThrow(() -> new AuthNumberException(AuthNumberErrorResult.PHONE_NUMBER_NOT_REGISTERED));
 
         // 인증정보 삭제
         authRepository.delete(authNumber);
@@ -172,14 +170,14 @@ public class AuthService {
     public void authenticateAuthNumForChangePwd(AuthFindPasswordRequest request) {
         // 비밀번호와 비밀번호 확인 불일치
         if (!request.getNewPwd().equals(request.getNewPwdCheck())) {
-            throw new AuthNumberException(AuthNumberErrorResult.NOT_MATCH_CHECKPWD);
+            throw new AuthNumberException(AuthNumberErrorResult.PASSWORD_MISMATCH);
         }
 
         // 인증완료된 핸드폰번호인지 확인
         AuthNumber authNumber = validateAuthNumber(request.getPhoneNum(), AuthKind.findPwd);
 
         User user = userRepository.findByLoginIdAndPhoneNumber(request.getLoginId(), request.getPhoneNum())
-                .orElseThrow(() -> new AuthNumberException(AuthNumberErrorResult.NOT_MATCH_INFO));
+                .orElseThrow(() -> new AuthNumberException(AuthNumberErrorResult.ID_OR_PASSWORD_MISMATCH));
 
         // 비밀 번호 변경
         user.changePassword(encoder.encode(request.getNewPwd()));
@@ -194,11 +192,11 @@ public class AuthService {
     public AuthNumber validateAuthNumber(String phoneNum, AuthKind authKind) {
         // 핸드폰 인증여부 확인
         AuthNumber authComplete = authRepository.findByPhoneNumAndAuthKindAndAuthTimeNotNull(phoneNum, authKind)
-                .orElseThrow(() -> new AuthNumberException(AuthNumberErrorResult.NOT_AUTHENTICATION));
+                .orElseThrow(() -> new AuthNumberException(AuthNumberErrorResult.PHONE_NUMBER_UNVERIFIED));
 
         // 핸드폰 인증 후 일정시간이 지나면 무효화
         if (Duration.between(authComplete.getAuthTime(), LocalDateTime.now()).getSeconds() > authNumberValidTime) {
-            throw new AuthNumberException(AuthNumberErrorResult.EXPIRED);
+            throw new AuthNumberException(AuthNumberErrorResult.AUTH_NUMBER_EXPIRED);
         }
         return authComplete;
     }
@@ -229,7 +227,7 @@ public class AuthService {
             authRepository.save(authNumber);
 
         } else {  // 이미 인증번호를 요청하였고 제한시간이 지나지 않은 경우
-            throw new AuthNumberException(AuthNumberErrorResult.YET_AUTHNUMBER_VALID);
+            throw new AuthNumberException(AuthNumberErrorResult.AUTH_NUMBER_IN_PROGRESS);
         }
     }
 
