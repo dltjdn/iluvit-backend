@@ -23,7 +23,7 @@ public class PostHeartService {
      */
     public void savePostHeart(Long userId, Long postId) {
         User user = userRepository.findById(userId)
-                .orElseThrow(() -> new UserException(UserErrorResult.USER_NOT_EXIST));
+                .orElseThrow(() -> new UserException(UserErrorResult.USER_NOT_FOUND));
 
         Post post = postRepository.findById(postId)
                 .orElseThrow(() -> new PostException(PostErrorResult.POST_NOT_EXIST));
@@ -43,7 +43,7 @@ public class PostHeartService {
      */
     public void deletePostHeart(Long userId, Long postId){
         User user = userRepository.findById(userId)
-                .orElseThrow(() -> new UserException(UserErrorResult.USER_NOT_EXIST));
+                .orElseThrow(() -> new UserException(UserErrorResult.USER_NOT_FOUND));
 
         Post post = postRepository.findById(postId)
                 .orElseThrow(() -> new PostException(PostErrorResult.POST_NOT_EXIST));

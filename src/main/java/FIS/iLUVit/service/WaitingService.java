@@ -33,9 +33,6 @@ public class WaitingService {
      * 설명회 회차에 대기를 신청합니다
      */
     public void waitingParticipation(Long userId, Long ptDateId) {
-        if(userId == null)
-            throw new UserException(UserErrorResult.NOT_LOGIN);
-
         // 잘못된 ptDateId로 요청 시 오류 반환
         if(ptDateId < 0)
             throw new PresentationException(PresentationErrorResult.WRONG_PTDATE_ID_REQUEST);
@@ -82,15 +79,13 @@ public class WaitingService {
      * 설명회 대기를 취소하고 대기 순서를 변경합니다
      */
     public void cancelParticipation(Long userId, Long waitingId) {
-        if(userId == null)
-            throw new UserException(UserErrorResult.NOT_LOGIN);
 
         // 잘못된 waitingId로 요청 시 오류 반환
         if(waitingId < 0)
             throw new WaitingException(WaitingErrorResult.WRONG_WAITINGID_REQUEST);
 
         // 검색 결과 없으면 오류 반환
-        Parent parent = parentRepository.findById(userId).orElseThrow(() -> new UserException(UserErrorResult.USER_NOT_EXIST));
+        Parent parent = parentRepository.findById(userId).orElseThrow(() -> new UserException(UserErrorResult.USER_NOT_FOUND));
         Waiting waiting = waitingRepository.findByIdAndParent(waitingId, parent)
                 .orElseThrow(() -> new WaitingException(WaitingErrorResult.NO_RESULT));
 

@@ -69,12 +69,9 @@ public class PresentationService {
     }
 
     public Presentation savePresentationInfoWithPtDate(PresentationDetailRequest request, Long userId) {
-        if(userId == null)
-            throw new UserException(UserErrorResult.NOT_LOGIN);
-
         // 리펙터링 필요 findById 를 통해서 그냥 canWrite 와 canRead 를 override 하기
         teacherRepository.findById(userId)
-                .orElseThrow(() -> new UserException(UserErrorResult.USER_NOT_EXIST))
+                .orElseThrow(() -> new UserException(UserErrorResult.USER_NOT_FOUND))
                 .canWrite(request.getCenterId());
         if (presentationRepository.findByCenterIdAndDate(request.getCenterId(), LocalDate.now()) != null)
             throw new PresentationException(PresentationErrorResult.ALREADY_PRESENTATION_EXIST);
@@ -100,8 +97,6 @@ public class PresentationService {
     }
 
     public Presentation savePresentationImageWithPtDate(Long presentationId, List<MultipartFile> images, Long userId) {
-        if (userId == null)
-            throw new UserException(UserErrorResult.NOT_LOGIN);
         Presentation presentation = presentationRepository.findById(presentationId)
                 .orElseThrow(() -> new PresentationException(PresentationErrorResult.NO_RESULT));
 
@@ -134,7 +129,7 @@ public class PresentationService {
         Presentation presentation = presentationRepository.findByIdAndJoinPtDate(request.getPresentationId())
                 .orElseThrow(() -> new PresentationException(PresentationErrorResult.NO_RESULT));
         teacherRepository.findById(userId)
-                .orElseThrow(() -> new UserException(UserErrorResult.USER_NOT_EXIST))
+                .orElseThrow(() -> new UserException(UserErrorResult.USER_NOT_FOUND))
                 .canWrite(presentation.getCenter().getId());
 
         // 데이터 베이스에 저장되어있는 ptDate 목록
@@ -200,7 +195,7 @@ public class PresentationService {
                 .orElseThrow(() -> new PresentationException(PresentationErrorResult.NO_RESULT));
 
         teacherRepository.findById(userId)
-                .orElseThrow(() -> new UserException(UserErrorResult.USER_NOT_EXIST))
+                .orElseThrow(() -> new UserException(UserErrorResult.USER_NOT_FOUND))
                 .canWrite(presentation.getCenter().getId());
 
         imageService.saveInfoImages(images, presentation);

@@ -39,12 +39,8 @@ public class ChatService {
      */
     public void saveNewChat(Long userId, ChatRoomCreateRequest request) {
 
-        if (userId == null) {
-            throw new ChatException(ChatErrorResult.UNAUTHORIZED_USER_ACCESS);
-        }
-
         User sendUser = userRepository.findById(userId)
-                .orElseThrow(() -> new ChatException(ChatErrorResult.USER_NOT_EXIST));
+                .orElseThrow(() -> new UserException(UserErrorResult.USER_NOT_FOUND));
 
         User receiveUser;
 
@@ -52,7 +48,7 @@ public class ChatService {
         Long comment_id = request.getCommentId();
 
         Post findPost = postRepository.findById(post_id)
-                .orElseThrow(() -> new ChatException(ChatErrorResult.POST_NOT_EXIST));
+                .orElseThrow(() -> new PostException(PostErrorResult.POST_NOT_EXIST));
 
         Boolean anonymousInfo;
 
@@ -70,11 +66,11 @@ public class ChatService {
         }
 
         if(receiveUser.getNickName() == "알 수 없음"){
-            throw new ChatException(ChatErrorResult.WITHDRAWN_MEMBER);
+            throw new ChatException(ChatErrorResult.WITHDRAWN_USER);
         }
 
         if (Objects.equals(userId, receiveUser.getId())) {
-            throw new ChatException(ChatErrorResult.NO_SEND_TO_SELF);
+            throw new ChatException(ChatErrorResult.CANNOT_SEND_TO_SELF);
         }
 
         Chat myChat = new Chat(request.getMessage(), receiveUser, sendUser);
@@ -106,26 +102,22 @@ public class ChatService {
      */
     public void saveChatInRoom(Long userId, ChatCreateRequest request) {
 
-        if (userId == null) {
-            throw new ChatException(ChatErrorResult.UNAUTHORIZED_USER_ACCESS);
-        }
-
         ChatRoom myRoom = chatRoomRepository.findById(request.getRoomId())
-                .orElseThrow(() -> new ChatException(ChatErrorResult.ROOM_NOT_EXIST));
+                .orElseThrow(() -> new ChatException(ChatErrorResult.CHAT_ROOM_NOT_FOUND));
 
         if (myRoom.getReceiver() == null || myRoom.getSender() == null || myRoom.getSender().getNickName() == "알 수 없음") {
-            throw new ChatException(ChatErrorResult.WITHDRAWN_MEMBER);
+            throw new ChatException(ChatErrorResult.WITHDRAWN_USER);
         }
 
         if (!Objects.equals(myRoom.getReceiver().getId(), userId)) {
-            throw new ChatException(ChatErrorResult.UNAUTHORIZED_USER_ACCESS);
+            throw new ChatException(ChatErrorResult.FORBIDDEN_ACCESS);
         }
 
         Long partnerUserId = myRoom.getSender().getId();
 
 
         if (Objects.equals(userId, partnerUserId)) {
-            throw new ChatException(ChatErrorResult.NO_SEND_TO_SELF);
+            throw new ChatException(ChatErrorResult.CANNOT_SEND_TO_SELF);
         }
 
         User sendUser = userRepository.getById(userId);
@@ -142,14 +134,14 @@ public class ChatService {
             chatRoomRepository.save(partnerRoom);
         } else {
             partnerRoom = chatRoomRepository.findById(myRoom.getPartner_id())
-                    .orElseThrow(() -> new ChatException(ChatErrorResult.ROOM_NOT_EXIST));
+                    .orElseThrow(() -> new ChatException(ChatErrorResult.CHAT_ROOM_NOT_FOUND));
         }
         myRoom.updatePartnerId(partnerRoom.getId());
         partnerRoom.updatePartnerId(myRoom.getId());
         partnerChat.updateChatRoom(partnerRoom);
 
         userRepository.findById(partnerUserId)
-                .orElseThrow(() -> new UserException(UserErrorResult.USER_NOT_EXIST))
+                .orElseThrow(() -> new UserException(UserErrorResult.USER_NOT_FOUND))
                 .updateReadAlarm(Boolean.FALSE);
 
         chatRepository.save(myChat);
@@ -161,7 +153,7 @@ public class ChatService {
      */
     public Slice<ChatRoomResponse> findChatRoomList(Long userId, Pageable pageable) {
         User user = userRepository.findById(userId)
-                .orElseThrow(() -> new ChatException(ChatErrorResult.USER_NOT_EXIST));
+                .orElseThrow(() -> new UserException(UserErrorResult.USER_NOT_FOUND));
 
         Slice<ChatRoom> chatList = chatRoomRepository.findByReceiverOrderByUpdatedDateDesc(user, pageable);
         return chatList.map(chat -> {
@@ -178,10 +170,10 @@ public class ChatService {
     public ChatDetailResponse findChatRoomDetails(Long userId, Long roomId, Pageable pageable) {
 
         User receiverUser = userRepository.findById(userId)
-                .orElseThrow(() -> new ChatException(ChatErrorResult.USER_NOT_EXIST));
+                .orElseThrow(() -> new UserException(UserErrorResult.USER_NOT_FOUND));
 
         ChatRoom findRoom = chatRoomRepository.findById(roomId)
-                .orElseThrow(() -> new ChatException(ChatErrorResult.ROOM_NOT_EXIST));
+                .orElseThrow(() -> new ChatException(ChatErrorResult.CHAT_ROOM_NOT_FOUND));
 
         User senderUser = findRoom.getSender();
 
@@ -225,10 +217,10 @@ public class ChatService {
         chatRoomRepository.findById(roomId)
                 .ifPresent(cr -> {
                     if (cr.getReceiver() == null) {
-                        throw new ChatException(ChatErrorResult.WITHDRAWN_MEMBER);
+                        throw new ChatException(ChatErrorResult.WITHDRAWN_USER);
                     }
                     if (!Objects.equals(cr.getReceiver().getId(), userId)) {
-                        throw new ChatException(ChatErrorResult.UNAUTHORIZED_USER_ACCESS);
+                        throw new ChatException(ChatErrorResult.FORBIDDEN_ACCESS);
                     }
                     if (cr.getPartner_id() != null) {
                         chatRoomRepository.findById(cr.getPartner_id())

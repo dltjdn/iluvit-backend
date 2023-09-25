@@ -34,7 +34,7 @@ public class CenterBookmarkService {
      */
     public Slice<CenterBookmarkResponse> findCentersByCenterBookmark(Long userId, Pageable pageable) {
         Parent parent = parentRepository.findById(userId)
-                .orElseThrow(() -> new UserException(UserErrorResult.USER_NOT_EXIST));
+                .orElseThrow(() -> new UserException(UserErrorResult.USER_NOT_FOUND));
 
         List<Prefer> centerBookmarks = centerBookmarkRepository.findByParent(parent);
 
@@ -67,7 +67,7 @@ public class CenterBookmarkService {
      */
     public void saveCenterBookmark(Long userId, Long centerId) {
         Parent parent = parentRepository.findById(userId)
-                .orElseThrow(() -> new UserException(UserErrorResult.USER_NOT_EXIST));
+                .orElseThrow(() -> new UserException(UserErrorResult.USER_NOT_FOUND));
 
         Center center = centerRepository.findById(centerId)
                         .orElseThrow(()-> new CenterException(CenterErrorResult.CENTER_NOT_FOUND));
@@ -87,7 +87,7 @@ public class CenterBookmarkService {
      */
     public void deleteCenterBookmark(Long userId, Long centerId) {
         Parent parent = parentRepository.findById(userId)
-                .orElseThrow(() -> new UserException(UserErrorResult.USER_NOT_EXIST));
+                .orElseThrow(() -> new UserException(UserErrorResult.USER_NOT_FOUND));
         Center center = centerRepository.findById(centerId)
                 .orElseThrow(()-> new CenterException(CenterErrorResult.CENTER_NOT_FOUND));
 

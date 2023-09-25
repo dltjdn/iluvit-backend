@@ -53,7 +53,7 @@ public class PostService {
     public void saveNewPost(Long userId, PostCreateRequest postCreateRequest) {
 
         User user = userRepository.findById(userId)
-                .orElseThrow(() -> new UserException(UserErrorResult.USER_NOT_EXIST));
+                .orElseThrow(() -> new UserException(UserErrorResult.USER_NOT_FOUND));
 
         Board board = boardRepository.findById(postCreateRequest.getBoardId())
                 .orElseThrow(() -> new BoardException(BoardErrorResult.BOARD_NOT_FOUND));
@@ -80,7 +80,7 @@ public class PostService {
      */
     public void deletePost(Long postId, Long userId) {
         User user = userRepository.findById(userId)
-                .orElseThrow(() -> new UserException(UserErrorResult.USER_NOT_EXIST));
+                .orElseThrow(() -> new UserException(UserErrorResult.USER_NOT_FOUND));
         Post post = postRepository.findById(postId)
                 .orElseThrow(() -> new PostException(PostErrorResult.POST_NOT_EXIST));
 
@@ -119,7 +119,7 @@ public class PostService {
      */
     public Slice<PostResponse> findPostByUser(Long userId, Pageable pageable) {
         User user = userRepository.findById(userId)
-                .orElseThrow(() -> new UserException(UserErrorResult.USER_NOT_EXIST));
+                .orElseThrow(() -> new UserException(UserErrorResult.USER_NOT_FOUND));
 
         Slice<Post> posts = postRepository.findByUser(user, pageable);
 
@@ -133,7 +133,7 @@ public class PostService {
         if(keyword == null || keyword == "") throw new PostException(PostErrorResult.NO_KEYWORD);
 
         User user = userRepository.findById(userId)
-                .orElseThrow(() -> new UserException(UserErrorResult.USER_NOT_EXIST));
+                .orElseThrow(() -> new UserException(UserErrorResult.USER_NOT_FOUND));
 
         List<Center> centers = new ArrayList<>();
 
@@ -145,7 +145,7 @@ public class PostService {
                     .collect(Collectors.toList());
         } else {
             Teacher teacher = teacherRepository.findById(userId)
-                    .orElseThrow(() -> new UserException(UserErrorResult.USER_NOT_EXIST));
+                    .orElseThrow(() -> new UserException(UserErrorResult.USER_NOT_FOUND));
             Center center = teacher.getCenter();
 
             if (center != null) centers.add(center);
@@ -167,7 +167,7 @@ public class PostService {
         if(keyword == null || keyword == "") throw new PostException(PostErrorResult.NO_KEYWORD);
 
         User user = userRepository.findById(userId).
-                orElseThrow(() -> new UserException(UserErrorResult.USER_NOT_EXIST));
+                orElseThrow(() -> new UserException(UserErrorResult.USER_NOT_FOUND));
 
         // 시설 이야기일 때 유저가 그 시설과 관계되어있는지 검증하는 로직
         if (centerId != null) {
@@ -189,7 +189,7 @@ public class PostService {
 
             } else { // 선생님일 때
                 Teacher teacher = teacherRepository.findById(userId)
-                        .orElseThrow(() -> new UserException(UserErrorResult.USER_NOT_EXIST));
+                        .orElseThrow(() -> new UserException(UserErrorResult.USER_NOT_FOUND));
 
                 if (!teacher.getCenter().equals(center)) {
                     throw new PostException(PostErrorResult.UNAUTHORIZED_USER_ACCESS);
@@ -211,7 +211,7 @@ public class PostService {
      */
     public Slice<PostResponse> searchByBoard(Long userId, Long boardId, String keyword, Pageable pageable) {
         User user = userRepository.findById(userId)
-                .orElseThrow(() -> new UserException(UserErrorResult.USER_NOT_EXIST));
+                .orElseThrow(() -> new UserException(UserErrorResult.USER_NOT_FOUND));
 
         boardRepository.findById(boardId)
                 .orElseThrow(() -> new BoardException(BoardErrorResult.BOARD_NOT_FOUND));
@@ -229,7 +229,7 @@ public class PostService {
      */
     public Slice<PostResponse> findPostByHeartCnt(Long userId, Long centerId, Pageable pageable) {
         User user = userRepository.findById(userId)
-                .orElseThrow(() -> new UserException(UserErrorResult.USER_NOT_EXIST));
+                .orElseThrow(() -> new UserException(UserErrorResult.USER_NOT_FOUND));
         // 유저가 차단한 유저를 조회한다
         List<Long> blockedUserIds = getBlockedUserIds(user);
 
@@ -247,7 +247,7 @@ public class PostService {
                 .orElseThrow(() -> new PostException(PostErrorResult.POST_NOT_EXIST));
 
         User user = userRepository.findById(userId)
-                .orElseThrow(() -> new UserException(UserErrorResult.USER_NOT_EXIST));
+                .orElseThrow(() -> new UserException(UserErrorResult.USER_NOT_FOUND));
 
         // 유저가 차단한 유저를 조회한다
         List<Long> blockedUserIds = getBlockedUserIds(user);
@@ -293,7 +293,7 @@ public class PostService {
      */
     public List<BoardPreviewResponse> findBoardDetailsByPublic(Long userId) {
         User user = userRepository.findById(userId)
-                .orElseThrow(() -> new UserException(UserErrorResult.USER_NOT_EXIST));
+                .orElseThrow(() -> new UserException(UserErrorResult.USER_NOT_FOUND));
 
         List<Bookmark> bookmarkList = boardBookmarkRepository.findByUserAndBoardCenterIsNull(user);
 
@@ -308,7 +308,7 @@ public class PostService {
     public List<BoardPreviewResponse> findBoardDetailsByCenter(Long userId, Long centerId) {
 
         User user = userRepository.findById(userId)
-                .orElseThrow(() -> new UserException(UserErrorResult.USER_NOT_EXIST));
+                .orElseThrow(() -> new UserException(UserErrorResult.USER_NOT_FOUND));
 
         // 학부모 일 경우 아이들의 시설 id와 주어진 시설 id중 일치하는 것이 하나라도 있어야 함
         if (user.getAuth() == Auth.PARENT && user instanceof Parent) {
@@ -326,7 +326,7 @@ public class PostService {
         // 선생 일 경우 속한 시설 id 와 주어진 시설 id가 일치해야 함
         else {
             Teacher teacher = teacherRepository.findById(userId)
-                    .orElseThrow(() -> new UserException(UserErrorResult.USER_NOT_EXIST));
+                    .orElseThrow(() -> new UserException(UserErrorResult.USER_NOT_FOUND));
 
             Center center = teacher.getCenter();
 

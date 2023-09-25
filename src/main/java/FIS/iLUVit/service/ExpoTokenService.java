@@ -11,7 +11,6 @@ import FIS.iLUVit.exception.UserException;
 import FIS.iLUVit.repository.ExpoTokenRepository;
 import FIS.iLUVit.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
-import org.jetbrains.annotations.NotNull;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -45,12 +44,13 @@ public class ExpoTokenService {
      */
     public ExpoTokenResponse findExpoTokenByUser(Long userId, String expoToken) {
         User user = userRepository.findById(userId)
-                .orElseThrow(() -> new UserException(UserErrorResult.USER_NOT_EXIST));
+                .orElseThrow(() -> new UserException(UserErrorResult.USER_NOT_FOUND));
+
         ExpoToken token = expoTokenRepository.findByTokenAndUser(expoToken, user)
                 .orElseThrow(() -> new UserException(UserErrorResult.NOT_VALID_TOKEN));
 
         if (!Objects.equals(token.getUser(), user)) {
-            throw new UserException(UserErrorResult.HAVE_NOT_AUTHORIZATION);
+            throw new UserException(UserErrorResult.FORBIDDEN_ACCESS);
         }
         return new ExpoTokenResponse(token);
     }

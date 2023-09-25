@@ -40,7 +40,7 @@ public class CommentService {
      */
     public void saveNewComment(Long userId, Long postId, Long parentCommentId, CommentCreateRequest request) {
         User user = userRepository.findById(userId)
-                .orElseThrow(() -> new UserException(UserErrorResult.USER_NOT_EXIST));
+                .orElseThrow(() -> new UserException(UserErrorResult.USER_NOT_FOUND));
 
         Post post = postRepository.findById(postId)
                 .orElseThrow(() -> new PostException(PostErrorResult.POST_NOT_EXIST));
@@ -128,7 +128,7 @@ public class CommentService {
      * 댓글 단 글 전체 조회
      */
     public Slice<CommentPostResponse> findCommentByUser(Long userId, Pageable pageable) {
-        User user = userRepository.findById(userId).orElseThrow(() -> new UserException(UserErrorResult.USER_NOT_EXIST));
+        User user = userRepository.findById(userId).orElseThrow(() -> new UserException(UserErrorResult.USER_NOT_FOUND));
         // Comment -> CommentDTO 타입으로 변환
         return commentRepository.findByUser(user, pageable).map(CommentPostResponse::new);
     }

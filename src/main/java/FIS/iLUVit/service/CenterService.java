@@ -57,7 +57,7 @@ public class CenterService {
      */
     public SliceImpl<CenterMapFilterResponse> findCenterByFilterForMapList(long userId, KindOf kindOf, CenterMapFilterRequest centerMapFilterRequest, Pageable pageable) {
         Parent parent = parentRepository.findById(userId)
-                .orElseThrow(() -> new UserException(UserErrorResult.USER_NOT_EXIST));
+                .orElseThrow(() -> new UserException(UserErrorResult.USER_NOT_FOUND));
 
         double longitude = centerMapFilterRequest.getLongitude();
         double latitude = centerMapFilterRequest.getLatitude();
@@ -118,7 +118,7 @@ public class CenterService {
      */
     public CenterBannerResponse findCenterBannerByCenter(Long userId, Long centerId) {
         Parent parent = parentRepository.findById(userId)
-                .orElseThrow(() -> new UserException(UserErrorResult.USER_NOT_EXIST));
+                .orElseThrow(() -> new UserException(UserErrorResult.USER_NOT_FOUND));
 
         Center center = centerRepository.findById(centerId)
                 .orElseThrow(() -> new CenterException(CenterErrorResult.CENTER_NOT_FOUND));
@@ -145,7 +145,7 @@ public class CenterService {
      */
     public List<CenterRecommendResponse> findRecommendCenterWithTheme(Long userId) {
         Parent parent = parentRepository.findById(userId)
-                .orElseThrow(() -> new UserException(UserErrorResult.USER_NOT_EXIST));
+                .orElseThrow(() -> new UserException(UserErrorResult.USER_NOT_FOUND));
 
         Theme theme = parent.getTheme();
         Location location = parent.getLocation();
@@ -164,7 +164,7 @@ public class CenterService {
      */
     public void modifyCenterInfo(Long userId, Long centerId, CenterDetailRequest centerDetailRequest) {
         Teacher teacher = teacherRepository.findById(userId)
-                .orElseThrow(() -> new UserException(UserErrorResult.USER_NOT_EXIST))
+                .orElseThrow(() -> new UserException(UserErrorResult.USER_NOT_FOUND))
                 .canWrite(centerId);
         // 해당하는 center 없으면 RuntimeException 반환
 
@@ -188,7 +188,7 @@ public class CenterService {
      */
     public void modifyCenterImage(Long userId, Long centerId, CenterImageRequest centerImageRequest) {
         Teacher teacher = teacherRepository.findById(userId)
-                .orElseThrow(() -> new UserException(UserErrorResult.USER_NOT_EXIST))
+                .orElseThrow(() -> new UserException(UserErrorResult.USER_NOT_FOUND))
                 .canWrite(centerId);
 
 

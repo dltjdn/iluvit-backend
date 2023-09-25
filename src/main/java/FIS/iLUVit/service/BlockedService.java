@@ -35,9 +35,9 @@ public class BlockedService {
         }
         // 차단 관계를 생성할 유저들의 정보 조회
         User blockingUser = userRepository.findById(blockingUserId)
-                .orElseThrow(() -> new UserException(UserErrorResult.USER_NOT_EXIST));
+                .orElseThrow(() -> new UserException(UserErrorResult.USER_NOT_FOUND));
         User blockedUser = userRepository
-                .findById(blockedUserId).orElseThrow(() -> new UserException(UserErrorResult.USER_NOT_EXIST));
+                .findById(blockedUserId).orElseThrow(() -> new UserException(UserErrorResult.USER_NOT_FOUND));
 
         // 이미 차단된 경우 예외 발생
         blockedRepository.findByBlockingUserAndBlockedUser(blockingUser, blockedUser)

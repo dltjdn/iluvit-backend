@@ -32,7 +32,7 @@ public class BoardBookmarkService {
      */
     public List<BoardStoryResponse> findBoardBookmarkByUser(Long userId) {
         User user = userRepository.findById(userId)
-                .orElseThrow(() -> new UserException(UserErrorResult.USER_NOT_EXIST));
+                .orElseThrow(() -> new UserException(UserErrorResult.USER_NOT_FOUND));
 
 
         List<Long> blockedUserIds = blockedRepository.findByBlockingUser(user).stream()
@@ -96,7 +96,7 @@ public class BoardBookmarkService {
      */
     public BoardBookmarkIdResponse saveBoardBookmark(Long userId, Long boardId) {
         User findUser = userRepository.findById(userId)
-                .orElseThrow(() -> new UserException(UserErrorResult.USER_NOT_EXIST));
+                .orElseThrow(() -> new UserException(UserErrorResult.USER_NOT_FOUND));
 
         Board findBoard = boardRepository.findById(boardId)
                 .orElseThrow(() -> new BoardException(BoardErrorResult.BOARD_NOT_FOUND));

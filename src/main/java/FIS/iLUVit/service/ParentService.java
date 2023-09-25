@@ -51,7 +51,7 @@ public class ParentService {
     public ParentDetailResponse findParentDetails(Long userId) {
 
         Parent findParent = parentRepository.findById(userId)
-                .orElseThrow(() -> new UserException(UserErrorResult.NOT_VALID_TOKEN));
+                .orElseThrow(() -> new UserException(UserErrorResult.USER_NOT_FOUND));
 
         ParentDetailResponse parentDetailResponse = new ParentDetailResponse(findParent,findParent.getProfileImagePath());
 
@@ -64,7 +64,7 @@ public class ParentService {
     public void modifyParentInfo(Long userId, ParentUpdateRequest request) throws IOException {
 
         Parent findParent = parentRepository.findById(userId)
-                .orElseThrow(() -> new UserException(UserErrorResult.NOT_VALID_TOKEN));
+                .orElseThrow(() -> new UserException(UserErrorResult.USER_NOT_FOUND));
 
         // 관심사를 스트링에서 객체로 바꾸기
         ObjectMapper objectMapper = new ObjectMapper();
@@ -141,7 +141,7 @@ public class ParentService {
         userService.withdrawUser(userId);  // 교사, 학부모 공톤 탈퇴 로직
 
         Parent parent = parentRepository.findById(userId)
-                .orElseThrow(() -> new UserException(UserErrorResult.NOT_VALID_TOKEN));
+                .orElseThrow(() -> new UserException(UserErrorResult.USER_NOT_FOUND));
 
         // 찜한 시설 리스트 삭제
         centerBookmarkRepository.findByParent(parent).forEach(centerBookmark -> {

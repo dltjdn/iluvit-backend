@@ -51,7 +51,7 @@ public class ChildService {
      */
     public List<ChildCenterResponse> findChildList(Long userId) {
         Parent findParent = parentRepository.findById(userId)
-                .orElseThrow(() -> new UserException(UserErrorResult.NOT_VALID_TOKEN));
+                .orElseThrow(() -> new UserException(UserErrorResult.USER_NOT_FOUND));
 
         List<ChildCenterResponse> childInfoRespons = new ArrayList<>();
 
@@ -73,7 +73,7 @@ public class ChildService {
 
         // 시설 가져오기
         Center center = centerRepository.findByIdAndSigned(request.getCenterId(), true)
-                .orElseThrow(() -> new UserException(UserErrorResult.NOT_VALID_REQUEST));
+                .orElseThrow(() -> new CenterException(CenterErrorResult.CENTER_NOT_FOUND));
 
         // 아이 등록
         Child newChild = request.createChild(center, parent);
@@ -98,11 +98,11 @@ public class ChildService {
      */
     public ChildDetailResponse findChildDetails(Long userId, Long childId) {
         User user = userRepository.findById(userId)
-                .orElseThrow(() -> new UserException(UserErrorResult.USER_NOT_EXIST));
+                .orElseThrow(() -> new UserException(UserErrorResult.USER_NOT_FOUND));
 
         // 프로필 수정하고자 하는 아이 가져오기
         Child child = childRepository.findByIdAndParent(childId, (Parent)user)
-                .orElseThrow(() -> new UserException(UserErrorResult.NOT_VALID_REQUEST));
+                .orElseThrow(() -> new UserException(UserErrorResult.USER_NOT_FOUND));
 
         ChildDetailResponse childDetailResponse = new ChildDetailResponse(child,child.getProfileImagePath());
 
@@ -114,7 +114,7 @@ public class ChildService {
      */
     public void modifyChildInfo(Long userId, Long childId, ChildUpdateRequest request) {
         User user = userRepository.findById(userId)
-                .orElseThrow(() -> new UserException(UserErrorResult.USER_NOT_EXIST));
+                .orElseThrow(() -> new UserException(UserErrorResult.USER_NOT_FOUND));
 
         // 수정하고자 하는 아이
         Child updatedChild = childRepository.findByIdAndParent(childId,(Parent)user)
@@ -135,7 +135,7 @@ public class ChildService {
      */
     public void deleteChild(Long userId, Long childId) {
         User user = userRepository.findById(userId)
-                .orElseThrow(() -> new UserException(UserErrorResult.USER_NOT_EXIST));
+                .orElseThrow(() -> new UserException(UserErrorResult.USER_NOT_FOUND));
 
         // 요청 사용자가 등록한 모든 아이 가져오기
         List<Child> childrenByUser = childRepository.findByParent((Parent)user);
@@ -178,7 +178,7 @@ public class ChildService {
      */
     public void requestAssignCenterForChild(Long userId, Long childId, Long centerId) {
         User user = userRepository.findById(userId)
-                .orElseThrow(() -> new UserException(UserErrorResult.USER_NOT_EXIST));
+                .orElseThrow(() -> new UserException(UserErrorResult.USER_NOT_FOUND));
 
         // 승인 받고자 하는 아이
         Child mappedChild = childRepository.findByIdAndParent(childId,(Parent)user)
@@ -210,7 +210,7 @@ public class ChildService {
      */
     public void leaveCenterForChild(Long userId, Long childId) {
         Parent parent = parentRepository.findById(userId)
-                .orElseThrow(() -> new UserException(UserErrorResult.USER_NOT_EXIST));
+                .orElseThrow(() -> new UserException(UserErrorResult.USER_NOT_FOUND));
 
         // 요청 사용자가 등록한 모든 아이 가져오기
         List<Child> childrenByUser = childRepository.findByParent(parent);
@@ -234,7 +234,7 @@ public class ChildService {
         // 사용자가 속한 시설의 아이들 끌어오기
         Approval approval = Approval.ACCEPT;
         Teacher teacher = teacherRepository.findByIdAndApproval(userId, approval)
-                .orElseThrow(() -> new UserException(UserErrorResult.HAVE_NOT_AUTHORIZATION));
+                .orElseThrow(() -> new UserException(UserErrorResult.USER_NOT_FOUND));
 
         List<ChildInfoForAdminResponse> childInfoForAdminResponses = new ArrayList<>();
 
@@ -256,9 +256,8 @@ public class ChildService {
      */
     public void acceptChildRegistration(Long userId, Long childId) {
         // 사용자가 등록된 시설과 연관된 아이들 목록 가져오기
-        Approval approval = Approval.ACCEPT;
-        Teacher teacher = teacherRepository.findByIdAndApproval(userId, approval)
-                .orElseThrow(() -> new UserException(UserErrorResult.HAVE_NOT_AUTHORIZATION));
+        Teacher teacher = teacherRepository.findByIdAndApproval(userId, Approval.ACCEPT)
+                .orElseThrow(() -> new UserException(UserErrorResult.USER_NOT_FOUND));
         // childId에 해당하는 아이가 시설에 승인 대기중인지 확인
         List<Child> childList = childRepository.findByCenter(teacher.getCenter());
         Child acceptedChild = childList.stream()
@@ -271,7 +270,7 @@ public class ChildService {
 
         // 승인하고자 하는 아이의 부모와 그 부모에 속한 모든 아이들 가져오기
         Parent acceptedParent = parentRepository.findById(acceptedChild.getParent().getId())
-                .orElseThrow(() -> new UserException(UserErrorResult.NOT_VALID_REQUEST));
+                .orElseThrow(() -> new UserException(UserErrorResult.USER_NOT_FOUND));
 
         // 승인 완료 알람이 학부모에게로 감
         Alarm alarm = new CenterApprovalAcceptedAlarm(acceptedParent, teacher.getCenter());
@@ -305,9 +304,8 @@ public class ChildService {
      */
     public void rejectChildRegistration(Long userId, Long childId) {
         // 사용자가 등록된 시설과 연관된 아이들 목록 가져오기
-        Approval approval = Approval.ACCEPT;
-        Teacher teacher = teacherRepository.findByIdAndApproval(userId, approval)
-                .orElseThrow(() -> new UserException(UserErrorResult.HAVE_NOT_AUTHORIZATION));
+        Teacher teacher = teacherRepository.findByIdAndApproval(userId, Approval.ACCEPT)
+                .orElseThrow(() -> new UserException(UserErrorResult.USER_NOT_FOUND));
 
         // childId 검증
         List<Child> childList = childRepository.findByCenter(teacher.getCenter());
@@ -342,7 +340,7 @@ public class ChildService {
         if (sameCenterChildren.isEmpty()) {
             List<Board> boards = boardRepository.findByCenter(deletedChild.getCenter());
             User user = userRepository.findById(parentId)
-                    .orElseThrow(() -> new UserException(UserErrorResult.USER_NOT_EXIST));
+                    .orElseThrow(() -> new UserException(UserErrorResult.USER_NOT_FOUND));
             boardBookmarkRepository.deleteByUserAndBoardIn(user, boards);
         }
     }

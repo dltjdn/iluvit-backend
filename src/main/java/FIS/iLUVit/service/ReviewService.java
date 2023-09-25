@@ -61,7 +61,7 @@ public class ReviewService {
      */
     public Slice<ReviewByParentResponse> findReviewListByParent(Long userId, Pageable pageable) {
         Parent parent = parentRepository.findById(userId)
-                .orElseThrow(() -> new UserException(UserErrorResult.USER_NOT_EXIST));
+                .orElseThrow(() -> new UserException(UserErrorResult.USER_NOT_FOUND));
 
         Slice<Review> reviews = reviewRepository.findByParent(parent, pageable);
 
@@ -76,12 +76,8 @@ public class ReviewService {
      */
     public void saveNewReview(Long userId, ReviewCreateRequest reviewCreateRequest) {
 
-        if (userId == null) {
-            throw new UserException(UserErrorResult.NOT_VALID_TOKEN);
-        }
-
         Parent findUser = parentRepository.findById(userId)
-                .orElseThrow(() -> new UserException(UserErrorResult.USER_NOT_EXIST));
+                .orElseThrow(() -> new UserException(UserErrorResult.USER_NOT_FOUND));
 
         // 리뷰_등록_학부모의_아이가_센터에_속해있지_않음
         List<Child> children = findUser.getChildren();
@@ -147,7 +143,7 @@ public class ReviewService {
         Review review = reviewRepository.findById(reviewId)
                 .orElseThrow(() -> new ReviewException(ReviewErrorResult.REVIEW_NOT_EXIST));
         Teacher teacher = teacherRepository.findById(teacherId)
-                .orElseThrow(() -> new UserException(UserErrorResult.USER_NOT_EXIST));
+                .orElseThrow(() -> new UserException(UserErrorResult.USER_NOT_FOUND));
         if (!teacher.getApproval().equals(Approval.ACCEPT)) {
             throw new ReviewException(ReviewErrorResult.APPROVAL_INCOMPLETE);
         }

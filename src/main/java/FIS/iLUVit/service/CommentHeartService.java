@@ -34,7 +34,7 @@ public class CommentHeartService {
         }
 
         User findUser = userRepository.findById(userId)
-                .orElseThrow(() -> new UserException(UserErrorResult.USER_NOT_EXIST));
+                .orElseThrow(() -> new UserException(UserErrorResult.USER_NOT_FOUND));
       ;
         Comment findComment = commentRepository.findById(commentId)
                 .orElseThrow(() -> new CommentException(CommentErrorResult.NO_EXIST_COMMENT));
@@ -59,7 +59,7 @@ public class CommentHeartService {
         }
 
         User findUser = userRepository.findById(userId)
-                .orElseThrow(() -> new UserException(UserErrorResult.USER_NOT_EXIST));
+                .orElseThrow(() -> new UserException(UserErrorResult.USER_NOT_FOUND));
 
         Comment findComment = commentRepository.findById(commentId)
                 .orElseThrow(() -> new CommentException(CommentErrorResult.NO_EXIST_COMMENT));

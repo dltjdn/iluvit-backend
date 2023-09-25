@@ -30,7 +30,7 @@ public class ReviewHeartService {
         Review review = reviewRepository.findById(reviewId)
                 .orElseThrow(() -> new ReviewException(ReviewErrorResult.REVIEW_NOT_EXIST));
         User user = userRepository.findById(userId)
-                .orElseThrow(() -> new UserException(UserErrorResult.USER_NOT_EXIST));
+                .orElseThrow(() -> new UserException(UserErrorResult.USER_NOT_FOUND));
 
         reviewHeartRepository.findByReviewAndUser(review, user)
                 .ifPresent(existingReviewHeart -> {
@@ -45,7 +45,7 @@ public class ReviewHeartService {
         Review review = reviewRepository.findById(reviewId)
                 .orElseThrow(() -> new ReviewException(ReviewErrorResult.REVIEW_NOT_EXIST));
         User user = userRepository.findById(userId)
-                .orElseThrow(() -> new UserException(UserErrorResult.USER_NOT_EXIST));
+                .orElseThrow(() -> new UserException(UserErrorResult.USER_NOT_FOUND));
 
         reviewHeartRepository.findByReviewAndUser(review, user)
                 .ifPresentOrElse(reviewHeartRepository::delete, () -> {

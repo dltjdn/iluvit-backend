@@ -41,7 +41,7 @@ public class ScrapService {
      */
     public List<ScrapDirResponse> findScrapDirList(Long userId) {
         User user = userRepository.findById(userId)
-                .orElseThrow(() -> new UserException(UserErrorResult.USER_NOT_EXIST));
+                .orElseThrow(() -> new UserException(UserErrorResult.USER_NOT_FOUND));
 
         List<Scrap> scraps = scrapRepository.findByUser(user);
         List<ScrapDirResponse> scrapDirResponseList = new ArrayList<>();
@@ -57,7 +57,7 @@ public class ScrapService {
      */
     public ScrapIdResponse saveNewScrapDir(Long userId, ScrapDirRequest request) {
         User user = userRepository.findById(userId)
-                .orElseThrow(() -> new UserException(UserErrorResult.USER_NOT_EXIST));
+                .orElseThrow(() -> new UserException(UserErrorResult.USER_NOT_FOUND));
 
         Scrap newScrap = Scrap.createScrap(user, request.getName());
         scrapRepository.save(newScrap);
@@ -72,7 +72,7 @@ public class ScrapService {
      */
     public void deleteScrapDir(Long userId, Long scrapId) {
         User user = userRepository.findById(userId)
-                .orElseThrow(() -> new UserException(UserErrorResult.USER_NOT_EXIST));
+                .orElseThrow(() -> new UserException(UserErrorResult.USER_NOT_FOUND));
         Scrap scrapDir = scrapRepository.findByIdAndUser(scrapId, user)
                 .orElseThrow(() -> new ScrapException(ScrapErrorResult.NOT_VALID_SCRAP));
 
@@ -89,7 +89,7 @@ public class ScrapService {
      */
     public void modifyScrapDirName(Long userId, ScrapDirDetailRequest request) {
         User user = userRepository.findById(userId)
-                .orElseThrow(() -> new UserException(UserErrorResult.USER_NOT_EXIST));
+                .orElseThrow(() -> new UserException(UserErrorResult.USER_NOT_FOUND));
         Scrap findScrap = scrapRepository.findByIdAndUser(request.getScrapId(), user)
                 .orElseThrow(() -> new ScrapException(ScrapErrorResult.NOT_VALID_SCRAP));
 
@@ -103,7 +103,7 @@ public class ScrapService {
     public void modifyScrapPost(Long userId, Long postId, List<ScrapDirUpdateRequest> scrapInfos) {
         // 사용자의 스크랩 폴더 리스트 가져오기
         User user = userRepository.findById(userId)
-                .orElseThrow(() -> new UserException(UserErrorResult.USER_NOT_EXIST));
+                .orElseThrow(() -> new UserException(UserErrorResult.USER_NOT_FOUND));
         List<Scrap> scraps = scrapRepository.findByUser(user);
 
         // 수정할 게시물 정보 가져오기
@@ -147,7 +147,7 @@ public class ScrapService {
     public void deleteScrapPost(Long userId, Long scrapPostId) {
         // 스크랩폴더에 해당 게시물의 저장정보 조회
         User user = userRepository.findById(userId)
-                .orElseThrow(() -> new UserException(UserErrorResult.USER_NOT_EXIST));
+                .orElseThrow(() -> new UserException(UserErrorResult.USER_NOT_FOUND));
 
         ScrapPost scrapPost = scrapPostRepository.findByIdAndScrapUser(scrapPostId, user)
                 .orElseThrow(() -> new ScrapException(ScrapErrorResult.NOT_VALID_SCRAPPOST));
@@ -161,7 +161,7 @@ public class ScrapService {
     public List<ScrapDirByPostResponse> findScrapDirListByPost(Long userId, Long postId) {
         // 사용자의 스크랩 폴더 리스트 가져오기
         User user = userRepository.findById(userId)
-                .orElseThrow(() -> new UserException(UserErrorResult.USER_NOT_EXIST));
+                .orElseThrow(() -> new UserException(UserErrorResult.USER_NOT_FOUND));
         List<Scrap> scrapListByUser = scrapRepository.findByUser(user);
 
         // 사용자의 모든 스크랩 폴더에 대해 ScrapDirByPostResponse 목록으로 변환
@@ -175,7 +175,7 @@ public class ScrapService {
      */
     public Slice<PostByScrapDirResponse> findPostByScrapDir(Long userId, Long scrapId, Pageable pageable) {
         User user = userRepository.findById(userId)
-                .orElseThrow(() -> new UserException(UserErrorResult.USER_NOT_EXIST));
+                .orElseThrow(() -> new UserException(UserErrorResult.USER_NOT_FOUND));
         Slice<ScrapPost> scrapPosts = scrapPostRepository.findByScrapIdAndScrapUser(scrapId, user, pageable);
 
         // 조회된 ScrapPost 목록을 PostByScrapDirResponse로 변환하여 반환

@@ -37,7 +37,7 @@ public class BoardService {
         List<BoardListResponse.BoardBookmarkDto> bookmarkList = new ArrayList<>();
         List<BoardListResponse.BoardBookmarkDto> boardList = new ArrayList<>();
         User user = userRepository.findById(userId)
-                .orElseThrow(() -> new UserException(UserErrorResult.USER_NOT_EXIST));
+                .orElseThrow(() -> new UserException(UserErrorResult.USER_NOT_FOUND));
 
         boards.forEach(board -> {
             Optional<Bookmark> bookmark =  boardBookmarkRepository.findByUserAndBoard(user, board);
@@ -64,7 +64,7 @@ public class BoardService {
         List<BoardListResponse.BoardBookmarkDto> bookmarkList = new ArrayList<>();
         List<BoardListResponse.BoardBookmarkDto> boardList = new ArrayList<>();
         User user = userRepository.findById(userId)
-                .orElseThrow(() -> new UserException(UserErrorResult.USER_NOT_EXIST));
+                .orElseThrow(() -> new UserException(UserErrorResult.USER_NOT_FOUND));
 
         boards.forEach(board -> {
             Optional<Bookmark> bookmark =  boardBookmarkRepository.findByUserAndBoard(user, board);
@@ -90,7 +90,7 @@ public class BoardService {
             return result;
         }
         User findUser = userRepository.findById(userId)
-                .orElseThrow(() -> new UserException(UserErrorResult.USER_NOT_EXIST));
+                .orElseThrow(() -> new UserException(UserErrorResult.USER_NOT_FOUND));
         if (findUser.getAuth() == Auth.PARENT && findUser instanceof Parent ) {
             Parent parent = (Parent) findUser;
             List<Child> children = childRepository.findByParent(parent);
@@ -133,7 +133,7 @@ public class BoardService {
 
         // 시설의 이야기에서 센터에 속하지 않은 회원은 게시판 생성 불가
         User findUser = userRepository.findById(userId)
-                .orElseThrow(() -> new UserException(UserErrorResult.USER_NOT_EXIST));
+                .orElseThrow(() -> new UserException(UserErrorResult.USER_NOT_FOUND));
 
         if (findUser.getAuth() == Auth.PARENT && findUser instanceof Parent) {
             Parent parent = (Parent) findUser;

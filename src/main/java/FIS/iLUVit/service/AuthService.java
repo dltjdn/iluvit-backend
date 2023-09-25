@@ -88,8 +88,6 @@ public class AuthService {
     * (핸드폰 번호 변경) 인증번호 받기
     */
     public void sendAuthNumForChangePhone(Long userId, String toNumber) {
-        if(userId == null)
-            throw new UserException(UserErrorResult.NOT_LOGIN);
 
         User findUser = userRepository.findByPhoneNumber(toNumber).orElse(null);
 

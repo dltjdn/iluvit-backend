@@ -58,7 +58,7 @@ public class AlarmService {
      */
     public void readAlarm(Long userId) {
         userRepository.findById(userId)
-                .orElseThrow(() -> new UserException(UserErrorResult.USER_NOT_EXIST))
+                .orElseThrow(() -> new UserException(UserErrorResult.USER_NOT_FOUND))
                 .updateReadAlarm(Boolean.TRUE); // user의 readAlarm 필드를 true로 바꾼다
     }
 
@@ -67,7 +67,7 @@ public class AlarmService {
      */
     public AlarmReadResponse hasRead(Long userId) {
         Boolean readAlarm = userRepository.findById(userId)
-                .orElseThrow(() -> new UserException(UserErrorResult.USER_NOT_EXIST))
+                .orElseThrow(() -> new UserException(UserErrorResult.USER_NOT_FOUND))
                 .getReadAlarm();
 
         AlarmReadResponse alarmReadResponse = new AlarmReadResponse(readAlarm);
@@ -89,7 +89,7 @@ public class AlarmService {
      */
     public void deleteAllAlarm(Long userId) {
         User user = userRepository.findById(userId)
-                .orElseThrow(() -> new UserException(UserErrorResult.NOT_VALID_TOKEN));
+                .orElseThrow(() -> new UserException(UserErrorResult.USER_NOT_FOUND));
 
         alarmRepository.deleteAllByUser(user);
     }

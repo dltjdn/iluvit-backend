@@ -117,7 +117,7 @@ public class BlackUserService {
 
         blackUsersByRestriectdReport.forEach(blackUser -> {
             User user = userRepository.findById(blackUser.getUserId())
-                    .orElseThrow(() -> new UserException(UserErrorResult.USER_NOT_EXIST));
+                    .orElseThrow(() -> new UserException(UserErrorResult.USER_NOT_FOUND));
             user.restorePersonalInfo(blackUser);
         });
 
@@ -133,13 +133,13 @@ public class BlackUserService {
         //현재 영구정지, 일주일간 이용제한 유저는 가입 불가
         blackUserRepository.findRestrictedByPhoneNumber(phoneNum)
                 .ifPresent(blackUser -> {
-                    throw new UserException(UserErrorResult.USER_IS_BLACK);
+                    throw new BlackUserException(BlackUserErrorResult.USER_IS_BLACK);
                 });
 
         // 탈퇴 후 15일이 지나지 않은 유저는 가입 불가
         blackUserRepository.findByPhoneNumberAndUserStatus(phoneNum, UserStatus.WITHDRAWN)
                 .ifPresent(blackUser -> {
-                    throw new UserException(UserErrorResult.USER_IS_WITHDRAWN);
+                    throw new BlackUserException(BlackUserErrorResult.USER_IS_WITHDRAWN);
                 });
     }
 

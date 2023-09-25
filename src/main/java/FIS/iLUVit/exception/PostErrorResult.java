@@ -10,7 +10,7 @@ import org.springframework.http.HttpStatus;
 public enum PostErrorResult implements ErrorResult {
 
     NO_MATCH_ANONYMOUS_INFO(HttpStatus.BAD_REQUEST, "게시글 작성자의 익명 여부와 Request 바디의 익명 여부가 일치하지 않습니다."),
-    POST_NOT_EXIST(HttpStatus.I_AM_A_TEAPOT, "해당 아이디를 가진 게시글이 존재하지 않습니다."),
+    POST_NOT_EXIST(HttpStatus.NOT_FOUND, "해당 아이디를 가진 게시글이 존재하지 않습니다."),
     PARENT_NOT_ACCESS_NOTICE(HttpStatus.FORBIDDEN, "학부모 회원은 공지 게시판에 글을 작성할 수 없습니다"),
     UNAUTHORIZED_USER_ACCESS(HttpStatus.FORBIDDEN, "권한 없는 유저입니다."),
     ALREADY_EXIST_HEART(HttpStatus.BAD_REQUEST, "이미 좋아요한 게시글입니다."),
