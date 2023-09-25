@@ -191,7 +191,7 @@ public class ChildService {
 
         // 승인 요청 보내는 시설
         Center center = centerRepository.findByIdAndSigned(centerId, true)
-                .orElseThrow(() -> new CenterException(CenterErrorResult.CENTER_NOT_EXIST));
+                .orElseThrow(() -> new CenterException(CenterErrorResult.CENTER_NOT_FOUND));
 
         mappedChild.mappingCenter(center);
 

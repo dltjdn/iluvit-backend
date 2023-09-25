@@ -173,7 +173,7 @@ public class PostService {
         if (centerId != null) {
 
             Center center = centerRepository.findById(centerId)
-                    .orElseThrow(() -> new CenterException(CenterErrorResult.CENTER_NOT_EXIST));
+                    .orElseThrow(() -> new CenterException(CenterErrorResult.CENTER_NOT_FOUND));
 
             if (user.getAuth() == Auth.PARENT) { // 학부모일 때
 
@@ -336,7 +336,7 @@ public class PostService {
         }
 
         Center center = centerRepository.findById(centerId)
-                .orElseThrow(() -> new CenterException(CenterErrorResult.CENTER_NOT_EXIST));
+                .orElseThrow(() -> new CenterException(CenterErrorResult.CENTER_NOT_FOUND));
 
         // 유저의 시설 즐겨찾기 리스트 가져옴
         List<Bookmark> bookmarkList = boardBookmarkRepository.findByUserAndBoardCenter(user, center);

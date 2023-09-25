@@ -57,7 +57,7 @@ public class BoardService {
      */
     public BoardListResponse findAllBoardByCenter(Long userId, Long centerId) {
         Center findCenter = centerRepository.findById(centerId)
-                .orElseThrow(() -> new CenterException(CenterErrorResult.CENTER_NOT_EXIST));
+                .orElseThrow(() -> new CenterException(CenterErrorResult.CENTER_NOT_FOUND));
 
 
         List<Board> boards = boardRepository.findByCenter(findCenter);  // 시설 이야기 모든 게시판
@@ -129,7 +129,7 @@ public class BoardService {
 
         // 센터가 존재하는 지 검사
         Center findCenter = centerRepository.findById(centerId)
-                .orElseThrow(() -> new CenterException(CenterErrorResult.CENTER_NOT_EXIST));
+                .orElseThrow(() -> new CenterException(CenterErrorResult.CENTER_NOT_FOUND));
 
         // 시설의 이야기에서 센터에 속하지 않은 회원은 게시판 생성 불가
         User findUser = userRepository.findById(userId)
@@ -140,12 +140,12 @@ public class BoardService {
             boolean childless = childRepository.findByParentAndCenter(parent, findCenter)
                     .isEmpty();
             if (childless) {
-                throw new BoardException(BoardErrorResult.UNAUTHORIZED_ACCESS);
+                throw new BoardException(BoardErrorResult.FORBIDDEN_ACCESS);
             }
         } else if (findUser instanceof Teacher) {
             Teacher teacher = (Teacher) findUser;
             if (teacher.getCenter() == null || !Objects.equals(teacher.getCenter().getId(), centerId)) {
-                throw new BoardException(BoardErrorResult.UNAUTHORIZED_ACCESS);
+                throw new BoardException(BoardErrorResult.FORBIDDEN_ACCESS);
             }
         }
 
@@ -192,17 +192,17 @@ public class BoardService {
      */
     private void validateAuth(Board findBoard, User u) {
         if (u.getAuth() == Auth.PARENT) {
-            throw new BoardException(BoardErrorResult.UNAUTHORIZED_ACCESS);
+            throw new BoardException(BoardErrorResult.FORBIDDEN_ACCESS);
         } else {
             Teacher t = (Teacher) u;
             if (t.getAuth() != Auth.DIRECTOR) {
-                throw new BoardException(BoardErrorResult.UNAUTHORIZED_ACCESS);
+                throw new BoardException(BoardErrorResult.FORBIDDEN_ACCESS);
             }
             if (t.getCenter() == null) {
-                throw new BoardException(BoardErrorResult.UNAUTHORIZED_ACCESS);
+                throw new BoardException(BoardErrorResult.FORBIDDEN_ACCESS);
             }
             if (t.getCenter().getId() != findBoard.getCenter().getId()) {
-                throw new BoardException(BoardErrorResult.UNAUTHORIZED_ACCESS);
+                throw new BoardException(BoardErrorResult.FORBIDDEN_ACCESS);
             }
         }
     }

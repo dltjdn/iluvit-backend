@@ -1,6 +1,5 @@
 package FIS.iLUVit.service;
 
-import FIS.iLUVit.controller.ReviewController;
 import FIS.iLUVit.dto.review.*;
 import FIS.iLUVit.domain.*;
 import FIS.iLUVit.domain.embeddable.Score;
@@ -36,7 +35,7 @@ public class ReviewService {
      */
     public Slice<ReviewByCenterResponse> findReviewByCenter(Long centerId, Pageable pageable) {
         Center findCenter = centerRepository.findById(centerId)
-                .orElseThrow(() -> new CenterException(CenterErrorResult.CENTER_NOT_EXIST));
+                .orElseThrow(() -> new CenterException(CenterErrorResult.CENTER_NOT_FOUND));
 
         Slice<Review> reviews = reviewRepository.findByCenterOrderByCreatedDate(findCenter, pageable);
 
@@ -100,7 +99,7 @@ public class ReviewService {
         }
 
         Center findCenter = centerRepository.findById(reviewCreateRequest.getCenterId())
-                .orElseThrow(() -> new CenterException(CenterErrorResult.CENTER_NOT_EXIST));
+                .orElseThrow(() -> new CenterException(CenterErrorResult.CENTER_NOT_FOUND));
 
         findCenter.addScore(Score.Review); // 리뷰 작성 시 센터의 스코어 올림
 

@@ -16,7 +16,7 @@ public enum BoardErrorResult implements ErrorResult {
     /**
      * 403 FORBIDDEN
      */
-    UNAUTHORIZED_ACCESS(HttpStatus.FORBIDDEN, "권한이 없는 유저입니다."),
+    FORBIDDEN_ACCESS(HttpStatus.FORBIDDEN, "권한이 없는 유저입니다."),
 
     /**
      * 400 BAD REQUEST

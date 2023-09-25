@@ -46,7 +46,7 @@ public class ScheduledNotificationService {
         for (ScheduleByDateResponse response : scheduleResponses) {
             Long centerId = response.getCenterId();
             Center center = centerRepository.findById(centerId)
-                    .orElseThrow(() -> new CenterException(CenterErrorResult.CENTER_NOT_EXIST));
+                    .orElseThrow(() -> new CenterException(CenterErrorResult.CENTER_NOT_FOUND));
             List<Teacher> directors = teacherRepository.findByCenterAndAuth(center, Auth.DIRECTOR);
             directors.forEach(director -> {
                 Alarm alarm = new AgentVisitedAlarm(director, Auth.DIRECTOR, director.getCenter());

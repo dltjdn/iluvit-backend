@@ -5,14 +5,10 @@ import FIS.iLUVit.exception.CenterException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
-import org.json.simple.JSONArray;
-import org.json.simple.JSONObject;
-import org.json.simple.parser.JSONParser;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.util.Pair;
 import org.springframework.http.*;
 import org.springframework.stereotype.Component;
-import org.springframework.web.client.RestTemplate;
 import org.springframework.web.reactive.function.client.WebClient;
 
 @Component
@@ -56,7 +52,7 @@ public class MapService {
 
 
         } catch (Exception ex){
-            throw new CenterException(CenterErrorResult.CENTER_WRONG_ADDRESS);
+            throw new CenterException(CenterErrorResult.ADDRESS_CONVERSION_FAILED);
         }
     }
 
@@ -94,7 +90,7 @@ public class MapService {
 
                 return Pair.of(sido, sigungu);
         } catch (Exception ex){
-            throw new CenterException(CenterErrorResult.CENTER_WRONG_ADDRESS);
+            throw new CenterException(CenterErrorResult.ADDRESS_CONVERSION_FAILED);
         }
     }
 

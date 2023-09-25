@@ -104,7 +104,7 @@ public class CenterService {
      */
     public CenterDetailResponse findCenterDetailsByCenter(Long centerId) {
         Center center = centerRepository.findById(centerId)
-                .orElseThrow(() -> new CenterException(CenterErrorResult.CENTER_NOT_EXIST));
+                .orElseThrow(() -> new CenterException(CenterErrorResult.CENTER_NOT_FOUND));
 
         // Center 가 id 에 의해 조회 되었으므로 score에 1 추가
         center.addScore(Score.GET);
@@ -121,7 +121,7 @@ public class CenterService {
                 .orElseThrow(() -> new UserException(UserErrorResult.USER_NOT_EXIST));
 
         Center center = centerRepository.findById(centerId)
-                .orElseThrow(() -> new CenterException(CenterErrorResult.CENTER_NOT_EXIST));
+                .orElseThrow(() -> new CenterException(CenterErrorResult.CENTER_NOT_FOUND));
 
         // 리뷰 score 평균
         Double tempStarAvg = reviewRepository.findByCenter(center).stream()
