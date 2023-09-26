@@ -85,13 +85,13 @@ public class ParticipationService {
      */
     public void cancelParticipation(Long userId, Long participationId) {
         if(participationId < 0)
-            throw new ParticipationException(ParticipationErrorResult.WRONG_PARTICIPATIONID_REQUEST);
+            throw new ParticipationException(ParticipationErrorResult.WRONG_PARTICIPATION_ID_REQUEST);
 
         Parent parent = parentRepository.findById(userId)
                 .orElseThrow(() -> new UserException(UserErrorResult.USER_NOT_FOUND));
 
         Participation participation = participationRepository.findByIdAndStatusAndParent(participationId, JOINED, parent)
-                .orElseThrow(() -> new ParticipationException(ParticipationErrorResult.NO_RESULT));
+                .orElseThrow(() -> new ParticipationException(ParticipationErrorResult.PARTICIPATION_NOT_FOUND));
 
         participation.cancel(); // ptDate cnt 값을 1줄여야 한다.
 
