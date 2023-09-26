@@ -54,11 +54,11 @@ public class ChatService {
 
         if (request.getCommentId() != null) {
             Comment findComment = commentRepository.findById(comment_id)
-                    .orElseThrow(() -> new CommentException(CommentErrorResult.NO_EXIST_COMMENT));
+                    .orElseThrow(() -> new CommentException(CommentErrorResult.COMMENT_NOT_FOUND));
             anonymousInfo = findComment.getAnonymous();
             receiveUser = findComment.getUser();
             if (receiveUser == null) {
-                throw new CommentException(CommentErrorResult.NO_EXIST_COMMENT);
+                throw new CommentException(CommentErrorResult.COMMENT_NOT_FOUND);
             }
         } else {
             anonymousInfo = findPost.getAnonymous();

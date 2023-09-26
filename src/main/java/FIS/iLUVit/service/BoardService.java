@@ -137,9 +137,8 @@ public class BoardService {
 
         if (findUser.getAuth() == Auth.PARENT && findUser instanceof Parent) {
             Parent parent = (Parent) findUser;
-            boolean childless = childRepository.findByParentAndCenter(parent, findCenter)
-                    .isEmpty();
-            if (childless) {
+            List<Child> childs = childRepository.findByParentAndCenter(parent, findCenter);
+            if (childs.isEmpty()) {
                 throw new BoardException(BoardErrorResult.FORBIDDEN_ACCESS);
             }
         } else if (findUser instanceof Teacher) {
@@ -195,13 +194,8 @@ public class BoardService {
             throw new BoardException(BoardErrorResult.FORBIDDEN_ACCESS);
         } else {
             Teacher t = (Teacher) u;
-            if (t.getAuth() != Auth.DIRECTOR) {
-                throw new BoardException(BoardErrorResult.FORBIDDEN_ACCESS);
-            }
-            if (t.getCenter() == null) {
-                throw new BoardException(BoardErrorResult.FORBIDDEN_ACCESS);
-            }
-            if (t.getCenter().getId() != findBoard.getCenter().getId()) {
+            if (t.getAuth() != Auth.DIRECTOR || t.getCenter() == null
+                    || !Objects.equals(t.getCenter().getId(), findBoard.getCenter().getId())) {
                 throw new BoardException(BoardErrorResult.FORBIDDEN_ACCESS);
             }
         }

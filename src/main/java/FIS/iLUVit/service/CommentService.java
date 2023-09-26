@@ -1,14 +1,14 @@
 package FIS.iLUVit.service;
 
-import FIS.iLUVit.domain.alarms.Alarm;
-import FIS.iLUVit.domain.enumtype.NotificationTitle;
-import FIS.iLUVit.dto.comment.CommentPostResponse;
-import FIS.iLUVit.dto.comment.CommentCreateRequest;
+import FIS.iLUVit.domain.Blocked;
 import FIS.iLUVit.domain.Comment;
 import FIS.iLUVit.domain.Post;
 import FIS.iLUVit.domain.User;
-import FIS.iLUVit.domain.Blocked;
+import FIS.iLUVit.domain.alarms.Alarm;
 import FIS.iLUVit.domain.alarms.PostAlarm;
+import FIS.iLUVit.domain.enumtype.NotificationTitle;
+import FIS.iLUVit.dto.comment.CommentCreateRequest;
+import FIS.iLUVit.dto.comment.CommentPostResponse;
 import FIS.iLUVit.exception.*;
 import FIS.iLUVit.repository.*;
 import lombok.RequiredArgsConstructor;
@@ -98,29 +98,24 @@ public class CommentService {
      */
     public void deleteComment(Long userId, Long commentId) {
 
-        if (userId == null) {
-            throw new CommentException(CommentErrorResult.UNAUTHORIZED_USER_ACCESS);
-        }
-
         commentRepository.findById(commentId)
                 .ifPresentOrElse(c -> {
                     // 내용 -> 삭제된 댓글입니다. + 작성자 -> null
-                    if (Objects.equals(c.getUser().getId(), userId)) {
-                        //c.deleteComment();
-
-                        // 댓글과 연관된 모든 신고내역의 target_id 를 null 값으로 만들어줘야함.
-                        reportRepository.setTargetIsNullAndStatusIsDelete(c.getId());
-                        // 댓글과 연관된 모든 신고상세내역의 target_comment_id(fk) 를 null 값으로 만들어줘야함.
-                        List<Long> commentIds = List.of(c.getId());
-                        reportDetailRepository.setCommentIsNull(commentIds);
-
-                        Comment findComment = commentRepository.findById(commentId).orElse(null);
-                        findComment.deleteComment();
-                    } else {
-                        throw new CommentException(CommentErrorResult.UNAUTHORIZED_USER_ACCESS);
+                    if (!Objects.equals(c.getUser().getId(), userId)) {
+                        throw new CommentException(CommentErrorResult.FORBIDDEN_ACCESS);
                     }
+                    //c.deleteComment();
+
+                    // 댓글과 연관된 모든 신고내역의 target_id 를 null 값으로 만들어줘야함.
+                    reportRepository.setTargetIsNullAndStatusIsDelete(c.getId());
+                    // 댓글과 연관된 모든 신고상세내역의 target_comment_id(fk) 를 null 값으로 만들어줘야함.
+                    List<Long> commentIds = List.of(c.getId());
+                    reportDetailRepository.setCommentIsNull(commentIds);
+
+                    Comment findComment = commentRepository.findById(commentId).orElse(null);
+                    findComment.deleteComment();
                 }, () -> {
-                    throw new CommentException(CommentErrorResult.NO_EXIST_COMMENT);
+                    throw new CommentException(CommentErrorResult.COMMENT_NOT_FOUND);
                 });
     }
 

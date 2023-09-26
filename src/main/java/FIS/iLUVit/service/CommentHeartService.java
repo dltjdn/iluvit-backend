@@ -29,19 +29,15 @@ public class CommentHeartService {
      * 댓글 좋아요 등록
      */
     public void saveCommentHeart(Long userId, Long commentId) {
-        if (userId == null) {
-            throw new CommentException(CommentErrorResult.UNAUTHORIZED_USER_ACCESS_HEART);
-        }
-
         User findUser = userRepository.findById(userId)
                 .orElseThrow(() -> new UserException(UserErrorResult.USER_NOT_FOUND));
       ;
         Comment findComment = commentRepository.findById(commentId)
-                .orElseThrow(() -> new CommentException(CommentErrorResult.NO_EXIST_COMMENT));
+                .orElseThrow(() -> new CommentException(CommentErrorResult.COMMENT_NOT_FOUND));
 
         commentHeartRepository.findByUserAndComment(findUser, findComment)
                 .ifPresent((ch) -> {
-                    throw new CommentException(CommentErrorResult.ALREADY_EXIST_HEART);
+                    throw new CommentException(CommentErrorResult.ALREADY_HEART_COMMENT);
                 });
 
         CommentHeart commentHeart = new CommentHeart(findUser, findComment);
@@ -54,21 +50,18 @@ public class CommentHeartService {
      * 댓글 좋아요 취소
      */
     public void deleteCommentHeart(Long userId, Long commentId) {
-        if (userId == null) {
-            throw new CommentException(CommentErrorResult.UNAUTHORIZED_USER_ACCESS_HEART);
-        }
 
         User findUser = userRepository.findById(userId)
                 .orElseThrow(() -> new UserException(UserErrorResult.USER_NOT_FOUND));
 
         Comment findComment = commentRepository.findById(commentId)
-                .orElseThrow(() -> new CommentException(CommentErrorResult.NO_EXIST_COMMENT));
+                .orElseThrow(() -> new CommentException(CommentErrorResult.COMMENT_NOT_FOUND));
 
         CommentHeart commentHeart = commentHeartRepository.findByUserAndComment(findUser, findComment)
-                .orElseThrow(() -> new CommentException(CommentErrorResult.NO_EXIST_COMMENT_HEART));
+                .orElseThrow(() -> new CommentException(CommentErrorResult.COMMENT_HEART_NOT_FOUND));
 
-        if (commentHeart.getUser() == null || !Objects.equals(commentHeart.getUser().getId(), userId)) {
-            throw new CommentException(CommentErrorResult.UNAUTHORIZED_USER_ACCESS_HEART);
+        if (!Objects.equals(commentHeart.getUser().getId(), userId)) {
+            throw new CommentException(CommentErrorResult.FORBIDDEN_ACCESS);
         }
 
         commentHeartRepository.delete(commentHeart);

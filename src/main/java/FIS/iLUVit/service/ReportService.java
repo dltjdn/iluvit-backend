@@ -74,7 +74,7 @@ public class ReportService {
         }else if (request.getType().equals(ReportType.COMMENT)){
             // 해당 댓글이 삭제되었으면 신고 불가능
             Comment findComment = commentRepository.findById(request.getTargetId())
-                    .orElseThrow(() -> new CommentException(CommentErrorResult.NO_EXIST_COMMENT));
+                    .orElseThrow(() -> new CommentException(CommentErrorResult.COMMENT_NOT_FOUND));
 
             // 댓글 작성자 정보
             User findTargetUser = userRepository.findById(findComment.getUser().getId())
