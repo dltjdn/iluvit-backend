@@ -39,7 +39,7 @@ public class ReportService {
         if (request.getType().equals(ReportType.POST)){
             // 해당 게시글이 삭제되었으면 신고 불가능
             Post findPost = postRepository.findById(request.getTargetId())
-                    .orElseThrow(() -> new PostException(PostErrorResult.POST_NOT_EXIST));
+                    .orElseThrow(() -> new PostException(PostErrorResult.POST_NOT_FOUND));
 
             // 게시글 작성자 정보
             User findTargetUser = userRepository.findById(findPost.getUser().getId())

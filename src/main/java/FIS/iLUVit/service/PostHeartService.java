@@ -26,12 +26,12 @@ public class PostHeartService {
                 .orElseThrow(() -> new UserException(UserErrorResult.USER_NOT_FOUND));
 
         Post post = postRepository.findById(postId)
-                .orElseThrow(() -> new PostException(PostErrorResult.POST_NOT_EXIST));
+                .orElseThrow(() -> new PostException(PostErrorResult.POST_NOT_FOUND));
 
         // 이미 좋아요 누른 게시물이면 에러
         postHeartRepository.findByUserAndPost(user, post)
                 .ifPresent((postHeart) -> {
-                    throw new PostException(PostErrorResult.ALREADY_EXIST_HEART);
+                    throw new PostException(PostErrorResult.ALREADY_HEART_POST);
                 });
 
         postHeartRepository.save(new PostHeart(user, post));
@@ -46,10 +46,10 @@ public class PostHeartService {
                 .orElseThrow(() -> new UserException(UserErrorResult.USER_NOT_FOUND));
 
         Post post = postRepository.findById(postId)
-                .orElseThrow(() -> new PostException(PostErrorResult.POST_NOT_EXIST));
+                .orElseThrow(() -> new PostException(PostErrorResult.POST_NOT_FOUND));
 
         PostHeart postHeart = postHeartRepository.findByUserAndPost(user, post)
-                .orElseThrow(() -> new PostException(PostErrorResult.POST_NOT_EXIST));
+                .orElseThrow(() -> new PostException(PostErrorResult.POST_HEART_NOT_FOUND));
 
         postHeartRepository.delete(postHeart);
     }

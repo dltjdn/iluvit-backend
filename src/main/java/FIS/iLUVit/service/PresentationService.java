@@ -74,7 +74,7 @@ public class PresentationService {
                 .orElseThrow(() -> new UserException(UserErrorResult.USER_NOT_FOUND))
                 .canWrite(request.getCenterId());
         if (presentationRepository.findByCenterIdAndDate(request.getCenterId(), LocalDate.now()) != null)
-            throw new PresentationException(PresentationErrorResult.ALREADY_PRESENTATION_EXIST);
+            throw new PresentationException(PresentationErrorResult.VALID_PRESENTATION_ALREADY_EXIST);
         Center center = centerRepository.getById(request.getCenterId());
         Presentation presentation = PresentationDetailRequest.toPresentation(request).updateCenter(center);
 
@@ -98,7 +98,7 @@ public class PresentationService {
 
     public Presentation savePresentationImageWithPtDate(Long presentationId, List<MultipartFile> images, Long userId) {
         Presentation presentation = presentationRepository.findById(presentationId)
-                .orElseThrow(() -> new PresentationException(PresentationErrorResult.NO_RESULT));
+                .orElseThrow(() -> new PresentationException(PresentationErrorResult.PRESENTATION_NOT_FOUND));
 
         imageService.saveInfoImages(images, presentation);
 
@@ -127,7 +127,7 @@ public class PresentationService {
     public Presentation modifyPresentationInfoWithPtDate(PresentationRequest request, Long userId) {
         //
         Presentation presentation = presentationRepository.findByIdAndJoinPtDate(request.getPresentationId())
-                .orElseThrow(() -> new PresentationException(PresentationErrorResult.NO_RESULT));
+                .orElseThrow(() -> new PresentationException(PresentationErrorResult.PRESENTATION_NOT_FOUND));
         teacherRepository.findById(userId)
                 .orElseThrow(() -> new UserException(UserErrorResult.USER_NOT_FOUND))
                 .canWrite(presentation.getCenter().getId());
@@ -150,7 +150,7 @@ public class PresentationService {
             else {
                 PtDate ptDate = ptDateMap.get(ptDateModifyDto.getPtDateId());
                 if(ptDate == null)
-                    throw new PresentationException(PresentationErrorResult.WRONG_PTDATE_ID_REQUEST);
+                    throw new PresentationException(PresentationErrorResult.INVALID_PTDATE_ID);
                 if(ptDateModifyDto.getAblePersonNum() > ptDate.getAblePersonNum() && ptDate.hasWaiting()){
                     // 추가 수용 가능 인원 숫자 체크
                     Integer changeNum = ptDateModifyDto.getAblePersonNum() - ptDate.getAblePersonNum();
@@ -192,7 +192,7 @@ public class PresentationService {
     public Presentation modifyPresentationImageWithPtDate(Long presentationId, List<MultipartFile> images, Long userId) {
         //
         Presentation presentation = presentationRepository.findById(presentationId)
-                .orElseThrow(() -> new PresentationException(PresentationErrorResult.NO_RESULT));
+                .orElseThrow(() -> new PresentationException(PresentationErrorResult.PRESENTATION_NOT_FOUND));
 
         teacherRepository.findById(userId)
                 .orElseThrow(() -> new UserException(UserErrorResult.USER_NOT_FOUND))

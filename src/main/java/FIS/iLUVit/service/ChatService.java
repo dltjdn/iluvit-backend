@@ -44,11 +44,11 @@ public class ChatService {
 
         User receiveUser;
 
-        Long post_id = request.getPostId();
+        Long postId = request.getPostId();
         Long comment_id = request.getCommentId();
 
-        Post findPost = postRepository.findById(post_id)
-                .orElseThrow(() -> new PostException(PostErrorResult.POST_NOT_EXIST));
+        Post findPost = postRepository.findById(postId)
+                .orElseThrow(() -> new PostException(PostErrorResult.POST_NOT_FOUND));
 
         Boolean anonymousInfo;
 

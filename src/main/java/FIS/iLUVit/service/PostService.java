@@ -60,7 +60,7 @@ public class PostService {
 
         // 학부모는 공지 게시판에 게시글 쓸 수 없다
         if (board.getBoardKind() == BoardKind.NOTICE && user.getAuth() == Auth.PARENT ) {
-                throw new PostException(PostErrorResult.PARENT_NOT_ACCESS_NOTICE);
+                throw new PostException(PostErrorResult.PARENT_CANNOT_WRITE_NOTICE);
         }
 
         List<MultipartFile> images = postCreateRequest.getImages();
@@ -82,11 +82,11 @@ public class PostService {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new UserException(UserErrorResult.USER_NOT_FOUND));
         Post post = postRepository.findById(postId)
-                .orElseThrow(() -> new PostException(PostErrorResult.POST_NOT_EXIST));
+                .orElseThrow(() -> new PostException(PostErrorResult.POST_NOT_FOUND));
 
         // 게시글을 쓴 사람만 삭제할 수 있다
         if (!post.getUser().equals(user)) {
-            throw new PostException(PostErrorResult.UNAUTHORIZED_USER_ACCESS);
+            throw new PostException(PostErrorResult.FORBIDDEN_ACCESS);
         }
 
         // 게시글과 연관된 모든 채팅방의 post_id를 null
@@ -130,7 +130,7 @@ public class PostService {
      * [모두의 이야기 + 유저가 속한 센터의 이야기] 에서 게시글 제목+내용 검색
      */
     public Slice<PostResponse> searchPost(Long userId, String keyword, Pageable pageable) {
-        if(keyword == null || keyword == "") throw new PostException(PostErrorResult.NO_KEYWORD);
+        if(keyword == null || keyword == "") throw new PostException(PostErrorResult.MISSING_SEARCH_KEYWORD);
 
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new UserException(UserErrorResult.USER_NOT_FOUND));
@@ -164,7 +164,7 @@ public class PostService {
      * [시설 이야기] or [모두의 이야기] 에서 게시글 제목+내용 검색
      */
     public Slice<PostResponse> searchPostByCenter(Long userId, Long centerId, String keyword, Pageable pageable) {
-        if(keyword == null || keyword == "") throw new PostException(PostErrorResult.NO_KEYWORD);
+        if(keyword == null || keyword == "") throw new PostException(PostErrorResult.MISSING_SEARCH_KEYWORD);
 
         User user = userRepository.findById(userId).
                 orElseThrow(() -> new UserException(UserErrorResult.USER_NOT_FOUND));
@@ -184,7 +184,7 @@ public class PostService {
                         .anyMatch(center::equals);
 
                 if (!hasAccess) {
-                    throw new PostException(PostErrorResult.UNAUTHORIZED_USER_ACCESS);
+                    throw new PostException(PostErrorResult.FORBIDDEN_ACCESS);
                 }
 
             } else { // 선생님일 때
@@ -192,7 +192,7 @@ public class PostService {
                         .orElseThrow(() -> new UserException(UserErrorResult.USER_NOT_FOUND));
 
                 if (!teacher.getCenter().equals(center)) {
-                    throw new PostException(PostErrorResult.UNAUTHORIZED_USER_ACCESS);
+                    throw new PostException(PostErrorResult.FORBIDDEN_ACCESS);
                 }
             }
         }
@@ -244,7 +244,7 @@ public class PostService {
      */
     public PostDetailResponse findPostByPostId(Long userId, Long postId) {
         Post post = postRepository.findById(postId)
-                .orElseThrow(() -> new PostException(PostErrorResult.POST_NOT_EXIST));
+                .orElseThrow(() -> new PostException(PostErrorResult.POST_NOT_FOUND));
 
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new UserException(UserErrorResult.USER_NOT_FOUND));
@@ -320,7 +320,7 @@ public class PostService {
                     .anyMatch(center -> center.getId().equals(centerId));
 
             if (!flag) {
-                throw new PostException(PostErrorResult.WAITING_OR_REJECT_CANNOT_ACCESS);
+                throw new PostException(PostErrorResult.FORBIDDEN_ACCESS);
             }
         }
         // 선생 일 경우 속한 시설 id 와 주어진 시설 id가 일치해야 함
@@ -331,7 +331,7 @@ public class PostService {
             Center center = teacher.getCenter();
 
             if (center == null || !center.equals(center)) {
-                throw new PostException(PostErrorResult.UNAUTHORIZED_USER_ACCESS);
+                throw new PostException(PostErrorResult.FORBIDDEN_ACCESS);
             }
         }
 
@@ -352,10 +352,10 @@ public class PostService {
      */
     public void pullUpPost(Long userId, Long postId) {
         Post post = postRepository.findById(postId)
-                .orElseThrow(() -> new PostException(PostErrorResult.POST_NOT_EXIST));
+                .orElseThrow(() -> new PostException(PostErrorResult.POST_NOT_FOUND));
 
         if (post.getUser().getId().equals(userId)) {
-            throw new PostException(PostErrorResult.UNAUTHORIZED_USER_ACCESS);
+            throw new PostException(PostErrorResult.FORBIDDEN_ACCESS);
         }
 
         // 장터글 끌어올리기 (postUpdateDate 현재시간으로 업데이트)

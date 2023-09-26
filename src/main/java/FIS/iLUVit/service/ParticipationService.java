@@ -46,16 +46,16 @@ public class ParticipationService {
     public void registerParticipation(Long userId, Long ptDateId) {
         // 잘못된 설명회 회차 id일 경우
         PtDate ptDate = ptDateRepository.findByIdAndJoinParticipation(ptDateId)
-                .orElseThrow(() -> new PresentationException(PresentationErrorResult.WRONG_PTDATE_ID_REQUEST));
+                .orElseThrow(() -> new PresentationException(PresentationErrorResult.PTDATE_NOT_FOUND));
 
         // 설명회 신청기간이 지났을경우
         if(LocalDate.now().isAfter(ptDate.getPresentation().getEndDate()))
             // 핵심 비지니스 로직 => 설명회 canRegister
-            throw new PresentationException(PresentationErrorResult.PARTICIPATION_PERIOD_PASSED);
+            throw new PresentationException(PresentationErrorResult.PARTICIPATION_PERIOD_EXPIRED);
 
         // 설명회 수용인원이 초과일 경우
         if(ptDate.getParticipantCnt() >= ptDate.getAblePersonNum())
-            throw new PresentationException(PresentationErrorResult.PRESENTATION_OVERCAPACITY);
+            throw new PresentationException(PresentationErrorResult.CAPACITY_EXCEEDED);
 
         List<Participation> participations = ptDate.getParticipations();
         Presentation presentation = ptDate.getPresentation();
@@ -65,7 +65,7 @@ public class ParticipationService {
 
         participations.forEach(participation -> {
             if(participation.getStatus().equals(JOINED) && participation.getParent().getId().equals(userId))
-                throw new PresentationException(PresentationErrorResult.ALREADY_PARTICIPATED_IN);
+                throw new PresentationException(PresentationErrorResult.ALREADY_PARTICIPATED);
         });
 
         // 설명회 등록

@@ -35,32 +35,32 @@ public class WaitingService {
     public void waitingParticipation(Long userId, Long ptDateId) {
         // 잘못된 ptDateId로 요청 시 오류 반환
         if(ptDateId < 0)
-            throw new PresentationException(PresentationErrorResult.WRONG_PTDATE_ID_REQUEST);
+            throw new PresentationException(PresentationErrorResult.INVALID_PTDATE_ID);
 
         PtDate ptDate = ptDateRepository.findById(ptDateId)
-                .orElseThrow(() -> new PresentationException(PresentationErrorResult.WRONG_PTDATE_ID_REQUEST));
+                .orElseThrow(() -> new PresentationException(PresentationErrorResult.PTDATE_NOT_FOUND));
 
         // 설명회 신청기간이 지났을경우 error throw
         if(LocalDate.now().isAfter(ptDate.getPresentation().getEndDate()))
             // 핵심 비지니스 로직 => 설명회 canRegister
-            throw new PresentationException(PresentationErrorResult.PARTICIPATION_PERIOD_PASSED);
+            throw new PresentationException(PresentationErrorResult.PARTICIPATION_PERIOD_EXPIRED);
 
         // 대기 등록을 이미 했을 경우 error Throw
         waitingRepository.findByPtDate(ptDate).forEach(waiting -> {
             if(waiting.getParent().getId().equals(userId))
-                throw new PresentationException(PresentationErrorResult.ALREADY_WAITED_IN);
+                throw new PresentationException(PresentationErrorResult.ALREADY_ON_WAIT);
         });
 
         // 설명회 인원이 가득 차지 않았을 경우 error Throw
         if(ptDate.getAblePersonNum() > ptDate.getParticipantCnt())
-            throw new PresentationException(PresentationErrorResult.PRESENTATION_NOT_OVERCAPACITY);
+            throw new PresentationException(PresentationErrorResult.NOT_REACHED_CAPACITY_FOR_WAIT);
 
         // 설명회를 이미 신청 했을 경우 error Throw
         Status status = Status.JOINED;
         List<Participation> participants = participationRepository.findByPtDateAndStatus(ptDate, status);
         participants.forEach(participation -> {
             if(participation.getParent().getId().equals(userId))
-                throw new PresentationException(PresentationErrorResult.ALREADY_PARTICIPATED_IN);
+                throw new PresentationException(PresentationErrorResult.ALREADY_PARTICIPATED);
         });
 
         Waiting waiting = Waiting.builder()

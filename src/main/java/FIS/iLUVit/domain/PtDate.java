@@ -101,7 +101,7 @@ public class PtDate extends BaseEntity {
 
     public PtDate update(PtDateDto ptDateDto) {
         if(participantCnt > ptDateDto.getAblePersonNum())
-            throw new PresentationException(PresentationErrorResult.UPDATE_ERROR_ABLE_PERSON_NUM);
+            throw new PresentationException(PresentationErrorResult.INSUFFICIENT_CAPACITY_SETTING);
         date = ptDateDto.getDate();
         time = ptDateDto.getTime();
         ablePersonNum = ptDateDto.getAblePersonNum();
@@ -110,7 +110,7 @@ public class PtDate extends BaseEntity {
 
     public void canDelete() {
         if(participantCnt > 0)
-            throw new PresentationException(PresentationErrorResult.DELETE_FAIL_HAS_PARTICIPANT);
+            throw new PresentationException(PresentationErrorResult.CANNOT_DELETE_WITH_PARTICIPANT);
     }
 
     @Override

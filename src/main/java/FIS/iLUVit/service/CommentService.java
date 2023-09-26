@@ -43,7 +43,7 @@ public class CommentService {
                 .orElseThrow(() -> new UserException(UserErrorResult.USER_NOT_FOUND));
 
         Post post = postRepository.findById(postId)
-                .orElseThrow(() -> new PostException(PostErrorResult.POST_NOT_EXIST));
+                .orElseThrow(() -> new PostException(PostErrorResult.POST_NOT_FOUND));
 
         // anonymous false 일 때 order = null
         // anonymous true 일 때 order = n

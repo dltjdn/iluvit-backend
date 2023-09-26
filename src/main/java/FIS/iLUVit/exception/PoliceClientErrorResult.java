@@ -12,7 +12,7 @@ public enum PoliceClientErrorResult implements ErrorResult {
     /**
      * 408 REQUEST TIMEOUT
      */
-    REQUEST_TIMEOUT(HttpStatus.REQUEST_TIMEOUT, "요청이 실패했습니다"),
+    REQUEST_TIMEOUT(HttpStatus.REQUEST_TIMEOUT, "요청이 실패했습니다."),
     ;
 
 
