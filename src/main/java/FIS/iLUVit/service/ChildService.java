@@ -118,7 +118,7 @@ public class ChildService {
 
         // 수정하고자 하는 아이
         Child updatedChild = childRepository.findByIdAndParent(childId,(Parent)user)
-                .orElseThrow(() -> new UserException(UserErrorResult.NOT_VALID_REQUEST));
+                .orElseThrow(() -> new ChildException(ChildErrorResult.CHILD_NOT_FOUND));
 
         // 프로필 수정
         updatedChild.update(request.getName(), request.getBirthDate());
@@ -144,7 +144,7 @@ public class ChildService {
         Child deletedChild = childrenByUser.stream()
                 .filter(child -> Objects.equals(child.getId(), childId))
                 .findFirst()
-                .orElseThrow(() -> new UserException(UserErrorResult.NOT_VALID_REQUEST));
+                .orElseThrow(() -> new ChildException(ChildErrorResult.CHILD_NOT_FOUND));
 
         // 삭제하고자 하는 아이와 같은 시설에 다니는 또 다른 자녀가 있는지 확인해서 없으면 해당 시설과 관련된 bookmark 모두 삭제
         if (deletedChild.getCenter() != null) {
@@ -182,7 +182,7 @@ public class ChildService {
 
         // 승인 받고자 하는 아이
         Child mappedChild = childRepository.findByIdAndParent(childId,(Parent)user)
-                .orElseThrow(() -> new UserException(UserErrorResult.NOT_VALID_REQUEST));
+                .orElseThrow(() -> new ChildException(ChildErrorResult.CHILD_NOT_FOUND));
 
         // 속해있는 시설이 있는 경우
         if (mappedChild.getCenter() != null) {
@@ -220,7 +220,7 @@ public class ChildService {
                 .filter(child -> Objects.equals(child.getId(), childId))
                 .filter(child -> child.getCenter() != null)
                 .findFirst()
-                .orElseThrow(() -> new UserException(UserErrorResult.NOT_VALID_REQUEST));
+                .orElseThrow(() -> new ChildException(ChildErrorResult.CHILD_NOT_FOUND));
 
         deleteBookmarkByCenter(userId, childrenByUser, exitedChild);
 
@@ -263,7 +263,7 @@ public class ChildService {
         Child acceptedChild = childList.stream()
                 .filter(child -> Objects.equals(child.getId(), childId) && child.getApproval() == Approval.WAITING)
                 .findFirst()
-                .orElseThrow(() -> new UserException(UserErrorResult.NOT_VALID_REQUEST));
+                .orElseThrow(() -> new ChildException(ChildErrorResult.CHILD_NOT_FOUND));
 
         // 승인
         acceptedChild.accepted();
@@ -312,7 +312,7 @@ public class ChildService {
         Child firedChild = childList.stream()
                 .filter(child -> Objects.equals(child.getId(), childId))
                 .findFirst()
-                .orElseThrow(() -> new UserException(UserErrorResult.NOT_VALID_REQUEST));
+                .orElseThrow(() -> new ChildException(ChildErrorResult.CHILD_NOT_FOUND));
 
 
         // 식제하고자 하는 아이의 부모에 속한 모든 아이들 가져오기

@@ -6,6 +6,8 @@ import FIS.iLUVit.dto.expoToken.ExpoTokenResponse;
 import FIS.iLUVit.dto.expoToken.ExpoTokenSaveRequest;
 import FIS.iLUVit.domain.ExpoToken;
 import FIS.iLUVit.domain.User;
+import FIS.iLUVit.exception.ExpoTokenErrorResult;
+import FIS.iLUVit.exception.ExpoTokenException;
 import FIS.iLUVit.exception.UserErrorResult;
 import FIS.iLUVit.exception.UserException;
 import FIS.iLUVit.repository.ExpoTokenRepository;
@@ -47,10 +49,10 @@ public class ExpoTokenService {
                 .orElseThrow(() -> new UserException(UserErrorResult.USER_NOT_FOUND));
 
         ExpoToken token = expoTokenRepository.findByTokenAndUser(expoToken, user)
-                .orElseThrow(() -> new UserException(UserErrorResult.NOT_VALID_TOKEN));
+                .orElseThrow(() -> new ExpoTokenException(ExpoTokenErrorResult.EXPO_TOKEN_NOT_FOUND));
 
         if (!Objects.equals(token.getUser(), user)) {
-            throw new UserException(UserErrorResult.FORBIDDEN_ACCESS);
+            throw new ExpoTokenException(ExpoTokenErrorResult.FORBIDDEN_ACCESS);
         }
         return new ExpoTokenResponse(token);
     }

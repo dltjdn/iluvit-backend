@@ -66,7 +66,7 @@ public class UserService {
 
         // 블랙 유저나 유저에 있는 로그인 아이디면 가입불가
         if (blackUser.isPresent() || user.isPresent()) {
-            throw new UserException(UserErrorResult.ALREADY_LOGINID_EXIST);
+            throw new UserException(UserErrorResult.ALREADY_LOGIN_ID_EXIST);
         }
     }
 
