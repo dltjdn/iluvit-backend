@@ -82,12 +82,12 @@ public class WaitingService {
 
         // 잘못된 waitingId로 요청 시 오류 반환
         if(waitingId < 0)
-            throw new WaitingException(WaitingErrorResult.WRONG_WAITINGID_REQUEST);
+            throw new WaitingException(WaitingErrorResult.WRONG_WAITING_ID_REQUEST);
 
         // 검색 결과 없으면 오류 반환
         Parent parent = parentRepository.findById(userId).orElseThrow(() -> new UserException(UserErrorResult.USER_NOT_FOUND));
         Waiting waiting = waitingRepository.findByIdAndParent(waitingId, parent)
-                .orElseThrow(() -> new WaitingException(WaitingErrorResult.NO_RESULT));
+                .orElseThrow(() -> new WaitingException(WaitingErrorResult.WAITING_NOT_FOUND));
 
         PtDate ptDate = waiting.getPtDate();
         ptDate.decreaseWaitingCnt();
