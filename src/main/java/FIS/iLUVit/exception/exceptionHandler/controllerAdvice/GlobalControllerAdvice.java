@@ -196,20 +196,6 @@ public class GlobalControllerAdvice extends ResponseEntityExceptionHandler {
     }
 
     /**
-     * Signup 관련 에러 등록
-     */
-    @ExceptionHandler(SignupException.class)
-    public ResponseEntity<ErrorResponse> signupExceptionHandler(SignupException e, HttpServletRequest request) {
-        log.warn("[SignupException] {} {} errMessage={}\n",
-                request.getMethod(),
-                request.getRequestURI(),
-                e.getErrorResult().getMessage()
-        );
-        slackErrorLogger.sendSlackAlertWarnLog(e.getErrorResult().getMessage(), request); // 슬랙 알림 보내는 메서드
-        return makeErrorResponseEntity(e.getErrorResult());
-    }
-
-    /**
      * Chat 관련 에러 등록
      */
     @ExceptionHandler(ChatException.class)

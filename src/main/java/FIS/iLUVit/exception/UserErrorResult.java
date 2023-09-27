@@ -21,8 +21,12 @@ public enum UserErrorResult implements ErrorResult {
     /**
      * 404 BAD REQUEST
      */
-    ALREADY_LOGIN_ID_EXIST(HttpStatus.BAD_REQUEST, "이미 존재하는 아이디입니다."),
-    ALREADY_NICKNAME_EXIST(HttpStatus.BAD_REQUEST, "이미 존재하는 닉네임입니다."),
+    DUPLICATE_LOGIN_ID(HttpStatus.BAD_REQUEST, "이미 존재하는 아이디입니다."),
+    DUPLICATE_NICKNAME(HttpStatus.BAD_REQUEST, "이미 존재하는 닉네임입니다."),
+    PASSWORD_CHECK_MISMATCH(HttpStatus.BAD_REQUEST, "비밀번호 확인이 다릅니다."),
+    INCORRECT_PASSWORD(HttpStatus.BAD_REQUEST, "비밀번호가 틀렸습니다."),
+    ALREADY_BELONGS_TO_CENTER(HttpStatus.BAD_REQUEST, "이미 속해있는 시설이 있습니다."),
+    HAVE_TO_MANDATE(HttpStatus.BAD_REQUEST, "원장권한을 다른 교사에게 위임한 후 다시 요청해주세요."),
     ;
 
     private final HttpStatus httpStatus;
