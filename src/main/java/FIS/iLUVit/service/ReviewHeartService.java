@@ -23,12 +23,9 @@ public class ReviewHeartService {
     private final UserRepository userRepository;
 
     public void saveReviewHeart(Long reviewId, Long userId) {
-        if (userId == null) {
-            throw new ReviewException(ReviewErrorResult.UNAUTHORIZED_USER_ACCESS);
-        }
 
         Review review = reviewRepository.findById(reviewId)
-                .orElseThrow(() -> new ReviewException(ReviewErrorResult.REVIEW_NOT_EXIST));
+                .orElseThrow(() -> new ReviewException(ReviewErrorResult.REVIEW_NOT_FOUND));
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new UserException(UserErrorResult.USER_NOT_FOUND));
 
@@ -43,13 +40,13 @@ public class ReviewHeartService {
 
     public void deleteReviewHeart(Long reviewId, Long userId) {
         Review review = reviewRepository.findById(reviewId)
-                .orElseThrow(() -> new ReviewException(ReviewErrorResult.REVIEW_NOT_EXIST));
+                .orElseThrow(() -> new ReviewException(ReviewErrorResult.REVIEW_NOT_FOUND));
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new UserException(UserErrorResult.USER_NOT_FOUND));
 
         reviewHeartRepository.findByReviewAndUser(review, user)
                 .ifPresentOrElse(reviewHeartRepository::delete, () -> {
-                    throw new ReviewException(ReviewErrorResult.REVIEW_HEART_NOT_EXIST);
+                    throw new ReviewException(ReviewErrorResult.REVIEW_HEART_NOT_FOUND);
                 });
     }
 }

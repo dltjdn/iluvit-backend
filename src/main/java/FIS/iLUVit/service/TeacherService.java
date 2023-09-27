@@ -14,10 +14,7 @@ import FIS.iLUVit.domain.alarms.CenterApprovalReceivedAlarm;
 import FIS.iLUVit.domain.enumtype.Approval;
 import FIS.iLUVit.domain.enumtype.Auth;
 import FIS.iLUVit.domain.enumtype.AuthKind;
-import FIS.iLUVit.exception.SignupErrorResult;
-import FIS.iLUVit.exception.SignupException;
-import FIS.iLUVit.exception.UserErrorResult;
-import FIS.iLUVit.exception.UserException;
+import FIS.iLUVit.exception.*;
 import FIS.iLUVit.repository.*;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -91,7 +88,7 @@ public class TeacherService {
         if (request.getCenterId() != null) {
             // 선택한 시설 정보 가져오기
             center = centerRepository.findById(request.getCenterId())
-                    .orElseThrow(() -> new SignupException(SignupErrorResult.NOT_EXIST_CENTER));
+                    .orElseThrow(() -> new CenterException(CenterErrorResult.CENTER_NOT_FOUND));
         }
         // 교사 객체를 생성하고 시설과 연결 ( 시설을 선택하지 않았으면 center = null )
         Teacher teacher = request.createTeacher(center, hashedPwd);
@@ -148,7 +145,7 @@ public class TeacherService {
             // 입력된 닉네임과 기존 교사 닉네임이 다를 경우에만 중복 검사 수행
             teacherRepository.findByNickName(request.getNickname())
                     .ifPresent(teacher -> {
-                        throw new SignupException(SignupErrorResult.DUPLICATED_NICKNAME);
+                        throw new UserException(UserErrorResult.DUPLICATE_NICKNAME);
                     });
         }
 
@@ -200,7 +197,7 @@ public class TeacherService {
     public Teacher requestAssignCenterForTeacher(Long userId, Long centerId) {
         // 교사 조회 및 시설 할당 여부 확인
         Teacher teacher = teacherRepository.findByIdAndCenterIsNull(userId)
-                .orElseThrow(() -> new SignupException(SignupErrorResult.ALREADY_BELONG_CENTER));
+                .orElseThrow(() -> new UserException(UserErrorResult.USER_NOT_FOUND));
 
         // 시설과의 연관관계 맺기
         Center center = centerRepository.getById(centerId);
@@ -223,7 +220,7 @@ public class TeacherService {
     public Teacher leaveCenterForTeacher(Long userId) {
         // user id로 교사 정보 조회 및 소속 시설 여부 확인
         Teacher escapedTeacher = teacherRepository.findById(userId)
-                .orElseThrow(() -> new SignupException(SignupErrorResult.NOT_BELONG_CENTER));
+                .orElseThrow(() -> new UserException(UserErrorResult.USER_NOT_FOUND));
 
         // 교사와 연결된 시설의 교사 리스트 조회
         List<Teacher> teacherList = teacherRepository.findByCenter(escapedTeacher.getCenter());
@@ -240,7 +237,7 @@ public class TeacherService {
 
         // 일반 교사가 남아있을때 최후의 관리교사이 탈퇴하려면 남은 교사에게 관리교사 권한을 위임해야함
         if (escapedTeacher.getAuth() == DIRECTOR && directors.size() == 1 && !commons.isEmpty()) {
-            throw new SignupException(SignupErrorResult.HAVE_TO_MANDATE);
+            throw new UserException(UserErrorResult.HAVE_TO_MANDATE);
         }
 
         // 속해있는 시설과 연관된 게시판 bookmark 모두 삭제

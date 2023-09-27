@@ -91,7 +91,7 @@ public class ReviewService {
             }
         }
         if (!flag) {
-            throw new ReviewException(ReviewErrorResult.UNAUTHORIZED_USER_ACCESS);
+            throw new ReviewException(ReviewErrorResult.FORBIDDEN_REVIEW_ACCESS);
         }
 
         Center findCenter = centerRepository.findById(reviewCreateRequest.getCenterId())
@@ -116,9 +116,9 @@ public class ReviewService {
      */
     public void modifyReview(Long reviewId, Long userId, ReviewContentRequest reviewContentRequest) {
         Review findReview = reviewRepository.findById(reviewId).orElseThrow(
-                () -> new ReviewException(ReviewErrorResult.REVIEW_NOT_EXIST));
+                () -> new ReviewException(ReviewErrorResult.REVIEW_NOT_FOUND));
         if (!Objects.equals(findReview.getParent().getId(), userId)) {
-            throw new ReviewException(ReviewErrorResult.UNAUTHORIZED_USER_ACCESS);
+            throw new ReviewException(ReviewErrorResult.FORBIDDEN_REVIEW_ACCESS);
         }
         findReview.updateContent(reviewContentRequest.getContent());
     }
@@ -128,9 +128,9 @@ public class ReviewService {
      */
     public void deleteReview(Long reviewId, Long userId) {
         Review findReview = reviewRepository.findById(reviewId)
-                .orElseThrow(() -> new ReviewException(ReviewErrorResult.REVIEW_NOT_EXIST));
+                .orElseThrow(() -> new ReviewException(ReviewErrorResult.REVIEW_NOT_FOUND));
         if (!Objects.equals(findReview.getParent().getId(), userId)) {
-            throw new ReviewException(ReviewErrorResult.UNAUTHORIZED_USER_ACCESS);
+            throw new ReviewException(ReviewErrorResult.FORBIDDEN_REVIEW_ACCESS);
         }
         reviewRepository.delete(findReview);
     }
@@ -141,17 +141,17 @@ public class ReviewService {
     public void saveComment(Long reviewId, ReviewCommentRequest reviewCommentRequest, Long teacherId) {
    
         Review review = reviewRepository.findById(reviewId)
-                .orElseThrow(() -> new ReviewException(ReviewErrorResult.REVIEW_NOT_EXIST));
+                .orElseThrow(() -> new ReviewException(ReviewErrorResult.REVIEW_NOT_FOUND));
         Teacher teacher = teacherRepository.findById(teacherId)
                 .orElseThrow(() -> new UserException(UserErrorResult.USER_NOT_FOUND));
         if (!teacher.getApproval().equals(Approval.ACCEPT)) {
             throw new ReviewException(ReviewErrorResult.APPROVAL_INCOMPLETE);
         }
         if (teacher.getAuth() != Auth.DIRECTOR) {
-            throw new ReviewException(ReviewErrorResult.UNAUTHORIZED_USER_ACCESS);
+            throw new ReviewException(ReviewErrorResult.FORBIDDEN_REVIEW_ACCESS);
         }
         if (!Objects.equals(teacher.getCenter().getId(), review.getCenter().getId())) {
-            throw new ReviewException(ReviewErrorResult.UNAUTHORIZED_USER_ACCESS);
+            throw new ReviewException(ReviewErrorResult.FORBIDDEN_REVIEW_ACCESS);
         }
 
         review.updateAnswer(reviewCommentRequest.getComment(), teacher);
@@ -162,9 +162,9 @@ public class ReviewService {
      */
     public void deleteComment(Long reviewId, Long teacherId) {
         Review review = reviewRepository.findById(reviewId)
-                .orElseThrow(() -> new ReviewException(ReviewErrorResult.REVIEW_NOT_EXIST));
+                .orElseThrow(() -> new ReviewException(ReviewErrorResult.REVIEW_NOT_FOUND));
         if (!Objects.equals(review.getTeacher().getId(), teacherId)) {
-            throw new ReviewException(ReviewErrorResult.UNAUTHORIZED_USER_ACCESS);
+            throw new ReviewException(ReviewErrorResult.FORBIDDEN_REVIEW_ACCESS);
         }
         review.updateAnswer(null, null); // 대댓글 삭제 -> null
     }

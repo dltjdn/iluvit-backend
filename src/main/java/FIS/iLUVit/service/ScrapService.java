@@ -1,14 +1,11 @@
 package FIS.iLUVit.service;
 
-import FIS.iLUVit.dto.scrap.*;
 import FIS.iLUVit.domain.Post;
 import FIS.iLUVit.domain.Scrap;
 import FIS.iLUVit.domain.ScrapPost;
 import FIS.iLUVit.domain.User;
-import FIS.iLUVit.exception.ScrapErrorResult;
-import FIS.iLUVit.exception.ScrapException;
-import FIS.iLUVit.exception.UserErrorResult;
-import FIS.iLUVit.exception.UserException;
+import FIS.iLUVit.dto.scrap.*;
+import FIS.iLUVit.exception.*;
 import FIS.iLUVit.repository.PostRepository;
 import FIS.iLUVit.repository.ScrapPostRepository;
 import FIS.iLUVit.repository.ScrapRepository;
@@ -74,11 +71,11 @@ public class ScrapService {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new UserException(UserErrorResult.USER_NOT_FOUND));
         Scrap scrapDir = scrapRepository.findByIdAndUser(scrapId, user)
-                .orElseThrow(() -> new ScrapException(ScrapErrorResult.NOT_VALID_SCRAP));
+                .orElseThrow(() -> new ScrapException(ScrapErrorResult.SCRAP_NOT_FOUND));
 
         // 조회된 스크랩 폴더가 기본 폴더인 경우 삭제 불가능
         if (scrapDir.getIsDefault()) {
-            throw new ScrapException(ScrapErrorResult.CANT_DELETE_DEFAULT);
+            throw new ScrapException(ScrapErrorResult.CANNOT_DELETE_DEFAULT);
         }
 
         scrapRepository.delete(scrapDir);
@@ -91,7 +88,7 @@ public class ScrapService {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new UserException(UserErrorResult.USER_NOT_FOUND));
         Scrap findScrap = scrapRepository.findByIdAndUser(request.getScrapId(), user)
-                .orElseThrow(() -> new ScrapException(ScrapErrorResult.NOT_VALID_SCRAP));
+                .orElseThrow(() -> new ScrapException(ScrapErrorResult.SCRAP_NOT_FOUND));
 
         // 조회된 스크랩 폴더의 이름을 요청된 dirName으로 수정
         findScrap.updateScrapDirName(request.getDirName());
@@ -108,36 +105,34 @@ public class ScrapService {
 
         // 수정할 게시물 정보 가져오기
         Post post = postRepository.findById(postId)
-                .orElseThrow(() -> new ScrapException(ScrapErrorResult.NOT_VALID_POST));
+                .orElseThrow(() -> new PostException(PostErrorResult.POST_NOT_FOUND));
 
         // request로 넘어온 스크랩 폴더 목록들을 사용자의 스크랩 폴더 목록과 비교
         scrapInfos.forEach(scrapInfo -> {
-            boolean isFindScrap = false;
             for (Scrap scrap : scraps) {
                 // 사용자의 스크랩 폴더와 request의 스크랩 폴더를 매칭
-                if (Objects.equals(scrapInfo.getScrapId(), scrap.getId())) {
-                    isFindScrap = true;
-                    // 사용자의 스크랩 폴더에 해당 게시물이 존재하는지 검사
-                    int scrapPostIndex = -1;
-                    for (int i = 0; i < scrap.getScrapPosts().size(); i++) {
-                        if (Objects.equals(scrap.getScrapPosts().get(i).getPost().getId(), post.getId())) {
-                            scrapPostIndex = i;
-                        }
+                if (!Objects.equals(scrapInfo.getScrapId(), scrap.getId())) {
+                    throw new ScrapException(ScrapErrorResult.NOT_VALID_SCRAP);
+                }
+
+                // 사용자의 스크랩 폴더에 해당 게시물이 존재하는지 검사
+                int scrapPostIndex = -1;
+                for (int i = 0; i < scrap.getScrapPosts().size(); i++) {
+                    if (Objects.equals(scrap.getScrapPosts().get(i).getPost().getId(), post.getId())) {
+                        scrapPostIndex = i;
                     }
-                    // 이전에 스크랩 폴더에 게시물을 스크랩 하지 않았고 스크랩 해야되는 경우
-                    if (scrapPostIndex == -1 && scrapInfo.getHasPost()) {
-                        ScrapPost newScrapPost = ScrapPost.createScrapPost(post, scrap);
-                        scrapPostRepository.save(newScrapPost);
-                    } else if (scrapPostIndex != -1 && !scrapInfo.getHasPost()) {
-                        // 이전에 해당 스크랩 폴더에 게시물을 스크랩 하였고 스크랩을 취소해야되는 경우
-                        scrapPostRepository.delete(scrap.getScrapPosts().get(scrapPostIndex));
-                    }
-                    break;
+                }
+
+                // 이전에 스크랩 폴더에 게시물을 스크랩 하지 않았고 스크랩 해야되는 경우
+                if (scrapPostIndex == -1 && scrapInfo.getHasPost()) {
+                    ScrapPost newScrapPost = ScrapPost.createScrapPost(post, scrap);
+                    scrapPostRepository.save(newScrapPost);
+                } else if (scrapPostIndex != -1 && !scrapInfo.getHasPost()) {
+                    // 이전에 해당 스크랩 폴더에 게시물을 스크랩 하였고 스크랩을 취소해야되는 경우
+                    scrapPostRepository.delete(scrap.getScrapPosts().get(scrapPostIndex));
                 }
             }
-            // DB에서 가져온 사용자 스크랩 정보와 request 스크랩 정보가 일치하지 않는 경우
-            if (!isFindScrap)
-                throw new ScrapException(ScrapErrorResult.NOT_VALID_SCRAP);
+
         });
     }
 
@@ -150,7 +145,7 @@ public class ScrapService {
                 .orElseThrow(() -> new UserException(UserErrorResult.USER_NOT_FOUND));
 
         ScrapPost scrapPost = scrapPostRepository.findByIdAndScrapUser(scrapPostId, user)
-                .orElseThrow(() -> new ScrapException(ScrapErrorResult.NOT_VALID_SCRAPPOST));
+                .orElseThrow(() -> new ScrapException(ScrapErrorResult.SCRAP_NOT_FOUND));
 
         scrapPostRepository.delete(scrapPost);
     }

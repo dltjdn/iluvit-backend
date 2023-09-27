@@ -74,7 +74,7 @@ public class ParentService {
         if(!Objects.equals(findParent.getNickName(), request.getNickname())){
             parentRepository.findByNickName(request.getNickname())
                     .ifPresent(parent -> {
-                        throw new UserException(UserErrorResult.ALREADY_NICKNAME_EXIST);
+                        throw new UserException(UserErrorResult.DUPLICATE_NICKNAME);
                     });
         }
 

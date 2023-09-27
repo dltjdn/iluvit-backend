@@ -66,7 +66,7 @@ public class UserService {
 
         // 블랙 유저나 유저에 있는 로그인 아이디면 가입불가
         if (blackUser.isPresent() || user.isPresent()) {
-            throw new UserException(UserErrorResult.ALREADY_LOGIN_ID_EXIST);
+            throw new UserException(UserErrorResult.DUPLICATE_LOGIN_ID);
         }
     }
 
@@ -79,7 +79,7 @@ public class UserService {
 
         // 블랙 유저나 유저에 있는 닉네임이면 가입불가
         if (blackUser.isPresent() || user.isPresent()) {
-            throw new UserException(UserErrorResult.ALREADY_NICKNAME_EXIST);
+            throw new UserException(UserErrorResult.DUPLICATE_NICKNAME);
         }
     }
 
@@ -93,11 +93,11 @@ public class UserService {
 
         // 기존 비밀번호와 유저가 입력한 현재 비밀번호를 확인
         if (!encoder.matches(request.getOriginPwd(), findUser.getPassword())) {
-            throw new SignupException(SignupErrorResult.NOT_MATCH_PWD);
+            throw new UserException(UserErrorResult.INCORRECT_PASSWORD);
         }
         // 새 비밀번호 확인
         if (!request.getNewPwd().equals(request.getNewPwdCheck())) {
-            throw new SignupException(SignupErrorResult.NOT_MATCH_PWDCHECK);
+            throw new UserException(UserErrorResult.PASSWORD_CHECK_MISMATCH);
         }
 
         // 비밀번호 변경
@@ -192,14 +192,14 @@ public class UserService {
     public String hashAndValidatePwdForSignup(String password, String passwordCheck, String loginId, String phoneNum, String nickName) {
         // 비밀번호 확인
         if (!password.equals(passwordCheck)) {
-            throw new SignupException(SignupErrorResult.NOT_MATCH_PWDCHECK);
+            throw new UserException(UserErrorResult.PASSWORD_CHECK_MISMATCH);
         }
 
         // 로그인 아이디, 닉네임 중복확인
-        User duplicatedUser = userRepository.findByLoginIdOrNickName(loginId, nickName).orElse(null);
-        if (duplicatedUser != null) {
-            throw new SignupException(SignupErrorResult.DUPLICATED_NICKNAME);
-        }
+        userRepository.findByLoginIdOrNickName(loginId, nickName)
+                .ifPresent((user) ->{
+                    throw new UserException(UserErrorResult.DUPLICATE_NICKNAME);
+                });
 
         // 핸드폰 인증확인
         AuthNumber authComplete = authRepository.findByPhoneNumAndAuthKindAndAuthTimeNotNull(phoneNum, AuthKind.signup)

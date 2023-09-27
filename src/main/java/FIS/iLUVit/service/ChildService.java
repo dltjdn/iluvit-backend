@@ -186,7 +186,7 @@ public class ChildService {
 
         // 속해있는 시설이 있는 경우
         if (mappedChild.getCenter() != null) {
-            throw new SignupException(SignupErrorResult.ALREADY_BELONG_CENTER);
+            throw new UserException(UserErrorResult.ALREADY_BELONGS_TO_CENTER);
         }
 
         // 승인 요청 보내는 시설
