@@ -1,6 +1,7 @@
 package FIS.iLUVit.domain.embeddable;
 
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -10,6 +11,7 @@ import javax.persistence.Embeddable;
 @Getter
 @AllArgsConstructor
 @NoArgsConstructor
+@Builder
 public class ClassInfo {
     // 연령별 학급수 (만 0 ~ 5세) 유치원은 (만3 ~ 5세)
     private Integer class_0;
