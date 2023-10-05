@@ -96,6 +96,10 @@ dependencies {
 
 }
 
+gitProperties {
+	keys = ['git.branch','git.commit.message.short','git.commit.id','git.commit.time','git.commit.user.name']
+}
+
 // 서순이 중요하다 test -> jacocoTestReport -> jacocoTestCoverageVerification 순서로 task 진행
 test {
 	useJUnitPlatform()
