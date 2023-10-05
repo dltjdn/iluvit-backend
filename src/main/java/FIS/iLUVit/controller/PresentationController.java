@@ -75,7 +75,6 @@ public class PresentationController {
     /**
      * 설명회 이미지 저장 및 수정
      */
-    @Transactional
     @RequestMapping(value = "{presentationId}/image", method = {RequestMethod.POST, RequestMethod.PATCH})
     public ResponseEntity<Void> updatePresentationImage(@Login Long userId, @PathVariable("presentationId") Long presentationId,
                                                           @RequestPart(required = false) List<MultipartFile> images){
