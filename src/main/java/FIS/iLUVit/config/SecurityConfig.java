@@ -1,6 +1,7 @@
 package FIS.iLUVit.config;
 
 import FIS.iLUVit.repository.UserRepository;
+import FIS.iLUVit.repository.AdminRepository;
 import FIS.iLUVit.security.ExceptionHandlerFilter;
 import FIS.iLUVit.security.JwtAuthorizationFilter;
 import FIS.iLUVit.security.JwtUtils;
@@ -25,6 +26,7 @@ import org.springframework.web.cors.CorsUtils;
 public class SecurityConfig {
 
     private final UserRepository userRepository;
+    private final AdminRepository adminRepository;
     private final CorsConfig corsConfig;
     private final AuthenticationConfiguration authenticationConfiguration;
     private final AccessDeniedHandler accessDeniedHandler;
@@ -56,7 +58,7 @@ public class SecurityConfig {
                     .antMatchers(HttpMethod.PATCH,"/expo-tokens/deactivate").permitAll()
                     .antMatchers("/alarm/**", "/board-bookmark/**", "/board/**","/center/**", "/chat/**", "/child/**", "/comment/**", "/comment-heart/**", "/expo-token/**"
                             , "/post/**", "/post-heart/**", "/presentation/**", "/report/**", "/review/**", "/review-heart/**", "/scrap/**", "/user/**", "/password/**","/auth/phonenum/**")
-                        .hasAnyRole("TEACHER", "DIRECTOR", "PARENT")
+                        .hasAnyRole("TEACHER", "DIRECTOR", "PARENT", "ADMIN")
                     .anyRequest().permitAll();
 
         return http.build();
@@ -71,7 +73,7 @@ public class SecurityConfig {
 
     @Bean
     public JwtAuthorizationFilter jwtAuthorizationFilter() throws Exception {
-        return new JwtAuthorizationFilter(authenticationManagerBean(), userRepository, jwtUtils);
+        return new JwtAuthorizationFilter(authenticationManagerBean(), userRepository, adminRepository, jwtUtils);
     }
 
     @Bean

@@ -12,6 +12,8 @@ import FIS.iLUVit.security.LoginResponse;
 import FIS.iLUVit.security.uesrdetails.PrincipalDetails;
 import com.auth0.jwt.exceptions.JWTVerificationException;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -24,7 +26,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
-
+@Slf4j
 @Service
 @Transactional
 @RequiredArgsConstructor
@@ -112,28 +114,33 @@ public class UserService {
     public LoginResponse login(LoginRequest request) {
         String loginId = request.getLoginId();
         String password = request.getPassword();
-
+log.error("++11111 {}", request);
         // 영구정지, 일주일간 이용제한인 유저인지 검증
         blackUserRepository.findRestrictedByLoginId(loginId)
                 .ifPresent(blackUser -> {
                     throw new UserException(UserErrorResult.USER_IS_BLACK_OR_WITHDRAWN);
                 });
+log.error("222222");
 
         // 로그인 아이디, 비밀번호 검증 에러 처리
         User user = userRepository.findByLoginId(loginId)
                 .orElseThrow(() -> new UserException(UserErrorResult.BAD_LOGIN_OR_PASSWORD));
 
+log.error("33333 {}", user.getPassword());
         if(!bCryptPasswordEncoder.matches(request.getPassword(), user.getPassword())) {
             throw new UserException(UserErrorResult.BAD_LOGIN_OR_PASSWORD);
         }
+log.error("44444 {} {}", request.getLoginId(), request.getPassword());
         // authenticationManager 이용한 아이디 및 비밀번호 확인
         Authentication authentication = authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(request.getLoginId(), request.getPassword()));
 
+log.error("55555");
         String jwt = jwtUtils.createAccessToken(authentication);
         String refresh = jwtUtils.createRefreshToken(authentication);
         TokenPair tokenPair = TokenPair.createTokenPair(jwt, refresh, user);
 
+log.error("66666");
         // 기존 토큰이 있으면 수정, 없으면 생성
         tokenPairRepository.findByUserId(user.getId())
                 .ifPresentOrElse(
@@ -141,10 +148,12 @@ public class UserService {
                         () -> tokenPairRepository.save(tokenPair)
                 );
 
+log.error("77777");
         LoginResponse response = user.getLoginInfo();
         response.setAccessToken(jwtUtils.addPrefix(jwt));
         response.setRefreshToken(jwtUtils.addPrefix(refresh));
 
+log.error("88888");
         // 더 이상 튜토리얼이 진행되지 않도록 하기
         user.disableTutorial();
         return response;

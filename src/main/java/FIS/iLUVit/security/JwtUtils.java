@@ -22,6 +22,9 @@ public class JwtUtils {
     @Value("${security.secretKey}")
     private String secretKey;
 
+    @Value("${security.adminSecretKey}")
+    private String adminSecretKey;
+
     @Value("${security.jwtExpirationInMs}")
     private int jwtExpirationInMs;
 
@@ -50,6 +53,11 @@ public class JwtUtils {
 
     public Long getUserIdFromToken(String token) {
         DecodedJWT jwt = JWT.require(Algorithm.HMAC512(secretKey)).build().verify(token);
+        return jwt.getClaim("id").asLong();
+    }
+
+    public Long getAdminIdFromToken(String token) {
+        DecodedJWT jwt = JWT.require(Algorithm.HMAC512(adminSecretKey)).build().verify(token);
         return jwt.getClaim("id").asLong();
     }
 
