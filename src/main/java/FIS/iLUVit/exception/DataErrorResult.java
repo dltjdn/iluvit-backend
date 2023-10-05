@@ -9,7 +9,7 @@ import org.springframework.http.HttpStatus;
 @RequiredArgsConstructor
 public enum DataErrorResult implements ErrorResult {
     /**
-     * 404 NOT FOUDN
+     * 404 NOT FOUND
      */
     DATA_NOT_FOUND(HttpStatus.NOT_FOUND, "검색결과가 없습니다."),
 

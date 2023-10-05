@@ -12,7 +12,7 @@ public enum CenterErrorResult implements ErrorResult {
     /**
      * 404 NOT FOUND
      */
-    CENTER_NOT_FOUND(HttpStatus.NOT_FOUND, "해당 아이디를 가진 센터가 존재하지 않습니다."),
+    CENTER_NOT_FOUND(HttpStatus.NOT_FOUND, "해당 아이디를 가진 시설이 존재하지 않습니다."),
 
     /**
      * 400 BAD REQUEST

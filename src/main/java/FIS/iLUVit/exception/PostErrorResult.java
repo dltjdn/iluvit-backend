@@ -9,7 +9,7 @@ import org.springframework.http.HttpStatus;
 @RequiredArgsConstructor
 public enum PostErrorResult implements ErrorResult {
     /**
-     * 404 NOT FOUNd
+     * 404 NOT FOUND
      */
     POST_NOT_FOUND(HttpStatus.NOT_FOUND, "해당 아이디를 가진 게시글이 존재하지 않습니다."),
     POST_HEART_NOT_FOUND(HttpStatus.NOT_FOUND,"해당 아이디를 가진 좋아요가 존재하지 않습니다."),

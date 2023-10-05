@@ -9,7 +9,7 @@ import org.springframework.http.HttpStatus;
 @RequiredArgsConstructor
 public enum BlackUserErrorResult implements ErrorResult {
     /**
-     * 400 NOT FOUND
+     * 404 NOT FOUND
      */
     BLACK_USER_NOT_FOUND(HttpStatus.NOT_FOUND, "해당 로그인아이디를 가진 블랙유저가 존재하지 않습니다."),
 

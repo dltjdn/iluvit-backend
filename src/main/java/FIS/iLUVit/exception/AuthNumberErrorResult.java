@@ -9,7 +9,7 @@ import org.springframework.http.HttpStatus;
 @RequiredArgsConstructor
 public enum AuthNumberErrorResult implements ErrorResult {
     /**
-     *  400 NOT FOUND
+     *  404 NOT FOUND
      */
     AUTHENTICATION_FAILED(HttpStatus.NOT_FOUND, "인증번호가 일치하지 않습니다."),
     PHONE_NUMBER_NOT_REGISTERED(HttpStatus.NOT_FOUND, "서비스에 가입되지 않은 핸드폰 번호입니다."),
