@@ -16,7 +16,7 @@ public enum BoardBookmarkErrorResult implements ErrorResult {
     /**
      * 403 FORBIDDEN
      */
-    FORBIDDEN_ACCESS(HttpStatus.FORBIDDEN, "북마크 삭제 권한이 없는 유저입니다."),
+    FORBIDDEN_ACCESS(HttpStatus.FORBIDDEN, "권한이 없는 유저입니다."),
     ;
 
     private final HttpStatus httpStatus;

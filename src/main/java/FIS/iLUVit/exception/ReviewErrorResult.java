@@ -17,7 +17,7 @@ public enum ReviewErrorResult implements ErrorResult {
    /**
     * 403 FORBIDDEN
     */
-    FORBIDDEN_REVIEW_ACCESS(HttpStatus.FORBIDDEN, "리뷰 작성 혹은 좋아요 등록 권한이 없는 유저입니다."),
+    FORBIDDEN_REVIEW_ACCESS(HttpStatus.FORBIDDEN, "권한이 없는 유저입니다."),
     APPROVAL_INCOMPLETE(HttpStatus.FORBIDDEN, "승인 대기 중이거나 승인 반려된 상태입니다."),
 
     /**
