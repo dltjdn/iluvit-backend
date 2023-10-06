@@ -89,7 +89,7 @@ public class ReviewService {
             }
         }
         if (!flag) {
-            throw new ReviewException(ReviewErrorResult.FORBIDDEN_REVIEW_ACCESS);
+            throw new ReviewException(ReviewErrorResult.FORBIDDEN_ACCESS);
         }
 
         Center findCenter = getCenter(reviewCreateRequest.getCenterId());
@@ -115,7 +115,7 @@ public class ReviewService {
     public void modifyReview(Long reviewId, Long userId, ReviewContentRequest reviewContentRequest) {
         Review findReview = getReview(reviewId);
         if (!Objects.equals(findReview.getParent().getId(), userId)) {
-            throw new ReviewException(ReviewErrorResult.FORBIDDEN_REVIEW_ACCESS);
+            throw new ReviewException(ReviewErrorResult.FORBIDDEN_ACCESS);
         }
         findReview.updateContent(reviewContentRequest.getContent());
     }
@@ -126,7 +126,7 @@ public class ReviewService {
     public void deleteReview(Long reviewId, Long userId) {
         Review findReview = getReview(reviewId);
         if (!Objects.equals(findReview.getParent().getId(), userId)) {
-            throw new ReviewException(ReviewErrorResult.FORBIDDEN_REVIEW_ACCESS);
+            throw new ReviewException(ReviewErrorResult.FORBIDDEN_ACCESS);
         }
         reviewRepository.delete(findReview);
     }
@@ -143,10 +143,10 @@ public class ReviewService {
             throw new ReviewException(ReviewErrorResult.APPROVAL_INCOMPLETE);
         }
         if (teacher.getAuth() != Auth.DIRECTOR) {
-            throw new ReviewException(ReviewErrorResult.FORBIDDEN_REVIEW_ACCESS);
+            throw new ReviewException(ReviewErrorResult.FORBIDDEN_ACCESS);
         }
         if (!Objects.equals(teacher.getCenter().getId(), review.getCenter().getId())) {
-            throw new ReviewException(ReviewErrorResult.FORBIDDEN_REVIEW_ACCESS);
+            throw new ReviewException(ReviewErrorResult.FORBIDDEN_ACCESS);
         }
 
         review.updateAnswer(reviewCommentRequest.getComment(), teacher);
@@ -158,7 +158,7 @@ public class ReviewService {
     public void deleteComment(Long reviewId, Long teacherId) {
         Review review = getReview(reviewId);
         if (!Objects.equals(review.getTeacher().getId(), teacherId)) {
-            throw new ReviewException(ReviewErrorResult.FORBIDDEN_REVIEW_ACCESS);
+            throw new ReviewException(ReviewErrorResult.FORBIDDEN_ACCESS);
         }
         review.updateAnswer(null, null); // 대댓글 삭제 -> null
     }
