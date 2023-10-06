@@ -52,15 +52,13 @@ public class PostService {
      */
     public void saveNewPost(Long userId, PostCreateRequest postCreateRequest) {
 
-        User user = userRepository.findById(userId)
-                .orElseThrow(() -> new UserException(UserErrorResult.USER_NOT_EXIST));
+        User user = getUser(userId);
 
-        Board board = boardRepository.findById(postCreateRequest.getBoardId())
-                .orElseThrow(() -> new BoardException(BoardErrorResult.BOARD_NOT_EXIST));
+        Board board = getBoard(postCreateRequest.getBoardId());
 
         // 학부모는 공지 게시판에 게시글 쓸 수 없다
         if (board.getBoardKind() == BoardKind.NOTICE && user.getAuth() == Auth.PARENT ) {
-                throw new PostException(PostErrorResult.PARENT_NOT_ACCESS_NOTICE);
+                throw new PostException(PostErrorResult.PARENT_CANNOT_WRITE_NOTICE);
         }
 
         List<MultipartFile> images = postCreateRequest.getImages();
@@ -79,14 +77,12 @@ public class PostService {
      *  게시글 삭제
      */
     public void deletePost(Long postId, Long userId) {
-        User user = userRepository.findById(userId)
-                .orElseThrow(() -> new UserException(UserErrorResult.USER_NOT_EXIST));
-        Post post = postRepository.findById(postId)
-                .orElseThrow(() -> new PostException(PostErrorResult.POST_NOT_EXIST));
+        User user = getUser(userId);
+        Post post = getPost(postId);
 
         // 게시글을 쓴 사람만 삭제할 수 있다
         if (!post.getUser().equals(user)) {
-            throw new PostException(PostErrorResult.UNAUTHORIZED_USER_ACCESS);
+            throw new PostException(PostErrorResult.FORBIDDEN_ACCESS);
         }
 
         // 게시글과 연관된 모든 채팅방의 post_id를 null
@@ -118,8 +114,7 @@ public class PostService {
      * 내가 쓴 게시글 전체 조회
      */
     public Slice<PostResponse> findPostByUser(Long userId, Pageable pageable) {
-        User user = userRepository.findById(userId)
-                .orElseThrow(() -> new UserException(UserErrorResult.USER_NOT_EXIST));
+        User user = getUser(userId);
 
         Slice<Post> posts = postRepository.findByUser(user, pageable);
 
@@ -130,10 +125,9 @@ public class PostService {
      * [모두의 이야기 + 유저가 속한 센터의 이야기] 에서 게시글 제목+내용 검색
      */
     public Slice<PostResponse> searchPost(Long userId, String keyword, Pageable pageable) {
-        if(keyword == null || keyword == "") throw new PostException(PostErrorResult.NO_KEYWORD);
+        if(keyword == null || keyword == "") throw new PostException(PostErrorResult.MISSING_SEARCH_KEYWORD);
 
-        User user = userRepository.findById(userId)
-                .orElseThrow(() -> new UserException(UserErrorResult.USER_NOT_EXIST));
+        User user = getUser(userId);
 
         List<Center> centers = new ArrayList<>();
 
@@ -145,7 +139,7 @@ public class PostService {
                     .collect(Collectors.toList());
         } else {
             Teacher teacher = teacherRepository.findById(userId)
-                    .orElseThrow(() -> new UserException(UserErrorResult.USER_NOT_EXIST));
+                    .orElseThrow(() -> new UserException(UserErrorResult.USER_NOT_FOUND));
             Center center = teacher.getCenter();
 
             if (center != null) centers.add(center);
@@ -164,16 +158,14 @@ public class PostService {
      * [시설 이야기] or [모두의 이야기] 에서 게시글 제목+내용 검색
      */
     public Slice<PostResponse> searchPostByCenter(Long userId, Long centerId, String keyword, Pageable pageable) {
-        if(keyword == null || keyword == "") throw new PostException(PostErrorResult.NO_KEYWORD);
+        if(keyword == null || keyword == "") throw new PostException(PostErrorResult.MISSING_SEARCH_KEYWORD);
 
-        User user = userRepository.findById(userId).
-                orElseThrow(() -> new UserException(UserErrorResult.USER_NOT_EXIST));
+        User user = getUser(userId);
 
         // 시설 이야기일 때 유저가 그 시설과 관계되어있는지 검증하는 로직
         if (centerId != null) {
 
-            Center center = centerRepository.findById(centerId)
-                    .orElseThrow(() -> new CenterException(CenterErrorResult.CENTER_NOT_EXIST));
+            Center center = getCenter(centerId);
 
             if (user.getAuth() == Auth.PARENT) { // 학부모일 때
 
@@ -184,15 +176,15 @@ public class PostService {
                         .anyMatch(center::equals);
 
                 if (!hasAccess) {
-                    throw new PostException(PostErrorResult.UNAUTHORIZED_USER_ACCESS);
+                    throw new PostException(PostErrorResult.FORBIDDEN_ACCESS);
                 }
 
             } else { // 선생님일 때
                 Teacher teacher = teacherRepository.findById(userId)
-                        .orElseThrow(() -> new UserException(UserErrorResult.USER_NOT_EXIST));
+                        .orElseThrow(() -> new UserException(UserErrorResult.USER_NOT_FOUND));
 
                 if (!teacher.getCenter().equals(center)) {
-                    throw new PostException(PostErrorResult.UNAUTHORIZED_USER_ACCESS);
+                    throw new PostException(PostErrorResult.FORBIDDEN_ACCESS);
                 }
             }
         }
@@ -206,15 +198,15 @@ public class PostService {
         return getPostResponses(posts);
     }
 
+
+
     /**
      * 각 게시판 별 게시글 제목+내용 검색
      */
     public Slice<PostResponse> searchByBoard(Long userId, Long boardId, String keyword, Pageable pageable) {
-        User user = userRepository.findById(userId)
-                .orElseThrow(() -> new UserException(UserErrorResult.USER_NOT_EXIST));
+        User user = getUser(userId);
 
-        boardRepository.findById(boardId)
-                .orElseThrow(() -> new BoardException(BoardErrorResult.BOARD_NOT_EXIST));
+        getBoard(boardId);
 
         // 유저가 차단한 유저를 조회한다
         List<Long> blockedUserIds = getBlockedUserIds(user);
@@ -224,12 +216,12 @@ public class PostService {
         return getPostResponses(posts);
     }
 
+
     /**
      * HOT 게시판 게시글 전체 조회
      */
     public Slice<PostResponse> findPostByHeartCnt(Long userId, Long centerId, Pageable pageable) {
-        User user = userRepository.findById(userId)
-                .orElseThrow(() -> new UserException(UserErrorResult.USER_NOT_EXIST));
+        User user = getUser(userId);
         // 유저가 차단한 유저를 조회한다
         List<Long> blockedUserIds = getBlockedUserIds(user);
 
@@ -239,15 +231,14 @@ public class PostService {
         return getPostResponses(posts);
     }
 
+
     /**
      *  게시글 상세 조회
      */
     public PostDetailResponse findPostByPostId(Long userId, Long postId) {
-        Post post = postRepository.findById(postId)
-                .orElseThrow(() -> new PostException(PostErrorResult.POST_NOT_EXIST));
+        Post post = getPost(postId);
 
-        User user = userRepository.findById(userId)
-                .orElseThrow(() -> new UserException(UserErrorResult.USER_NOT_EXIST));
+        User user = getUser(userId);
 
         // 유저가 차단한 유저를 조회한다
         List<Long> blockedUserIds = getBlockedUserIds(user);
@@ -292,8 +283,7 @@ public class PostService {
      * 모두의 이야기 게시판 전체 조회
      */
     public List<BoardPreviewResponse> findBoardDetailsByPublic(Long userId) {
-        User user = userRepository.findById(userId)
-                .orElseThrow(() -> new UserException(UserErrorResult.USER_NOT_EXIST));
+        User user = getUser(userId);
 
         List<Bookmark> bookmarkList = boardBookmarkRepository.findByUserAndBoardCenterIsNull(user);
 
@@ -307,8 +297,7 @@ public class PostService {
      */
     public List<BoardPreviewResponse> findBoardDetailsByCenter(Long userId, Long centerId) {
 
-        User user = userRepository.findById(userId)
-                .orElseThrow(() -> new UserException(UserErrorResult.USER_NOT_EXIST));
+        User user = getUser(userId);
 
         // 학부모 일 경우 아이들의 시설 id와 주어진 시설 id중 일치하는 것이 하나라도 있어야 함
         if (user.getAuth() == Auth.PARENT && user instanceof Parent) {
@@ -320,23 +309,22 @@ public class PostService {
                     .anyMatch(center -> center.getId().equals(centerId));
 
             if (!flag) {
-                throw new PostException(PostErrorResult.WAITING_OR_REJECT_CANNOT_ACCESS);
+                throw new PostException(PostErrorResult.FORBIDDEN_ACCESS);
             }
         }
         // 선생 일 경우 속한 시설 id 와 주어진 시설 id가 일치해야 함
         else {
             Teacher teacher = teacherRepository.findById(userId)
-                    .orElseThrow(() -> new UserException(UserErrorResult.USER_NOT_EXIST));
+                    .orElseThrow(() -> new UserException(UserErrorResult.USER_NOT_FOUND));
 
             Center center = teacher.getCenter();
 
             if (center == null || !center.equals(center)) {
-                throw new PostException(PostErrorResult.UNAUTHORIZED_USER_ACCESS);
+                throw new PostException(PostErrorResult.FORBIDDEN_ACCESS);
             }
         }
 
-        Center center = centerRepository.findById(centerId)
-                .orElseThrow(() -> new CenterException(CenterErrorResult.CENTER_NOT_EXIST));
+        Center center = getCenter(centerId);
 
         // 유저의 시설 즐겨찾기 리스트 가져옴
         List<Bookmark> bookmarkList = boardBookmarkRepository.findByUserAndBoardCenter(user, center);
@@ -351,16 +339,16 @@ public class PostService {
      * 장터글 끌어올리기
      */
     public void pullUpPost(Long userId, Long postId) {
-        Post post = postRepository.findById(postId)
-                .orElseThrow(() -> new PostException(PostErrorResult.POST_NOT_EXIST));
+        Post post = getPost(postId);
 
         if (post.getUser().getId().equals(userId)) {
-            throw new PostException(PostErrorResult.UNAUTHORIZED_USER_ACCESS);
+            throw new PostException(PostErrorResult.FORBIDDEN_ACCESS);
         }
 
         // 장터글 끌어올리기 (postUpdateDate 현재시간으로 업데이트)
         post.updateTime(LocalDateTime.now());
     }
+
 
     /**
      * Post -> PostResposne
@@ -448,6 +436,36 @@ public class PostService {
                 .map(User::getId)
                 .collect(Collectors.toList());
         return blockedUserIds;
+    }
+    /**
+     * 예외처리 - 존재하는 유저인가
+     */
+    private User getUser(Long userId) {
+        return userRepository.findById(userId)
+                .orElseThrow(() -> new UserException(UserErrorResult.USER_NOT_FOUND));
+    }
+
+    /**
+     * 예외처리 - 존재하는 게시글인가
+     */
+    private Post getPost(Long postId) {
+        return postRepository.findById(postId)
+                .orElseThrow(() -> new PostException(PostErrorResult.POST_NOT_FOUND));
+    }
+    /**
+     * 예외처리 - 존재하는 시설인가
+     */
+    private Center getCenter(Long centerId) {
+        return  centerRepository.findById(centerId)
+                .orElseThrow(() -> new CenterException(CenterErrorResult.CENTER_NOT_FOUND));
+    }
+
+    /**
+     * 예외처리 - 존재하는 게시판인가
+     */
+    private Board getBoard(Long boardId) {
+        return boardRepository.findById(boardId)
+                .orElseThrow(() -> new BoardException(BoardErrorResult.BOARD_NOT_FOUND));
     }
 
 }

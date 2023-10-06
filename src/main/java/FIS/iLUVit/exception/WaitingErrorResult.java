@@ -8,9 +8,17 @@ import org.springframework.http.HttpStatus;
 @AllArgsConstructor
 @Getter
 public enum WaitingErrorResult implements ErrorResult {
+    /**
+     * 404 NOT FOUND
+     */
+    WAITING_NOT_FOUND(HttpStatus.NOT_FOUND, "해당 대기 정보가 존재하지 않습니다."),
 
-    WRONG_WAITINGID_REQUEST(HttpStatus.I_AM_A_TEAPOT, "올바르지 않은 waitingId 입니다"),
-    NO_RESULT(HttpStatus.I_AM_A_TEAPOT, "잘못된 요청입니다");
+    /**
+     * 400 BAD REQUEST
+     */
+    WRONG_WAITING_ID_REQUEST(HttpStatus.BAD_REQUEST, "올바르지 않은 대기 Id 입니다."),
+    ;
+
     private final HttpStatus httpStatus;
     private final String message;
 

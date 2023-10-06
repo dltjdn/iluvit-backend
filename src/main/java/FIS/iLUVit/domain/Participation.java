@@ -59,7 +59,7 @@ public class Participation extends BaseEntity {
         participants.forEach(participation -> {
             // 설명회를 신청한 내역과 해당 설명회가 JOINED 일 경우 Exception Handle
             if(participation.getParent().equals(parent) && participation.status == Status.JOINED)
-                throw new PresentationException(PresentationErrorResult.ALREADY_PARTICIPATED_IN);
+                throw new PresentationException(PresentationErrorResult.ALREADY_PARTICIPATED);
         });
     }
 

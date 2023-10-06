@@ -76,7 +76,7 @@ public class PtDate extends BaseEntity {
 
     public void updatePtDate(PtDateDto ptDateDto) {
         if(participantCnt > ptDateDto.getAblePersonNum())
-            throw new PresentationException(PresentationErrorResult.UPDATE_ERROR_ABLE_PERSON_NUM);
+            throw new PresentationException(PresentationErrorResult.INSUFFICIENT_CAPACITY_SETTING);
 
         date = ptDateDto.getDate();
         time = ptDateDto.getTime();
@@ -92,13 +92,13 @@ public class PtDate extends BaseEntity {
     // 등록이 가능한지 여부 체크
     public void checkCanRegister() {
         if (ablePersonNum <= participantCnt)
-            throw new PresentationException(PresentationErrorResult.PRESENTATION_OVERCAPACITY);
+            throw new PresentationException(PresentationErrorResult.CAPACITY_EXCEEDED);
 
     }
 
     public void checkCanNotRegister(){
         if(ablePersonNum > participantCnt)
-            throw new PresentationException(PresentationErrorResult.PRESENTATION_NOT_OVERCAPACITY);
+            throw new PresentationException(PresentationErrorResult.NOT_REACHED_CAPACITY_FOR_WAIT);
     }
 
     // 설명회 신청 할경우 participantCnt 값을 1증가
@@ -118,7 +118,7 @@ public class PtDate extends BaseEntity {
 
     public boolean checkCanDelete() {
         if(participantCnt > 0)
-            throw new PresentationException(PresentationErrorResult.DELETE_FAIL_HAS_PARTICIPANT);
+            throw new PresentationException(PresentationErrorResult.CANNOT_DELETE_WITH_PARTICIPANT);
         return true;
     }
 

@@ -61,8 +61,7 @@ public class AlarmService {
      * 전체 알림 읽었다고 처리하기
      */
     public void readAlarm(Long userId) {
-        userRepository.findById(userId)
-                .orElseThrow(() -> new UserException(UserErrorResult.USER_NOT_EXIST))
+        getUser(userId)
                 .updateReadAlarm(Boolean.TRUE); // user의 readAlarm 필드를 true로 바꾼다
     }
 
@@ -70,8 +69,7 @@ public class AlarmService {
      * 전체 알림 읽었는지 안 읽었는지 여부를 조회합니다
      */
     public AlarmReadResponse hasRead(Long userId) {
-        Boolean readAlarm = userRepository.findById(userId)
-                .orElseThrow(() -> new UserException(UserErrorResult.USER_NOT_EXIST))
+        Boolean readAlarm = getUser(userId)
                 .getReadAlarm();
 
         AlarmReadResponse alarmReadResponse = new AlarmReadResponse(readAlarm);
@@ -92,9 +90,7 @@ public class AlarmService {
      * 모든 알림을 삭제합니다
      */
     public void deleteAllAlarm(Long userId) {
-        User user = userRepository.findById(userId)
-                .orElseThrow(() -> new UserException(UserErrorResult.NOT_VALID_TOKEN));
-
+        User user = getUser(userId);
         alarmRepository.deleteAllByUser(user);
     }
 
@@ -127,6 +123,14 @@ public class AlarmService {
         alarmRepository.save(alarm);
         String type = "아이러빗";
         AlarmUtils.publishAlarmEvent(alarm, type);
+    }
+
+    /**
+     * 예외처리 - 존재하는 유저인가
+     */
+    private User getUser(Long userId) {
+        return userRepository.findById(userId)
+                .orElseThrow(() -> new UserException(UserErrorResult.USER_NOT_FOUND));
     }
 
 

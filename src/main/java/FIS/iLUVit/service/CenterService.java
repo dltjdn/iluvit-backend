@@ -56,8 +56,7 @@ public class CenterService {
      * 유저가 설정한 필터 기반 시설 조회
      */
     public SliceImpl<CenterMapFilterResponse> findCenterByFilterForMapList(long userId, KindOf kindOf, CenterMapFilterRequest centerMapFilterRequest, Pageable pageable) {
-        Parent parent = parentRepository.findById(userId)
-                .orElseThrow(() -> new UserException(UserErrorResult.USER_NOT_EXIST));
+        Parent parent = getParent(userId);
 
         double longitude = centerMapFilterRequest.getLongitude();
         double latitude = centerMapFilterRequest.getLatitude();
@@ -99,12 +98,12 @@ public class CenterService {
         return new SliceImpl<>(centerMapFilterResponses, pageable, hasNext);
     }
 
+
     /**
      * 시설 상세 조회
      */
     public CenterDetailResponse findCenterDetailsByCenter(Long centerId) {
-        Center center = centerRepository.findById(centerId)
-                .orElseThrow(() -> new CenterException(CenterErrorResult.CENTER_NOT_EXIST));
+        Center center = getCenter(centerId);
 
         // Center 가 id 에 의해 조회 되었으므로 score에 1 추가
         center.addScore(Score.GET);
@@ -117,11 +116,8 @@ public class CenterService {
      * 미리보기 배너 용 시설 상세 조회
      */
     public CenterBannerResponse findCenterBannerByCenter(Long userId, Long centerId) {
-        Parent parent = parentRepository.findById(userId)
-                .orElseThrow(() -> new UserException(UserErrorResult.USER_NOT_EXIST));
-
-        Center center = centerRepository.findById(centerId)
-                .orElseThrow(() -> new CenterException(CenterErrorResult.CENTER_NOT_EXIST));
+        Parent parent = getParent(userId);
+        Center center = getCenter(centerId);
 
         // 리뷰 score 평균
         Double tempStarAvg = reviewRepository.findByCenter(center).stream()
@@ -144,8 +140,7 @@ public class CenterService {
      *  추천 시설 전체 조회 ( 학부모가 선택한 관심 테마를 가지고 있는 시설 조회 )
      */
     public List<CenterRecommendResponse> findRecommendCenterWithTheme(Long userId) {
-        Parent parent = parentRepository.findById(userId)
-                .orElseThrow(() -> new UserException(UserErrorResult.USER_NOT_EXIST));
+        Parent parent = getParent(userId);
 
         Theme theme = parent.getTheme();
         Location location = parent.getLocation();
@@ -163,9 +158,7 @@ public class CenterService {
      * 시설 정보 수정
      */
     public void modifyCenterInfo(Long userId, Long centerId, CenterDetailRequest centerDetailRequest) {
-        Teacher teacher = teacherRepository.findById(userId)
-                .orElseThrow(() -> new UserException(UserErrorResult.USER_NOT_EXIST))
-                .checkPermission(centerId);
+        Teacher teacher = getTeacher(userId, centerId);
         // 해당하는 center 없으면 RuntimeException 반환
 
         Center center = teacher.getCenter();
@@ -187,10 +180,7 @@ public class CenterService {
      * 시설 이미지 수정
      */
     public void modifyCenterImage(Long userId, Long centerId, CenterImageRequest centerImageRequest) {
-        Teacher teacher = teacherRepository.findById(userId)
-                .orElseThrow(() -> new UserException(UserErrorResult.USER_NOT_EXIST))
-                .checkPermission(centerId);
-
+        Teacher teacher = getTeacher(userId, centerId);
 
         List<MultipartFile> infoImages = centerImageRequest.getInfoImages();
         MultipartFile profileImage = centerImageRequest.getProfileImage();
@@ -198,7 +188,6 @@ public class CenterService {
         imageService.saveInfoImages(infoImages, teacher.getCenter());
         imageService.saveProfileImage(profileImage, teacher.getCenter());
     }
-
 
     /**
      * 두 지점 사이의 거리를 계산하는 메서드
@@ -214,6 +203,34 @@ public class CenterService {
         double c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
 
         return EARTH_RADIUS_KM * c;
+    }
+
+    /**
+     * 예외처리 - 존재하는 권한있는 선생님인가
+     */
+    private Teacher getTeacher(Long userId, Long centerId) {
+        Teacher teacher = teacherRepository.findById(userId)
+                .orElseThrow(() -> new UserException(UserErrorResult.USER_NOT_FOUND))
+                .checkPermission(centerId);
+        return teacher;
+    }
+
+    /**
+     * 예외처리 - 존재하는 학부모인가
+     */
+    private Parent getParent(long userId) {
+        Parent parent = parentRepository.findById(userId)
+                .orElseThrow(() -> new UserException(UserErrorResult.USER_NOT_FOUND));
+        return parent;
+    }
+
+    /**
+     * 예외처리 - 존재하는 시설인가
+     */
+    private Center getCenter(Long centerId) {
+        Center center = centerRepository.findById(centerId)
+                .orElseThrow(() -> new CenterException(CenterErrorResult.CENTER_NOT_FOUND));
+        return center;
     }
 
 }

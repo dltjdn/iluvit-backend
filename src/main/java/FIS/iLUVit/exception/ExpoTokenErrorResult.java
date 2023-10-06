@@ -4,20 +4,20 @@ import FIS.iLUVit.exception.exceptionHandler.ErrorResult;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
-
 @Getter
 @RequiredArgsConstructor
-public enum CenterBookmarkErrorResult implements ErrorResult {
+public enum ExpoTokenErrorResult implements ErrorResult {
     /**
      * 404 NOT FOUND
      */
-    CENTER_BOOKMARK_NOT_FOUND(HttpStatus.NOT_FOUND, "존재하지 않는 시설 즐겨찾기입니다."),
+    EXPO_TOKEN_NOT_FOUND(HttpStatus.NOT_FOUND, "해당 엑스포 토큰이 존재하지 않습니다."),
 
     /**
-     * 400 BAD REQUEST
+     * 403 FORBIDDEN
      */
-    ALREADY_CENTER_BOOKMARKED(HttpStatus.BAD_REQUEST, "이미 즐겨찾기 한 시설입니다."),
+    FORBIDDEN_ACCESS(HttpStatus.FORBIDDEN, "권한이 없는 유저입니다."),
     ;
+
     private final HttpStatus httpStatus;
     private final String message;
 }

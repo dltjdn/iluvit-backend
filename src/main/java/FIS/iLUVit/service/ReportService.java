@@ -30,8 +30,7 @@ public class ReportService {
      */
     public void registerReport(Long userId, ReportRequest request) {
         // 신고자 정보
-        User findUser = userRepository.findById(userId)
-                .orElseThrow(() -> new UserException(UserErrorResult.USER_NOT_EXIST));
+        User findUser = getUser(userId);
 
         Long reportDetailId = null;
 
@@ -39,16 +38,15 @@ public class ReportService {
         if (request.getType().equals(ReportType.POST)){
             // 해당 게시글이 삭제되었으면 신고 불가능
             Post findPost = postRepository.findById(request.getTargetId())
-                    .orElseThrow(() -> new PostException(PostErrorResult.POST_NOT_EXIST));
+                    .orElseThrow(() -> new PostException(PostErrorResult.POST_NOT_FOUND));
 
             // 게시글 작성자 정보
-            User findTargetUser = userRepository.findById(findPost.getUser().getId())
-                    .orElseThrow(() -> new UserException(UserErrorResult.USER_NOT_EXIST));
+            User findTargetUser = getUser(findPost.getUser().getId());
 
             // 해당 게시글을 유저가 이미 신고했으면 중복으로 신고 불가능
             reportDetailRepository.findByUserAndReportTargetId(findUser, request.getTargetId())
                     .ifPresent(rd -> {
-                        throw new ReportException(ReportErrorResult.ALREADY_EXIST_POST_REPORT);
+                        throw new ReportException(ReportErrorResult.POST_REPORT_ALREADY_EXIST);
                     });
 
             // 신고 가능
@@ -74,16 +72,15 @@ public class ReportService {
         }else if (request.getType().equals(ReportType.COMMENT)){
             // 해당 댓글이 삭제되었으면 신고 불가능
             Comment findComment = commentRepository.findById(request.getTargetId())
-                    .orElseThrow(() -> new CommentException(CommentErrorResult.NO_EXIST_COMMENT));
+                    .orElseThrow(() -> new CommentException(CommentErrorResult.COMMENT_NOT_FOUND));
 
             // 댓글 작성자 정보
-            User findTargetUser = userRepository.findById(findComment.getUser().getId())
-                    .orElseThrow(() -> new UserException(UserErrorResult.USER_NOT_EXIST));
+            User findTargetUser = getUser(findComment.getUser().getId());
 
             // 해당 댓글을 이미 신고했으면 중복으로 신고 불가능
             reportDetailRepository.findByUserAndReportTargetId(findUser, request.getTargetId())
                     .ifPresent(rd -> {
-                        throw new ReportException(ReportErrorResult.ALREADY_EXIST_COMMENT_REPORT);
+                        throw new ReportException(ReportErrorResult.COMMENT_REPORT_ALREADY_EXIST);
                     });
 
             // 신고 가능
@@ -106,5 +103,13 @@ public class ReportService {
                 findReport.plusCount();
             }
         }
+    }
+
+    /**
+     * 예외처리 - 존재하는 유저인가
+     */
+    private User getUser(Long userId) {
+        return userRepository.findById(userId)
+                .orElseThrow(() -> new UserException(UserErrorResult.USER_NOT_FOUND));
     }
 }

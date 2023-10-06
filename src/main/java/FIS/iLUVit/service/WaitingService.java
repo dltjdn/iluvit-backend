@@ -43,7 +43,7 @@ public class WaitingService {
         // 대기 등록을 이미 했을 경우 error Throw
         waitingRepository.findByPtDate(ptDate).forEach(waiting -> {
             if(waiting.getParent().getId().equals(userId))
-                throw new PresentationException(PresentationErrorResult.ALREADY_WAITED_IN);
+                throw new PresentationException(PresentationErrorResult.ALREADY_ON_WAIT);
         });
 
         // 설명회 인원이 가득 차지 않았을 경우 error Throw
@@ -53,7 +53,7 @@ public class WaitingService {
         List<Participation> participants = participationRepository.findByPtDateAndStatus(ptDate, Status.JOINED);
         participants.forEach(participation -> {
             if(participation.getParent().getId().equals(userId))
-                throw new PresentationException(PresentationErrorResult.ALREADY_PARTICIPATED_IN);
+                throw new PresentationException(PresentationErrorResult.ALREADY_PARTICIPATED);
         });
 
         Parent parent = getParent(userId);
@@ -66,7 +66,6 @@ public class WaitingService {
         waitingRepository.save(waiting);
     }
 
-
     /**
      * 설명회 대기를 취소하고 대기 순서를 변경합니다
      */
@@ -74,12 +73,12 @@ public class WaitingService {
 
         // 잘못된 waitingId로 요청 시 오류 반환
         if(waitingId < 0)
-            throw new WaitingException(WaitingErrorResult.WRONG_WAITINGID_REQUEST);
+            throw new WaitingException(WaitingErrorResult.WRONG_WAITING_ID_REQUEST);
 
         // 검색 결과 없으면 오류 반환
         Parent parent = getParent(userId);
         Waiting waiting = waitingRepository.findByIdAndParent(waitingId, parent)
-                .orElseThrow(() -> new WaitingException(WaitingErrorResult.NO_RESULT));
+                .orElseThrow(() -> new WaitingException(WaitingErrorResult.WAITING_NOT_FOUND));
 
         PtDate ptDate = waiting.getPtDate();
         ptDate.decreaseWaitingCnt();
@@ -122,23 +121,23 @@ public class WaitingService {
     }
 
     /**
-     * 예외처리 - 존재하는 학부모인가
-     */
-    private Parent getParent(Long userId) {
-        return parentRepository.findById(userId)
-                .orElseThrow(() -> new UserException(UserErrorResult.USER_NOT_EXIST));
-
-    }
-
-    /**
      * 예외처리 - 존재하는 설명회 회차인가
      */
     private PtDate getPtDate(Long ptDateId) {
         if(ptDateId < 0)
-            throw new PresentationException(PresentationErrorResult.WRONG_PTDATE_REQUEST);
+            throw new PresentationException(PresentationErrorResult.INVALID_PTDATE_ID);
 
         return ptDateRepository.findById(ptDateId)
-                .orElseThrow(() -> new PresentationException(PresentationErrorResult.WRONG_PTDATE_REQUEST));
+                .orElseThrow(() -> new PresentationException(PresentationErrorResult.PTDATE_NOT_FOUND));
+    }
+
+    /**
+     * 예외처리 - 존재하는 학부모인가
+     */
+    private Parent getParent(Long userId) {
+        return parentRepository.findById(userId)
+                .orElseThrow(() -> new UserException(UserErrorResult.USER_NOT_FOUND));
+
     }
 
 }

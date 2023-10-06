@@ -67,7 +67,7 @@ public class Presentation extends BaseImageEntity {
     public void checkCanRegister() {
         LocalDate now = LocalDate.now();
         if(now.isBefore(startDate) || now.isAfter(endDate)){
-            throw new PresentationException(PresentationErrorResult.PARTICIPATION_PERIOD_PASSED);
+            throw new PresentationException(PresentationErrorResult.PARTICIPATION_PERIOD_EXPIRED);
         }
     }
 }

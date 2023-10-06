@@ -31,18 +31,15 @@ public class BlockedService {
      */
     public void createBlocked(Long blockingUserId, Long blockedUserId) {
         if(blockingUserId.equals(blockedUserId)) {
-            throw new BlockedException(BlockedErrorResult.IS_SAME_USER);
+            throw new BlockedException(BlockedErrorResult.CANNOT_BLOCK_SELF);
         }
         // 차단 관계를 생성할 유저들의 정보 조회
-        User blockingUser = userRepository.findById(blockingUserId)
-                .orElseThrow(() -> new UserException(UserErrorResult.USER_NOT_EXIST));
-        User blockedUser = userRepository
-                .findById(blockedUserId).orElseThrow(() -> new UserException(UserErrorResult.USER_NOT_EXIST));
-
+        User blockingUser = getUser(blockingUserId);
+        User blockedUser = getUser(blockedUserId);
         // 이미 차단된 경우 예외 발생
         blockedRepository.findByBlockingUserAndBlockedUser(blockingUser, blockedUser)
                 .ifPresent(existingBlocked -> {
-                    throw new BlockedException(BlockedErrorResult.ALREADY_BLOCKED_EXIST);
+                    throw new BlockedException(BlockedErrorResult.ALREADY_BLOCKED);
                 });
 
         // 차단 정보 생성
@@ -66,5 +63,14 @@ public class BlockedService {
         // 차단당한 유저로부터 받은 쪽지에 대한 알림 삭제
         alarmRepository.deleteByUserAndSenderId(blockingUser, blockedUser.getId());
     }
+
+    /**
+     * 예외처리 - 존재하는 유저인가
+     */
+    private User getUser(Long userId) {
+        return userRepository.findById(userId)
+                .orElseThrow(() -> new UserException(UserErrorResult.USER_NOT_FOUND));
+    }
+
 
 }

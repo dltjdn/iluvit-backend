@@ -29,19 +29,12 @@ public class CommentHeartService {
      * 댓글 좋아요 등록
      */
     public void saveCommentHeart(Long userId, Long commentId) {
-        if (userId == null) {
-            throw new CommentException(CommentErrorResult.UNAUTHORIZED_USER_ACCESS_HEART);
-        }
-
-        User findUser = userRepository.findById(userId)
-                .orElseThrow(() -> new UserException(UserErrorResult.USER_NOT_EXIST));
-      ;
-        Comment findComment = commentRepository.findById(commentId)
-                .orElseThrow(() -> new CommentException(CommentErrorResult.NO_EXIST_COMMENT));
+        User findUser = getUser(userId);
+        Comment findComment = getComment(commentId);
 
         commentHeartRepository.findByUserAndComment(findUser, findComment)
                 .ifPresent((ch) -> {
-                    throw new CommentException(CommentErrorResult.ALREADY_EXIST_HEART);
+                    throw new CommentException(CommentErrorResult.ALREADY_HEART_COMMENT);
                 });
 
         CommentHeart commentHeart = new CommentHeart(findUser, findComment);
@@ -54,21 +47,16 @@ public class CommentHeartService {
      * 댓글 좋아요 취소
      */
     public void deleteCommentHeart(Long userId, Long commentId) {
-        if (userId == null) {
-            throw new CommentException(CommentErrorResult.UNAUTHORIZED_USER_ACCESS_HEART);
-        }
 
-        User findUser = userRepository.findById(userId)
-                .orElseThrow(() -> new UserException(UserErrorResult.USER_NOT_EXIST));
+        User findUser = getUser(userId);
 
-        Comment findComment = commentRepository.findById(commentId)
-                .orElseThrow(() -> new CommentException(CommentErrorResult.NO_EXIST_COMMENT));
+        Comment findComment = getComment(commentId);
 
         CommentHeart commentHeart = commentHeartRepository.findByUserAndComment(findUser, findComment)
-                .orElseThrow(() -> new CommentException(CommentErrorResult.NO_EXIST_COMMENT_HEART));
+                .orElseThrow(() -> new CommentException(CommentErrorResult.COMMENT_HEART_NOT_FOUND));
 
-        if (commentHeart.getUser() == null || !Objects.equals(commentHeart.getUser().getId(), userId)) {
-            throw new CommentException(CommentErrorResult.UNAUTHORIZED_USER_ACCESS_HEART);
+        if (!Objects.equals(commentHeart.getUser().getId(), userId)) {
+            throw new CommentException(CommentErrorResult.FORBIDDEN_ACCESS);
         }
 
         commentHeartRepository.delete(commentHeart);
@@ -76,5 +64,21 @@ public class CommentHeartService {
         Comment comment = commentHeart.getComment();
 
         comment.minusHeartCnt();
+    }
+
+    /**
+     * 예외처리 - 존재하는 댓글인가
+     */
+    private Comment getComment(Long commentId) {
+        return commentRepository.findById(commentId)
+                .orElseThrow(() -> new CommentException(CommentErrorResult.COMMENT_NOT_FOUND));
+    }
+
+    /**
+     * 예외처리 - 존재하는 유저인가
+     */
+    private User getUser(Long userId) {
+        return userRepository.findById(userId)
+                .orElseThrow(() -> new UserException(UserErrorResult.USER_NOT_FOUND));
     }
 }

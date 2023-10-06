@@ -14,10 +14,7 @@ import FIS.iLUVit.domain.alarms.CenterApprovalReceivedAlarm;
 import FIS.iLUVit.domain.enumtype.Approval;
 import FIS.iLUVit.domain.enumtype.Auth;
 import FIS.iLUVit.domain.enumtype.AuthKind;
-import FIS.iLUVit.exception.SignupErrorResult;
-import FIS.iLUVit.exception.SignupException;
-import FIS.iLUVit.exception.UserErrorResult;
-import FIS.iLUVit.exception.UserException;
+import FIS.iLUVit.exception.*;
 import FIS.iLUVit.repository.*;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -66,14 +63,14 @@ public class TeacherService {
      */
     public TeacherDetailResponse findTeacherDetails(Long userId) throws IOException {
         // 유저 id로 교사 조회
-        Teacher findTeacher = teacherRepository.findById(userId)
-                .orElseThrow(() -> new UserException(UserErrorResult.NOT_VALID_TOKEN));
+        Teacher findTeacher = getTeacher(userId);
 
         // 조회된 교사 정보와 프로필 이미지를 이용하여 TeacherDetailResponse 생성
         TeacherDetailResponse teacherDetailResponse = new TeacherDetailResponse(findTeacher,findTeacher.getProfileImagePath());
 
         return teacherDetailResponse;
     }
+
 
     /**
      * 교사 회원가입을 수행합니다
@@ -91,7 +88,7 @@ public class TeacherService {
         if (request.getCenterId() != null) {
             // 선택한 시설 정보 가져오기
             center = centerRepository.findById(request.getCenterId())
-                    .orElseThrow(() -> new SignupException(SignupErrorResult.NOT_EXIST_CENTER));
+                    .orElseThrow(() -> new CenterException(CenterErrorResult.CENTER_NOT_FOUND));
         }
         // 교사 객체를 생성하고 시설과 연결 ( 시설을 선택하지 않았으면 center = null )
         Teacher teacher = request.createTeacher(center, hashedPwd);
@@ -140,15 +137,14 @@ public class TeacherService {
      */
     public void modifyTeacherInfo(Long userId, TeacherDetailRequest request) throws IOException {
         // 유저 id로 교사 조회
-        Teacher findTeacher = teacherRepository.findById(userId)
-                .orElseThrow(() -> new UserException(UserErrorResult.NOT_VALID_TOKEN));
+        Teacher findTeacher = getTeacher(userId);
 
         // 유저 닉네임 중복 검사
         if (!Objects.equals(findTeacher.getNickName(), request.getNickname())) {
             // 입력된 닉네임과 기존 교사 닉네임이 다를 경우에만 중복 검사 수행
             teacherRepository.findByNickName(request.getNickname())
                     .ifPresent(teacher -> {
-                        throw new SignupException(SignupErrorResult.DUPLICATED_NICKNAME);
+                        throw new UserException(UserErrorResult.DUPLICATE_NICKNAME);
                     });
         }
 
@@ -199,9 +195,7 @@ public class TeacherService {
      */
     public Teacher requestAssignCenterForTeacher(Long userId, Long centerId) {
         // 교사 조회 및 시설 할당 여부 확인
-        Teacher teacher = teacherRepository.findByIdAndCenterIsNull(userId)
-                .orElseThrow(() -> new SignupException(SignupErrorResult.ALREADY_BELONG_CENTER));
-
+        Teacher teacher = getTeacher(userId);
         // 시설과의 연관관계 맺기
         Center center = centerRepository.getById(centerId);
         teacher.assignCenter(center);
@@ -222,8 +216,7 @@ public class TeacherService {
      */
     public Teacher leaveCenterForTeacher(Long userId) {
         // user id로 교사 정보 조회 및 소속 시설 여부 확인
-        Teacher escapedTeacher = teacherRepository.findById(userId)
-                .orElseThrow(() -> new SignupException(SignupErrorResult.NOT_BELONG_CENTER));
+        Teacher escapedTeacher = getTeacher(userId);
 
         // 교사와 연결된 시설의 교사 리스트 조회
         List<Teacher> teacherList = teacherRepository.findByCenter(escapedTeacher.getCenter());
@@ -240,7 +233,7 @@ public class TeacherService {
 
         // 일반 교사가 남아있을때 최후의 관리교사이 탈퇴하려면 남은 교사에게 관리교사 권한을 위임해야함
         if (escapedTeacher.getAuth() == DIRECTOR && directors.size() == 1 && !commons.isEmpty()) {
-            throw new SignupException(SignupErrorResult.HAVE_TO_MANDATE);
+            throw new UserException(UserErrorResult.HAVE_TO_MANDATE);
         }
 
         // 속해있는 시설과 연관된 게시판 bookmark 모두 삭제
@@ -257,8 +250,7 @@ public class TeacherService {
      */
     public List<TeacherInfoForAdminResponse> findTeacherApprovalList(Long userId) {
         // user id로 관리교사인지 확인
-        Teacher director = teacherRepository.findByIdAndAuth(userId, DIRECTOR)
-                .orElseThrow(() -> new UserException(UserErrorResult.HAVE_NOT_AUTHORIZATION));
+        Teacher director = getDirectorByAuth(userId);
 
         // 관리교사로 등록 되어있는 시설의 교사 리스트 조회
         List<Teacher> teacherList = teacherRepository.findByCenter(director.getCenter());
@@ -284,15 +276,14 @@ public class TeacherService {
      */
     public Teacher acceptTeacherRegistration(Long userId, Long teacherId) {
         // user id로 관리교사인지 확인
-        Teacher director = teacherRepository.findByIdAndAuth(userId, DIRECTOR)
-                .orElseThrow(() -> new UserException(UserErrorResult.HAVE_NOT_AUTHORIZATION));
+        Teacher director = getDirectorByAuth(userId);
 
         // 승인하고자 하는 교사가 해당 시설에 속해 있는지 && 대기 상태인지 확인
         List<Teacher> teacherList = teacherRepository.findByCenter(director.getCenter());
         Teacher acceptedTeacher = teacherList.stream()
                 .filter(teacher -> Objects.equals(teacher.getId(), teacherId) && teacher.getApproval() == Approval.WAITING)
                 .findFirst()
-                .orElseThrow(() -> new UserException(UserErrorResult.NOT_VALID_REQUEST));
+                .orElseThrow(() -> new UserException(UserErrorResult.USER_NOT_FOUND));
 
         // 교사 등록 승인
         acceptedTeacher.acceptTeacher();
@@ -307,21 +298,20 @@ public class TeacherService {
         return acceptedTeacher;
     }
 
+
     /**
      * 시설에 등록을 요청한 교사의 등록 요청을 거절합니다 / 교사를 삭제합니다
      */
     public Teacher rejectTeacherRegistration(Long userId, Long teacherId) {
         // user id로 관리교사인지 확인
-        Teacher director = teacherRepository.findByIdAndAuth(userId, DIRECTOR)
-                .orElseThrow(() -> new UserException(UserErrorResult.HAVE_NOT_AUTHORIZATION));
+        Teacher director = getDirectorByAuth(userId);
 
         // 승인 요청 거절/삭제 하고자 하는 교사 정보 조회
-        Teacher firedTeacher = teacherRepository.findById(teacherId)
-                .orElseThrow(() -> new UserException(UserErrorResult.NOT_VALID_REQUEST));
+        Teacher firedTeacher = getTeacher(teacherId);
 
         // 삭제하고자 하는 교사가 해당 시설에 소속되어 있는지 확인
         if (firedTeacher.getCenter() == null || !Objects.equals(director.getCenter().getId(), firedTeacher.getCenter().getId())) {
-            throw new UserException(UserErrorResult.NOT_VALID_REQUEST);
+            throw new UserException(UserErrorResult.FORBIDDEN_ACCESS);
         }
 
         // 해당 시설과 연관된 게시판 즐겨찾기 삭제
@@ -338,8 +328,7 @@ public class TeacherService {
      */
     public Teacher mandateTeacher(Long userId, Long teacherId) {
         // user id로 관리교사인지 확인
-        Teacher director = teacherRepository.findByIdAndAuth(userId, DIRECTOR)
-                .orElseThrow(() -> new UserException(UserErrorResult.HAVE_NOT_AUTHORIZATION));
+        Teacher director = getDirectorByAuth(userId);
 
         // 해당 시설에 소속된 교사 리스트 조회
         List<Teacher> teacherList = teacherRepository.findByCenter(director.getCenter());
@@ -348,7 +337,7 @@ public class TeacherService {
                 .filter(teacher -> Objects.equals(teacher.getId(), teacherId))
                 .filter(teacher -> teacher.getApproval() == Approval.ACCEPT)
                 .findFirst()
-                .orElseThrow(() -> new UserException(UserErrorResult.NOT_VALID_REQUEST));
+                .orElseThrow(() -> new UserException(UserErrorResult.USER_NOT_FOUND));
 
         // 교사에게 관리교사 권한 부여
         mandatedTeacher.beDirector();
@@ -361,8 +350,7 @@ public class TeacherService {
      */
     public Teacher demoteTeacher(Long userId, Long teacherId) {
         // user id로 관리교사인지 확인
-        Teacher director = teacherRepository.findByIdAndAuth(userId, DIRECTOR)
-                .orElseThrow(() -> new UserException(UserErrorResult.HAVE_NOT_AUTHORIZATION));
+        Teacher director = getDirectorByAuth(userId);
 
         // 해당 시설에 소속된 교사 리스트 조회
         List<Teacher> teacherList = teacherRepository.findByCenter(director.getCenter());
@@ -370,7 +358,7 @@ public class TeacherService {
         Teacher demotedTeacher = teacherList.stream()
                 .filter(teacher -> Objects.equals(teacher.getId(), teacherId))
                 .findFirst()
-                .orElseThrow(() -> new UserException(UserErrorResult.NOT_VALID_REQUEST));
+                .orElseThrow(() -> new UserException(UserErrorResult.USER_NOT_FOUND));
 
         // 교사의 관리교사 권한 박탈
         demotedTeacher.beTeacher();
@@ -401,6 +389,22 @@ public class TeacherService {
             boardBookmarkRepository.deleteByUserAndBoardIn(escapedTeacher, boards);
         }
         // TODO scrap 없애는 코드 추가
+    }
+
+    /**
+     * 예외처리 - 존재하는 해당 권한의 선생인가
+     */
+    private Teacher getDirectorByAuth(Long userId) {
+        return teacherRepository.findByIdAndAuth(userId, DIRECTOR)
+                .orElseThrow(() -> new UserException(UserErrorResult.USER_NOT_FOUND));
+    }
+
+    /**
+     * 예외처리 - 존재하는 선생인가
+     */
+    private Teacher getTeacher(Long userId) {
+        return teacherRepository.findById(userId)
+                .orElseThrow(() -> new UserException(UserErrorResult.USER_NOT_FOUND));
     }
 
 }

@@ -60,7 +60,7 @@ public class PresentationService {
      */
     public List<PresentationFindOneResponse> findAllPresentation(Long userId, Long centerId) {
         Parent parent = parentRepository.findById(userId)
-                .orElseThrow(() -> new UserException(UserErrorResult.USER_NOT_EXIST));
+                .orElseThrow(() -> new UserException(UserErrorResult.USER_NOT_FOUND));
 
         // 현재 진행 중인 설명회 리스트 조회
         List<Presentation> presentations = presentationRepository.findByCenterAndDate(centerId, LocalDate.now());
@@ -92,10 +92,8 @@ public class PresentationService {
 
         // 끝나지 않은 설명회 하나라도 있으면 오류
         if(!presentationRepository.findByCenterAndEndDateAfter(center, LocalDate.now()).isEmpty()){
-            throw new PresentationException(PresentationErrorResult.PRESENTATION_ALREADY_EXIST);
+            throw new PresentationException(PresentationErrorResult.VALID_PRESENTATION_ALREADY_EXIST);
         }
-
-
 
         // 설명회, 설명회 회차 생성 및 저장
         Presentation presentation = Presentation.createPresentation(request, center);
@@ -132,7 +130,7 @@ public class PresentationService {
 
                     } else { // 기존 설명회 회차 정보를 수정할 때
                         PtDate ptDate = ptDateRepository.findById(ptDateId)
-                                .orElseThrow(() -> new PresentationException(PresentationErrorResult.PTDATE_NOT_EXIST));
+                                .orElseThrow(() -> new PresentationException(PresentationErrorResult.PTDATE_NOT_FOUND));
 
                         // 수정 정보의 수용가능 인원이 현재 수용가능 인원보다 많고, 대기자가 있을 때
                         if (ptDateDto.getAblePersonNum() > ptDate.getAblePersonNum() && ptDate.checkHasWaiting()) {
@@ -248,7 +246,7 @@ public class PresentationService {
      */
     private Teacher getTeacher(Long userId, Long centerId) {
         return teacherRepository.findById(userId)
-                .orElseThrow(() -> new UserException(UserErrorResult.USER_NOT_EXIST))
+                .orElseThrow(() -> new UserException(UserErrorResult.USER_NOT_FOUND))
                 .checkPermission(centerId);
     }
 
@@ -257,7 +255,7 @@ public class PresentationService {
      */
     private Presentation getPresentation(Long presentationId) {
         return presentationRepository.findById(presentationId)
-                .orElseThrow(() -> new PresentationException(PresentationErrorResult.PRESENTATION_NOT_EXIST));
+                .orElseThrow(() -> new PresentationException(PresentationErrorResult.PRESENTATION_NOT_FOUND));
     }
 
     /**
@@ -265,7 +263,7 @@ public class PresentationService {
      */
     private PtDate getPtDate(Long ptDateId) {
         return ptDateRepository.findById(ptDateId)
-                .orElseThrow(() -> new PresentationException(PresentationErrorResult.PTDATE_NOT_EXIST));
+                .orElseThrow(() -> new PresentationException(PresentationErrorResult.PTDATE_NOT_FOUND));
     }
 
     /**
@@ -273,9 +271,7 @@ public class PresentationService {
      */
     private Center getCenter(Long centerId) {
         return centerRepository.findById(centerId)
-                .orElseThrow(() -> new CenterException(CenterErrorResult.CENTER_NOT_EXIST));
+                .orElseThrow(() -> new CenterException(CenterErrorResult.CENTER_NOT_FOUND));
     }
-
-
 
 }

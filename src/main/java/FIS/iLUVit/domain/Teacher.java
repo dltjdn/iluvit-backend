@@ -8,6 +8,8 @@ import FIS.iLUVit.domain.enumtype.Approval;
 import FIS.iLUVit.domain.enumtype.Auth;
 import FIS.iLUVit.exception.CenterErrorResult;
 import FIS.iLUVit.exception.CenterException;
+import FIS.iLUVit.exception.UserErrorResult;
+import FIS.iLUVit.exception.UserException;
 import FIS.iLUVit.security.UserDto;
 import lombok.AccessLevel;
 import lombok.Builder;
@@ -89,7 +91,7 @@ public class Teacher extends User {
 
     public Teacher checkPermission(Long centerId) {
         if(approval != Approval.ACCEPT || !Objects.equals(centerId, center.getId()))
-            throw new CenterException(CenterErrorResult.AUTHENTICATION_FAILED);
+            throw new UserException(UserErrorResult.FORBIDDEN_ACCESS);
         return this;
     }
 

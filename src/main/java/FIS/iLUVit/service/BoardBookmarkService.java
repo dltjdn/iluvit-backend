@@ -3,10 +3,7 @@ package FIS.iLUVit.service;
 import FIS.iLUVit.dto.board.BoardBookmarkIdResponse;
 import FIS.iLUVit.dto.board.BoardStoryResponse;
 import FIS.iLUVit.domain.*;
-import FIS.iLUVit.exception.BoardBookmarkErrorResult;
-import FIS.iLUVit.exception.BoardBookmarkException;
-import FIS.iLUVit.exception.UserErrorResult;
-import FIS.iLUVit.exception.UserException;
+import FIS.iLUVit.exception.*;
 import FIS.iLUVit.repository.*;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -26,7 +23,6 @@ public class BoardBookmarkService {
     private final UserRepository userRepository;
     private final BoardRepository boardRepository;
     private final PostRepository postRepository;
-
     private final BlockedRepository blockedRepository;
 
 
@@ -34,9 +30,7 @@ public class BoardBookmarkService {
      * 즐겨찾는 게시판 전체 조회
      */
     public List<BoardStoryResponse> findBoardBookmarkByUser(Long userId) {
-        User user = userRepository.findById(userId)
-                .orElseThrow(() -> new UserException(UserErrorResult.USER_NOT_EXIST));
-
+        User user = getUser(userId);
 
         List<Long> blockedUserIds = blockedRepository.findByBlockingUser(user).stream()
                 .map(Blocked::getBlockedUser)
@@ -94,15 +88,15 @@ public class BoardBookmarkService {
 
     }
 
+
     /**
      * 즐겨찾는 게시판 등록
      */
     public BoardBookmarkIdResponse saveBoardBookmark(Long userId, Long boardId) {
-        User findUser = userRepository.findById(userId)
-                .orElseThrow(() -> new BoardBookmarkException(BoardBookmarkErrorResult.USER_NOT_EXIST));
+        User findUser = getUser(userId);
 
         Board findBoard = boardRepository.findById(boardId)
-                .orElseThrow(() -> new BoardBookmarkException(BoardBookmarkErrorResult.BOARD_NOT_EXIST));
+                .orElseThrow(() -> new BoardException(BoardErrorResult.BOARD_NOT_FOUND));
 
         Bookmark bookmark = boardBookmarkRepository.save(new Bookmark(findBoard, findUser));
 
@@ -114,14 +108,22 @@ public class BoardBookmarkService {
      */
     public void deleteBoardBookmark(Long userId, Long bookmarkId) {
         Bookmark findBookmark = boardBookmarkRepository.findById(bookmarkId)
-                .orElseThrow(() -> new BoardBookmarkException(BoardBookmarkErrorResult.BOOKMARK_NOT_EXIST));
+                .orElseThrow(() -> new BoardBookmarkException(BoardBookmarkErrorResult.BOARD_BOOKMARK_NOT_FOUND));
 
         if (!findBookmark.getUser().getId().equals(userId)) {
-            throw new BoardBookmarkException(BoardBookmarkErrorResult.UNAUTHORIZED_USER_ACCESS);
+            throw new BoardBookmarkException(BoardBookmarkErrorResult.FORBIDDEN_ACCESS);
         }
 
         boardBookmarkRepository.delete(findBookmark);
     }
 
+    /**
+     * 예외처리 - 존재하는 유저인가
+     */
+    private User getUser(Long userId) {
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new UserException(UserErrorResult.USER_NOT_FOUND));
+        return user;
+    }
 
 }

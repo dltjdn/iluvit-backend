@@ -9,8 +9,15 @@ import org.springframework.http.HttpStatus;
 @Getter
 public enum ParticipationErrorResult implements ErrorResult {
 
-    NO_RESULT(HttpStatus.I_AM_A_TEAPOT, "올바르지 않은 접근입니다"),
-    WRONG_PARTICIPATIONID_REQUEST(HttpStatus.I_AM_A_TEAPOT, "올바르지 않은 participationId 입니다");
+    /**
+     * 404 NOT FOUND
+     */
+    PARTICIPATION_NOT_FOUND(HttpStatus.NOT_FOUND, "해당 설명회 참여 정보가 존재하지 않습니다."),
+
+    /**
+     * 400 BAD REQUEST
+     */
+    WRONG_PARTICIPATION_ID_REQUEST(HttpStatus.BAD_REQUEST, "올바르지 않은 설명회 참여 id 입니다");
 
     private final HttpStatus httpStatus;
     private final String message;

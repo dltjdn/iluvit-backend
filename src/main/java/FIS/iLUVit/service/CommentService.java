@@ -1,14 +1,14 @@
 package FIS.iLUVit.service;
 
-import FIS.iLUVit.domain.alarms.Alarm;
-import FIS.iLUVit.domain.enumtype.NotificationTitle;
-import FIS.iLUVit.dto.comment.CommentPostResponse;
-import FIS.iLUVit.dto.comment.CommentCreateRequest;
+import FIS.iLUVit.domain.Blocked;
 import FIS.iLUVit.domain.Comment;
 import FIS.iLUVit.domain.Post;
 import FIS.iLUVit.domain.User;
-import FIS.iLUVit.domain.Blocked;
+import FIS.iLUVit.domain.alarms.Alarm;
 import FIS.iLUVit.domain.alarms.PostAlarm;
+import FIS.iLUVit.domain.enumtype.NotificationTitle;
+import FIS.iLUVit.dto.comment.CommentCreateRequest;
+import FIS.iLUVit.dto.comment.CommentPostResponse;
 import FIS.iLUVit.exception.*;
 import FIS.iLUVit.repository.*;
 import lombok.RequiredArgsConstructor;
@@ -39,11 +39,10 @@ public class CommentService {
      * 댓글 작성 (comment_id 값이 null일 경우 댓글 작성, comment_id 값까지 보내는 경우 대댓글 작성)
      */
     public void saveNewComment(Long userId, Long postId, Long parentCommentId, CommentCreateRequest request) {
-        User user = userRepository.findById(userId)
-                .orElseThrow(() -> new UserException(UserErrorResult.USER_NOT_EXIST));
+        User user = getUser(userId);
 
         Post post = postRepository.findById(postId)
-                .orElseThrow(() -> new PostException(PostErrorResult.POST_NOT_EXIST));
+                .orElseThrow(() -> new PostException(PostErrorResult.POST_NOT_FOUND));
 
         // anonymous false 일 때 order = null
         // anonymous true 일 때 order = n
@@ -93,34 +92,30 @@ public class CommentService {
         commentRepository.save(comment);
     }
 
+
     /**
      * 댓글 삭제 ( 댓글 데이터 지우지 않고 내용, 작성자만 null로 변경)
      */
     public void deleteComment(Long userId, Long commentId) {
 
-        if (userId == null) {
-            throw new CommentException(CommentErrorResult.UNAUTHORIZED_USER_ACCESS);
-        }
-
         commentRepository.findById(commentId)
                 .ifPresentOrElse(c -> {
                     // 내용 -> 삭제된 댓글입니다. + 작성자 -> null
-                    if (Objects.equals(c.getUser().getId(), userId)) {
-                        //c.deleteComment();
-
-                        // 댓글과 연관된 모든 신고내역의 target_id 를 null 값으로 만들어줘야함.
-                        reportRepository.setTargetIsNullAndStatusIsDelete(c.getId());
-                        // 댓글과 연관된 모든 신고상세내역의 target_comment_id(fk) 를 null 값으로 만들어줘야함.
-                        List<Long> commentIds = List.of(c.getId());
-                        reportDetailRepository.setCommentIsNull(commentIds);
-
-                        Comment findComment = commentRepository.findById(commentId).orElse(null);
-                        findComment.deleteComment();
-                    } else {
-                        throw new CommentException(CommentErrorResult.UNAUTHORIZED_USER_ACCESS);
+                    if (!Objects.equals(c.getUser().getId(), userId)) {
+                        throw new CommentException(CommentErrorResult.FORBIDDEN_ACCESS);
                     }
+                    //c.deleteComment();
+
+                    // 댓글과 연관된 모든 신고내역의 target_id 를 null 값으로 만들어줘야함.
+                    reportRepository.setTargetIsNullAndStatusIsDelete(c.getId());
+                    // 댓글과 연관된 모든 신고상세내역의 target_comment_id(fk) 를 null 값으로 만들어줘야함.
+                    List<Long> commentIds = List.of(c.getId());
+                    reportDetailRepository.setCommentIsNull(commentIds);
+
+                    Comment findComment = commentRepository.findById(commentId).orElse(null);
+                    findComment.deleteComment();
                 }, () -> {
-                    throw new CommentException(CommentErrorResult.NO_EXIST_COMMENT);
+                    throw new CommentException(CommentErrorResult.COMMENT_NOT_FOUND);
                 });
     }
 
@@ -128,8 +123,16 @@ public class CommentService {
      * 댓글 단 글 전체 조회
      */
     public Slice<CommentPostResponse> findCommentByUser(Long userId, Pageable pageable) {
-        User user = userRepository.findById(userId).orElseThrow(() -> new UserException(UserErrorResult.USER_NOT_EXIST));
+        User user = getUser(userId);
         // Comment -> CommentDTO 타입으로 변환
         return commentRepository.findByUser(user, pageable).map(CommentPostResponse::new);
+    }
+
+    /**
+     * 예외처리 - 존재하는 유저인가
+     */
+    private User getUser(Long userId) {
+       return userRepository.findById(userId)
+                .orElseThrow(() -> new UserException(UserErrorResult.USER_NOT_FOUND));
     }
 }
