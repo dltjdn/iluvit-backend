@@ -1,6 +1,6 @@
 package FIS.iLUVit.repository;
 
-import FIS.iLUVit.config.argumentResolver.ForDB;
+import FIS.iLUVit.global.config.argumentResolver.ForDB;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.context.annotation.ComponentScan;
 

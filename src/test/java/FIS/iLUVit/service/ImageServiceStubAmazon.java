@@ -1,18 +1,5 @@
 package FIS.iLUVit.service;
 
-import FIS.iLUVit.domain.BaseImageEntity;
-import FIS.iLUVit.exception.ImageErrorResult;
-import FIS.iLUVit.exception.ImageException;
-import org.springframework.web.multipart.MultipartFile;
-
-import javax.persistence.Id;
-import java.lang.annotation.Annotation;
-import java.lang.reflect.Field;
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
-
 /**
  * s3 testStub
  */
