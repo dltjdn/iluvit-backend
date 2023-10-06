@@ -1,22 +1,19 @@
 package FIS.iLUVit.repository;
 
-import FIS.iLUVit.dto.presentation.PresentationForUserResponse;
+import FIS.iLUVit.domain.Presentation;
 import FIS.iLUVit.domain.embeddable.Area;
 import FIS.iLUVit.domain.embeddable.Theme;
 import FIS.iLUVit.domain.enumtype.KindOf;
-import FIS.iLUVit.dto.presentation.PresentationForUserDto;
-import FIS.iLUVit.dto.presentation.QPresentationForUserDto;
 import com.querydsl.core.types.OrderSpecifier;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.AllArgsConstructor;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Slice;
 import org.springframework.data.domain.SliceImpl;
 
 import java.time.LocalDate;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
-import java.util.stream.Collectors;
 
 import static FIS.iLUVit.domain.QCenter.center;
 import static FIS.iLUVit.domain.QPresentation.presentation;
@@ -27,23 +24,21 @@ public class PresentationRepositoryCustomImpl extends CenterQueryMethod implemen
 
     private final JPAQueryFactory jpaQueryFactory;
 
-    /*
-        지역과 테마와 관심 연령과 종류와 설명회 종료일 이동과 시설이름이 각각 검색 조건에 부합하도록 필터링을하여 PresentationForUserDto 객체를 불러옵니다.
+    /**
+        지역, 테마, 관심연령, 시설종류, 설명회 종료일, 검색어에 해당하는 설명회 리스트를 조회합니다
      */
     @Override
-    public SliceImpl<PresentationForUserResponse> findByFilter(List<Area> areas, Theme theme, Integer interestedAge, KindOf kindOf, String searchContent, Pageable pageable) {
+    public Slice<Presentation> findByFilter(List<Area> areas, Theme theme, Integer interestedAge, KindOf kindOf, String searchContent, Pageable pageable) {
 
-        LocalDate now = LocalDate.now();
-
-        List<PresentationForUserDto> presentations = jpaQueryFactory.select(new QPresentationForUserDto(presentation, center))
+        List<Presentation> presentations = jpaQueryFactory.select(presentation)
                 .from(presentation)
                 .join(presentation.center, center)
                 .where(areasIn(areas)
-                        .and(themeEq(theme))
-                        .and(interestedAgeEq(interestedAge))
-                        .and(kindOfEq(kindOf))
-                        .and(presentation.endDate.goe(now))
-                        .and(centerNameEq(searchContent))
+                        ,themeEq(theme)
+                        ,interestedAgeEq(interestedAge)
+                        ,kindOfEq(kindOf)
+                        ,presentation.endDate.goe(LocalDate.now())
+                        ,centerNameEq(searchContent)
                 )
                 .orderBy(Objects.requireNonNull(presentationSort(pageable)).toArray(OrderSpecifier[]::new))
                 .offset(pageable.getOffset())
@@ -57,18 +52,7 @@ public class PresentationRepositoryCustomImpl extends CenterQueryMethod implemen
             hasNext = true;
         }
 
-        List<PresentationForUserResponse> collect = presentations.stream().map(presentation -> {
-            String infoImagePath = presentation.getInfoImages();
-            List<String> infoImages;
-            if(infoImagePath == null || infoImagePath.equals(""))
-                infoImages = new ArrayList<>();
-            else
-                infoImages = List.of(infoImagePath.split(","));
-            PresentationForUserResponse presentationResponse = new PresentationForUserResponse(presentation, infoImages);
-            return presentationResponse;
-        }).collect(Collectors.toList());
-
-        return new SliceImpl<>(collect, pageable, hasNext);
+        return new SliceImpl<>(presentations, pageable, hasNext);
 
     }
 

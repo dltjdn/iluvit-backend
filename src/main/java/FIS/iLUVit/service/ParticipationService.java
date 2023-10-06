@@ -45,7 +45,7 @@ public class ParticipationService {
      */
     public void registerParticipation(Long userId, Long ptDateId) {
         // 잘못된 설명회 회차 id일 경우
-        PtDate ptDate = ptDateRepository.findByIdAndJoinParticipation(ptDateId)
+        PtDate ptDate = ptDateRepository.findById(ptDateId)
                 .orElseThrow(() -> new PresentationException(PresentationErrorResult.PTDATE_NOT_FOUND));
 
         // 설명회 신청기간이 지났을경우
@@ -69,7 +69,7 @@ public class ParticipationService {
         });
 
         // 설명회 등록
-        participationRepository.save(Participation.createAndRegister(parent, presentation, ptDate, participations));
+        participationRepository.save(Participation.createParticipation(parent, presentation, ptDate, participations));
 
         if(ptDate.getAblePersonNum() <= ptDate.getParticipantCnt()){
             teacherRepository.findByCenter(presentation.getCenter()).forEach((teacher) -> {
@@ -93,11 +93,11 @@ public class ParticipationService {
         Participation participation = participationRepository.findByIdAndStatusAndParent(participationId, JOINED, parent)
                 .orElseThrow(() -> new ParticipationException(ParticipationErrorResult.PARTICIPATION_NOT_FOUND));
 
-        participation.cancel(); // ptDate cnt 값을 1줄여야 한다.
+        participation.cancelParticipation(); // ptDate cnt 값을 1줄여야 한다.
 
         PtDate ptDate = participation.getPtDate();
 
-        if(ptDate.hasWaiting()){
+        if(ptDate.checkHasWaiting()){
             eventPublisher.publishEvent(new ParticipationCancelEvent(ptDate.getPresentation(), ptDate)); // 이벤트 리스너 호출
         }
     }
@@ -170,5 +170,18 @@ public class ParticipationService {
 
         return participationDtos;
     }
+
+
+    /**
+     * 설명회 참여정보를 저장한다
+     */
+    public void saveParticipation(Parent parent, Presentation presentation,PtDate ptDate){
+        List<Participation> participations = participationRepository.findByPtDate(ptDate);
+
+        Participation paticipation = Participation.createParticipation(parent, presentation, ptDate, participations);
+
+        participationRepository.save(paticipation);
+    }
+
 
 }

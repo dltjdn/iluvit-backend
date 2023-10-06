@@ -17,6 +17,7 @@ public enum PresentationErrorResult implements ErrorResult {
     /**
      * 400 BAD REQUEST
      */
+    CHECK_START_AND_END_DATE(HttpStatus.BAD_REQUEST, "시작일자와 종료일자를 다시 확인해 주세요."),
     PARTICIPATION_PERIOD_EXPIRED(HttpStatus.BAD_REQUEST, "설명회 신청기간이 종료되었습니다."),
     INVALID_PTDATE_ID(HttpStatus.BAD_REQUEST, "올바르지 않은 설명회 회차 id 입니다."),
     ALREADY_PARTICIPATED(HttpStatus.BAD_REQUEST, "이미 설명회를 신청하셨습니다."),

@@ -31,7 +31,7 @@ public class CenterController {
      */
 
     /**
-     * 시설 전체 조회
+     * 주변 시설 전체 조회
      */
     @PostMapping("search/all")
     public ResponseEntity<List<CenterMapResponse>> getAllCenter(@RequestParam("searchContent") String searchContent, @RequestBody @Validated CenterMapRequest centerMapRequest){

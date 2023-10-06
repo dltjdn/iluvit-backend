@@ -1,18 +1,15 @@
 package FIS.iLUVit.domain;
 
-import FIS.iLUVit.dto.presentation.PresentationRequest;
+import FIS.iLUVit.dto.presentation.PresentationCreateRequest;
+import FIS.iLUVit.dto.presentation.PresentationUpdateRequest;
+import FIS.iLUVit.exception.PresentationErrorResult;
 import FIS.iLUVit.exception.PresentationException;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import org.hibernate.annotations.Cascade;
 
 import javax.persistence.*;
 import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.List;
-
-import static org.hibernate.annotations.CascadeType.*;
 
 @Entity
 @NoArgsConstructor
@@ -31,14 +28,9 @@ public class Presentation extends BaseImageEntity {
     @JoinColumn
     private Center center;
 
-    @OneToMany(mappedBy = "presentation")
-    @Cascade({PERSIST, REMOVE})
-    private List<PtDate> ptDates = new ArrayList<>();
-
 
     @Builder
-    public Presentation(Long id, LocalDate startDate, LocalDate endDate, String place, String content, Integer imgCnt, Integer videoCnt, Center center) {
-        this.id = id;
+    public Presentation(LocalDate startDate, LocalDate endDate, String place, String content, Integer imgCnt, Integer videoCnt, Center center) {
         this.startDate = startDate;
         this.endDate = endDate;
         this.place = place;
@@ -48,41 +40,34 @@ public class Presentation extends BaseImageEntity {
         this.center = center;
     }
 
-    public static Presentation createPresentation(LocalDate startDate, LocalDate endDate, String place, String content, Integer imgCnt, Integer videoCnt, Center center) {
+    public static Presentation createPresentation(PresentationCreateRequest request, Center center){
+        if(request.getEndDate().isBefore(request.getStartDate()))
+            throw new PresentationException(PresentationErrorResult.CHECK_START_AND_END_DATE);
+
         return Presentation.builder()
-                .startDate(startDate)
-                .endDate(endDate)
-                .content(content)
-                .imgCnt(imgCnt)
-                .videoCnt(videoCnt)
                 .center(center)
+                .startDate(request.getStartDate())
+                .endDate(request.getEndDate())
+                .content(request.getContent())
+                .place(request.getPlace())
                 .build();
     }
 
-    public Presentation updateImageCnt(int size) {
-        imgCnt = size;
-        return this;
-    }
 
-    public Presentation updateCenter(Center center) {
-        this.center = center;
-        return this;
-    }
+    public void updatePresentation(PresentationUpdateRequest request) {
+        if(request.getEndDate().isBefore(request.getStartDate()))
+            throw new PresentationException(PresentationErrorResult.CHECK_START_AND_END_DATE);
 
-    public Presentation update(PresentationRequest request) {
         startDate = request.getStartDate();
         endDate = request.getEndDate();
-        if(endDate.isBefore(startDate))
-            throw new PresentationException("시작일자와 종료일자를 다시 확인해 주세요.");
         content = request.getContent();
         place = request.getPlace();
-        return this;
     }
 
-    public void canRegister() {
+    public void checkCanRegister() {
         LocalDate now = LocalDate.now();
         if(now.isBefore(startDate) || now.isAfter(endDate)){
-            throw new PresentationException("신청기간이 지났습니다");
+            throw new PresentationException(PresentationErrorResult.PARTICIPATION_PERIOD_EXPIRED);
         }
     }
 }

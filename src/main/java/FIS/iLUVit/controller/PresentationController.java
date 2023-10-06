@@ -3,12 +3,13 @@ package FIS.iLUVit.controller;
 import FIS.iLUVit.config.argumentResolver.Login;
 import FIS.iLUVit.dto.presentation.*;
 import FIS.iLUVit.service.PresentationService;
-import FIS.iLUVit.dto.parent.ParentResponse;
+import FIS.iLUVit.dto.parent.PresentationByParentResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.SliceImpl;
+import org.springframework.data.domain.Slice;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
@@ -30,23 +31,21 @@ public class PresentationController {
      */
 
     /**
-     * 작성자: 현승구
-     * 작성내용: 필터 기반 설명회 검색
+     * 필터 기반 설명회 검색
      */
     @PostMapping("search")
-    public SliceImpl<PresentationForUserResponse> getPresentationByFilter(@RequestBody PresentationSearchFilterDto dto, Pageable pageable){
-        return presentationService.findPresentationByFilter(dto.getAreas(), dto.getTheme(), dto.getInterestedAge(), dto.getKindOf(), dto.getSearchContent(), pageable);
+    public ResponseEntity<Slice<PresentationSearchFilterResponse>> getPresentationByFilter(@RequestBody PresentationSearchFilterRequest request, Pageable pageable){
+        Slice<PresentationSearchFilterResponse> responses = presentationService.findPresentationByFilter(request, pageable);
+        return ResponseEntity.ok().body(responses);
     }
 
     /**
-     * 작성자: 현승구
-     * 작성내용: 설명회 전체 조회
-     * 비고: 현재날짜에 맞춰서 설명회 기간에 있으면 반환 그렇지 않으면 반환 하지않음
+     * (현재 진행 중인) 설명회 전체 조회
      */
     @GetMapping("info/center/{centerId}")
-    @ResponseStatus(HttpStatus.ACCEPTED)
-    public List<PresentationDetailResponse> getAllPresentation(@PathVariable("centerId") Long centerId, @Login Long userId){
-        return presentationService.findPresentationByCenterIdAndDate(centerId, userId);
+    public ResponseEntity<List<PresentationFindOneResponse>> getAllPresentation(@Login Long userId, @PathVariable("centerId") Long centerId){
+        List<PresentationFindOneResponse> responses = presentationService.findAllPresentation( userId, centerId);
+        return ResponseEntity.ok().body(responses);
     }
 
 
@@ -55,93 +54,67 @@ public class PresentationController {
      */
 
     /**
-     * 작성자: 이창윤
-     * 작성내용: 설명회 정보 저장
-     * 비고: 설명회 회차 정보 저장 포함
+     * 설명회 정보 저장 (설명회 회차 정보 저장 포함)
      */
     @PostMapping("")
-    @ResponseStatus(HttpStatus.CREATED)
-    public PresentationResponse createPresentationInfo(@RequestBody @Validated PresentationDetailRequest request,
-                                                         @Login Long userId){
-
-        return new PresentationResponse(presentationService.savePresentationInfoWithPtDate(request, userId));
+    public ResponseEntity<PresentationCreateResponse> createPresentationInfo(@Login Long userId, @RequestBody @Validated PresentationCreateRequest request){
+        PresentationCreateResponse response = presentationService.createPresentationInfo(userId, request);
+        return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
 
 
     /**
-     * 작성자: 이창윤
-     * 작성내용: 설명회 정보 수정
-     * 비고: 설명회 회차 정보 수정 포함
+     * 설명회 정보 수정 ( 설명회 회차 정보 수정 포함)
      */
     @PatchMapping("")
-    @ResponseStatus(HttpStatus.ACCEPTED)
-    public PresentationResponse updatePresentationInfo(@RequestBody @Validated PresentationRequest request,
-                                                       @Login Long userId){
-        return new PresentationResponse(presentationService.modifyPresentationInfoWithPtDate(request, userId));
+    public ResponseEntity<Void> updatePresentationInfo( @Login Long userId, @RequestBody @Validated PresentationUpdateRequest request){
+        presentationService.updatePresentationInfo(userId, request);
+        return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
     }
 
     /**
-     * 작성자: 이창윤
-     * 작성내용: 설명회 이미지 저장
+     * 설명회 이미지 저장 및 수정
      */
-    @Transactional
-    @PostMapping("{presentationId}/image")
-    @ResponseStatus(HttpStatus.CREATED)
-    public PresentationResponse createPresentationImage(@PathVariable("presentationId") Long presentationId,
-                                                          @RequestPart(required = false) List<MultipartFile> images,
-                                                          @Login Long userId) {
-        return new PresentationResponse(presentationService.savePresentationImageWithPtDate(presentationId, images, userId));
+    @RequestMapping(value = "{presentationId}/image", method = {RequestMethod.POST, RequestMethod.PATCH})
+    public ResponseEntity<Void> updatePresentationImage(@Login Long userId, @PathVariable("presentationId") Long presentationId,
+                                                          @RequestPart(required = false) List<MultipartFile> images){
+        presentationService.updatePresentationImage(userId, presentationId, images);
+        return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
     }
 
     /**
-     * 작성자: 이창윤
-     * 작성내용: 설명회 이미지 수정
-     */
-    @Transactional
-    @PatchMapping("{presentationId}/image")
-    @ResponseStatus(HttpStatus.ACCEPTED)
-    public PresentationResponse updatePresentationImage(@PathVariable("presentationId") Long presentationId,
-                                                        @RequestPart(required = false) List<MultipartFile> images,
-                                                        @Login Long userId){
-        return new PresentationResponse(presentationService.modifyPresentationImageWithPtDate(presentationId, images, userId));
-    }
-
-    /**
-     * 작성자: 현승구
-     * 작성내용: 교사용 설명회 전체 조회
+     * 교사용 설명회 전체 조회
      */
     @GetMapping("center/{centerId}")
-    public List<PresentationForTeacherResponse> getAllPresentationForTeacher(@Login Long userId,
-                                                                             @PathVariable("centerId") Long centerId,
-                                                                             Pageable pageable){
+    public List<PresentationForTeacherResponse> getAllPresentationForTeacher(@Login Long userId, @PathVariable("centerId") Long centerId, Pageable pageable){
         return presentationService.findPresentationListByCenter(userId, centerId, pageable);
     }
 
     /**
-     * 작성자: 현승구
-     * 작성내용: 설명회 상세 조회
+     * 설명회 상세 조회
      */
     @GetMapping("{presentationId}")
-    public PresentationDetailResponse getPresentationDetails(@PathVariable("presentationId") Long presentationId){
-        return presentationService.findPresentationDetails(presentationId);
+    public ResponseEntity<PresentationFindOneResponse> getPresentationDetails(@PathVariable("presentationId") Long presentationId){
+        PresentationFindOneResponse response = presentationService.findPresentationDetails(presentationId);
+        return ResponseEntity.ok().body(response);
     }
 
     /**
-     * 작성자: 현승구
-     * 작성내용: 설명회 예약 학부모 전체 조회(예약명단)
+     * 설명회 예약 학부모 전체 조회 (예약명단)
      */
     @GetMapping("pt-date/{ptDateId}/participating")
-    public List<ParentResponse> getParentParticipate(@Login Long userId, @PathVariable("ptDateId") Long ptDateId){
-        return presentationService.findParentListWithRegisterParticipation(userId, ptDateId);
+    public ResponseEntity<List<PresentationByParentResponse>> getParentParticipate(@Login Long userId, @PathVariable("ptDateId") Long ptDateId){
+        List<PresentationByParentResponse> responses = presentationService.findParentListWithRegisterParticipation(userId, ptDateId);
+        return ResponseEntity.ok().body(responses);
     }
 
     /**
-     * 작성자: 현승구
-     * 작성내용: 설명회 대기 학부모 전체 조회(대기명단)
+     * 설명회 대기 학부모 전체 조회 (대기명단)
      */
     @GetMapping("pt-date/{ptDateId}/waiting")
-    public List<ParentResponse> getParentWait(@Login Long userId, @PathVariable("ptDateId") Long ptDateId){
-        return presentationService.findParentListWithWaitingParticipation(userId, ptDateId);
+    public ResponseEntity<List<PresentationByParentResponse>> getParentWait(@Login Long userId, @PathVariable("ptDateId") Long ptDateId){
+        List<PresentationByParentResponse> responses = presentationService.findParentListWithWaitingParticipation(userId, ptDateId);
+        return ResponseEntity.ok().body(responses);
     }
 
 }

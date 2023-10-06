@@ -12,7 +12,7 @@ import java.util.List;
 @Getter
 @AllArgsConstructor
 @NoArgsConstructor
-public class PresentationSearchFilterDto {
+public class PresentationSearchFilterRequest {
     private List<Area> areas = new ArrayList<>();
     private Theme theme;
     private Integer interestedAge;

@@ -24,27 +24,23 @@ public class PtDate extends BaseEntity {
     private LocalDate date;
     private String time;            // 설명회 날짜 시간
     private Integer ablePersonNum;      // 해당 회차에 신청 가능한 사람 수
-    private Integer participantCnt;     // 신청 사람 수
+    private Integer participantCnt;     // 신청자 수
 
     @Version
     private Integer version;
 
-    private Integer waitingCnt;         // 대기 수
+    private Integer waitingCnt;         // 대기자  수
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn
     private Presentation presentation;
 
-    // Set 으로 변경해야 할까?
     @OneToMany(mappedBy = "ptDate")
     private List<Participation> participations = new ArrayList<>();
 
-    @OneToMany(mappedBy = "ptDate")
-    private List<Waiting> waitings = new ArrayList<>();       // 인원 마감이 된 회차에 대기
 
-    @Builder(toBuilder = true)
-    public PtDate(Long id, LocalDate date, String time, Integer ablePersonNum, Integer participantCnt, Integer waitingCnt, Presentation presentation) {
-        this.id = id;
+    @Builder
+    public PtDate(LocalDate date, String time, Integer ablePersonNum, Integer participantCnt, Integer waitingCnt, Presentation presentation) {
         this.date = date;
         this.time = time;
         this.ablePersonNum = ablePersonNum;
@@ -53,64 +49,15 @@ public class PtDate extends BaseEntity {
         this.presentation = presentation;
     }
 
-    public static PtDate register(Presentation presentation, LocalDate date, String time, Integer ablePersonNum) {
-        PtDate ptDate = PtDate.builder()
-                .date(date)
-                .time(time)
-                .ablePersonNum(ablePersonNum)
+    public static PtDate createPtDate(Presentation presentation, PtDateDto ptDateCreateDto) {
+        return PtDate.builder()
+                .date(ptDateCreateDto.getDate())
+                .time(ptDateCreateDto.getTime())
+                .ablePersonNum(ptDateCreateDto.getAblePersonNum())
                 .waitingCnt(0)
                 .participantCnt(0)
                 .presentation(presentation)
                 .build();
-        presentation.getPtDates().add(ptDate);
-        return ptDate;
-    }
-
-    // 일정을 취소할 경우 participantCnt 값을 줄인다
-    public void cancelParticipation() {
-        participantCnt--;
-    }
-
-    public PtDate acceptWaiting(Waiting waiting) {
-        waitings.add(waiting);
-        return this;
-    }
-
-    // 등록이 가능한지 여부 체크
-    public boolean canRegister() {
-        if (ablePersonNum <= participantCnt) return false;
-        else return true;
-    }
-
-    // 설명회 신청 할경우 participantCnt 값을 1증가
-    public void acceptParticipation(Participation participation) {
-        participantCnt++;
-        participations.add(participation);
-    }
-
-    public void cancelWaitingForAcceptingParticipation() {
-        // 쿼리문 나가지 않기위한 waitings 초기화 안하기
-        waitingCnt--;
-    }
-
-    public boolean hasWaiting(){
-        if(waitingCnt > 0)
-            return true;
-        else return false;
-    }
-
-    public PtDate update(PtDateDto ptDateDto) {
-        if(participantCnt > ptDateDto.getAblePersonNum())
-            throw new PresentationException(PresentationErrorResult.INSUFFICIENT_CAPACITY_SETTING);
-        date = ptDateDto.getDate();
-        time = ptDateDto.getTime();
-        ablePersonNum = ptDateDto.getAblePersonNum();
-        return this;
-    }
-
-    public void canDelete() {
-        if(participantCnt > 0)
-            throw new PresentationException(PresentationErrorResult.CANNOT_DELETE_WITH_PARTICIPANT);
     }
 
     @Override
@@ -127,12 +74,58 @@ public class PtDate extends BaseEntity {
         return Objects.hash(id);
     }
 
-    public PtDate updateWaitingCntForPtDateChange(Integer changeNum) {
-//        participantCnt += changeNum;
+    public void updatePtDate(PtDateDto ptDateDto) {
+        if(participantCnt > ptDateDto.getAblePersonNum())
+            throw new PresentationException(PresentationErrorResult.INSUFFICIENT_CAPACITY_SETTING);
+
+        date = ptDateDto.getDate();
+        time = ptDateDto.getTime();
+        ablePersonNum = ptDateDto.getAblePersonNum();
+    }
+
+
+    // 일정을 취소할 경우 participantCnt 값을 줄인다
+    public void cancelParticipation() {
+        participantCnt--;
+    }
+
+    // 등록이 가능한지 여부 체크
+    public void checkCanRegister() {
+        if (ablePersonNum <= participantCnt)
+            throw new PresentationException(PresentationErrorResult.CAPACITY_EXCEEDED);
+
+    }
+
+    public void checkCanNotRegister(){
+        if(ablePersonNum > participantCnt)
+            throw new PresentationException(PresentationErrorResult.NOT_REACHED_CAPACITY_FOR_WAIT);
+    }
+
+    // 설명회 신청 할경우 participantCnt 값을 1증가
+    public void acceptParticipationCnt() {
+        participantCnt++;
+    }
+
+    public void cancelWaitingForAcceptingParticipation() {
+        waitingCnt--;
+    }
+
+    public boolean checkHasWaiting(){
+        if(waitingCnt > 0)
+            return true;
+        else return false;
+    }
+
+    public boolean checkCanDelete() {
+        if(participantCnt > 0)
+            throw new PresentationException(PresentationErrorResult.CANNOT_DELETE_WITH_PARTICIPANT);
+        return true;
+    }
+
+
+    public void updateWaitingCntForPtDateChange(Integer changeNum) {
         waitingCnt =- changeNum;
-        if(waitingCnt < 0)
-            waitingCnt = 0;
-        return this;
+        if(waitingCnt < 0) waitingCnt = 0;
     }
 
     public void resetWaitingCnt() {

@@ -15,7 +15,7 @@ import java.util.List;
 @Getter
 @AllArgsConstructor
 @NoArgsConstructor
-public class PresentationRequest {
+public class PresentationUpdateRequest {
     @NotNull
     private Long presentationId;
 

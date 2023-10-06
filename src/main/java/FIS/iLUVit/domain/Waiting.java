@@ -31,21 +31,18 @@ public class Waiting extends BaseEntity {
     private PtDate ptDate;
 
     @Builder
-    public Waiting(Long id, Integer waitingOrder, Parent parent, PtDate ptDate) {
-        this.id = id;
+    public Waiting(Integer waitingOrder, Parent parent, PtDate ptDate) {
         this.waitingOrder = waitingOrder;
         this.parent = parent;
         this.ptDate = ptDate;
     }
 
-    public static Participation whenParticipationCanceled(Waiting waiting, Presentation presentation) {
-        Parent parent = waiting.parent;
-        // 영속성 관리 되어서 ptDate 가져올때 쿼리 안나감
-        PtDate ptDate = waiting.ptDate;
-        ptDate.cancelWaitingForAcceptingParticipation();
-        List<Participation> participations = ptDate.getParticipations();
-
-        return Participation.createAndRegisterForWaitings(parent, presentation, ptDate, participations);
+    public static Waiting createWaiting(Integer waitingOrder, Parent parent, PtDate ptDate){
+        return Waiting.builder()
+                .waitingOrder(waitingOrder)
+                .parent(parent)
+                .ptDate(ptDate)
+                .build();
     }
 
 }
