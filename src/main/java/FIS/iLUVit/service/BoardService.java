@@ -36,8 +36,7 @@ public class BoardService {
         List<Board> boards = boardRepository.findByCenterIsNull(); // 모두의 이야기 내 모든 게시판
         List<BoardListResponse.BoardBookmarkDto> bookmarkList = new ArrayList<>();
         List<BoardListResponse.BoardBookmarkDto> boardList = new ArrayList<>();
-        User user = userRepository.findById(userId)
-                .orElseThrow(() -> new UserException(UserErrorResult.USER_NOT_FOUND));
+        User user = getUser(userId);
 
         boards.forEach(board -> {
             Optional<Bookmark> bookmark =  boardBookmarkRepository.findByUserAndBoard(user, board);
@@ -56,15 +55,12 @@ public class BoardService {
      * 시설 이야기 게시판 전체 조회
      */
     public BoardListResponse findAllBoardByCenter(Long userId, Long centerId) {
-        Center findCenter = centerRepository.findById(centerId)
-                .orElseThrow(() -> new CenterException(CenterErrorResult.CENTER_NOT_FOUND));
-
+        Center findCenter = getCenter(centerId);
 
         List<Board> boards = boardRepository.findByCenter(findCenter);  // 시설 이야기 모든 게시판
         List<BoardListResponse.BoardBookmarkDto> bookmarkList = new ArrayList<>();
         List<BoardListResponse.BoardBookmarkDto> boardList = new ArrayList<>();
-        User user = userRepository.findById(userId)
-                .orElseThrow(() -> new UserException(UserErrorResult.USER_NOT_FOUND));
+        User user = getUser(userId);
 
         boards.forEach(board -> {
             Optional<Bookmark> bookmark =  boardBookmarkRepository.findByUserAndBoard(user, board);
@@ -80,6 +76,7 @@ public class BoardService {
         return boardListResponse;
     }
 
+
     /**
      * 이야기 (모두의 이야기 + 유저가 속한 시설의 이야기) 전체 조회
      */
@@ -89,8 +86,7 @@ public class BoardService {
         if (userId == null) {
             return result;
         }
-        User findUser = userRepository.findById(userId)
-                .orElseThrow(() -> new UserException(UserErrorResult.USER_NOT_FOUND));
+        User findUser = getUser(userId);
         if (findUser.getAuth() == Auth.PARENT && findUser instanceof Parent ) {
             Parent parent = (Parent) findUser;
             List<Child> children = childRepository.findByParent(parent);
@@ -128,12 +124,10 @@ public class BoardService {
         }
 
         // 센터가 존재하는 지 검사
-        Center findCenter = centerRepository.findById(centerId)
-                .orElseThrow(() -> new CenterException(CenterErrorResult.CENTER_NOT_FOUND));
+        Center findCenter = getCenter(centerId);
 
         // 시설의 이야기에서 센터에 속하지 않은 회원은 게시판 생성 불가
-        User findUser = userRepository.findById(userId)
-                .orElseThrow(() -> new UserException(UserErrorResult.USER_NOT_FOUND));
+        User findUser = getUser(userId);
 
         if (findUser.getAuth() == Auth.PARENT && findUser instanceof Parent) {
             Parent parent = (Parent) findUser;
@@ -200,5 +194,22 @@ public class BoardService {
             }
         }
     }
-  
+
+    /**
+     * 예외처리 - 존재하는 유저인가
+     */
+    private User getUser(Long userId) {
+        return userRepository.findById(userId)
+                .orElseThrow(() -> new UserException(UserErrorResult.USER_NOT_FOUND));
+    }
+
+    /**
+     * 예외처리 - 존재하는 시설인가
+     */
+    private Center getCenter(Long centerId) {
+        return centerRepository.findById(centerId)
+                .orElseThrow(() -> new CenterException(CenterErrorResult.CENTER_NOT_FOUND));
+    }
+
+
 }

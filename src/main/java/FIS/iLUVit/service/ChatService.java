@@ -39,8 +39,7 @@ public class ChatService {
      */
     public void saveNewChat(Long userId, ChatRoomCreateRequest request) {
 
-        User sendUser = userRepository.findById(userId)
-                .orElseThrow(() -> new UserException(UserErrorResult.USER_NOT_FOUND));
+        User sendUser = getUser(userId);
 
         User receiveUser;
 
@@ -97,13 +96,13 @@ public class ChatService {
         chatRepository.save(partnerChat);
     }
 
+
     /**
      * 쪽지 작성 ( 대화방 생성 후 쪽지 작성 )
      */
     public void saveChatInRoom(Long userId, ChatCreateRequest request) {
 
-        ChatRoom myRoom = chatRoomRepository.findById(request.getRoomId())
-                .orElseThrow(() -> new ChatException(ChatErrorResult.CHAT_ROOM_NOT_FOUND));
+        ChatRoom myRoom = getChatRoom(request.getRoomId());
 
         if (myRoom.getReceiver() == null || myRoom.getSender() == null || myRoom.getSender().getNickName() == "알 수 없음") {
             throw new ChatException(ChatErrorResult.WITHDRAWN_USER);
@@ -140,8 +139,7 @@ public class ChatService {
         partnerRoom.updatePartnerId(myRoom.getId());
         partnerChat.updateChatRoom(partnerRoom);
 
-        userRepository.findById(partnerUserId)
-                .orElseThrow(() -> new UserException(UserErrorResult.USER_NOT_FOUND))
+        getUser(partnerUserId)
                 .updateReadAlarm(Boolean.FALSE);
 
         chatRepository.save(myChat);
@@ -152,8 +150,7 @@ public class ChatService {
      * 대화방 전체 조회
      */
     public Slice<ChatRoomResponse> findChatRoomList(Long userId, Pageable pageable) {
-        User user = userRepository.findById(userId)
-                .orElseThrow(() -> new UserException(UserErrorResult.USER_NOT_FOUND));
+        User user = getUser(userId);
 
         Slice<ChatRoom> chatList = chatRoomRepository.findByReceiverOrderByUpdatedDateDesc(user, pageable);
         return chatList.map(chat -> {
@@ -169,11 +166,9 @@ public class ChatService {
      */
     public ChatDetailResponse findChatRoomDetails(Long userId, Long roomId, Pageable pageable) {
 
-        User receiverUser = userRepository.findById(userId)
-                .orElseThrow(() -> new UserException(UserErrorResult.USER_NOT_FOUND));
+        User receiverUser = getUser(userId);
 
-        ChatRoom findRoom = chatRoomRepository.findById(roomId)
-                .orElseThrow(() -> new ChatException(ChatErrorResult.CHAT_ROOM_NOT_FOUND));
+        ChatRoom findRoom = getChatRoom(roomId);
 
         User senderUser = findRoom.getSender();
 
@@ -209,6 +204,7 @@ public class ChatService {
 
         return chatDto;
     }
+
 
     /**
      * 대화방 삭제
@@ -249,6 +245,22 @@ public class ChatService {
         }
         chat.updateChatRoom(chatRoom);
         return chatRoom;
+    }
+
+    /**
+     * 예외처리 - 존재하는 유저인가
+     */
+    private User getUser(Long userId) {
+        return userRepository.findById(userId)
+                .orElseThrow(() -> new UserException(UserErrorResult.USER_NOT_FOUND));
+    }
+
+    /**
+     * 예외처리 - 존재하는 채팅방인가
+     */
+    private ChatRoom getChatRoom(Long roomId) {
+        return  chatRoomRepository.findById(roomId)
+                .orElseThrow(() -> new ChatException(ChatErrorResult.CHAT_ROOM_NOT_FOUND));
     }
 
 }

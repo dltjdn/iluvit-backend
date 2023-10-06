@@ -23,7 +23,6 @@ public class BoardBookmarkService {
     private final UserRepository userRepository;
     private final BoardRepository boardRepository;
     private final PostRepository postRepository;
-
     private final BlockedRepository blockedRepository;
 
 
@@ -31,9 +30,7 @@ public class BoardBookmarkService {
      * 즐겨찾는 게시판 전체 조회
      */
     public List<BoardStoryResponse> findBoardBookmarkByUser(Long userId) {
-        User user = userRepository.findById(userId)
-                .orElseThrow(() -> new UserException(UserErrorResult.USER_NOT_FOUND));
-
+        User user = getUser(userId);
 
         List<Long> blockedUserIds = blockedRepository.findByBlockingUser(user).stream()
                 .map(Blocked::getBlockedUser)
@@ -91,12 +88,12 @@ public class BoardBookmarkService {
 
     }
 
+
     /**
      * 즐겨찾는 게시판 등록
      */
     public BoardBookmarkIdResponse saveBoardBookmark(Long userId, Long boardId) {
-        User findUser = userRepository.findById(userId)
-                .orElseThrow(() -> new UserException(UserErrorResult.USER_NOT_FOUND));
+        User findUser = getUser(userId);
 
         Board findBoard = boardRepository.findById(boardId)
                 .orElseThrow(() -> new BoardException(BoardErrorResult.BOARD_NOT_FOUND));
@@ -120,5 +117,13 @@ public class BoardBookmarkService {
         boardBookmarkRepository.delete(findBookmark);
     }
 
+    /**
+     * 예외처리 - 존재하는 유저인가
+     */
+    private User getUser(Long userId) {
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new UserException(UserErrorResult.USER_NOT_FOUND));
+        return user;
+    }
 
 }

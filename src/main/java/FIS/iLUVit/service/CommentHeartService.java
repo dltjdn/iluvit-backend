@@ -29,11 +29,8 @@ public class CommentHeartService {
      * 댓글 좋아요 등록
      */
     public void saveCommentHeart(Long userId, Long commentId) {
-        User findUser = userRepository.findById(userId)
-                .orElseThrow(() -> new UserException(UserErrorResult.USER_NOT_FOUND));
-      ;
-        Comment findComment = commentRepository.findById(commentId)
-                .orElseThrow(() -> new CommentException(CommentErrorResult.COMMENT_NOT_FOUND));
+        User findUser = getUser(userId);
+        Comment findComment = getComment(commentId);
 
         commentHeartRepository.findByUserAndComment(findUser, findComment)
                 .ifPresent((ch) -> {
@@ -51,11 +48,9 @@ public class CommentHeartService {
      */
     public void deleteCommentHeart(Long userId, Long commentId) {
 
-        User findUser = userRepository.findById(userId)
-                .orElseThrow(() -> new UserException(UserErrorResult.USER_NOT_FOUND));
+        User findUser = getUser(userId);
 
-        Comment findComment = commentRepository.findById(commentId)
-                .orElseThrow(() -> new CommentException(CommentErrorResult.COMMENT_NOT_FOUND));
+        Comment findComment = getComment(commentId);
 
         CommentHeart commentHeart = commentHeartRepository.findByUserAndComment(findUser, findComment)
                 .orElseThrow(() -> new CommentException(CommentErrorResult.COMMENT_HEART_NOT_FOUND));
@@ -69,5 +64,21 @@ public class CommentHeartService {
         Comment comment = commentHeart.getComment();
 
         comment.minusHeartCnt();
+    }
+
+    /**
+     * 예외처리 - 존재하는 댓글인가
+     */
+    private Comment getComment(Long commentId) {
+        return commentRepository.findById(commentId)
+                .orElseThrow(() -> new CommentException(CommentErrorResult.COMMENT_NOT_FOUND));
+    }
+
+    /**
+     * 예외처리 - 존재하는 유저인가
+     */
+    private User getUser(Long userId) {
+        return userRepository.findById(userId)
+                .orElseThrow(() -> new UserException(UserErrorResult.USER_NOT_FOUND));
     }
 }

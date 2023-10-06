@@ -50,8 +50,7 @@ public class ParentService {
      */
     public ParentDetailResponse findParentDetails(Long userId) {
 
-        Parent findParent = parentRepository.findById(userId)
-                .orElseThrow(() -> new UserException(UserErrorResult.USER_NOT_FOUND));
+        Parent findParent = getParent(userId);
 
         ParentDetailResponse parentDetailResponse = new ParentDetailResponse(findParent,findParent.getProfileImagePath());
 
@@ -63,8 +62,7 @@ public class ParentService {
      */
     public void modifyParentInfo(Long userId, ParentUpdateRequest request) throws IOException {
 
-        Parent findParent = parentRepository.findById(userId)
-                .orElseThrow(() -> new UserException(UserErrorResult.USER_NOT_FOUND));
+        Parent findParent = getParent(userId);
 
         // 관심사를 스트링에서 객체로 바꾸기
         ObjectMapper objectMapper = new ObjectMapper();
@@ -140,8 +138,7 @@ public class ParentService {
     public void withdrawParent(Long userId){
         userService.withdrawUser(userId);  // 교사, 학부모 공톤 탈퇴 로직
 
-        Parent parent = parentRepository.findById(userId)
-                .orElseThrow(() -> new UserException(UserErrorResult.USER_NOT_FOUND));
+        Parent parent = getParent(userId);
 
         // 찜한 시설 리스트 삭제
         centerBookmarkRepository.findByParent(parent).forEach(centerBookmark -> {
@@ -162,6 +159,14 @@ public class ParentService {
         waitingRepository.findByParent(parent).forEach(waiting-> {
             waitingService.cancelParticipation(userId, waiting.getId());
         });
+    }
+
+    /**
+     * 예외처리 - 존재하는 학부모인가
+     */
+    private Parent getParent(Long userId) {
+        return  parentRepository.findById(userId)
+                .orElseThrow(() -> new UserException(UserErrorResult.USER_NOT_FOUND));
     }
 
 }

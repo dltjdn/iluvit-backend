@@ -50,8 +50,7 @@ public class ChildService {
      * 아이 정보 전체 조회
      */
     public List<ChildCenterResponse> findChildList(Long userId) {
-        Parent findParent = parentRepository.findById(userId)
-                .orElseThrow(() -> new UserException(UserErrorResult.USER_NOT_FOUND));
+        Parent findParent = getParent(userId);
 
         List<ChildCenterResponse> childInfoRespons = new ArrayList<>();
 
@@ -64,6 +63,7 @@ public class ChildService {
         return childInfoRespons;
     }
 
+
     /**
      * 아이 정보 저장 ( 아이 생성 )
      */
@@ -72,8 +72,7 @@ public class ChildService {
         Parent parent = parentRepository.getById(userId);
 
         // 시설 가져오기
-        Center center = centerRepository.findByIdAndSigned(request.getCenterId(), true)
-                .orElseThrow(() -> new CenterException(CenterErrorResult.CENTER_NOT_FOUND));
+        Center center = getCenterSigned(request.getCenterId());
 
         // 아이 등록
         Child newChild = request.createChild(center, parent);
@@ -97,12 +96,10 @@ public class ChildService {
      * 아이 정보 상세 조회
      */
     public ChildDetailResponse findChildDetails(Long userId, Long childId) {
-        User user = userRepository.findById(userId)
-                .orElseThrow(() -> new UserException(UserErrorResult.USER_NOT_FOUND));
+        User user = getUser(userId);
 
         // 프로필 수정하고자 하는 아이 가져오기
-        Child child = childRepository.findByIdAndParent(childId, (Parent)user)
-                .orElseThrow(() -> new UserException(UserErrorResult.USER_NOT_FOUND));
+        Child child = getChildByParent(childId, (Parent) user);
 
         ChildDetailResponse childDetailResponse = new ChildDetailResponse(child,child.getProfileImagePath());
 
@@ -113,17 +110,12 @@ public class ChildService {
      * 아이 정보 수정
      */
     public void modifyChildInfo(Long userId, Long childId, ChildUpdateRequest request) {
-        User user = userRepository.findById(userId)
-                .orElseThrow(() -> new UserException(UserErrorResult.USER_NOT_FOUND));
+        User user = getUser(userId);
 
         // 수정하고자 하는 아이
-        Child updatedChild = childRepository.findByIdAndParent(childId,(Parent)user)
-                .orElseThrow(() -> new ChildException(ChildErrorResult.CHILD_NOT_FOUND));
-
+        Child updatedChild = getChildByParent(childId, (Parent) user);
         // 프로필 수정
         updatedChild.update(request.getName(), request.getBirthDate());
-
-        ChildDetailResponse childDetailResponse = new ChildDetailResponse(updatedChild, updatedChild.getProfileImagePath());
 
         // 프로필 이미지 수정
         imageService.saveProfileImage(request.getProfileImg(), updatedChild);
@@ -134,8 +126,7 @@ public class ChildService {
      * 아이 삭제
      */
     public void deleteChild(Long userId, Long childId) {
-        User user = userRepository.findById(userId)
-                .orElseThrow(() -> new UserException(UserErrorResult.USER_NOT_FOUND));
+        User user = getUser(userId);
 
         // 요청 사용자가 등록한 모든 아이 가져오기
         List<Child> childrenByUser = childRepository.findByParent((Parent)user);
@@ -177,8 +168,7 @@ public class ChildService {
      * 아이 시설 대기 ( 아이 시설 승인 요청 )
      */
     public void requestAssignCenterForChild(Long userId, Long childId, Long centerId) {
-        User user = userRepository.findById(userId)
-                .orElseThrow(() -> new UserException(UserErrorResult.USER_NOT_FOUND));
+        User user = getUser(userId);
 
         // 승인 받고자 하는 아이
         Child mappedChild = childRepository.findByIdAndParent(childId,(Parent)user)
@@ -188,10 +178,8 @@ public class ChildService {
         if (mappedChild.getCenter() != null) {
             throw new UserException(UserErrorResult.ALREADY_BELONGS_TO_CENTER);
         }
-
         // 승인 요청 보내는 시설
-        Center center = centerRepository.findByIdAndSigned(centerId, true)
-                .orElseThrow(() -> new CenterException(CenterErrorResult.CENTER_NOT_FOUND));
+        Center center = getCenterSigned(centerId);
 
         mappedChild.mappingCenter(center);
 
@@ -205,12 +193,12 @@ public class ChildService {
         });
     }
 
+
     /**
      * 아이 시설 탈퇴
      */
     public void leaveCenterForChild(Long userId, Long childId) {
-        Parent parent = parentRepository.findById(userId)
-                .orElseThrow(() -> new UserException(UserErrorResult.USER_NOT_FOUND));
+        Parent parent = getParent(userId);
 
         // 요청 사용자가 등록한 모든 아이 가져오기
         List<Child> childrenByUser = childRepository.findByParent(parent);
@@ -233,8 +221,7 @@ public class ChildService {
     public List<ChildInfoForAdminResponse> findChildApprovalList(Long userId) {
         // 사용자가 속한 시설의 아이들 끌어오기
         Approval approval = Approval.ACCEPT;
-        Teacher teacher = teacherRepository.findByIdAndApproval(userId, approval)
-                .orElseThrow(() -> new UserException(UserErrorResult.USER_NOT_FOUND));
+        Teacher teacher = getTeacherByApproval(userId, approval);
 
         List<ChildInfoForAdminResponse> childInfoForAdminResponses = new ArrayList<>();
 
@@ -256,8 +243,7 @@ public class ChildService {
      */
     public void acceptChildRegistration(Long userId, Long childId) {
         // 사용자가 등록된 시설과 연관된 아이들 목록 가져오기
-        Teacher teacher = teacherRepository.findByIdAndApproval(userId, Approval.ACCEPT)
-                .orElseThrow(() -> new UserException(UserErrorResult.USER_NOT_FOUND));
+        Teacher teacher = getTeacherByApproval(userId, Approval.ACCEPT);
         // childId에 해당하는 아이가 시설에 승인 대기중인지 확인
         List<Child> childList = childRepository.findByCenter(teacher.getCenter());
         Child acceptedChild = childList.stream()
@@ -269,8 +255,7 @@ public class ChildService {
         acceptedChild.accepted();
 
         // 승인하고자 하는 아이의 부모와 그 부모에 속한 모든 아이들 가져오기
-        Parent acceptedParent = parentRepository.findById(acceptedChild.getParent().getId())
-                .orElseThrow(() -> new UserException(UserErrorResult.USER_NOT_FOUND));
+        Parent acceptedParent = getParent(acceptedChild.getParent().getId());
 
         // 승인 완료 알람이 학부모에게로 감
         Alarm alarm = new CenterApprovalAcceptedAlarm(acceptedParent, teacher.getCenter());
@@ -304,8 +289,7 @@ public class ChildService {
      */
     public void rejectChildRegistration(Long userId, Long childId) {
         // 사용자가 등록된 시설과 연관된 아이들 목록 가져오기
-        Teacher teacher = teacherRepository.findByIdAndApproval(userId, Approval.ACCEPT)
-                .orElseThrow(() -> new UserException(UserErrorResult.USER_NOT_FOUND));
+        Teacher teacher = getTeacherByApproval(userId, Approval.ACCEPT);
 
         // childId 검증
         List<Child> childList = childRepository.findByCenter(teacher.getCenter());
@@ -339,9 +323,50 @@ public class ChildService {
         // 없으면 해당 시설과 연관된 bookmark 싹 다 삭제
         if (sameCenterChildren.isEmpty()) {
             List<Board> boards = boardRepository.findByCenter(deletedChild.getCenter());
-            User user = userRepository.findById(parentId)
-                    .orElseThrow(() -> new UserException(UserErrorResult.USER_NOT_FOUND));
+            User user = getUser(parentId);
             boardBookmarkRepository.deleteByUserAndBoardIn(user, boards);
         }
     }
+
+    /**
+     * 예외처리 - 존재하는 유저인가
+     */
+    private User getUser(Long userId) {
+        return userRepository.findById(userId)
+                .orElseThrow(() -> new UserException(UserErrorResult.USER_NOT_FOUND));
+    }
+
+    /**
+     * 예외처리 - 존재하는 해당 학부모의 아이인가
+     */
+    private Child getChildByParent(Long childId, Parent user) {
+        return childRepository.findByIdAndParent(childId, user)
+                .orElseThrow(() -> new UserException(UserErrorResult.USER_NOT_FOUND));
+    }
+
+    /**
+     * 예외처리 - 존재하는 승인여부에 해당하는 선생인가
+     */
+    private Teacher getTeacherByApproval(Long userId, Approval approval) {
+        return teacherRepository.findByIdAndApproval(userId, approval)
+                .orElseThrow(() -> new UserException(UserErrorResult.USER_NOT_FOUND));
+    }
+
+    /**
+     * 예외처리 - 존재하는 학부모인가
+     */
+    private Parent getParent(Long userId) {
+        return parentRepository.findById(userId)
+                .orElseThrow(() -> new UserException(UserErrorResult.USER_NOT_FOUND));
+    }
+
+    /**
+     * 예외처리 - 존재하는 signed 된 시설인가
+     */
+    private Center getCenterSigned(Long centerId) {
+        return centerRepository.findByIdAndSigned(centerId, true)
+                .orElseThrow(() -> new CenterException(CenterErrorResult.CENTER_NOT_FOUND));
+    }
+
+
 }

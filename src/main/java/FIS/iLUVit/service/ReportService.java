@@ -30,8 +30,7 @@ public class ReportService {
      */
     public void registerReport(Long userId, ReportRequest request) {
         // 신고자 정보
-        User findUser = userRepository.findById(userId)
-                .orElseThrow(() -> new UserException(UserErrorResult.USER_NOT_FOUND));
+        User findUser = getUser(userId);
 
         Long reportDetailId = null;
 
@@ -42,8 +41,7 @@ public class ReportService {
                     .orElseThrow(() -> new PostException(PostErrorResult.POST_NOT_FOUND));
 
             // 게시글 작성자 정보
-            User findTargetUser = userRepository.findById(findPost.getUser().getId())
-                    .orElseThrow(() -> new UserException(UserErrorResult.USER_NOT_FOUND));
+            User findTargetUser = getUser(findPost.getUser().getId());
 
             // 해당 게시글을 유저가 이미 신고했으면 중복으로 신고 불가능
             reportDetailRepository.findByUserAndReportTargetId(findUser, request.getTargetId())
@@ -77,8 +75,7 @@ public class ReportService {
                     .orElseThrow(() -> new CommentException(CommentErrorResult.COMMENT_NOT_FOUND));
 
             // 댓글 작성자 정보
-            User findTargetUser = userRepository.findById(findComment.getUser().getId())
-                    .orElseThrow(() -> new UserException(UserErrorResult.USER_NOT_FOUND));
+            User findTargetUser = getUser(findComment.getUser().getId());
 
             // 해당 댓글을 이미 신고했으면 중복으로 신고 불가능
             reportDetailRepository.findByUserAndReportTargetId(findUser, request.getTargetId())
@@ -106,5 +103,13 @@ public class ReportService {
                 findReport.plusCount();
             }
         }
+    }
+
+    /**
+     * 예외처리 - 존재하는 유저인가
+     */
+    private User getUser(Long userId) {
+        return userRepository.findById(userId)
+                .orElseThrow(() -> new UserException(UserErrorResult.USER_NOT_FOUND));
     }
 }

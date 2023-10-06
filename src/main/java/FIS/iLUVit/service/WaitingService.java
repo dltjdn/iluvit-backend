@@ -121,15 +121,6 @@ public class WaitingService {
     }
 
     /**
-     * 예외처리 - 존재하는 학부모인가
-     */
-    private Parent getParent(Long userId) {
-        return parentRepository.findById(userId)
-                .orElseThrow(() -> new UserException(UserErrorResult.USER_NOT_FOUND));
-
-    }
-
-    /**
      * 예외처리 - 존재하는 설명회 회차인가
      */
     private PtDate getPtDate(Long ptDateId) {
@@ -138,6 +129,15 @@ public class WaitingService {
 
         return ptDateRepository.findById(ptDateId)
                 .orElseThrow(() -> new PresentationException(PresentationErrorResult.PTDATE_NOT_FOUND));
+    }
+
+    /**
+     * 예외처리 - 존재하는 학부모인가
+     */
+    private Parent getParent(Long userId) {
+        return parentRepository.findById(userId)
+                .orElseThrow(() -> new UserException(UserErrorResult.USER_NOT_FOUND));
+
     }
 
 }

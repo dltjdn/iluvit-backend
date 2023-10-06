@@ -63,14 +63,14 @@ public class TeacherService {
      */
     public TeacherDetailResponse findTeacherDetails(Long userId) throws IOException {
         // 유저 id로 교사 조회
-        Teacher findTeacher = teacherRepository.findById(userId)
-                .orElseThrow(() -> new UserException(UserErrorResult.USER_NOT_FOUND));
+        Teacher findTeacher = getTeacher(userId);
 
         // 조회된 교사 정보와 프로필 이미지를 이용하여 TeacherDetailResponse 생성
         TeacherDetailResponse teacherDetailResponse = new TeacherDetailResponse(findTeacher,findTeacher.getProfileImagePath());
 
         return teacherDetailResponse;
     }
+
 
     /**
      * 교사 회원가입을 수행합니다
@@ -137,8 +137,7 @@ public class TeacherService {
      */
     public void modifyTeacherInfo(Long userId, TeacherDetailRequest request) throws IOException {
         // 유저 id로 교사 조회
-        Teacher findTeacher = teacherRepository.findById(userId)
-                .orElseThrow(() -> new UserException(UserErrorResult.USER_NOT_FOUND));
+        Teacher findTeacher = getTeacher(userId);
 
         // 유저 닉네임 중복 검사
         if (!Objects.equals(findTeacher.getNickName(), request.getNickname())) {
@@ -196,9 +195,7 @@ public class TeacherService {
      */
     public Teacher requestAssignCenterForTeacher(Long userId, Long centerId) {
         // 교사 조회 및 시설 할당 여부 확인
-        Teacher teacher = teacherRepository.findByIdAndCenterIsNull(userId)
-                .orElseThrow(() -> new UserException(UserErrorResult.USER_NOT_FOUND));
-
+        Teacher teacher = getTeacher(userId);
         // 시설과의 연관관계 맺기
         Center center = centerRepository.getById(centerId);
         teacher.assignCenter(center);
@@ -219,8 +216,7 @@ public class TeacherService {
      */
     public Teacher leaveCenterForTeacher(Long userId) {
         // user id로 교사 정보 조회 및 소속 시설 여부 확인
-        Teacher escapedTeacher = teacherRepository.findById(userId)
-                .orElseThrow(() -> new UserException(UserErrorResult.USER_NOT_FOUND));
+        Teacher escapedTeacher = getTeacher(userId);
 
         // 교사와 연결된 시설의 교사 리스트 조회
         List<Teacher> teacherList = teacherRepository.findByCenter(escapedTeacher.getCenter());
@@ -254,8 +250,7 @@ public class TeacherService {
      */
     public List<TeacherInfoForAdminResponse> findTeacherApprovalList(Long userId) {
         // user id로 관리교사인지 확인
-        Teacher director = teacherRepository.findByIdAndAuth(userId, DIRECTOR)
-                .orElseThrow(() -> new UserException(UserErrorResult.USER_NOT_FOUND));
+        Teacher director = getDirectorByAuth(userId);
 
         // 관리교사로 등록 되어있는 시설의 교사 리스트 조회
         List<Teacher> teacherList = teacherRepository.findByCenter(director.getCenter());
@@ -281,8 +276,7 @@ public class TeacherService {
      */
     public Teacher acceptTeacherRegistration(Long userId, Long teacherId) {
         // user id로 관리교사인지 확인
-        Teacher director = teacherRepository.findByIdAndAuth(userId, DIRECTOR)
-                .orElseThrow(() -> new UserException(UserErrorResult.USER_NOT_FOUND));
+        Teacher director = getDirectorByAuth(userId);
 
         // 승인하고자 하는 교사가 해당 시설에 속해 있는지 && 대기 상태인지 확인
         List<Teacher> teacherList = teacherRepository.findByCenter(director.getCenter());
@@ -304,17 +298,16 @@ public class TeacherService {
         return acceptedTeacher;
     }
 
+
     /**
      * 시설에 등록을 요청한 교사의 등록 요청을 거절합니다 / 교사를 삭제합니다
      */
     public Teacher rejectTeacherRegistration(Long userId, Long teacherId) {
         // user id로 관리교사인지 확인
-        Teacher director = teacherRepository.findByIdAndAuth(userId, DIRECTOR)
-                .orElseThrow(() -> new UserException(UserErrorResult.USER_NOT_FOUND));
+        Teacher director = getDirectorByAuth(userId);
 
         // 승인 요청 거절/삭제 하고자 하는 교사 정보 조회
-        Teacher firedTeacher = teacherRepository.findById(teacherId)
-                .orElseThrow(() -> new UserException(UserErrorResult.USER_NOT_FOUND));
+        Teacher firedTeacher = getTeacher(teacherId);
 
         // 삭제하고자 하는 교사가 해당 시설에 소속되어 있는지 확인
         if (firedTeacher.getCenter() == null || !Objects.equals(director.getCenter().getId(), firedTeacher.getCenter().getId())) {
@@ -335,8 +328,7 @@ public class TeacherService {
      */
     public Teacher mandateTeacher(Long userId, Long teacherId) {
         // user id로 관리교사인지 확인
-        Teacher director = teacherRepository.findByIdAndAuth(userId, DIRECTOR)
-                .orElseThrow(() -> new UserException(UserErrorResult.USER_NOT_FOUND));
+        Teacher director = getDirectorByAuth(userId);
 
         // 해당 시설에 소속된 교사 리스트 조회
         List<Teacher> teacherList = teacherRepository.findByCenter(director.getCenter());
@@ -358,8 +350,7 @@ public class TeacherService {
      */
     public Teacher demoteTeacher(Long userId, Long teacherId) {
         // user id로 관리교사인지 확인
-        Teacher director = teacherRepository.findByIdAndAuth(userId, DIRECTOR)
-                .orElseThrow(() -> new UserException(UserErrorResult.USER_NOT_FOUND));
+        Teacher director = getDirectorByAuth(userId);
 
         // 해당 시설에 소속된 교사 리스트 조회
         List<Teacher> teacherList = teacherRepository.findByCenter(director.getCenter());
@@ -398,6 +389,22 @@ public class TeacherService {
             boardBookmarkRepository.deleteByUserAndBoardIn(escapedTeacher, boards);
         }
         // TODO scrap 없애는 코드 추가
+    }
+
+    /**
+     * 예외처리 - 존재하는 해당 권한의 선생인가
+     */
+    private Teacher getDirectorByAuth(Long userId) {
+        return teacherRepository.findByIdAndAuth(userId, DIRECTOR)
+                .orElseThrow(() -> new UserException(UserErrorResult.USER_NOT_FOUND));
+    }
+
+    /**
+     * 예외처리 - 존재하는 선생인가
+     */
+    private Teacher getTeacher(Long userId) {
+        return teacherRepository.findById(userId)
+                .orElseThrow(() -> new UserException(UserErrorResult.USER_NOT_FOUND));
     }
 
 }

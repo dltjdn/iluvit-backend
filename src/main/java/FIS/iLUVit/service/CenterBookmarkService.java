@@ -33,8 +33,7 @@ public class CenterBookmarkService {
      * 즐겨찾는 시설 전체 조회
      */
     public Slice<CenterBookmarkResponse> findCentersByCenterBookmark(Long userId, Pageable pageable) {
-        Parent parent = parentRepository.findById(userId)
-                .orElseThrow(() -> new UserException(UserErrorResult.USER_NOT_FOUND));
+        Parent parent = getParent(userId);
 
         List<Prefer> centerBookmarks = centerBookmarkRepository.findByParent(parent);
 
@@ -66,11 +65,8 @@ public class CenterBookmarkService {
      * 시설 즐겨찾기 등록
      */
     public void saveCenterBookmark(Long userId, Long centerId) {
-        Parent parent = parentRepository.findById(userId)
-                .orElseThrow(() -> new UserException(UserErrorResult.USER_NOT_FOUND));
-
-        Center center = centerRepository.findById(centerId)
-                        .orElseThrow(()-> new CenterException(CenterErrorResult.CENTER_NOT_FOUND));
+        Parent parent = getParent(userId);
+        Center center = getCenter(centerId);
 
         centerBookmarkRepository.findByCenterAndParent(center, parent)
                 .ifPresent(prefer -> {
@@ -86,10 +82,8 @@ public class CenterBookmarkService {
      * 시설 즐겨찾기 해제
      */
     public void deleteCenterBookmark(Long userId, Long centerId) {
-        Parent parent = parentRepository.findById(userId)
-                .orElseThrow(() -> new UserException(UserErrorResult.USER_NOT_FOUND));
-        Center center = centerRepository.findById(centerId)
-                .orElseThrow(()-> new CenterException(CenterErrorResult.CENTER_NOT_FOUND));
+        Parent parent = getParent(userId);
+        Center center = getCenter(centerId);
 
         Prefer deletedPrefer = centerBookmarkRepository.findByCenterAndParent(center,parent)
                 .orElseThrow(() -> new CenterBookmarkException(CenterBookmarkErrorResult.CENTER_BOOKMARK_NOT_FOUND));
@@ -97,4 +91,19 @@ public class CenterBookmarkService {
         centerBookmarkRepository.delete(deletedPrefer);
     }
 
+    /**
+     * 예외처리 - 존재하는 시설인가
+     */
+    private Center getCenter(Long centerId) {
+        return centerRepository.findById(centerId)
+                .orElseThrow(()-> new CenterException(CenterErrorResult.CENTER_NOT_FOUND));
+    }
+
+    /**
+     * 예외처리 - 존재하는 학부모인가
+     */
+    private Parent getParent(Long userId) {
+        return parentRepository.findById(userId)
+                .orElseThrow(() -> new UserException(UserErrorResult.USER_NOT_FOUND));
+    }
 }

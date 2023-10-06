@@ -87,8 +87,7 @@ public class ParticipationService {
         if(participationId < 0)
             throw new ParticipationException(ParticipationErrorResult.WRONG_PARTICIPATION_ID_REQUEST);
 
-        Parent parent = parentRepository.findById(userId)
-                .orElseThrow(() -> new UserException(UserErrorResult.USER_NOT_FOUND));
+        Parent parent = getParent(userId);
 
         Participation participation = participationRepository.findByIdAndStatusAndParent(participationId, JOINED, parent)
                 .orElseThrow(() -> new ParticipationException(ParticipationErrorResult.PARTICIPATION_NOT_FOUND));
@@ -102,13 +101,13 @@ public class ParticipationService {
         }
     }
 
+
     /**
      * 신청한/취소한 설명회 전체 조회
      */
     public List<ParticipationWithStatusResponse> findAllParticipationByUser(Long userId) {
         // 학부모 조회
-        Parent parent = parentRepository.findById(userId)
-                .orElseThrow(()-> new UserException(UserErrorResult.USER_NOT_FOUND));
+        Parent parent = getParent(userId);
 
         List<ParticipationResponse> participationResponses = participationRepository.findByParent(parent).stream()
                 .map(ParticipationResponse::createDtoByParticipation)
@@ -136,8 +135,7 @@ public class ParticipationService {
      * 신청한 설명회 전체 조회
      */
     public Slice<ParticipationResponse> findRegisterParticipationByUser(Long userId, Pageable pageable){
-        Parent parent = parentRepository.findById(userId)
-                .orElseThrow(() -> new UserException(UserErrorResult.USER_NOT_FOUND));
+        Parent parent = getParent(userId);
 
         Slice<ParticipationResponse> participationDtos = participationRepository.findByParentAndStatus(parent, JOINED, pageable)
                 .map(ParticipationResponse::createDtoByParticipation);
@@ -149,8 +147,7 @@ public class ParticipationService {
      * 신청을 취소한 설명회 전체 조회
      */
     public Slice<ParticipationResponse> findCancelParticipationByUser(Long userId, Pageable pageable){
-        Parent parent = parentRepository.findById(userId)
-                .orElseThrow(() -> new UserException(UserErrorResult.USER_NOT_FOUND));
+        Parent parent = getParent(userId);
 
         Slice<ParticipationResponse> participationDtos = participationRepository.findByParentAndStatus(parent, CANCELED, pageable)
                 .map(ParticipationResponse::createDtoByParticipation);
@@ -162,8 +159,7 @@ public class ParticipationService {
      * 대기를 신청한 설명회 전체 조회
      */
     public Slice<ParticipationResponse> findWaitingParticipationByUser(Long userId, Pageable pageable){
-        Parent parent = parentRepository.findById(userId)
-                .orElseThrow(() -> new UserException(UserErrorResult.USER_NOT_FOUND));
+        Parent parent = getParent(userId);
 
         Slice<ParticipationResponse> participationDtos = waitingRepository.findByParent(parent, pageable)
                 .map(ParticipationResponse::createDtoByWaiting);
@@ -183,5 +179,12 @@ public class ParticipationService {
         participationRepository.save(paticipation);
     }
 
+    /**
+     * 예외처리 - 존재하는 학부모인가
+     */
+    private Parent getParent(Long userId) {
+        return parentRepository.findById(userId)
+                .orElseThrow(() -> new UserException(UserErrorResult.USER_NOT_FOUND));
+    }
 
 }

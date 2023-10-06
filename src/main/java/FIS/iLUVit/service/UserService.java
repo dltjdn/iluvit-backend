@@ -50,12 +50,13 @@ public class UserService {
                             throw new BlackUserException(BlackUserErrorResult.USER_IS_BLACK_OR_WITHDRAWN);
                 });
         // 유저 id로 유저 조회
-        User user = userRepository.findById(userId)
-                .orElseThrow(() -> new UserException(UserErrorResult.USER_NOT_FOUND));
+        User user = getUser(userId);
 
         // 유저의 기본 정보 반환
         return user.getUserInfo();
     }
+
+
 
     /**
      * 중복된 로그인 아이디일 경우 에러를 반환합니다
@@ -88,8 +89,7 @@ public class UserService {
      */
     public void changePassword(Long id, PasswordUpdateRequest request) {
         // 유저 id로 유저 정보 조회
-        User findUser = userRepository.findById(id)
-                .orElseThrow(() -> new UserException(UserErrorResult.USER_NOT_FOUND));
+        User findUser = getUser(id);
 
         // 기존 비밀번호와 유저가 입력한 현재 비밀번호를 확인
         if (!encoder.matches(request.getOriginPwd(), findUser.getPassword())) {
@@ -156,7 +156,7 @@ public class UserService {
 
         // 이전에 받았던 refreshToken과 일치하는지 확인(tokenPair 유저당 하나로 유지)
         Long userId = jwtUtils.getUserIdFromToken(requestRefreshToken);
-        User user = userRepository.findById(userId).orElseThrow(() -> new UserException(UserErrorResult.USER_NOT_FOUND));
+        User user = getUser(userId);
         TokenPair findTokenPair = tokenPairRepository.findByUser(user)
                 .orElseThrow(() -> new JWTVerificationException("유효하지 않은 토큰입니다."));
         if (!requestRefreshToken.equals(findTokenPair.getRefreshToken())) {
@@ -218,8 +218,7 @@ public class UserService {
      */
     public void withdrawUser(Long userId){
         // 유저 정보 삭제 & 게시글, 댓글, 채팅, 시설리뷰 작성자 '알 수 없음'
-        User user = userRepository.findById(userId)
-                .orElseThrow(() -> new UserException(UserErrorResult.USER_NOT_FOUND));
+        User user = getUser(userId);
         // 15일 동안 재가입 방지를 위해 블랙 유저에 저장
         blackUserRepository.save(new BlackUser(user, UserStatus.WITHDRAWN));
 
@@ -242,4 +241,11 @@ public class UserService {
         expoTokenRepository.deleteAllByUser(user);
     }
 
+    /**
+     * 예외처리 - 존재하는 유저인가
+     */
+    private User getUser(Long userId) {
+        return userRepository.findById(userId)
+                .orElseThrow(() -> new UserException(UserErrorResult.USER_NOT_FOUND));
+    }
 }

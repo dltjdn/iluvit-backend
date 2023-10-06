@@ -34,8 +34,7 @@ public class ReviewService {
      * 해당 시설의 리뷰를 조회하여 조회된 리뷰 리스트를 dto를 반환합니다
      */
     public Slice<ReviewByCenterResponse> findReviewByCenter(Long centerId, Pageable pageable) {
-        Center findCenter = centerRepository.findById(centerId)
-                .orElseThrow(() -> new CenterException(CenterErrorResult.CENTER_NOT_FOUND));
+        Center findCenter = getCenter(centerId);
 
         Slice<Review> reviews = reviewRepository.findByCenterOrderByCreatedDate(findCenter, pageable);
 
@@ -56,12 +55,12 @@ public class ReviewService {
         return reviewByCenterDtos;
     }
 
+
     /**
      * 사용자가 작성한 리뷰 리스트를 조회하고 dto를 반환합니다
      */
     public Slice<ReviewByParentResponse> findReviewListByParent(Long userId, Pageable pageable) {
-        Parent parent = parentRepository.findById(userId)
-                .orElseThrow(() -> new UserException(UserErrorResult.USER_NOT_FOUND));
+        Parent parent = getParent(userId);
 
         Slice<Review> reviews = reviewRepository.findByParent(parent, pageable);
 
@@ -76,8 +75,7 @@ public class ReviewService {
      */
     public void saveNewReview(Long userId, ReviewCreateRequest reviewCreateRequest) {
 
-        Parent findUser = parentRepository.findById(userId)
-                .orElseThrow(() -> new UserException(UserErrorResult.USER_NOT_FOUND));
+        Parent findUser = getParent(userId);
 
         // 리뷰_등록_학부모의_아이가_센터에_속해있지_않음
         List<Child> children = findUser.getChildren();
@@ -94,8 +92,7 @@ public class ReviewService {
             throw new ReviewException(ReviewErrorResult.FORBIDDEN_REVIEW_ACCESS);
         }
 
-        Center findCenter = centerRepository.findById(reviewCreateRequest.getCenterId())
-                .orElseThrow(() -> new CenterException(CenterErrorResult.CENTER_NOT_FOUND));
+        Center findCenter = getCenter(reviewCreateRequest.getCenterId());
 
         findCenter.addScore(Score.Review); // 리뷰 작성 시 센터의 스코어 올림
 
@@ -111,12 +108,12 @@ public class ReviewService {
         reviewRepository.save(review);
     }
 
+
     /**
      * 리뷰를 수정합니다
      */
     public void modifyReview(Long reviewId, Long userId, ReviewContentRequest reviewContentRequest) {
-        Review findReview = reviewRepository.findById(reviewId).orElseThrow(
-                () -> new ReviewException(ReviewErrorResult.REVIEW_NOT_FOUND));
+        Review findReview = getReview(reviewId);
         if (!Objects.equals(findReview.getParent().getId(), userId)) {
             throw new ReviewException(ReviewErrorResult.FORBIDDEN_REVIEW_ACCESS);
         }
@@ -127,8 +124,7 @@ public class ReviewService {
      * 리뷰를 삭제합니다
      */
     public void deleteReview(Long reviewId, Long userId) {
-        Review findReview = reviewRepository.findById(reviewId)
-                .orElseThrow(() -> new ReviewException(ReviewErrorResult.REVIEW_NOT_FOUND));
+        Review findReview = getReview(reviewId);
         if (!Objects.equals(findReview.getParent().getId(), userId)) {
             throw new ReviewException(ReviewErrorResult.FORBIDDEN_REVIEW_ACCESS);
         }
@@ -139,9 +135,8 @@ public class ReviewService {
      * 리뷰의 답글을 등록합니다
      */
     public void saveComment(Long reviewId, ReviewCommentRequest reviewCommentRequest, Long teacherId) {
-   
-        Review review = reviewRepository.findById(reviewId)
-                .orElseThrow(() -> new ReviewException(ReviewErrorResult.REVIEW_NOT_FOUND));
+
+        Review review = getReview(reviewId);
         Teacher teacher = teacherRepository.findById(teacherId)
                 .orElseThrow(() -> new UserException(UserErrorResult.USER_NOT_FOUND));
         if (!teacher.getApproval().equals(Approval.ACCEPT)) {
@@ -161,11 +156,34 @@ public class ReviewService {
      * 리뷰의 답글을 삭제합니다
      */
     public void deleteComment(Long reviewId, Long teacherId) {
-        Review review = reviewRepository.findById(reviewId)
-                .orElseThrow(() -> new ReviewException(ReviewErrorResult.REVIEW_NOT_FOUND));
+        Review review = getReview(reviewId);
         if (!Objects.equals(review.getTeacher().getId(), teacherId)) {
             throw new ReviewException(ReviewErrorResult.FORBIDDEN_REVIEW_ACCESS);
         }
         review.updateAnswer(null, null); // 대댓글 삭제 -> null
+    }
+
+    /**
+     * 예외처리 - 존재하는 학부모인가
+     */
+    private Parent getParent(Long userId) {
+        return parentRepository.findById(userId)
+                .orElseThrow(() -> new UserException(UserErrorResult.USER_NOT_FOUND));
+    }
+
+    /**
+     * 예외처리 - 존재하는 시설인가
+     */
+    private Center getCenter(Long centerId) {
+        return centerRepository.findById(centerId)
+                .orElseThrow(() -> new CenterException(CenterErrorResult.CENTER_NOT_FOUND));
+    }
+
+    /**
+     * 예외처리 - 존재하는 리뷰인가
+     */
+    private Review getReview(Long reviewId) {
+        return reviewRepository.findById(reviewId)
+                .orElseThrow(() -> new ReviewException(ReviewErrorResult.REVIEW_NOT_FOUND));
     }
 }

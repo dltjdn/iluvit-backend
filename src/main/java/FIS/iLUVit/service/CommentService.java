@@ -39,8 +39,7 @@ public class CommentService {
      * 댓글 작성 (comment_id 값이 null일 경우 댓글 작성, comment_id 값까지 보내는 경우 대댓글 작성)
      */
     public void saveNewComment(Long userId, Long postId, Long parentCommentId, CommentCreateRequest request) {
-        User user = userRepository.findById(userId)
-                .orElseThrow(() -> new UserException(UserErrorResult.USER_NOT_FOUND));
+        User user = getUser(userId);
 
         Post post = postRepository.findById(postId)
                 .orElseThrow(() -> new PostException(PostErrorResult.POST_NOT_FOUND));
@@ -93,6 +92,7 @@ public class CommentService {
         commentRepository.save(comment);
     }
 
+
     /**
      * 댓글 삭제 ( 댓글 데이터 지우지 않고 내용, 작성자만 null로 변경)
      */
@@ -123,8 +123,16 @@ public class CommentService {
      * 댓글 단 글 전체 조회
      */
     public Slice<CommentPostResponse> findCommentByUser(Long userId, Pageable pageable) {
-        User user = userRepository.findById(userId).orElseThrow(() -> new UserException(UserErrorResult.USER_NOT_FOUND));
+        User user = getUser(userId);
         // Comment -> CommentDTO 타입으로 변환
         return commentRepository.findByUser(user, pageable).map(CommentPostResponse::new);
+    }
+
+    /**
+     * 예외처리 - 존재하는 유저인가
+     */
+    private User getUser(Long userId) {
+       return userRepository.findById(userId)
+                .orElseThrow(() -> new UserException(UserErrorResult.USER_NOT_FOUND));
     }
 }

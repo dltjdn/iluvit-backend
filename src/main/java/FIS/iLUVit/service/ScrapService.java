@@ -37,8 +37,7 @@ public class ScrapService {
      * 스크랩 폴더 목록 가져오기
      */
     public List<ScrapDirResponse> findScrapDirList(Long userId) {
-        User user = userRepository.findById(userId)
-                .orElseThrow(() -> new UserException(UserErrorResult.USER_NOT_FOUND));
+        User user = getUser(userId);
 
         List<Scrap> scraps = scrapRepository.findByUser(user);
         List<ScrapDirResponse> scrapDirResponseList = new ArrayList<>();
@@ -49,12 +48,13 @@ public class ScrapService {
         return scrapDirResponseList;
     }
 
+
+
     /**
      * 스크랩 폴더 추가하기
      */
     public ScrapIdResponse saveNewScrapDir(Long userId, ScrapDirRequest request) {
-        User user = userRepository.findById(userId)
-                .orElseThrow(() -> new UserException(UserErrorResult.USER_NOT_FOUND));
+        User user = getUser(userId);
 
         Scrap newScrap = Scrap.createScrap(user, request.getName());
         scrapRepository.save(newScrap);
@@ -68,10 +68,8 @@ public class ScrapService {
      * 스크랩 폴더 삭제하기
      */
     public void deleteScrapDir(Long userId, Long scrapId) {
-        User user = userRepository.findById(userId)
-                .orElseThrow(() -> new UserException(UserErrorResult.USER_NOT_FOUND));
-        Scrap scrapDir = scrapRepository.findByIdAndUser(scrapId, user)
-                .orElseThrow(() -> new ScrapException(ScrapErrorResult.SCRAP_NOT_FOUND));
+        User user = getUser(userId);
+        Scrap scrapDir = getScrap(scrapId, user);
 
         // 조회된 스크랩 폴더가 기본 폴더인 경우 삭제 불가능
         if (scrapDir.getIsDefault()) {
@@ -81,14 +79,13 @@ public class ScrapService {
         scrapRepository.delete(scrapDir);
     }
 
+
     /**
      * 스크랩 폴더 이름 바꾸기
      */
     public void modifyScrapDirName(Long userId, ScrapDirDetailRequest request) {
-        User user = userRepository.findById(userId)
-                .orElseThrow(() -> new UserException(UserErrorResult.USER_NOT_FOUND));
-        Scrap findScrap = scrapRepository.findByIdAndUser(request.getScrapId(), user)
-                .orElseThrow(() -> new ScrapException(ScrapErrorResult.SCRAP_NOT_FOUND));
+        User user = getUser(userId);
+        Scrap findScrap = getScrap(request.getScrapId(), user);
 
         // 조회된 스크랩 폴더의 이름을 요청된 dirName으로 수정
         findScrap.updateScrapDirName(request.getDirName());
@@ -99,8 +96,7 @@ public class ScrapService {
      */
     public void modifyScrapPost(Long userId, Long postId, List<ScrapDirUpdateRequest> scrapInfos) {
         // 사용자의 스크랩 폴더 리스트 가져오기
-        User user = userRepository.findById(userId)
-                .orElseThrow(() -> new UserException(UserErrorResult.USER_NOT_FOUND));
+        User user = getUser(userId);
         List<Scrap> scraps = scrapRepository.findByUser(user);
 
         // 수정할 게시물 정보 가져오기
@@ -141,8 +137,7 @@ public class ScrapService {
      */
     public void deleteScrapPost(Long userId, Long scrapPostId) {
         // 스크랩폴더에 해당 게시물의 저장정보 조회
-        User user = userRepository.findById(userId)
-                .orElseThrow(() -> new UserException(UserErrorResult.USER_NOT_FOUND));
+        User user = getUser(userId);
 
         ScrapPost scrapPost = scrapPostRepository.findByIdAndScrapUser(scrapPostId, user)
                 .orElseThrow(() -> new ScrapException(ScrapErrorResult.SCRAP_NOT_FOUND));
@@ -155,8 +150,7 @@ public class ScrapService {
      */
     public List<ScrapDirByPostResponse> findScrapDirListByPost(Long userId, Long postId) {
         // 사용자의 스크랩 폴더 리스트 가져오기
-        User user = userRepository.findById(userId)
-                .orElseThrow(() -> new UserException(UserErrorResult.USER_NOT_FOUND));
+        User user = getUser(userId);
         List<Scrap> scrapListByUser = scrapRepository.findByUser(user);
 
         // 사용자의 모든 스크랩 폴더에 대해 ScrapDirByPostResponse 목록으로 변환
@@ -169,12 +163,27 @@ public class ScrapService {
      * 해당 스크랩 폴더의 게시물들 preview 보여주기
      */
     public Slice<PostByScrapDirResponse> findPostByScrapDir(Long userId, Long scrapId, Pageable pageable) {
-        User user = userRepository.findById(userId)
-                .orElseThrow(() -> new UserException(UserErrorResult.USER_NOT_FOUND));
+        User user = getUser(userId);
         Slice<ScrapPost> scrapPosts = scrapPostRepository.findByScrapIdAndScrapUser(scrapId, user, pageable);
 
         // 조회된 ScrapPost 목록을 PostByScrapDirResponse로 변환하여 반환
         return scrapPosts.map(PostByScrapDirResponse::new);
+    }
+
+    /**
+     * 예외처리 - 존재하는 유저인가
+     */
+    private User getUser(Long userId) {
+        return userRepository.findById(userId)
+                .orElseThrow(() -> new UserException(UserErrorResult.USER_NOT_FOUND));
+    }
+
+    /**
+     * 예외처리 - 존재하는 스크랩 폴더인가
+     */
+    private Scrap getScrap(Long scrapId, User user) {
+        return scrapRepository.findByIdAndUser(scrapId, user)
+                .orElseThrow(() -> new ScrapException(ScrapErrorResult.SCRAP_NOT_FOUND));
     }
 
 }
