@@ -24,8 +24,8 @@ import FIS.iLUVit.domain.user.exception.UserErrorResult;
 import FIS.iLUVit.domain.user.exception.UserException;
 import FIS.iLUVit.domain.user.repository.UserRepository;
 import FIS.iLUVit.domain.common.domain.NotificationTitle;
-import FIS.iLUVit.domain.center.dto.CenterBasicResponse;
-import FIS.iLUVit.domain.center.dto.CenterBasicRequest;
+import FIS.iLUVit.domain.center.dto.CenterFindForUserResponse;
+import FIS.iLUVit.domain.center.dto.CenterFindForUserRequest;
 import FIS.iLUVit.domain.alarm.domain.CenterApprovalAcceptedAlarm;
 import FIS.iLUVit.domain.alarm.domain.CenterApprovalReceivedAlarm;
 import FIS.iLUVit.domain.common.domain.Approval;
@@ -167,18 +167,18 @@ public class ChildService {
     /**
      * 아이 추가용 시설 정보 조회
      */
-    public Slice<CenterBasicResponse> findCenterForAddChild(CenterBasicRequest request, Pageable pageable) {
-        List<CenterBasicResponse> centerBasicResponses = centerRepository.findCenterForAddChild(request.getSido(), request.getSigungu(), request.getCenterName()).stream()
-                .map(CenterBasicResponse::new)
+    public Slice<CenterFindForUserResponse> findCenterForAddChild(CenterFindForUserRequest request, Pageable pageable) {
+        List<CenterFindForUserResponse> centerFindForUserRespons = centerRepository.findCenterForAddChild(request.getSido(), request.getSigungu(), request.getCenterName()).stream()
+                .map(CenterFindForUserResponse::new)
                 .collect(Collectors.toList());
 
         boolean hasNext = false;
-        if (centerBasicResponses.size() > pageable.getPageSize()) {
+        if (centerFindForUserRespons.size() > pageable.getPageSize()) {
             hasNext = true;
-            centerBasicResponses.remove(pageable.getPageSize());
+            centerFindForUserRespons.remove(pageable.getPageSize());
         }
 
-        return new SliceImpl<>(centerBasicResponses, pageable, hasNext);
+        return new SliceImpl<>(centerFindForUserRespons, pageable, hasNext);
 
     }
 

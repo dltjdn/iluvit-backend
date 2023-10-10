@@ -2,7 +2,9 @@ package FIS.iLUVit.domain.center.dto;
 
 import FIS.iLUVit.domain.center.domain.*;
 import FIS.iLUVit.domain.center.domain.KindOf;
+import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
 
 import java.time.LocalDate;
@@ -10,7 +12,8 @@ import java.util.List;
 
 @Getter
 @AllArgsConstructor
-public class CenterDetailResponse {
+@Builder(access = AccessLevel.PRIVATE)
+public class CenterFindResponse {
     private Long id;
     private String name;                    // 시설명
     private String estType;                 // 설립유형
@@ -47,41 +50,44 @@ public class CenterDetailResponse {
     private List<String> programs;
     private List<String> addInfos;
 
-    public CenterDetailResponse(Center center, String profileImage, List<String> infoImages){
-        this.id = center.getId();
-        this.name = center.getName();
-        this.estType = center.getEstType();
-        this.estDate = center.getEstDate();
-        this.tel = center.getTel();
-        this.director = center.getDirector();
-        this.homepage = center.getHomepage();
-        this.startTime = center.getStartTime();
-        this.endTime = center.getEndTime();
-        this.minAge = center.getMinAge();
-        this.maxAge = center.getMaxAge();
-        this.address = center.getAddress();
-        this.addressDetail = center.getAddressDetail();
-        this.area = center.getArea();
-        this.longitude = center.getLongitude();
-        this.latitude = center.getLatitude();
-        this.offerService = center.getOfferService();
-        this.maxChildCnt = center.getMaxChildCnt();
-        this.curChildCnt = center.getCurChildCnt();
-        this.updateDate = center.getUpdateDate();
-        this.signed = center.getSigned();
-        this.recruit = center.getRecruit();
-        this.introText = center.getIntroText();
-        this.imgCnt = center.getImgCnt();
-        this.videoCnt = center.getVideoCnt();
-        this.kindOf = center.getKindOf();
-        this.classInfo = center.getClassInfo();
-        this.teacherInfo = center.getTeacherInfo();
-        this.costInfo = center.getCostInfo();
-        this.basicInfra = center.getBasicInfra();
-        this.theme = center.getTheme();
-        this.programs = Center.decodeString(center.getProgram());
-        this.addInfos = Center.decodeString(center.getAddInfo());
-        this.profileImage = profileImage;
-        this.infoImages = infoImages;
+    public static CenterFindResponse of(Center center, List<String> infoImages){
+        return CenterFindResponse.builder()
+                .id(center.getId())
+                .name(center.getName())
+                .estType(center.getEstType())
+                .estDate(center.getEstDate())
+                .tel(center.getTel())
+                .director(center.getDirector())
+                .homepage(center.getHomepage())
+                .startTime(center.getStartTime())
+                .endTime(center.getEndTime())
+                .minAge(center.getMinAge())
+                .maxAge(center.getMaxAge())
+                .address(center.getAddress())
+                .addressDetail(center.getAddressDetail())
+                .area(center.getArea())
+                .longitude(center.getLongitude())
+                .latitude(center.getLatitude())
+                .offerService(center.getOfferService())
+                .maxChildCnt(center.getMaxChildCnt())
+                .curChildCnt(center.getCurChildCnt())
+                .updateDate(center.getUpdateDate())
+                .signed(center.getSigned())
+                .recruit(center.getRecruit())
+                .introText(center.getIntroText())
+                .imgCnt(center.getImgCnt())
+                .videoCnt(center.getVideoCnt())
+                .kindOf(center.getKindOf())
+                .classInfo(center.getClassInfo())
+                .teacherInfo(center.getTeacherInfo())
+                .costInfo(center.getCostInfo())
+                .basicInfra(center.getBasicInfra())
+                .theme(center.getTheme())
+                .programs(Center.decodeString(center.getProgram()))
+                .addInfos(Center.decodeString(center.getAddInfo()))
+                .profileImage(center.getProfileImagePath())
+                .infoImages(infoImages)
+                .build();
     }
+
 }

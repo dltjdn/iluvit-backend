@@ -1,7 +1,7 @@
 package FIS.iLUVit.domain.center.domain;
 
 import FIS.iLUVit.domain.common.domain.BaseImageEntity;
-import FIS.iLUVit.domain.center.dto.CenterDetailRequest;
+import FIS.iLUVit.domain.center.dto.CenterUpdateRequest;
 import lombok.*;
 import lombok.extern.slf4j.Slf4j;
 
@@ -12,14 +12,12 @@ import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-@Slf4j
 @Entity
 @Inheritance(strategy = InheritanceType.JOINED)
 @DiscriminatorValue("null")
 @DiscriminatorColumn(name = "kindOf")
 @Getter
 @NoArgsConstructor
-@AllArgsConstructor
 @EqualsAndHashCode(of = "id", callSuper = false)
 public class Center extends BaseImageEntity {
     @Id @GeneratedValue
@@ -120,7 +118,7 @@ public class Center extends BaseImageEntity {
         this.infoImagePath = infoImagePath;
     }
 
-    public void updateCenter(CenterDetailRequest requestDto, Double longitude, Double latitude, String sido, String sigungu) {
+    public void updateCenter(CenterUpdateRequest requestDto, Double longitude, Double latitude, String sido, String sigungu) {
         this.name = requestDto.getName();
         this.owner = requestDto.getOwner();
         this.director = requestDto.getDirector();

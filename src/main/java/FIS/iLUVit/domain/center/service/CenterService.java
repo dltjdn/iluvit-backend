@@ -52,16 +52,13 @@ public class CenterService {
      * 주변 시설 전체 조회
      */
     public List<CenterMapResponse> findCenterByFilterForMap(CenterMapRequest centerMapRequest){
-        String searchContent = centerMapRequest.getSearchContent();
-        double longitude = centerMapRequest.getLongitude();
-        double latitude = centerMapRequest.getLatitude();
-        Double distance = centerMapRequest.getDistance();
 
-        List<Center> centerByFilter = centerRepository.findByFilterForMap(longitude, latitude, distance, searchContent);
+        List<Center> centerByFilter = centerRepository.findByFilterForMap(centerMapRequest.getLongitude(),centerMapRequest.getLatitude(),
+                centerMapRequest.getDistance(), centerMapRequest.getSearchContent());
 
-        List<CenterMapResponse> centerMapResponses = centerByFilter.stream().map(center -> {
-            return new CenterMapResponse(center.getId(), center.getName(), center.getLongitude(), center.getLatitude(), center.getSigned());
-        }).collect(Collectors.toList());
+        List<CenterMapResponse> centerMapResponses = centerByFilter.stream()
+                .map(CenterMapResponse::from)
+                .collect(Collectors.toList());
 
         return centerMapResponses;
     }
@@ -69,7 +66,7 @@ public class CenterService {
     /**
      * 유저가 설정한 필터 기반 시설 조회
      */
-    public SliceImpl<CenterMapFilterResponse> findCenterByFilterForMapList(long userId, CenterMapFilterRequest centerMapFilterRequest, Pageable pageable) {
+    public Slice<CenterMapFilterResponse> findCenterByFilterForMapList(long userId, CenterMapFilterRequest centerMapFilterRequest, Pageable pageable) {
         Parent parent = getParent(userId);
 
         KindOf kindOf =centerMapFilterRequest.getKindOf();
@@ -94,11 +91,11 @@ public class CenterService {
                     .orElse(0.0);// 또는 null
 
             // 해당 유저 아이디가 센터북마크에 있는지 검증하는 로직
-            Optional<Prefer> prefer = centerBookmarkRepository.findByCenterAndParent(center, parent);
+            Optional<Prefer> isCenterBookmark = centerBookmarkRepository.findByCenterAndParent(center, parent);
 
             double distance = calculateDistance(latitude, longitude, center.getLatitude(), center.getLongitude());
+            CenterMapFilterResponse centerMapFilterResponse = CenterMapFilterResponse.of(center, distance, avgScore, isCenterBookmark.isPresent());
 
-            CenterMapFilterResponse centerMapFilterResponse = new CenterMapFilterResponse(center, distance, avgScore, prefer.isPresent());
             centerMapFilterResponses.add(centerMapFilterResponse);
 
         }));
@@ -117,14 +114,14 @@ public class CenterService {
     /**
      * 시설 상세 조회
      */
-    public CenterDetailResponse findCenterDetailsByCenter(Long centerId) {
+    public CenterFindResponse findCenterDetailsByCenter(Long centerId) {
         Center center = getCenter(centerId);
 
         // Center 가 id 에 의해 조회 되었으므로 score에 1 추가
         center.addScore(Score.GET);
+        List<String> infoImages = imageService.getInfoImages(center.getInfoImagePath());
 
-        CenterDetailResponse centerDetailResponse = new CenterDetailResponse(center,center.getProfileImagePath(),imageService.getInfoImages(center.getInfoImagePath()));
-        return centerDetailResponse;
+        return CenterFindResponse.of(center, infoImages);
     }
 
     /**
@@ -137,18 +134,16 @@ public class CenterService {
         // 리뷰 score 평균
         Double tempStarAvg = reviewRepository.findByCenter(center).stream()
                 .mapToInt(Review::getScore).average().orElse(0.0);
-        Double starAvg = Math.round(tempStarAvg * 10) / 10.0;
+        Double starAverage = Math.round(tempStarAvg * 10) / 10.0;
 
         // 현재 유저와 센터에 해당하는 북마크가 있을 시 센터 북마크 조회, 없을시 null
         Optional<Prefer> centerBookmark = centerBookmarkRepository.findByCenterAndParent(center, parent);
 
-        Boolean hasCenterBookmark = centerBookmark.isPresent();
+        Boolean isCenterBookmark = centerBookmark.isPresent();
 
         List<String> infoImages = imageService.getInfoImages(center.getInfoImagePath());
 
-        CenterBannerResponse centerBannerResponse = new CenterBannerResponse(center, infoImages, hasCenterBookmark, starAvg);
-
-        return centerBannerResponse;
+        return CenterBannerResponse.of(center, infoImages, isCenterBookmark, starAverage);
     }
 
     /**
@@ -163,7 +158,7 @@ public class CenterService {
 
 
         List<CenterRecommendResponse> centerRecommendResponses = centerRepository.findRecommendCenter(theme, location, pageRequest).stream()
-                .map(CenterRecommendResponse::new) // Center를 CenterRecommendDto로 변환
+                .map(CenterRecommendResponse::from) // Center를 CenterRecommendDto로 변환
                 .collect(Collectors.toList());
 
         return centerRecommendResponses;
@@ -172,13 +167,13 @@ public class CenterService {
     /**
      * 시설 정보 수정
      */
-    public void modifyCenterInfo(Long userId, Long centerId, CenterDetailRequest centerDetailRequest) {
+    public void modifyCenterInfo(Long userId, Long centerId, CenterUpdateRequest centerUpdateRequest) {
         Teacher teacher = getTeacher(userId, centerId);
         // 해당하는 center 없으면 RuntimeException 반환
 
         Center center = teacher.getCenter();
 
-        Pair<Double, Double> location = mapService.convertAddressToLocation(centerDetailRequest.getAddress());
+        Pair<Double, Double> location = mapService.convertAddressToLocation(centerUpdateRequest.getAddress());
 
         Double longitude = location.getFirst();
         Double latitude = location.getSecond();
@@ -187,7 +182,7 @@ public class CenterService {
         String sido = area.getFirst();
         String sigungu = area.getSecond();
 
-        center.updateCenter(centerDetailRequest,longitude, latitude, sido, sigungu);
+        center.updateCenter(centerUpdateRequest,longitude, latitude, sido, sigungu);
     }
 
 

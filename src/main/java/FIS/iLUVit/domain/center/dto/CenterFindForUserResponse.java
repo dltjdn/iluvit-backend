@@ -6,12 +6,12 @@ import lombok.NoArgsConstructor;
 
 @Getter
 @NoArgsConstructor
-public class CenterBasicResponse {
+public class CenterFindForUserResponse {
     private Long id;
     private String name;
     private String address;
 
-    public CenterBasicResponse(Center center){
+    public CenterFindForUserResponse(Center center){
         this.id = center.getId();
         this.name = center.getName();
         this.address = center.getAddress();

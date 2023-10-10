@@ -1,8 +1,8 @@
 package FIS.iLUVit.domain.child.controller;
 
 import FIS.iLUVit.global.config.argumentResolver.Login;
-import FIS.iLUVit.domain.center.dto.CenterBasicResponse;
-import FIS.iLUVit.domain.center.dto.CenterBasicRequest;
+import FIS.iLUVit.domain.center.dto.CenterFindForUserResponse;
+import FIS.iLUVit.domain.center.dto.CenterFindForUserRequest;
 import FIS.iLUVit.domain.child.dto.*;
 import FIS.iLUVit.domain.child.service.ChildService;
 import lombok.RequiredArgsConstructor;
@@ -77,8 +77,8 @@ public class ChildController {
      * 아이 추가용 시설 정보 조회
      */
     @GetMapping("search/center")
-    public ResponseEntity<Slice<CenterBasicResponse>> getCenterForChild(@ModelAttribute CenterBasicRequest centerBasicRequest, Pageable pageable) {
-        Slice<CenterBasicResponse> centerDtos = childService.findCenterForAddChild(centerBasicRequest, pageable);
+    public ResponseEntity<Slice<CenterFindForUserResponse>> getCenterForChild(@ModelAttribute CenterFindForUserRequest centerFindForUserRequest, Pageable pageable) {
+        Slice<CenterFindForUserResponse> centerDtos = childService.findCenterForAddChild(centerFindForUserRequest, pageable);
         return ResponseEntity.ok(centerDtos);
     }
 

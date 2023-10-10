@@ -1,7 +1,7 @@
 package FIS.iLUVit.domain.centerbookmark.controller;
 
 import FIS.iLUVit.global.config.argumentResolver.Login;
-import FIS.iLUVit.domain.center.dto.CenterBookmarkResponse;
+import FIS.iLUVit.domain.centerbookmark.dto.CenterBookmarkResponse;
 import FIS.iLUVit.domain.centerbookmark.service.CenterBookmarkService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;

@@ -18,8 +18,8 @@ import FIS.iLUVit.domain.teacher.repository.TeacherRepository;
 import FIS.iLUVit.domain.user.service.UserService;
 import FIS.iLUVit.domain.common.domain.Location;
 import FIS.iLUVit.domain.common.domain.NotificationTitle;
-import FIS.iLUVit.domain.center.dto.CenterBasicResponse;
-import FIS.iLUVit.domain.center.dto.CenterBasicRequest;
+import FIS.iLUVit.domain.center.dto.CenterFindForUserResponse;
+import FIS.iLUVit.domain.center.dto.CenterFindForUserRequest;
 import FIS.iLUVit.domain.teacher.dto.SignupTeacherRequest;
 import FIS.iLUVit.domain.teacher.dto.TeacherDetailRequest;
 import FIS.iLUVit.domain.teacher.dto.TeacherDetailResponse;
@@ -193,11 +193,11 @@ public class TeacherService {
     /**
      * 시설 정보를 조회합니다
      */
-    public Slice<CenterBasicResponse> findCenterForSignupTeacher(CenterBasicRequest request, Pageable pageable) {
+    public Slice<CenterFindForUserResponse> findCenterForSignupTeacher(CenterFindForUserRequest request, Pageable pageable) {
         List<Center> centers = centerRepository.findForSignup(request.getSido(), request.getSigungu(), request.getCenterName());
 
-        List<CenterBasicResponse> centerBasicResponses = centers.stream()
-                .map(CenterBasicResponse::new) // Center를 CenterDto로 변환
+        List<CenterFindForUserResponse> centerFindForUserRespons = centers.stream()
+                .map(CenterFindForUserResponse::new) // Center를 CenterDto로 변환
                 .collect(Collectors.toList());
 
         boolean hasNext = false;
@@ -206,7 +206,7 @@ public class TeacherService {
             centers.remove(pageable.getPageSize());
         }
 
-        return new SliceImpl<>(centerBasicResponses, pageable, hasNext);
+        return new SliceImpl<>(centerFindForUserRespons, pageable, hasNext);
     }
  
     /**

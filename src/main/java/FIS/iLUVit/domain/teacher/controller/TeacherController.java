@@ -1,8 +1,8 @@
 package FIS.iLUVit.domain.teacher.controller;
 
 import FIS.iLUVit.global.config.argumentResolver.Login;
-import FIS.iLUVit.domain.center.dto.CenterBasicResponse;
-import FIS.iLUVit.domain.center.dto.CenterBasicRequest;
+import FIS.iLUVit.domain.center.dto.CenterFindForUserResponse;
+import FIS.iLUVit.domain.center.dto.CenterFindForUserRequest;
 import FIS.iLUVit.domain.teacher.dto.SignupTeacherRequest;
 import FIS.iLUVit.domain.teacher.dto.TeacherDetailRequest;
 import FIS.iLUVit.domain.teacher.dto.TeacherDetailResponse;
@@ -63,8 +63,8 @@ public class TeacherController {
      * 교사 회원가입, 교사 이직용 시설 정보 조회
      */
     @GetMapping("search/center")
-    public ResponseEntity<Slice<CenterBasicResponse>> getCenterForTeacher(@ModelAttribute CenterBasicRequest centerBasicRequest, Pageable pageable) {
-        Slice<CenterBasicResponse> centerDtos = teacherService.findCenterForSignupTeacher(centerBasicRequest, pageable);
+    public ResponseEntity<Slice<CenterFindForUserResponse>> getCenterForTeacher(@ModelAttribute CenterFindForUserRequest centerFindForUserRequest, Pageable pageable) {
+        Slice<CenterFindForUserResponse> centerDtos = teacherService.findCenterForSignupTeacher(centerFindForUserRequest, pageable);
         return ResponseEntity.ok(centerDtos);
     }
 

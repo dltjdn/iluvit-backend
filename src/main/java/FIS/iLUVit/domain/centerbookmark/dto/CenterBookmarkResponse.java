@@ -1,4 +1,4 @@
-package FIS.iLUVit.domain.center.dto;
+package FIS.iLUVit.domain.centerbookmark.dto;
 
 import FIS.iLUVit.domain.center.domain.Center;
 import FIS.iLUVit.domain.center.domain.Area;

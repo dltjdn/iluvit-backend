@@ -8,7 +8,7 @@ import FIS.iLUVit.domain.centerbookmark.exception.CenterBookmarkException;
 import FIS.iLUVit.domain.parent.domain.Parent;
 import FIS.iLUVit.domain.centerbookmark.domain.Prefer;
 import FIS.iLUVit.domain.review.domain.Review;
-import FIS.iLUVit.domain.center.dto.CenterBookmarkResponse;
+import FIS.iLUVit.domain.centerbookmark.dto.CenterBookmarkResponse;
 import FIS.iLUVit.domain.center.repository.CenterRepository;
 import FIS.iLUVit.domain.parent.repository.ParentRepository;
 import FIS.iLUVit.domain.centerbookmark.repository.CenterBookmarkRepository;
