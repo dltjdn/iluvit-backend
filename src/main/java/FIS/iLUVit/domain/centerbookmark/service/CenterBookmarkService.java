@@ -53,7 +53,7 @@ public class CenterBookmarkService {
                     .average()
                     .orElse(0.0); // 만약 리뷰가 없는 경우 0.0을 반환
 
-            centerBookmarkResponses.add(new CenterBookmarkResponse(centerBookmark.getCenter(), averageScore));
+            centerBookmarkResponses.add(CenterBookmarkResponse.of(centerBookmark.getCenter(), averageScore));
         });
 
         boolean hasNext = false;

@@ -3,9 +3,14 @@ package FIS.iLUVit.domain.centerbookmark.dto;
 import FIS.iLUVit.domain.center.domain.Center;
 import FIS.iLUVit.domain.center.domain.Area;
 import FIS.iLUVit.domain.center.domain.Theme;
+import FIS.iLUVit.domain.center.dto.CenterBannerResponse;
+import FIS.iLUVit.domain.centerbookmark.controller.CenterBookmarkController;
+import lombok.AccessLevel;
+import lombok.Builder;
 import lombok.Getter;
 
 @Getter
+@Builder(access = AccessLevel.PRIVATE)
 public class CenterBookmarkResponse {
     private Long id;
     private String name;                    // 시설명
@@ -26,25 +31,27 @@ public class CenterBookmarkResponse {
     private String profileImage;
     private Double starAverage;
 
-    public CenterBookmarkResponse(Center center, Double starAverage){
-        this.id = center.getId();
-        this.name = center.getName();
-        this.owner = center.getOwner();
-        this.director = center.getDirector();
-        this.estType = center.getEstType();
-        this.tel = center.getTel();
-        this.startTime = center.getStartTime();
-        this.endTime = center.getEndTime();
-        this.minAge = center.getMinAge();
-        this.maxAge = center.getMaxAge();
-        this.address = center.getAddress();
-        this.addressDetail = center.getAddressDetail();
-        this.area = center.getArea();
-        this.longitude = center.getLongitude();
-        this.latitude = center.getLatitude();
-        this.theme = center.getTheme();
-        this.starAverage = starAverage;
-        this.profileImage = center.getProfileImagePath();
+    public static CenterBookmarkResponse of(Center center, Double starAverage){
+        return CenterBookmarkResponse.builder()
+                .id(center.getId())
+                .name(center.getName())
+                .owner(center.getOwner())
+                .director(center.getDirector())
+                .estType(center.getEstType())
+                .tel(center.getTel())
+                .startTime(center.getStartTime())
+                .endTime(center.getEndTime())
+                .minAge(center.getMinAge())
+                .maxAge(center.getMaxAge())
+                .address(center.getAddress())
+                .addressDetail(center.getAddressDetail())
+                .area(center.getArea())
+                .longitude(center.getLongitude())
+                .latitude(center.getLatitude())
+                .theme(center.getTheme())
+                .profileImage(center.getProfileImagePath())
+                .starAverage(starAverage)
+                .build();
     }
 
 }

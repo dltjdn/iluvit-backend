@@ -37,7 +37,7 @@ public class CenterBookmarkController {
     @PostMapping("{centerId}")
     public ResponseEntity<Void> createCenterBookmark(@Login Long userId, @PathVariable("centerId") Long centerId) {
         centerBookmarkService.saveCenterBookmark(userId, centerId);
-        return ResponseEntity.status(HttpStatus.CREATED).build();
+        return ResponseEntity.noContent().build();
     }
 
     /**
@@ -46,7 +46,7 @@ public class CenterBookmarkController {
     @DeleteMapping("{centerId}")
     public ResponseEntity<Void> deleteCenterBookmark(@Login Long userId, @PathVariable("centerId") Long centerId) {
         centerBookmarkService.deleteCenterBookmark(userId, centerId);
-        return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
+        return ResponseEntity.noContent().build();
     }
 
 }
