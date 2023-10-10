@@ -12,9 +12,7 @@ import org.springframework.format.annotation.DateTimeFormat;
 import java.time.LocalDate;
 
 @Getter
-@NoArgsConstructor
-@AllArgsConstructor
-@Builder
+@Builder(access = AccessLevel.PRIVATE)
 public class ParticipationResponse {
     private Long parentId;
     private Long participantId;
@@ -36,7 +34,7 @@ public class ParticipationResponse {
     private Integer participantCnt;
     private Status status;
 
-    public static ParticipationResponse createDtoByParticipation(Participation participation) {
+    public static ParticipationResponse from(Participation participation) {
         PtDate ptDate = participation.getPtDate();
         Parent parent = participation.getParent();
         Presentation presentation = ptDate.getPresentation();
@@ -63,7 +61,7 @@ public class ParticipationResponse {
                 .build();
     }
 
-    public static ParticipationResponse createDtoByWaiting(Waiting waiting){
+    public static ParticipationResponse of(Waiting waiting){
         PtDate ptDate = waiting.getPtDate();
         Parent parent = waiting.getParent();
         Presentation presentation = ptDate.getPresentation();

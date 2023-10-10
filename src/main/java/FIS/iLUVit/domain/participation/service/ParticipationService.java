@@ -4,6 +4,7 @@ import FIS.iLUVit.domain.alarm.repository.AlarmRepository;
 import FIS.iLUVit.domain.parent.domain.Parent;
 import FIS.iLUVit.domain.parent.repository.ParentRepository;
 import FIS.iLUVit.domain.participation.domain.Participation;
+import FIS.iLUVit.domain.participation.dto.ParticipationCreateRequest;
 import FIS.iLUVit.domain.participation.exception.ParticipationErrorResult;
 import FIS.iLUVit.domain.participation.exception.ParticipationException;
 import FIS.iLUVit.domain.participation.repository.ParticipationRepository;
@@ -57,7 +58,8 @@ public class ParticipationService {
     /**
      * 설명회 신청
      */
-    public void registerParticipation(Long userId, Long ptDateId) {
+    public void registerParticipation(Long userId, ParticipationCreateRequest request) {
+        Long ptDateId = request.getPtDateId();
         // 잘못된 설명회 회차 id일 경우
         PtDate ptDate = ptDateRepository.findById(ptDateId)
                 .orElseThrow(() -> new PresentationException(PresentationErrorResult.PTDATE_NOT_FOUND));
@@ -119,30 +121,24 @@ public class ParticipationService {
     /**
      * 신청한/취소한 설명회 전체 조회
      */
-    public List<ParticipationWithStatusResponse> findAllParticipationByUser(Long userId) {
+    public ParticipationWithStatusResponse findAllParticipationByUser(Long userId) {
         // 학부모 조회
         Parent parent = getParent(userId);
 
         List<ParticipationResponse> participationResponses = participationRepository.findByParent(parent).stream()
-                .map(ParticipationResponse::createDtoByParticipation)
+                .map(ParticipationResponse::from)
                 .collect(Collectors.toList());
 
         participationResponses.addAll(
                 parent.getWaitings().stream()
-                .map(ParticipationResponse::createDtoByWaiting)
+                .map(ParticipationResponse::of)
                 .collect(Collectors.toList())
         );
 
         Map<Status, List<ParticipationResponse>> statusParticipationMap = participationResponses.stream()
                 .collect(Collectors.groupingBy(ParticipationResponse::getStatus));
 
-        List<ParticipationWithStatusResponse> participationWithStatusResponses = new ArrayList<>();
-
-        statusParticipationMap.forEach((status, participationDtoList)-> {
-            participationWithStatusResponses.add(new ParticipationWithStatusResponse(status, participationDtoList));
-        });
-
-        return participationWithStatusResponses;
+        return ParticipationWithStatusResponse.from(statusParticipationMap);
     }
 
     /**
@@ -152,7 +148,7 @@ public class ParticipationService {
         Parent parent = getParent(userId);
 
         Slice<ParticipationResponse> participationDtos = participationRepository.findByParentAndStatus(parent, JOINED, pageable)
-                .map(ParticipationResponse::createDtoByParticipation);
+                .map(ParticipationResponse::from);
 
         return participationDtos;
     }
@@ -164,7 +160,7 @@ public class ParticipationService {
         Parent parent = getParent(userId);
 
         Slice<ParticipationResponse> participationDtos = participationRepository.findByParentAndStatus(parent, CANCELED, pageable)
-                .map(ParticipationResponse::createDtoByParticipation);
+                .map(ParticipationResponse::from);
 
         return participationDtos;
     }
@@ -176,7 +172,7 @@ public class ParticipationService {
         Parent parent = getParent(userId);
 
         Slice<ParticipationResponse> participationDtos = waitingRepository.findByParent(parent, pageable)
-                .map(ParticipationResponse::createDtoByWaiting);
+                .map(ParticipationResponse::of);
 
         return participationDtos;
     }
