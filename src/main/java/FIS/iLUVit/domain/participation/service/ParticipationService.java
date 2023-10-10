@@ -121,7 +121,7 @@ public class ParticipationService {
     /**
      * 신청한/취소한 설명회 전체 조회
      */
-    public ParticipationWithStatusResponse findAllParticipationByUser(Long userId) {
+    public Map<Status, List<ParticipationResponse>> findAllParticipationByUser(Long userId) {
         // 학부모 조회
         Parent parent = getParent(userId);
 
@@ -135,10 +135,8 @@ public class ParticipationService {
                 .collect(Collectors.toList())
         );
 
-        Map<Status, List<ParticipationResponse>> statusParticipationMap = participationResponses.stream()
+        return participationResponses.stream()
                 .collect(Collectors.groupingBy(ParticipationResponse::getStatus));
-
-        return ParticipationWithStatusResponse.from(statusParticipationMap);
     }
 
     /**

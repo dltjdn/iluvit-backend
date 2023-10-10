@@ -1,5 +1,6 @@
 package FIS.iLUVit.domain.participation.controller;
 
+import FIS.iLUVit.domain.participation.domain.Status;
 import FIS.iLUVit.domain.participation.dto.ParticipationCreateRequest;
 import FIS.iLUVit.global.config.argumentResolver.Login;
 import FIS.iLUVit.domain.participation.dto.ParticipationResponse;
@@ -14,6 +15,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequiredArgsConstructor
@@ -44,12 +46,12 @@ public class ParticipationController {
     }
 
     /**
-     * 신청한/신청 취소한 설명회 전체 조회
+     * 신청한/신청 취소한/대기한 설명회 전체 조회
      */
     @GetMapping("")
-    public ResponseEntity<ParticipationWithStatusResponse> getAllParticipation(@Login Long userId){
-        ParticipationWithStatusResponse participationWithStatusResponses = participationService.findAllParticipationByUser(userId);
-        return ResponseEntity.ok(participationWithStatusResponses);
+    public ResponseEntity<Map<Status, List<ParticipationResponse>>> getAllParticipation(@Login Long userId){
+        Map<Status, List<ParticipationResponse>> response = participationService.findAllParticipationByUser(userId);
+        return ResponseEntity.ok(response);
     }
 
     /**
