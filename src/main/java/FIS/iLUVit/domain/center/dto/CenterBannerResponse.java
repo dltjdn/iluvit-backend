@@ -1,6 +1,7 @@
 package FIS.iLUVit.domain.center.dto;
 
 import FIS.iLUVit.domain.center.domain.Center;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -18,6 +19,7 @@ public class CenterBannerResponse {
     private String profileImage;
     private List<String> infoImages;
     private Double starAverage;
+    @JsonProperty(value = "prefer")
     private Boolean isCenterBookmark;             // 시설 북마크 여부
 
     public CenterBannerResponse(Center center, List<String> infoImages, Boolean isCenterBookmark, Double starAverage) {

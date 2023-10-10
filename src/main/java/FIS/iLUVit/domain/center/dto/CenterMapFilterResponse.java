@@ -3,6 +3,7 @@ package FIS.iLUVit.domain.center.dto;
 import FIS.iLUVit.domain.center.domain.Center;
 import FIS.iLUVit.domain.center.domain.Theme;
 import FIS.iLUVit.domain.center.domain.KindOf;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Getter;
 
 
@@ -24,7 +25,8 @@ public class CenterMapFilterResponse {
     private String profileImage;            // 프로필 이미지
     private Theme theme;                    // 테마
     private Double distance;                // 시설과 내 현위치 간 거리
-    private Double starAverage;             // 시설 평점
+    private Double starAverage;// 시설 평점
+    @JsonProperty(value="prefer")
     private Boolean isCenterBookmark;       // 시설 즐겨찾기 여부
 
     public CenterMapFilterResponse(Center center, Double distance, Double starAverage, Boolean isCenterBookmark) {

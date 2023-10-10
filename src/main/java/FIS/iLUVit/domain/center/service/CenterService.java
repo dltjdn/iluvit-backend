@@ -51,7 +51,8 @@ public class CenterService {
     /**
      * 주변 시설 전체 조회
      */
-    public List<CenterMapResponse> findCenterByFilterForMap(String searchContent, CenterMapRequest centerMapRequest){
+    public List<CenterMapResponse> findCenterByFilterForMap(CenterMapRequest centerMapRequest){
+        String searchContent = centerMapRequest.getSearchContent();
         double longitude = centerMapRequest.getLongitude();
         double latitude = centerMapRequest.getLatitude();
         Double distance = centerMapRequest.getDistance();
@@ -68,9 +69,10 @@ public class CenterService {
     /**
      * 유저가 설정한 필터 기반 시설 조회
      */
-    public SliceImpl<CenterMapFilterResponse> findCenterByFilterForMapList(long userId, KindOf kindOf, CenterMapFilterRequest centerMapFilterRequest, Pageable pageable) {
+    public SliceImpl<CenterMapFilterResponse> findCenterByFilterForMapList(long userId, CenterMapFilterRequest centerMapFilterRequest, Pageable pageable) {
         Parent parent = getParent(userId);
 
+        KindOf kindOf =centerMapFilterRequest.getKindOf();
         double longitude = centerMapFilterRequest.getLongitude();
         double latitude = centerMapFilterRequest.getLatitude();
         List<Long> centerIds = centerMapFilterRequest.getCenterIds();

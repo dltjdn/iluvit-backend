@@ -32,8 +32,8 @@ public class CenterController {
      * 주변 시설 전체 조회
      */
     @PostMapping("search/all")
-    public ResponseEntity<List<CenterMapResponse>> getAllCenter(@RequestParam("searchContent") String searchContent, @RequestBody @Validated CenterMapRequest centerMapRequest){
-        List<CenterMapResponse> centerByFilterForMap = centerService.findCenterByFilterForMap(searchContent, centerMapRequest);
+    public ResponseEntity<List<CenterMapResponse>> getAllCenter(@RequestBody @Validated CenterMapRequest centerMapRequest){
+        List<CenterMapResponse> centerByFilterForMap = centerService.findCenterByFilterForMap(centerMapRequest);
         return ResponseEntity.ok(centerByFilterForMap);
     }
 
@@ -42,8 +42,8 @@ public class CenterController {
      * 유저가 설정한 필터 기반 시설 조회
      */
     @PostMapping("search")
-    public ResponseEntity<SliceImpl<CenterMapFilterResponse>> getCenterByFilter(@Login Long userId, @RequestParam("kindOf") KindOf kindOf, @RequestBody @Validated CenterMapFilterRequest centerMapFilterRequest, Pageable pageable){
-        SliceImpl<CenterMapFilterResponse> centerByFilterForMapList = centerService.findCenterByFilterForMapList(userId,kindOf, centerMapFilterRequest, pageable);
+    public ResponseEntity<SliceImpl<CenterMapFilterResponse>> getCenterByFilter(@Login Long userId, @RequestBody @Validated CenterMapFilterRequest centerMapFilterRequest, Pageable pageable){
+        SliceImpl<CenterMapFilterResponse> centerByFilterForMapList = centerService.findCenterByFilterForMapList(userId,centerMapFilterRequest, pageable);
         return ResponseEntity.ok(centerByFilterForMapList);
     }
 
