@@ -1,6 +1,6 @@
 package FIS.iLUVit.stub;
 
-import FIS.iLUVit.service.MessageService;
+import FIS.iLUVit.domain.authnum.service.MessageService;
 import net.nurigo.sdk.message.request.SingleMessageSendingRequest;
 import net.nurigo.sdk.message.response.SingleMessageSentResponse;
 

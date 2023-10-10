@@ -1,25 +1,9 @@
 package FIS.iLUVit.service;
 
-import FIS.iLUVit.domain.*;
-import FIS.iLUVit.exception.PresentationErrorResult;
-import FIS.iLUVit.exception.PresentationException;
-import FIS.iLUVit.exception.WaitingErrorResult;
-import FIS.iLUVit.exception.WaitingException;
-import FIS.iLUVit.repository.ParentRepository;
-import FIS.iLUVit.repository.ParticipationRepository;
-import FIS.iLUVit.repository.PtDateRepository;
-import FIS.iLUVit.repository.WaitingRepository;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
-import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
-import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
-
-import java.util.List;
-import java.util.Optional;
 
 import static FIS.iLUVit.Creator.*;
 import static org.assertj.core.api.Assertions.assertThat;
