@@ -5,6 +5,7 @@ import FIS.iLUVit.domain.center.domain.Center;
 import FIS.iLUVit.domain.center.repository.CenterRepository;
 import FIS.iLUVit.domain.centerbookmark.domain.Prefer;
 import FIS.iLUVit.domain.centerbookmark.repository.CenterBookmarkRepository;
+import FIS.iLUVit.domain.common.domain.Auth;
 import FIS.iLUVit.domain.parent.domain.Parent;
 import FIS.iLUVit.domain.parent.repository.ParentRepository;
 import FIS.iLUVit.domain.review.domain.Review;
@@ -17,10 +18,12 @@ import FIS.iLUVit.domain.center.domain.Theme;
 import FIS.iLUVit.domain.center.domain.KindOf;
 import FIS.iLUVit.domain.center.exception.CenterErrorResult;
 import FIS.iLUVit.domain.center.exception.CenterException;
+import FIS.iLUVit.domain.user.domain.User;
 import FIS.iLUVit.domain.user.exception.UserErrorResult;
 import FIS.iLUVit.domain.user.exception.UserException;
 import FIS.iLUVit.domain.common.service.ImageService;
 import FIS.iLUVit.domain.common.service.MapService;
+import FIS.iLUVit.domain.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.*;
 import org.springframework.data.util.Pair;
@@ -46,6 +49,7 @@ public class CenterService {
     private final ParentRepository parentRepository;
     private final TeacherRepository teacherRepository;
     private final MapService mapService;
+    private final UserRepository userRepository;
 
 
     /**
@@ -67,7 +71,7 @@ public class CenterService {
      * 유저가 설정한 필터 기반 시설 조회
      */
     public Slice<CenterMapFilterResponse> findCenterByFilterForMapList(long userId, CenterMapFilterRequest centerMapFilterRequest, Pageable pageable) {
-        Parent parent = getParent(userId);
+        User user = getUser(userId);
 
         KindOf kindOf =centerMapFilterRequest.getKindOf();
         double longitude = centerMapFilterRequest.getLongitude();
@@ -91,10 +95,14 @@ public class CenterService {
                     .orElse(0.0);// 또는 null
 
             // 해당 유저 아이디가 센터북마크에 있는지 검증하는 로직
-            Optional<Prefer> isCenterBookmark = centerBookmarkRepository.findByCenterAndParent(center, parent);
+            Boolean isCenterBookmark = null;
+            if(user.getAuth() == Auth.PARENT) {
+                Parent parent = getParent(userId);
+                isCenterBookmark = centerBookmarkRepository.findByCenterAndParent(center, parent).isPresent();
+            }
 
             double distance = calculateDistance(latitude, longitude, center.getLatitude(), center.getLongitude());
-            CenterMapFilterResponse centerMapFilterResponse = CenterMapFilterResponse.of(center, distance, avgScore, isCenterBookmark.isPresent());
+            CenterMapFilterResponse centerMapFilterResponse = CenterMapFilterResponse.of(center, distance, avgScore, isCenterBookmark);
 
             centerMapFilterResponses.add(centerMapFilterResponse);
 
@@ -128,7 +136,7 @@ public class CenterService {
      * 미리보기 배너 용 시설 상세 조회
      */
     public CenterBannerResponse findCenterBannerByCenter(Long userId, Long centerId) {
-        Parent parent = getParent(userId);
+        User user = getUser(userId);
         Center center = getCenter(centerId);
 
         // 리뷰 score 평균
@@ -137,9 +145,11 @@ public class CenterService {
         Double starAverage = Math.round(tempStarAvg * 10) / 10.0;
 
         // 현재 유저와 센터에 해당하는 북마크가 있을 시 센터 북마크 조회, 없을시 null
-        Optional<Prefer> centerBookmark = centerBookmarkRepository.findByCenterAndParent(center, parent);
-
-        Boolean isCenterBookmark = centerBookmark.isPresent();
+        Boolean isCenterBookmark = null;
+        if(user.getAuth() == Auth.PARENT) {
+            Parent parent = getParent(userId);
+            isCenterBookmark = centerBookmarkRepository.findByCenterAndParent(center, parent).isPresent();
+        }
 
         List<String> infoImages = imageService.getInfoImages(center.getInfoImagePath());
 
@@ -219,28 +229,30 @@ public class CenterService {
      * 예외처리 - 존재하는 권한있는 선생님인가
      */
     private Teacher getTeacher(Long userId, Long centerId) {
-        Teacher teacher = teacherRepository.findById(userId)
+        return teacherRepository.findById(userId)
                 .orElseThrow(() -> new UserException(UserErrorResult.USER_NOT_FOUND))
                 .checkPermission(centerId);
-        return teacher;
     }
 
     /**
      * 예외처리 - 존재하는 학부모인가
      */
     private Parent getParent(long userId) {
-        Parent parent = parentRepository.findById(userId)
+        return parentRepository.findById(userId)
                 .orElseThrow(() -> new UserException(UserErrorResult.USER_NOT_FOUND));
-        return parent;
     }
 
     /**
      * 예외처리 - 존재하는 시설인가
      */
     private Center getCenter(Long centerId) {
-        Center center = centerRepository.findById(centerId)
+        return centerRepository.findById(centerId)
                 .orElseThrow(() -> new CenterException(CenterErrorResult.CENTER_NOT_FOUND));
-        return center;
+    }
+
+    private User getUser(Long userId){
+        return userRepository.findById(userId)
+                .orElseThrow(() -> new UserException(UserErrorResult.USER_NOT_FOUND));
     }
 
 }
