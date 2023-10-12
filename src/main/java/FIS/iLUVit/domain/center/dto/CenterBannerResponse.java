@@ -16,7 +16,7 @@ public class CenterBannerResponse {
     private String profileImage;
     private List<String> infoImages;
     private Double starAverage;
-    @JsonProperty(value = "prefer")
+    @JsonProperty("prefer")
     private Boolean isCenterBookmark;             // 시설 북마크 여부
 
     public static CenterBannerResponse of(Center center, List<String> infoImages, Boolean isCenterBookmark, Double starAverage){

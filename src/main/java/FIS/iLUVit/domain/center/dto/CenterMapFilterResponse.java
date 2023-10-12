@@ -29,7 +29,7 @@ public class CenterMapFilterResponse {
     private Theme theme;                    // 테마
     private Double distance;                // 시설과 내 현위치 간 거리
     private Double starAverage;// 시설 평점
-    @JsonProperty(value="prefer")
+    @JsonProperty("prefer")
     private Boolean isCenterBookmark;       // 시설 즐겨찾기 여부
 
     public static CenterMapFilterResponse of(Center center, Double distance, Double starAverage, Boolean isCenterBookmark){

@@ -2,6 +2,7 @@ package FIS.iLUVit.domain.child.dto;
 
 import FIS.iLUVit.domain.child.domain.Child;
 import FIS.iLUVit.domain.common.domain.Approval;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -13,7 +14,9 @@ import lombok.NoArgsConstructor;
 public class ChildCenterResponse {
     private Long id;
     private String name;
+    @JsonProperty("center_id")
     private Long centerId;
+    @JsonProperty("center_name")
     private String centerName;
     private String profileImage;
     private Approval approval;

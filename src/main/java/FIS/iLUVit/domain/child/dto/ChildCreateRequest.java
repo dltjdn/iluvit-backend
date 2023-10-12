@@ -4,6 +4,7 @@ import FIS.iLUVit.domain.center.domain.Center;
 import FIS.iLUVit.domain.child.domain.Child;
 import FIS.iLUVit.domain.parent.domain.Parent;
 import FIS.iLUVit.domain.common.domain.Approval;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -18,6 +19,7 @@ import java.time.LocalDate;
 @AllArgsConstructor
 @NoArgsConstructor
 public class ChildCreateRequest {
+    @JsonProperty("center_id")
     private Long centerId;
     @NotBlank(message = "이름을 입력해주세요")
     private String name;
