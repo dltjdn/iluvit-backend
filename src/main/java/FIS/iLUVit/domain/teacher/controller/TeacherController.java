@@ -53,18 +53,18 @@ public class TeacherController {
     /**
      * 교사 정보 수정
      */
-    @PatchMapping("")
+    @PostMapping("")
     public ResponseEntity<Void> updateTeacher(@Login Long userId, @Valid @ModelAttribute TeacherDetailRequest request) throws IOException {
         teacherService.modifyTeacherInfo(userId, request);
-        return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
+        return ResponseEntity.noContent().build();
     }
 
     /**
      * 교사 회원가입, 교사 이직용 시설 정보 조회
      */
     @GetMapping("search/center")
-    public ResponseEntity<Slice<CenterFindForUserResponse>> getCenterForTeacher(@ModelAttribute CenterFindForUserRequest centerFindForUserRequest, Pageable pageable) {
-        Slice<CenterFindForUserResponse> centerDtos = teacherService.findCenterForSignupTeacher(centerFindForUserRequest, pageable);
+    public ResponseEntity<Slice<CenterFindForUserResponse>> getCenterForTeacher(@ModelAttribute CenterFindForUserRequest request, Pageable pageable) {
+        Slice<CenterFindForUserResponse> centerDtos = teacherService.findCenterForSignupTeacher(request, pageable);
         return ResponseEntity.ok(centerDtos);
     }
 
@@ -74,7 +74,7 @@ public class TeacherController {
     @PatchMapping("center/{centerId}")
     public ResponseEntity<Void> assignCenterForTeacher(@Login Long userId, @PathVariable("centerId") Long centerId) {
         teacherService.requestAssignCenterForTeacher(userId, centerId);
-        return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
+        return ResponseEntity.noContent().build();
     }
 
     /**
@@ -83,7 +83,7 @@ public class TeacherController {
     @PatchMapping("center")
     public ResponseEntity<Void> leaveCenterForTeacher(@Login Long userId) {
         teacherService.leaveCenterForTeacher(userId);
-        return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
+        return ResponseEntity.noContent().build();
     }
 
 
@@ -106,7 +106,7 @@ public class TeacherController {
     @PatchMapping("{teacherId}/accept")
     public ResponseEntity<Void> acceptTeacher(@Login Long userId, @PathVariable("teacherId") Long teacherId) {
         teacherService.acceptTeacherRegistration(userId, teacherId);
-        return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
+        return ResponseEntity.noContent().build();
     }
 
     /**
@@ -115,7 +115,7 @@ public class TeacherController {
     @PatchMapping("{teacherId}/reject")
     public ResponseEntity<Void> rejectTeacher(@Login Long userId, @PathVariable("teacherId") Long teacherId) {
         teacherService.rejectTeacherRegistration(userId, teacherId);
-        return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
+        return ResponseEntity.noContent().build();
     }
 
     /**
@@ -124,7 +124,7 @@ public class TeacherController {
     @PatchMapping("{teacherId}/mandate")
     public ResponseEntity<Void> mandateTeacher(@Login Long userId, @PathVariable("teacherId") Long teacherId) {
         teacherService.mandateTeacher(userId, teacherId);
-        return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
+        return ResponseEntity.noContent().build();
     }
 
     /**
@@ -133,7 +133,7 @@ public class TeacherController {
     @PatchMapping("{teacherId}/demote")
     public ResponseEntity<Void> demoteTeacher(@Login Long userId, @PathVariable("teacherId") Long teacherId) {
         teacherService.demoteTeacher(userId, teacherId);
-        return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
+        return ResponseEntity.noContent().build();
     }
 
     /**
@@ -142,7 +142,7 @@ public class TeacherController {
     @DeleteMapping("withdraw")
     public ResponseEntity<Void> deleteTeacher(@Login Long userId){
         teacherService.withdrawTeacher(userId);
-        return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
+        return ResponseEntity.noContent().build();
     }
 
 }
