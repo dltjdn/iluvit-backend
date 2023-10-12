@@ -1,11 +1,13 @@
 package FIS.iLUVit.domain.scrap.repository;
 
+import FIS.iLUVit.domain.center.domain.Center;
 import FIS.iLUVit.domain.scrap.domain.ScrapPost;
 import FIS.iLUVit.domain.user.domain.User;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
 import org.springframework.data.jpa.repository.JpaRepository;
 
+import java.util.List;
 import java.util.Optional;
 
 public interface ScrapPostRepository extends JpaRepository<ScrapPost, Long> {
@@ -20,4 +22,5 @@ public interface ScrapPostRepository extends JpaRepository<ScrapPost, Long> {
      */
     Optional<ScrapPost> findByIdAndScrapUser(Long scrapPostId, User user);
 
+    List<ScrapPost> findByPostBoardCenter(Center center);
 }

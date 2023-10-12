@@ -11,8 +11,10 @@ import FIS.iLUVit.domain.boardbookmark.exception.BoardBookmarkErrorResult;
 import FIS.iLUVit.domain.boardbookmark.exception.BoardBookmarkException;
 import FIS.iLUVit.domain.boardbookmark.repository.BoardBookmarkRepository;
 import FIS.iLUVit.domain.center.domain.Center;
+import FIS.iLUVit.domain.common.domain.Approval;
 import FIS.iLUVit.domain.post.domain.Post;
 import FIS.iLUVit.domain.post.repository.PostRepository;
+import FIS.iLUVit.domain.teacher.domain.Teacher;
 import FIS.iLUVit.domain.user.domain.User;
 import FIS.iLUVit.domain.user.exception.UserErrorResult;
 import FIS.iLUVit.domain.user.exception.UserException;
@@ -129,6 +131,35 @@ public class BoardBookmarkService {
         }
 
         boardBookmarkRepository.delete(findBookmark);
+    }
+
+    /**
+     * 해당 시설과 연관된 게시판의 게시판 즐겨찾기를 삭제한다
+     */
+    public void deleteBoardBookmarkByCenter(Teacher teacher){
+        if (teacher.getApproval() == Approval.ACCEPT) { // 교사의 승인 상태가 ACCEPT인지 확인
+            // 교사의 소속 시설과 관련된 게시판 조회
+            List<Board> boards = boardRepository.findByCenter(teacher.getCenter());
+            // 교사와 관련된 게시판 즐겨찾기 삭제
+            boardBookmarkRepository.deleteByUserAndBoardIn(teacher, boards);
+        }
+    }
+
+    /**
+     * 기본 게시판들을 게시판 즐겨찾기에 추가
+     */
+    public void saveDefaultBoardBookmark(Center center, Teacher teacher){
+        List<Board> defaultBoards = null;
+        if(center == null){
+            defaultBoards = boardRepository.findByCenterIsNullAndIsDefaultTrue();
+        }
+        else {
+            defaultBoards = boardRepository.findByCenterAndIsDefaultTrue(center);
+        }
+        for (Board defaultBoard : defaultBoards) {
+            Bookmark bookmark = Bookmark.of(defaultBoard, teacher);
+            boardBookmarkRepository.save(bookmark);
+        }
     }
 
     /**

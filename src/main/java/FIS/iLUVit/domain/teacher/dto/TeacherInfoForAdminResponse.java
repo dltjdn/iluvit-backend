@@ -17,15 +17,6 @@ public class TeacherInfoForAdminResponse {
     private Auth auth;
     private String profileImg;
 
-    public TeacherInfoForAdminResponse(Teacher teacher, String profileImg) {
-        this.teacherId =teacher.getId();
-        this.name = teacher.getName();
-        this.nickName=teacher.getNickName();
-        this.approval = teacher.getApproval();
-        this.auth = teacher.getAuth();
-        this.profileImg = profileImg;
-    }
-
     public static TeacherInfoForAdminResponse from(Teacher teacher){
         return TeacherInfoForAdminResponse.builder()
                 .teacherId(teacher.getId())

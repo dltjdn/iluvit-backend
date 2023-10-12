@@ -1,21 +1,25 @@
 package FIS.iLUVit.domain.alarm.service;
 
-import FIS.iLUVit.domain.center.domain.Center;
-import FIS.iLUVit.domain.presentation.domain.Presentation;
-import FIS.iLUVit.domain.user.domain.User;
-import FIS.iLUVit.domain.waiting.domain.Waiting;
+import FIS.iLUVit.domain.alarm.AlarmUtils;
 import FIS.iLUVit.domain.alarm.domain.Alarm;
+import FIS.iLUVit.domain.alarm.domain.CenterApprovalReceivedAlarm;
 import FIS.iLUVit.domain.alarm.domain.ConvertedToParticipateAlarm;
 import FIS.iLUVit.domain.alarm.domain.PresentationCreatedAlarm;
 import FIS.iLUVit.domain.alarm.dto.AlarmDeleteRequest;
-import FIS.iLUVit.domain.alarm.dto.AlarmResponse;
 import FIS.iLUVit.domain.alarm.dto.AlarmReadResponse;
+import FIS.iLUVit.domain.alarm.dto.AlarmResponse;
+import FIS.iLUVit.domain.alarm.repository.AlarmRepository;
+import FIS.iLUVit.domain.center.domain.Center;
+import FIS.iLUVit.domain.centerbookmark.repository.CenterBookmarkRepository;
+import FIS.iLUVit.domain.common.domain.Auth;
+import FIS.iLUVit.domain.common.domain.NotificationTitle;
+import FIS.iLUVit.domain.presentation.domain.Presentation;
+import FIS.iLUVit.domain.teacher.domain.Teacher;
+import FIS.iLUVit.domain.user.domain.User;
 import FIS.iLUVit.domain.user.exception.UserErrorResult;
 import FIS.iLUVit.domain.user.exception.UserException;
-import FIS.iLUVit.domain.alarm.repository.AlarmRepository;
-import FIS.iLUVit.domain.centerbookmark.repository.CenterBookmarkRepository;
 import FIS.iLUVit.domain.user.repository.UserRepository;
-import FIS.iLUVit.domain.alarm.AlarmUtils;
+import FIS.iLUVit.domain.waiting.domain.Waiting;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
@@ -122,11 +126,24 @@ public class AlarmService {
 
         });
     }
-    public void sendParticipateAlarm(Waiting waiting, Presentation presentation){
+
+    public void sendParticipateAlarm(Waiting waiting, Presentation presentation) {
         Alarm alarm = new ConvertedToParticipateAlarm(waiting.getParent(), presentation, presentation.getCenter());
         alarmRepository.save(alarm);
         String type = "아이러빗";
         AlarmUtils.publishAlarmEvent(alarm, type);
+    }
+
+    /**
+     * 승인 요청 알림을 해당 시설의 관리교사에게 전송
+     */
+    public void sendCenterApprovalReceivedAlarm(List<Teacher> directors) {
+        directors.forEach(director -> {
+            Alarm alarm = new CenterApprovalReceivedAlarm(director, Auth.TEACHER, director.getCenter());
+            alarmRepository.save(alarm);
+            AlarmUtils.publishAlarmEvent(alarm, NotificationTitle.ILUVIT.getDescription());
+        });
+
     }
 
     /**

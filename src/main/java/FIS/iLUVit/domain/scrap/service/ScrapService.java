@@ -8,6 +8,7 @@ import FIS.iLUVit.domain.scrap.domain.ScrapPost;
 import FIS.iLUVit.domain.scrap.dto.*;
 import FIS.iLUVit.domain.scrap.exception.ScrapErrorResult;
 import FIS.iLUVit.domain.scrap.exception.ScrapException;
+import FIS.iLUVit.domain.teacher.domain.Teacher;
 import FIS.iLUVit.domain.user.domain.User;
 import FIS.iLUVit.domain.post.repository.PostRepository;
 import FIS.iLUVit.domain.scrap.repository.ScrapPostRepository;
@@ -173,6 +174,22 @@ public class ScrapService {
 
         // 조회된 ScrapPost 목록을 PostByScrapDirResponse로 변환하여 반환
         return scrapPosts.map(PostByScrapDirResponse::new);
+    }
+
+    /**
+     * 해당 시설과 연관된 사용자의 스크랩 게시물을 삭제합니다
+     */
+    public void deleteScrapByCenter(Teacher teacher){
+        List<ScrapPost> scraps = scrapPostRepository.findByPostBoardCenter(teacher.getCenter());
+        scrapPostRepository.deleteAll(scraps);
+    }
+
+    /**
+     *  기본 스크랩 폴더 생성
+     */
+    public void saveDefaultSrap(User user){
+        Scrap scrap = Scrap.from(user);
+        scrapRepository.save(scrap);
     }
 
     /**

@@ -1,17 +1,14 @@
 package FIS.iLUVit.domain.teacher.service;
 
-import FIS.iLUVit.domain.alarm.AlarmUtils;
-import FIS.iLUVit.domain.alarm.domain.Alarm;
-import FIS.iLUVit.domain.alarm.domain.CenterApprovalReceivedAlarm;
-import FIS.iLUVit.domain.alarm.repository.AlarmRepository;
+import FIS.iLUVit.domain.alarm.service.AlarmService;
 import FIS.iLUVit.domain.authnum.domain.AuthKind;
 import FIS.iLUVit.domain.authnum.repository.AuthRepository;
 import FIS.iLUVit.domain.authnum.service.AuthService;
 import FIS.iLUVit.domain.blackuser.service.BlackUserService;
 import FIS.iLUVit.domain.board.domain.Board;
 import FIS.iLUVit.domain.board.repository.BoardRepository;
-import FIS.iLUVit.domain.boardbookmark.domain.Bookmark;
 import FIS.iLUVit.domain.boardbookmark.repository.BoardBookmarkRepository;
+import FIS.iLUVit.domain.boardbookmark.service.BoardBookmarkService;
 import FIS.iLUVit.domain.center.domain.Center;
 import FIS.iLUVit.domain.center.dto.CenterFindForUserRequest;
 import FIS.iLUVit.domain.center.dto.CenterFindForUserResponse;
@@ -21,11 +18,11 @@ import FIS.iLUVit.domain.center.repository.CenterRepository;
 import FIS.iLUVit.domain.common.domain.Approval;
 import FIS.iLUVit.domain.common.domain.Auth;
 import FIS.iLUVit.domain.common.domain.Location;
-import FIS.iLUVit.domain.common.domain.NotificationTitle;
 import FIS.iLUVit.domain.common.service.ImageService;
 import FIS.iLUVit.domain.common.service.MapService;
 import FIS.iLUVit.domain.scrap.domain.Scrap;
 import FIS.iLUVit.domain.scrap.repository.ScrapRepository;
+import FIS.iLUVit.domain.scrap.service.ScrapService;
 import FIS.iLUVit.domain.teacher.domain.Teacher;
 import FIS.iLUVit.domain.teacher.dto.TeacherFindOneResponse;
 import FIS.iLUVit.domain.teacher.dto.TeacherInfoForAdminResponse;
@@ -44,7 +41,6 @@ import org.springframework.data.domain.SliceImpl;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
@@ -58,15 +54,16 @@ import static FIS.iLUVit.domain.common.domain.Auth.DIRECTOR;
 public class TeacherService {
     private final ImageService imageService;
     private final AuthService authService;
+    private final AlarmService alarmService;
     private final CenterRepository centerRepository;
     private final TeacherRepository teacherRepository;
     private final AuthRepository authRepository;
-    private final BoardRepository boardRepository;
-    private final BoardBookmarkRepository boardBookmarkRepository;
     private final ScrapRepository scrapRepository;
+    private final ScrapService scrapService;
     private final MapService mapService;
-    private final AlarmRepository alarmRepository;
     private final BlackUserService blackUserService;
+
+    private final BoardBookmarkService boardBookmarkService;
 
     private UserService userService;
     @Autowired
@@ -108,29 +105,18 @@ public class TeacherService {
         imageService.saveProfileImage(null, teacher);
         teacherRepository.save(teacher);
 
-        // 모두의 이야기 default boards bookmark 추가
-        List<Board> defaultBoards = boardRepository.findByCenterIsNullAndIsDefaultTrue();
-        for (Board defaultBoard : defaultBoards) {
-            Bookmark bookmark = Bookmark.of(defaultBoard, teacher);
-            boardBookmarkRepository.save(bookmark);
-        }
+        // 모두의 이야기 기본 게시판들을 게시판 즐겨찾기에 추가
+        boardBookmarkService.saveDefaultBoardBookmark(null, teacher);
 
-        // default 스크랩 생성
-        Scrap scrap = Scrap.from(teacher);
-        scrapRepository.save(scrap);
+        // 기본 스크랩 폴더 생성
+        scrapService.saveDefaultSrap(teacher);
 
         // 사용이 끝난 인증번호 삭제
         authRepository.deleteByPhoneNumAndAuthKind(request.getPhoneNum(), AuthKind.signup);
 
         // 시설의 관리교사에게 알림 보내기
-        List<Teacher> teacherList = teacherRepository.findByCenter(center);
-        teacherList.forEach(t -> {
-            if (t.getAuth() == DIRECTOR) {
-                Alarm alarm = new CenterApprovalReceivedAlarm(t, Auth.TEACHER, t.getCenter());
-                alarmRepository.save(alarm);
-                AlarmUtils.publishAlarmEvent(alarm, NotificationTitle.ILUVIT.getDescription());
-            }
-        });
+        List<Teacher> directors = teacherRepository.findByCenterAndAuth(center, DIRECTOR);
+        alarmService.sendCenterApprovalReceivedAlarm(directors);
 
     }
 
@@ -199,13 +185,8 @@ public class TeacherService {
         teacher.assignCenter(center); // 시설과의 연관관계 맺기
 
         // 승인 요청 알람이 해당 시설의 관리교사에게 전송
-        List<Teacher> directors = teacherRepository.findByCenterAndAuth(center, DIRECTOR);
-        directors.forEach(director -> {
-            Alarm alarm = new CenterApprovalReceivedAlarm(director, Auth.TEACHER, director.getCenter());
-            alarmRepository.save(alarm);
-            AlarmUtils.publishAlarmEvent(alarm, NotificationTitle.ILUVIT.getDescription());
-        });
-
+        List<Teacher> directors = teacherRepository.findByCenterAndAuth(center, Auth.DIRECTOR);
+        alarmService.sendCenterApprovalReceivedAlarm(directors);
     }
 
     /**
@@ -233,8 +214,9 @@ public class TeacherService {
             throw new UserException(UserErrorResult.HAVE_TO_MANDATE);
         }
 
-        // 속해있는 시설과 연관된 게시판 bookmark 모두 삭제
-        deleteBookmarkByCenter(escapedTeacher);
+        // 속해있는 시설과 연관된 게시판 즐겨찾기, 스크랩 모두 삭제
+        boardBookmarkService.deleteBoardBookmarkByCenter(escapedTeacher);
+        scrapService.deleteScrapByCenter(escapedTeacher);
 
         // 시설과의 연관관계 끊기
         escapedTeacher.exitCenter();
@@ -276,11 +258,7 @@ public class TeacherService {
         acceptedTeacher.acceptTeacher();
 
         // 해당 시설의 기본 게시판들을 교사의 게시판 즐겨찾기에 추가
-        List<Board> defaultBoards = boardRepository.findByCenterAndIsDefaultTrue(director.getCenter());
-        for (Board defaultBoard : defaultBoards) {
-            Bookmark bookmark = Bookmark.of(defaultBoard, acceptedTeacher);
-            boardBookmarkRepository.save(bookmark);
-        }
+        boardBookmarkService.saveDefaultBoardBookmark(director.getCenter(), acceptedTeacher);
     }
 
 
@@ -299,8 +277,9 @@ public class TeacherService {
             throw new UserException(UserErrorResult.FORBIDDEN_ACCESS);
         }
 
-        // 해당 시설과 연관된 게시판 즐겨찾기 삭제
-        deleteBookmarkByCenter(firedTeacher);
+        // 해당 시설과 연관된 게시판 즐겨찾기, 스크랩 삭제
+        boardBookmarkService.deleteBoardBookmarkByCenter(firedTeacher);
+        scrapService.deleteScrapByCenter(firedTeacher);
 
         // 시설과의 연관관계 끊기
         firedTeacher.exitCenter();
@@ -354,20 +333,6 @@ public class TeacherService {
         userService.withdrawUser(userId);
         // 연결된 시설 끊기 ( 해당 시설과 연관된 bookmark 삭제 )
         leaveCenterForTeacher(userId);
-    }
-
-    /**
-     * 해당 시설과 연관된 게시판의 게시판 즐겨찾기를 삭제합니다
-     */
-    private void deleteBookmarkByCenter(Teacher escapedTeacher) {
-        // 교사의 승인 상태가 ACCEPT인지 확인
-        if (escapedTeacher.getApproval() == Approval.ACCEPT) {
-            // 교사의 소석 시설과 관련된 게시판 조회
-            List<Board> boards = boardRepository.findByCenter(escapedTeacher.getCenter());
-            // 교사와 관련된 게시판 즐겨찾기 삭제
-            boardBookmarkRepository.deleteByUserAndBoardIn(escapedTeacher, boards);
-        }
-        // TODO scrap 없애는 코드 추가
     }
 
     /**
