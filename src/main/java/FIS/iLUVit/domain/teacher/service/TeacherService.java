@@ -5,9 +5,6 @@ import FIS.iLUVit.domain.authnum.domain.AuthKind;
 import FIS.iLUVit.domain.authnum.repository.AuthRepository;
 import FIS.iLUVit.domain.authnum.service.AuthService;
 import FIS.iLUVit.domain.blackuser.service.BlackUserService;
-import FIS.iLUVit.domain.board.domain.Board;
-import FIS.iLUVit.domain.board.repository.BoardRepository;
-import FIS.iLUVit.domain.boardbookmark.repository.BoardBookmarkRepository;
 import FIS.iLUVit.domain.boardbookmark.service.BoardBookmarkService;
 import FIS.iLUVit.domain.center.domain.Center;
 import FIS.iLUVit.domain.center.dto.CenterFindForUserRequest;
@@ -20,7 +17,6 @@ import FIS.iLUVit.domain.common.domain.Auth;
 import FIS.iLUVit.domain.common.domain.Location;
 import FIS.iLUVit.domain.common.service.ImageService;
 import FIS.iLUVit.domain.common.service.MapService;
-import FIS.iLUVit.domain.scrap.domain.Scrap;
 import FIS.iLUVit.domain.scrap.repository.ScrapRepository;
 import FIS.iLUVit.domain.scrap.service.ScrapService;
 import FIS.iLUVit.domain.teacher.domain.Teacher;
@@ -116,7 +112,7 @@ public class TeacherService {
 
         // 시설의 관리교사에게 알림 보내기
         List<Teacher> directors = teacherRepository.findByCenterAndAuth(center, DIRECTOR);
-        alarmService.sendCenterApprovalReceivedAlarm(directors);
+        alarmService.sendCenterApprovalReceivedAlarm(directors, Auth.TEACHER);
 
     }
 
@@ -186,7 +182,7 @@ public class TeacherService {
 
         // 승인 요청 알람이 해당 시설의 관리교사에게 전송
         List<Teacher> directors = teacherRepository.findByCenterAndAuth(center, Auth.DIRECTOR);
-        alarmService.sendCenterApprovalReceivedAlarm(directors);
+        alarmService.sendCenterApprovalReceivedAlarm(directors, Auth.TEACHER);
     }
 
     /**

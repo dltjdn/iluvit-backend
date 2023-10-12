@@ -11,6 +11,7 @@ import FIS.iLUVit.domain.boardbookmark.exception.BoardBookmarkErrorResult;
 import FIS.iLUVit.domain.boardbookmark.exception.BoardBookmarkException;
 import FIS.iLUVit.domain.boardbookmark.repository.BoardBookmarkRepository;
 import FIS.iLUVit.domain.center.domain.Center;
+import FIS.iLUVit.domain.child.domain.Child;
 import FIS.iLUVit.domain.common.domain.Approval;
 import FIS.iLUVit.domain.post.domain.Post;
 import FIS.iLUVit.domain.post.repository.PostRepository;
@@ -143,6 +144,11 @@ public class BoardBookmarkService {
             // 교사와 관련된 게시판 즐겨찾기 삭제
             boardBookmarkRepository.deleteByUserAndBoardIn(teacher, boards);
         }
+    }
+    public void deleteBoardBookmarkByChild(Long userId, Child child){
+        List<Board> boards = boardRepository.findByCenter(child.getCenter());
+        User user = getUser(userId);
+        boardBookmarkRepository.deleteByUserAndBoardIn(user, boards);
     }
 
     /**

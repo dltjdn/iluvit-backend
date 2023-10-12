@@ -1,10 +1,7 @@
 package FIS.iLUVit.domain.alarm.service;
 
 import FIS.iLUVit.domain.alarm.AlarmUtils;
-import FIS.iLUVit.domain.alarm.domain.Alarm;
-import FIS.iLUVit.domain.alarm.domain.CenterApprovalReceivedAlarm;
-import FIS.iLUVit.domain.alarm.domain.ConvertedToParticipateAlarm;
-import FIS.iLUVit.domain.alarm.domain.PresentationCreatedAlarm;
+import FIS.iLUVit.domain.alarm.domain.*;
 import FIS.iLUVit.domain.alarm.dto.AlarmDeleteRequest;
 import FIS.iLUVit.domain.alarm.dto.AlarmReadResponse;
 import FIS.iLUVit.domain.alarm.dto.AlarmResponse;
@@ -13,6 +10,7 @@ import FIS.iLUVit.domain.center.domain.Center;
 import FIS.iLUVit.domain.centerbookmark.repository.CenterBookmarkRepository;
 import FIS.iLUVit.domain.common.domain.Auth;
 import FIS.iLUVit.domain.common.domain.NotificationTitle;
+import FIS.iLUVit.domain.parent.domain.Parent;
 import FIS.iLUVit.domain.presentation.domain.Presentation;
 import FIS.iLUVit.domain.teacher.domain.Teacher;
 import FIS.iLUVit.domain.user.domain.User;
@@ -137,14 +135,21 @@ public class AlarmService {
     /**
      * 승인 요청 알림을 해당 시설의 관리교사에게 전송
      */
-    public void sendCenterApprovalReceivedAlarm(List<Teacher> directors) {
+    public void sendCenterApprovalReceivedAlarm(List<Teacher> directors, Auth auth) {
         directors.forEach(director -> {
-            Alarm alarm = new CenterApprovalReceivedAlarm(director, Auth.TEACHER, director.getCenter());
+            Alarm alarm = new CenterApprovalReceivedAlarm(director, auth, director.getCenter());
             alarmRepository.save(alarm);
             AlarmUtils.publishAlarmEvent(alarm, NotificationTitle.ILUVIT.getDescription());
         });
 
     }
+
+    public void sendCenterApprovalAcceptedAlarm(Parent parent, Center center){
+        Alarm alarm = new CenterApprovalAcceptedAlarm(parent, center);
+        alarmRepository.save(alarm);
+        AlarmUtils.publishAlarmEvent(alarm, NotificationTitle.ILUVIT.getDescription());
+    }
+
 
     /**
      * 예외처리 - 존재하는 유저인가

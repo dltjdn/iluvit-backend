@@ -3,14 +3,13 @@ package FIS.iLUVit.domain.child.dto;
 import FIS.iLUVit.domain.child.domain.Child;
 import FIS.iLUVit.domain.common.domain.Approval;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 
 @Getter
 @NoArgsConstructor
 @AllArgsConstructor
+@Builder(access = AccessLevel.PRIVATE)
 public class ChildCenterResponse {
     private Long id;
     private String name;
@@ -21,14 +20,21 @@ public class ChildCenterResponse {
     private String profileImage;
     private Approval approval;
 
-    public ChildCenterResponse(Child child, String image) {
-        this.id = child.getId();
-        this.name = child.getName();
-        if (child.getCenter() != null) {
-            this.centerId = child.getCenter().getId();
-            this.centerName = child.getCenter().getName();
+    public static ChildCenterResponse from(Child child){
+        ChildCenterResponseBuilder builder = ChildCenterResponse.builder()
+                .id(child.getId())
+                .name(child.getName())
+                .centerId(child.getCenter().getId())
+                .centerName(child.getCenter().getName())
+                .profileImage(child.getProfileImagePath())
+                .approval(child.getApproval());
+
+
+        if(child.getCenter() != null) {
+            builder.centerId(child.getCenter().getId())
+                    .centerName(child.getCenter().getName());
         }
-        this.profileImage = image;
-        this.approval = child.getApproval();
+
+        return builder.build();
     }
 }

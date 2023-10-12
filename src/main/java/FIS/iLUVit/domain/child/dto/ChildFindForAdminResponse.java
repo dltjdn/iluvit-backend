@@ -3,14 +3,13 @@ package FIS.iLUVit.domain.child.dto;
 import FIS.iLUVit.domain.child.domain.Child;
 import FIS.iLUVit.domain.common.domain.Approval;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 @Getter
 @NoArgsConstructor
 @AllArgsConstructor
-public class ChildInfoForAdminResponse {
+@Builder(access = AccessLevel.PRIVATE)
+public class ChildFindForAdminResponse {
 
     @JsonProperty("child_id")
     private Long childId;
@@ -26,12 +25,14 @@ public class ChildInfoForAdminResponse {
     private String childProfileImg;
     private Approval approval;
 
-    public ChildInfoForAdminResponse(Child child, String childProfileImg) {
-        this.childId = child.getId();
-        this.parentName = child.getParent().getName();
-        this.parentPhoneNum = child.getParent().getPhoneNumber();
-        this.childName = child.getName();
-        this.approval = child.getApproval();
-        this.childProfileImg = childProfileImg;
+    public static ChildFindForAdminResponse from(Child child){
+        return ChildFindForAdminResponse.builder()
+                .childId(child.getId())
+                .parentName(child.getParent().getName())
+                .parentPhoneNum(child.getParent().getPhoneNumber())
+                .childName(child.getName())
+                .approval(child.getApproval())
+                .childProfileImg(child.getProfileImagePath())
+                .build();
     }
 }

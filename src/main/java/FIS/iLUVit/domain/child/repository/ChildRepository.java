@@ -2,6 +2,7 @@ package FIS.iLUVit.domain.child.repository;
 
 import FIS.iLUVit.domain.center.domain.Center;
 import FIS.iLUVit.domain.child.domain.Child;
+import FIS.iLUVit.domain.common.domain.Approval;
 import FIS.iLUVit.domain.parent.domain.Parent;
 import org.springframework.data.jpa.repository.JpaRepository;
 
@@ -29,5 +30,14 @@ public interface ChildRepository extends JpaRepository<Child, Long> {
      * 시설로 아이 리스트를 조회합니다.
      */
     List<Child> findByCenter(Center center);
+
+    /**
+     * 시설에 속해있지 않는 해당하는 아이를 조회합니다
+     */
+    Optional<Child> findByIdAndCenterIsNull(Long childId);
+
+    Optional<Child> findByIdAndCenterAndApproval(Long childId, Center center, Approval approval);
+
+    Optional<Child> findByIdAndCenter(Long childId, Center center);
 
 }
