@@ -1,6 +1,8 @@
 package FIS.iLUVit.domain.parent.domain;
 
 import FIS.iLUVit.domain.child.domain.Child;
+import FIS.iLUVit.domain.common.domain.Location;
+import FIS.iLUVit.domain.parent.dto.ParentCreateRequest;
 import FIS.iLUVit.domain.participation.domain.Participation;
 import FIS.iLUVit.domain.user.domain.User;
 import FIS.iLUVit.domain.waiting.domain.Waiting;
@@ -37,8 +39,7 @@ public class Parent extends User {
     private List<Waiting> waitings = new ArrayList<>();
 
     @Builder
-    public Parent(Long id, String nickName, String loginId, String password, String phoneNumber, String emailAddress, String name, Theme theme, Integer interestAge, Auth auth, String address, String detailAddress, Boolean readAlarm) {
-        this.id = id;
+    public Parent(String nickName, String loginId, String password, String phoneNumber, String emailAddress, String name, Theme theme, Integer interestAge, Auth auth, String address, String detailAddress, Boolean readAlarm, Location location) {
         this.nickName = nickName;
         this.loginId = loginId;
         this.password = password;
@@ -51,9 +52,26 @@ public class Parent extends User {
         this.theme = theme;
         this.interestAge = interestAge;
         this.readAlarm = readAlarm;
+        this.location = location;
     }
 
-    public void updateDetail(ParentUpdateRequest request, Theme theme) {
+    public static Parent of(ParentCreateRequest request, String password, Location location){
+        return Parent.builder()
+                .nickName(request.getNickname())
+                .loginId(request.getLoginId())
+                .password(password)
+                .phoneNumber(request.getPhoneNum())
+                .emailAddress(request.getEmailAddress())
+                .name(request.getName())
+                .address(request.getAddress())
+                .detailAddress(request.getDetailAddress())
+                .auth(Auth.PARENT)
+                .readAlarm(true)
+                .location(location)
+                .build();
+    }
+
+    public void updateParentInfo(ParentUpdateRequest request, Theme theme, Location location) {
         this.name = request.getName();
         this.nickName = request.getNickname();
         this.emailAddress = request.getEmailAddress();
@@ -61,9 +79,10 @@ public class Parent extends User {
         this.detailAddress = request.getDetailAddress();
         this.interestAge = request.getInterestAge();
         this.theme = theme;
+        this.location = location;
     }
 
-    public void updateDetailWithPhoneNum(ParentUpdateRequest request, Theme theme) {
+    public void updateParentInfoWithPhoneNum(ParentUpdateRequest request, Theme theme, Location location) {
         this.name = request.getName();
         this.nickName = request.getNickname();
         this.phoneNumber = request.getPhoneNum();
@@ -72,6 +91,7 @@ public class Parent extends User {
         this.detailAddress = request.getDetailAddress();
         this.interestAge = request.getInterestAge();
         this.theme = theme;
+        this.location = location;
     }
 
     @Override

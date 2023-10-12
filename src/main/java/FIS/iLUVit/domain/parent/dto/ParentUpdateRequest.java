@@ -9,8 +9,6 @@ import javax.validation.constraints.Size;
 
 @Getter
 @Setter
-@Builder
-@AllArgsConstructor
 @NoArgsConstructor
 public class ParentUpdateRequest {
     @NotEmpty(message = "입력하지 않은 목록이 있습니다.")

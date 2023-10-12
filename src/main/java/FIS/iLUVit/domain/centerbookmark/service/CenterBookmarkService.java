@@ -97,6 +97,16 @@ public class CenterBookmarkService {
     }
 
     /**
+     * 즐겨찾기 한 시설 리스트 삭제
+     */
+    public void deleteCenterBookmarkByWithdraw(Long userId, Parent parent){
+        centerBookmarkRepository.findByParent(parent).forEach(centerBookmark -> {
+           deleteCenterBookmark(userId, centerBookmark.getCenter().getId());
+        });
+    }
+
+
+    /**
      * 예외처리 - 존재하는 시설인가
      */
     private Center getCenter(Long centerId) {

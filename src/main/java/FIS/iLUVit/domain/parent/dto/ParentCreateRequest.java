@@ -10,9 +10,7 @@ import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
 
 @Getter
-@Builder
 @NoArgsConstructor
-@AllArgsConstructor
 public class ParentCreateRequest {
     @Size(min=5, message = "아이디는 5자 이상이어야합니다.")
     private String loginId;
@@ -35,21 +33,4 @@ public class ParentCreateRequest {
     private Theme theme;
     @NotNull(message = "입력하지 않은 목록이 있습니다.")
     private Integer interestAge;
-
-    public Parent createParent(String pwd) {
-        return Parent.builder()
-                .loginId(loginId)
-                .password(pwd)
-                .name(name)
-                .nickName(nickname)
-                .phoneNumber(phoneNum)
-                .emailAddress(emailAddress)
-                .address(address)
-                .detailAddress(detailAddress)
-                .theme(theme)
-                .interestAge(interestAge)
-                .auth(Auth.PARENT)
-                .readAlarm(true)
-                .build();
-    }
 }

@@ -148,7 +148,7 @@ public class BoardBookmarkService {
     /**
      * 기본 게시판들을 게시판 즐겨찾기에 추가
      */
-    public void saveDefaultBoardBookmark(Center center, Teacher teacher){
+    public void saveDefaultBoardBookmark(Center center, User user){
         List<Board> defaultBoards = null;
         if(center == null){
             defaultBoards = boardRepository.findByCenterIsNullAndIsDefaultTrue();
@@ -157,7 +157,7 @@ public class BoardBookmarkService {
             defaultBoards = boardRepository.findByCenterAndIsDefaultTrue(center);
         }
         for (Board defaultBoard : defaultBoards) {
-            Bookmark bookmark = Bookmark.of(defaultBoard, teacher);
+            Bookmark bookmark = Bookmark.of(defaultBoard, user);
             boardBookmarkRepository.save(bookmark);
         }
     }

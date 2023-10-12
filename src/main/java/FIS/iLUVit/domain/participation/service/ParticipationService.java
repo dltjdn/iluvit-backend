@@ -188,6 +188,15 @@ public class ParticipationService {
     }
 
     /**
+     *  신청되어있는 설명회 신청 목록에서 빠지게 하기 ( 설명회 신청 삭제 )
+     */
+    public void deleteParticipationByWithdraw(Parent parent){
+        participationRepository.findByParent(parent).forEach(participation -> {
+            participationRepository.deleteById(participation.getId());
+        });
+    }
+
+    /**
      * 예외처리 - 존재하는 학부모인가
      */
     private Parent getParent(Long userId) {

@@ -132,6 +132,15 @@ public class WaitingService {
     }
 
     /**
+     *  신청되어있는 설명회 대기 목록에서 빠지게 하기 ( 설명회 대기 취소 )
+     */
+    public void deleteWaitingByWithdraw(Long userId, Parent parent){
+        waitingRepository.findByParent(parent).forEach(waiting-> {
+            cancelParticipation(userId, waiting.getId());
+        });
+    }
+
+    /**
      * 예외처리 - 존재하는 설명회 회차인가
      */
     private PtDate getPtDate(Long ptDateId) {

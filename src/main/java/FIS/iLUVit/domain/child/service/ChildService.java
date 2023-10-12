@@ -347,6 +347,15 @@ public class ChildService {
     }
 
     /**
+     * 아이 삭제 & 아이가 연관된 유치원 연관관계 끊기(해당 시설과 관련된 bookmark 모두 삭제)
+     */
+    public void deleteChildByWithdraw(Long userId, Parent parent){
+        childRepository.findByParent(parent).forEach(child -> {
+            deleteChild(userId, child.getId());
+        });
+    }
+
+    /**
      * 예외처리 - 존재하는 유저인가
      */
     private User getUser(Long userId) {
