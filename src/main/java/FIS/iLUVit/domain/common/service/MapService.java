@@ -2,6 +2,7 @@ package FIS.iLUVit.domain.common.service;
 
 import FIS.iLUVit.domain.center.exception.CenterErrorResult;
 import FIS.iLUVit.domain.center.exception.CenterException;
+import FIS.iLUVit.domain.common.domain.Location;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
@@ -94,4 +95,12 @@ public class MapService {
         }
     }
 
+    /**
+     * 주소를 좌표로 변환하고 시도와 시군구 정보 가져오기
+     */
+    public Location getLocationInfo(String address) {
+        Pair<Double, Double> loAndLat = convertAddressToLocation(address);
+        Pair<String, String> hangjung = getSidoSigunguByLocation(loAndLat.getFirst(), loAndLat.getSecond());
+        return Location.of(loAndLat, hangjung);
+    }
 }

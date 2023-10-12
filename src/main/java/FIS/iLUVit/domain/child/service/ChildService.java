@@ -169,7 +169,7 @@ public class ChildService {
      */
     public Slice<CenterFindForUserResponse> findCenterForAddChild(CenterFindForUserRequest request, Pageable pageable) {
         List<CenterFindForUserResponse> centerFindForUserRespons = centerRepository.findCenterForAddChild(request.getSido(), request.getSigungu(), request.getCenterName()).stream()
-                .map(CenterFindForUserResponse::new)
+                .map(CenterFindForUserResponse::from)
                 .collect(Collectors.toList());
 
         boolean hasNext = false;

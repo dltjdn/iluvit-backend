@@ -61,7 +61,7 @@ public class ScrapService {
     public ScrapIdResponse saveNewScrapDir(Long userId, ScrapDirRequest request) {
         User user = getUser(userId);
 
-        Scrap newScrap = Scrap.createScrap(user, request.getName());
+        Scrap newScrap = Scrap.of(user, request.getName());
         scrapRepository.save(newScrap);
         ScrapIdResponse scrapIdResponse = new ScrapIdResponse(newScrap.getId());
 

@@ -10,10 +10,8 @@ import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
 
 @Getter
-@Builder
-@AllArgsConstructor
 @NoArgsConstructor
-public class SignupTeacherRequest {
+public class TeacherSignupRequest {
     @Size(min=5, message = "아이디는 5자 이상이어야합니다.")
     private String loginId;
     @Pattern(regexp = "^(?=.*[A-Za-z])(?=.*\\d)(?=.*[@$!%*#?&])[A-Za-z\\d@$!%*#?&]{8,}$", message = "비밀번호는 문자, 숫자, 특수문자를 최소 한개씩 포함한 8자 이상이어야합니다.")
@@ -34,22 +32,5 @@ public class SignupTeacherRequest {
     @NotNull(message = "입력하지 않은 목록이 있습니다.")
     private String detailAddress;
     private Long centerId;
-
-    public Teacher createTeacher(Center center, String pwd){
-        return Teacher.builder()
-                .loginId(loginId)
-                .password(pwd)
-                .nickName(nickname)
-                .name(name)
-                .phoneNumber(phoneNum)
-                .emailAddress(emailAddress)
-                .address(address)
-                .detailAddress(detailAddress)
-                .center(center)
-                .approval(Approval.WAITING)
-                .auth(Auth.TEACHER)
-                .readAlarm(true)
-                .build();
-    }
 
 }

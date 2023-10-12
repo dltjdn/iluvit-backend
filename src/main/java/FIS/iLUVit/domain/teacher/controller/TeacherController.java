@@ -3,9 +3,9 @@ package FIS.iLUVit.domain.teacher.controller;
 import FIS.iLUVit.global.config.argumentResolver.Login;
 import FIS.iLUVit.domain.center.dto.CenterFindForUserResponse;
 import FIS.iLUVit.domain.center.dto.CenterFindForUserRequest;
-import FIS.iLUVit.domain.teacher.dto.SignupTeacherRequest;
-import FIS.iLUVit.domain.teacher.dto.TeacherDetailRequest;
-import FIS.iLUVit.domain.teacher.dto.TeacherDetailResponse;
+import FIS.iLUVit.domain.teacher.dto.TeacherSignupRequest;
+import FIS.iLUVit.domain.teacher.dto.TeacherUpdateRequest;
+import FIS.iLUVit.domain.teacher.dto.TeacherFindOneResponse;
 import FIS.iLUVit.domain.teacher.dto.TeacherInfoForAdminResponse;
 import FIS.iLUVit.domain.teacher.service.TeacherService;
 import lombok.RequiredArgsConstructor;
@@ -36,16 +36,16 @@ public class TeacherController {
      * 교사 정보 상세 조회
      */
     @GetMapping("")
-    public ResponseEntity<TeacherDetailResponse> getTeacherDetail(@Login Long userId) throws IOException {
-        TeacherDetailResponse teacherDetailResponse = teacherService.findTeacherDetails(userId);
-        return ResponseEntity.ok(teacherDetailResponse);
+    public ResponseEntity<TeacherFindOneResponse> getTeacherDetail(@Login Long userId) {
+        TeacherFindOneResponse teacherFindOneResponse = teacherService.findTeacherDetails(userId);
+        return ResponseEntity.ok(teacherFindOneResponse);
     }
 
     /**
      * 교사 생성 (교사 회원가입)
      */
     @PostMapping("signup")
-    public ResponseEntity<Void> createTeacher(@RequestBody @Valid SignupTeacherRequest request) {
+    public ResponseEntity<Void> createTeacher(@RequestBody @Valid TeacherSignupRequest request) {
         teacherService.signupTeacher(request);
         return ResponseEntity.status(HttpStatus.CREATED).build();
     }
@@ -54,8 +54,8 @@ public class TeacherController {
      * 교사 정보 수정
      */
     @PostMapping("")
-    public ResponseEntity<Void> updateTeacher(@Login Long userId, @Valid @ModelAttribute TeacherDetailRequest request) throws IOException {
-        teacherService.modifyTeacherInfo(userId, request);
+    public ResponseEntity<Void> updateTeacherInfo(@Login Long userId, @Valid @ModelAttribute TeacherUpdateRequest request){
+        teacherService.updateTeacherInfo(userId, request);
         return ResponseEntity.noContent().build();
     }
 

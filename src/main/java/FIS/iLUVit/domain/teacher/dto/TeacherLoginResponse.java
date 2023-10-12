@@ -6,12 +6,12 @@ import FIS.iLUVit.domain.user.dto.UserInfoResponse;
 import lombok.Getter;
 
 @Getter
-public class LoginTeacherResponse extends UserInfoResponse {
+public class TeacherLoginResponse extends UserInfoResponse {
 
     private Long centerId;
     private Approval approval;
 
-    public LoginTeacherResponse(Teacher teacher) {
+    public TeacherLoginResponse(Teacher teacher) {
         super(teacher);
         if (teacher.getCenter() != null) {
             this.centerId = teacher.getCenter().getId();

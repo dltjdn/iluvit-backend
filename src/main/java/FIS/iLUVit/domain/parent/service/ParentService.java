@@ -32,7 +32,6 @@ import FIS.iLUVit.domain.waiting.service.WaitingService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.data.util.Pair;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -107,13 +106,12 @@ public class ParentService {
             findParent.updateDetail(request, theme);
         }
 
-        Pair<Double, Double> loAndLat = mapService.convertAddressToLocation(request.getAddress());
-        Pair<String, String> hangjung = mapService.getSidoSigunguByLocation(loAndLat.getFirst(), loAndLat.getSecond());
-        Location location = new Location(loAndLat, hangjung);
+        Location location = mapService.getLocationInfo(request.getAddress());
         findParent.updateLocation(location);
 
-        new ParentDetailResponse(findParent,findParent.getProfileImagePath());
+
         imageService.saveProfileImage(request.getProfileImg(), findParent);
+
 
     }
 
@@ -127,13 +125,11 @@ public class ParentService {
         String hashedPwd = userService.hashAndValidatePwdForSignup(request.getPassword(), request.getPasswordCheck(), request.getLoginId(), request.getPhoneNum(), request.getNickname());
         Parent parent = request.createParent(hashedPwd);
 
-        Pair<Double, Double> loAndLat = mapService.convertAddressToLocation(request.getAddress());
-        Pair<String, String> hangjung = mapService.getSidoSigunguByLocation(loAndLat.getFirst(), loAndLat.getSecond());
-        Location location = new Location(loAndLat, hangjung);
+        Location location = mapService.getLocationInfo(request.getAddress());
         parent.updateLocation(location);
 
         // default 스크랩 생성
-        Scrap scrap = Scrap.createDefaultScrap(parent);
+        Scrap scrap = Scrap.from(parent);
 
         imageService.saveProfileImage(null, parent);
 
@@ -146,7 +142,7 @@ public class ParentService {
         // 모두의 이야기 default boards bookmark 추가하기
         List<Board> defaultBoards = boardRepository.findByCenterIsNullAndIsDefaultTrue();
         for (Board defaultBoard : defaultBoards) {
-            Bookmark bookmark = Bookmark.createBookmark(defaultBoard, parent);
+            Bookmark bookmark = Bookmark.of(defaultBoard, parent);
             boardBookmarkRepository.save(bookmark);
         }
     }
