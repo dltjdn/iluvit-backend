@@ -1,8 +1,7 @@
 package FIS.iLUVit.domain.board.controller;
 
 import FIS.iLUVit.global.config.argumentResolver.Login;
-import FIS.iLUVit.domain.board.dto.BoardIdResponse;
-import FIS.iLUVit.domain.board.dto.BoardListResponse;
+import FIS.iLUVit.domain.board.dto.BoardFindAllResponse;
 import FIS.iLUVit.domain.board.dto.BoardCreateRequest;
 import FIS.iLUVit.domain.board.dto.BoardStoryPreviewResponse;
 import FIS.iLUVit.domain.board.service.BoardService;
@@ -29,18 +28,18 @@ public class BoardController {
      * 모두의 이야기 게시판 전체 조회
      */
     @GetMapping("public")
-    public ResponseEntity<BoardListResponse> getAllBoardByPublic(@Login Long userId) {
-        BoardListResponse boardListResponse = boardService.findBoardByPublicList(userId);
-        return ResponseEntity.ok(boardListResponse);
+    public ResponseEntity<BoardFindAllResponse> getAllBoardByPublic(@Login Long userId) {
+        BoardFindAllResponse boardFindAllResponse = boardService.findBoardByPublicList(userId);
+        return ResponseEntity.ok(boardFindAllResponse);
     }
 
     /**
      *  시설 이야기 게시판 전체 조회
      */
     @GetMapping("in-center/{centerId}")
-    public ResponseEntity<BoardListResponse> getAllBoardByCenter(@Login Long userId, @PathVariable("centerId") Long centerId) {
-        BoardListResponse boardListResponse = boardService.findAllBoardByCenter(userId, centerId);
-        return ResponseEntity.ok(boardListResponse);
+    public ResponseEntity<BoardFindAllResponse> getAllBoardByCenter(@Login Long userId, @PathVariable("centerId") Long centerId) {
+        BoardFindAllResponse boardFindAllResponse = boardService.findAllBoardByCenter(userId, centerId);
+        return ResponseEntity.ok(boardFindAllResponse);
     }
 
     /**
@@ -55,11 +54,11 @@ public class BoardController {
     /**
      * 게시판 생성
      */
-    @PostMapping("{centerId}")
-    public ResponseEntity<BoardIdResponse> createBoard(@Login Long userId, @PathVariable("centerId") Long centerId,
+    @PostMapping("")
+    public ResponseEntity<Long> createBoard(@Login Long userId, @RequestParam("center_id") Long centerId,
                                                        @RequestBody @Valid BoardCreateRequest boardCreateRequest) {
-        BoardIdResponse boardIdResponse = boardService.saveNewBoard(userId, centerId, boardCreateRequest);
-        return ResponseEntity.status(HttpStatus.CREATED).body(boardIdResponse);
+        Long boardId = boardService.saveNewBoard(userId, centerId, boardCreateRequest);
+        return ResponseEntity.status(HttpStatus.CREATED).body(boardId);
     }
 
     /**
@@ -68,7 +67,7 @@ public class BoardController {
     @DeleteMapping("{boardId}")
     public ResponseEntity<Void> deleteBoard(@Login Long userId, @PathVariable("boardId") Long boardId) {
         boardService.deleteBoardWithValidation(userId, boardId);
-        return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
+        return ResponseEntity.noContent().build();
     }
 
 }

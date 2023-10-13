@@ -18,8 +18,7 @@ import FIS.iLUVit.domain.user.domain.User;
 import FIS.iLUVit.domain.user.exception.UserErrorResult;
 import FIS.iLUVit.domain.user.exception.UserException;
 import FIS.iLUVit.domain.user.repository.UserRepository;
-import FIS.iLUVit.domain.board.dto.BoardIdResponse;
-import FIS.iLUVit.domain.board.dto.BoardListResponse;
+import FIS.iLUVit.domain.board.dto.BoardFindAllResponse;
 import FIS.iLUVit.domain.board.dto.BoardCreateRequest;
 import FIS.iLUVit.domain.board.dto.BoardStoryPreviewResponse;
 import FIS.iLUVit.domain.common.domain.Approval;
@@ -46,49 +45,49 @@ public class BoardService {
     /**
      * 모두의 이야기 게시판 전체 조회
      */
-    public BoardListResponse findBoardByPublicList(Long userId) {
+    public BoardFindAllResponse findBoardByPublicList(Long userId) {
 
         List<Board> boards = boardRepository.findByCenterIsNull(); // 모두의 이야기 내 모든 게시판
-        List<BoardListResponse.BoardBookmarkDto> bookmarkList = new ArrayList<>();
-        List<BoardListResponse.BoardBookmarkDto> boardList = new ArrayList<>();
+        List<BoardFindAllResponse.BoardBookmarkDto> bookmarkList = new ArrayList<>();
+        List<BoardFindAllResponse.BoardBookmarkDto> boardList = new ArrayList<>();
         User user = getUser(userId);
 
         boards.forEach(board -> {
             Optional<Bookmark> bookmark =  boardBookmarkRepository.findByUserAndBoard(user, board);
             if (bookmark.isEmpty()) { // 즐찾 안한 게시판들은 보드 리스트에 넣음
-                boardList.add(new BoardListResponse.BoardBookmarkDto(board));
+                boardList.add(new BoardFindAllResponse.BoardBookmarkDto(board));
             } else { // 즐찾한 게시판들은 북마크 리스트에 넣음
-                bookmarkList.add(new BoardListResponse.BoardBookmarkDto(board,bookmark.get().getId()));
+                bookmarkList.add(new BoardFindAllResponse.BoardBookmarkDto(board,bookmark.get().getId()));
             }
         });
-        BoardListResponse boardListResponse = new BoardListResponse(null, "모두의 이야기", bookmarkList, boardList);
+        BoardFindAllResponse boardFindAllResponse = new BoardFindAllResponse(null, "모두의 이야기", bookmarkList, boardList);
 
-        return boardListResponse;
+        return boardFindAllResponse;
     }
 
     /**
      * 시설 이야기 게시판 전체 조회
      */
-    public BoardListResponse findAllBoardByCenter(Long userId, Long centerId) {
+    public BoardFindAllResponse findAllBoardByCenter(Long userId, Long centerId) {
         Center findCenter = getCenter(centerId);
 
         List<Board> boards = boardRepository.findByCenter(findCenter);  // 시설 이야기 모든 게시판
-        List<BoardListResponse.BoardBookmarkDto> bookmarkList = new ArrayList<>();
-        List<BoardListResponse.BoardBookmarkDto> boardList = new ArrayList<>();
+        List<BoardFindAllResponse.BoardBookmarkDto> bookmarkList = new ArrayList<>();
+        List<BoardFindAllResponse.BoardBookmarkDto> boardList = new ArrayList<>();
         User user = getUser(userId);
 
         boards.forEach(board -> {
             Optional<Bookmark> bookmark =  boardBookmarkRepository.findByUserAndBoard(user, board);
             if (bookmark.isEmpty()) { // 즐찾 안한 게시판들은 보드 리스트에 넣음
-                boardList.add(new BoardListResponse.BoardBookmarkDto(board));
+                boardList.add(new BoardFindAllResponse.BoardBookmarkDto(board));
             } else { // 즐찾한 게시판들은 북마크 리스트에 넣음
-                bookmarkList.add(new BoardListResponse.BoardBookmarkDto(board,bookmark.get().getId()));
+                bookmarkList.add(new BoardFindAllResponse.BoardBookmarkDto(board,bookmark.get().getId()));
             }
         });
 
-        BoardListResponse boardListResponse = new BoardListResponse(centerId, findCenter.getName(), bookmarkList, boardList);
+        BoardFindAllResponse boardFindAllResponse = new BoardFindAllResponse(centerId, findCenter.getName(), bookmarkList, boardList);
 
-        return boardListResponse;
+        return boardFindAllResponse;
     }
 
 
@@ -125,7 +124,7 @@ public class BoardService {
     /**
      * 게시판 생성
      */
-    public BoardIdResponse saveNewBoard(Long userId, Long centerId, BoardCreateRequest request) {
+    public Long saveNewBoard(Long userId, Long centerId, BoardCreateRequest request) {
 
         // 모두의 이야기에서 게시판 이름 중복성 검사 및 저장
         if (centerId == null) {
@@ -133,9 +132,9 @@ public class BoardService {
                     .ifPresent((b) -> {
                         throw new BoardException(BoardErrorResult.DUPLICATE_BOARD_NAME);
                     });
-            Long boardId = boardRepository.save(Board.createBoard(
-                    request.getBoardName(), request.getBoardKind(), null, false)).getId();
-            return new BoardIdResponse(boardId);
+
+            Board board = Board.createBoard(request.getBoardName(), request.getBoardKind(), null, false);
+            return boardRepository.save(board).getId();
         }
 
         // 센터가 존재하는 지 검사
@@ -165,8 +164,7 @@ public class BoardService {
 
 
         Board board = Board.createBoard(request.getBoardName(), request.getBoardKind(), findCenter,false);
-        Board savedBoard = boardRepository.save(board);
-        return new BoardIdResponse(savedBoard.getId());
+        return boardRepository.save(board).getId();
     }
 
     /**

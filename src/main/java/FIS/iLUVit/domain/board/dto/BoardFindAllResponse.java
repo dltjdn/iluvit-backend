@@ -1,6 +1,7 @@
 package FIS.iLUVit.domain.board.dto;
 
 import FIS.iLUVit.domain.board.domain.Board;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -11,9 +12,10 @@ import java.util.List;
 @Getter
 @NoArgsConstructor
 @AllArgsConstructor
-public class BoardListResponse {
-
+public class BoardFindAllResponse {
+    @JsonProperty("center_id")
     private Long centerId;
+    @JsonProperty("center_name")
     private String centerName;
 
     private List<BoardBookmarkDto> bookmarkList = new ArrayList<>(); // 즐겨찾기한 게시판
@@ -22,8 +24,11 @@ public class BoardListResponse {
     @Getter
     @NoArgsConstructor
     public static class BoardBookmarkDto {
+        @JsonProperty("bookmark_id")
         private Long bookmarkId;
+        @JsonProperty("board_id")
         private Long boardId;
+        @JsonProperty("board_name")
         private String boardName;
 
         public BoardBookmarkDto(Board board) {
