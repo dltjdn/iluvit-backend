@@ -1,5 +1,6 @@
 package FIS.iLUVit.domain.post.dto;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -24,6 +25,7 @@ public class PostCreateRequest {
     private Boolean anonymous;              // 익명
 
     @NotNull(message = "게시판 아이디 필요")
+    @JsonProperty("board_id")
     private Long boardId;// 게시판 아이디
 
     private List<MultipartFile> images; // 게시판 이미지들

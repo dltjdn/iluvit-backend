@@ -44,7 +44,7 @@ public class PostController {
     @DeleteMapping("{postId}")
     public ResponseEntity<Void> deletePost(@Login Long userId, @PathVariable("postId") Long postId) {
         postService.deletePost(postId, userId);
-        return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
+        return ResponseEntity.noContent().build();
     }
 
     /**
@@ -60,7 +60,7 @@ public class PostController {
      * [모두의 이야기 + 유저가 속한 센터의 이야기] 에서  게시글 제목+내용 검색
      */
     @GetMapping("search/all")
-    public ResponseEntity<Slice<PostResponse>> getPost(@Login Long userId, @RequestParam("keyword") String keyword, Pageable pageable) {
+    public ResponseEntity<Slice<PostResponse>> getPost(@Login Long userId, @RequestParam("input") String keyword, Pageable pageable) {
         Slice<PostResponse> postResponses = postService.searchPost(userId, keyword, pageable);
         return ResponseEntity.ok(postResponses);
     }
@@ -68,9 +68,9 @@ public class PostController {
     /**
      * [시설 이야기] or [모두의 이야기] 에서 게시글 제목+내용 검색
      */
-    @GetMapping(value = {"search/center","search/center/{centerId}"})
-    public ResponseEntity<Slice<PostResponse>> getPostByCenter(@Login Long userId, @PathVariable(required = false, value="centerId") Long centerId,
-            @RequestParam("keyword") String keyword, Pageable pageable) {
+    @GetMapping("search/in-center")
+    public ResponseEntity<Slice<PostResponse>> getPostByCenter(@Login Long userId, @RequestParam("center_id") Long centerId,
+                                                               @RequestParam("input") String keyword, @RequestParam("auth") String auth, Pageable pageable) {
         Slice<PostResponse> postResponses = postService.searchPostByCenter( userId, centerId, keyword, pageable);
         return ResponseEntity.ok(postResponses);
     }
@@ -78,8 +78,9 @@ public class PostController {
     /**
      * 각 게시판 별 게시글 제목+내용 검색
      */
-    @GetMapping("search/board/{boardId}")
-    public ResponseEntity<Slice<PostResponse>> getPostByBoard(@Login Long userId, @PathVariable("boardId") Long boardId, @RequestParam("keyword") String keyword, Pageable pageable) {
+    @GetMapping("search/in-board")
+    public ResponseEntity<Slice<PostResponse>> getPostByBoard(@Login Long userId, @RequestParam("board_id") Long boardId,
+                                                              @RequestParam("input") String keyword, Pageable pageable) {
         Slice<PostResponse> postResponses = postService.searchByBoard(userId, boardId, keyword, pageable);
         return ResponseEntity.ok(postResponses);
     }
@@ -88,8 +89,8 @@ public class PostController {
     /**
      * HOT 게시판 게시글 전체 조회
      */
-    @GetMapping(value={"search/hot-board", "search/hot-board/{centerId}"})
-    public ResponseEntity<Slice<PostResponse>> getPostByHotBoard(@Login Long userId, @PathVariable(required = false, value="centerId") Long centerId, Pageable pageable) {
+    @GetMapping("search/hot-board")
+    public ResponseEntity<Slice<PostResponse>> getPostByHotBoard(@Login Long userId, @RequestParam("center_id") Long centerId, Pageable pageable) {
         Slice<PostResponse> postResponses = postService.findPostByHeartCnt(userId, centerId, pageable);
         return ResponseEntity.ok(postResponses);
     }
@@ -106,7 +107,7 @@ public class PostController {
     /**
      * 모두의 이야기 게시판 전체 조회
      */
-    @GetMapping("story")
+    @GetMapping("public-main")
     public ResponseEntity<List<BoardPreviewResponse>> getBoardDetailsByPublic(@Login Long userId) {
         List<BoardPreviewResponse> boardPreviewResponses = postService.findBoardDetailsByPublic(userId);
         return ResponseEntity.ok(boardPreviewResponses);
@@ -115,8 +116,8 @@ public class PostController {
     /**
      * 시설별 이야기 게시판 전체 조회
      */
-    @GetMapping("story/{centerId}")
-    public ResponseEntity<List<BoardPreviewResponse>> getBoardDetailsByCenter(@Login Long userId, @PathVariable("centerId") Long centerId) {
+    @GetMapping("center-main")
+    public ResponseEntity<List<BoardPreviewResponse>> getBoardDetailsByCenter(@Login Long userId, @RequestParam("center_id") Long centerId) {
         List<BoardPreviewResponse> boardPreviewResponses = postService.findBoardDetailsByCenter(userId, centerId);
         return ResponseEntity.ok(boardPreviewResponses);
     }
@@ -125,10 +126,10 @@ public class PostController {
     /**
      * 장터글 끌어올리기
      */
-    @PatchMapping ("{postId}/update")
+    @PutMapping ("{postId}/update")
     public ResponseEntity<Void> pullUp(@Login Long userId, @PathVariable("postId") Long postId) {
         postService.pullUpPost(userId, postId);
-        return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
+        return ResponseEntity.noContent().build();
     }
 
 

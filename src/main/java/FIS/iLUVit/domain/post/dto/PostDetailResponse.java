@@ -2,6 +2,7 @@ package FIS.iLUVit.domain.post.dto;
 
 import FIS.iLUVit.domain.comment.dto.CommentInPostResponse;
 import FIS.iLUVit.domain.post.domain.Post;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -18,7 +19,10 @@ import java.util.Objects;
 public class PostDetailResponse {
 
     private Long id; // 게시글 아이디
+
+    @JsonProperty("writer_id")
     private Long writerId;
+
     private String nickname;
     private Boolean anonymous;
     private LocalDate date;

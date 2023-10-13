@@ -2,6 +2,7 @@ package FIS.iLUVit.domain.post.dto;
 
 import FIS.iLUVit.domain.post.domain.Post;
 import FIS.iLUVit.domain.board.domain.BoardKind;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -12,7 +13,7 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 public class BoardPreviewResponse {
-
+    @JsonProperty("board_id")
     private Long boardId;
     private String boardName;
     private BoardKind boardKind;
@@ -21,6 +22,7 @@ public class BoardPreviewResponse {
     @Getter
     @NoArgsConstructor
     public static class PostInfo {
+        @JsonProperty("post_id")
         private Long postId;
         private String title;
         private String content;

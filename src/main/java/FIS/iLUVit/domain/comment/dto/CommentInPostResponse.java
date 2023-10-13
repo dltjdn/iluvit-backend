@@ -2,6 +2,7 @@ package FIS.iLUVit.domain.comment.dto;
 
 import FIS.iLUVit.domain.comment.domain.Comment;
 import FIS.iLUVit.domain.user.domain.User;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -15,6 +16,7 @@ import java.util.Objects;
 @NoArgsConstructor
 public class CommentInPostResponse {
     private Long id;
+    @JsonProperty("writer_id")
     private Long writerId;
     private String nickName;
     private String profileImage;

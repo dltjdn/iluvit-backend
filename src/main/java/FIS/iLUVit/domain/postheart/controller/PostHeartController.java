@@ -33,7 +33,7 @@ public class PostHeartController {
     @DeleteMapping("{postId}")
     public ResponseEntity<Void> deletePostHeart(@Login Long userId, @PathVariable("postId") Long postId){
         postHeartService.deletePostHeart(userId,postId);
-        return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
+        return ResponseEntity.noContent().build();
     }
 
 }
