@@ -10,6 +10,7 @@ plugins {
 	id 'java'
 	id "com.ewerk.gradle.plugins.querydsl" version "1.0.10"
 	id "jacoco"
+	id "org.asciidoctor.jvm.convert" version "3.3.2"
 }
 
 group = 'FIS'
@@ -20,6 +21,7 @@ configurations {
 	compileOnly {
 		extendsFrom annotationProcessor
 	}
+	asciidoctorExt
 }
 
 repositories {
@@ -98,13 +100,27 @@ dependencies {
 
 	implementation 'org.springframework.boot:spring-boot-starter-actuator'
 
+	// Spring REST Docs
+	asciidoctorExt 'org.springframework.restdocs:spring-restdocs-asciidoctor'
+	testImplementation 'org.springframework.restdocs:spring-restdocs-mockmvc'
+}
+
+ext {
+	snippetsDir = file('build/generated-snippets')
+}
+
+bootJar {
+	dependsOn asciidoctor
+	from ("${asciidoctor.outputDir}/html5") {
+		into 'static/docs'
+	}
 }
 
 // 서순이 중요하다 test -> jacocoTestReport -> jacocoTestCoverageVerification 순서로 task 진행
 test {
 	useJUnitPlatform()
 	finalizedBy 'jacocoTestReport'
-	bootJar
+	outputs.dir snippetsDir
 }
 
 // test 결과값 받는 부분을 설정하기 위한 jacocoTestReport
@@ -145,7 +161,7 @@ sourceSets {
 	main.java.srcDir querydslDir
 }
 
-compileQuerydsl{
+compileQuerydsl {
 	options.annotationProcessorPath = configurations.querydsl
 }
 configurations {
@@ -161,4 +177,10 @@ jar {
 
 tasks.withType(JavaCompile){
 	options.encoding = "UTF-8"
+}
+
+asciidoctor {
+	inputs.dir snippetsDir
+	configurations 'asciidoctorExt'
+	dependsOn test
 }
