@@ -3,9 +3,8 @@ package FIS.iLUVit.domain.comment.dto;
 import FIS.iLUVit.domain.comment.domain.Comment;
 import FIS.iLUVit.domain.user.domain.User;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
+
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.List;
@@ -14,6 +13,7 @@ import java.util.Objects;
 @Getter
 @AllArgsConstructor
 @NoArgsConstructor
+@Builder(access = AccessLevel.PRIVATE)
 public class CommentInPostResponse {
     private Long id;
     @JsonProperty("writer_id")
@@ -27,39 +27,69 @@ public class CommentInPostResponse {
     private Boolean anonymous;
     private Boolean canDelete;
     private Boolean isBlocked;  // 댓글 차단 여부
-    private List<CommentReplyResponse> answers;
+    private List<CommentInPostResponse> answers;
 
+    public static CommentInPostResponse commentOf(Comment comment, Long userId, List<CommentInPostResponse> subComments, Boolean isBlocked){
+        CommentInPostResponseBuilder builder = CommentInPostResponse.builder()
+                .id(comment.getId())
+                .heartCnt(comment.getHeartCnt())
+                .anonymous(comment.getAnonymous())
+                .content(comment.getContent())
+                .date(comment.getDate())
+                .time(comment.getTime())
+                .isBlocked(isBlocked)
+                .answers(subComments);
 
-    public CommentInPostResponse(Comment comment, Long userId, List<CommentReplyResponse> subComments, Boolean isBlocked) {
-        this.id = comment.getId();
-        User writer = comment.getUser();
-        if (writer != null) {
-            this.writerId = writer.getId();
-            if (Objects.equals(writer.getId(), userId)) {
-                this.canDelete = true;
-            } else {
-                this.canDelete = false;
-            }
+        User user = comment.getUser();
+        if (user != null) {
+            builder.writerId(user.getId());
+            builder.canDelete(Objects.equals(user.getId(), userId));
 
             if (comment.getAnonymous()) {
                 if (comment.getAnonymousOrder().equals(-1)) {
-                    this.nickName = "익명(작성자)";
+                    builder.nickName("익명(작성자)");
                 } else {
-                    this.nickName = "익명" + comment.getAnonymousOrder();
+                    builder.nickName("익명" + comment.getAnonymousOrder());
                 }
             } else {
-                this.profileImage = writer.getProfileImagePath();
-                this.nickName = writer.getNickName();
+                builder.profileImage(user.getProfileImagePath());
+                builder.nickName(user.getNickName());
             }
         }
-        this.heartCnt = comment.getHeartCnt();
-        this.anonymous = comment.getAnonymous();
-        this.content = comment.getContent();
-        this.date = comment.getDate();
-        this.time = comment.getTime();
-        this.isBlocked = isBlocked;
-        this.answers = subComments;
+        return builder.build();
     }
+
+    public static CommentInPostResponse subCommentOf(Comment comment, Long userId, Boolean isBlocked){
+        CommentInPostResponseBuilder builder = CommentInPostResponse.builder()
+                .id(comment.getId())
+                .heartCnt(comment.getHeartCnt())
+                .anonymous(comment.getAnonymous())
+                .content(comment.getContent())
+                .date(comment.getDate())
+                .time(comment.getTime())
+                .isBlocked(isBlocked);
+
+        User user = comment.getUser();
+        if (user != null) {
+            builder.writerId(user.getId());
+            builder.canDelete(Objects.equals(user.getId(), userId));
+
+            if (comment.getAnonymous()) {
+                if (comment.getAnonymousOrder().equals(-1)) {
+                    builder.nickName("익명(작성자)");
+                } else {
+                    builder.nickName("익명" + comment.getAnonymousOrder());
+                }
+            } else {
+                builder.profileImage(user.getProfileImagePath());
+                builder.nickName(user.getNickName());
+            }
+        }
+        return builder.build();
+    }
+
+
+
 
 
 }

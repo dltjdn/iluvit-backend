@@ -30,7 +30,6 @@ public class PostHeartService {
      */
     public void savePostHeart(Long userId, Long postId) {
         User user = getUser(userId);
-
         Post post = getPost(postId);
 
         // 이미 좋아요 누른 게시물이면 에러
@@ -39,7 +38,7 @@ public class PostHeartService {
                     throw new PostException(PostErrorResult.ALREADY_HEART_POST);
                 });
 
-        postHeartRepository.save(new PostHeart(user, post));
+        postHeartRepository.save(PostHeart.of(user, post));
         post.plusHeartCount(); // 좋아요 수 +1
     }
 
@@ -49,7 +48,6 @@ public class PostHeartService {
      */
     public void deletePostHeart(Long userId, Long postId){
         User user = getUser(userId);
-
         Post post = getPost(postId);
 
         PostHeart postHeart = postHeartRepository.findByUserAndPost(user, post)

@@ -4,6 +4,7 @@ import FIS.iLUVit.domain.post.domain.Post;
 import FIS.iLUVit.domain.common.domain.BaseEntity;
 import FIS.iLUVit.domain.user.domain.User;
 import lombok.AccessLevel;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.OnDelete;
@@ -28,8 +29,16 @@ public class PostHeart extends BaseEntity {
     @OnDelete(action = OnDeleteAction.CASCADE)
     private Post post;
 
+    @Builder(access = AccessLevel.PRIVATE)
     public PostHeart(User user, Post post) {
         this.user = user;
         this.post = post;
+    }
+
+    public static PostHeart of(User user, Post post){
+        return PostHeart.builder()
+                .user(user)
+                .post(post)
+                .build();
     }
 }

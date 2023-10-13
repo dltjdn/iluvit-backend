@@ -19,7 +19,7 @@ public class BoardFindStoryResponse {
     private String profileImagePath;
 
     public static BoardFindStoryResponse from(Center center){
-        BoardStoryPreviewResponseBuilder builder = BoardFindStoryResponse.builder();
+        BoardFindStoryResponseBuilder builder = BoardFindStoryResponse.builder();
 
         if(center == null){
             builder.storyName("모두의 이야기");

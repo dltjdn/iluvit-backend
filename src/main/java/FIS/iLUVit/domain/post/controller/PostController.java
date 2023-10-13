@@ -1,10 +1,10 @@
 package FIS.iLUVit.domain.post.controller;
 
+import FIS.iLUVit.domain.post.dto.PostFindByBoardResponse;
 import FIS.iLUVit.global.config.argumentResolver.Login;
-import FIS.iLUVit.domain.post.dto.BoardPreviewResponse;
-import FIS.iLUVit.domain.post.dto.PostResponse;
+import FIS.iLUVit.domain.post.dto.PostFindResponse;
 import FIS.iLUVit.domain.post.dto.PostCreateRequest;
-import FIS.iLUVit.domain.post.dto.PostDetailResponse;
+import FIS.iLUVit.domain.post.dto.PostFindDetailResponse;
 import FIS.iLUVit.domain.post.service.PostService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -51,38 +51,38 @@ public class PostController {
      * 내가 쓴 게시글 전체 조회
      */
     @GetMapping("mypage")
-    public ResponseEntity<Slice<PostResponse>> getPostByUser(@Login Long userId, Pageable pageable) {
-        Slice<PostResponse> postResponse = postService.findPostByUser(userId, pageable);
-        return ResponseEntity.ok(postResponse);
+    public ResponseEntity<Slice<PostFindResponse>> getPostByUser(@Login Long userId, Pageable pageable) {
+        Slice<PostFindResponse> responses = postService.findPostByUser(userId, pageable);
+        return ResponseEntity.ok(responses);
     }
 
     /**
      * [모두의 이야기 + 유저가 속한 센터의 이야기] 에서  게시글 제목+내용 검색
      */
     @GetMapping("search/all")
-    public ResponseEntity<Slice<PostResponse>> getPost(@Login Long userId, @RequestParam("input") String keyword, Pageable pageable) {
-        Slice<PostResponse> postResponses = postService.searchPost(userId, keyword, pageable);
-        return ResponseEntity.ok(postResponses);
+    public ResponseEntity<Slice<PostFindResponse>> getPost(@Login Long userId, @RequestParam("input") String keyword, Pageable pageable) {
+        Slice<PostFindResponse> responses = postService.searchPost(userId, keyword, pageable);
+        return ResponseEntity.ok(responses);
     }
 
     /**
      * [시설 이야기] or [모두의 이야기] 에서 게시글 제목+내용 검색
      */
     @GetMapping("search/in-center")
-    public ResponseEntity<Slice<PostResponse>> getPostByCenter(@Login Long userId, @RequestParam("center_id") Long centerId,
-                                                               @RequestParam("input") String keyword, @RequestParam("auth") String auth, Pageable pageable) {
-        Slice<PostResponse> postResponses = postService.searchPostByCenter( userId, centerId, keyword, pageable);
-        return ResponseEntity.ok(postResponses);
+    public ResponseEntity<Slice<PostFindResponse>> getPostByCenter(@Login Long userId, @RequestParam("center_id") Long centerId,
+                                                                   @RequestParam("input") String keyword, @RequestParam("auth") String auth, Pageable pageable) {
+        Slice<PostFindResponse> responses = postService.searchPostByCenter( userId, centerId, keyword, pageable);
+        return ResponseEntity.ok(responses);
     }
 
     /**
      * 각 게시판 별 게시글 제목+내용 검색
      */
     @GetMapping("search/in-board")
-    public ResponseEntity<Slice<PostResponse>> getPostByBoard(@Login Long userId, @RequestParam("board_id") Long boardId,
-                                                              @RequestParam("input") String keyword, Pageable pageable) {
-        Slice<PostResponse> postResponses = postService.searchByBoard(userId, boardId, keyword, pageable);
-        return ResponseEntity.ok(postResponses);
+    public ResponseEntity<Slice<PostFindResponse>> getPostByBoard(@Login Long userId, @RequestParam("board_id") Long boardId,
+                                                                  @RequestParam("input") String keyword, Pageable pageable) {
+        Slice<PostFindResponse> responses = postService.searchByBoard(userId, boardId, keyword, pageable);
+        return ResponseEntity.ok(responses);
     }
 
 
@@ -90,36 +90,36 @@ public class PostController {
      * HOT 게시판 게시글 전체 조회
      */
     @GetMapping("search/hot-board")
-    public ResponseEntity<Slice<PostResponse>> getPostByHotBoard(@Login Long userId, @RequestParam("center_id") Long centerId, Pageable pageable) {
-        Slice<PostResponse> postResponses = postService.findPostByHeartCnt(userId, centerId, pageable);
-        return ResponseEntity.ok(postResponses);
+    public ResponseEntity<Slice<PostFindResponse>> getPostByHotBoard(@Login Long userId, @RequestParam("center_id") Long centerId, Pageable pageable) {
+        Slice<PostFindResponse> responses = postService.findPostByHeartCnt(userId, centerId, pageable);
+        return ResponseEntity.ok(responses);
     }
 
     /**
      *  게시글 상세 조회
      */
     @GetMapping("{postId}")
-    public ResponseEntity<PostDetailResponse> getPostDetails(@Login Long userId, @PathVariable("postId") Long postId) {
-        PostDetailResponse postDetailResponse = postService.findPostByPostId(userId, postId);
-        return ResponseEntity.ok(postDetailResponse);
+    public ResponseEntity<PostFindDetailResponse> getPostDetails(@Login Long userId, @PathVariable("postId") Long postId) {
+        PostFindDetailResponse response = postService.findPostByPostId(userId, postId);
+        return ResponseEntity.ok(response);
     }
 
     /**
      * 모두의 이야기 게시판 전체 조회
      */
     @GetMapping("public-main")
-    public ResponseEntity<List<BoardPreviewResponse>> getBoardDetailsByPublic(@Login Long userId) {
-        List<BoardPreviewResponse> boardPreviewResponses = postService.findBoardDetailsByPublic(userId);
-        return ResponseEntity.ok(boardPreviewResponses);
+    public ResponseEntity<List<PostFindByBoardResponse>> getBoardDetailsByPublic(@Login Long userId) {
+        List<PostFindByBoardResponse> responses = postService.findBoardDetailsByPublic(userId);
+        return ResponseEntity.ok(responses);
     }
 
     /**
      * 시설별 이야기 게시판 전체 조회
      */
     @GetMapping("center-main")
-    public ResponseEntity<List<BoardPreviewResponse>> getBoardDetailsByCenter(@Login Long userId, @RequestParam("center_id") Long centerId) {
-        List<BoardPreviewResponse> boardPreviewResponses = postService.findBoardDetailsByCenter(userId, centerId);
-        return ResponseEntity.ok(boardPreviewResponses);
+    public ResponseEntity<List<PostFindByBoardResponse>> getBoardDetailsByCenter(@Login Long userId, @RequestParam("center_id") Long centerId) {
+        List<PostFindByBoardResponse> responses = postService.findBoardDetailsByCenter(userId, centerId);
+        return ResponseEntity.ok(responses);
     }
 
 

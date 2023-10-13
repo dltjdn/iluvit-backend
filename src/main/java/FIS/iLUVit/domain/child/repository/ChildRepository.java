@@ -40,4 +40,6 @@ public interface ChildRepository extends JpaRepository<Child, Long> {
 
     Optional<Child> findByIdAndCenter(Long childId, Center center);
 
+    List<Child> findByParentAndCenterAndApproval(Parent parent, Center center, Approval approval);
+
 }
