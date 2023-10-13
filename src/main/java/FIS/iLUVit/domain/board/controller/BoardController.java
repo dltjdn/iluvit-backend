@@ -3,7 +3,7 @@ package FIS.iLUVit.domain.board.controller;
 import FIS.iLUVit.global.config.argumentResolver.Login;
 import FIS.iLUVit.domain.board.dto.BoardFindAllResponse;
 import FIS.iLUVit.domain.board.dto.BoardCreateRequest;
-import FIS.iLUVit.domain.board.dto.BoardStoryPreviewResponse;
+import FIS.iLUVit.domain.board.dto.BoardFindStoryResponse;
 import FIS.iLUVit.domain.board.service.BoardService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -46,8 +46,8 @@ public class BoardController {
      * 이야기 (모두의 이야기 + 유저가 속한 시설의 이야기) 전체 조회
      */
     @GetMapping("home")
-    public ResponseEntity<List<BoardStoryPreviewResponse>> getAllStory(@Login Long userId) {
-        List<BoardStoryPreviewResponse> storyPreviewList = boardService.findStoryPreviewList(userId);
+    public ResponseEntity<List<BoardFindStoryResponse>> getAllStory(@Login Long userId) {
+        List<BoardFindStoryResponse> storyPreviewList = boardService.findStoryPreviewList(userId);
         return ResponseEntity.ok(storyPreviewList);
     }
 
@@ -66,7 +66,7 @@ public class BoardController {
     */
     @DeleteMapping("{boardId}")
     public ResponseEntity<Void> deleteBoard(@Login Long userId, @PathVariable("boardId") Long boardId) {
-        boardService.deleteBoardWithValidation(userId, boardId);
+        boardService.deleteBoard(userId, boardId);
         return ResponseEntity.noContent().build();
     }
 

@@ -34,7 +34,7 @@ import FIS.iLUVit.domain.user.repository.UserRepository;
 import FIS.iLUVit.domain.common.domain.Approval;
 import FIS.iLUVit.domain.common.domain.Auth;
 import FIS.iLUVit.domain.board.domain.BoardKind;
-import FIS.iLUVit.domain.board.dto.BoardPreviewResponse;
+import FIS.iLUVit.domain.post.dto.BoardPreviewResponse;
 import FIS.iLUVit.domain.comment.dto.CommentInPostResponse;
 import FIS.iLUVit.domain.comment.dto.CommentReplyResponse;
 import FIS.iLUVit.domain.post.dto.PostCreateRequest;

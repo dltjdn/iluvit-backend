@@ -1,7 +1,7 @@
 package FIS.iLUVit.domain.post.controller;
 
 import FIS.iLUVit.global.config.argumentResolver.Login;
-import FIS.iLUVit.domain.board.dto.BoardPreviewResponse;
+import FIS.iLUVit.domain.post.dto.BoardPreviewResponse;
 import FIS.iLUVit.domain.post.dto.PostResponse;
 import FIS.iLUVit.domain.post.dto.PostCreateRequest;
 import FIS.iLUVit.domain.post.dto.PostDetailResponse;

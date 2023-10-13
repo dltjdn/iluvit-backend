@@ -9,7 +9,6 @@ import lombok.NoArgsConstructor;
 import javax.validation.constraints.NotBlank;
 @Getter
 @NoArgsConstructor
-@AllArgsConstructor
 public class BoardCreateRequest {
     @NotBlank(message = "게시판 이름을 채워주세요.")
     @JsonProperty("board_name")

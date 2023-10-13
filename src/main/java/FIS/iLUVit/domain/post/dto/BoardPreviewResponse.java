@@ -1,4 +1,4 @@
-package FIS.iLUVit.domain.board.dto;
+package FIS.iLUVit.domain.post.dto;
 
 import FIS.iLUVit.domain.post.domain.Post;
 import FIS.iLUVit.domain.board.domain.BoardKind;

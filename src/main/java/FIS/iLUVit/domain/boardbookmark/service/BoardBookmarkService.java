@@ -20,8 +20,7 @@ import FIS.iLUVit.domain.user.domain.User;
 import FIS.iLUVit.domain.user.exception.UserErrorResult;
 import FIS.iLUVit.domain.user.exception.UserException;
 import FIS.iLUVit.domain.user.repository.UserRepository;
-import FIS.iLUVit.domain.board.dto.BoardBookmarkIdResponse;
-import FIS.iLUVit.domain.board.dto.BoardStoryResponse;
+import FIS.iLUVit.domain.boardbookmark.dto.BoardBookmarkFindResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -46,13 +45,8 @@ public class BoardBookmarkService {
     /**
      * 즐겨찾는 게시판 전체 조회
      */
-    public List<BoardStoryResponse> findBoardBookmarkByUser(Long userId) {
+    public List<BoardBookmarkFindResponse> findBoardBookmarkByUser(Long userId) {
         User user = getUser(userId);
-
-        List<Long> blockedUserIds = blockedRepository.findByBlockingUser(user).stream()
-                .map(Blocked::getBlockedUser)
-                .map(User::getId)
-                .collect(Collectors.toList());
 
         // 북마크한 게시판들
         List<Board> boards = boardBookmarkRepository.findByUser(user).stream()
@@ -62,77 +56,87 @@ public class BoardBookmarkService {
         // 게시판들과 게시판들이 속해있는 센터를 매핑한다 ( 모두의 이야기 게시판이면 new Center() 넣어준다 )
         Map<Center, List<Board>> centerBoardMap = boards.stream()
                 .collect(Collectors.groupingBy((board -> {
-                    return board.getCenter()==null? new Center(): board.getCenter();
+                    return board.getCenter() == null ?
+                            new Center(): board.getCenter();
                 })));
 
-        List<BoardStoryResponse> boardStoryResponses = new ArrayList<>();
+        // 차단한 사용자 id들 조회
+        List<Long> blockedUserIds = getBlockedUserIds(user);
 
-        /*
-         * 시설별로 (시설-게시판리스트) 반복문 돈다
-         */
-        centerBoardMap.forEach((center, boardList) -> {
+        List<BoardBookmarkFindResponse> boardBookmarkFindRespons = new ArrayList<>();
+        centerBoardMap.forEach((center, boardList) -> { //시설별로 (시설-게시판리스트) 반복문 돈다
+            List<BoardBookmarkFindResponse.BoardDto> boardDtoList = new ArrayList<>();
 
-            List<BoardStoryResponse.BoardDto> boardDtoList = new ArrayList<>();
-
-            /*
-             * 게시판 별로 반복문 돈다
-             */
-            boardList.forEach(board -> {
-                Long boardId = board.getId();
-                String boardName = board.getName();
-                String postTitle = null;
-                Long postId = null;
-
-                List<Post> posts = postRepository.findByBoardAndUserIdNotIn(board, blockedUserIds);
-
-                if (!posts.isEmpty()) { // 게시판에 게시물이 하나도 없을수도 있으므로 검사해줘야한다
-                    postTitle = posts.get(0).getTitle(); // 게시판의 가장 최근 게시물 하나
-                    postId = posts.get(0).getId();
-                }
-
-                BoardStoryResponse.BoardDto boardDto = new BoardStoryResponse.BoardDto(boardId, boardName, postTitle, postId);
-                boardDtoList.add(boardDto);
-            });
+            addBoardDtoList(blockedUserIds, boardList, boardDtoList); // 게시판 별로 반복문을 돈다
 
             String storyName = center.getId() == null ? "모두의 이야기" : center.getName(); // 센터 아이디 널이면 모두, 아니면 시설 이야기
 
-            BoardStoryResponse boardStoryResponse = new BoardStoryResponse(center.getId(), storyName, boardDtoList);
-
-            boardStoryResponses.add(boardStoryResponse);
+            boardBookmarkFindRespons.add(BoardBookmarkFindResponse.of(center.getId(), storyName, boardDtoList));
         });
 
-        return boardStoryResponses;
+        return boardBookmarkFindRespons;
 
     }
-
 
     /**
      * 즐겨찾는 게시판 등록
      */
-    public BoardBookmarkIdResponse saveBoardBookmark(Long userId, Long boardId) {
-        User findUser = getUser(userId);
+    public Long saveBoardBookmark(Long userId, Long boardId) {
+        User user = getUser(userId);
 
-        Board findBoard = boardRepository.findById(boardId)
+        Board board = boardRepository.findById(boardId)
                 .orElseThrow(() -> new BoardException(BoardErrorResult.BOARD_NOT_FOUND));
 
-        Bookmark bookmark = boardBookmarkRepository.save(new Bookmark(findBoard, findUser));
+        Bookmark bookmark = boardBookmarkRepository.save(Bookmark.of(board, user));
 
-        return new BoardBookmarkIdResponse(bookmark.getId());
+        return bookmark.getId();
     }
 
     /**
      * 즐겨찾는 게시판 삭제
      */
     public void deleteBoardBookmark(Long userId, Long bookmarkId) {
-        Bookmark findBookmark = boardBookmarkRepository.findById(bookmarkId)
+        Bookmark boardBookmark = boardBookmarkRepository.findById(bookmarkId)
                 .orElseThrow(() -> new BoardBookmarkException(BoardBookmarkErrorResult.BOARD_BOOKMARK_NOT_FOUND));
 
-        if (!findBookmark.getUser().getId().equals(userId)) {
+        // 즐겨찾는 게시판 삭제 권한 체크
+        if (!boardBookmark.getUser().getId().equals(userId)) {
             throw new BoardBookmarkException(BoardBookmarkErrorResult.FORBIDDEN_ACCESS);
         }
-
-        boardBookmarkRepository.delete(findBookmark);
+        boardBookmarkRepository.delete(boardBookmark);
     }
+
+    /**
+     * 차단된 유저 아이디 리스트를 조회한다
+     */
+    private List<Long> getBlockedUserIds(User user) {
+        return blockedRepository.findByBlockingUser(user).stream()
+                .map(Blocked::getBlockedUser)
+                .map(User::getId)
+                .collect(Collectors.toList());
+    }
+
+    /**
+     * 게시판 별로 반복문을 돌며 게시판 및 게시글을 boardDtoList에 더한다
+     */
+    private void addBoardDtoList(List<Long> blockedUserIds, List<Board> boardList, List<BoardBookmarkFindResponse.BoardDto> boardDtoList) {
+        boardList.forEach(board -> {
+            Long boardId = board.getId();
+            String boardName = board.getName();
+            String postTitle = null;
+            Long postId = null;
+
+            List<Post> posts = postRepository.findByBoardAndUserIdNotIn(board, blockedUserIds);
+
+            if (!posts.isEmpty()) { // 게시판에 게시물이 하나도 없을수도 있으므로 검사해줘야한다
+                postTitle = posts.get(0).getTitle(); // 게시판의 가장 최근 게시물 하나
+                postId = posts.get(0).getId();
+            }
+
+            boardDtoList.add(BoardBookmarkFindResponse.BoardDto.of(boardId, boardName, postTitle, postId));
+        });
+    }
+
 
     /**
      * 해당 시설과 연관된 게시판의 게시판 즐겨찾기를 삭제한다
@@ -155,7 +159,7 @@ public class BoardBookmarkService {
      * 기본 게시판들을 게시판 즐겨찾기에 추가
      */
     public void saveDefaultBoardBookmark(Center center, User user){
-        List<Board> defaultBoards = null;
+        List<Board> defaultBoards;
         if(center == null){
             defaultBoards = boardRepository.findByCenterIsNullAndIsDefaultTrue();
         }
