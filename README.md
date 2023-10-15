@@ -16,7 +16,8 @@
 ![스크린샷 2022-09-08 오후 2 25 30](https://user-images.githubusercontent.com/65563854/189041137-e20d5278-fbbd-48f2-b545-b9219e09bf08.png)
 
 ## API Document
-- [API 명세서 노션](https://half-turn-bb0.notion.site/API-ILUVIT-4f0bd47ebe8c43f1ab3ec475389b3898?pvs=4)
+- [API V1 명세서](https://api.iluvit.app/swagger-ui/index.html#/) 
+- [API V2 명세서](https://half-turn-bb0.notion.site/API-V2-ILUVIT-4f0bd47ebe8c43f1ab3ec475389b3898?pvs=4)
 <br><br>
 
 ## Commit Convention
