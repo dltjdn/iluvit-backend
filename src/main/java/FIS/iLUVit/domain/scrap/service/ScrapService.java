@@ -59,15 +59,13 @@ public class ScrapService {
     /**
      * 스크랩 폴더 추가하기
      */
-    public ScrapIdResponse saveNewScrapDir(Long userId, ScrapDirRequest request) {
+    public List<ScrapDirResponse> saveNewScrapDir(Long userId, ScrapDirCreateequest request) {
         User user = getUser(userId);
 
         Scrap newScrap = Scrap.of(user, request.getName());
         scrapRepository.save(newScrap);
-        ScrapIdResponse scrapIdResponse = new ScrapIdResponse(newScrap.getId());
 
-        // 스크랩 파일을 추가한 상태의 전체 스크랩 파일 목록 가져오기
-        return scrapIdResponse;
+        return findScrapDirList(userId); // 스크랩 폴더 목록 가져오기
     }
 
     /**

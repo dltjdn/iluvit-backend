@@ -8,7 +8,7 @@ import javax.validation.constraints.NotEmpty;
 @Getter
 @AllArgsConstructor
 @NoArgsConstructor
-public class ScrapDirRequest {
+public class ScrapDirCreateequest {
     @NotEmpty(message = "입력되지 않은 목록이 있습니다.")
     private String name;
 }

@@ -41,7 +41,7 @@ public class ScrapController {
     @DeleteMapping("post/{scrapPostId}")
     public ResponseEntity<Void> deleteScrapPost(@Login Long userId, @PathVariable("scrapPostId") Long scrapPostId) {
         scrapService.deleteScrapPost(userId, scrapPostId);
-        return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
+        return ResponseEntity.noContent().build();
     }
 
     /**
@@ -57,9 +57,9 @@ public class ScrapController {
      * 스크랩 폴더 생성
      */
     @PostMapping("dir")
-    public ResponseEntity<ScrapIdResponse> createScrapDir(@Login Long userId, @Valid @RequestBody ScrapDirRequest request) {
-        ScrapIdResponse scrapIdResponse = scrapService.saveNewScrapDir(userId, request);
-        return ResponseEntity.status(HttpStatus.CREATED).body(scrapIdResponse);
+    public ResponseEntity<List<ScrapDirResponse>> createScrapDir(@Login Long userId, @Valid @RequestBody ScrapDirCreateequest request) {
+        List<ScrapDirResponse> responses = scrapService.saveNewScrapDir(userId, request);
+        return ResponseEntity.status(HttpStatus.CREATED).body(responses);
     }
 
     /**
@@ -68,7 +68,7 @@ public class ScrapController {
     @PutMapping("dir/name")
     public ResponseEntity<Void> updateScrapDir(@Login Long userId, @Valid @RequestBody ScrapDirDetailRequest request) {
         scrapService.modifyScrapDirName(userId, request);
-        return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
+        return ResponseEntity.noContent().build();
     }
 
     /**
@@ -77,7 +77,7 @@ public class ScrapController {
     @DeleteMapping("dir/{scrapDirId}")
     public ResponseEntity<Void> deleteScrapDir(@Login Long userId, @PathVariable("scrapDirId") Long scrapDirId) {
         scrapService.deleteScrapDir(userId, scrapDirId);
-        return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
+        return ResponseEntity.noContent().build();
     }
 
     /**

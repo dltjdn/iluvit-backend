@@ -1,6 +1,7 @@
 package FIS.iLUVit.domain.scrap.dto;
 
 import FIS.iLUVit.domain.scrap.domain.ScrapPost;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -11,26 +12,34 @@ import java.time.LocalTime;
 @AllArgsConstructor
 @NoArgsConstructor
 public class PostByScrapDirResponse {
+    @JsonProperty("post_id")
     private Long postId;
     private String title;
     private String content;
     private Boolean anonymous;
     private String nickname;    // 작성자 닉네임
+    @JsonProperty("user_id")
     private Long userId;        // 작성자 id
     private int commentCnt;
     private int heartCnt;
     private int imgCnt;
 
     private String previewImage;
+    @JsonProperty("board_id")
     private Long boardId;
+    @JsonProperty("board_name")
     private String boardName;
 
     private LocalDate date;
     private LocalTime time;
+    @JsonProperty("center_id")
 
     private Long centerId;
+
+    @JsonProperty("center_name")
     private String centerName;
 
+    @JsonProperty("scrapPost_id")
     private Long scrapPostId;
 
     public PostByScrapDirResponse(ScrapPost sp) {
