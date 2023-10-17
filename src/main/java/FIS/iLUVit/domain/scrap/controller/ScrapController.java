@@ -57,7 +57,7 @@ public class ScrapController {
      * 스크랩 폴더 생성
      */
     @PostMapping("dir")
-    public ResponseEntity<List<ScrapDirResponse>> createScrapDir(@Login Long userId, @Valid @RequestBody ScrapDirCreateequest request) {
+    public ResponseEntity<List<ScrapDirResponse>> createScrapDir(@Login Long userId, @Valid @RequestBody ScrapDirCreateRequest request) {
         List<ScrapDirResponse> responses = scrapService.saveNewScrapDir(userId, request);
         return ResponseEntity.status(HttpStatus.CREATED).body(responses);
     }
@@ -66,7 +66,7 @@ public class ScrapController {
      * 스크랩 폴더 이름 수정
      */
     @PutMapping("dir/name")
-    public ResponseEntity<Void> updateScrapDir(@Login Long userId, @Valid @RequestBody ScrapDirDetailRequest request) {
+    public ResponseEntity<Void> updateScrapDir(@Login Long userId, @Valid @RequestBody ScrapDirNameUpdateRequest request) {
         scrapService.modifyScrapDirName(userId, request);
         return ResponseEntity.noContent().build();
     }
@@ -84,17 +84,17 @@ public class ScrapController {
      * 게시물 별 스크랩 폴더 전체 조회
      */
     @GetMapping("post/{postId}/dir")
-    public ResponseEntity<List<ScrapDirByPostResponse>> getScrapDirByPost(@Login Long userId, @PathVariable("postId") Long postId) {
-        List<ScrapDirByPostResponse> scrapDirByPostResponses = scrapService.findScrapDirListByPost(userId, postId);
-        return ResponseEntity.ok().body(scrapDirByPostResponses);
+    public ResponseEntity<List<ScrapDirFindByPostResponse>> getScrapDirByPost(@Login Long userId, @PathVariable("postId") Long postId) {
+        List<ScrapDirFindByPostResponse> scrapDirFindByPostRespons = scrapService.findScrapDirListByPost(userId, postId);
+        return ResponseEntity.ok().body(scrapDirFindByPostRespons);
     }
 
     /**
      * 스크랩 폴더별 게시물 전체 조회
      */
     @GetMapping("dir/{scrapDirId}/post")
-    public ResponseEntity<Slice<PostByScrapDirResponse>> getPostByScrapDir(@Login Long userId, @PathVariable("scrapDirId") Long scrapDirId, Pageable pageable) {
-        Slice<PostByScrapDirResponse> scrapPostPreviewResponses = scrapService.findPostByScrapDir(userId, scrapDirId, pageable);
+    public ResponseEntity<Slice<ScrapDirPostsResponse>> getPostByScrapDir(@Login Long userId, @PathVariable("scrapDirId") Long scrapDirId, Pageable pageable) {
+        Slice<ScrapDirPostsResponse> scrapPostPreviewResponses = scrapService.findPostByScrapDir(userId, scrapDirId, pageable);
         return ResponseEntity.ok().body(scrapPostPreviewResponses);
     }
 

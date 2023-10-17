@@ -30,16 +30,15 @@ public class ScrapPost extends BaseEntity {
     private Scrap scrap;
 
     @Builder
-    public ScrapPost(Long id, Post post, Scrap scrap) {
-        this.id = id;
+    public ScrapPost(Post post, Scrap scrap) {
         this.post = post;
         this.scrap = scrap;
     }
 
-    public static ScrapPost createScrapPost(Post post, Scrap scrap) {
-        ScrapPost scrapPost = new ScrapPost();
-        scrapPost.post = post;
-        scrapPost.scrap = scrap;
-        return scrapPost;
+    public static ScrapPost of(Post post, Scrap scrap) {
+        return ScrapPost.builder()
+                .post(post)
+                .scrap(scrap)
+                .build();
     }
 }

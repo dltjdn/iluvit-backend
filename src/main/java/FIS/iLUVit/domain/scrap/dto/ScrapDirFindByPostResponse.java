@@ -3,21 +3,24 @@ package FIS.iLUVit.domain.scrap.dto;
 import FIS.iLUVit.domain.scrap.domain.Scrap;
 import lombok.*;
 
+import java.util.Objects;
+
 @Getter
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder(access = AccessLevel.PRIVATE)
-public class ScrapDirResponse {
+public class ScrapDirFindByPostResponse {
     private Long scrapId;
     private String name;
-    private Integer postsNum;
+    private Boolean hasPost;
 
-
-    public static ScrapDirResponse from(Scrap scrap){
-        return ScrapDirResponse.builder()
+    public static ScrapDirFindByPostResponse of(Scrap scrap, boolean hasPost){
+        return ScrapDirFindByPostResponse.builder()
                 .scrapId(scrap.getId())
                 .name(scrap.getName())
-                .postsNum(scrap.getScrapPosts().size())
+                .hasPost(hasPost)
                 .build();
-        }
+    }
+
+
 }
