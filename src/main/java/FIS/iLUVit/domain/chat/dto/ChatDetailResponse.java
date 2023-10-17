@@ -4,6 +4,7 @@ import FIS.iLUVit.domain.center.domain.Center;
 import FIS.iLUVit.domain.chat.domain.Chat;
 import FIS.iLUVit.domain.chat.domain.ChatRoom;
 import FIS.iLUVit.domain.post.domain.Post;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.springframework.data.domain.Slice;
@@ -14,26 +15,46 @@ import java.time.LocalTime;
 @Getter
 @NoArgsConstructor
 public class ChatDetailResponse {
+    @JsonProperty("room_id")
     private Long roomId;
+    @JsonProperty("center_id")
     private Long centerId;
     private String centerName; // centerId null이면 모두의 이야기
+
+    @JsonProperty("board_id")
     private Long boardId;
     private String boardName;
+
+    @JsonProperty("post_id")
     private Long postId;
+
+    @JsonProperty("comment_id")
     private Long commentId;
     private Slice<ChatInfo> chatList;
+
+    @JsonProperty("my_id")
     private Long myId;
     private Boolean anonymous;
+
+    @JsonProperty("opponent_id")
     private Long opponentId;
+
+    @JsonProperty("opponent_nickname")
     private String opponentNickname;
+
+    @JsonProperty("opponent_image")
     private String opponentImage;
     private Boolean opponentIsBlocked; // 쪽지를 보낸 유저가 차단된 유저인지 판단
 
     @Getter
     @NoArgsConstructor
     public static class ChatInfo {
+        @JsonProperty("chat_id")
         private Long chatId;
+
+        @JsonProperty("sender_id")
         private Long senderId;
+        @JsonProperty("receiver_id")
         private Long receiverId;
         private LocalDate date;
         private LocalTime time;

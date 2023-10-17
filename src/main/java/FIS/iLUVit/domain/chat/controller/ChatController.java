@@ -47,8 +47,8 @@ public class ChatController {
      */
     @GetMapping("")
     public ResponseEntity<Slice<ChatRoomResponse>> getAllChatRoom(@Login Long userId, Pageable pageable) {
-        Slice<ChatRoomResponse> chatListDtos = chatService.findChatRoomList(userId, pageable);
-        return ResponseEntity.ok(chatListDtos);
+        Slice<ChatRoomResponse> responses = chatService.findChatRoomList(userId, pageable);
+        return ResponseEntity.ok(responses);
     }
 
     /**
@@ -56,8 +56,8 @@ public class ChatController {
      */
     @GetMapping("{roomId}")
     public ResponseEntity<ChatDetailResponse> getChatRoomDetails(@Login Long userId, @PathVariable("roomId") Long roomId, Pageable pageable) {
-        ChatDetailResponse chatListDtos = chatService.findChatRoomDetails(userId, roomId, pageable);
-        return ResponseEntity.ok(chatListDtos);
+        ChatDetailResponse responses = chatService.findChatRoomDetails(userId, roomId, pageable);
+        return ResponseEntity.ok(responses);
     }
 
     /**
@@ -66,7 +66,7 @@ public class ChatController {
     @DeleteMapping("{roomId}")
     public ResponseEntity<Void> deleteChatRoom(@Login Long userId, @PathVariable("roomId") Long roomId) {
         chatService.deleteChatRoom(userId, roomId);
-        return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
+        return ResponseEntity.noContent().build();
     }
 
 }
