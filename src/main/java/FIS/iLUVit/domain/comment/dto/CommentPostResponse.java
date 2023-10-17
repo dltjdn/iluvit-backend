@@ -2,13 +2,15 @@ package FIS.iLUVit.domain.comment.dto;
 
 import FIS.iLUVit.domain.comment.domain.Comment;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
+
 import java.time.LocalDate;
 import java.time.LocalTime;
 
 @Getter
 @NoArgsConstructor
+@AllArgsConstructor
+@Builder(access = AccessLevel.PRIVATE)
 public class CommentPostResponse {
     private Long id;
     private LocalDate date;          // 게시글 작성 날짜
@@ -51,5 +53,28 @@ public class CommentPostResponse {
         } else {
             this.centerName = "모두의 이야기";
         }
+    }
+
+    public static CommentPostResponse from(Comment comment){
+        CommentPostResponseBuilder builder = CommentPostResponse.builder()
+                .id(comment.getId())
+                .date(comment.getDate())
+                .time(comment.getTime())
+                .anonymous(comment.getAnonymous())
+                .content(comment.getContent())
+                .postId(comment.getPost().getId())
+                .postTitle(comment.getPost().getTitle())
+                .heartCnt(comment.getPost().getHeartCnt())
+                .userId(comment.getUser().getId())
+                .boardId(comment.getPost().getBoard().getId())
+                .boardName(comment.getPost().getBoard().getName());
+
+        if (comment.getPost().getBoard().getCenter() != null) {
+            builder.centerId(comment.getPost().getBoard().getCenter().getId())
+                    .centerName(comment.getPost().getBoard().getCenter().getName());
+        } else {
+            builder.centerName("모두의 이야기");
+        }
+        return builder.build();
     }
 }

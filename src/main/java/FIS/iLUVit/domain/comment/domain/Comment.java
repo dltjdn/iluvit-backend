@@ -60,14 +60,28 @@ public class Comment extends BaseEntity {
         this.heartCnt = 0;
     }
 
+    public static Comment of(Boolean anonymous, String content, Post post, User user, Integer anonymousOrder){
+        Comment comment = Comment.builder()
+                .anonymous(anonymous)
+                .content(content)
+                .post(post)
+                .user(user)
+                .date(LocalDate.now())
+                .time(LocalTime.now())
+                .anonymousOrder(anonymousOrder)
+                .heartCnt(0)
+                .build();
+        post.updateComment(comment);
+        return comment;
+    }
+
     public void updateParentComment(Comment parentComment) {
         this.parentComment = parentComment;
         parentComment.getSubComments().add(this);
     }
 
-    @Builder(toBuilder = true)
-    public Comment(Long id, LocalDate date, LocalTime time, Boolean anonymous, String content, Integer anonymousOrder, Integer heartCnt, Post post, User user, List<Comment> subComments, Comment parentComment) {
-        this.id = id;
+    @Builder(access = AccessLevel.PRIVATE)
+    public Comment(LocalDate date, LocalTime time, Boolean anonymous, String content, Integer anonymousOrder, Integer heartCnt, Post post, User user, List<Comment> subComments, Comment parentComment) {
         this.date = date;
         this.time = time;
         this.anonymous = anonymous;
@@ -79,8 +93,6 @@ public class Comment extends BaseEntity {
         this.subComments = subComments;
         this.parentComment = parentComment;
     }
-
-
 
     public void deleteComment() {
         this.content = "삭제된 댓글입니다.";

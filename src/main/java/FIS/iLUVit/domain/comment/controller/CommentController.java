@@ -38,7 +38,7 @@ public class CommentController {
     @PatchMapping("{commentId}")
     public ResponseEntity<Void> deleteComment(@Login Long userId, @PathVariable("commentId") Long commentId) {
         commentService.deleteComment(userId, commentId);
-        return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
+        return ResponseEntity.noContent().build();
     }
 
     /**

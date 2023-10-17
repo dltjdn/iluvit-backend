@@ -8,9 +8,11 @@ import FIS.iLUVit.domain.alarm.dto.AlarmResponse;
 import FIS.iLUVit.domain.alarm.repository.AlarmRepository;
 import FIS.iLUVit.domain.center.domain.Center;
 import FIS.iLUVit.domain.centerbookmark.repository.CenterBookmarkRepository;
+import FIS.iLUVit.domain.comment.domain.Comment;
 import FIS.iLUVit.domain.common.domain.Auth;
 import FIS.iLUVit.domain.common.domain.NotificationTitle;
 import FIS.iLUVit.domain.parent.domain.Parent;
+import FIS.iLUVit.domain.post.domain.Post;
 import FIS.iLUVit.domain.presentation.domain.Presentation;
 import FIS.iLUVit.domain.teacher.domain.Teacher;
 import FIS.iLUVit.domain.user.domain.User;
@@ -146,6 +148,13 @@ public class AlarmService {
 
     public void sendCenterApprovalAcceptedAlarm(Parent parent, Center center){
         Alarm alarm = new CenterApprovalAcceptedAlarm(parent, center);
+        alarmRepository.save(alarm);
+        AlarmUtils.publishAlarmEvent(alarm, NotificationTitle.ILUVIT.getDescription());
+    }
+
+
+    public void sendPostAlarm(Post post, Comment comment) {
+        Alarm alarm = new PostAlarm(post.getUser(), post, comment);
         alarmRepository.save(alarm);
         AlarmUtils.publishAlarmEvent(alarm, NotificationTitle.ILUVIT.getDescription());
     }
