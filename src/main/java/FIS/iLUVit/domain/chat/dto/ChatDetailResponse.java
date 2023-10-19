@@ -111,35 +111,6 @@ public class ChatDetailResponse {
         return builder.build();
     }
 
-    public ChatDetailResponse(ChatRoom chatRoom, Slice<Chat> chatList, Boolean opponentIsBlocked) {
-        Post getPost = chatRoom.getPost();
-        if (getPost != null) {
-            this.boardId = getPost.getBoard().getId();
-            this.boardName = getPost.getBoard().getName();
-            this.postId = getPost.getId();
-            Center getCenter = getPost.getBoard().getCenter();
-            if (getCenter != null) {
-                this.centerId = getPost.getBoard().getCenter().getId();
-                this.centerName = getPost.getBoard().getCenter().getName() + "의 이야기";
-            } else {
-                this.centerName = "모두의 이야기";
-            }
-        }
-        this.roomId = chatRoom.getId();
-        if (chatRoom.getComment() != null) {
-            this.commentId = chatRoom.getComment().getId();
-        }
-        this.chatList = chatList;
-        if (chatRoom.getReceiver() != null) {
-            this.myId = chatRoom.getReceiver().getId();
-        }
-        this.anonymous = chatRoom.getAnonymous();
-        if (chatRoom.getSender() != null) {
-            this.opponentId = chatRoom.getSender().getId();
-            this.opponentNickname = chatRoom.getSender().getNickName();
-        }
-        this.opponentIsBlocked = opponentIsBlocked;
-    }
 
 
 }

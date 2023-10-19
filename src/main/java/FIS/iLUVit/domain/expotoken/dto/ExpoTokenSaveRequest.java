@@ -7,7 +7,6 @@ import javax.validation.constraints.NotNull;
 
 @Getter
 @NoArgsConstructor
-@AllArgsConstructor
 public class ExpoTokenSaveRequest {
 
     @NotNull(message = "토큰 값을 정확히 넣어주세요.")

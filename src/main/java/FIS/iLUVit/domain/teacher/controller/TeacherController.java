@@ -1,12 +1,9 @@
 package FIS.iLUVit.domain.teacher.controller;
 
+import FIS.iLUVit.domain.teacher.dto.*;
 import FIS.iLUVit.global.config.argumentResolver.Login;
 import FIS.iLUVit.domain.center.dto.CenterFindForUserResponse;
 import FIS.iLUVit.domain.center.dto.CenterFindForUserRequest;
-import FIS.iLUVit.domain.teacher.dto.TeacherSignupRequest;
-import FIS.iLUVit.domain.teacher.dto.TeacherUpdateRequest;
-import FIS.iLUVit.domain.teacher.dto.TeacherFindOneResponse;
-import FIS.iLUVit.domain.teacher.dto.TeacherInfoForAdminResponse;
 import FIS.iLUVit.domain.teacher.service.TeacherService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -17,7 +14,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
-import java.io.IOException;
 import java.util.List;
 
 @Slf4j
@@ -36,9 +32,9 @@ public class TeacherController {
      * 교사 정보 상세 조회
      */
     @GetMapping("")
-    public ResponseEntity<TeacherFindOneResponse> getTeacherDetail(@Login Long userId) {
-        TeacherFindOneResponse teacherFindOneResponse = teacherService.findTeacherDetails(userId);
-        return ResponseEntity.ok(teacherFindOneResponse);
+    public ResponseEntity<TeacherFindOneDetailResponse> getTeacherDetail(@Login Long userId) {
+        TeacherFindOneDetailResponse teacherBasicInfoResponse = teacherService.findTeacherDetails(userId);
+        return ResponseEntity.ok(teacherBasicInfoResponse);
     }
 
     /**

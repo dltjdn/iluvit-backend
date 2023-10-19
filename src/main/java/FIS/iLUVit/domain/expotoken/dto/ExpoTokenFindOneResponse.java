@@ -6,14 +6,14 @@ import lombok.Getter;
 
 @Getter
 @AllArgsConstructor
-public class ExpoTokenResponse {
+public class ExpoTokenFindOneResponse {
     private Long id;
     private String token;
     private String deviceId;
     private Boolean active;
     private Boolean accept;
 
-    public ExpoTokenResponse(ExpoToken expoToken) {
+    public ExpoTokenFindOneResponse(ExpoToken expoToken) {
         this.id = expoToken.getId();
         this.token = expoToken.getToken();
         this.deviceId = expoToken.getDeviceId();

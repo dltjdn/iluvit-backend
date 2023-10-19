@@ -20,10 +20,7 @@ import FIS.iLUVit.domain.common.service.MapService;
 import FIS.iLUVit.domain.scrap.repository.ScrapRepository;
 import FIS.iLUVit.domain.scrap.service.ScrapService;
 import FIS.iLUVit.domain.teacher.domain.Teacher;
-import FIS.iLUVit.domain.teacher.dto.TeacherFindOneResponse;
-import FIS.iLUVit.domain.teacher.dto.TeacherInfoForAdminResponse;
-import FIS.iLUVit.domain.teacher.dto.TeacherSignupRequest;
-import FIS.iLUVit.domain.teacher.dto.TeacherUpdateRequest;
+import FIS.iLUVit.domain.teacher.dto.*;
 import FIS.iLUVit.domain.teacher.repository.TeacherRepository;
 import FIS.iLUVit.domain.user.exception.UserErrorResult;
 import FIS.iLUVit.domain.user.exception.UserException;
@@ -70,10 +67,10 @@ public class TeacherService {
     /**
      * 교사의 상세 정보를 조회합니다
      */
-    public TeacherFindOneResponse findTeacherDetails(Long userId) {
+    public TeacherFindOneDetailResponse findTeacherDetails(Long userId) {
         Teacher teacher = getTeacher(userId);
 
-        return TeacherFindOneResponse.from(teacher);
+        return TeacherFindOneDetailResponse.from(teacher);
     }
 
 

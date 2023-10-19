@@ -2,7 +2,6 @@ package FIS.iLUVit.domain.authnum.controller;
 
 import FIS.iLUVit.global.config.argumentResolver.Login;
 import FIS.iLUVit.domain.authnum.dto.AuthRequest;
-import FIS.iLUVit.domain.authnum.dto.AuthLoginIdResponse;
 import FIS.iLUVit.domain.authnum.dto.AuthFindPasswordRequest;
 import FIS.iLUVit.domain.authnum.service.AuthService;
 import lombok.RequiredArgsConstructor;
@@ -74,21 +73,22 @@ public class AuthController {
         authService.authenticateAuthNumForChangingPhoneNum(userId, request);
     }
 
+
     /**
      * (아이디찾기) 인증번호 인증 후 유저 아이디 반환
      */
     @PostMapping("loginid")
-    public ResponseEntity<AuthLoginIdResponse> authenticateAuthNumForFindLoginId(@RequestBody AuthRequest authRequest) {
-        AuthLoginIdResponse authLoginIdResponse = authService.authenticateAuthNumForFindLoginId(authRequest);
-        return ResponseEntity.ok(authLoginIdResponse);
+    public ResponseEntity<String> authenticateAuthNumForFindLoginId(@RequestBody AuthRequest request) {
+        String response = authService.authenticateAuthNumForFindLoginId(request);
+        return ResponseEntity.ok(response);
     }
 
     /**
      * (비밀번호 변경용 비밀번호찾기) 인증이 완료된 핸드폰번호인지 확인 후 비밀번호 변경
      */
     @PostMapping("password")
-    public ResponseEntity<Void> authenticateAuthNumForChangePwd(@RequestBody @Valid AuthFindPasswordRequest authFindPasswordRequest) {
-        authService.authenticateAuthNumForChangePwd(authFindPasswordRequest);
+    public ResponseEntity<Void> authenticateAuthNumForChangePwd(@RequestBody @Valid AuthFindPasswordRequest request) {
+        authService.authenticateAuthNumForChangePwd(request);
         return ResponseEntity.ok().build();
     }
 

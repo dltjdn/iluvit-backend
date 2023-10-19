@@ -5,7 +5,7 @@ import FIS.iLUVit.domain.common.domain.Location;
 import FIS.iLUVit.domain.teacher.dto.TeacherSignupRequest;
 import FIS.iLUVit.domain.user.domain.User;
 import FIS.iLUVit.domain.teacher.dto.TeacherLoginResponse;
-import FIS.iLUVit.domain.teacher.dto.TeacherBasicInfoResponse;
+import FIS.iLUVit.domain.teacher.dto.TeacherFindOneResponse;
 import FIS.iLUVit.domain.teacher.dto.TeacherUpdateRequest;
 import FIS.iLUVit.domain.user.dto.UserFindOneResponse;
 import FIS.iLUVit.domain.common.domain.Approval;
@@ -103,7 +103,7 @@ public class Teacher extends User {
 
     @Override
     public UserFindOneResponse getUserInfo() {
-        return new TeacherBasicInfoResponse(id, nickName, auth, center, approval);
+        return new TeacherFindOneResponse(id, nickName, auth, center, approval);
     }
 
     public void beDirector() {
