@@ -76,13 +76,9 @@ public class AlarmService {
     /**
      * 전체 알림 읽었는지 안 읽었는지 여부를 조회합니다
      */
-    public AlarmReadResponse hasRead(Long userId) {
-        Boolean readAlarm = getUser(userId)
+    public Boolean hasRead(Long userId) {
+        return getUser(userId)
                 .getReadAlarm();
-
-        AlarmReadResponse alarmReadResponse = new AlarmReadResponse(readAlarm);
-
-        return alarmReadResponse;
     }
 
     /**
