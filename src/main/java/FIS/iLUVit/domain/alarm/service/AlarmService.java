@@ -159,6 +159,13 @@ public class AlarmService {
         AlarmUtils.publishAlarmEvent(alarm, NotificationTitle.ILUVIT.getDescription());
     }
 
+    public void sendChatAlarm(User user, Boolean anonymousInfo, User receiveUser) {
+        Alarm alarm = new ChatAlarm(receiveUser, user, anonymousInfo);
+        alarmRepository.save(alarm);
+        AlarmUtils.publishAlarmEvent(alarm, NotificationTitle.ILUVIT.getDescription());
+    }
+
+
 
     /**
      * 예외처리 - 존재하는 유저인가

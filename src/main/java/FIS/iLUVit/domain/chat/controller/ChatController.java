@@ -3,7 +3,7 @@ package FIS.iLUVit.domain.chat.controller;
 
 import FIS.iLUVit.global.config.argumentResolver.Login;
 import FIS.iLUVit.domain.chat.dto.ChatDetailResponse;
-import FIS.iLUVit.domain.chat.dto.ChatRoomResponse;
+import FIS.iLUVit.domain.chat.dto.ChatRoomFindAllResponse;
 import FIS.iLUVit.domain.chat.dto.ChatRoomCreateRequest;
 import FIS.iLUVit.domain.chat.dto.ChatCreateRequest;
 import FIS.iLUVit.domain.chat.service.ChatService;
@@ -46,8 +46,8 @@ public class ChatController {
      * 대화방 전체 조회
      */
     @GetMapping("")
-    public ResponseEntity<Slice<ChatRoomResponse>> getAllChatRoom(@Login Long userId, Pageable pageable) {
-        Slice<ChatRoomResponse> responses = chatService.findChatRoomList(userId, pageable);
+    public ResponseEntity<Slice<ChatRoomFindAllResponse>> getAllChatRoom(@Login Long userId, Pageable pageable) {
+        Slice<ChatRoomFindAllResponse> responses = chatService.findChatRoomList(userId, pageable);
         return ResponseEntity.ok(responses);
     }
 
