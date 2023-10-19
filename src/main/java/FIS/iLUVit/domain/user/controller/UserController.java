@@ -1,17 +1,12 @@
 package FIS.iLUVit.domain.user.controller;
 
+import FIS.iLUVit.domain.user.dto.*;
 import FIS.iLUVit.global.config.argumentResolver.Login;
-import FIS.iLUVit.domain.user.dto.PasswordUpdateRequest;
 import FIS.iLUVit.domain.tokenpair.dto.TokenRefreshRequest;
-import FIS.iLUVit.domain.user.dto.UserBasicInfoResponse;
-import FIS.iLUVit.domain.user.dto.VersionInfoResponse;
-import FIS.iLUVit.domain.user.dto.LoginRequestDto;
-import FIS.iLUVit.domain.user.dto.UserInfoResponse;
 import FIS.iLUVit.domain.user.service.UserService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.core.env.Environment;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -33,8 +28,8 @@ public class UserController {
      * 유저 상세 조회
      */
     @GetMapping("user")
-    public ResponseEntity<UserBasicInfoResponse> getUserDetails(@Login Long id) {
-        UserBasicInfoResponse userBasicInfoResponse = userService.findUserDetails(id);
+    public ResponseEntity<UserFindOneResponse> getUserDetails(@Login Long id) {
+        UserFindOneResponse userBasicInfoResponse = userService.findUserDetails(id);
         return ResponseEntity.ok(userBasicInfoResponse);
     }
 
@@ -42,56 +37,63 @@ public class UserController {
     * 아이디 중복 조회
     */
     @GetMapping("check-loginid")
-    public ResponseEntity<Void> checkLoginId(@RequestParam String loginId) {
-        userService.checkLoginIdAvailability(loginId);
-        return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
+    public ResponseEntity<Void> checkLoginId(@RequestBody UserCheckDuplicateLoginIdRequest request) {
+        userService.checkLoginIdAvailability(request);
+        return ResponseEntity.noContent().build();
     }
 
     /**
     * 닉네임 중복 조회
     */
     @GetMapping("check-nickname")
-    public ResponseEntity<Void> checkNickname(@RequestParam String nickname) {
-        userService.checkNicknameAvailability(nickname);
-        return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
+    public ResponseEntity<Void> checkNickname(@RequestBody UserCheckDuplicateNicknameRequest request) {
+        userService.checkNicknameAvailability(request);
+        return ResponseEntity.noContent().build();
     }
 
     /**
      * 비밀번호 변경
      */
     @PutMapping("password")
-    public ResponseEntity<Void> updatePassword(@Login Long id, @Valid @RequestBody PasswordUpdateRequest request) {
+    public ResponseEntity<Void> updatePassword(@Login Long id, @Valid @RequestBody UserPasswordUpdateRequest request) {
         userService.changePassword(id, request);
-        return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
+        return ResponseEntity.noContent().build();
     }
 
     /**
      * 유저 로그인
      */
     @PostMapping("login")
-    public ResponseEntity<UserInfoResponse> login(@RequestBody LoginRequestDto request) {
-        UserInfoResponse userInfoResponse = userService.login(request);
-        return ResponseEntity.ok(userInfoResponse);
+    public ResponseEntity<UserLoginResponse> login(@RequestBody UserLoginRequest request) {
+        UserLoginResponse userLoginResponse = userService.login(request);
+        return ResponseEntity.ok(userLoginResponse);
     }
 
     /**
      * 토큰 재발급
      */
     @PostMapping("refresh")
-    public ResponseEntity<UserInfoResponse> refreshToken(@Valid @RequestBody TokenRefreshRequest request) {
-        UserInfoResponse userInfoResponse = userService.refreshAccessToken(request);
-        return ResponseEntity.ok(userInfoResponse);
+    public ResponseEntity<UserLoginResponse> refreshToken(@Valid @RequestBody TokenRefreshRequest request) {
+        UserLoginResponse userLoginResponse = userService.refreshAccessToken(request);
+        return ResponseEntity.ok(userLoginResponse);
     }
 
     /**
-     * 앱 버전 확인
+     * AOS 버전 확인
      */
-    @GetMapping("version")
-    public ResponseEntity<VersionInfoResponse> getVersion() {
-        String iosVersion = env.getProperty("version.ios");
+    @GetMapping("version/aos")
+    public ResponseEntity<String> getAosVersion() {
         String aosVersion = env.getProperty("version.aos");
-        VersionInfoResponse versionInfoResponse = new VersionInfoResponse(iosVersion, aosVersion);
-        return ResponseEntity.ok(versionInfoResponse);
+        return ResponseEntity.ok(aosVersion);
+    }
+
+    /**
+     * IOS 버전 확인
+     */
+    @GetMapping("version/ios")
+    public ResponseEntity<String> getIosVersion() {
+        String iosVersion = env.getProperty("version.ios");
+        return ResponseEntity.ok(iosVersion);
     }
 
 }

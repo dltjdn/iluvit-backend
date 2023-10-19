@@ -7,10 +7,10 @@ import FIS.iLUVit.domain.participation.domain.Participation;
 import FIS.iLUVit.domain.user.domain.User;
 import FIS.iLUVit.domain.waiting.domain.Waiting;
 import FIS.iLUVit.domain.parent.dto.ParentUpdateRequest;
-import FIS.iLUVit.domain.user.dto.UserBasicInfoResponse;
+import FIS.iLUVit.domain.user.dto.UserFindOneResponse;
 import FIS.iLUVit.domain.center.domain.Theme;
 import FIS.iLUVit.domain.common.domain.Auth;
-import FIS.iLUVit.domain.user.dto.UserInfoResponse;
+import FIS.iLUVit.domain.user.dto.UserLoginResponse;
 import lombok.*;
 import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
@@ -95,13 +95,13 @@ public class Parent extends User {
     }
 
     @Override
-    public UserInfoResponse getLoginInfo() {
-        return new UserInfoResponse(this);
+    public UserLoginResponse getLoginInfo() {
+        return new UserLoginResponse(this);
     }
 
     @Override
-    public UserBasicInfoResponse getUserInfo() {
-        return new UserBasicInfoResponse(id, nickName, auth);
+    public UserFindOneResponse getUserInfo() {
+        return new UserFindOneResponse(id, nickName, auth);
     }
 
 }

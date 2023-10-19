@@ -7,12 +7,12 @@ import FIS.iLUVit.domain.user.domain.User;
 import FIS.iLUVit.domain.teacher.dto.TeacherLoginResponse;
 import FIS.iLUVit.domain.teacher.dto.TeacherBasicInfoResponse;
 import FIS.iLUVit.domain.teacher.dto.TeacherUpdateRequest;
-import FIS.iLUVit.domain.user.dto.UserBasicInfoResponse;
+import FIS.iLUVit.domain.user.dto.UserFindOneResponse;
 import FIS.iLUVit.domain.common.domain.Approval;
 import FIS.iLUVit.domain.common.domain.Auth;
 import FIS.iLUVit.domain.user.exception.UserErrorResult;
 import FIS.iLUVit.domain.user.exception.UserException;
-import FIS.iLUVit.domain.user.dto.UserInfoResponse;
+import FIS.iLUVit.domain.user.dto.UserLoginResponse;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
@@ -97,12 +97,12 @@ public class Teacher extends User {
     }
 
     @Override
-    public UserInfoResponse getLoginInfo() {
+    public UserLoginResponse getLoginInfo() {
         return new TeacherLoginResponse(this);
     }
 
     @Override
-    public UserBasicInfoResponse getUserInfo() {
+    public UserFindOneResponse getUserInfo() {
         return new TeacherBasicInfoResponse(id, nickName, auth, center, approval);
     }
 
