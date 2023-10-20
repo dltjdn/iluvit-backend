@@ -1,0 +1,4 @@
+== User
+
+=== 유저 상세 조회
+operation::find-one-user[snippets='http-request,http-response,response-fields']
