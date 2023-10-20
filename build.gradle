@@ -32,6 +32,10 @@ jacoco {
 	toolVersion = "0.8.8"
 }
 
+ext {
+	snippetsDir = file('build/generated-snippets')
+}
+
 dependencies {
 	implementation "com.querydsl:querydsl-jpa:${queryDslVersion}"
 	implementation "com.querydsl:querydsl-apt:${queryDslVersion}"
@@ -105,17 +109,6 @@ dependencies {
 	testImplementation 'org.springframework.restdocs:spring-restdocs-mockmvc'
 }
 
-ext {
-	snippetsDir = file('build/generated-snippets')
-}
-
-bootJar {
-	dependsOn asciidoctor
-	from ("${asciidoctor.outputDir}/html5") {
-		into 'static/docs'
-	}
-}
-
 // 서순이 중요하다 test -> jacocoTestReport -> jacocoTestCoverageVerification 순서로 task 진행
 test {
 	useJUnitPlatform()
@@ -151,6 +144,31 @@ jacocoTestCoverageVerification {
 	}
 }
 
+asciidoctor {
+	inputs.dir snippetsDir
+	configurations 'asciidoctorExt'
+	baseDirFollowsSourceFile()
+	dependsOn test
+}
+
+asciidoctor.doFirst {
+	delete file('src/main/resources/static/docs')
+}
+
+task createDocument(type: Copy) {
+	dependsOn asciidoctor
+	from file("build/docs/asciidoc")
+	into file("src/main/resources/static")
+}
+
+bootJar {
+	dependsOn createDocument
+	copy {
+		from("${asciidoctor.outputDir}")
+		into 'static/docs'
+	}
+}
+
 def querydslDir = "$buildDir/generated/querydsl"
 
 querydsl {
@@ -177,10 +195,4 @@ jar {
 
 tasks.withType(JavaCompile){
 	options.encoding = "UTF-8"
-}
-
-asciidoctor {
-	inputs.dir snippetsDir
-	configurations 'asciidoctorExt'
-	dependsOn test
 }
