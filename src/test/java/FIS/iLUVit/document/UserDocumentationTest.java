@@ -3,6 +3,7 @@ package FIS.iLUVit.document;
 import FIS.iLUVit.domain.common.domain.Auth;
 import FIS.iLUVit.domain.user.controller.UserController;
 import FIS.iLUVit.domain.user.domain.User;
+import FIS.iLUVit.domain.user.dto.PasswordUpdateRequest;
 import FIS.iLUVit.domain.user.dto.UserBasicInfoResponse;
 import FIS.iLUVit.domain.user.service.UserService;
 import FIS.iLUVit.domain.parent.domain.Parent;
@@ -12,10 +13,12 @@ import com.auth0.jwt.JWT;
 import com.auth0.jwt.algorithms.Algorithm;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.springframework.context.annotation.Import;
+import org.springframework.http.MediaType;
 import org.springframework.restdocs.RestDocumentationContextProvider;
 import org.springframework.restdocs.RestDocumentationExtension;
 import org.springframework.restdocs.mockmvc.MockMvcRestDocumentation;
@@ -34,8 +37,9 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.doReturn;
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
 import static org.springframework.restdocs.operation.preprocess.Preprocessors.*;
-import static org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath;
-import static org.springframework.restdocs.payload.PayloadDocumentation.responseFields;
+import static org.springframework.restdocs.payload.PayloadDocumentation.*;
+import static org.springframework.restdocs.request.RequestDocumentation.parameterWithName;
+import static org.springframework.restdocs.request.RequestDocumentation.requestParameters;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -75,6 +79,7 @@ public class UserDocumentationTest {
     }
 
     @Test
+    @DisplayName("유저 상세 조회")
     public void findOneUser() throws Exception {
         // given
         String url = "/user";
@@ -103,5 +108,80 @@ public class UserDocumentationTest {
                         ))
                 );
     }
+
+    @Test
+    @DisplayName("아이디 중복 조회")
+    public void checkDuplicatedLoginId() throws Exception {
+        // given
+        String url = "/check-loginid";
+        // when
+        ResultActions result = mockMvc.perform(
+                MockMvcRequestBuilders.get(url)
+                        .param("loginId", "testLoginId")
+        );
+        // then
+        result.andExpect(status().isNoContent())
+                .andDo(document("check-duplicated-login-id",
+                        preprocessRequest(prettyPrint()),
+                        preprocessResponse(prettyPrint()),
+                        requestParameters(
+                                parameterWithName("loginId")
+                                        .description("중복을 확인할 로그인 아이디")
+                        )
+                ));
+    }
+
+    @Test
+    @DisplayName("닉네임 중복 조회")
+    public void checkDuplicatedNickname() throws Exception {
+        // given
+        String url = "/check-nickname";
+        // when
+        ResultActions result = mockMvc.perform(
+                MockMvcRequestBuilders.get(url)
+                        .param("nickname", "testNickname")
+        );
+        // then
+        result.andExpect(status().isNoContent())
+                .andDo(document("check-duplicated-nickname",
+                        preprocessRequest(prettyPrint()),
+                        preprocessResponse(prettyPrint()),
+                        requestParameters(
+                                parameterWithName("nickname")
+                                        .description("중복을 확인할 닉네임")
+                        )
+                ));
+    }
+
+    @Test
+    @DisplayName("비밀번호 변경")
+    public void updatePassword() throws Exception {
+        // given
+        String url = "/password";
+        PasswordUpdateRequest request = PasswordUpdateRequest.builder()
+                .originPwd("originPwd")
+                .newPwd("asd123!@#")
+                .newPwdCheck("asd123!@#")
+                .build();
+        // when
+        ResultActions result = mockMvc.perform(
+                MockMvcRequestBuilders.put(url)
+                        .header("Authorization", createJwtToken(parent))
+                        .content(objectMapper.writeValueAsString(request))
+                        .contentType(MediaType.APPLICATION_JSON)
+        );
+        // then
+        result.andExpect(status().isNoContent())
+                .andDo(document("update-password",
+                        preprocessRequest(prettyPrint()),
+                        preprocessResponse(prettyPrint()),
+                        requestFields(
+                                fieldWithPath("originPwd").description("변경 전 비밀번호"),
+                                fieldWithPath("newPwd").description("변경 후 비밀번호"),
+                                fieldWithPath("newPwdCheck").description("변경 후 비밀번호 확인")
+                                )
+                ));
+    }
+
 
 }
