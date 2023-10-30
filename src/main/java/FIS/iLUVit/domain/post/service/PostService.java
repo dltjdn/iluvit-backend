@@ -73,7 +73,7 @@ public class PostService {
 
         User user = getUser(userId);
 
-        Board board = getBoard(request.getBoardId());
+        Board board = getBoard(request.getBoard_id());
 
         // 학부모는 공지 게시판에 게시글 쓸 수 없다
         if (board.getBoardKind() == BoardKind.NOTICE && user.getAuth() == Auth.PARENT ) {

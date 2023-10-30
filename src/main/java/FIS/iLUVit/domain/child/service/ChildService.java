@@ -80,7 +80,7 @@ public class ChildService {
         Parent parent = parentRepository.getById(userId);
 
         // 시설 가져오기
-        Center center = getCenterSigned(request.getCenterId());
+        Center center = getCenterSigned(request.getCenter_id());
 
         // 아이 등록
         Child newChild = request.createChild(center, parent);
