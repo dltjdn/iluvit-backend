@@ -134,13 +134,15 @@ public class PresentationService {
     /**
      * 설명회 정보 수정 ( 설명회 회차 정보 수정 포함)
      */
-    public void updatePresentationInfo(Long userId, PresentationUpdateRequest request) {
+    public PresentationCreateResponse updatePresentationInfo(Long userId, PresentationUpdateRequest request) {
 
         Presentation presentation = getPresentation(request.getPresentationId());
 
         getTeacher(userId, presentation.getCenter().getId());
 
-        request.getPtDateDtos().forEach(ptDateDto -> {
+        List<PtDateDto> ptDateDtos = request.getPtDateDtos();
+
+        ptDateDtos.forEach(ptDateDto -> {
                     Long ptDateId = ptDateDto.getPtDateId();
 
                     if (ptDateId == null) { // 새로운 설명회 회차일 때
@@ -164,18 +166,25 @@ public class PresentationService {
         // 설명회 정보 업데이트
         presentation.updatePresentation(request);
 
+        List<Long> ptDateIds = ptDateDtos.stream()
+                .map(PtDateDto::getPtDateId)
+                .collect(toList());
+
+        return PresentationCreateResponse.of(presentation, ptDateIds);
+
     }
 
 
     /**
      * 설명회 이미지 저장 및 수정
      */
-    public void updatePresentationImage(Long userId, Long presentationId, List<MultipartFile> images) {
+    public PresentationCreateResponse updatePresentationImage(Long userId, Long presentationId, List<MultipartFile> images) {
         Presentation presentation = getPresentation(presentationId);
 
         getTeacher(userId,presentation.getCenter().getId());
 
         imageService.saveInfoImages(images, presentation);
+        return PresentationCreateResponse.of(presentation, null);
     }
 
     /**
