@@ -31,18 +31,18 @@ public class ParticipationController {
      * 설명회 신청
      */
     @PostMapping("")
-    public ResponseEntity<Void> registerParticipation(@Login Long userId, @RequestBody ParticipationCreateRequest request){
-        participationService.registerParticipation(userId, request);
-        return ResponseEntity.status(HttpStatus.CREATED).build();
+    public ResponseEntity<Long> registerParticipation(@Login Long userId, @RequestBody ParticipationCreateRequest request){
+        Long response = participationService.registerParticipation(userId, request);
+        return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
 
     /**
      * 설명회 취소 ( 대가자 있을 경우 자동 합류 )
      */
     @PatchMapping("{participationId}")
-    public ResponseEntity<Void> cancelParticipation(@Login Long userId, @PathVariable("participationId") Long participationId){
-        participationService.cancelParticipation(userId, participationId);
-        return ResponseEntity.noContent().build();
+    public ResponseEntity<Long> cancelParticipation(@Login Long userId, @PathVariable("participationId") Long participationId){
+        Long response = participationService.cancelParticipation(userId, participationId);
+        return ResponseEntity.ok().body(response);
     }
 
     /**

@@ -58,7 +58,7 @@ public class ParticipationService {
     /**
      * 설명회 신청
      */
-    public void registerParticipation(Long userId, ParticipationCreateRequest request) {
+    public Long registerParticipation(Long userId, ParticipationCreateRequest request) {
         Long ptDateId = request.getPtDateId();
         // 잘못된 설명회 회차 id일 경우
         PtDate ptDate = ptDateRepository.findById(ptDateId)
@@ -85,7 +85,8 @@ public class ParticipationService {
         });
 
         // 설명회 등록
-        participationRepository.save(Participation.createParticipation(parent, presentation, ptDate, participations));
+        Participation participation = Participation.createParticipation(parent, presentation, ptDate, participations);
+        participationRepository.save(participation);
 
         if(ptDate.getAblePersonNum() <= ptDate.getParticipantCnt()){
             teacherRepository.findByCenter(presentation.getCenter()).forEach((teacher) -> {
@@ -94,12 +95,14 @@ public class ParticipationService {
                 AlarmUtils.publishAlarmEvent(alarm, NotificationTitle.ILUVIT.getDescription());
             });
         }
+
+        return participation.getId();
     }
 
     /**
      * 설명회 취소 ( 대가자 있을 경우 자동 합류 )
      */
-    public void cancelParticipation(Long userId, Long participationId) {
+    public Long cancelParticipation(Long userId, Long participationId) {
         if(participationId < 0)
             throw new ParticipationException(ParticipationErrorResult.WRONG_PARTICIPATION_ID_REQUEST);
 
@@ -115,6 +118,8 @@ public class ParticipationService {
         if(ptDate.checkHasWaiting()){
             eventPublisher.publishEvent(new ParticipationCancelEvent(ptDate.getPresentation(), ptDate)); // 이벤트 리스너 호출
         }
+
+        return participationId;
     }
 
 

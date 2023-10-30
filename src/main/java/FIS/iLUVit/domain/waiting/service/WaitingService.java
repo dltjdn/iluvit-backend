@@ -42,7 +42,7 @@ public class WaitingService {
     /**
      * 설명회 회차에 대기를 신청합니다
      */
-    public void waitingParticipation(Long userId, WaitingCreateRequest request) {
+    public Long waitingParticipation(Long userId, WaitingCreateRequest request) {
         long ptDateId = request.getPtDateId();
 
         // 잘못된 ptDateId로 요청 시 오류 반환
@@ -75,12 +75,14 @@ public class WaitingService {
         ptDate.increaseWaitingCnt();
 
         waitingRepository.save(waiting);
+
+        return waiting.getId();
     }
 
     /**
      * 설명회 대기를 취소하고 대기 순서를 변경합니다
      */
-    public void cancelParticipation(Long userId, Long waitingId) {
+    public Long cancelParticipation(Long userId, Long waitingId) {
 
         // 잘못된 waitingId로 요청 시 오류 반환
         if(waitingId < 0)
@@ -95,6 +97,8 @@ public class WaitingService {
         ptDate.decreaseWaitingCnt();
         waitingRepository.updateWaitingOrder(ptDate, waiting.getWaitingOrder());
         waitingRepository.delete(waiting);
+
+        return waitingId;
     }
 
 
