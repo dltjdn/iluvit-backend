@@ -74,7 +74,7 @@ public class ParentService {
     /**
      *  학부모 정보 수정
      */
-    public void modifyParentInfo(Long userId, ParentUpdateRequest request) throws IOException {
+    public ParentFindOneResponse modifyParentInfo(Long userId, ParentUpdateRequest request) throws IOException {
         Parent findParent = getParent(userId);
 
         // 유저 닉네임 중복 검사
@@ -103,6 +103,8 @@ public class ParentService {
             findParent.updateParentInfo(request, theme, location);
         }
         imageService.saveProfileImage(request.getProfileImg(), findParent);
+
+        return ParentFindOneResponse.from(findParent);
     }
 
     /**

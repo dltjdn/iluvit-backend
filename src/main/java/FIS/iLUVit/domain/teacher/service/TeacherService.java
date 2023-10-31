@@ -117,7 +117,7 @@ public class TeacherService {
     /**
      * 교사 정보를 변경합니다
      */
-    public void updateTeacherInfo(Long userId, TeacherUpdateRequest request) {
+    public TeacherFindOneDetailResponse updateTeacherInfo(Long userId, TeacherUpdateRequest request) {
         Teacher findTeacher = getTeacher(userId);
 
         // 유저 닉네임 중복 검사
@@ -144,6 +144,7 @@ public class TeacherService {
 
         // 프로필 이미지 저장
         imageService.saveProfileImage(request.getProfileImg(), findTeacher);
+        return TeacherFindOneDetailResponse.from(findTeacher);
     }
 
     /**

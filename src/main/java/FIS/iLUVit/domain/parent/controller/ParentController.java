@@ -39,9 +39,9 @@ public class ParentController {
      *  학부모 정보 수정
      */
     @PatchMapping("")
-    public ResponseEntity<Void> updateParent(@Login Long userId, @Valid @ModelAttribute ParentUpdateRequest parentUpdateRequest) throws IOException {
-        parentService.modifyParentInfo(userId, parentUpdateRequest);
-        return ResponseEntity.noContent().build();
+    public ResponseEntity<ParentFindOneResponse> updateParent(@Login Long userId, @Valid @ModelAttribute ParentUpdateRequest parentUpdateRequest) throws IOException {
+        ParentFindOneResponse response = parentService.modifyParentInfo(userId, parentUpdateRequest);
+        return ResponseEntity.ok().body(response);
     }
 
     /**

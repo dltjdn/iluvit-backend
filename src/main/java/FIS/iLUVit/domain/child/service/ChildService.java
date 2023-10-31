@@ -108,7 +108,7 @@ public class ChildService {
     /**
      * 아이 정보 수정
      */
-    public void updateChildInfo(Long userId, Long childId, ChildUpdateRequest request) {
+    public ChildFindOneResponse updateChildInfo(Long userId, Long childId, ChildUpdateRequest request) {
         User user = getUser(userId);
 
         Child updatedChild = getChildByParent(childId, (Parent) user); // 수정하고자 하는 아이
@@ -116,12 +116,14 @@ public class ChildService {
         updatedChild.updateChildInfo(request.getName(), request.getBirthDate()); // 프로필 수정
 
         imageService.saveProfileImage(request.getProfileImg(), updatedChild); // 프로필 이미지 저장
+
+        return ChildFindOneResponse.from(updatedChild);
     }
 
     /**
      * 아이 삭제
      */
-    public void deleteChild(Long userId, Long childId) {
+    public List<ChildCenterResponse> deleteChild(Long userId, Long childId) {
         User user = getUser(userId);
 
         // 삭제하고자 하는 아이
@@ -139,6 +141,7 @@ public class ChildService {
         }
 
         childRepository.delete(deletedChild);
+        return findAllChild(userId);
     }
 
 
@@ -163,7 +166,7 @@ public class ChildService {
     /**
      * 아이 시설 대기 ( 아이 시설 승인 요청 )
      */
-    public void requestAssignCenterForChild(Long userId, Long childId, Long centerId) {
+    public Long requestAssignCenterForChild(Long userId, Long childId, Long centerId) {
         User user = getUser(userId);
 
         // 승인 받고자 하는 아이
@@ -182,6 +185,8 @@ public class ChildService {
         // 승인 요청 알림을 해당 시설의 관리교사에게 전송
         List<Teacher> teachers = teacherRepository.findByCenterAndApproval(center, Approval.ACCEPT);
         alarmService.sendCenterApprovalReceivedAlarm(teachers, Auth.TEACHER);
+
+        return mappedChild.getCenter().getId();
     }
 
 

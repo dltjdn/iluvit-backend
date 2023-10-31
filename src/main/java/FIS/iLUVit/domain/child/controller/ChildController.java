@@ -59,18 +59,18 @@ public class ChildController {
      * 아이 정보 수정
      */
     @PutMapping("{childId}")
-    public ResponseEntity<Void> updateChild(@Login Long userId, @PathVariable("childId") Long childId, @ModelAttribute ChildUpdateRequest childUpdateRequest)  {
-       childService.updateChildInfo(userId, childId, childUpdateRequest);
-        return ResponseEntity.noContent().build();
+    public ResponseEntity<ChildFindOneResponse> updateChild(@Login Long userId, @PathVariable("childId") Long childId, @ModelAttribute ChildUpdateRequest childUpdateRequest)  {
+       ChildFindOneResponse response = childService.updateChildInfo(userId, childId, childUpdateRequest);
+        return ResponseEntity.ok().body(response);
     }
 
     /**
      * 아이 삭제
      */
     @DeleteMapping("{childId}")
-    public ResponseEntity<Void> deleteChild(@Login Long userId, @PathVariable("childId") Long childId) {
-       childService.deleteChild(userId, childId);
-        return ResponseEntity.noContent().build();
+    public ResponseEntity<List<ChildCenterResponse>> deleteChild(@Login Long userId, @PathVariable("childId") Long childId) {
+       List<ChildCenterResponse> responses = childService.deleteChild(userId, childId);
+        return ResponseEntity.ok().body(responses);
     }
 
     /**
@@ -86,9 +86,9 @@ public class ChildController {
      * 아이 시설 대기 ( 아이 시설 승인 요청 )
      */
     @PatchMapping("{childId}/center/{centerId}")
-    public ResponseEntity<Void> assignCenterForChild(@Login Long userId, @PathVariable("childId") Long childId, @PathVariable("centerId") Long centerId) {
-        childService.requestAssignCenterForChild(userId, childId, centerId);
-        return ResponseEntity.noContent().build();
+    public ResponseEntity<Long> assignCenterForChild(@Login Long userId, @PathVariable("childId") Long childId, @PathVariable("centerId") Long centerId) {
+        Long response = childService.requestAssignCenterForChild(userId, childId, centerId);
+        return ResponseEntity.ok().body(response);
     }
 
     /**

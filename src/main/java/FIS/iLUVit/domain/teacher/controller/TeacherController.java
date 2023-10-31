@@ -16,7 +16,6 @@ import org.springframework.web.bind.annotation.*;
 import javax.validation.Valid;
 import java.util.List;
 
-@Slf4j
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("teacher")
@@ -50,9 +49,9 @@ public class TeacherController {
      * 교사 정보 수정
      */
     @PostMapping("")
-    public ResponseEntity<Void> updateTeacherInfo(@Login Long userId, @Valid @ModelAttribute TeacherUpdateRequest request){
-        teacherService.updateTeacherInfo(userId, request);
-        return ResponseEntity.noContent().build();
+    public ResponseEntity<TeacherFindOneDetailResponse> updateTeacherInfo(@Login Long userId, @Valid @ModelAttribute TeacherUpdateRequest request){
+        TeacherFindOneDetailResponse response = teacherService.updateTeacherInfo(userId, request);
+        return ResponseEntity.ok().body(response);
     }
 
     /**
