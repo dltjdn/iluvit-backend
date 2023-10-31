@@ -11,3 +11,9 @@ operation::check-duplicated-nickname[snippets='http-request,http-response,reques
 
 === 비밀번호 변경
 operation::update-password[snippets='http-request,http-response,request-fields']
+
+=== 로그인
+operation::login[snippets='http-request,http-response,request-fields,response-fields']
+
+=== 토큰 재발급
+operation::refresh-token[snippets='http-request,http-response,request-fields,response-fields']

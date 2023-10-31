@@ -1,10 +1,13 @@
 package FIS.iLUVit.document;
 
 import FIS.iLUVit.domain.common.domain.Auth;
+import FIS.iLUVit.domain.tokenpair.dto.TokenRefreshRequest;
 import FIS.iLUVit.domain.user.controller.UserController;
 import FIS.iLUVit.domain.user.domain.User;
+import FIS.iLUVit.domain.user.dto.LoginRequestDto;
 import FIS.iLUVit.domain.user.dto.PasswordUpdateRequest;
 import FIS.iLUVit.domain.user.dto.UserBasicInfoResponse;
+import FIS.iLUVit.domain.user.dto.UserInfoResponse;
 import FIS.iLUVit.domain.user.service.UserService;
 import FIS.iLUVit.domain.parent.domain.Parent;
 import FIS.iLUVit.global.config.argumentResolver.LoginUserArgumentResolver;
@@ -30,7 +33,6 @@ import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import java.io.IOException;
 import java.util.Date;
 
 import static org.mockito.ArgumentMatchers.any;
@@ -57,7 +59,7 @@ public class UserDocumentationTest {
     private Parent parent;
 
     @BeforeEach
-    public void init(final RestDocumentationContextProvider provider) throws IOException {
+    public void setUp(final RestDocumentationContextProvider provider) {
         objectMapper = new ObjectMapper();
         mockMvc = MockMvcBuilders.standaloneSetup(target)
                 .setCustomArgumentResolvers(new LoginUserArgumentResolver("secretKey"))
@@ -178,10 +180,85 @@ public class UserDocumentationTest {
                         requestFields(
                                 fieldWithPath("originPwd").description("변경 전 비밀번호"),
                                 fieldWithPath("newPwd").description("변경 후 비밀번호"),
-                                fieldWithPath("newPwdCheck").description("변경 후 비밀번호 확인")
-                                )
+                                fieldWithPath("newPwdCheck").description("변경 후 비밀번호 확인"))
                 ));
     }
+
+    @Test
+    @DisplayName("로그인")
+    public void login() throws Exception {
+        // given
+        String url = "/login";
+        LoginRequestDto request = new LoginRequestDto("loginId", "password");
+        UserInfoResponse response = new UserInfoResponse(1L, "testNickname", Auth.PARENT, false, "Bearer ", "Bearer ");
+
+        doReturn(response)
+                .when(userService)
+                .login(any());
+        // when
+        ResultActions result = mockMvc.perform(
+                MockMvcRequestBuilders.post(url)
+                        .content(objectMapper.writeValueAsString(request))
+                        .contentType(MediaType.APPLICATION_JSON)
+        );
+        // then
+        result.andExpect(status().isOk())
+                .andExpect(content().json(
+                        objectMapper.writeValueAsString(response)
+                ))
+                .andDo(document("login",
+                        preprocessRequest(prettyPrint()),
+                        preprocessResponse(prettyPrint()),
+                        requestFields(
+                                fieldWithPath("loginId").description("로그인 아이디"),
+                                fieldWithPath("password").description("비밀번호")),
+                        responseFields(
+                                fieldWithPath("id").type(JsonFieldType.NUMBER).description("유저 기본키"),
+                                fieldWithPath("nickname").type(JsonFieldType.STRING).description("유저 닉네임"),
+                                fieldWithPath("auth").type(JsonFieldType.STRING).description("유저 권한 - PARENT, TEACHER, DIRECTOR"),
+                                fieldWithPath("needTutorial").type(JsonFieldType.BOOLEAN).description("로그인 튜토리얼 진행 여부"),
+                                fieldWithPath("accessToken").type(JsonFieldType.STRING).description("access token"),
+                                fieldWithPath("refreshToken").type(JsonFieldType.STRING).description("refresh token"))
+                ));
+    }
+
+    @Test
+    @DisplayName("토큰 재발급")
+    public void refreshToken() throws Exception {
+        // given
+        String url = "/refresh";
+        TokenRefreshRequest request = new TokenRefreshRequest("Bearer ");
+        UserInfoResponse response = new UserInfoResponse(1L, "testNickname", Auth.PARENT, false, "Bearer ", "Bearer ");
+
+        doReturn(response)
+                .when(userService)
+                .refreshAccessToken(any());
+        // when
+        ResultActions result = mockMvc.perform(
+                MockMvcRequestBuilders.post(url)
+                        .content(objectMapper.writeValueAsString(request))
+                        .contentType(MediaType.APPLICATION_JSON)
+        );
+        // then
+        result.andExpect(status().isOk())
+                .andExpect(content().json(
+                        objectMapper.writeValueAsString(response)
+                ))
+                .andDo(document("refresh-token",
+                        preprocessRequest(prettyPrint()),
+                        preprocessResponse(prettyPrint()),
+                        requestFields(
+                                fieldWithPath("refreshToken").description("토큰 재발급을 위한 refresh token")),
+                        responseFields(
+                                fieldWithPath("id").type(JsonFieldType.NUMBER).description("유저 기본키"),
+                                fieldWithPath("nickname").type(JsonFieldType.STRING).description("유저 닉네임"),
+                                fieldWithPath("auth").type(JsonFieldType.STRING).description("유저 권한 - PARENT, TEACHER, DIRECTOR"),
+                                fieldWithPath("needTutorial").type(JsonFieldType.BOOLEAN).description("로그인 튜토리얼 진행 여부"),
+                                fieldWithPath("accessToken").type(JsonFieldType.STRING).description("access token"),
+                                fieldWithPath("refreshToken").type(JsonFieldType.STRING).description("refresh token"))
+                ));
+    }
+
 
 
 }
