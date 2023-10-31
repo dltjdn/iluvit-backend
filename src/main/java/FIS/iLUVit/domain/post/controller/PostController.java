@@ -33,18 +33,18 @@ public class PostController {
      * 게시글 저장
      */
     @PostMapping("")
-    public ResponseEntity<Void> createPost(@Login Long userId, @ModelAttribute @Validated PostCreateRequest postCreateRequest) {
-        postService.saveNewPost(userId, postCreateRequest);
-        return ResponseEntity.status(HttpStatus.CREATED).build();
+    public ResponseEntity<Long> createPost(@Login Long userId, @ModelAttribute @Validated PostCreateRequest postCreateRequest) {
+        Long response = postService.saveNewPost(userId, postCreateRequest);
+        return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
 
     /**
      *  게시글 삭제
      */
     @DeleteMapping("{postId}")
-    public ResponseEntity<Void> deletePost(@Login Long userId, @PathVariable("postId") Long postId) {
-        postService.deletePost(postId, userId);
-        return ResponseEntity.noContent().build();
+    public ResponseEntity<Long> deletePost(@Login Long userId, @PathVariable("postId") Long postId) {
+        Long response = postService.deletePost(postId, userId);
+        return ResponseEntity.ok().body(response);
     }
 
     /**

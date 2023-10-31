@@ -67,7 +67,7 @@ public class ScrapService {
     /**
      * 스크랩 폴더 삭제하기
      */
-    public void deleteScrapDir(Long userId, Long scrapId) {
+    public List<ScrapDirResponse> deleteScrapDir(Long userId, Long scrapId) {
         User user = getUser(userId);
         Scrap scrapDir = getScrap(scrapId, user);
 
@@ -77,6 +77,7 @@ public class ScrapService {
         }
 
         scrapRepository.delete(scrapDir);
+        return findScrapDirList(userId);
     }
 
 

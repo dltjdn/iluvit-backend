@@ -69,7 +69,7 @@ public class PostService {
     /**
      * 게시글 저장
      */
-    public void saveNewPost(Long userId, PostCreateRequest request) {
+    public Long saveNewPost(Long userId, PostCreateRequest request) {
 
         User user = getUser(userId);
 
@@ -87,12 +87,13 @@ public class PostService {
 
         postRepository.save(post);
         imageService.saveInfoImages(images, post);
+        return post.getId();
     }
 
     /**
      *  게시글 삭제
      */
-    public void deletePost(Long postId, Long userId) {
+    public Long deletePost(Long postId, Long userId) {
         User user = getUser(userId);
         Post post = getPost(postId);
 
@@ -105,6 +106,7 @@ public class PostService {
         //  comment 참조하는 report, reportDetail 모두 set null
 
         postRepository.delete(post);
+        return postId;
     }
 
     /**

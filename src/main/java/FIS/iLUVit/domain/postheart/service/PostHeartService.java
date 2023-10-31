@@ -28,7 +28,7 @@ public class PostHeartService {
     /**
      * 게시글 좋아요 등록
      */
-    public void savePostHeart(Long userId, Long postId) {
+    public Long savePostHeart(Long userId, Long postId) {
         User user = getUser(userId);
         Post post = getPost(postId);
 
@@ -38,8 +38,9 @@ public class PostHeartService {
                     throw new PostException(PostErrorResult.ALREADY_HEART_POST);
                 });
 
-        postHeartRepository.save(PostHeart.of(user, post));
         post.plusHeartCount(); // 좋아요 수 +1
+        PostHeart savedPostHeart = postHeartRepository.save(PostHeart.of(user, post));
+        return savedPostHeart.getId();
     }
 
 

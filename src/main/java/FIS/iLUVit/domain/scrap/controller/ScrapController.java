@@ -75,9 +75,9 @@ public class ScrapController {
      * 스크랩 폴더 삭제
      */
     @DeleteMapping("dir/{scrapDirId}")
-    public ResponseEntity<Void> deleteScrapDir(@Login Long userId, @PathVariable("scrapDirId") Long scrapDirId) {
-        scrapService.deleteScrapDir(userId, scrapDirId);
-        return ResponseEntity.noContent().build();
+    public ResponseEntity<List<ScrapDirResponse>> deleteScrapDir(@Login Long userId, @PathVariable("scrapDirId") Long scrapDirId) {
+        List<ScrapDirResponse> responses = scrapService.deleteScrapDir(userId, scrapDirId);
+        return ResponseEntity.ok().body(responses);
     }
 
     /**
