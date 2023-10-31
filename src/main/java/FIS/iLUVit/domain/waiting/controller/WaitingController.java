@@ -1,5 +1,6 @@
 package FIS.iLUVit.domain.waiting.controller;
 
+import FIS.iLUVit.domain.waiting.dto.WaitingCreateRequest;
 import FIS.iLUVit.global.config.argumentResolver.Login;
 import FIS.iLUVit.domain.waiting.service.WaitingService;
 import lombok.RequiredArgsConstructor;
@@ -25,18 +26,18 @@ public class WaitingController {
     /**
      * 설명회 회차에 대기를 신청합니다
      */
-    @PostMapping("{ptDateId}")
-    public ResponseEntity<Void> registerWaiting(@Login Long userId, @PathVariable("ptDateId") Long ptDateId){
-        waitingService.waitingParticipation(userId, ptDateId);
-        return ResponseEntity.status(HttpStatus.CREATED).build();
+    @PostMapping("")
+    public ResponseEntity<Long> registerWaiting(@Login Long userId, @RequestBody WaitingCreateRequest request){
+        Long response = waitingService.waitingParticipation(userId, request);
+        return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
 
     /**
      * 설명회 회차에 대기 신청을 취소합니다
      */
     @DeleteMapping("{waitingId}")
-    public ResponseEntity<Void> cancelWaiting(@Login Long userId, @PathVariable("waitingId") Long waitingId) {
-        waitingService.cancelParticipation(userId, waitingId);
-        return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
+    public ResponseEntity<Long> cancelWaiting(@Login Long userId, @PathVariable("waitingId") Long waitingId) {
+        Long response = waitingService.cancelParticipation(userId, waitingId);
+        return ResponseEntity.ok(response);
     }
 }

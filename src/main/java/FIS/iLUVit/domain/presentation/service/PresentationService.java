@@ -5,6 +5,7 @@ import FIS.iLUVit.domain.center.domain.Center;
 import FIS.iLUVit.domain.center.exception.CenterErrorResult;
 import FIS.iLUVit.domain.center.exception.CenterException;
 import FIS.iLUVit.domain.center.repository.CenterRepository;
+import FIS.iLUVit.domain.common.domain.Auth;
 import FIS.iLUVit.domain.parent.domain.Parent;
 import FIS.iLUVit.domain.parent.repository.ParentRepository;
 import FIS.iLUVit.domain.participation.domain.Participation;
@@ -21,8 +22,10 @@ import FIS.iLUVit.domain.ptdate.dto.PtDateDto;
 import FIS.iLUVit.domain.ptdate.repository.PtDateRepository;
 import FIS.iLUVit.domain.teacher.domain.Teacher;
 import FIS.iLUVit.domain.teacher.repository.TeacherRepository;
+import FIS.iLUVit.domain.user.domain.User;
 import FIS.iLUVit.domain.user.exception.UserErrorResult;
 import FIS.iLUVit.domain.user.exception.UserException;
+import FIS.iLUVit.domain.user.repository.UserRepository;
 import FIS.iLUVit.domain.waiting.domain.Waiting;
 import FIS.iLUVit.domain.waiting.repository.WaitingRepository;
 import FIS.iLUVit.domain.participation.domain.Status;
@@ -53,7 +56,7 @@ public class PresentationService {
     private final TeacherRepository teacherRepository;
     private final WaitingRepository waitingRepository;
     private final ParticipationRepository participationRepository;
-    private final ParentRepository parentRepository;
+    private final UserRepository userRepository;
     private final AlarmService alarmService;
     private final ParticipationService participationService;
     private final WaitingService waitingService;
@@ -78,7 +81,7 @@ public class PresentationService {
      * (현재 진행 중인) 설명회 전체 조회
      */
     public List<PresentationFindOneResponse> findAllPresentation(Long userId, Long centerId) {
-        Parent parent = parentRepository.findById(userId)
+        User user = userRepository.findById(userId)
                 .orElseThrow(() -> new UserException(UserErrorResult.USER_NOT_FOUND));
 
         // 현재 진행 중인 설명회 리스트 조회
@@ -86,14 +89,33 @@ public class PresentationService {
 
         List<PresentationFindOneResponse> responses = presentations.stream().map((presentation -> {
             List<String> infoImages = imageService.getInfoImages(presentation.getInfoImagePath());
+            List<PtDateDetailDto> ptDateDetailDtos = new ArrayList<>();
 
-            // 설명회 별 회차 리스트 조회 및 회차별 대기,참여 명단 조회
-            List<PtDateDetailDto> ptDateDetailDtos = ptDateRepository.findByPresentation(presentation).stream()
-                    .map((ptDate -> {
-                        Waiting waitings = waitingRepository.findByPtDateAndParent(ptDate, parent).orElse(null);
-                        Participation participations = participationRepository.findByPtDateAndParentAndStatus(ptDate, parent, Status.JOINED).orElse(null);
-                        return PtDateDetailDto.of(ptDate, participations, waitings);
-                    })).collect(toList());
+            if(user.getAuth() == Auth.PARENT){
+                // 설명회 별 회차 리스트 조회 및 회차별 대기,참여 명단 조회
+                ptDateDetailDtos = ptDateRepository.findByPresentation(presentation).stream()
+                        .map((ptDate -> {
+                            Waiting waiting = waitingRepository.findByPtDateAndParent(ptDate, (Parent)user).orElse(null);
+                            Participation participation = participationRepository.findByPtDateAndParentAndStatus(ptDate, (Parent)user, Status.JOINED).orElse(null);
+                            return PtDateDetailDto.of(ptDate, participation, waiting);
+                        })).collect(toList());
+            }
+
+            if(user.getAuth() == Auth.DIRECTOR || user.getAuth() == Auth.TEACHER){
+                ptDateDetailDtos = ptDateRepository.findByPresentation(presentation).stream()
+                        .map((ptDate -> {
+                            Waiting waiting = null;
+                            Participation participation = null;
+
+                            List<Waiting> waitings = waitingRepository.findByPtDate(ptDate);
+                            if(!waitings.isEmpty()) waiting = waitings.get(0);
+
+                            List<Participation> participations = participationRepository.findByPtDate(ptDate);
+                            if(!participations.isEmpty()) participation = participations.get(0);
+
+                            return PtDateDetailDto.of(ptDate, participation, waiting);
+                        })).collect(toList());
+            }
 
             return PresentationFindOneResponse.of(presentation, infoImages, ptDateDetailDtos);
         })).collect(toList());
@@ -134,13 +156,15 @@ public class PresentationService {
     /**
      * 설명회 정보 수정 ( 설명회 회차 정보 수정 포함)
      */
-    public void updatePresentationInfo(Long userId, PresentationUpdateRequest request) {
+    public PresentationCreateResponse updatePresentationInfo(Long userId, PresentationUpdateRequest request) {
 
         Presentation presentation = getPresentation(request.getPresentationId());
 
         getTeacher(userId, presentation.getCenter().getId());
 
-        request.getPtDateDtos().forEach(ptDateDto -> {
+        List<PtDateDto> ptDateDtos = request.getPtDateDtos();
+
+        ptDateDtos.forEach(ptDateDto -> {
                     Long ptDateId = ptDateDto.getPtDateId();
 
                     if (ptDateId == null) { // 새로운 설명회 회차일 때
@@ -164,18 +188,25 @@ public class PresentationService {
         // 설명회 정보 업데이트
         presentation.updatePresentation(request);
 
+        List<Long> ptDateIds = ptDateDtos.stream()
+                .map(PtDateDto::getPtDateId)
+                .collect(toList());
+
+        return PresentationCreateResponse.of(presentation, ptDateIds);
+
     }
 
 
     /**
      * 설명회 이미지 저장 및 수정
      */
-    public void updatePresentationImage(Long userId, Long presentationId, List<MultipartFile> images) {
+    public PresentationCreateResponse updatePresentationImage(Long userId, Long presentationId, List<MultipartFile> images) {
         Presentation presentation = getPresentation(presentationId);
 
         getTeacher(userId,presentation.getCenter().getId());
 
         imageService.saveInfoImages(images, presentation);
+        return PresentationCreateResponse.of(presentation, null);
     }
 
     /**

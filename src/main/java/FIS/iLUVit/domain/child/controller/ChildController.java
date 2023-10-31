@@ -1,8 +1,8 @@
 package FIS.iLUVit.domain.child.controller;
 
 import FIS.iLUVit.global.config.argumentResolver.Login;
-import FIS.iLUVit.domain.center.dto.CenterBasicResponse;
-import FIS.iLUVit.domain.center.dto.CenterBasicRequest;
+import FIS.iLUVit.domain.center.dto.CenterFindForUserResponse;
+import FIS.iLUVit.domain.center.dto.CenterFindForUserRequest;
 import FIS.iLUVit.domain.child.dto.*;
 import FIS.iLUVit.domain.child.service.ChildService;
 import lombok.RequiredArgsConstructor;
@@ -33,7 +33,7 @@ public class ChildController {
      */
     @GetMapping("info")
     public ResponseEntity<List<ChildCenterResponse>> getAllChild(@Login Long userId) {
-        List<ChildCenterResponse> childInfoRespons = childService.findChildList(userId);
+        List<ChildCenterResponse> childInfoRespons = childService.findAllChild(userId);
         return ResponseEntity.ok(childInfoRespons);
     }
 
@@ -50,8 +50,8 @@ public class ChildController {
      * 아이 정보 상세 조회
      */
     @GetMapping("{childId}")
-    public ResponseEntity<ChildDetailResponse> getChildDetails(@Login Long userId, @PathVariable("childId") Long childId) {
-        ChildDetailResponse childDetails = childService.findChildDetails(userId, childId);
+    public ResponseEntity<ChildFindOneResponse> getChildDetails(@Login Long userId, @PathVariable("childId") Long childId) {
+        ChildFindOneResponse childDetails = childService.findChildDetails(userId, childId);
         return ResponseEntity.ok(childDetails);
     }
 
@@ -59,26 +59,26 @@ public class ChildController {
      * 아이 정보 수정
      */
     @PutMapping("{childId}")
-    public ResponseEntity<Void> updateChild(@Login Long userId, @PathVariable("childId") Long childId, @ModelAttribute ChildUpdateRequest childUpdateRequest)  {
-       childService.modifyChildInfo(userId, childId, childUpdateRequest);
-        return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
+    public ResponseEntity<ChildFindOneResponse> updateChild(@Login Long userId, @PathVariable("childId") Long childId, @ModelAttribute ChildUpdateRequest childUpdateRequest)  {
+       ChildFindOneResponse response = childService.updateChildInfo(userId, childId, childUpdateRequest);
+        return ResponseEntity.ok(response);
     }
 
     /**
      * 아이 삭제
      */
     @DeleteMapping("{childId}")
-    public ResponseEntity<Void> deleteChild(@Login Long userId, @PathVariable("childId") Long childId) {
-       childService.deleteChild(userId, childId);
-        return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
+    public ResponseEntity<List<ChildCenterResponse>> deleteChild(@Login Long userId, @PathVariable("childId") Long childId) {
+       List<ChildCenterResponse> responses = childService.deleteChild(userId, childId);
+        return ResponseEntity.ok(responses);
     }
 
     /**
      * 아이 추가용 시설 정보 조회
      */
     @GetMapping("search/center")
-    public ResponseEntity<Slice<CenterBasicResponse>> getCenterForChild(@ModelAttribute CenterBasicRequest centerBasicRequest, Pageable pageable) {
-        Slice<CenterBasicResponse> centerDtos = childService.findCenterForAddChild(centerBasicRequest, pageable);
+    public ResponseEntity<Slice<CenterFindForUserResponse>> getCenterForChild(@ModelAttribute CenterFindForUserRequest centerFindForUserRequest, Pageable pageable) {
+        Slice<CenterFindForUserResponse> centerDtos = childService.findCenterForAddChild(centerFindForUserRequest, pageable);
         return ResponseEntity.ok(centerDtos);
     }
 
@@ -86,9 +86,9 @@ public class ChildController {
      * 아이 시설 대기 ( 아이 시설 승인 요청 )
      */
     @PatchMapping("{childId}/center/{centerId}")
-    public ResponseEntity<Void> assignCenterForChild(@Login Long userId, @PathVariable("childId") Long childId, @PathVariable("centerId") Long centerId) {
-        childService.requestAssignCenterForChild(userId, childId, centerId);
-        return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
+    public ResponseEntity<Long> assignCenterForChild(@Login Long userId, @PathVariable("childId") Long childId, @PathVariable("centerId") Long centerId) {
+        Long response = childService.requestAssignCenterForChild(userId, childId, centerId);
+        return ResponseEntity.ok(response);
     }
 
     /**
@@ -97,7 +97,7 @@ public class ChildController {
     @PatchMapping("{childId}/center")
     public ResponseEntity<Void> leaveCenterForChild(@Login Long userId, @PathVariable("childId") Long childId) {
         childService.leaveCenterForChild(userId, childId);
-        return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
+        return ResponseEntity.noContent().build();
     }
 
     /**
@@ -108,8 +108,8 @@ public class ChildController {
      *  아이 승인용 아이 정보 전체 조회
      */
     @GetMapping("approval")
-    public ResponseEntity<List<ChildInfoForAdminResponse>> getChildForApproval(@Login Long userId) {
-        List<ChildInfoForAdminResponse> childApprovalList = childService.findChildApprovalList(userId);
+    public ResponseEntity<List<ChildFindForAdminResponse>> getChildForApproval(@Login Long userId) {
+        List<ChildFindForAdminResponse> childApprovalList = childService.findChildApprovalList(userId);
         return ResponseEntity.ok(childApprovalList);
     }
 
@@ -119,7 +119,7 @@ public class ChildController {
     @PatchMapping("{childId}/accept")
     public ResponseEntity<Void> acceptChild(@Login Long userId, @PathVariable("childId") Long childId) {
         childService.acceptChildRegistration(userId, childId);
-        return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
+        return ResponseEntity.noContent().build();
     }
 
     /**
@@ -128,7 +128,7 @@ public class ChildController {
     @PatchMapping("{childId}/reject")
     public ResponseEntity<Void> rejectChild(@Login Long userId, @PathVariable("childId") Long childId) {
         childService.rejectChildRegistration(userId, childId);
-        return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
+        return ResponseEntity.noContent().build();
     }
 
 }

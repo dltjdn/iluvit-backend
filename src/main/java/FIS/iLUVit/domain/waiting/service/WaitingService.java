@@ -13,6 +13,7 @@ import FIS.iLUVit.domain.waiting.domain.Waiting;
 import FIS.iLUVit.domain.participation.domain.Status;
 import FIS.iLUVit.domain.parent.repository.ParentRepository;
 import FIS.iLUVit.domain.participation.repository.ParticipationRepository;
+import FIS.iLUVit.domain.waiting.dto.WaitingCreateRequest;
 import FIS.iLUVit.domain.waiting.exception.WaitingErrorResult;
 import FIS.iLUVit.domain.waiting.exception.WaitingException;
 import FIS.iLUVit.domain.ptdate.repository.PtDateRepository;
@@ -41,7 +42,8 @@ public class WaitingService {
     /**
      * 설명회 회차에 대기를 신청합니다
      */
-    public void waitingParticipation(Long userId, Long ptDateId) {
+    public Long waitingParticipation(Long userId, WaitingCreateRequest request) {
+        long ptDateId = request.getPtDateId();
 
         // 잘못된 ptDateId로 요청 시 오류 반환
         PtDate ptDate = getPtDate(ptDateId);
@@ -73,12 +75,14 @@ public class WaitingService {
         ptDate.increaseWaitingCnt();
 
         waitingRepository.save(waiting);
+
+        return waiting.getId();
     }
 
     /**
      * 설명회 대기를 취소하고 대기 순서를 변경합니다
      */
-    public void cancelParticipation(Long userId, Long waitingId) {
+    public Long cancelParticipation(Long userId, Long waitingId) {
 
         // 잘못된 waitingId로 요청 시 오류 반환
         if(waitingId < 0)
@@ -93,6 +97,8 @@ public class WaitingService {
         ptDate.decreaseWaitingCnt();
         waitingRepository.updateWaitingOrder(ptDate, waiting.getWaitingOrder());
         waitingRepository.delete(waiting);
+
+        return waitingId;
     }
 
 
@@ -127,6 +133,15 @@ public class WaitingService {
 
         alarmService.sendParticipateAlarm(waiting, presentation); // 설명회 신청 알림 전송
         return waiting;
+    }
+
+    /**
+     *  신청되어있는 설명회 대기 목록에서 빠지게 하기 ( 설명회 대기 취소 )
+     */
+    public void deleteWaitingByWithdraw(Long userId, Parent parent){
+        waitingRepository.findByParent(parent).forEach(waiting-> {
+            cancelParticipation(userId, waiting.getId());
+        });
     }
 
     /**

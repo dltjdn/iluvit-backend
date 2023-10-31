@@ -47,28 +47,28 @@ public class AlarmController {
     /**
      * 전체 알림 읽음으로 업데이트
      */
-    @PatchMapping("read")
+    @GetMapping("read")
     public ResponseEntity<Void> readAlarm(@Login Long userId) {
         alarmService.readAlarm(userId);
-        return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
+        return ResponseEntity.noContent().build();
     }
 
     /**
      * 전체 알림 읽었는지 안 읽었는지 여부를 조회합니다
      */
     @GetMapping("is-read")
-    public ResponseEntity<AlarmReadResponse> hasRead(@Login Long userId){
-        AlarmReadResponse alarmReadResponse = alarmService.hasRead(userId);
-        return ResponseEntity.ok(alarmReadResponse);
+    public ResponseEntity<Boolean> hasRead(@Login Long userId){
+        Boolean response = alarmService.hasRead(userId);
+        return ResponseEntity.ok(response);
     }
 
     /**
      * 선택한 알림들을 삭제합니다
      */
     @DeleteMapping("")
-    public ResponseEntity<Void> deleteAlarm(@Login Long userId, @RequestBody AlarmDeleteRequest alarmDeleteRequest) {
-        alarmService.deleteSelectedAlarm(userId, alarmDeleteRequest);
-        return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
+    public ResponseEntity<Integer> deleteAlarm(@Login Long userId, @RequestBody AlarmDeleteRequest alarmDeleteRequest) {
+        Integer response = alarmService.deleteSelectedAlarm(userId, alarmDeleteRequest);
+        return ResponseEntity.ok(response);
     }
 
     /**
@@ -77,6 +77,6 @@ public class AlarmController {
     @DeleteMapping("all")
     public ResponseEntity<Void> deleteAllAlarm(@Login Long userId) {
         alarmService.deleteAllAlarm(userId);
-        return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
+        return ResponseEntity.noContent().build();
     }
 }

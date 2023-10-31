@@ -5,6 +5,7 @@ import FIS.iLUVit.domain.comment.domain.Comment;
 import FIS.iLUVit.domain.post.domain.Post;
 import FIS.iLUVit.domain.user.domain.User;
 import lombok.AccessLevel;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -22,7 +23,7 @@ public class ChatRoom extends BaseEntity {
     private LocalTime time;             // 쪽지 발생 시간
     private String message;             // 쪽지 내용
 
-    private Long partner_id;            // 상대 ChatRoom 아이디
+    private Long partnerId;            // 상대 ChatRoom 아이디
 
     private Boolean anonymous;          // 프로필 익명 여부 -> true 설정하면 양쪽 다 익명으로
 
@@ -42,13 +43,28 @@ public class ChatRoom extends BaseEntity {
     @JoinColumn(name = "comment_id")
     private Comment comment;
 
-    public ChatRoom(User receiver, User sender, Post post, Boolean anonymous) {
-        this.date = LocalDate.now();
-        this.time = LocalTime.now();
+    @Builder(access = AccessLevel.PRIVATE)
+    public ChatRoom(LocalDate date, LocalTime time, String message, Long partnerId, Boolean anonymous, User receiver, User sender, Post post, Comment comment) {
+        this.date = date;
+        this.time = time;
+        this.message = message;
+        this.partnerId = partnerId;
+        this.anonymous = anonymous;
         this.receiver = receiver;
         this.sender = sender;
         this.post = post;
-        this.anonymous = anonymous;
+        this.comment = comment;
+    }
+
+    public static ChatRoom of(User receiver, User sender, Post post, Boolean anonymous){
+        return ChatRoom.builder()
+                .date(LocalDate.now())
+                .time(LocalTime.now())
+                .receiver(receiver)
+                .sender(sender)
+                .post(post)
+                .anonymous(anonymous)
+                .build();
     }
 
     public void updateComment(Comment comment) {
@@ -62,6 +78,6 @@ public class ChatRoom extends BaseEntity {
     }
 
     public void updatePartnerId(Long partner_id) {
-        this.partner_id = partner_id;
+        this.partnerId = partner_id;
     }
 }

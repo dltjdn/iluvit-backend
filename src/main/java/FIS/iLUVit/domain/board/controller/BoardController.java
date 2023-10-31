@@ -1,10 +1,9 @@
 package FIS.iLUVit.domain.board.controller;
 
 import FIS.iLUVit.global.config.argumentResolver.Login;
-import FIS.iLUVit.domain.board.dto.BoardIdResponse;
-import FIS.iLUVit.domain.board.dto.BoardListResponse;
+import FIS.iLUVit.domain.board.dto.BoardFindAllResponse;
 import FIS.iLUVit.domain.board.dto.BoardCreateRequest;
-import FIS.iLUVit.domain.board.dto.BoardStoryPreviewResponse;
+import FIS.iLUVit.domain.board.dto.BoardFindStoryResponse;
 import FIS.iLUVit.domain.board.service.BoardService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -29,46 +28,46 @@ public class BoardController {
      * 모두의 이야기 게시판 전체 조회
      */
     @GetMapping("public")
-    public ResponseEntity<BoardListResponse> getAllBoardByPublic(@Login Long userId) {
-        BoardListResponse boardListResponse = boardService.findBoardByPublicList(userId);
-        return ResponseEntity.ok(boardListResponse);
+    public ResponseEntity<BoardFindAllResponse> getAllBoardByPublic(@Login Long userId) {
+        BoardFindAllResponse boardFindAllResponse = boardService.findBoardByPublicList(userId);
+        return ResponseEntity.ok(boardFindAllResponse);
     }
 
     /**
      *  시설 이야기 게시판 전체 조회
      */
     @GetMapping("in-center/{centerId}")
-    public ResponseEntity<BoardListResponse> getAllBoardByCenter(@Login Long userId, @PathVariable("centerId") Long centerId) {
-        BoardListResponse boardListResponse = boardService.findAllBoardByCenter(userId, centerId);
-        return ResponseEntity.ok(boardListResponse);
+    public ResponseEntity<BoardFindAllResponse> getAllBoardByCenter(@Login Long userId, @PathVariable("centerId") Long centerId) {
+        BoardFindAllResponse boardFindAllResponse = boardService.findAllBoardByCenter(userId, centerId);
+        return ResponseEntity.ok(boardFindAllResponse);
     }
 
     /**
      * 이야기 (모두의 이야기 + 유저가 속한 시설의 이야기) 전체 조회
      */
     @GetMapping("home")
-    public ResponseEntity<List<BoardStoryPreviewResponse>> getAllStory(@Login Long userId) {
-        List<BoardStoryPreviewResponse> storyPreviewList = boardService.findStoryPreviewList(userId);
+    public ResponseEntity<List<BoardFindStoryResponse>> getAllStory(@Login Long userId) {
+        List<BoardFindStoryResponse> storyPreviewList = boardService.findStoryPreviewList(userId);
         return ResponseEntity.ok(storyPreviewList);
     }
 
     /**
      * 게시판 생성
      */
-    @PostMapping("{centerId}")
-    public ResponseEntity<BoardIdResponse> createBoard(@Login Long userId, @PathVariable("centerId") Long centerId,
+    @PostMapping("")
+    public ResponseEntity<Long> createBoard(@Login Long userId, @RequestParam("center_id") Long centerId,
                                                        @RequestBody @Valid BoardCreateRequest boardCreateRequest) {
-        BoardIdResponse boardIdResponse = boardService.saveNewBoard(userId, centerId, boardCreateRequest);
-        return ResponseEntity.status(HttpStatus.CREATED).body(boardIdResponse);
+        Long boardId = boardService.saveNewBoard(userId, centerId, boardCreateRequest);
+        return ResponseEntity.status(HttpStatus.CREATED).body(boardId);
     }
 
     /**
      * 게시판 삭제
     */
     @DeleteMapping("{boardId}")
-    public ResponseEntity<Void> deleteBoard(@Login Long userId, @PathVariable("boardId") Long boardId) {
-        boardService.deleteBoardWithValidation(userId, boardId);
-        return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
+    public ResponseEntity<Long> deleteBoard(@Login Long userId, @PathVariable("boardId") Long boardId) {
+        Long response = boardService.deleteBoard(userId, boardId);
+        return ResponseEntity.ok(response);
     }
 
 }

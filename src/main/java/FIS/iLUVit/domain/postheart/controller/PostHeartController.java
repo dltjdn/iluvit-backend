@@ -22,9 +22,9 @@ public class PostHeartController {
      * 게시글 좋아요 등록
     */
     @PostMapping("{postId}")
-    public ResponseEntity<Void> createPostHeart(@Login Long userId, @PathVariable("postId") Long postId) {
-        postHeartService.savePostHeart(userId, postId);
-        return ResponseEntity.status(HttpStatus.CREATED).build();
+    public ResponseEntity<Long> createPostHeart(@Login Long userId, @PathVariable("postId") Long postId) {
+        Long response = postHeartService.savePostHeart(userId, postId);
+        return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
     
     /**
@@ -33,7 +33,7 @@ public class PostHeartController {
     @DeleteMapping("{postId}")
     public ResponseEntity<Void> deletePostHeart(@Login Long userId, @PathVariable("postId") Long postId){
         postHeartService.deletePostHeart(userId,postId);
-        return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
+        return ResponseEntity.noContent().build();
     }
 
 }

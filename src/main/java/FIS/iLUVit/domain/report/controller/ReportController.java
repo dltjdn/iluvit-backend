@@ -26,9 +26,9 @@ public class ReportController {
      * 부적절한 게시글 혹은 댓글 신고하기
      */
     @PostMapping("")
-    public ResponseEntity<Void> createReport(@Login Long userId, @RequestBody ReportRequest request){
-        reportService.registerReport(userId, request);
-        return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
+    public ResponseEntity<Long> createReport(@Login Long userId, @RequestBody ReportRequest request){
+        Long response = reportService.registerReport(userId, request);
+        return ResponseEntity.ok(response);
     }
 
 }

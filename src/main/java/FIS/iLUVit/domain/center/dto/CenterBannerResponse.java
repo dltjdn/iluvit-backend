@@ -1,15 +1,13 @@
 package FIS.iLUVit.domain.center.dto;
 
 import FIS.iLUVit.domain.center.domain.Center;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import lombok.*;
 
 import java.util.List;
 
 @Getter
-@NoArgsConstructor
-@AllArgsConstructor
+@Builder(access = AccessLevel.PRIVATE)
 public class CenterBannerResponse {
     private Long centerId;
     private String name;                    // 시설명
@@ -18,16 +16,19 @@ public class CenterBannerResponse {
     private String profileImage;
     private List<String> infoImages;
     private Double starAverage;
+    @JsonProperty("prefer")
     private Boolean isCenterBookmark;             // 시설 북마크 여부
 
-    public CenterBannerResponse(Center center, List<String> infoImages, Boolean isCenterBookmark, Double starAverage) {
-        this.centerId = center.getId();
-        this.name = center.getName();
-        this.signed = center.getSigned();
-        this.recruit = center.getRecruit();
-        this.profileImage = center.getProfileImagePath();
-        this.infoImages = infoImages;
-        this.starAverage = starAverage;
-        this.isCenterBookmark = isCenterBookmark;
+    public static CenterBannerResponse of(Center center, List<String> infoImages, Boolean isCenterBookmark, Double starAverage){
+        return CenterBannerResponse.builder()
+                .centerId(center.getId())
+                .name(center.getName())
+                .signed(center.getSigned())
+                .recruit(center.getRecruit())
+                .profileImage(center.getProfileImagePath())
+                .infoImages(infoImages)
+                .starAverage(starAverage)
+                .isCenterBookmark(isCenterBookmark)
+                .build();
     }
 }

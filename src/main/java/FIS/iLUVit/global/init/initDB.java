@@ -31,11 +31,11 @@ public class initDB {
 
         public void dbInit() {
 
-            Board board2 = Board.createBoard("자유 게시판", BoardKind.NORMAL, null, true);
-            Board board3 = Board.createBoard("학부모 게시판", BoardKind.NORMAL, null, true);
-            Board board4 = Board.createBoard("선생님 게시판", BoardKind.NORMAL, null, true);
-            Board board5 = Board.createBoard("원장님 게시판", BoardKind.NORMAL, null, true);
-            Board board6 = Board.createBoard("정보 게시판", BoardKind.NORMAL, null, true);
+            Board board2 = Board.publicOf("자유 게시판", BoardKind.NORMAL, true);
+            Board board3 = Board.publicOf("학부모 게시판", BoardKind.NORMAL, true);
+            Board board4 = Board.publicOf("선생님 게시판", BoardKind.NORMAL,  true);
+            Board board5 = Board.publicOf("원장님 게시판", BoardKind.NORMAL, true);
+            Board board6 = Board.publicOf("정보 게시판", BoardKind.NORMAL, true);
 
             em.persist(board2);
             em.persist(board3);

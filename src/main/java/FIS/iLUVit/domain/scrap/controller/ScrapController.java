@@ -41,7 +41,7 @@ public class ScrapController {
     @DeleteMapping("post/{scrapPostId}")
     public ResponseEntity<Void> deleteScrapPost(@Login Long userId, @PathVariable("scrapPostId") Long scrapPostId) {
         scrapService.deleteScrapPost(userId, scrapPostId);
-        return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
+        return ResponseEntity.noContent().build();
     }
 
     /**
@@ -50,52 +50,52 @@ public class ScrapController {
     @GetMapping("dir")
     public ResponseEntity<List<ScrapDirResponse>> getAllScrapDir(@Login Long userId) {
         List<ScrapDirResponse> scrapDirResponses = scrapService.findScrapDirList(userId);
-        return ResponseEntity.ok().body(scrapDirResponses);
+        return ResponseEntity.ok(scrapDirResponses);
     }
 
     /**
      * 스크랩 폴더 생성
      */
     @PostMapping("dir")
-    public ResponseEntity<ScrapIdResponse> createScrapDir(@Login Long userId, @Valid @RequestBody ScrapDirRequest request) {
-        ScrapIdResponse scrapIdResponse = scrapService.saveNewScrapDir(userId, request);
-        return ResponseEntity.status(HttpStatus.CREATED).body(scrapIdResponse);
+    public ResponseEntity<List<ScrapDirResponse>> createScrapDir(@Login Long userId, @Valid @RequestBody ScrapDirCreateRequest request) {
+        List<ScrapDirResponse> responses = scrapService.saveNewScrapDir(userId, request);
+        return ResponseEntity.status(HttpStatus.CREATED).body(responses);
     }
 
     /**
      * 스크랩 폴더 이름 수정
      */
     @PutMapping("dir/name")
-    public ResponseEntity<Void> updateScrapDir(@Login Long userId, @Valid @RequestBody ScrapDirDetailRequest request) {
+    public ResponseEntity<Void> updateScrapDir(@Login Long userId, @Valid @RequestBody ScrapDirNameUpdateRequest request) {
         scrapService.modifyScrapDirName(userId, request);
-        return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
+        return ResponseEntity.noContent().build();
     }
 
     /**
      * 스크랩 폴더 삭제
      */
     @DeleteMapping("dir/{scrapDirId}")
-    public ResponseEntity<Void> deleteScrapDir(@Login Long userId, @PathVariable("scrapDirId") Long scrapDirId) {
-        scrapService.deleteScrapDir(userId, scrapDirId);
-        return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
+    public ResponseEntity<List<ScrapDirResponse>> deleteScrapDir(@Login Long userId, @PathVariable("scrapDirId") Long scrapDirId) {
+        List<ScrapDirResponse> responses = scrapService.deleteScrapDir(userId, scrapDirId);
+        return ResponseEntity.ok(responses);
     }
 
     /**
      * 게시물 별 스크랩 폴더 전체 조회
      */
     @GetMapping("post/{postId}/dir")
-    public ResponseEntity<List<ScrapDirByPostResponse>> getScrapDirByPost(@Login Long userId, @PathVariable("postId") Long postId) {
-        List<ScrapDirByPostResponse> scrapDirByPostResponses = scrapService.findScrapDirListByPost(userId, postId);
-        return ResponseEntity.ok().body(scrapDirByPostResponses);
+    public ResponseEntity<List<ScrapDirFindByPostResponse>> getScrapDirByPost(@Login Long userId, @PathVariable("postId") Long postId) {
+        List<ScrapDirFindByPostResponse> scrapDirFindByPostRespons = scrapService.findScrapDirListByPost(userId, postId);
+        return ResponseEntity.ok(scrapDirFindByPostRespons);
     }
 
     /**
      * 스크랩 폴더별 게시물 전체 조회
      */
     @GetMapping("dir/{scrapDirId}/post")
-    public ResponseEntity<Slice<PostByScrapDirResponse>> getPostByScrapDir(@Login Long userId, @PathVariable("scrapDirId") Long scrapDirId, Pageable pageable) {
-        Slice<PostByScrapDirResponse> scrapPostPreviewResponses = scrapService.findPostByScrapDir(userId, scrapDirId, pageable);
-        return ResponseEntity.ok().body(scrapPostPreviewResponses);
+    public ResponseEntity<Slice<ScrapDirPostsResponse>> getPostByScrapDir(@Login Long userId, @PathVariable("scrapDirId") Long scrapDirId, Pageable pageable) {
+        Slice<ScrapDirPostsResponse> scrapPostPreviewResponses = scrapService.findPostByScrapDir(userId, scrapDirId, pageable);
+        return ResponseEntity.ok(scrapPostPreviewResponses);
     }
 
 }

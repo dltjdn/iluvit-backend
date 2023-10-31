@@ -1,12 +1,9 @@
 package FIS.iLUVit.domain.teacher.controller;
 
+import FIS.iLUVit.domain.teacher.dto.*;
 import FIS.iLUVit.global.config.argumentResolver.Login;
-import FIS.iLUVit.domain.center.dto.CenterBasicResponse;
-import FIS.iLUVit.domain.center.dto.CenterBasicRequest;
-import FIS.iLUVit.domain.teacher.dto.SignupTeacherRequest;
-import FIS.iLUVit.domain.teacher.dto.TeacherDetailRequest;
-import FIS.iLUVit.domain.teacher.dto.TeacherDetailResponse;
-import FIS.iLUVit.domain.teacher.dto.TeacherInfoForAdminResponse;
+import FIS.iLUVit.domain.center.dto.CenterFindForUserResponse;
+import FIS.iLUVit.domain.center.dto.CenterFindForUserRequest;
 import FIS.iLUVit.domain.teacher.service.TeacherService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -17,10 +14,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
-import java.io.IOException;
 import java.util.List;
 
-@Slf4j
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("teacher")
@@ -36,16 +31,16 @@ public class TeacherController {
      * 교사 정보 상세 조회
      */
     @GetMapping("")
-    public ResponseEntity<TeacherDetailResponse> getTeacherDetail(@Login Long userId) throws IOException {
-        TeacherDetailResponse teacherDetailResponse = teacherService.findTeacherDetails(userId);
-        return ResponseEntity.ok(teacherDetailResponse);
+    public ResponseEntity<TeacherFindOneDetailResponse> getTeacherDetail(@Login Long userId) {
+        TeacherFindOneDetailResponse teacherBasicInfoResponse = teacherService.findTeacherDetails(userId);
+        return ResponseEntity.ok(teacherBasicInfoResponse);
     }
 
     /**
      * 교사 생성 (교사 회원가입)
      */
     @PostMapping("signup")
-    public ResponseEntity<Void> createTeacher(@RequestBody @Valid SignupTeacherRequest request) {
+    public ResponseEntity<Void> createTeacher(@RequestBody @Valid TeacherSignupRequest request) {
         teacherService.signupTeacher(request);
         return ResponseEntity.status(HttpStatus.CREATED).build();
     }
@@ -53,18 +48,18 @@ public class TeacherController {
     /**
      * 교사 정보 수정
      */
-    @PatchMapping("")
-    public ResponseEntity<Void> updateTeacher(@Login Long userId, @Valid @ModelAttribute TeacherDetailRequest request) throws IOException {
-        teacherService.modifyTeacherInfo(userId, request);
-        return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
+    @PostMapping("")
+    public ResponseEntity<TeacherFindOneDetailResponse> updateTeacherInfo(@Login Long userId, @Valid @ModelAttribute TeacherUpdateRequest request){
+        TeacherFindOneDetailResponse response = teacherService.updateTeacherInfo(userId, request);
+        return ResponseEntity.ok(response);
     }
 
     /**
      * 교사 회원가입, 교사 이직용 시설 정보 조회
      */
     @GetMapping("search/center")
-    public ResponseEntity<Slice<CenterBasicResponse>> getCenterForTeacher(@ModelAttribute CenterBasicRequest centerBasicRequest, Pageable pageable) {
-        Slice<CenterBasicResponse> centerDtos = teacherService.findCenterForSignupTeacher(centerBasicRequest, pageable);
+    public ResponseEntity<Slice<CenterFindForUserResponse>> getCenterForTeacher(@ModelAttribute CenterFindForUserRequest request, Pageable pageable) {
+        Slice<CenterFindForUserResponse> centerDtos = teacherService.findCenterForSignupTeacher(request, pageable);
         return ResponseEntity.ok(centerDtos);
     }
 
@@ -74,7 +69,7 @@ public class TeacherController {
     @PatchMapping("center/{centerId}")
     public ResponseEntity<Void> assignCenterForTeacher(@Login Long userId, @PathVariable("centerId") Long centerId) {
         teacherService.requestAssignCenterForTeacher(userId, centerId);
-        return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
+        return ResponseEntity.noContent().build();
     }
 
     /**
@@ -83,7 +78,7 @@ public class TeacherController {
     @PatchMapping("center")
     public ResponseEntity<Void> leaveCenterForTeacher(@Login Long userId) {
         teacherService.leaveCenterForTeacher(userId);
-        return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
+        return ResponseEntity.noContent().build();
     }
 
 
@@ -106,7 +101,7 @@ public class TeacherController {
     @PatchMapping("{teacherId}/accept")
     public ResponseEntity<Void> acceptTeacher(@Login Long userId, @PathVariable("teacherId") Long teacherId) {
         teacherService.acceptTeacherRegistration(userId, teacherId);
-        return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
+        return ResponseEntity.noContent().build();
     }
 
     /**
@@ -115,7 +110,7 @@ public class TeacherController {
     @PatchMapping("{teacherId}/reject")
     public ResponseEntity<Void> rejectTeacher(@Login Long userId, @PathVariable("teacherId") Long teacherId) {
         teacherService.rejectTeacherRegistration(userId, teacherId);
-        return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
+        return ResponseEntity.noContent().build();
     }
 
     /**
@@ -124,7 +119,7 @@ public class TeacherController {
     @PatchMapping("{teacherId}/mandate")
     public ResponseEntity<Void> mandateTeacher(@Login Long userId, @PathVariable("teacherId") Long teacherId) {
         teacherService.mandateTeacher(userId, teacherId);
-        return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
+        return ResponseEntity.noContent().build();
     }
 
     /**
@@ -133,7 +128,7 @@ public class TeacherController {
     @PatchMapping("{teacherId}/demote")
     public ResponseEntity<Void> demoteTeacher(@Login Long userId, @PathVariable("teacherId") Long teacherId) {
         teacherService.demoteTeacher(userId, teacherId);
-        return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
+        return ResponseEntity.noContent().build();
     }
 
     /**
@@ -142,7 +137,7 @@ public class TeacherController {
     @DeleteMapping("withdraw")
     public ResponseEntity<Void> deleteTeacher(@Login Long userId){
         teacherService.withdrawTeacher(userId);
-        return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
+        return ResponseEntity.noContent().build();
     }
 
 }

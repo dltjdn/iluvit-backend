@@ -7,7 +7,6 @@ import lombok.NoArgsConstructor;
 import javax.validation.constraints.NotNull;
 
 @Getter
-@AllArgsConstructor
 @NoArgsConstructor
 public class ScrapDirUpdateRequest {
     @NotNull(message = "입력되지 않은 목록이 있습니다.")

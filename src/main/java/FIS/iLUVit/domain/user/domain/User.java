@@ -3,9 +3,9 @@ package FIS.iLUVit.domain.user.domain;
 import FIS.iLUVit.domain.blackuser.domain.BlackUser;
 import FIS.iLUVit.domain.common.domain.BaseImageEntity;
 import FIS.iLUVit.domain.common.domain.Location;
-import FIS.iLUVit.domain.user.dto.UserBasicInfoResponse;
+import FIS.iLUVit.domain.user.dto.UserFindOneResponse;
 import FIS.iLUVit.domain.common.domain.Auth;
-import FIS.iLUVit.domain.user.dto.UserInfoResponse;
+import FIS.iLUVit.domain.user.dto.UserLoginResponse;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -67,12 +67,12 @@ public class User extends BaseImageEntity {
         return Objects.hash(id);
     }
 
-    public UserInfoResponse getLoginInfo() {
-        return new UserInfoResponse(this);
+    public UserLoginResponse getLoginInfo() {
+        return new UserLoginResponse(this);
     }
 
-    public UserBasicInfoResponse getUserInfo() {
-        return new UserBasicInfoResponse(id, nickName, auth);
+    public UserFindOneResponse getUserInfo() {
+        return new UserFindOneResponse(id, nickName, auth);
     }
 
     public User updateReadAlarm(Boolean readAlarm) {

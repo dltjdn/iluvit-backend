@@ -2,7 +2,7 @@ package FIS.iLUVit.domain.parent.controller;
 
 import FIS.iLUVit.global.config.argumentResolver.Login;
 import FIS.iLUVit.domain.parent.dto.ParentUpdateRequest;
-import FIS.iLUVit.domain.parent.dto.ParentDetailResponse;
+import FIS.iLUVit.domain.parent.dto.ParentFindOneResponse;
 import FIS.iLUVit.domain.parent.dto.ParentCreateRequest;
 import FIS.iLUVit.domain.parent.service.ParentService;
 import lombok.RequiredArgsConstructor;
@@ -30,8 +30,8 @@ public class ParentController {
      *  학부모 정보 상세 조회
      */
     @GetMapping("")
-    public ResponseEntity<ParentDetailResponse> getParentDetails(@Login Long userId){
-        ParentDetailResponse parentDetails = parentService.findParentDetails(userId);
+    public ResponseEntity<ParentFindOneResponse> getParentDetails(@Login Long userId){
+        ParentFindOneResponse parentDetails = parentService.findParentDetails(userId);
         return ResponseEntity.ok(parentDetails);
     }
 
@@ -39,9 +39,9 @@ public class ParentController {
      *  학부모 정보 수정
      */
     @PatchMapping("")
-    public ResponseEntity<Void> updateParent(@Login Long userId, @Valid @ModelAttribute ParentUpdateRequest parentUpdateRequest) throws IOException {
-        parentService.modifyParentInfo(userId, parentUpdateRequest);
-        return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
+    public ResponseEntity<ParentFindOneResponse> updateParent(@Login Long userId, @Valid @ModelAttribute ParentUpdateRequest parentUpdateRequest) throws IOException {
+        ParentFindOneResponse response = parentService.modifyParentInfo(userId, parentUpdateRequest);
+        return ResponseEntity.ok(response);
     }
 
     /**
@@ -59,6 +59,6 @@ public class ParentController {
     @DeleteMapping("withdraw")
     public ResponseEntity<Void> deleteParent(@Login Long userId){
         parentService.withdrawParent(userId);
-        return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
+        return ResponseEntity.noContent().build();
     }
 }

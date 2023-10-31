@@ -27,28 +27,27 @@ public class Scrap extends BaseEntity {
     @OneToMany(mappedBy = "scrap")
     private List<ScrapPost> scrapPosts = new ArrayList<>();
 
-    @Builder
-    private Scrap(Long id, User user, String name, Boolean isDefault) {
-        this.id = id;
+    @Builder(access = AccessLevel.PRIVATE)
+    private Scrap(User user, String name, Boolean isDefault) {
         this.user = user;
         this.name = name;
         this.isDefault = isDefault;
     }
 
-    public static Scrap createScrap(User user, String name) {
-        Scrap scrap = new Scrap();
-        scrap.user = user;
-        scrap.name = name;
-        scrap.isDefault = false;
-        return scrap;
+    public static Scrap of(User user, String name) {
+        return Scrap.builder()
+                .user(user)
+                .name(name)
+                .isDefault(false)
+                .build();
     }
 
-    public static Scrap createDefaultScrap(User user) {
-        Scrap scrap = new Scrap();
-        scrap.user = user;
-        scrap.name = "기본폴더";
-        scrap.isDefault = true;
-        return scrap;
+    public static Scrap from(User user) {
+        return Scrap.builder()
+                .user(user)
+                .name("기본폴더")
+                .isDefault(true)
+                .build();
     }
 
     public void updateScrapDirName(String name) {

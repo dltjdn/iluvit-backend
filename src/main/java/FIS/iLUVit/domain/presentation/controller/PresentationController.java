@@ -35,7 +35,7 @@ public class PresentationController {
     @PostMapping("search")
     public ResponseEntity<Slice<PresentationSearchFilterResponse>> getPresentationByFilter(@RequestBody PresentationSearchFilterRequest request, Pageable pageable){
         Slice<PresentationSearchFilterResponse> responses = presentationService.findPresentationByFilter(request, pageable);
-        return ResponseEntity.ok().body(responses);
+        return ResponseEntity.ok(responses);
     }
 
     /**
@@ -44,7 +44,7 @@ public class PresentationController {
     @GetMapping("info/center/{centerId}")
     public ResponseEntity<List<PresentationFindOneResponse>> getAllPresentation(@Login Long userId, @PathVariable("centerId") Long centerId){
         List<PresentationFindOneResponse> responses = presentationService.findAllPresentation( userId, centerId);
-        return ResponseEntity.ok().body(responses);
+        return ResponseEntity.ok(responses);
     }
 
 
@@ -66,19 +66,19 @@ public class PresentationController {
      * 설명회 정보 수정 ( 설명회 회차 정보 수정 포함)
      */
     @PatchMapping("")
-    public ResponseEntity<Void> updatePresentationInfo( @Login Long userId, @RequestBody @Validated PresentationUpdateRequest request){
-        presentationService.updatePresentationInfo(userId, request);
-        return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
+    public ResponseEntity<PresentationCreateResponse> updatePresentationInfo( @Login Long userId, @RequestBody @Validated PresentationUpdateRequest request){
+        PresentationCreateResponse response = presentationService.updatePresentationInfo(userId, request);
+        return ResponseEntity.ok(response);
     }
 
     /**
      * 설명회 이미지 저장 및 수정
      */
     @RequestMapping(value = "{presentationId}/image", method = {RequestMethod.POST, RequestMethod.PATCH})
-    public ResponseEntity<Void> updatePresentationImage(@Login Long userId, @PathVariable("presentationId") Long presentationId,
+    public ResponseEntity<PresentationCreateResponse> updatePresentationImage(@Login Long userId, @PathVariable("presentationId") Long presentationId,
                                                           @RequestPart(required = false) List<MultipartFile> images){
-        presentationService.updatePresentationImage(userId, presentationId, images);
-        return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
+        PresentationCreateResponse response = presentationService.updatePresentationImage(userId, presentationId, images);
+        return ResponseEntity.ok(response);
     }
 
     /**
@@ -95,7 +95,7 @@ public class PresentationController {
     @GetMapping("{presentationId}")
     public ResponseEntity<PresentationFindOneResponse> getPresentationDetails(@PathVariable("presentationId") Long presentationId){
         PresentationFindOneResponse response = presentationService.findPresentationDetails(presentationId);
-        return ResponseEntity.ok().body(response);
+        return ResponseEntity.ok(response);
     }
 
     /**
@@ -104,7 +104,7 @@ public class PresentationController {
     @GetMapping("pt-date/{ptDateId}/participating")
     public ResponseEntity<List<PresentationByParentResponse>> getParentParticipate(@Login Long userId, @PathVariable("ptDateId") Long ptDateId){
         List<PresentationByParentResponse> responses = presentationService.findParentListWithRegisterParticipation(userId, ptDateId);
-        return ResponseEntity.ok().body(responses);
+        return ResponseEntity.ok(responses);
     }
 
     /**
@@ -113,7 +113,7 @@ public class PresentationController {
     @GetMapping("pt-date/{ptDateId}/waiting")
     public ResponseEntity<List<PresentationByParentResponse>> getParentWait(@Login Long userId, @PathVariable("ptDateId") Long ptDateId){
         List<PresentationByParentResponse> responses = presentationService.findParentListWithWaitingParticipation(userId, ptDateId);
-        return ResponseEntity.ok().body(responses);
+        return ResponseEntity.ok(responses);
     }
 
 }

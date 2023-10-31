@@ -2,13 +2,11 @@ package FIS.iLUVit.domain.center.controller;
 
 import FIS.iLUVit.global.config.argumentResolver.Login;
 import FIS.iLUVit.domain.center.dto.*;
-import FIS.iLUVit.domain.center.domain.KindOf;
 import FIS.iLUVit.domain.center.service.CenterService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.SliceImpl;
-import org.springframework.http.HttpStatus;
+import org.springframework.data.domain.Slice;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
@@ -32,8 +30,8 @@ public class CenterController {
      * 주변 시설 전체 조회
      */
     @PostMapping("search/all")
-    public ResponseEntity<List<CenterMapResponse>> getAllCenter(@RequestParam("searchContent") String searchContent, @RequestBody @Validated CenterMapRequest centerMapRequest){
-        List<CenterMapResponse> centerByFilterForMap = centerService.findCenterByFilterForMap(searchContent, centerMapRequest);
+    public ResponseEntity<List<CenterMapResponse>> getAllCenter(@RequestBody @Validated CenterMapRequest centerMapRequest){
+        List<CenterMapResponse> centerByFilterForMap = centerService.findCenterByFilterForMap(centerMapRequest);
         return ResponseEntity.ok(centerByFilterForMap);
     }
 
@@ -42,8 +40,8 @@ public class CenterController {
      * 유저가 설정한 필터 기반 시설 조회
      */
     @PostMapping("search")
-    public ResponseEntity<SliceImpl<CenterMapFilterResponse>> getCenterByFilter(@Login Long userId, @RequestParam("kindOf") KindOf kindOf, @RequestBody @Validated CenterMapFilterRequest centerMapFilterRequest, Pageable pageable){
-        SliceImpl<CenterMapFilterResponse> centerByFilterForMapList = centerService.findCenterByFilterForMapList(userId,kindOf, centerMapFilterRequest, pageable);
+    public ResponseEntity<Slice<CenterMapFilterResponse>> getCenterByFilter(@Login Long userId, @RequestBody @Validated CenterMapFilterRequest centerMapFilterRequest, Pageable pageable){
+        Slice<CenterMapFilterResponse> centerByFilterForMapList = centerService.findCenterByFilterForMapList(userId,centerMapFilterRequest, pageable);
         return ResponseEntity.ok(centerByFilterForMapList);
     }
 
@@ -51,8 +49,8 @@ public class CenterController {
      * 시설 상세 조회
      */
     @GetMapping("{centerId}/info")
-    public ResponseEntity<CenterDetailResponse> getCenterDetails(@PathVariable("centerId") Long centerId){
-        CenterDetailResponse centerDetailsByCenter = centerService.findCenterDetailsByCenter(centerId);
+    public ResponseEntity<CenterFindResponse> getCenterDetails(@PathVariable("centerId") Long centerId){
+        CenterFindResponse centerDetailsByCenter = centerService.findCenterDetailsByCenter(centerId);
         return ResponseEntity.ok(centerDetailsByCenter);
     }
 
@@ -89,11 +87,11 @@ public class CenterController {
      */
     @PatchMapping("{centerId}")
     public ResponseEntity<Void> updateCenterInfo(@Login Long userId, @PathVariable("centerId") Long centerId,
-                                                 @RequestBody @Validated CenterDetailRequest centerDetailRequest){
+                                                 @RequestBody @Validated CenterUpdateRequest centerUpdateRequest){
 
-        centerService.modifyCenterInfo(userId, centerId, centerDetailRequest);
+        centerService.modifyCenterInfo(userId, centerId, centerUpdateRequest);
 
-        return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
+        return ResponseEntity.noContent().build();
     }
 
     /**
@@ -101,11 +99,11 @@ public class CenterController {
      */
     @PatchMapping("{centerId}/image")
     public ResponseEntity<Void> updateCenterImage(@Login Long userId, @PathVariable("centerId") Long centerId,
-                                                  @Valid @ModelAttribute CenterImageRequest centerImageRequest){
+                                                  @Valid @ModelAttribute CenterImageRequest centerImageRequest) {
 
         centerService.modifyCenterImage(userId, centerId, centerImageRequest);
 
-        return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
+        return ResponseEntity.noContent().build();
     }
 
 }

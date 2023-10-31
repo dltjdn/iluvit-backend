@@ -59,7 +59,7 @@ public class Child extends BaseImageEntity {
         this.approval = Approval.ACCEPT;
     }
 
-    public void update(String name, LocalDate birthDate) {
+    public void updateChildInfo(String name, LocalDate birthDate) {
         this.name = name;
         this.birthDate = birthDate;
     }

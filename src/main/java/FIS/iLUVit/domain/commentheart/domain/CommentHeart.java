@@ -28,15 +28,16 @@ public class CommentHeart extends BaseEntity {
     @OnDelete(action = OnDeleteAction.CASCADE)
     private Comment comment;
 
+    @Builder(access = AccessLevel.PRIVATE)
     public CommentHeart(User user, Comment comment) {
         this.user = user;
         this.comment = comment;
     }
 
-    @Builder(toBuilder = true)
-    public CommentHeart(Long id, User user, Comment comment) {
-        this.id = id;
-        this.user = user;
-        this.comment = comment;
+    public static CommentHeart of(User user, Comment comment){
+        return CommentHeart.builder()
+                .user(user)
+                .comment(comment)
+                .build();
     }
 }

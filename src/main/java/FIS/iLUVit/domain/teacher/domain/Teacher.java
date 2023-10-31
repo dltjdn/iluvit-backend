@@ -1,16 +1,18 @@
 package FIS.iLUVit.domain.teacher.domain;
 
 import FIS.iLUVit.domain.center.domain.Center;
+import FIS.iLUVit.domain.common.domain.Location;
+import FIS.iLUVit.domain.teacher.dto.TeacherSignupRequest;
 import FIS.iLUVit.domain.user.domain.User;
-import FIS.iLUVit.domain.teacher.dto.LoginTeacherResponse;
-import FIS.iLUVit.domain.teacher.dto.TeacherBasicInfoResponse;
-import FIS.iLUVit.domain.teacher.dto.TeacherDetailRequest;
-import FIS.iLUVit.domain.user.dto.UserBasicInfoResponse;
+import FIS.iLUVit.domain.teacher.dto.TeacherLoginResponse;
+import FIS.iLUVit.domain.teacher.dto.TeacherFindOneResponse;
+import FIS.iLUVit.domain.teacher.dto.TeacherUpdateRequest;
+import FIS.iLUVit.domain.user.dto.UserFindOneResponse;
 import FIS.iLUVit.domain.common.domain.Approval;
 import FIS.iLUVit.domain.common.domain.Auth;
 import FIS.iLUVit.domain.user.exception.UserErrorResult;
 import FIS.iLUVit.domain.user.exception.UserException;
-import FIS.iLUVit.domain.user.dto.UserInfoResponse;
+import FIS.iLUVit.domain.user.dto.UserLoginResponse;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
@@ -27,7 +29,6 @@ import java.util.Objects;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Teacher extends User {
 
-
     @Enumerated(EnumType.STRING)
     private Approval approval;              // 교사 승인 여부
 
@@ -35,9 +36,8 @@ public class Teacher extends User {
     @JoinColumn(name = "center_id")
     private Center center;
 
-    @Builder
-    public Teacher(Long id, String nickName, String loginId, String password, String phoneNumber, String emailAddress, String name, Auth auth, Approval approval, Center center, String address, String detailAddress, Boolean readAlarm) {
-        this.id = id;
+    @Builder(access = AccessLevel.PRIVATE)
+    public Teacher(String nickName, String loginId, String password, String phoneNumber, String emailAddress, String name, Auth auth, Approval approval,Location location, Center center, String address, String detailAddress, Boolean readAlarm) {
         this.nickName = nickName;
         this.loginId = loginId;
         this.password = password;
@@ -48,45 +48,46 @@ public class Teacher extends User {
         this.detailAddress = detailAddress;
         this.auth = auth;
         this.approval = approval;
+        this.location = location;
         this.center = center;
         this.readAlarm = readAlarm;
     }
 
-    public static Teacher createTeacher(String nickName, String loginId, String password, String phoneNumber, String emailAddress, String name, Auth auth, Approval approval, Center center, String address, String detailAddress) {
+    public static Teacher of(TeacherSignupRequest request, String password, Center center, Location location) {
         return Teacher.builder()
-                .nickName(nickName)
-                .loginId(loginId)
+                .nickName(request.getNickname())
+                .loginId(request.getLoginId())
                 .password(password)
-                .phoneNumber(phoneNumber)
-                .emailAddress(emailAddress)
-                .name(name)
-                .approval(approval)
+                .phoneNumber(request.getPhoneNum())
+                .emailAddress(request.getEmailAddress())
+                .name(request.getName())
+                .approval(Approval.WAITING)
+                .auth(Auth.TEACHER)
+                .address(request.getAddress())
+                .detailAddress(request.getDetailAddress())
                 .center(center)
-                .auth(auth)
-                .address(address)
-                .detailAddress(detailAddress)
+                .readAlarm(true)
+                .location(location)
                 .build();
     }
 
-    public void mappingCenter(Center center) {
-        this.center = center;
-    }
-
-    public void updateDetail(TeacherDetailRequest request) {
+    public void updateTeacherInfo(TeacherUpdateRequest request, Location location) {
         this.name = request.getName();
         this.nickName = request.getNickname();
         this.emailAddress = request.getEmailAddress();
         this.address = request.getAddress();
         this.detailAddress = request.getDetailAddress();
+        this.location = location;
     }
 
-    public void updateDetailWithPhoneNum(TeacherDetailRequest request) {
+    public void updateTeacherInfoWithPhoneNum(TeacherUpdateRequest request, Location location) {
         this.name = request.getName();
         this.nickName = request.getNickname();
         this.emailAddress = request.getEmailAddress();
         this.address = request.getAddress();
         this.detailAddress = request.getDetailAddress();
         this.phoneNumber = request.getPhoneNum();
+        this.location = location;
     }
 
     public Teacher checkPermission(Long centerId) {
@@ -96,13 +97,13 @@ public class Teacher extends User {
     }
 
     @Override
-    public UserInfoResponse getLoginInfo() {
-        return new LoginTeacherResponse(this);
+    public UserLoginResponse getLoginInfo() {
+        return new TeacherLoginResponse(this);
     }
 
     @Override
-    public UserBasicInfoResponse getUserInfo() {
-        return new TeacherBasicInfoResponse(id, nickName, auth, center, approval);
+    public UserFindOneResponse getUserInfo() {
+        return new TeacherFindOneResponse(id, nickName, auth, center, approval);
     }
 
     public void beDirector() {

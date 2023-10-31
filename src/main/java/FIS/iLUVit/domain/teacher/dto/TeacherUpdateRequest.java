@@ -1,0 +1,27 @@
+package FIS.iLUVit.domain.teacher.dto;
+
+import lombok.*;
+import org.springframework.web.multipart.MultipartFile;
+import javax.validation.constraints.NotEmpty;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
+
+@Getter
+@Setter
+@NoArgsConstructor
+public class TeacherUpdateRequest {
+    @NotEmpty(message = "입력되지 않은 목록이 있습니다.")
+    private String name;
+    @Size(min = 2, max = 10, message = "닉네임은 2글자 이상 10글자 이하여야 합니다.")
+    private String nickname;
+    @NotNull(message = "입력되지 않은 목록이 있습니다.")
+    private Boolean changePhoneNum;
+    private String phoneNum;
+    @NotEmpty(message = "입력되지 않은 목록이 있습니다.")
+    private String emailAddress;
+    @NotEmpty(message = "입력되지 않은 목록이 있습니다.")
+    private String address;
+    @NotEmpty(message = "입력되지 않은 목록이 있습니다.")
+    private String detailAddress;
+    private MultipartFile profileImg;
+}

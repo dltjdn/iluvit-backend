@@ -1,5 +1,6 @@
 package FIS.iLUVit.domain.chat.dto;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -14,5 +15,6 @@ public class ChatCreateRequest {
     private String message;
 
     @NotBlank(message = "대화방 id 필요")
+    @JsonProperty("room_id")
     private Long roomId;
 }

@@ -4,6 +4,7 @@ import FIS.iLUVit.domain.alarm.repository.AlarmRepository;
 import FIS.iLUVit.domain.parent.domain.Parent;
 import FIS.iLUVit.domain.parent.repository.ParentRepository;
 import FIS.iLUVit.domain.participation.domain.Participation;
+import FIS.iLUVit.domain.participation.dto.ParticipationCreateRequest;
 import FIS.iLUVit.domain.participation.exception.ParticipationErrorResult;
 import FIS.iLUVit.domain.participation.exception.ParticipationException;
 import FIS.iLUVit.domain.participation.repository.ParticipationRepository;
@@ -57,7 +58,8 @@ public class ParticipationService {
     /**
      * 설명회 신청
      */
-    public void registerParticipation(Long userId, Long ptDateId) {
+    public Long registerParticipation(Long userId, ParticipationCreateRequest request) {
+        Long ptDateId = request.getPtDateId();
         // 잘못된 설명회 회차 id일 경우
         PtDate ptDate = ptDateRepository.findById(ptDateId)
                 .orElseThrow(() -> new PresentationException(PresentationErrorResult.PTDATE_NOT_FOUND));
@@ -83,7 +85,8 @@ public class ParticipationService {
         });
 
         // 설명회 등록
-        participationRepository.save(Participation.createParticipation(parent, presentation, ptDate, participations));
+        Participation participation = Participation.createParticipation(parent, presentation, ptDate, participations);
+        participationRepository.save(participation);
 
         if(ptDate.getAblePersonNum() <= ptDate.getParticipantCnt()){
             teacherRepository.findByCenter(presentation.getCenter()).forEach((teacher) -> {
@@ -92,12 +95,14 @@ public class ParticipationService {
                 AlarmUtils.publishAlarmEvent(alarm, NotificationTitle.ILUVIT.getDescription());
             });
         }
+
+        return participation.getId();
     }
 
     /**
      * 설명회 취소 ( 대가자 있을 경우 자동 합류 )
      */
-    public void cancelParticipation(Long userId, Long participationId) {
+    public Long cancelParticipation(Long userId, Long participationId) {
         if(participationId < 0)
             throw new ParticipationException(ParticipationErrorResult.WRONG_PARTICIPATION_ID_REQUEST);
 
@@ -113,36 +118,30 @@ public class ParticipationService {
         if(ptDate.checkHasWaiting()){
             eventPublisher.publishEvent(new ParticipationCancelEvent(ptDate.getPresentation(), ptDate)); // 이벤트 리스너 호출
         }
+
+        return participationId;
     }
 
 
     /**
      * 신청한/취소한 설명회 전체 조회
      */
-    public List<ParticipationWithStatusResponse> findAllParticipationByUser(Long userId) {
+    public Map<Status, List<ParticipationResponse>> findAllParticipationByUser(Long userId) {
         // 학부모 조회
         Parent parent = getParent(userId);
 
         List<ParticipationResponse> participationResponses = participationRepository.findByParent(parent).stream()
-                .map(ParticipationResponse::createDtoByParticipation)
+                .map(ParticipationResponse::from)
                 .collect(Collectors.toList());
 
         participationResponses.addAll(
                 parent.getWaitings().stream()
-                .map(ParticipationResponse::createDtoByWaiting)
+                .map(ParticipationResponse::of)
                 .collect(Collectors.toList())
         );
 
-        Map<Status, List<ParticipationResponse>> statusParticipationMap = participationResponses.stream()
+        return participationResponses.stream()
                 .collect(Collectors.groupingBy(ParticipationResponse::getStatus));
-
-        List<ParticipationWithStatusResponse> participationWithStatusResponses = new ArrayList<>();
-
-        statusParticipationMap.forEach((status, participationDtoList)-> {
-            participationWithStatusResponses.add(new ParticipationWithStatusResponse(status, participationDtoList));
-        });
-
-        return participationWithStatusResponses;
     }
 
     /**
@@ -152,7 +151,7 @@ public class ParticipationService {
         Parent parent = getParent(userId);
 
         Slice<ParticipationResponse> participationDtos = participationRepository.findByParentAndStatus(parent, JOINED, pageable)
-                .map(ParticipationResponse::createDtoByParticipation);
+                .map(ParticipationResponse::from);
 
         return participationDtos;
     }
@@ -164,7 +163,7 @@ public class ParticipationService {
         Parent parent = getParent(userId);
 
         Slice<ParticipationResponse> participationDtos = participationRepository.findByParentAndStatus(parent, CANCELED, pageable)
-                .map(ParticipationResponse::createDtoByParticipation);
+                .map(ParticipationResponse::from);
 
         return participationDtos;
     }
@@ -176,7 +175,7 @@ public class ParticipationService {
         Parent parent = getParent(userId);
 
         Slice<ParticipationResponse> participationDtos = waitingRepository.findByParent(parent, pageable)
-                .map(ParticipationResponse::createDtoByWaiting);
+                .map(ParticipationResponse::of);
 
         return participationDtos;
     }
@@ -191,6 +190,15 @@ public class ParticipationService {
         Participation paticipation = Participation.createParticipation(parent, presentation, ptDate, participations);
 
         participationRepository.save(paticipation);
+    }
+
+    /**
+     *  신청되어있는 설명회 신청 목록에서 빠지게 하기 ( 설명회 신청 삭제 )
+     */
+    public void deleteParticipationByWithdraw(Parent parent){
+        participationRepository.findByParent(parent).forEach(participation -> {
+            participationRepository.deleteById(participation.getId());
+        });
     }
 
     /**

@@ -39,7 +39,7 @@ public class ReportService {
     /**
      * 부적절한 게시글 혹은 댓글 신고하기
      */
-    public void registerReport(Long userId, ReportRequest request) {
+    public Long registerReport(Long userId, ReportRequest request) {
         // 신고자 정보
         User findUser = getUser(userId);
 
@@ -114,6 +114,8 @@ public class ReportService {
                 findReport.plusCount();
             }
         }
+
+        return reportDetailId;
     }
 
     /**

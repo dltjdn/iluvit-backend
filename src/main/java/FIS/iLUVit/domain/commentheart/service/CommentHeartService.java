@@ -28,31 +28,28 @@ public class CommentHeartService {
     /**
      * 댓글 좋아요 등록
      */
-    public void saveCommentHeart(Long userId, Long commentId) {
-        User findUser = getUser(userId);
-        Comment findComment = getComment(commentId);
+    public Long saveCommentHeart(Long userId, Long commentId) {
+        User user = getUser(userId);
+        Comment comment = getComment(commentId);
 
-        commentHeartRepository.findByUserAndComment(findUser, findComment)
-                .ifPresent((ch) -> {
+        commentHeartRepository.findByUserAndComment(user, comment)
+                .ifPresent((commentHeart) -> {
                     throw new CommentException(CommentErrorResult.ALREADY_HEART_COMMENT);
                 });
 
-        CommentHeart commentHeart = new CommentHeart(findUser, findComment);
-
-        findComment.plusHeartCnt();
-        commentHeartRepository.save(commentHeart);
+        comment.plusHeartCnt();
+        CommentHeart savedCommentHeart = commentHeartRepository.save(CommentHeart.of(user, comment));
+        return savedCommentHeart.getId();
     }
 
     /**
      * 댓글 좋아요 취소
      */
-    public void deleteCommentHeart(Long userId, Long commentId) {
+    public Long deleteCommentHeart(Long userId, Long commentId) {
+        User user = getUser(userId);
+        Comment comment = getComment(commentId);
 
-        User findUser = getUser(userId);
-
-        Comment findComment = getComment(commentId);
-
-        CommentHeart commentHeart = commentHeartRepository.findByUserAndComment(findUser, findComment)
+        CommentHeart commentHeart = commentHeartRepository.findByUserAndComment(user, comment)
                 .orElseThrow(() -> new CommentException(CommentErrorResult.COMMENT_HEART_NOT_FOUND));
 
         if (!Objects.equals(commentHeart.getUser().getId(), userId)) {
@@ -61,9 +58,8 @@ public class CommentHeartService {
 
         commentHeartRepository.delete(commentHeart);
 
-        Comment comment = commentHeart.getComment();
-
-        comment.minusHeartCnt();
+        commentHeart.getComment().minusHeartCnt();
+        return commentHeart.getId();
     }
 
     /**

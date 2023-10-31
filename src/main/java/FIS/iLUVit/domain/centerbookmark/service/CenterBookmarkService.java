@@ -8,7 +8,7 @@ import FIS.iLUVit.domain.centerbookmark.exception.CenterBookmarkException;
 import FIS.iLUVit.domain.parent.domain.Parent;
 import FIS.iLUVit.domain.centerbookmark.domain.Prefer;
 import FIS.iLUVit.domain.review.domain.Review;
-import FIS.iLUVit.domain.center.dto.CenterBookmarkResponse;
+import FIS.iLUVit.domain.centerbookmark.dto.CenterBookmarkResponse;
 import FIS.iLUVit.domain.center.repository.CenterRepository;
 import FIS.iLUVit.domain.parent.repository.ParentRepository;
 import FIS.iLUVit.domain.centerbookmark.repository.CenterBookmarkRepository;
@@ -53,7 +53,7 @@ public class CenterBookmarkService {
                     .average()
                     .orElse(0.0); // 만약 리뷰가 없는 경우 0.0을 반환
 
-            centerBookmarkResponses.add(new CenterBookmarkResponse(centerBookmark.getCenter(), averageScore));
+            centerBookmarkResponses.add(CenterBookmarkResponse.of(centerBookmark.getCenter(), averageScore));
         });
 
         boolean hasNext = false;
@@ -95,6 +95,16 @@ public class CenterBookmarkService {
 
         centerBookmarkRepository.delete(deletedPrefer);
     }
+
+    /**
+     * 즐겨찾기 한 시설 리스트 삭제
+     */
+    public void deleteCenterBookmarkByWithdraw(Long userId, Parent parent){
+        centerBookmarkRepository.findByParent(parent).forEach(centerBookmark -> {
+           deleteCenterBookmark(userId, centerBookmark.getCenter().getId());
+        });
+    }
+
 
     /**
      * 예외처리 - 존재하는 시설인가

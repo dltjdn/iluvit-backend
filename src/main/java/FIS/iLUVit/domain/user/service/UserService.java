@@ -16,17 +16,14 @@ import FIS.iLUVit.domain.scrap.service.ScrapService;
 import FIS.iLUVit.domain.tokenpair.repository.TokenPairRepository;
 import FIS.iLUVit.domain.tokenpair.domain.TokenPair;
 import FIS.iLUVit.domain.user.domain.User;
+import FIS.iLUVit.domain.user.dto.*;
 import FIS.iLUVit.domain.user.exception.UserErrorResult;
 import FIS.iLUVit.domain.user.exception.UserException;
 import FIS.iLUVit.domain.user.repository.UserRepository;
-import FIS.iLUVit.domain.user.dto.PasswordUpdateRequest;
 import FIS.iLUVit.domain.tokenpair.dto.TokenRefreshRequest;
-import FIS.iLUVit.domain.user.dto.UserBasicInfoResponse;
 import FIS.iLUVit.domain.authnum.domain.AuthKind;
 import FIS.iLUVit.domain.blackuser.domain.UserStatus;
 import FIS.iLUVit.global.security.JwtUtils;
-import FIS.iLUVit.domain.user.dto.LoginRequestDto;
-import FIS.iLUVit.domain.user.dto.UserInfoResponse;
 import FIS.iLUVit.global.security.uesrdetails.PrincipalDetails;
 import com.auth0.jwt.exceptions.JWTVerificationException;
 import lombok.RequiredArgsConstructor;
@@ -61,7 +58,7 @@ public class UserService {
     /**
      * 유저 기본정보( id, nickname, auth )를 반환합니다
      */
-    public UserBasicInfoResponse findUserDetails(Long userId) {
+    public UserFindOneResponse findUserDetails(Long userId) {
         // 블랙 유저 검증
         blackUserRepository.findByUserId(userId)
                 .ifPresent(blackUser -> {
@@ -79,7 +76,8 @@ public class UserService {
     /**
      * 중복된 로그인 아이디일 경우 에러를 반환합니다
      */
-    public void checkLoginIdAvailability(String loginId) {
+    public void checkLoginIdAvailability(UserCheckDuplicateLoginIdRequest request) {
+        String loginId = request.getLoginId();
         Optional<BlackUser> blackUser = blackUserRepository.findByLoginId((loginId));
         Optional<User> user = userRepository.findByLoginId(loginId);
 
@@ -92,7 +90,8 @@ public class UserService {
     /**
      * 중복된 닉네임일 경우 에러를 반환힙니다
      */
-    public void checkNicknameAvailability(String nickname) {
+    public void checkNicknameAvailability(UserCheckDuplicateNicknameRequest request) {
+        String nickname = request.getNickname();
         Optional<BlackUser> blackUser = blackUserRepository.findByNickName(nickname);
         Optional<User> user = userRepository.findByNickName(nickname);
 
@@ -105,7 +104,7 @@ public class UserService {
     /**
      * 비밀번호를 변경합니다
      */
-    public void changePassword(Long id, PasswordUpdateRequest request) {
+    public void changePassword(Long id, UserPasswordUpdateRequest request) {
         // 유저 id로 유저 정보 조회
         User findUser = getUser(id);
 
@@ -125,7 +124,7 @@ public class UserService {
     /**
      * 유저의 로그인 요청을 처리합니다
      */
-    public UserInfoResponse login(LoginRequestDto request) {
+    public UserLoginResponse login(UserLoginRequest request) {
         // 영구정지, 일주일간 이용제한 유저인지 검증
         blackUserRepository.findRestrictedByLoginId(request.getLoginId())
                 .ifPresent(blackUser -> {
@@ -152,7 +151,7 @@ public class UserService {
                 );
 
         // 응답에 필요한 유저 정보 생성
-        UserInfoResponse response = principal.getUser().getLoginInfo();
+        UserLoginResponse response = principal.getUser().getLoginInfo();
         response.setAccessToken(jwtUtils.addPrefix(jwt));
         response.setRefreshToken(jwtUtils.addPrefix(refresh));
 
@@ -165,7 +164,7 @@ public class UserService {
     /**
      * refreshToken으로 accessToken를 재발급합니다
      */
-    public UserInfoResponse refreshAccessToken(TokenRefreshRequest request) {
+    public UserLoginResponse refreshAccessToken(TokenRefreshRequest request) {
         //요청으로 받은 refreshToken 추출
         String requestRefreshToken = request.getRefreshToken().replace("Bearer ", "");
 
@@ -191,7 +190,7 @@ public class UserService {
             String refresh = jwtUtils.createRefreshToken(authentication);
             findTokenPair.updateToken(jwt, refresh);
 
-            UserInfoResponse response = principal.getUser().getLoginInfo();
+            UserLoginResponse response = principal.getUser().getLoginInfo();
             response.setAccessToken(jwtUtils.addPrefix(jwt));
             response.setRefreshToken(jwtUtils.addPrefix(refresh));
 

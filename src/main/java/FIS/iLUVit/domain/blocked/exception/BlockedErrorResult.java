@@ -11,7 +11,7 @@ public enum BlockedErrorResult implements ErrorResult {
     /**
      * 404 NOT FOUND
      */
-    NOT_EXIST_BLOCKED(HttpStatus.NOT_FOUND, "차단 관계가 존재하지 않습니다."),
+    BLOCKED_NOT_FOUND(HttpStatus.NOT_FOUND, "차단 관계가 존재하지 않습니다."),
 
     /**
      * 400 BAD REQUEST

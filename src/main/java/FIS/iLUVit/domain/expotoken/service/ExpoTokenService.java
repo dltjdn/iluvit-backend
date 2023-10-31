@@ -1,8 +1,7 @@
 package FIS.iLUVit.domain.expotoken.service;
 
 import FIS.iLUVit.domain.expotoken.dto.ExpoTokenDeviceIdRequest;
-import FIS.iLUVit.domain.expotoken.dto.ExpoTokenIdResponse;
-import FIS.iLUVit.domain.expotoken.dto.ExpoTokenResponse;
+import FIS.iLUVit.domain.expotoken.dto.ExpoTokenFindOneResponse;
 import FIS.iLUVit.domain.expotoken.dto.ExpoTokenSaveRequest;
 import FIS.iLUVit.domain.expotoken.domain.ExpoToken;
 import FIS.iLUVit.domain.user.domain.User;
@@ -29,7 +28,7 @@ public class ExpoTokenService {
     /**
      * expoToken을 등록합니다
      */
-    public ExpoTokenIdResponse saveToken(Long userId, ExpoTokenSaveRequest request) {
+    public Long saveToken(Long userId, ExpoTokenSaveRequest request) {
         User findUser = userRepository.getById(userId);
         ExpoToken token = ExpoToken.builder()
                 .user(findUser)
@@ -37,14 +36,13 @@ public class ExpoTokenService {
                 .accept(request.getAccept())
                 .build();
         ExpoToken savedToken = expoTokenRepository.save(token);
-        ExpoTokenIdResponse response = new ExpoTokenIdResponse(savedToken.getId());
-        return response;
+        return savedToken.getId();
     }
 
     /**
      * expoToken을 조회합니다
      */
-    public ExpoTokenResponse findExpoTokenByUser(Long userId, String expoToken) {
+    public ExpoTokenFindOneResponse findExpoTokenByUser(Long userId, String expoToken) {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new UserException(UserErrorResult.USER_NOT_FOUND));
 
@@ -54,7 +52,7 @@ public class ExpoTokenService {
         if (!Objects.equals(token.getUser(), user)) {
             throw new ExpoTokenException(ExpoTokenErrorResult.FORBIDDEN_ACCESS);
         }
-        return new ExpoTokenResponse(token);
+        return new ExpoTokenFindOneResponse(token);
     }
 
     /**

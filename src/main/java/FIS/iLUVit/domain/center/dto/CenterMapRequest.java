@@ -10,16 +10,12 @@ import javax.validation.constraints.NotNull;
 @NoArgsConstructor
 public class CenterMapRequest {
     @NotNull
+    private String searchContent;
+    @NotNull
     private double longitude;
     @NotNull
     private double latitude;
     @NotNull
     private Double distance;
 
-    @Builder
-    public CenterMapRequest(double longitude, double latitude, Double distance) {
-        this.longitude = longitude;
-        this.latitude = latitude;
-        this.distance = distance;
-    }
 }
