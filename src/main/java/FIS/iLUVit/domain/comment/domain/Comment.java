@@ -52,7 +52,7 @@ public class Comment extends BaseEntity {
         this.anonymous = anonymous;
         this.content = content;
         this.post = post;
-        post.updateComment(this);
+        post.increaseCommentCnt();
         this.user = user;
         this.date = LocalDate.now();
         this.time = LocalTime.now();
@@ -71,7 +71,7 @@ public class Comment extends BaseEntity {
                 .anonymousOrder(anonymousOrder)
                 .heartCnt(0)
                 .build();
-        post.updateComment(comment);
+        post.increaseCommentCnt();
         return comment;
     }
 
@@ -97,7 +97,6 @@ public class Comment extends BaseEntity {
     public void deleteComment() {
         this.content = "삭제된 댓글입니다.";
         this.user = null;
-        this.getPost().reduceCommentCnt();
     }
 
     public void plusHeartCnt() {

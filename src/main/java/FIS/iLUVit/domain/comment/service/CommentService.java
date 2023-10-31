@@ -4,6 +4,8 @@ import FIS.iLUVit.domain.alarm.service.AlarmService;
 import FIS.iLUVit.domain.blocked.domain.Blocked;
 import FIS.iLUVit.domain.blocked.repository.BlockedRepository;
 import FIS.iLUVit.domain.comment.domain.Comment;
+import FIS.iLUVit.domain.comment.dto.CommentCreateRequest;
+import FIS.iLUVit.domain.comment.dto.CommentPostResponse;
 import FIS.iLUVit.domain.comment.exception.CommentErrorResult;
 import FIS.iLUVit.domain.comment.exception.CommentException;
 import FIS.iLUVit.domain.comment.repository.CommentRepository;
@@ -17,18 +19,15 @@ import FIS.iLUVit.domain.user.domain.User;
 import FIS.iLUVit.domain.user.exception.UserErrorResult;
 import FIS.iLUVit.domain.user.exception.UserException;
 import FIS.iLUVit.domain.user.repository.UserRepository;
-import FIS.iLUVit.domain.comment.dto.CommentCreateRequest;
-import FIS.iLUVit.domain.comment.dto.CommentPostResponse;
+import java.util.List;
+import java.util.Objects;
+import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.util.List;
-import java.util.Objects;
-import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -76,18 +75,21 @@ public class CommentService {
      */
     public Long deleteComment(Long userId, Long commentId) {
 
-        commentRepository.findById(commentId)
-                .ifPresentOrElse(comment -> {
-                    // 내용 -> 삭제된 댓글입니다. + 작성자 -> null
-                    if (!Objects.equals(comment.getUser().getId(), userId)) {
-                        throw new CommentException(CommentErrorResult.FORBIDDEN_ACCESS);
-                    }
-                    deleteReportByComment(comment);
+        Comment comment = commentRepository.findById(commentId)
+                .orElseThrow(() -> new CommentException(CommentErrorResult.COMMENT_NOT_FOUND));
 
-                    comment.deleteComment();
-                }, () -> {
-                    throw new CommentException(CommentErrorResult.COMMENT_NOT_FOUND);
-                });
+        // 내용 -> 삭제된 댓글입니다. + 작성자 -> null
+        if (!Objects.equals(comment.getUser().getId(), userId)) {
+            throw new CommentException(CommentErrorResult.FORBIDDEN_ACCESS);
+        }
+
+        deleteReportByComment(comment);
+
+        comment.deleteComment();
+        Post post = postRepository.findById(comment.getPost().getId())
+                .orElseThrow(() -> new PostException(PostErrorResult.POST_NOT_FOUND));
+        post.reduceCommentCnt();
+
         return commentId;
     }
 

@@ -1,7 +1,6 @@
 package FIS.iLUVit.domain.post.domain;
 
 import FIS.iLUVit.domain.board.domain.Board;
-import FIS.iLUVit.domain.comment.domain.Comment;
 import FIS.iLUVit.domain.common.domain.BaseImageEntity;
 import FIS.iLUVit.domain.user.domain.User;
 import lombok.AccessLevel;
@@ -15,8 +14,6 @@ import javax.persistence.*;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
-import java.util.ArrayList;
-import java.util.List;
 
 @Entity
 @Getter
@@ -52,11 +49,8 @@ public class Post extends BaseImageEntity {
     @JoinColumn(name = "user_id")
     private User user;
 
-    @OneToMany(mappedBy = "post")
-    private List<Comment> comments = new ArrayList<>();
-
     @Builder(access = AccessLevel.PRIVATE)
-    public Post( String title, String content, Boolean anonymous, LocalDate date, LocalTime time, Integer commentCnt, Integer heartCnt, Integer imgCnt, Integer videoCnt, LocalDateTime postCreateDate, LocalDateTime postUpdateDate, Board board, User user, List<Comment> comments, Integer anonymousOrder) {
+    public Post( String title, String content, Boolean anonymous, LocalDate date, LocalTime time, Integer commentCnt, Integer heartCnt, Integer imgCnt, Integer videoCnt, LocalDateTime postCreateDate, LocalDateTime postUpdateDate, Board board, User user, Integer anonymousOrder) {
         this.title = title;
         this.content = content;
         this.anonymous = anonymous;
@@ -70,7 +64,6 @@ public class Post extends BaseImageEntity {
         this.postUpdateDate = postUpdateDate;
         this.board = board;
         this.user = user;
-        this.comments = comments;
         this.anonymousOrder = anonymousOrder;
     }
 
@@ -106,8 +99,7 @@ public class Post extends BaseImageEntity {
         this.postUpdateDate = LocalDateTime.now();
     }
 
-    public void updateComment(Comment comment) {
-        this.comments.add(comment);
+    public void increaseCommentCnt() {
         this.commentCnt++;
     }
 
@@ -116,7 +108,7 @@ public class Post extends BaseImageEntity {
     }
 
     public void reduceCommentCnt() {
-        this.commentCnt -= 1;
+        this.commentCnt--;
     }
 
     public void plusAnonymousOrder() {
