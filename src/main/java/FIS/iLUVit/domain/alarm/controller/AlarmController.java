@@ -66,9 +66,9 @@ public class AlarmController {
      * 선택한 알림들을 삭제합니다
      */
     @DeleteMapping("")
-    public ResponseEntity<Void> deleteAlarm(@Login Long userId, @RequestBody AlarmDeleteRequest alarmDeleteRequest) {
-        alarmService.deleteSelectedAlarm(userId, alarmDeleteRequest);
-        return ResponseEntity.noContent().build();
+    public ResponseEntity<Integer> deleteAlarm(@Login Long userId, @RequestBody AlarmDeleteRequest alarmDeleteRequest) {
+        Integer response = alarmService.deleteSelectedAlarm(userId, alarmDeleteRequest);
+        return ResponseEntity.ok(response);
     }
 
     /**

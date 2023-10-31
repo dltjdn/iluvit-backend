@@ -45,6 +45,6 @@ public class BoardBookmarkController {
     @DeleteMapping("{bookmarkId}")
     public ResponseEntity<Long> deleteBoardBookmark(@Login Long userId, @PathVariable("bookmarkId") Long bookmarkId) {
         Long response = boardBookmarkService.deleteBoardBookmark(userId, bookmarkId);
-        return ResponseEntity.ok().body(response);
+        return ResponseEntity.ok(response);
     }
 }

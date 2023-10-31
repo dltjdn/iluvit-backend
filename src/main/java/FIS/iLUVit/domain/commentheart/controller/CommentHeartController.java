@@ -32,6 +32,6 @@ public class CommentHeartController {
     @DeleteMapping("{commentId}")
     public ResponseEntity<Long> deleteCommentHeart(@Login Long userId, @PathVariable Long commentId) {
         Long response = commentHeartService.deleteCommentHeart(userId, commentId);
-        return ResponseEntity.ok().body(response);
+        return ResponseEntity.ok(response);
     }
 }

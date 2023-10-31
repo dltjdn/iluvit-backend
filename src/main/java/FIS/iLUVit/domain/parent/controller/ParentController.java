@@ -41,7 +41,7 @@ public class ParentController {
     @PatchMapping("")
     public ResponseEntity<ParentFindOneResponse> updateParent(@Login Long userId, @Valid @ModelAttribute ParentUpdateRequest parentUpdateRequest) throws IOException {
         ParentFindOneResponse response = parentService.modifyParentInfo(userId, parentUpdateRequest);
-        return ResponseEntity.ok().body(response);
+        return ResponseEntity.ok(response);
     }
 
     /**

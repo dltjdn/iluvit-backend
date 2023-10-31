@@ -84,10 +84,10 @@ public class AlarmService {
     /**
      * 선택한 알림들을 삭제합니다
      */
-    public void deleteSelectedAlarm(Long userId, AlarmDeleteRequest alarmDeleteRequest) {
+    public Integer deleteSelectedAlarm(Long userId, AlarmDeleteRequest alarmDeleteRequest) {
         List<Long> alarmIds = alarmDeleteRequest.getAlarmIds();
 
-        alarmRepository.deleteByUserIdAndIdIn(userId, alarmIds);
+        return alarmRepository.deleteByUserIdAndIdIn(userId, alarmIds);
     }
 
     /**

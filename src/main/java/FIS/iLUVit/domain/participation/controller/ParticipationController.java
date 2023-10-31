@@ -42,7 +42,7 @@ public class ParticipationController {
     @PatchMapping("{participationId}")
     public ResponseEntity<Long> cancelParticipation(@Login Long userId, @PathVariable("participationId") Long participationId){
         Long response = participationService.cancelParticipation(userId, participationId);
-        return ResponseEntity.ok().body(response);
+        return ResponseEntity.ok(response);
     }
 
     /**

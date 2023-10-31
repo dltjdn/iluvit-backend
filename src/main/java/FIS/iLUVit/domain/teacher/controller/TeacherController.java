@@ -51,7 +51,7 @@ public class TeacherController {
     @PostMapping("")
     public ResponseEntity<TeacherFindOneDetailResponse> updateTeacherInfo(@Login Long userId, @Valid @ModelAttribute TeacherUpdateRequest request){
         TeacherFindOneDetailResponse response = teacherService.updateTeacherInfo(userId, request);
-        return ResponseEntity.ok().body(response);
+        return ResponseEntity.ok(response);
     }
 
     /**

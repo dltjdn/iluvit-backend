@@ -28,18 +28,18 @@ public class ChatController {
      * 쪽지 작성 ( 대화방 생성 )
      */
     @PostMapping("")
-    public ResponseEntity<Void> createChat(@Login Long userId, @RequestBody ChatRoomCreateRequest chatRoomCreateRequest) {
-        chatService.saveNewChat(userId, chatRoomCreateRequest);
-        return ResponseEntity.status(HttpStatus.CREATED).build();
+    public ResponseEntity<Long> createChat(@Login Long userId, @RequestBody ChatRoomCreateRequest chatRoomCreateRequest) {
+        Long response = chatService.saveNewChat(userId, chatRoomCreateRequest);
+        return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
 
     /**
      * 쪽지 작성 ( 대화방 생성 후 쪽지 작성 )
      */
     @PostMapping("in-room")
-    public ResponseEntity<Void> createChatInRoom(@Login Long userId, @RequestBody ChatCreateRequest chatCreateRequest) {
-        chatService.saveChatInRoom(userId, chatCreateRequest);
-        return ResponseEntity.status(HttpStatus.CREATED).build();
+    public ResponseEntity<Long> createChatInRoom(@Login Long userId, @RequestBody ChatCreateRequest chatCreateRequest) {
+        Long response = chatService.saveChatInRoom(userId, chatCreateRequest);
+        return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
 
     /**
@@ -64,9 +64,9 @@ public class ChatController {
      * 대화방 삭제
      */
     @DeleteMapping("{roomId}")
-    public ResponseEntity<Void> deleteChatRoom(@Login Long userId, @PathVariable("roomId") Long roomId) {
-        chatService.deleteChatRoom(userId, roomId);
-        return ResponseEntity.noContent().build();
+    public ResponseEntity<Long> deleteChatRoom(@Login Long userId, @PathVariable("roomId") Long roomId) {
+        Long response = chatService.deleteChatRoom(userId, roomId);
+        return ResponseEntity.ok(response);
     }
 
 }

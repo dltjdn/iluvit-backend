@@ -38,7 +38,7 @@ public class CommentController {
     @PatchMapping("{commentId}")
     public ResponseEntity<Long> deleteComment(@Login Long userId, @PathVariable("commentId") Long commentId) {
         Long response = commentService.deleteComment(userId, commentId);
-        return ResponseEntity.ok().body(response);
+        return ResponseEntity.ok(response);
     }
 
     /**

@@ -50,7 +50,7 @@ public class ScrapController {
     @GetMapping("dir")
     public ResponseEntity<List<ScrapDirResponse>> getAllScrapDir(@Login Long userId) {
         List<ScrapDirResponse> scrapDirResponses = scrapService.findScrapDirList(userId);
-        return ResponseEntity.ok().body(scrapDirResponses);
+        return ResponseEntity.ok(scrapDirResponses);
     }
 
     /**
@@ -77,7 +77,7 @@ public class ScrapController {
     @DeleteMapping("dir/{scrapDirId}")
     public ResponseEntity<List<ScrapDirResponse>> deleteScrapDir(@Login Long userId, @PathVariable("scrapDirId") Long scrapDirId) {
         List<ScrapDirResponse> responses = scrapService.deleteScrapDir(userId, scrapDirId);
-        return ResponseEntity.ok().body(responses);
+        return ResponseEntity.ok(responses);
     }
 
     /**
@@ -86,7 +86,7 @@ public class ScrapController {
     @GetMapping("post/{postId}/dir")
     public ResponseEntity<List<ScrapDirFindByPostResponse>> getScrapDirByPost(@Login Long userId, @PathVariable("postId") Long postId) {
         List<ScrapDirFindByPostResponse> scrapDirFindByPostRespons = scrapService.findScrapDirListByPost(userId, postId);
-        return ResponseEntity.ok().body(scrapDirFindByPostRespons);
+        return ResponseEntity.ok(scrapDirFindByPostRespons);
     }
 
     /**
@@ -95,7 +95,7 @@ public class ScrapController {
     @GetMapping("dir/{scrapDirId}/post")
     public ResponseEntity<Slice<ScrapDirPostsResponse>> getPostByScrapDir(@Login Long userId, @PathVariable("scrapDirId") Long scrapDirId, Pageable pageable) {
         Slice<ScrapDirPostsResponse> scrapPostPreviewResponses = scrapService.findPostByScrapDir(userId, scrapDirId, pageable);
-        return ResponseEntity.ok().body(scrapPostPreviewResponses);
+        return ResponseEntity.ok(scrapPostPreviewResponses);
     }
 
 }

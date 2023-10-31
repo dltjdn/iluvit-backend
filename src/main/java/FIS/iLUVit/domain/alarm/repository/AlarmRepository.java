@@ -32,7 +32,7 @@ public interface AlarmRepository extends JpaRepository<Alarm, Long> {
     /**
      * 해당 사용자의 알람 id 리스트를 삭제합니다
      */
-    void deleteByUserIdAndIdIn(Long userId, List<Long> alarmIds);
+    Integer deleteByUserIdAndIdIn(Long userId, List<Long> alarmIds);
 
     /**
      * 해당 사용자의 모든 알람을 삭제합니다.

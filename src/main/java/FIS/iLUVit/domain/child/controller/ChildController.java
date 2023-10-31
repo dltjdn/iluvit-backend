@@ -61,7 +61,7 @@ public class ChildController {
     @PutMapping("{childId}")
     public ResponseEntity<ChildFindOneResponse> updateChild(@Login Long userId, @PathVariable("childId") Long childId, @ModelAttribute ChildUpdateRequest childUpdateRequest)  {
        ChildFindOneResponse response = childService.updateChildInfo(userId, childId, childUpdateRequest);
-        return ResponseEntity.ok().body(response);
+        return ResponseEntity.ok(response);
     }
 
     /**
@@ -70,7 +70,7 @@ public class ChildController {
     @DeleteMapping("{childId}")
     public ResponseEntity<List<ChildCenterResponse>> deleteChild(@Login Long userId, @PathVariable("childId") Long childId) {
        List<ChildCenterResponse> responses = childService.deleteChild(userId, childId);
-        return ResponseEntity.ok().body(responses);
+        return ResponseEntity.ok(responses);
     }
 
     /**
@@ -88,7 +88,7 @@ public class ChildController {
     @PatchMapping("{childId}/center/{centerId}")
     public ResponseEntity<Long> assignCenterForChild(@Login Long userId, @PathVariable("childId") Long childId, @PathVariable("centerId") Long centerId) {
         Long response = childService.requestAssignCenterForChild(userId, childId, centerId);
-        return ResponseEntity.ok().body(response);
+        return ResponseEntity.ok(response);
     }
 
     /**

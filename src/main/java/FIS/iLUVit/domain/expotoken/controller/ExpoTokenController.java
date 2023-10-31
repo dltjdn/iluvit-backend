@@ -40,7 +40,7 @@ public class ExpoTokenController {
     public ResponseEntity<ExpoTokenFindOneResponse> getExpoToken(@Login Long userId, HttpServletRequest request) {
         String expoToken = request.getHeader("ExpoToken");
         ExpoTokenFindOneResponse response = expoTokenService.findExpoTokenByUser(userId, expoToken);
-        return ResponseEntity.ok().body(response);
+        return ResponseEntity.ok(response);
     }
 
     /**

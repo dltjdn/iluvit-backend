@@ -38,6 +38,6 @@ public class WaitingController {
     @DeleteMapping("{waitingId}")
     public ResponseEntity<Long> cancelWaiting(@Login Long userId, @PathVariable("waitingId") Long waitingId) {
         Long response = waitingService.cancelParticipation(userId, waitingId);
-        return ResponseEntity.ok().body(response);
+        return ResponseEntity.ok(response);
     }
 }

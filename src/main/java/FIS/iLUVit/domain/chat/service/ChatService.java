@@ -52,7 +52,7 @@ public class ChatService {
     /**
      * 쪽지 작성 ( 대화방 생성 )
      */
-    public void saveNewChat(Long userId, ChatRoomCreateRequest request) {
+    public Long saveNewChat(Long userId, ChatRoomCreateRequest request) {
 
         User user = getUser(userId);
         Long commentId = request.getCommentId();
@@ -78,7 +78,7 @@ public class ChatService {
 
         validateSaveChat(userId, receiveUser);
 
-        createChatRoom(request, user, commentId, post, anonymousInfo, receiveUser);
+        Long chatId = createChatRoom(request, user, commentId, post, anonymousInfo, receiveUser);
 
         // 쪽지를 받은 유저가 자신이 차단한 유저를 조회
         List<User> blockedUsers = getBlockedUsers(receiveUser);
@@ -87,12 +87,13 @@ public class ChatService {
         if(!blockedUsers.contains(user)) {
             alarmService.sendChatAlarm(user, anonymousInfo, receiveUser);
         }
+        return chatId;
     }
 
     /**
      * 쪽지 작성 ( 대화방 생성 후 쪽지 작성 )
      */
-    public void saveChatInRoom(Long userId, ChatCreateRequest request) {
+    public Long saveChatInRoom(Long userId, ChatCreateRequest request) {
 
         ChatRoom myRoom = getChatRoom(request.getRoomId());
 
@@ -114,11 +115,12 @@ public class ChatService {
         myRoom.updatePartnerId(partnerRoom.getId());
         partnerRoom.updatePartnerId(myRoom.getId());
 
-        createChat(request.getMessage(), myRoom, receiveUser, sendUser, partnerRoom);
+        Long chatId = createChat(request.getMessage(), myRoom, receiveUser, sendUser, partnerRoom);
 
         getUser(partnerUserId)
                 .updateReadAlarm(Boolean.FALSE);
 
+        return chatId;
     }
 
     /**
@@ -165,7 +167,7 @@ public class ChatService {
     /**
      * 대화방 삭제
      */
-    public void deleteChatRoom(Long userId, Long roomId) {
+    public Long deleteChatRoom(Long userId, Long roomId) {
         chatRoomRepository.findById(roomId)
                 .ifPresentOrElse(chatRoom -> {
                     if (chatRoom.getReceiver() == null) {
@@ -182,6 +184,7 @@ public class ChatService {
                     throw new ChatException(ChatErrorResult.CHAT_ROOM_NOT_FOUND);
                 });
         chatRoomRepository.deleteById(roomId);
+        return roomId;
     }
 
     /**
@@ -207,23 +210,27 @@ public class ChatService {
     /**
      * 나와 상태방의 채팅방과 채팅을 생성한다
      */
-    private void createChatRoom(ChatRoomCreateRequest request, User user, Long commentId, Post post, Boolean anonymousInfo, User receiveUser) {
+    private Long createChatRoom(ChatRoomCreateRequest request, User user, Long commentId, Post post, Boolean anonymousInfo, User receiveUser) {
         ChatRoom myRoom = getOrCreateChatRoom(user, receiveUser, commentId, post, anonymousInfo);
         ChatRoom partnerRoom = getOrCreateChatRoom(receiveUser, user, commentId, post, anonymousInfo);
         myRoom.updatePartnerId(partnerRoom.getId());
         partnerRoom.updatePartnerId(myRoom.getId());
 
-        createChat(request.getMessage(), myRoom, receiveUser, user, partnerRoom);
+        Chat myChat = Chat.of(request.getMessage(), myRoom, receiveUser, user);
+        Chat partnerChat = Chat.of(request.getMessage(), partnerRoom, receiveUser, user);
+        chatRepository.save(myChat);
+        return chatRepository.save(partnerChat).getId();
     }
 
     /**
      * 나와 상대방의 채팅을 생성한다
      */
-    private void createChat(String request, ChatRoom myRoom, User receiveUser, User user, ChatRoom partnerRoom) {
+    private Long createChat(String request, ChatRoom myRoom, User receiveUser, User user, ChatRoom partnerRoom) {
         Chat myChat = Chat.of(request, myRoom, receiveUser, user);
         Chat partnerChat = Chat.of(request, partnerRoom, receiveUser, user);
-        chatRepository.save(myChat);
+        Chat newChat = chatRepository.save(myChat);
         chatRepository.save(partnerChat);
+        return newChat.getId();
     }
 
     /**

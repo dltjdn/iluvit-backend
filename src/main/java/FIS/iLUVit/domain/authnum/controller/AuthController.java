@@ -61,16 +61,18 @@ public class AuthController {
      * (회원가입, 비밀번호 찾기) 인증번호 인증
      */
     @PostMapping("")
-    public void authenticateAuthNum(@RequestBody AuthRequest request) {
+    public ResponseEntity<Void> authenticateAuthNum(@RequestBody AuthRequest request) {
         authService.authenticateAuthNum(request);
+        return ResponseEntity.ok().build();
     }
 
     /**
      * (핸드폰번호 변경) 인증번호 인증
      */
     @PostMapping("phonenum")
-    public void authenticateAuthNumForChangingPhoneNum(@Login Long userId, @RequestBody AuthRequest request) {
+    public ResponseEntity<Void> authenticateAuthNumForChangingPhoneNum(@Login Long userId, @RequestBody AuthRequest request) {
         authService.authenticateAuthNumForChangingPhoneNum(userId, request);
+        return ResponseEntity.ok().build();
     }
 
 
