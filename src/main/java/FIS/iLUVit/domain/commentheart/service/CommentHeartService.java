@@ -28,7 +28,7 @@ public class CommentHeartService {
     /**
      * 댓글 좋아요 등록
      */
-    public void saveCommentHeart(Long userId, Long commentId) {
+    public Long saveCommentHeart(Long userId, Long commentId) {
         User user = getUser(userId);
         Comment comment = getComment(commentId);
 
@@ -38,13 +38,14 @@ public class CommentHeartService {
                 });
 
         comment.plusHeartCnt();
-        commentHeartRepository.save(CommentHeart.of(user, comment));
+        CommentHeart savedCommentHeart = commentHeartRepository.save(CommentHeart.of(user, comment));
+        return savedCommentHeart.getId();
     }
 
     /**
      * 댓글 좋아요 취소
      */
-    public void deleteCommentHeart(Long userId, Long commentId) {
+    public Long deleteCommentHeart(Long userId, Long commentId) {
         User user = getUser(userId);
         Comment comment = getComment(commentId);
 
@@ -58,6 +59,7 @@ public class CommentHeartService {
         commentHeartRepository.delete(commentHeart);
 
         commentHeart.getComment().minusHeartCnt();
+        return commentHeart.getId();
     }
 
     /**

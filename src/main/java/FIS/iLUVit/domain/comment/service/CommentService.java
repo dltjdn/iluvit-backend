@@ -46,7 +46,7 @@ public class CommentService {
     /**
      * 댓글 작성 (comment_id 값이 null일 경우 댓글 작성, comment_id 값까지 보내는 경우 대댓글 작성)
      */
-    public void saveNewComment(Long userId, Long postId, Long parentCommentId, CommentCreateRequest request) {
+    public Long saveNewComment(Long userId, Long postId, Long parentCommentId, CommentCreateRequest request) {
         User user = getUser(userId);
         Post post = postRepository.findById(postId)
                 .orElseThrow(() -> new PostException(PostErrorResult.POST_NOT_FOUND));
@@ -61,19 +61,20 @@ public class CommentService {
                             .orElseThrow(()-> new CommentException(CommentErrorResult.COMMENT_NOT_FOUND));
             comment.updateParentComment(parentComment);
         }
-        commentRepository.save(comment);
+        Comment savedComment = commentRepository.save(comment);
 
         List<User> blockedUsers = getBlackUsers(post);  // 게시글을 쓴 유저가 차단한 유저를 조회한다
         if (!user.equals(post.getUser()) && !blockedUsers.contains(user)) { // 본인 게시글에 댓글단 건 알림 X
             alarmService.sendPostAlarm(post, comment);
         }
 
+        return savedComment.getId();
     }
 
     /**
      * 댓글 삭제 ( 댓글 데이터 지우지 않고 내용, 작성자만 null로 변경)
      */
-    public void deleteComment(Long userId, Long commentId) {
+    public Long deleteComment(Long userId, Long commentId) {
 
         commentRepository.findById(commentId)
                 .ifPresentOrElse(comment -> {
@@ -87,6 +88,7 @@ public class CommentService {
                 }, () -> {
                     throw new CommentException(CommentErrorResult.COMMENT_NOT_FOUND);
                 });
+        return commentId;
     }
 
 

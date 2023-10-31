@@ -21,17 +21,17 @@ public class CommentHeartController {
      * 댓글 좋아요 등록
      */
     @PostMapping("{commentId}")
-    public ResponseEntity<Void> createCommentHeart(@Login Long userId, @PathVariable Long commentId) {
-        commentHeartService.saveCommentHeart(userId, commentId);
-        return ResponseEntity.status(HttpStatus.CREATED).build();
+    public ResponseEntity<Long> createCommentHeart(@Login Long userId, @PathVariable Long commentId) {
+        Long response = commentHeartService.saveCommentHeart(userId, commentId);
+        return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
 
     /**
      * 댓글 좋아요 취소
      */
     @DeleteMapping("{commentId}")
-    public ResponseEntity<Void> deleteCommentHeart(@Login Long userId, @PathVariable Long commentId) {
-        commentHeartService.deleteCommentHeart(userId, commentId);
-        return ResponseEntity.noContent().build();
+    public ResponseEntity<Long> deleteCommentHeart(@Login Long userId, @PathVariable Long commentId) {
+        Long response = commentHeartService.deleteCommentHeart(userId, commentId);
+        return ResponseEntity.ok().body(response);
     }
 }
