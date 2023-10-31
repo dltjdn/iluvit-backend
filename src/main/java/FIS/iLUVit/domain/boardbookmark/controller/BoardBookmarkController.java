@@ -43,8 +43,8 @@ public class BoardBookmarkController {
      * 즐겨찾는 게시판 삭제
     */
     @DeleteMapping("{bookmarkId}")
-    public ResponseEntity<Void> deleteBoardBookmark(@Login Long userId, @PathVariable("bookmarkId") Long bookmarkId) {
-        boardBookmarkService.deleteBoardBookmark(userId, bookmarkId);
-        return ResponseEntity.noContent().build();
+    public ResponseEntity<Long> deleteBoardBookmark(@Login Long userId, @PathVariable("bookmarkId") Long bookmarkId) {
+        Long response = boardBookmarkService.deleteBoardBookmark(userId, bookmarkId);
+        return ResponseEntity.ok().body(response);
     }
 }

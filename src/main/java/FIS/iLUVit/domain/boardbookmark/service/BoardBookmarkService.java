@@ -95,7 +95,7 @@ public class BoardBookmarkService {
     /**
      * 즐겨찾는 게시판 삭제
      */
-    public void deleteBoardBookmark(Long userId, Long bookmarkId) {
+    public Long deleteBoardBookmark(Long userId, Long bookmarkId) {
         Bookmark boardBookmark = boardBookmarkRepository.findById(bookmarkId)
                 .orElseThrow(() -> new BoardBookmarkException(BoardBookmarkErrorResult.BOARD_BOOKMARK_NOT_FOUND));
 
@@ -104,6 +104,7 @@ public class BoardBookmarkService {
             throw new BoardBookmarkException(BoardBookmarkErrorResult.FORBIDDEN_ACCESS);
         }
         boardBookmarkRepository.delete(boardBookmark);
+        return bookmarkId;
     }
 
     /**

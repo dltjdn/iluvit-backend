@@ -151,7 +151,7 @@ public class BoardService {
     /**
      * 게시판 삭제
      */
-    public void deleteBoard(Long userId, Long boardId) {
+    public Long deleteBoard(Long userId, Long boardId) {
         Board board = boardRepository.findById(boardId)
                 .orElseThrow(() -> new BoardException(BoardErrorResult.BOARD_NOT_FOUND));
 
@@ -165,6 +165,7 @@ public class BoardService {
                 .ifPresent(user -> validateDeleteBoardAuth(board, user));
 
         boardRepository.delete(board);
+        return boardId;
     }
 
     /**

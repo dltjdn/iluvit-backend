@@ -65,9 +65,9 @@ public class BoardController {
      * 게시판 삭제
     */
     @DeleteMapping("{boardId}")
-    public ResponseEntity<Void> deleteBoard(@Login Long userId, @PathVariable("boardId") Long boardId) {
-        boardService.deleteBoard(userId, boardId);
-        return ResponseEntity.noContent().build();
+    public ResponseEntity<Long> deleteBoard(@Login Long userId, @PathVariable("boardId") Long boardId) {
+        Long response = boardService.deleteBoard(userId, boardId);
+        return ResponseEntity.ok().body(response);
     }
 
 }
